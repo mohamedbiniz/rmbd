@@ -25,6 +25,7 @@
         <module>sat4j</module>
         <module>choco2</module>
         <module>Logging Module</module>
+        <module>theory</module>
     </modules>
     <!--
     More Project Information
