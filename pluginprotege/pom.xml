@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>rmbd</artifactId>
+        <groupId>at.ainf</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pluginprotege</artifactId>
+
+    <!-- <version>1.0.0</version>
+    <url>http://www.wso2.org</url>-->
+
+    <packaging>jar</packaging>
+    <name>Query Debugger</name>
+    <description>A plugin for protege to debug ontologies  </description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.5</version>
+                <extensions>true</extensions>
+
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>at.ainf.pluginprotege;singleton:=true</Bundle-SymbolicName>
+                        <Bundle-Name>Query Debugger Plug-in</Bundle-Name>
+                        <Bundle-Version>1.0_alpha</Bundle-Version>
+                        <Bundle-Activator>org.protege.editor.core.plugin.DefaultPluginActivator</Bundle-Activator>
+                        <!--<Bundle-Activator>at.ainf.pluginprotege.BundleActivator</Bundle-Activator>-->
+                        <!--<Update-Url>http://wwwu.edu.uni-klu.ac.at/pfleiss/update.properties</Update-Url>-->
+                        <!--<Import-Package>org.osgi.framework,org.apache.log4j,javax.swing,javax.
+                        swing.border,javax.swing.colorchooser,javax.swing.event,javax.swing.f
+                        ilechooser,javax.swing.plaf,javax.swing.plaf.basic,javax.swing.plaf.m
+                        etal,javax.swing.plaf.multi,javax.swing.plaf.synth,javax.swing.table,
+                        javax.swing.text,javax.swing.text.html,javax.swing.text.html.parser,j
+                        avax.swing.text.rtf,javax.swing.tree,javax.swing.undo</Import-Package>-->
+                        <!--<Embed-Directory>lib</Embed-Directory>-->
+                        <Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
+                            org.protege.editor.core.application;bundle-version="4.1",org.protege.editor.owl;bundle-version="4.1",
+                            org.semanticweb.owl.owlapi;bundle-version="3.0"
+                        </Require-Bundle>
+                        <Private-Package>at.ainf.pluginprotege.*</Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${env.PROTEGE_HOME}/plugins</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>target/</directory>
+                                    <includes>
+                                        <include>at.ainf.querydebugger.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}/../owlapi-3/target/</directory>
+                                    <includes>
+                                        <include>at.ainf.owlapi3.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}/../diagnosis/target/</directory>
+                                    <includes>
+                                        <include>at.ainf.diagnosis.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.2</version>
+                <configuration>
+                    <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <finalName>at.ainf.querydebugger</finalName>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <dependencies>
+
+        <!-- other modules -->
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>owlapi-3</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>diagnosis</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <!-- dependencies out of bundles directory from protege 4.2.0 alpha build 249 -->
+
+        <dependency>
+            <groupId>org.protege.editor.core</groupId>
+            <artifactId>application</artifactId>
+            <version>4.2.0.b249</version>
+        </dependency>
+
+        <!-- next dependency out of plugin directory from protege 4.2.0 alpha build 249  -->
+
+        <dependency>
+            <groupId>org.protege.editor</groupId>
+            <artifactId>owl</artifactId>
+            <version>4.2.0.b249</version>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

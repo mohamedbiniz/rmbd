@@ -1,0 +1,191 @@
+<?xml version="1.0" ?>
+
+<plugin>
+    <extension id="at.ainf.pluginprotege.views.ConflictSetView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Conflict Sets"/>
+        <class value="at.ainf.pluginprotege.views.ConflictSetView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+    <extension id="at.ainf.pluginprotege.views.HittingSetView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Diagnoses"/>
+        <class value="at.ainf.pluginprotege.views.HittingSetView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+    <extension id="at.ainf.pluginprotege.testcasesentailmentsview.TestCasesEntailmentsView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Test Cases and Entailments"/>
+        <class value="at.ainf.pluginprotege.testcasesentailmentsview.TestCasesEntailmentsView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+    <extension id="at.ainf.pluginprotege.queryaskingview.QueryAskingView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Query Asking "/>
+        <class value="at.ainf.pluginprotege.queryaskingview.QueryAskingView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+    <extension id="at.ainf.pluginprotege.views.AxiomExplainView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Axiom Explanation "/>
+        <class value="at.ainf.pluginprotege.views.AxiomExplainView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+    <extension id="at.ainf.pluginprotege.views.RepairView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Entailments"/>
+        <class value="at.ainf.pluginprotege.views.RepairView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+    <extension id="at.ainf.pluginprotege.views.diagnosistreeview.DiagnosisTreeView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="HS Tree"/>
+        <class value="at.ainf.pluginprotege.views.diagnosistreeview.DiagnosisTreeView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+    <extension id="at.ainf.pluginprotege.buttonview.ButtonView"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Toolbox"/>
+        <class value="at.ainf.pluginprotege.buttonview.ButtonView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+    <extension id="at.ainf.pluginprotege.DebugTabVw"
+            point="org.protege.editor.core.application.ViewComponent">
+        <label value="Debug Tab"/>
+        <class value="at.ainf.pluginprotege.DebugTabVw"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+
+    <extension id="at.ainf.pluginprotege.basis.Ehook"
+            point="org.protege.editor.core.application.EditorKitHook">
+        <class value="at.ainf.pluginprotege.basis.Ehook"/>
+        <editorKitId value="OWLEditorKit"/>
+    </extension>
+
+
+    <!-- <extension id="at.ainf.pluginprotege.TabbedHierarchyView"
+            point="org.protege.axiomeditor.core.application.ViewComponent">
+        <label value="Tabbed subclasses"/>
+        <class value="at.ainf.pluginprotege.TabbedHierarchyView"/>
+        <headerColor value="@org.protege.classcolor"/>
+        <category value="@org.protege.classcategory"/>
+    </extension> -->
+
+    <!-- <extension id="at.ainf.pluginprotege.InferredTabbedHierarchyView"
+            point="org.protege.axiomeditor.core.application.ViewComponent">
+        <label value="Tabbed subclasses (inferred)"/>
+        <class value="at.ainf.pluginprotege.InferredTabbedHierarchyView"/>
+        <headerColor value="@org.protege.classcolor"/>
+        <category value="@org.protege.classcategory"/>
+    </extension> -->
+
+    <extension
+         id="menu.menudebug"
+         point="org.protege.editor.core.application.EditorKitMenuAction">
+      <name value="Debugger"/>
+      <toolTip value="Debug with Query Module "/>
+      <path value="/SlotYB-B"/>
+      <editorKitId value="any"/>
+   </extension>
+
+    <!-- <extension id="menu.debug.confent"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Config Entailments"/>
+       <toolTip value="Config entailments "/>
+       <class value="at.ainf.pluginprotege.menuactions.ConfEntailmentsAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAC-A"/>
+       <editorKitId value="any"/>
+   </extension>  -->
+
+    <!-- <extension id="menu.debug.configprobabilites"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Config Probabilities"/>
+       <toolTip value="Config user error probabilities "/>
+       <class value="at.ainf.pluginprotege.menuactions.ConfProbabilitesAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAC-B"/>
+       <editorKitId value="any"/>
+   </extension> -->
+
+    <!-- <extension id="menu.debug.configsearch"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Config Search"/>
+       <toolTip value="Config Search "/>
+       <class value="at.ainf.pluginprotege.menuactions.ConfSearchAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAC-C"/>
+       <editorKitId value="any"/>
+   </extension> -->
+
+    <extension id="menu.menudebug.options"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Options "/>
+       <toolTip value="Options"/>
+       <class value="at.ainf.pluginprotege.menuactions.OptionsDialogAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAC-C"/>
+       <editorKitId value="any"/>
+   </extension>
+
+    <extension id="menu.menudebug.configwizad"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Configuration Wizard"/>
+       <toolTip value="Helps in Configuration"/>
+       <class value="at.ainf.pluginprotege.menuactions.ConfigurationWizardAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAC-D"/>
+       <editorKitId value="any"/>
+   </extension>
+
+
+    <!-- <extension id="menu.debug.startdiag"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Start Query  "/>
+       <toolTip value="Start Query  "/>
+       <class value="at.ainf.pluginprotege.menuactions.StartDiagAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAC-E"/>
+       <editorKitId value="any"/>
+   </extension> -->
+
+    <!--<extension id="menu.menudebug.save"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Save Testcases"/>
+       <toolTip value="Saves entailments and test cases "/>
+       <class value="at.ainf.pluginprotege.menuactions.SaveTestcasesAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAB-B"/>
+       <editorKitId value="any"/>
+   </extension>-->
+
+    <!--<extension id="menu.menudebug.load"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Load Testcases"/>
+       <toolTip value="Load entailments and test cases "/>
+       <class value="at.ainf.pluginprotege.menuactions.LoadTestcasesAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAB-A"/>
+       <editorKitId value="any"/>
+   </extension>-->
+
+    <extension id="menu.menudebug.opendebugtab"
+              point="org.protege.editor.core.application.EditorKitMenuAction">
+       <name value="Open Debug Tab"/>
+       <toolTip value="Open Debug Tab"/>
+       <class value="at.ainf.pluginprotege.menuactions.OpenDTabAction"/>
+       <path value="at.ainf.pluginprotege.menu.menudebug/SlotAA-A"/>
+       <editorKitId value="any"/>
+   </extension>
+
+   <extension id="WorkspaceTab"
+              point="org.protege.editor.core.application.WorkspaceTab">
+      <label value="Debugger"/>
+      <class value="at.ainf.pluginprotege.WorkspaceTab"/>
+      <index value="X"/>
+      <editorKitId value="OWLEditorKit"/>
+      <defaultViewConfigFileName value="tab_layout_plugin.xml"/>
+    </extension>
+
+</plugin>
