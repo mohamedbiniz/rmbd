@@ -36,7 +36,7 @@ public class PartitioningTest {
 
     @BeforeClass
     public static void setUp() {
-        String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
+        String conf = ClassLoader.getSystemResource("pluginprotege-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
     }
 

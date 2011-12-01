@@ -5,7 +5,6 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.debugging.OwlQueryDebuggerFactory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.pluginprotege.controlpanel.*;
 import at.ainf.pluginprotege.testcasesentailmentsview.axiomeditor.owlparser.MyOWLRendererParser;

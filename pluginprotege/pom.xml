@@ -132,7 +132,7 @@
         </dependency>
         <dependency>
             <groupId>at.ainf</groupId>
-            <artifactId>query-gen</artifactId>
+            <artifactId>querygen</artifactId>
             <version>1.0</version>
         </dependency>
 

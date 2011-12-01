@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.debugging;
+package at.ainf.pluginprotege;
 
 import at.ainf.querygen.querydebug.ProbabilityQueryDebugger;
 import at.ainf.querygen.querydebug.QueryDebugger;
