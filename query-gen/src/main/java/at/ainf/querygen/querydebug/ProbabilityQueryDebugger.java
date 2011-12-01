@@ -1,4 +1,4 @@
-package at.ainf.diagnosis.querydebug;
+package at.ainf.querygen.querydebug;
 
 import at.ainf.theory.model.ITheory;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;

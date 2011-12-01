@@ -1,6 +1,6 @@
 package at.ainf.pluginprotege.queryaskingview;
 
-import at.ainf.diagnosis.partitioning.Partition;
+import at.ainf.querygen.partitioning.Partition;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.pluginprotege.backgroundsearch.BackgroundSearcher;

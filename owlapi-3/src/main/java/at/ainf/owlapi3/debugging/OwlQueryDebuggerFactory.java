@@ -1,10 +1,10 @@
 package at.ainf.owlapi3.debugging;
 
+import at.ainf.querygen.querydebug.ProbabilityQueryDebugger;
+import at.ainf.querygen.querydebug.QueryDebugger;
+import at.ainf.querygen.querydebug.SimpleQueryDebugger;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.querydebug.ProbabilityQueryDebugger;
-import at.ainf.diagnosis.querydebug.QueryDebugger;
-import at.ainf.diagnosis.querydebug.SimpleQueryDebugger;
 import at.ainf.owlapi3.model.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;

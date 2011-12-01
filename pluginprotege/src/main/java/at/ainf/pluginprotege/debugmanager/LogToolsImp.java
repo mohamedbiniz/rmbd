@@ -1,6 +1,6 @@
 package at.ainf.pluginprotege.debugmanager;
 
-import at.ainf.diagnosis.partitioning.Partition;
+import at.ainf.querygen.partitioning.Partition;
 import at.ainf.theory.storage.HittingSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;

@@ -1,4 +1,4 @@
-package at.ainf.diagnosis.partitioning;
+package at.ainf.querygen.partitioning;
 
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;

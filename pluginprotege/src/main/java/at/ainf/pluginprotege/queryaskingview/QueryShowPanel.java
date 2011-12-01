@@ -2,7 +2,7 @@ package at.ainf.pluginprotege.queryaskingview;
 
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.partitioning.Partition;
+import at.ainf.querygen.partitioning.Partition;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.pluginprotege.WorkspaceTab;
 import at.ainf.pluginprotege.controlpanel.QueryDebuggerPreference;

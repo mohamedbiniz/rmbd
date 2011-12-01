@@ -130,6 +130,11 @@
             <artifactId>diagnosis</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>query-gen</artifactId>
+            <version>1.0</version>
+        </dependency>
 
         <!-- dependencies out of bundles directory from protege 4.2.0 alpha build 249 -->
 

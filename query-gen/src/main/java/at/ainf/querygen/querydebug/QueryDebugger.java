@@ -1,9 +1,9 @@
-package at.ainf.diagnosis.querydebug;
+package at.ainf.querygen.querydebug;
 
 import at.ainf.theory.model.ITheory;
 
-import at.ainf.diagnosis.partitioning.Partition;
-import at.ainf.diagnosis.partitioning.ScoringFunction;
+import at.ainf.querygen.partitioning.Partition;
+import at.ainf.querygen.partitioning.ScoringFunction;
 import at.ainf.theory.storage.HittingSet;
 
 

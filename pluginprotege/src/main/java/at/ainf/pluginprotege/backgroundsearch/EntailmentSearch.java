@@ -1,9 +1,9 @@
 package at.ainf.pluginprotege.backgroundsearch;
 
-import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
-import at.ainf.diagnosis.partitioning.Partition;
-import at.ainf.diagnosis.partitioning.ScoringFunction;
-import at.ainf.diagnosis.partitioning.SplitScoringFunction;
+import at.ainf.querygen.partitioning.EntropyScoringFunction;
+import at.ainf.querygen.partitioning.Partition;
+import at.ainf.querygen.partitioning.ScoringFunction;
+import at.ainf.querygen.partitioning.SplitScoringFunction;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.pluginprotege.controlpanel.QueryDebuggerPreference;

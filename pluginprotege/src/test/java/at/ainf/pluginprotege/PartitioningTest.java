@@ -1,8 +1,8 @@
-package at.ainf.owlapi3;
+package at.ainf.pluginprotege;
 
+import at.ainf.querygen.partitioning.*;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.partitioning.*;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.owlapi3.debugging.OWLDebugger;
 import at.ainf.owlapi3.debugging.SimpleDebugger;
