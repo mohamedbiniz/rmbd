@@ -1,6 +1,6 @@
 package at.ainf.pluginprotege.views;
 
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.NodeCostsEstimator;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;

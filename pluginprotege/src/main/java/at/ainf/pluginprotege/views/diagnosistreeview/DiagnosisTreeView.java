@@ -1,6 +1,7 @@
 package at.ainf.pluginprotege.views.diagnosistreeview;
 
-import at.ainf.diagnosis.storage.HittingSetImpl;
+import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.diagnosis.tree.Node;
 import at.ainf.pluginprotege.WorkspaceTab;
 import at.ainf.pluginprotege.debugmanager.*;
 import org.protege.editor.owl.ui.view.cls.AbstractOWLClassViewComponent;
@@ -38,7 +39,7 @@ public class DiagnosisTreeView extends AbstractOWLClassViewComponent implements 
         if (hs == null)
             tr.setDisplayNodeChanged(null);
         else
-            tr.setDisplayNodeChanged(hs.getNode());
+            tr.setDisplayNodeChanged((Node<OWLLogicalAxiom>)hs.getNode());
     }
 
 
@@ -63,7 +64,7 @@ public class DiagnosisTreeView extends AbstractOWLClassViewComponent implements 
         if (e.getTreenode() == null)
             tr.setDisplayNodeChanged(null);
         else
-            tr.setDisplayNodeChanged(((HittingSetImpl<OWLLogicalAxiom>)e.getTreenode()).getNode());
+            tr.setDisplayNodeChanged((Node<OWLLogicalAxiom>)((HittingSetImpl<OWLLogicalAxiom>)e.getTreenode()).getNode());
     }
 
 }

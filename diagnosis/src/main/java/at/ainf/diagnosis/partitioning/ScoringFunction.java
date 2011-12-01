@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 
 import java.util.Set;
 

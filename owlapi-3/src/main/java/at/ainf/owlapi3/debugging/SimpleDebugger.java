@@ -1,10 +1,10 @@
 package at.ainf.owlapi3.debugging;
 
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.storage.SimpleStorage;
+import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.semanticweb.owlapi.model.OWLException;

@@ -1,6 +1,6 @@
 package at.ainf.queryselection;
 
-import at.ainf.diagnosis.model.SolverException;
+import at.ainf.theory.model.SolverException;
 
 import java.util.List;
 

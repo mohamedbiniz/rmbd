@@ -14,8 +14,8 @@
  */
 package at.ainf.diagnosis.quickxplain;
 
-import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.model.SolverException;
+import at.ainf.theory.Searchable;
+import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class OldQuickXplain<E> extends BaseQuickXplain<E> {
      * @param u u
      * @return conflict
      * @throws NoConflictException exception
-     * @throws at.ainf.diagnosis.model.SolverException
+     * @throws at.ainf.theory.model.SolverException
      *                             ex
      */
     public Set<E> quickXplain(final Searchable<E> c, final FormulaList<E> u) throws NoConflictException, SolverException {

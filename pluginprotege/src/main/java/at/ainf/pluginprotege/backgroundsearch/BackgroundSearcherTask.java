@@ -1,10 +1,10 @@
 package at.ainf.pluginprotege.backgroundsearch;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.StorageItemAddedEvent;
-import at.ainf.diagnosis.storage.StorageItemListener;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.StorageItemAddedEvent;
+import at.ainf.theory.storage.StorageItemListener;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;

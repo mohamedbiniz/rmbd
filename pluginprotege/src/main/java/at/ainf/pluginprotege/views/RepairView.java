@@ -1,8 +1,7 @@
 package at.ainf.pluginprotege.views;
 
-import at.ainf.diagnosis.model.ITheory;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.SolverException;
 import at.ainf.pluginprotege.WorkspaceTab;
 import at.ainf.pluginprotege.debugmanager.*;
 import org.protege.editor.core.ui.util.ComponentFactory;
@@ -11,7 +10,6 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;

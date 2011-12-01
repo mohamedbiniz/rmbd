@@ -1,6 +1,6 @@
 package at.ainf.queryselection;
 
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 
 /**
  * Created by IntelliJ IDEA.

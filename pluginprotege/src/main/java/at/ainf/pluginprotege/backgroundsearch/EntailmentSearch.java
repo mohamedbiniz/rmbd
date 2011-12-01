@@ -4,7 +4,7 @@ import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
 import at.ainf.diagnosis.partitioning.Partition;
 import at.ainf.diagnosis.partitioning.ScoringFunction;
 import at.ainf.diagnosis.partitioning.SplitScoringFunction;
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.pluginprotege.controlpanel.QueryDebuggerPreference;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;

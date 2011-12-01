@@ -1,7 +1,7 @@
 package at.ainf.pluginprotege;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.partitioning.BruteForce;
 import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
 import at.ainf.diagnosis.partitioning.Partition;

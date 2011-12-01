@@ -1,13 +1,13 @@
 package at.ainf.pluginprotege.backgroundsearch;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partition;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.ScoringFunction;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.pluginprotege.controlpanel.QueryDebuggerPreference;

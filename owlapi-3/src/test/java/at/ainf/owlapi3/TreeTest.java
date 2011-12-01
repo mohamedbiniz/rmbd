@@ -1,8 +1,8 @@
 package at.ainf.owlapi3;
 
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.debugging.OWLDebugger;

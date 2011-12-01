@@ -1,7 +1,7 @@
 package at.ainf.owlapi3;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.apache.log4j.Logger;
 import org.semanticweb.HermiT.Reasoner;

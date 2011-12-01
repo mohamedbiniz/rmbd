@@ -1,9 +1,9 @@
 package at.ainf.pluginprotege.queryeval;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.storage.SimpleStorage;
+import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;

@@ -1,7 +1,7 @@
 package at.ainf.pluginprotege;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.pluginprotege.testcasesentailmentsview.axiomeditor.owlparser.MyOWLRendererParser;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;

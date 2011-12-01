@@ -1,13 +1,11 @@
 package at.ainf.owlapi3.model;
 
-import at.ainf.diagnosis.model.AbstractTheory;
-import at.ainf.diagnosis.model.ITheory;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.tree.NodeCostsEstimator;
+import at.ainf.theory.model.AbstractTheory;
+import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;

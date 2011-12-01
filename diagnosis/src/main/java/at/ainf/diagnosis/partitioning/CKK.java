@@ -1,9 +1,9 @@
 package at.ainf.diagnosis.partitioning;
 
-import at.ainf.diagnosis.model.ITheory;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.storage.HittingSet;
 import org.apache.log4j.Logger;
 
 import java.util.*;

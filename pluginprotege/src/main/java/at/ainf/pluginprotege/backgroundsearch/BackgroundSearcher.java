@@ -1,6 +1,6 @@
 package at.ainf.pluginprotege.backgroundsearch;
 
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.pluginprotege.debugmanager.DebugManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;

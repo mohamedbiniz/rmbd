@@ -1,12 +1,10 @@
 package at.ainf.pluginprotege;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.partitioning.Partition;
-import at.ainf.diagnosis.partitioning.QueryMinimizer;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.SimpleStorage;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.debugging.OWLDebugger;
@@ -15,7 +13,6 @@ import at.ainf.owlapi3.model.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.pluginprotege.backgroundsearch.BackgroundSearcher;
 import at.ainf.pluginprotege.controlpanel.*;
-import at.ainf.pluginprotege.queryaskingview.DiagProvider;
 import at.ainf.pluginprotege.testcasesentailmentsview.axiomeditor.owlparser.MyOWLRendererParser;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;

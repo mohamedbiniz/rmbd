@@ -1,8 +1,8 @@
 package at.ainf.pluginprotege;
 
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.HittingSetImpl;
-import at.ainf.diagnosis.storage.SimpleStorage;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;

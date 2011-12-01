@@ -1,7 +1,7 @@
 package at.ainf.queryselection;
 
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.HittingSetImpl;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.HittingSetImpl;
 import at.ainf.diagnosis.tree.Node;
 
 import java.util.Set;

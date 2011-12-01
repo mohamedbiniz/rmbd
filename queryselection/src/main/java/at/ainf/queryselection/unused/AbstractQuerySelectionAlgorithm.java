@@ -8,7 +8,7 @@ package at.ainf.queryselection.unused;
  * To change this template use File | Settings | File Templates.
  */
 
-import at.ainf.diagnosis.model.AbstractTheory;
+import at.ainf.theory.model.AbstractTheory;
 import at.ainf.owlapi3.debugging.AbstractOWLDebugger;
 import at.ainf.owlapi3.debugging.SimpleDebugger;
 import at.ainf.owlapi3.model.OWLTheory;

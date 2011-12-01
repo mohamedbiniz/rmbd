@@ -1,7 +1,7 @@
 package at.ainf.pluginprotege.views.diagnosistreeview;
 
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.HittingSetImpl;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.HittingSetImpl;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.NodeCostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -150,7 +150,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
         }
 
         for (Object hittingSet : hs) {
-            Node<OWLLogicalAxiom> node = ((HittingSetImpl<OWLLogicalAxiom>) hittingSet).getNode();
+            Node<OWLLogicalAxiom> node = (Node<OWLLogicalAxiom>) ((HittingSetImpl<OWLLogicalAxiom>) hittingSet).getNode();
             Node<OWLLogicalAxiom> parent = node.getParent();
 
             while (parent != null) {

@@ -1,13 +1,11 @@
 package at.ainf.pluginprotege.debugmanager;
 
 import at.ainf.diagnosis.partitioning.Partition;
-import at.ainf.diagnosis.storage.HittingSet;
-import org.protege.editor.owl.ui.list.OWLLinkedObjectList;
+import at.ainf.theory.storage.HittingSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
-import java.util.Iterator;
 import java.util.Set;
 
 /**

@@ -1,8 +1,6 @@
 package at.ainf.pluginprotege.debugmanager;
 
-import at.ainf.diagnosis.storage.HittingSet;
 import at.ainf.pluginprotege.views.ResultsListSection;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.util.EventObject;
 import java.util.Set;

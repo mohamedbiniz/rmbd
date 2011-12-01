@@ -14,9 +14,9 @@
  */
 package at.ainf.diagnosis.quickxplain;
 
-import at.ainf.diagnosis.Searchable;
+import at.ainf.theory.Searchable;
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.model.SolverException;
+import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.apache.log4j.Logger;
 

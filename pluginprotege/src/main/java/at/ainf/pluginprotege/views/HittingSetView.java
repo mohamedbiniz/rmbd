@@ -1,6 +1,6 @@
 package at.ainf.pluginprotege.views;
 
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.pluginprotege.debugmanager.DebugManager;
 import at.ainf.pluginprotege.WorkspaceTab;

@@ -70,7 +70,12 @@
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>theory</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.semanticweb.owl</groupId>

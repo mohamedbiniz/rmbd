@@ -1,7 +1,7 @@
 package at.ainf.queryselection.sim;
 
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.StorageListener;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.StorageListener;
 import at.ainf.queryselection.DiagnosisMemento;
 import at.ainf.queryselection.QueryModuleDiagnosis;
 

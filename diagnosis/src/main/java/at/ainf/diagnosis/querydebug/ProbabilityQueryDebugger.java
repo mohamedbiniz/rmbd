@@ -1,8 +1,8 @@
 package at.ainf.diagnosis.querydebug;
 
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.theory.model.ITheory;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.storage.SimpleStorage;
+import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.NodeCostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 

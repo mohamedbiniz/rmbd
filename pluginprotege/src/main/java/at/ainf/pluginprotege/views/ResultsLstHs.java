@@ -1,21 +1,14 @@
 package at.ainf.pluginprotege.views;
 
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.tree.Node;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.pluginprotege.debugmanager.DebugManager;
-import at.ainf.pluginprotege.queryaskingview.buttons.QueryEntButton;
-import at.ainf.pluginprotege.queryaskingview.buttons.QueryNotEntaiButton;
-import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
 import org.protege.editor.core.ui.list.MListButton;
-import org.protege.editor.core.ui.list.MListItem;
 import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

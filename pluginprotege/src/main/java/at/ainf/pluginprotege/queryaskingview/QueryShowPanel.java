@@ -1,9 +1,9 @@
 package at.ainf.pluginprotege.queryaskingview;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.partitioning.Partition;
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.pluginprotege.WorkspaceTab;
 import at.ainf.pluginprotege.controlpanel.QueryDebuggerPreference;
 import at.ainf.pluginprotege.debugmanager.DebugManager;

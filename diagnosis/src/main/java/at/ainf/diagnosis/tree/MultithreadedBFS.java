@@ -1,7 +1,7 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.Storage;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.Set;

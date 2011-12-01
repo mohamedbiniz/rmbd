@@ -1,9 +1,9 @@
 package at.ainf.owlapi3;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.partitioning.*;
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.owlapi3.debugging.OWLDebugger;
 import at.ainf.owlapi3.debugging.SimpleDebugger;
 import at.ainf.owlapi3.model.OWLTheory;

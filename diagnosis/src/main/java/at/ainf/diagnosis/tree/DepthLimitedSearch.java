@@ -8,10 +8,10 @@
 
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.Storage;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.Set;

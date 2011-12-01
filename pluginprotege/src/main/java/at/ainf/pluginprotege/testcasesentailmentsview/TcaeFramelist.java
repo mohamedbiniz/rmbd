@@ -1,7 +1,7 @@
 package at.ainf.pluginprotege.testcasesentailmentsview;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.pluginprotege.WorkspaceTab;
 import at.ainf.pluginprotege.testcasesentailmentsview.axiomeditor.OWLAxiomEditor;

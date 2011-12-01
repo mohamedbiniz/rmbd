@@ -1,7 +1,7 @@
 package at.ainf.owlapi3.debugging;
 
-import at.ainf.diagnosis.model.UnsatisfiableFormulasException;
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.semanticweb.owlapi.model.OWLException;

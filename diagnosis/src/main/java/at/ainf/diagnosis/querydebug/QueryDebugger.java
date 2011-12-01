@@ -1,10 +1,10 @@
 package at.ainf.diagnosis.querydebug;
 
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.theory.model.ITheory;
 
 import at.ainf.diagnosis.partitioning.Partition;
 import at.ainf.diagnosis.partitioning.ScoringFunction;
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 
 
 import java.util.Set;

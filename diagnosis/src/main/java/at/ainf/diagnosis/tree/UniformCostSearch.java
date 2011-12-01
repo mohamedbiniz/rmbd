@@ -1,13 +1,9 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.HittingSet;
-import at.ainf.diagnosis.storage.HittingSetImpl;
-import at.ainf.diagnosis.storage.SimpleStorage;
-import at.ainf.diagnosis.tree.AbstractTreeSearch;
-import at.ainf.diagnosis.tree.CostNode;
-import at.ainf.diagnosis.tree.Node;
-import at.ainf.diagnosis.tree.NodeCostsEstimator;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.*;

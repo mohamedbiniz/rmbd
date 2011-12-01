@@ -1,6 +1,6 @@
 package at.ainf.pluginprotege.views.diagnosistreeview;
 
-import at.ainf.diagnosis.storage.HittingSet;
+import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.pluginprotege.debugmanager.DebugManager;
 import org.protege.editor.owl.OWLEditorKit;
