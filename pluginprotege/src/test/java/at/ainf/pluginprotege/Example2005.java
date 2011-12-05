@@ -1,6 +1,6 @@
 package at.ainf.pluginprotege;
 
-import at.ainf.querygen.querydebug.QueryDebugger;
+import at.ainf.owlapi3.debugging.QueryDebugger;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;

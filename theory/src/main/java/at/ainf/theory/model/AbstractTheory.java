@@ -346,7 +346,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         this.solver = solver;
     }
 
-    protected boolean hasBackgroundTheory() {
+    public boolean hasBackgroundTheory() {
         return this.backgroundFormulas.size() > 0;
     }
 

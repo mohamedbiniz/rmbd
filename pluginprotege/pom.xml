@@ -44,13 +44,9 @@
                         <Bundle-Activator>org.protege.editor.core.plugin.DefaultPluginActivator</Bundle-Activator>
                         <!--<Bundle-Activator>at.ainf.pluginprotege.BundleActivator</Bundle-Activator>-->
                         <!--<Update-Url>http://wwwu.edu.uni-klu.ac.at/pfleiss/update.properties</Update-Url>-->
-                        <!--<Import-Package>org.osgi.framework,org.apache.log4j,javax.swing,javax.
-                        swing.border,javax.swing.colorchooser,javax.swing.event,javax.swing.f
-                        ilechooser,javax.swing.plaf,javax.swing.plaf.basic,javax.swing.plaf.m
-                        etal,javax.swing.plaf.multi,javax.swing.plaf.synth,javax.swing.table,
-                        javax.swing.text,javax.swing.text.html,javax.swing.text.html.parser,j
-                        avax.swing.text.rtf,javax.swing.tree,javax.swing.undo</Import-Package>-->
+                        <Import-Package>!at.ainf.diagnosis.*,!at.ainf.theory.*,!at.ainf.owlapi3.*,!at.ainf.querygen.*,*</Import-Package>
                         <!--<Embed-Directory>lib</Embed-Directory>-->
+                        <Bundle-ClassPath>.;at.ainf.theory.jar;at.ainf.diagnosis.jar;at.ainf.querygen.jar;at.ainf.owlapi3.jar</Bundle-ClassPath>
                         <Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
                             org.protege.editor.core.application;bundle-version="4.1",org.protege.editor.owl;bundle-version="4.1",
                             org.semanticweb.owl.owlapi;bundle-version="3.0"
@@ -59,6 +55,63 @@
                     </instructions>
                 </configuration>
             </plugin>
+            <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                  <artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>theory</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.theory.jar</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>diagnosis</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.diagnosis.jar</destFileName>
+                </artifactItem>
+                  <artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>querygen</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.querygen.jar</destFileName>
+                </artifactItem>
+                  <artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>owlapi-3</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.owlapi3.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/wars</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.4.3</version>
@@ -78,6 +131,7 @@
                                         <include>at.ainf.querydebugger.jar</include>
                                     </includes>
                                 </resource>
+                                <!--
                                 <resource>
                                     <directory>${project.basedir}/../owlapi-3/target/</directory>
                                     <includes>
@@ -90,6 +144,18 @@
                                         <include>at.ainf.diagnosis.jar</include>
                                     </includes>
                                 </resource>
+                                <resource>
+                                    <directory>${project.basedir}/../querygen/target/</directory>
+                                    <includes>
+                                        <include>at.ainf.querygen.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}/../theory/target/</directory>
+                                    <includes>
+                                        <include>at.ainf.theory.jar</include>
+                                    </includes>
+                                </resource>-->
                             </resources>
                         </configuration>
                     </execution>
@@ -119,6 +185,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.picocontainer</groupId>
+            <artifactId>picocontainer</artifactId>
+            <version>2.14.1</version>
+        </dependency>
+
         <!-- other modules -->
         <dependency>
             <groupId>at.ainf</groupId>
@@ -133,6 +205,11 @@
         <dependency>
             <groupId>at.ainf</groupId>
             <artifactId>querygen</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>theory</artifactId>
             <version>1.0</version>
         </dependency>
 

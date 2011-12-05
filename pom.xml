@@ -21,12 +21,12 @@
         <module>diagnosis</module>
         <module>owlapi-3</module>
         <module>pluginprotege</module>
-        <module>query</module>
+        <module>queryselection</module>
         <module>sat4j</module>
         <module>choco2</module>
-        <module>Logging Module</module>
+        <module>logger</module>
         <module>theory</module>
-        <module>query-gen</module>
+        <module>querygen</module>
     </modules>
     <!--
     More Project Information

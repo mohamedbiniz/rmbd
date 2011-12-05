@@ -1,4 +1,4 @@
-package at.ainf.querygen.querydebug;
+package at.ainf.owlapi3.debugging;
 
 import at.ainf.theory.model.ITheory;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;

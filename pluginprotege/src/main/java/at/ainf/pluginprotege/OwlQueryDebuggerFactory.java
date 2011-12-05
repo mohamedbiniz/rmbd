@@ -1,8 +1,8 @@
 package at.ainf.pluginprotege;
 
-import at.ainf.querygen.querydebug.ProbabilityQueryDebugger;
-import at.ainf.querygen.querydebug.QueryDebugger;
-import at.ainf.querygen.querydebug.SimpleQueryDebugger;
+import at.ainf.owlapi3.debugging.ProbabilityQueryDebugger;
+import at.ainf.owlapi3.debugging.QueryDebugger;
+import at.ainf.owlapi3.debugging.SimpleQueryDebugger;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.owlapi3.model.OWLAxiomNodeCostsEstimator;
