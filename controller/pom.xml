@@ -9,23 +9,19 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>querygen</artifactId>
-    <name>Query Generator</name>
+    <artifactId>controller</artifactId>
 
     <dependencies>
-            <dependency>
+        <dependency>
             <groupId>at.ainf</groupId>
             <artifactId>diagnosis</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
-            </dependency>
+        </dependency>
         <dependency>
             <groupId>at.ainf</groupId>
             <artifactId>theory</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
-
 
 </project>

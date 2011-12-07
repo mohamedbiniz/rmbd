@@ -184,15 +184,6 @@
 
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.picocontainer</groupId>
-            <artifactId>picocontainer</artifactId>
-            <version>2.14.1</version>
-        </dependency>
-
-        <!-- other modules -->
-
         <dependency>
             <groupId>at.ainf</groupId>
             <artifactId>owlapi-3</artifactId>
@@ -201,11 +192,6 @@
         <dependency>
             <groupId>at.ainf</groupId>
             <artifactId>diagnosis</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>at.ainf</groupId>
-            <artifactId>querygen</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

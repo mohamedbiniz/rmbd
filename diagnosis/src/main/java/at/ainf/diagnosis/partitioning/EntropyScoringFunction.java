@@ -1,4 +1,4 @@
-package at.ainf.querygen.partitioning;
+package at.ainf.diagnosis.partitioning;
 
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Partition;

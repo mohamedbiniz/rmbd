@@ -1,7 +1,7 @@
 package at.ainf.pluginprotege;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
-import at.ainf.querygen.partitioning.*;
+import at.ainf.diagnosis.partitioning.*;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;

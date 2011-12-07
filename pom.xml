@@ -26,8 +26,9 @@
         <module>choco2</module>
         <module>logger</module>
         <module>theory</module>
-        <module>querygen</module>
         <module>protegeview</module>
+        <module>controller</module>
+        <module>pico</module>
     </modules>
     <!--
     More Project Information

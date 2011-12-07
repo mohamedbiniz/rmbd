@@ -1,6 +1,6 @@
 package at.ainf.pluginprotege.queryeval;
 
-import at.ainf.querygen.partitioning.*;
+import at.ainf.diagnosis.partitioning.*;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;

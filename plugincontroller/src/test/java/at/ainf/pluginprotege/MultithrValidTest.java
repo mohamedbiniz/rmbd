@@ -1,11 +1,11 @@
 package at.ainf.pluginprotege;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
+import at.ainf.diagnosis.partitioning.BruteForce;
+import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
+import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.pluginprotege.testcasesentailmentsview.axiomeditor.owlparser.MyOWLRendererParser;
-import at.ainf.querygen.partitioning.BruteForce;
-import at.ainf.querygen.partitioning.EntropyScoringFunction;
-import at.ainf.querygen.partitioning.Partitioning;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.Partition;
