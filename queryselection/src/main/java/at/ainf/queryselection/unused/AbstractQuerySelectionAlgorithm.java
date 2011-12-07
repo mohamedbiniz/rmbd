@@ -8,10 +8,6 @@ package at.ainf.queryselection.unused;
  * To change this template use File | Settings | File Templates.
  */
 
-import at.ainf.theory.model.AbstractTheory;
-import at.ainf.owlapi3.debugging.AbstractOWLDebugger;
-import at.ainf.owlapi3.debugging.SimpleDebugger;
-import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.queryselection.QInfo;
 import at.ainf.queryselection.Query;
 import at.ainf.queryselection.QueryModuleDiagnosis;
@@ -45,7 +41,7 @@ public abstract class AbstractQuerySelectionAlgorithm<T> extends Observable /*im
 
     private int maxNumOfMostProbDiags;
     private int maxDiagnosisLength;
-    private AbstractOWLDebugger debugger;
+    //private AbstractOWLDebugger debugger;
     private Map<LogicalConstruct, Float> faultProbabilities;
 
     public static final int TYPE_MINSCORE = 1;
@@ -121,7 +117,7 @@ public abstract class AbstractQuerySelectionAlgorithm<T> extends Observable /*im
                return null;
            }
        }
-    */
+    //
     public void init(AbstractTheory abstractTheory) {
         if (abstractTheory instanceof OWLTheory) {
             OWLTheory theory = (OWLTheory) abstractTheory;
@@ -129,7 +125,7 @@ public abstract class AbstractQuerySelectionAlgorithm<T> extends Observable /*im
             debugger.setTheory(theory);
             this.debugger = debugger;
         }
-    }
+    }*/
 
     public QInfo setQueryAnswer(boolean answer) {
         // TODO: diagnoses eliminieren, pos bzw. neg test cases setzen, neue diags holen, sodass wieder n diags, probability updaten etc.

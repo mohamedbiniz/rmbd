@@ -3,6 +3,7 @@ package at.ainf.diagnosis.tree;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.NodeCostsEstimator;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 

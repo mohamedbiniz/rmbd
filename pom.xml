@@ -20,13 +20,14 @@
     <modules>
         <module>diagnosis</module>
         <module>owlapi-3</module>
-        <module>pluginprotege</module>
+        <module>plugincontroller</module>
         <module>queryselection</module>
         <module>sat4j</module>
         <module>choco2</module>
         <module>logger</module>
         <module>theory</module>
         <module>querygen</module>
+        <module>protegeview</module>
     </modules>
     <!--
     More Project Information

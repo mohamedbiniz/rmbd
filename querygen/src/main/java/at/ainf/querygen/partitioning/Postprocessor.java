@@ -1,5 +1,7 @@
 package at.ainf.querygen.partitioning;
 
+import at.ainf.theory.storage.Partition;
+
 import java.util.List;
 
 /**

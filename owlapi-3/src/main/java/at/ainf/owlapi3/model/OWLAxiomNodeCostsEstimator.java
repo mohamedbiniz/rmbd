@@ -1,7 +1,7 @@
 package at.ainf.owlapi3.model;
 
 import at.ainf.theory.storage.HittingSet;
-import at.ainf.diagnosis.tree.NodeCostsEstimator;
+import at.ainf.theory.storage.NodeCostsEstimator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;

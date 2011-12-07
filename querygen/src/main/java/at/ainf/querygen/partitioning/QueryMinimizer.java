@@ -5,6 +5,7 @@ import at.ainf.theory.model.AbstractSearchableObject;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.Partition;
 
 import java.util.Set;
 

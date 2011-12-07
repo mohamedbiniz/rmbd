@@ -4,6 +4,7 @@ import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 
 import java.util.*;
