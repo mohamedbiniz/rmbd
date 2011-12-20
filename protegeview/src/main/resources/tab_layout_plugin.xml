@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <VSNode splits="1.0">
+        <CNode>
+            <Component label="Debug Tab">
+                <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.DebugTabVw"/>
+            </Component>
+        </CNode>
+    </VSNode>
+</layout>

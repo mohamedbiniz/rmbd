@@ -380,4 +380,20 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     public void doBayesUpdate(Set<? extends HittingSet<T>> hittingSets) {
         throw new RuntimeException("Unimplemented method");
     }
+
+    public Object getOriginalOntology() {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    public Object getOntology() {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+
+
+    public void reset() {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+
 }

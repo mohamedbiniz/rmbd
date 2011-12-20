@@ -1,5 +1,8 @@
 package at.ainf.diagnosis.debugger;
 
+import at.ainf.diagnosis.partitioning.CKK;
+import at.ainf.diagnosis.partitioning.QueryMinimizer;
+import at.ainf.diagnosis.partitioning.ScoringFunction;
 import at.ainf.theory.model.ITheory;
 /*import at.ainf.querygen.partitioning.CKK;
   import at.ainf.querygen.partitioning.QueryMinimizer;
@@ -8,12 +11,14 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.Partition;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,6 +50,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         SimpleStorage<Id> storage = new SimpleStorage<Id>();
         search = new BreadthFirstSearch<Id>(storage);
         search.setSearcher(new NewQuickXplain<Id>());
+        if(theory != null) getTheory().reset();
         search.setTheory(getTheory());
 
     }
@@ -69,7 +75,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         return theory;
     }
 
-    /*private void minimizePartitionAx(Partition<Id> query) {
+    private void minimizePartitionAx(Partition<Id> query) {
         if (query.partition == null) return;
         QueryMinimizer<Id> mnz = new QueryMinimizer<Id>(query, getTheory());
         NewQuickXplain<Id> q = new NewQuickXplain<Id>();
@@ -98,10 +104,10 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
             if (!search.getTheory().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query complement");
         }
-    }*/
+    }
 
 
-    /*public Partition<Id> getQuery(ScoringFunction<Id> func, boolean minimize, double acceptanceThreshold) {
+    public Partition<Id> getQuery(ScoringFunction<Id> func, boolean minimize, double acceptanceThreshold) {
         CKK<Id> ckk = new CKK<Id>(theory, func);
         ckk.setThreshold(acceptanceThreshold);
 
@@ -120,7 +126,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
             minimizePartitionAx(best);
 
         return best;
-    }*/
+    }
 
     public void updateMaxHittingSets(int number) {
         maxDiags = number;
@@ -157,7 +163,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     }
 
     //
-    public void dispose() {
+    public void reset() {
         maxDiags = 9;
         init();
     }

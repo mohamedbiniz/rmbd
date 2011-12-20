@@ -20,7 +20,6 @@
     <modules>
         <module>diagnosis</module>
         <module>owlapi-3</module>
-        <module>plugincontroller</module>
         <module>queryselection</module>
         <module>sat4j</module>
         <module>choco2</module>
@@ -28,7 +27,7 @@
         <module>theory</module>
         <module>protegeview</module>
         <module>controller</module>
-        <module>pico</module>
+        <module>owlcontroller</module>
     </modules>
     <!--
     More Project Information

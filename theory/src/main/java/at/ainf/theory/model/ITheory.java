@@ -130,4 +130,11 @@ public interface ITheory<Id> extends Searchable<Id> {
     boolean isEntailed(Set<Id> n);
 
     public void doBayesUpdate(Set<? extends HittingSet<Id>> hittingSets);
+
+    public Object getOriginalOntology();
+
+    public Object getOntology();
+
+    public void reset();
+
 }

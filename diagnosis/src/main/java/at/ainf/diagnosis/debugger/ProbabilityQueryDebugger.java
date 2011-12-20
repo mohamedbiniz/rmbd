@@ -1,8 +1,8 @@
 package at.ainf.diagnosis.debugger;
 
+import at.ainf.diagnosis.tree.NodeCostsEstimator;
 import at.ainf.theory.model.ITheory;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.NodeCostsEstimator;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 
@@ -21,12 +21,8 @@ public class ProbabilityQueryDebugger<Id> extends SimpleQueryDebugger<Id> {
         SimpleStorage<Id> storage = new SimpleStorage<Id>();
         search = new UniformCostSearch<Id>(storage,nodeCostsEstimator);
         search.setSearcher(new NewQuickXplain<Id>());
+        if(theory != null) getTheory().reset();
         search.setTheory(getTheory());
-
-    }
-
-    public void setNodeCostsEstimator(NodeCostsEstimator<Id> est) {
-        nodeCostsEstimator = est;
     }
 
     public ProbabilityQueryDebugger(ITheory<Id> idITheory, NodeCostsEstimator<Id> costEst) {
@@ -35,5 +31,4 @@ public class ProbabilityQueryDebugger<Id> extends SimpleQueryDebugger<Id> {
         init();
 
     }
-
 }

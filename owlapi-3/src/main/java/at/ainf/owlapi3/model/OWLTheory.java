@@ -94,16 +94,28 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return REDUCE_TO_UNSAT;
     }
 
-    public OWLTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology)
-            throws UnsatisfiableFormulasException, SolverException {
-        this(reasonerFactory, ontology, Collections.<OWLLogicalAxiom>emptySet());
+
+    private OWLReasonerFactory originalReasonerFactory;
+
+    private OWLOntology origOntology;
+
+    private Set<OWLLogicalAxiom> origBackgroundAxioms;
+
+
+    public void reset() {
+
+        try {
+            init(originalReasonerFactory,origOntology,origBackgroundAxioms);
+        } catch (UnsatisfiableFormulasException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (SolverException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
-    public OWLTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms, boolean reduce)
-            throws UnsatisfiableFormulasException, SolverException {
-
-
-        OWLOntologyManager man = ontology.getOWLOntologyManager();
+    private void init (OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
+        throws UnsatisfiableFormulasException, SolverException {
+         OWLOntologyManager man = ontology.getOWLOntologyManager();
         setOwlOntologyManager(man);
 
         try {
@@ -137,7 +149,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
         addBackgroundFormulas(backgroundAxioms);
 
-        if (reduce) {
+        /*if (reduce) {
             REDUCE_TO_UNSAT = true;
             updateAxioms(getOntology(), logicalAxioms, backgroundAxioms);
             getSolver().flush();
@@ -156,13 +168,47 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
                 }
             } else
                 updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
-        }
+        }*/
+
+    }
+
+    public void activateReduceToUns() {
+        REDUCE_TO_UNSAT = true;
+            updateAxioms(getOntology(), getOriginalOntology().getLogicalAxioms(), getBackgroundFormulas());
+            getSolver().flush();
+            if (getSolver().isConsistent()) {
+                Set<OWLClass> entities = getSolver().getUnsatisfiableClasses().getEntities();
+                updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
+                entities.remove(BOTTOM_CLASS);
+                if (!entities.isEmpty()) {
+                    String iri = "http://ainf.at/testiri#";
+                    for (OWLClass cl : entities) {
+                        OWLDataFactory fac = getOriginalOntology().getOWLOntologyManager().getOWLDataFactory();
+                        OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "d_" + cl.getIRI().getFragment()));
+
+                        try {
+                            addBackgroundFormula(fac.getOWLClassAssertionAxiom(cl, test_individual));
+                        } catch (UnsatisfiableFormulasException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        } catch (SolverException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                    }
+                }
+            } else
+                updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
     }
 
     public OWLTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
             throws UnsatisfiableFormulasException, SolverException {
-        this(reasonerFactory,ontology,backgroundAxioms,false);
+        this.originalReasonerFactory = reasonerFactory;
+        this.origOntology = ontology;
+        this.origBackgroundAxioms = backgroundAxioms;
+
+        init(reasonerFactory,ontology,backgroundAxioms);
+
     }
+
 
     public OWLOntology getOriginalOntology() {
         return this.original;
