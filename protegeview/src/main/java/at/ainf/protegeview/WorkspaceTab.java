@@ -90,6 +90,8 @@ public class
         }
         //getWS().getSearch().setTheory(getWS().getOwlTheory());
 
+        //OwlControllerMngr.getOWLController().calculateDiags();
+
 
         Frame parent = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);
 
@@ -576,8 +578,9 @@ public class
             }*/
 
             search.setTheory(theory);
-            ((UniformCostSearch<OWLLogicalAxiom>)search).
-                    setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory, map));
+            OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+            es.updateKeywordProb(map);
+            ((UniformCostSearch<OWLLogicalAxiom>)search).setNodeCostsEstimator(es);
             for (Set<OWLLogicalAxiom> axiom : posTests) {
                 theory.addPositiveTest(axiom);
             }

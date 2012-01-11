@@ -226,7 +226,9 @@ public class Example2Test extends AbstractExample {
 
         if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
         theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+        OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+        es.updateKeywordProb(map);
+        search.setNodeCostsEstimator(es);
 
         search.setTheory(theory);
         search.setMaxHittingSets(0);
@@ -264,7 +266,7 @@ public class Example2Test extends AbstractExample {
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
-            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
 
             search.setTheory(theory);
             search.setMaxHittingSets(0);
@@ -308,7 +310,7 @@ public class Example2Test extends AbstractExample {
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
-            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
 
             search.setTheory(theory);
             search.setMaxHittingSets(0);
@@ -340,7 +342,7 @@ public class Example2Test extends AbstractExample {
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
         theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
 
         search.setTheory(theory);
         search.setMaxHittingSets(0);

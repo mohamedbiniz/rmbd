@@ -35,7 +35,7 @@
                         <Bundle-SymbolicName>at.ainf.protegeview;singleton:=true</Bundle-SymbolicName>
                         <Bundle-Name>Query Debugger Plug-in</Bundle-Name>
                         <Bundle-Version>1.0_alpha</Bundle-Version>
-                        <Bundle-Activator>org.protege.editor.core.plugin.DefaultPluginActivator</Bundle-Activator>
+                        <Bundle-Activator>at.ainf.protegeview.Activator</Bundle-Activator>
                         <!--<Bundle-Activator>at.ainf.pluginprotege.BundleActivator</Bundle-Activator>-->
                         <!--<Update-Url>http://wwwu.edu.uni-klu.ac.at/pfleiss/update.properties</Update-Url>-->
                         <Import-Package>!at.ainf.diagnosis.*,
@@ -255,6 +255,11 @@
             <groupId>org.protege.editor</groupId>
             <artifactId>owl</artifactId>
             <version>4.2.0.b249</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi_R4_core</artifactId>
+            <version>1.0</version>
         </dependency>
 
     </dependencies>

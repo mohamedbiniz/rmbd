@@ -37,6 +37,10 @@ public interface QueryDebugger<Id> {
 
     void reset();
 
+    public void addQueryDebuggerListener(QueryDebuggerListener<Id> listener);
+
+    public void removeQueryDebuggerListener(QueryDebuggerListener<Id> listener);
+
     public boolean resume();
 
 }

@@ -23,6 +23,10 @@ public class ProbabilityQueryDebugger<Id> extends SimpleQueryDebugger<Id> {
         search.setSearcher(new NewQuickXplain<Id>());
         if(theory != null) getTheory().reset();
         search.setTheory(getTheory());
+        conflictSetsListener = new StorageConflictSetsListenerImpl();
+        hittingSetsListener = new StorageHittingSetsListenerImpl();
+        search.getStorage().addStorageConflictSetsListener(conflictSetsListener);
+        search.getStorage().addStorageHittingSetsListener(hittingSetsListener);
     }
 
     public ProbabilityQueryDebugger(ITheory<Id> idITheory, NodeCostsEstimator<Id> costEst) {

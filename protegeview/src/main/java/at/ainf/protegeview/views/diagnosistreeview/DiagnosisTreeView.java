@@ -33,7 +33,10 @@ public class DiagnosisTreeView extends AbstractOWLClassViewComponent implements 
         DebugManager.getInstance().addTreeNodeChangedListener(this);
         DebugManager.getInstance().addHittingSetsChangedListener(this);
         WorkspaceTab workspace = (WorkspaceTab) getOWLWorkspace().getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
-        ((DiagnosesTreeModel)tr.getModel()).setConflictSets(workspace.getSearch().getStorage().getConflictSets(), getOWLWorkspace());
+        if (workspace.getSearch() == null)
+            ((DiagnosesTreeModel)tr.getModel()).setConflictSets (null, getOWLWorkspace());
+        else
+            ((DiagnosesTreeModel)tr.getModel()).setConflictSets(workspace.getSearch().getStorage().getConflictSets(), getOWLWorkspace());
         tr.hittingSets(DebugManager.getInstance().getValidHittingSets());
         HittingSetImpl<OWLLogicalAxiom> hs = (HittingSetImpl<OWLLogicalAxiom>)DebugManager.getInstance().getTreeNode();
         if (hs == null)

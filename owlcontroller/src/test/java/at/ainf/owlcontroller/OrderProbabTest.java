@@ -81,7 +81,7 @@ public class OrderProbabTest {
             //search.setNormalize_axioms (false);
             //search.setNormalize_diagnoses (true);
             search.setTheory(theory);
-            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
 
             ((OWLAxiomNodeCostsEstimator)search.getNodeCostsEstimator()).setKeywordProbabilities(map, null);
 

@@ -30,6 +30,12 @@
             <artifactId>theory</artifactId>
             <version>1.0</version>
         </dependency>-->
+
+        <dependency>
+            <groupId>org.semanticweb</groupId>
+            <artifactId>HermiT</artifactId>
+            <version>1.3.5</version>
+        </dependency>
         <dependency>
                     <groupId>at.ainf</groupId>
                     <artifactId>controller</artifactId>

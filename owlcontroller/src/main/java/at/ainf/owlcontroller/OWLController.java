@@ -1,5 +1,9 @@
 package at.ainf.owlcontroller;
 
+import at.ainf.owlcontroller.listeners.OWLControllerListener;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+
 /**
  * Created by IntelliJ IDEA.
  * User: pfleiss
@@ -8,5 +12,18 @@ package at.ainf.owlcontroller;
  * To change this template use File | Settings | File Templates.
  */
 public interface OWLController {
+
+    public void activateSimpleDebugger();
+
+    public void activateProbDebugger();
+
+    public void updateActiveOntology(OWLOntology ontology, OWLReasonerFactory factory);
+
+    public void doCalcHS();
+
+    public void addControllerListener(OWLControllerListener listener, Class cls);
+
+    public void removeControllerListener(OWLControllerListener listener, Class cls);
+
 
 }

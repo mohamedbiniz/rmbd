@@ -1,10 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
     <VSNode splits="1.0">
-        <CNode>
-            <Component label="Debug Tab">
-                <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.DebugTabVw"/>
-            </Component>
-        </CNode>
+        <HSNode splits="0.08937198067632851 0.4553140096618358 0.4553140096618358">
+            <CNode>
+                <Component label="Toolbox">
+                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.buttonview.ButtonView"/>
+                </Component>
+            </CNode>
+            <VSNode splits="0.2276570048309179 0.2276570048309179">
+                <CNode>
+                    <Component label="HS Tree">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.diagnosistreeview.DiagnosisTreeView"/>
+                    </Component>
+                    <Component label="Entailments">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.RepairView"/>
+                    </Component>
+                    <Component label="Axiom Explanation">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.AxiomExplainView"/>
+                    </Component>
+                </CNode>
+                <CNode>
+                    <Component label="Query Asking">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.queryaskingview.QueryAskingView"/>
+                    </Component>
+                </CNode>
+            </VSNode>
+            <VSNode splits="0.2276570048309179 0.2276570048309179">
+                <CNode>
+                    <Component label="Test Cases and Entailments">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.testcasesentailmentsview.TestCasesEntailmentsView"/>
+                    </Component>
+                </CNode>
+                <CNode>
+                    <Component label="Diagnoses">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.HittingSetView"/>
+                    </Component>
+                    <Component label="Conflict Sets">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.ConflictSetView"/>
+                    </Component>
+                </CNode>
+            </VSNode>
+        </HSNode>
     </VSNode>
 </layout>

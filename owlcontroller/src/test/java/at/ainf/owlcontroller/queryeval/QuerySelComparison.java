@@ -202,7 +202,9 @@ public class QuerySelComparison {
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
         //ProbabilityTableModel mo = new ProbabilityTableModel();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+        OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+        es.updateKeywordProb(map);
+        search.setNodeCostsEstimator(es);
 
         search.run();
         TreeSet<HittingSet<OWLLogicalAxiom>> alldiags = (TreeSet<HittingSet<OWLLogicalAxiom>>)
@@ -261,7 +263,9 @@ public class QuerySelComparison {
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+            OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+            es.updateKeywordProb(map);
+            search.setNodeCostsEstimator(es);
 
             logger.info("found all diagnoses for " + ontologyFileString);
             for (UsersProbab usersProbab : UsersProbab.values()) {
@@ -337,7 +341,9 @@ public class QuerySelComparison {
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+            OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+            es.updateKeywordProb(map);
+            search.setNodeCostsEstimator(es);
 
             logger.info("searching diagnoses for " + ontologyFileString);
             try {

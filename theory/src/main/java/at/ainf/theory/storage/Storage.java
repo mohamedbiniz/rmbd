@@ -45,4 +45,12 @@ public interface Storage<E extends HittingSet<Id>, T extends Set<Id>, Id> {
 
     void removeStorageItemListener(StorageItemListener l);
 
+    public void addStorageConflictSetsListener(StorageConflictSetsListener l);
+
+    public void removeStorageConflictSetsListener(StorageConflictSetsListener l);
+
+    public void addStorageHittingSetsListener(StorageHittingSetsListener l);
+
+    public void removeStorageHittingSetsListener(StorageHittingSetsListener l);
+
 }

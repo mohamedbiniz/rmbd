@@ -10,13 +10,13 @@ import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.HittingSet;
-import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.SimpleStorage;
+import at.ainf.theory.storage.*;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -33,6 +33,10 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     protected ITheory<Id> theory;
 
     protected TreeSearch<? extends HittingSet<Id>, Set<Id>, Id> search;
+
+    protected StorageConflictSetsListener conflictSetsListener;
+
+    protected StorageHittingSetsListener hittingSetsListener;
 
     private int maxDiags = 9;
 
@@ -52,6 +56,10 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         search.setSearcher(new NewQuickXplain<Id>());
         if(theory != null) getTheory().reset();
         search.setTheory(getTheory());
+        conflictSetsListener = new StorageConflictSetsListenerImpl();
+        hittingSetsListener = new StorageHittingSetsListenerImpl();
+        search.getStorage().addStorageConflictSetsListener(conflictSetsListener);
+        search.getStorage().addStorageHittingSetsListener(hittingSetsListener);
 
     }
 
@@ -148,6 +156,30 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     }
 
+    protected class StorageConflictSetsListenerImpl implements StorageConflictSetsListener {
+        public void conflictSetAdded(StorageItemAddedEvent e) {
+            for (QueryDebuggerListener<Id> listener : listeners)
+                listener.conflictSetAdded(search.getStorage().getConflictSets());
+        }
+    }
+
+    protected class StorageHittingSetsListenerImpl implements StorageHittingSetsListener {
+        public void hittingSetAdded(StorageItemAddedEvent e) {
+            for (QueryDebuggerListener<Id> listener : listeners)
+                listener.hittingSetAdded(search.getStorage().getValidHittingSets());
+        }
+    }
+
+    private List<QueryDebuggerListener<Id>> listeners = new LinkedList<QueryDebuggerListener<Id>>();
+
+    public void addQueryDebuggerListener(QueryDebuggerListener<Id> listener) {
+        listeners.add(listener);
+    }
+
+    public void removeQueryDebuggerListener(QueryDebuggerListener<Id> listener) {
+        listeners.remove(listener);
+    }
+
     public boolean resume() {
         try {
             search.run(maxDiags);
@@ -165,7 +197,11 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     //
     public void reset() {
         maxDiags = 9;
+        search.getStorage().removeStorageConflictSetsListener(conflictSetsListener);
+        search.getStorage().removeStorageHittingSetsListener(hittingSetsListener);
         init();
+
+
     }
 
 }

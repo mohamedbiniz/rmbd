@@ -227,7 +227,7 @@ public class Example1Test extends AbstractExample {
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
-            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
 
             search.setTheory(theory);
             search.setMaxHittingSets(0);
@@ -263,7 +263,7 @@ public class Example1Test extends AbstractExample {
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
-            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
 
             search.setTheory(theory);
             search.setMaxHittingSets(0);

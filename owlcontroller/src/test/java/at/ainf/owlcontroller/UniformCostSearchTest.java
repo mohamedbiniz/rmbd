@@ -56,7 +56,7 @@ public class UniformCostSearchTest {
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
         search.setTheory(theory);
 
 

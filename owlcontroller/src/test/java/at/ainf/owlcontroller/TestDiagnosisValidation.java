@@ -85,7 +85,7 @@ public class TestDiagnosisValidation {
 
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
         search.setTheory(theory);
         search.setMaxHittingSets(0);
 

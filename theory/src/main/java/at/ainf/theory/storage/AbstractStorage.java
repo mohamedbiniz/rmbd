@@ -57,6 +57,7 @@ public abstract class AbstractStorage<T extends HittingSet<Id>, E extends Set<Id
 
     protected void conflictAdded() {
         notifyStorageItemAdded();
+        notifyConflictSetAdded();
     }
 
     public void setConflicts(Set<E> conflicts) {
@@ -78,7 +79,10 @@ public abstract class AbstractStorage<T extends HittingSet<Id>, E extends Set<Id
     }
 
     protected void validHittingSetAdded() {
-         notifyStorageItemAdded();
+        notifyStorageItemAdded();
+        notifyHittingSetAdded();
+
+
     }
 
     public void setHittingSets(Set<T> hittingSets) {
@@ -187,4 +191,39 @@ public abstract class AbstractStorage<T extends HittingSet<Id>, E extends Set<Id
 
    }
 
+    private List<StorageConflictSetsListener> conflictSetsListeners = new LinkedList<StorageConflictSetsListener>();
+
+    public void addStorageConflictSetsListener(StorageConflictSetsListener l) {
+        conflictSetsListeners.add(l);
+    }
+
+    public void removeStorageConflictSetsListener(StorageConflictSetsListener l) {
+        conflictSetsListeners.remove(l);
+    }
+
+    private void notifyConflictSetAdded() {
+       StorageItemAddedEvent event =new StorageItemAddedEvent(this);
+
+       for (StorageConflictSetsListener listener : conflictSetsListeners)
+           listener.conflictSetAdded(event);
+
+   }
+
+    private List<StorageHittingSetsListener> hittingSetsListeners = new LinkedList<StorageHittingSetsListener>();
+
+    public void addStorageHittingSetsListener(StorageHittingSetsListener l) {
+        hittingSetsListeners.add(l);
+    }
+
+    public void removeStorageHittingSetsListener(StorageHittingSetsListener l) {
+        hittingSetsListeners.remove(l);
+    }
+
+    private void notifyHittingSetAdded() {
+       StorageItemAddedEvent event =new StorageItemAddedEvent(this);
+
+       for (StorageHittingSetsListener listener : hittingSetsListeners)
+           listener.hittingSetAdded(event);
+
+   }
 }

@@ -20,10 +20,56 @@ public class OWLAxiomNodeCostsEstimator implements NodeCostsEstimator<OWLLogical
 
     private ITheory<OWLLogicalAxiom> theory;
 
-    public OWLAxiomNodeCostsEstimator(ITheory<OWLLogicalAxiom> t, Map<ManchesterOWLSyntax, Double> keywordProbabilities) {
-        this.keywordProbabilities = keywordProbabilities;
+    private ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
+                ManchesterOWLSyntax.ONLY,
+                ManchesterOWLSyntax.MIN,
+                ManchesterOWLSyntax.MAX,
+                ManchesterOWLSyntax.EXACTLY,
+                ManchesterOWLSyntax.AND,
+                ManchesterOWLSyntax.OR,
+                ManchesterOWLSyntax.NOT,
+                ManchesterOWLSyntax.VALUE,
+                ManchesterOWLSyntax.INVERSE,
+                ManchesterOWLSyntax.SUBCLASS_OF,
+                ManchesterOWLSyntax.EQUIVALENT_TO,
+                ManchesterOWLSyntax.DISJOINT_CLASSES,
+                ManchesterOWLSyntax.DISJOINT_WITH,
+                ManchesterOWLSyntax.FUNCTIONAL,
+                ManchesterOWLSyntax.INVERSE_OF,
+                ManchesterOWLSyntax.SUB_PROPERTY_OF,
+                ManchesterOWLSyntax.SAME_AS,
+                ManchesterOWLSyntax.DIFFERENT_FROM,
+                ManchesterOWLSyntax.RANGE,
+                ManchesterOWLSyntax.DOMAIN,
+                ManchesterOWLSyntax.TYPE,
+                ManchesterOWLSyntax.TRANSITIVE,
+                ManchesterOWLSyntax.SYMMETRIC
+        };
+
+
+    public OWLAxiomNodeCostsEstimator(ITheory<OWLLogicalAxiom> t) {
+        this.keywordProbabilities = createKeywordProbs();
         this.theory = t;
         updateAxiomProbabilities();
+    }
+
+    public void updateKeywordProb(Map<ManchesterOWLSyntax, Double> keywordProbabilities) {
+        this.keywordProbabilities = keywordProbabilities;
+        updateAxiomProbabilities();
+    }
+
+    private Map<ManchesterOWLSyntax, Double> createKeywordProbs() {
+
+        Map<ManchesterOWLSyntax, Double> map = new HashMap<ManchesterOWLSyntax, Double>();
+
+        for (ManchesterOWLSyntax keyword : keywords)
+            map.put(keyword, 0.01);
+        map.put(ManchesterOWLSyntax.SOME, 0.05);
+        map.put(ManchesterOWLSyntax.ONLY, 0.05);
+        map.put(ManchesterOWLSyntax.AND, 0.001);
+        map.put(ManchesterOWLSyntax.OR, 0.001);
+        map.put(ManchesterOWLSyntax.NOT, 0.01);
+        return map;
     }
 
     public double getNodeSetCosts(Set<OWLLogicalAxiom> labelSet) {
