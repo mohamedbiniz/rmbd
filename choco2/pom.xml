@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2009 Kostyantyn Shchekotykhin
+  ~
+  ~ All rights reserved. This program and the accompanying materials
+  ~ are made available under the terms of the GNU Public License v3.0
+  ~ http://www.gnu.org/licenses/gpl.txt
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>rmbd</artifactId>
+        <groupId>at.ainf</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>at.ainf</groupId>
+    <artifactId>choco2</artifactId>
+    <version>1.0</version>
+    <name>Choco 2 adapter</name>
+
+    <repositories>
+        <repository>
+            <id>choco.repo</id>
+            <url>http://www.emn.fr/x-info/choco-solver/mvn/repository/</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>antlr3-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.riedelcastro</groupId>
+                <artifactId>gcupload-maven-plugin</artifactId>
+                <version>0.9</version>
+                <configuration>
+                    <projectName>rmbd</projectName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>choco</groupId>
+            <artifactId>choco-cp</artifactId>
+            <version>2.1.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>choco</groupId>
+            <artifactId>choco-kernel</artifactId>
+            <version>2.1.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>diagnosis</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+    </dependencies>
+</project>
