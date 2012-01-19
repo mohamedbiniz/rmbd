@@ -1,6 +1,7 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.HittingSetImpl;
 import at.ainf.theory.storage.SimpleStorage;
@@ -41,7 +42,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<HittingSet<Id>, Se
     }
 
     public void createRoot() throws NoConflictException,
-            SolverException {
+            SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
         Set<Id> conflict = calculateConflict(null);

@@ -11,7 +11,7 @@ package at.ainf.sat4j.tree;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.sat4j.model.PropositionalTheory;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.SimpleStorage;
@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
-import org.sat4j.specs.IVec;
 import org.sat4j.specs.IVecInt;
 
 import java.util.*;
@@ -49,7 +48,7 @@ public class TreeEvaluation {
 
     @Test
     public void createTree() throws SolverException, ContradictionException,
-            NoConflictException, UnsatisfiableFormulasException {
+            NoConflictException, InconsistentTheoryException {
 
         if (logger.isInfoEnabled())
             logger.info("Starting the tree creation test.");
@@ -66,7 +65,7 @@ public class TreeEvaluation {
 
     }
 
-    private void run(TreeSearch<HittingSet<IVecInt>, Set<IVecInt>, IVecInt> search) throws SolverException, ContradictionException, NoConflictException, UnsatisfiableFormulasException {
+    private void run(TreeSearch<HittingSet<IVecInt>, Set<IVecInt>, IVecInt> search) throws SolverException, ContradictionException, NoConflictException, InconsistentTheoryException {
         search.setSearcher(new NewQuickXplain<IVecInt>());
 
         int[] clause = new int[]{5, 6};
@@ -148,7 +147,7 @@ public class TreeEvaluation {
     }
 
     @Test
-    public void testTests() throws SolverException, NoConflictException, UnsatisfiableFormulasException {
+    public void testTests() throws SolverException, NoConflictException, InconsistentTheoryException {
         SimpleStorage<IVecInt> storage = new SimpleStorage<IVecInt>();
         BreadthFirstSearch<IVecInt> search = new BreadthFirstSearch<IVecInt>(storage);
         search.setSearcher(new NewQuickXplain<IVecInt>());
@@ -178,7 +177,7 @@ public class TreeEvaluation {
         boolean test = false;
         try {
             th.addNegativeTest(new VecInt(new int[]{2}));
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             test = true;
         }
         assertTrue(test);
@@ -196,7 +195,7 @@ public class TreeEvaluation {
         test = false;
         try {
             th.addNonEntailedTest(net);
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             test = true;
         }
         assertTrue(test);
@@ -217,7 +216,7 @@ public class TreeEvaluation {
     }
 
     @Test
-    public void testStopAndGo() throws SolverException, NoConflictException, UnsatisfiableFormulasException {
+    public void testStopAndGo() throws SolverException, NoConflictException, InconsistentTheoryException {
         SimpleStorage<IVecInt> storage = new SimpleStorage<IVecInt>();
         BreadthFirstSearch<IVecInt> search = new BreadthFirstSearch<IVecInt>(storage);
         search.setSearcher(new NewQuickXplain<IVecInt>());

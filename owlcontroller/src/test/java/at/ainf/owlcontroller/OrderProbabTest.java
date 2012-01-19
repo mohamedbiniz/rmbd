@@ -1,7 +1,7 @@
 package at.ainf.owlcontroller;
 
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.SimpleStorage;
@@ -46,7 +46,7 @@ public class OrderProbabTest {
 
 
     @Test
-    public void probabTest() throws OWLException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void probabTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
         OWLOntology ontology =
                 manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ecai2010.owl"));
 

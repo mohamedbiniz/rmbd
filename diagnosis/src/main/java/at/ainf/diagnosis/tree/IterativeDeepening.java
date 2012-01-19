@@ -8,8 +8,8 @@
 
 package at.ainf.diagnosis.tree;
 
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -41,7 +41,7 @@ public class IterativeDeepening<Id> extends DepthLimitedSearch<Id> {
         this.step = step;
     }
 
-    public Set<HittingSet<Id>> run() throws SolverException, NoConflictException, UnsatisfiableFormulasException {
+    public Set<HittingSet<Id>> run() throws SolverException, NoConflictException, InconsistentTheoryException {
         int iterationDepth = this.startDepth;
         do {
             setLimit(iterationDepth);

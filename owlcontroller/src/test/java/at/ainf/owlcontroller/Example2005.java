@@ -4,8 +4,8 @@ import at.ainf.diagnosis.debugger.ProbabilityQueryDebugger;
 import at.ainf.diagnosis.debugger.QueryDebugger;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -44,7 +44,7 @@ public class Example2005 {
     MyOWLRendererParser parser;
 
     @Test
-    public void testCSandHS() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException, NoConflictException, ParserException {
+    public void testCSandHS() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException, ParserException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         //UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
 
@@ -85,7 +85,7 @@ public class Example2005 {
 
 
     @Test
-    public void testposT() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void testposT() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         //BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
 
@@ -130,7 +130,7 @@ public class Example2005 {
 
     }
 
-    public void createOntology() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException {
+    public void createOntology() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         ontology = manager.loadOntologyFromOntologyDocument(file);

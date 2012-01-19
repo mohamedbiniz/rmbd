@@ -12,8 +12,8 @@ import at.ainf.choco2.model.ConstraintTheory;
 import at.ainf.choco2.parser.ConstraintReader;
 import at.ainf.choco2.parser.ConstraintReaderException;
 import at.ainf.diagnosis.Searcher;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.SimpleStorage;
@@ -57,7 +57,7 @@ public class TreeEvaluation {
 
 
     @Test
-    public void treeTest() throws SolverException, UnsatisfiableFormulasException {
+    public void treeTest() throws SolverException, InconsistentTheoryException {
         List<Constraint> changable = new LinkedList<Constraint>();
         List<Constraint> unchangable = new LinkedList<Constraint>();
 
@@ -136,7 +136,7 @@ public class TreeEvaluation {
     }
 
     @Test
-    public void treeParserTest() throws SolverException, UnsatisfiableFormulasException {
+    public void treeParserTest() throws SolverException, InconsistentTheoryException {
         //String constraints = "d: int [1,20]; [c1,c] d > 5; [c2,c] d >= 6; [c3,c] d <= 5;";
         String constraints =
                 "a: int [1,20]; b: int [1,20]; c: int [1,20]; [c1,c] a > b; [c2,c] b > c; [c3,c] c > a;";
@@ -192,7 +192,7 @@ public class TreeEvaluation {
     }
 
     @Test
-    public void hardTest() throws SolverException, UnsatisfiableFormulasException {
+    public void hardTest() throws SolverException, InconsistentTheoryException {
         List<Constraint> changable = new LinkedList<Constraint>();
         List<Constraint> unchangable = new LinkedList<Constraint>();
 

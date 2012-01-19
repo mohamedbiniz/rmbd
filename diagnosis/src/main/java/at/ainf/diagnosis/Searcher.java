@@ -15,6 +15,7 @@
 package at.ainf.diagnosis;
 
 import at.ainf.theory.Searchable;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
@@ -33,15 +34,19 @@ public interface Searcher<F> {
     /**
      * Calculates a minimal conflict if any.
      *
+     *
      * @param searchable the theory that contains formulas of the background theory as well
      *                   as strategies, which must contain all formulas.
      * @param formulas   subset of formulas saved in the theory that might contain minimal conflicts.
+     * @param changes
      * @return a collection of formulas, which correspond to a minimal conflict.
      * @throws NoConflictException is thrown if formulas are consistent
      * @throws SolverException     is thrown if any solver related problems occur.
      */
-    public Set<F> search(Searchable<F> searchable, final Collection<F> formulas)
-            throws NoConflictException, SolverException;
+    public Set<F> search(Searchable<F> searchable, final Collection<F> formulas, Set<F> changes)
+            throws NoConflictException, SolverException, InconsistentTheoryException;
+
+    public boolean isDual();
 
     /**
      * Saves statistics of calculations.

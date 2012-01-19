@@ -3,7 +3,7 @@ package at.ainf.protegeview;
 import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.SimpleStorage;
@@ -596,8 +596,8 @@ public class
         } catch (SolverException e) {
             JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
 
-        } catch (UnsatisfiableFormulasException e) {
-            JOptionPane.showMessageDialog(null, "There was an UnsatisfiableFormulas exception", "UnsatisfiableFormulasException", JOptionPane.ERROR_MESSAGE);
+        } catch (InconsistentTheoryException e) {
+            JOptionPane.showMessageDialog(null, "There was an UnsatisfiableFormulas exception", "InconsistentTheoryException", JOptionPane.ERROR_MESSAGE);
 
 
         }
@@ -649,6 +649,15 @@ public class
             }
         }
 
+    }
+
+    public String getStrTestcases() {
+        String r = "";
+
+        for (int i = 0; i < testcasesModel.size(); i++)
+            r += testcasesModel.get(i).toString() + "| ";
+
+        return r;
     }
 
 

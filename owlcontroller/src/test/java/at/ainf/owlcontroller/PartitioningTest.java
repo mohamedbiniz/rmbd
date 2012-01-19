@@ -2,8 +2,8 @@ package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.partitioning.*;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.theory.storage.Partition;
@@ -43,7 +43,7 @@ public class PartitioningTest {
 
 
     @Test
-    public void testBruteForce() throws OWLException, UnsatisfiableFormulasException, SolverException {
+    public void testBruteForce() throws OWLException, InconsistentTheoryException, SolverException {
         OWLTheory theory = Utils.loadTheory(manager, "ontologies/partition.owl");
         debugger.set_Theory(theory);
         debugger.reset();
@@ -57,7 +57,7 @@ public class PartitioningTest {
 
     //@Ignore
     @Test
-    public void testGreedyForce() throws OWLException, UnsatisfiableFormulasException, SolverException {
+    public void testGreedyForce() throws OWLException, InconsistentTheoryException, SolverException {
         OWLTheory theory = Utils.loadTheory(manager, "ontologies/partition.owl");
         debugger.set_Theory(theory);
         debugger.reset();
@@ -78,7 +78,7 @@ public class PartitioningTest {
 
     @Ignore
     @Test
-    public void testGreedyForce2() throws OWLException, UnsatisfiableFormulasException, SolverException {
+    public void testGreedyForce2() throws OWLException, InconsistentTheoryException, SolverException {
         OWLTheory theory = Utils.loadTheory(manager, "ontologies/ecai.simple.owl");
         debugger.set_Theory(theory);
         debugger.reset();
@@ -103,7 +103,7 @@ public class PartitioningTest {
     }
 
     @Test
-    public void testBruteForce2() throws OWLException, UnsatisfiableFormulasException, SolverException {
+    public void testBruteForce2() throws OWLException, InconsistentTheoryException, SolverException {
 
         OWLTheory theory = Utils.loadTheory(manager, "ontologies/Univ.owl");
         debugger.set_Theory(theory);
@@ -122,7 +122,7 @@ public class PartitioningTest {
         testOntology(theory, "Greedy", algo);
     }
 
-    private void testOntology(OWLTheory theory, String message, Partitioning<OWLLogicalAxiom> algo) throws SolverException, UnsatisfiableFormulasException, OWLException {
+    private void testOntology(OWLTheory theory, String message, Partitioning<OWLLogicalAxiom> algo) throws SolverException, InconsistentTheoryException, OWLException {
         long time = System.currentTimeMillis();
         Partition<OWLLogicalAxiom> part = algo.generatePartition(debugger.getHittingSets());
         time = System.currentTimeMillis() - time;

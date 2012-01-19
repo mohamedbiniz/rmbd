@@ -1,8 +1,8 @@
 package at.ainf.diagnosis.partitioning;
 
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.HittingSetImpl;
 import at.ainf.theory.storage.Partition;
@@ -70,7 +70,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
 
 
     public <E extends HittingSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
         if (getScoringFunction() == null)
             throw new IllegalStateException("Scoring function is not set!");
         // save the original hitting sets
@@ -116,7 +116,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
     }
 
     private Partition<Id> findPartition(SortedSet<Measurable> hittingSets, Map<Measurable, List<Measurable>> map)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
         if ((hittingSets == null || hittingSets.isEmpty() || hittingSets.size() <= 1)) {
             if (hittingSets == null || map.keySet().isEmpty())
                 return new Partition<Id>();
@@ -210,7 +210,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         map.get(lt).remove(rt);
         double together = lt.measure + rt.measure;
 
-        Measurable t = new Measurable(new HittingSetImpl<Id>("NULL:" + this.count++, 0), together);
+        Measurable t = new Measurable(new HittingSetImpl<Id>("NULL:" + this.count++, 0,Collections.<Id>emptySet(), Collections.<Id>emptySet()), together);
         put(map, t, lt);
         put(map, t, rt);
     }
@@ -233,7 +233,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         }
     }
 
-    private Partition<Id> createPartition(Collection<Measurable> left) throws UnsatisfiableFormulasException, SolverException {
+    private Partition<Id> createPartition(Collection<Measurable> left) throws InconsistentTheoryException, SolverException {
         Partition<Id> part = new Partition<Id>();
         for (Measurable el : left)
             part.dx.add(getOriginalHittingSet(el.hs));

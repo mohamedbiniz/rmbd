@@ -16,6 +16,7 @@ package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.theory.Searchable;
 import at.ainf.diagnosis.Searcher;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.apache.log4j.Logger;
@@ -44,7 +45,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     private long calls = 0;
     */
-    protected abstract Set<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u) throws NoConflictException, SolverException;
+    protected abstract Set<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u) throws NoConflictException, SolverException, InconsistentTheoryException;
 
     protected abstract int getIterations();
 
@@ -63,10 +64,18 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
         return -1;
     }
 
-    public Set<Id> search(Searchable<Id> searchable, final Collection<Id> formulas)
-            throws NoConflictException, SolverException {
+    protected abstract Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
+            throws InconsistentTheoryException, SolverException;
+
+    protected abstract void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes) throws InconsistentTheoryException, SolverException;
+
+
+    public Set<Id> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
+            throws NoConflictException, SolverException, InconsistentTheoryException {
 
         Set<Id> conflictFormulas = null;
+
+        formulas = applyChanges(searchable, formulas, changes);
 
         long time = 0;
         try {
@@ -89,9 +98,15 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             */
             //}
         }
+        rollbackChanges(searchable, formulas, changes);
 
         return conflictFormulas;
     }
+
+    public boolean isDual() {
+        return false;
+    }
+
     /*
     public void logStatistics() {
         if (logger.isInfoEnabled()) {

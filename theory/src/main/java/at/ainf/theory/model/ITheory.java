@@ -75,27 +75,27 @@ public interface ITheory<Id> extends Searchable<Id> {
 
     public boolean testDiagnosis(Collection<Id> diagnosis) throws SolverException;
 
-    public void registerTestCases() throws SolverException, UnsatisfiableFormulasException;
+    public void registerTestCases() throws SolverException, InconsistentTheoryException;
 
     public void unregisterTestCases() throws SolverException;
 
     // handling test cases
 
-    boolean addPositiveTest(Id test) throws SolverException, UnsatisfiableFormulasException;
+    boolean addPositiveTest(Id test) throws SolverException, InconsistentTheoryException;
 
-    boolean addNegativeTest(Id test) throws SolverException, UnsatisfiableFormulasException;
+    boolean addNegativeTest(Id test) throws SolverException, InconsistentTheoryException;
 
-    boolean addEntailedTest(Id test) throws SolverException, UnsatisfiableFormulasException;
+    boolean addEntailedTest(Id test) throws SolverException, InconsistentTheoryException;
 
-    boolean addNonEntailedTest(Id test) throws SolverException, UnsatisfiableFormulasException;
+    boolean addNonEntailedTest(Id test) throws SolverException, InconsistentTheoryException;
 
-    boolean addPositiveTest(Set<Id> test) throws SolverException, UnsatisfiableFormulasException;
+    boolean addPositiveTest(Set<Id> test) throws SolverException, InconsistentTheoryException;
 
-    boolean addNegativeTest(Set<Id> test) throws SolverException, UnsatisfiableFormulasException;
+    boolean addNegativeTest(Set<Id> test) throws SolverException, InconsistentTheoryException;
 
-    boolean addEntailedTest(Set<Id> test) throws SolverException, UnsatisfiableFormulasException;
+    boolean addEntailedTest(Set<Id> test) throws SolverException, InconsistentTheoryException;
 
-    boolean addNonEntailedTest(Set<Id> test) throws SolverException, UnsatisfiableFormulasException;
+    boolean addNonEntailedTest(Set<Id> test) throws SolverException, InconsistentTheoryException;
 
     boolean removeNonEntailedTest(Id test);
 

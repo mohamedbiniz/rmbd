@@ -1,8 +1,8 @@
 package at.ainf.protegeview.testcasesentailmentsview;
 
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.protegeview.testcasesentailmentsview.axiomeditor.OWLAxiomEditor;
 import org.protege.editor.core.ProtegeApplication;
@@ -135,8 +135,8 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
             JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
             return false;
 
-        } catch (UnsatisfiableFormulasException e) {
-            JOptionPane.showMessageDialog(null, "The background theory is unsatisfiable ", "UnsatisfiableFormulasException", JOptionPane.ERROR_MESSAGE);
+        } catch (InconsistentTheoryException e) {
+            JOptionPane.showMessageDialog(null, "The background theory is unsatisfiable ", "InconsistentTheoryException", JOptionPane.ERROR_MESSAGE);
             return false;
 
         }

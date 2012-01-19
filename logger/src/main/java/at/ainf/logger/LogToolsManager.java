@@ -23,12 +23,15 @@ public class LogToolsManager {
 
     private Method queryMethod;
 
+    private Method openDebugTabMeth;
+
     public LogToolsManager(Object logTools) {
         this.logTools = logTools;
         try {
             rendererMethod = logTools.getClass().getMethod("getRendering", new Class[]{Object.class});
             queryMethod = logTools.getClass().getMethod("renderQuery", new Class[]{Object.class});
             hsrendMethod = logTools.getClass().getMethod("getHsRendering", new Class[]{Object.class});
+            openDebugTabMeth = logTools.getClass().getMethod("openDebugTab", new Class[]{});
         } catch (NoSuchMethodException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -51,6 +54,16 @@ public class LogToolsManager {
 
     public String getHsRendering(Object set) {
         return executeMethod(hsrendMethod, set);
+    }
+
+    public void openDebugTab() {
+        try {
+            openDebugTabMeth.invoke(logTools, new Object[]{});
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     public String getQueryRendering(Object set) {

@@ -3,6 +3,7 @@ package at.ainf.diagnosis.partitioning;
 import at.ainf.theory.Searchable;
 import at.ainf.theory.model.AbstractSearchableObject;
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Partition;
@@ -50,5 +51,13 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
     @Override
     protected boolean verifyConsistency() throws SolverException {
         return verifyQuery(getFormulaStack());
+    }
+
+    public void addBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
+        theory.addBackgroundFormulas(formulas);
+    }
+
+    public void removeBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
+        theory.removeBackgroundFormulas(formulas);
     }
 }

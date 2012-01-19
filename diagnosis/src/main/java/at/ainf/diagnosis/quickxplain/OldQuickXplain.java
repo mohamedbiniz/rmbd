@@ -14,9 +14,9 @@
  */
 package at.ainf.diagnosis.quickxplain;
 
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.theory.Searchable;
 import at.ainf.theory.model.SolverException;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,6 +33,23 @@ public class OldQuickXplain<E> extends BaseQuickXplain<E> {
     private int iterations = 0;
 
     public OldQuickXplain() {
+    }
+
+
+    @Override
+    protected Collection<E> applyChanges(Searchable<E> c, Collection<E> formulas, Set<E> changes) {
+        if (changes != null) {
+            for (E axiom : changes)
+                formulas.remove(axiom);
+            //if (logger.isDebugEnabled())
+            //    logger.debug("Removing labels from the list: " + changes);
+        }
+        return formulas;
+    }
+
+    @Override
+    protected void rollbackChanges(Searchable<E> c, Collection<E> formulas, Set<E> changes) {
+        // nothing to rollback here;
     }
 
     /**

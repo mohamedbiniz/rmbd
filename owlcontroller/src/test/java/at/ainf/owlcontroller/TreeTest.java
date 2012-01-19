@@ -2,12 +2,12 @@ package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
-import at.ainf.owlapi3.model.OWLDiagnosisSearcher;
+import at.ainf.owlapi3.model.OWLDiagnosisSearchableObject;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -45,17 +45,17 @@ public class TreeTest {
     }
 
     @Test
-    public void testDiagnosisSearcher() throws UnsatisfiableFormulasException, OWLOntologyCreationException, SolverException, NoConflictException {
+    public void testDiagnosisSearcher() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         OWLTheory th = Utils.loadTheory(manager, "ontologies/ecai.simple.owl");
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
-        Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearcher(th), th.getActiveFormulas());
+        Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getActiveFormulas(), null);
 
         String logd = "Hitting set: {" + Utils.logCollection(diagnosis);
         logger.info(logd);
     }
 
     @Test
-    public void testSimpleTestCases() throws UnsatisfiableFormulasException, SolverException, URISyntaxException, OWLException {
+    public void testSimpleTestCases() throws InconsistentTheoryException, SolverException, URISyntaxException, OWLException {
 
         OWLTheory th = Utils.loadTheory(manager, "ontologies/ecai.simple.owl");
         debug.set_Theory(th);
@@ -122,14 +122,14 @@ public class TreeTest {
     }
 
     @Test
-    public void testTestCases() throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    public void testTestCases() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
 
         testOntology("ontologies/ecai.owl", false);
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A2,M2}, {M3,M2}, {M1}, {A1} }", logd);
-        assertEquals("Conflicts { {A1,M1,M2}, {M3,A1,A2,M1} }", logc);
+        assertEquals("Conflicts { {M3,A1,A2,M1}, {A1,M1,M2} }", logc);
 
 
         // testConsistency that there are no changes in the theory
@@ -160,7 +160,7 @@ public class TreeTest {
 
     /*
     @Test
-    public void testNegation() throws SolverException, URISyntaxException, OWLException, UnsatisfiableFormulasException {
+    public void testNegation() throws SolverException, URISyntaxException, OWLException, InconsistentTheoryException {
 
 
         OWLDataFactory owlDataFactory = manager.getOWLDataFactory();
@@ -189,7 +189,7 @@ public class TreeTest {
 
 
     @Test
-    public void readTest() throws UnsatisfiableFormulasException, OWLOntologyCreationException, SolverException, FileNotFoundException {
+    public void readTest() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, FileNotFoundException {
         FileInputStream st = new FileInputStream("C:\\Users\\kostya\\ontologies\\Ontology1300710969086\\Ontology1300710969086.owl");
         OWLOntology o = manager.loadOntologyFromOntologyDocument(st);
         o.getLogicalAxioms();
@@ -213,7 +213,7 @@ public class TreeTest {
     }
 
     @Test
-    public void testDebug1() throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    public void testDebug1() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.1.owl", false);
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
@@ -222,7 +222,7 @@ public class TreeTest {
     }
 
     @Test
-    public void testDebug2() throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    public void testDebug2() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.2.owl", false);
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
@@ -232,7 +232,7 @@ public class TreeTest {
     }
 
     @Test
-    public void testCommonEntailments() throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    public void testCommonEntailments() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         OWLTheory owlTheory = testOntology("ontologies/ecai.owl", false);
 
         Iterator<? extends Set<OWLLogicalAxiom>> hsi = debug.getValidHittingSets().iterator();
@@ -249,17 +249,17 @@ public class TreeTest {
     }
 
     @Test
-    public void testDebugFull() throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    public void testDebugFull() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.owl", false);
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A2,M2}, {M3,M2}, {M1}, {A1} }", logd);
-        assertEquals("Conflicts { {A1,M1,M2}, {M3,A1,A2,M1} }", logc);
+        assertEquals("Conflicts { {M3,A1,A2,M1}, {A1,M1,M2} }", logc);
     }
 
     @Test
-    public void testDebug3() throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    public void testDebug3() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.3.owl", false);
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
@@ -269,7 +269,7 @@ public class TreeTest {
     }
 
     //@Test
-    public void testDebugCorrect() throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    public void testDebugCorrect() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.corrected.owl", true);
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
@@ -296,7 +296,7 @@ public class TreeTest {
     }               */
 
     @Test
-    public void testDebugIncoherent() throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    public void testDebugIncoherent() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.incoherent.owl", false);
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
@@ -306,13 +306,13 @@ public class TreeTest {
     }
 
 
-    private OWLTheory testOntology(String path, boolean sat) throws OWLException, SolverException, URISyntaxException, UnsatisfiableFormulasException {
+    private OWLTheory testOntology(String path, boolean sat) throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         return testOntology(path, sat, null, null);
     }
 
     private OWLTheory testOntology(String path, boolean sat, Collection<OWLLogicalAxiom> positiveCases,
                                    Collection<OWLLogicalAxiom> negativeCases) throws OWLException, SolverException,
-            URISyntaxException, UnsatisfiableFormulasException {
+            URISyntaxException, InconsistentTheoryException {
         //debugger.reset();
         OWLTheory th = Utils.loadTheory(manager, path);
 

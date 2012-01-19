@@ -65,27 +65,27 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         typeOfTest.put(test, true);
     }
 
-    public boolean addPositiveTest(T test) throws SolverException, UnsatisfiableFormulasException {
+    public boolean addPositiveTest(T test) throws SolverException, InconsistentTheoryException {
         return addPositiveTest(getTestSet(test));
     }
 
-    public boolean addNegativeTest(T test) throws SolverException, UnsatisfiableFormulasException {
+    public boolean addNegativeTest(T test) throws SolverException, InconsistentTheoryException {
         return addNegativeTest(getTestSet(test));
     }
 
-    public boolean addEntailedTest(T test) throws SolverException, UnsatisfiableFormulasException {
+    public boolean addEntailedTest(T test) throws SolverException, InconsistentTheoryException {
         return addEntailedTest(getTestSet(test));
     }
 
-    public boolean addNonEntailedTest(T test) throws SolverException, UnsatisfiableFormulasException {
+    public boolean addNonEntailedTest(T test) throws SolverException, InconsistentTheoryException {
         return addNonEntailedTest(getTestSet(test));
     }
 
-    public boolean addPositiveTest(Set<T> test) throws SolverException, UnsatisfiableFormulasException {
+    public boolean addPositiveTest(Set<T> test) throws SolverException, InconsistentTheoryException {
         boolean val = this.positiveTests.add(test);
         if (val && !isTestConsistent()) {
             this.positiveTests.remove(test);
-            throw new UnsatisfiableFormulasException(MESSAGE);
+            throw new InconsistentTheoryException(MESSAGE);
         }
         if (val)
             addToTestList(test, true);
@@ -93,11 +93,11 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         return val;
     }
 
-    public boolean addNegativeTest(Set<T> test) throws SolverException, UnsatisfiableFormulasException {
+    public boolean addNegativeTest(Set<T> test) throws SolverException, InconsistentTheoryException {
         boolean val = this.negativeTests.add(test);
         if (val && !isTestConsistent()) {
             this.negativeTests.remove(test);
-            throw new UnsatisfiableFormulasException(MESSAGE);
+            throw new InconsistentTheoryException(MESSAGE);
         }
         if (val)
             addToTestList(test, false);
@@ -105,11 +105,11 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         return val;
     }
 
-    public boolean addEntailedTest(Set<T> test) throws SolverException, UnsatisfiableFormulasException {
+    public boolean addEntailedTest(Set<T> test) throws SolverException, InconsistentTheoryException {
         boolean val = this.entailed.add(test);
         if (val && !isTestConsistent()) {
             this.entailed.remove(test);
-            throw new UnsatisfiableFormulasException(MESSAGE);
+            throw new InconsistentTheoryException(MESSAGE);
         }
         if (val)
             addToTestList(test, true);
@@ -117,11 +117,11 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         return val;
     }
 
-    public boolean addNonEntailedTest(Set<T> test) throws SolverException, UnsatisfiableFormulasException {
+    public boolean addNonEntailedTest(Set<T> test) throws SolverException, InconsistentTheoryException {
         boolean val = this.nonentailed.add(test);
         if (val && !isTestConsistent()) {
             this.nonentailed.remove(test);
-            throw new UnsatisfiableFormulasException(MESSAGE);
+            throw new InconsistentTheoryException(MESSAGE);
         }
         if (val)
             addToTestList(test, false);
@@ -223,14 +223,14 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
 
     protected abstract T negate(T formula);
 
-    public void registerTestCases() throws SolverException, UnsatisfiableFormulasException {
+    public void registerTestCases() throws SolverException, InconsistentTheoryException {
         try {
             for (Set<T> test : getEntailedTests())
                 this.addNegativeTest(negate(test));
             for (Set<T> test : getNonentailedTests())
                 this.addPositiveTest(negate(test));
 
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             throw new RuntimeException("Invalid tests or background knowledge are saved in the theory!");
         }
 
@@ -292,35 +292,35 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         return Collections.unmodifiableSet(activeFormulas);
     }
 
-    public void setBackgroundFormulas(Collection<T> fs) throws UnsatisfiableFormulasException, SolverException {
+    public void setBackgroundFormulas(Collection<T> fs) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas = new LinkedHashSet<T>(fs);
         if (!isConsistent()) {
             this.backgroundFormulas.clear();
-            throw new UnsatisfiableFormulasException("The background theory is unsatisfiable!");
+            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }
         this.activeFormulas.removeAll(backgroundFormulas);
     }
 
 
-    public <E extends Set<T>> void addBackgroundFormulas(E formulas) throws UnsatisfiableFormulasException, SolverException {
+    public void addBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas.addAll(formulas);
         if (!isConsistent()) {
             this.backgroundFormulas.removeAll(formulas);
-            throw new UnsatisfiableFormulasException("The background theory is unsatisfiable!");
+            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }
         this.activeFormulas.remove(formulas);
     }
 
-    public void addBackgroundFormula(T formula) throws UnsatisfiableFormulasException, SolverException {
+    public void addBackgroundFormula(T formula) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas.add(formula);
         if (!isConsistent()) {
             this.backgroundFormulas.remove(formula);
-            throw new UnsatisfiableFormulasException("The background theory is unsatisfiable!");
+            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }
         this.activeFormulas.remove(formula);
     }
 
-    protected void removeBackgroundFormulas(Set<T> tests) {
+    public void removeBackgroundFormulas(Set<T> tests) {
         this.backgroundFormulas.removeAll(tests);
     }
 

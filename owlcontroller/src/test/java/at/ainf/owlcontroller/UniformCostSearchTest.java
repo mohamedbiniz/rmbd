@@ -1,7 +1,7 @@
 package at.ainf.owlcontroller;
 
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.SimpleStorage;
@@ -35,7 +35,7 @@ public class UniformCostSearchTest {
     OWLTheory theory;
 
     @Test
-    public void testEcai2010Abox() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void testEcai2010Abox() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
@@ -66,7 +66,7 @@ public class UniformCostSearchTest {
 
 
     @Test
-    public void testEcai2010Simple() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void testEcai2010Simple() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
 
@@ -89,7 +89,7 @@ public class UniformCostSearchTest {
     }
 
     @Test
-    public void testEcai2010BreadthFirst() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void testEcai2010BreadthFirst() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
 
@@ -105,7 +105,7 @@ public class UniformCostSearchTest {
 
     }
 
-    /*public void testEcai2010UniformCost() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    /*public void testEcai2010UniformCost() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         TreeSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
 
@@ -154,7 +154,7 @@ public class UniformCostSearchTest {
 
     }
 
-    public void createTh() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException {
+    public void createTh() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         File file = new File(ClassLoader.getSystemResource("ecai2010.owl").getFile());

@@ -47,10 +47,6 @@ public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet
         return name;
     }
 
-    public HittingSetImpl(String name, double measure) {
-        this(name, measure, Collections.<Id>emptySet(), Collections.<Id>emptySet());
-    }
-
     public HittingSetImpl(String name, double measure, Set<Id> hittingSet, Set<Id> entailments) {
         this.name = name;
         setMeasure(measure);
@@ -59,10 +55,6 @@ public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet
         setEntailments(entailments);
     }
 
-    public HittingSetImpl(String name, double measure, Set<Id> hittingSet, Set<Id> entailments, boolean valid) {
-        this(name, measure, hittingSet, entailments);
-        this.setValid(valid);
-    }
 
     public boolean isValid() {
         return this.valid;

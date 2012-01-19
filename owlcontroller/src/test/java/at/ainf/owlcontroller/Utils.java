@@ -2,18 +2,16 @@ package at.ainf.owlcontroller;
 
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -66,7 +64,7 @@ public class Utils {
         return map;
     }
 
-    public static OWLTheory loadTheory(OWLOntologyManager manager, String path) throws SolverException, UnsatisfiableFormulasException, OWLOntologyCreationException {
+    public static OWLTheory loadTheory(OWLOntologyManager manager, String path) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         InputStream st = ClassLoader.getSystemResourceAsStream(path);
         return createTheory(manager.loadOntologyFromOntologyDocument(st));
     }
@@ -133,8 +131,7 @@ public class Utils {
         return buf.toString();
     }
 
-
-    public static OWLTheory createTheory(OWLOntology ontology) throws SolverException, UnsatisfiableFormulasException {
+    public static OWLTheory createTheory(OWLOntology ontology) throws SolverException, InconsistentTheoryException {
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));
@@ -146,5 +143,29 @@ public class Utils {
         assert (theory.isConsistent());
 
         return theory;
+    }
+
+    public static String renderManyAxioms(Collection<OWLLogicalAxiom> axioms) {
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        String result = "";
+
+        for (OWLLogicalAxiom axiom : axioms) {
+            result += renderer.render(axiom) + "\n";
+        }
+        result = (String) result.subSequence(0,result.length()-2);
+
+        return result;
+    }
+
+    public static String renderAxioms(Set<OWLLogicalAxiom> axioms) {
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        String result = "";
+
+        for (OWLLogicalAxiom axiom : axioms) {
+            result += renderer.render(axiom) + ", ";
+        }
+        result = (String) result.subSequence(0,result.length()-2);
+
+        return result;
     }
 }

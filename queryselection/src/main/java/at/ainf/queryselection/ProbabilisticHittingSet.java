@@ -4,6 +4,7 @@ import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.HittingSetImpl;
 import at.ainf.diagnosis.tree.Node;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -56,7 +57,7 @@ public class ProbabilisticHittingSet<Id> extends HittingSetImpl<Id> implements H
 
 
     public ProbabilisticHittingSet(String name, double value) {
-        super(name, value);
+        super(name, value, Collections.<Id>emptySet(), Collections.<Id>emptySet());
     }
 
     public double getUserAssignedProbability() {

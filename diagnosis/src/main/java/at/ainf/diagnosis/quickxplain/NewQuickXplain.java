@@ -15,6 +15,7 @@
 package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.theory.Searchable;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
@@ -35,6 +36,23 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
     public NewQuickXplain() {
     }
 
+    @Override
+    protected Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
+            throws InconsistentTheoryException, SolverException {
+        if (changes != null) {
+            for (Id axiom : changes)
+                formulas.remove(axiom);
+            //if (logger.isDebugEnabled())
+            //    logger.debug("Removing labels from the list: " + changes);
+        }
+        return formulas;
+    }
+
+    @Override
+    protected void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes) throws InconsistentTheoryException, SolverException {
+        // nothing to rollback here;
+    }
+
     /**
      * @return conflict
      * @throws at.ainf.diagnosis.tree.exceptions.NoConflictException
@@ -42,10 +60,11 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
      */
 
     public Set<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
-            throws NoConflictException, SolverException {
+            throws NoConflictException, SolverException, InconsistentTheoryException {
         iterations = 0;
 
-
+        if (!c.isConsistent())
+            throw new InconsistentTheoryException("Background theory or test cases are inconsistent! Finding conflicts is impossible!");
         c.push(u);
         final boolean isCons = c.isConsistent();
         c.pop();
@@ -93,4 +112,5 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
     public int getIterations() {
         return iterations;
     }
+
 }

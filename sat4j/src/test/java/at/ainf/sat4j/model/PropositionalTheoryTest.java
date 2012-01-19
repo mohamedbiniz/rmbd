@@ -12,7 +12,7 @@ package at.ainf.sat4j.model;
 import static org.junit.Assert.*;
 
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import org.junit.Test;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class PropositionalTheoryTest {
 
     @Test
-    public void testTheory() throws ContradictionException, SolverException, UnsatisfiableFormulasException {
+    public void testTheory() throws ContradictionException, SolverException, InconsistentTheoryException {
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
         th.addBackgroundFormula(new VecInt(clause));

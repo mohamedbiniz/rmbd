@@ -10,8 +10,8 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -34,6 +34,8 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
     private int maxHittingSets = Integer.MAX_VALUE;
 
     private static Logger logger = Logger.getLogger(AbstractTreeSearch.class.getName());
+
+    private static Logger loggerDual = Logger.getLogger("dualtreelogger");
 
     private final Storage<T, E, Id> storage;
 
@@ -87,7 +89,7 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
     }
 
     public Set<T> run() throws
-            SolverException, NoConflictException, UnsatisfiableFormulasException {
+            SolverException, NoConflictException, InconsistentTheoryException {
         clearSearch();
         if (getMaxHittingSets() <= 0)
             return run(-1);
@@ -101,7 +103,7 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
         this.root = null;
     }
 
-    public Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, UnsatisfiableFormulasException {
+    public Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, InconsistentTheoryException {
 
         start("Overall run");
         start("Diagnosis", "diagnosis");
@@ -147,7 +149,7 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
 
     protected abstract void finalizeSearch();
 
-    private void processOpenNodes() throws SolverException, NoConflictException {
+    private void processOpenNodes() throws SolverException, NoConflictException, InconsistentTheoryException {
         if (getRoot() == null)
             throw new IllegalArgumentException("The tree is not initialized!");
         if (openNodesIsEmpty())
@@ -156,15 +158,17 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
 
         while (!openNodesIsEmpty() && (maxHittingSets <= 0 || (getStorage().getHittingSetsCount() < getMaxHittingSets()))) {
             Node<Id> node = getNode();
+            loggerDual.info("now processing node with uplink : " + node.getArcLabel());
             processNode(node);
         }
         if (logger.isInfoEnabled())
             logger.info("Finished search with " + getSizeOpenNodes() + " open nodes. Pruned " + this.prunedHS + " diagnoses on the last iteration.");
     }
 
-    protected void processNode(Node<Id> node) throws SolverException {
+    protected void processNode(Node<Id> node) throws SolverException, InconsistentTheoryException {
         boolean prune = pruneHittingSet(node);
 
+        loggerDual.info("arc: " + node.getArcLabel());
         if (!prune) {
             try {
                 if (!canReuseConflict(node))
@@ -172,25 +176,49 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
                 if (!node.isClosed())
                     expand(node);
             } catch (NoConflictException e) {
-                node.setClosed();
-                stop("diagnosis");
-                if (logger.isInfoEnabled())
-                    logger.info("Closing node. " + getSizeOpenNodes() + " more to process.");
+                // if(!getSearcher().isDual()) {
+                    node.setClosed();
+                    stop("diagnosis");
+                    if (logger.isInfoEnabled())
+                        logger.info("Closing node. " + getSizeOpenNodes() + " more to process.");
 
-                Set<Id> diagnosis = node.getPathLabels();
+                    Set<Id> diagnosis = node.getPathLabels();
 
-                boolean valid = true;
-                if (getTheory().hasTests())
-                    valid = getTheory().testDiagnosis(diagnosis);
-                T hs = createHittingSet(node, valid);
-                hs.setValid(valid);
-                getStorage().addHittingSet(hs);
-                start("Diagnosis", "diagnosis");
-                if (logger.isInfoEnabled()) {
-                    logger.info("Found conflicts: " + getStorage().getConflictsCount() + " and diagnoses " + getStorage().getHittingSetsCount());
-                    logger.info("Pruned " + this.prunedHS + " diagnoses");
-                    this.prunedHS = 0;
-                }
+                    boolean valid = true;
+                    if (getTheory().hasTests())
+                        valid = getTheory().testDiagnosis(diagnosis);
+                    T hs = createHittingSet(node, valid);
+                    loggerDual.info("created hitting set: " + hs);
+                    for (Id axiom : hs)
+                        loggerDual.info("axiom: " + axiom);
+                    hs.setValid(valid);
+                    getStorage().addHittingSet(hs);
+                    start("Diagnosis", "diagnosis");
+                    if (logger.isInfoEnabled()) {
+                        logger.info("Found conflicts: " + getStorage().getConflictsCount() + " and diagnoses " + getStorage().getHittingSetsCount());
+                        logger.info("Pruned " + this.prunedHS + " diagnoses");
+                        this.prunedHS = 0;
+                    }
+                /*}
+                else {
+                    E conflictSet = createConflictSet(node.getPathLabels());
+                    getStorage().addConflict(conflictSet);
+                    // verify if there is a conflict that is a subset of the new conflict
+                    Set<E> invalidConflicts = new LinkedHashSet<E>();
+                    for (E cs : getStorage().getConflictSets()) {
+                        if (cs.containsAll(conflictSet) && cs.size() > conflictSet.size())
+                            invalidConflicts.add(cs);
+                    }
+
+                    if (!invalidConflicts.isEmpty()) {
+                        for (E invalidConflict : invalidConflicts) {
+                            loggerDual.info("now conflict invalid: " + invalidConflict);
+                            getStorage().removeConflictSet(invalidConflict);
+                        }
+                        updateTree(conflictSet);
+                    }
+
+                }*/
             }
         } else
             this.prunedHS++;
@@ -198,7 +226,7 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
 
 
     public void createRoot() throws NoConflictException,
-            SolverException {
+            SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
         Set<Id> conflict = calculateConflict(null);
@@ -207,10 +235,12 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
     }
 
     public Set<Id> calculateConflict(Node<Id> node) throws
-            SolverException, NoConflictException {
+            SolverException, NoConflictException, InconsistentTheoryException {
         // if conflict was already calculated
         Set<Id> quickConflict;
         Collection<Id> list = new ArrayList<Id>(getTheory().getActiveFormulas());
+        Collections.sort((List<? extends Comparable>)list);
+        Set<Id> pathLabels = null;
         if (node != null) {
             if (logger.isDebugEnabled())
                 logger.debug("Calculating a conflict for the node: " + node);
@@ -219,39 +249,52 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
                     logger.debug("The conflict is already calculated: " + node.getConflict());
                 return node.getConflict();
             }
-            //list.removeAll(node.getPathLabels());
-            for (Id axiom : node.getPathLabels())
-                list.remove(axiom);
-            if (logger.isDebugEnabled())
-                logger.debug("Removing labels from the list: " + node.getPathLabels());
-        }
-        if (node == null && logger.isDebugEnabled())
-            logger.debug("Calculating a conflict for the root node");
-        quickConflict = getSearcher().search(getTheory(), list);
-
-        if (logger.isInfoEnabled())
-            logger.info("Found conflict: " + quickConflict);
-
-        E conflictSet = createConflictSet(quickConflict);
-        getStorage().addConflict(conflictSet);
-        // verify if there is a conflict that is a subset of the new conflict
-        Set<E> invalidConflicts = new LinkedHashSet<E>();
-        for (E e : getStorage().getConflictSets()) {
-            if (e.containsAll(conflictSet) && e.size() > conflictSet.size())
-                invalidConflicts.add(e);
+            pathLabels = node.getPathLabels();
         }
 
-        if (!invalidConflicts.isEmpty()) {
-            for (E invalidConflict : invalidConflicts) {
-                getStorage().removeConflictSet(invalidConflict);
+        quickConflict = getSearcher().search(getTheory(), list, pathLabels);
+
+        //if(!searcher.isDual()) {
+            if (logger.isInfoEnabled())
+                logger.info("Found conflict: " + quickConflict);
+
+            E conflictSet = createConflictSet(quickConflict);
+            loggerDual.info("created conflict set: " + conflictSet);
+            getStorage().addConflict(conflictSet);
+            // verify if there is a conflict that is a subset of the new conflict
+            Set<E> invalidConflicts = new LinkedHashSet<E>();
+            for (E e : getStorage().getConflictSets()) {
+                if (e.containsAll(conflictSet) && e.size() > conflictSet.size())
+                    invalidConflicts.add(e);
             }
-            updateTree(conflictSet);
-        }
-        // current node should ge a conflict only if a path from
-        // this node to root does not include closed nodes
-        if (node != null && !hasClosedParent(node.getParent()))
-            node.setConflict(quickConflict);
-        return quickConflict;
+
+            if (!invalidConflicts.isEmpty()) {
+                for (E invalidConflict : invalidConflicts) {
+                    loggerDual.info("now conflict invalid: " + invalidConflict);
+                    getStorage().removeConflictSet(invalidConflict);
+                }
+                updateTree(conflictSet);
+            }
+            // current node should ge a conflict only if a path from
+            // this node to root does not include closed nodes
+            if (node != null && !hasClosedParent(node.getParent()))
+                node.setConflict(quickConflict);
+            return quickConflict;
+        /*}
+        else {
+                Set<Id> diagnosis = quickConflict;
+                boolean valid = true;
+                if (getTheory().hasTests())
+                    valid = getTheory().testDiagnosis(diagnosis);
+                T hs = createHittingSet(diagnosis, valid);
+                hs.setValid(valid);
+                getStorage().addHittingSet(hs);
+                if (node != null && !hasClosedParent(node.getParent()))
+                node.setConflict(quickConflict);
+
+            return hs;
+
+        }*/
     }
 
     protected boolean hasClosedParent(Node<Id> node) {

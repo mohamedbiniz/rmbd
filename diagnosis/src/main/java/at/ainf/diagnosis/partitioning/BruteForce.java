@@ -1,8 +1,8 @@
 package at.ainf.diagnosis.partitioning;
 
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
@@ -42,7 +42,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
     }
 
     public <E extends HittingSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
         if (this.scoring == null)
             throw new IllegalStateException("Scoring function is not set!");
         // save the original hitting sets
@@ -95,7 +95,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
     }
 
     protected boolean verifyPartition(Partition<Id> partition)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
         Set<Id> ent = getCommonEntailments(partition.dx);
         partition.partition = Collections.unmodifiableSet(ent);
         if (logger.isDebugEnabled())
@@ -132,7 +132,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
     }
 
     protected <E extends HittingSet<Id>> Partition<Id> findPartition(Set<E> hittingSets, Set<E> head)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
 
         if (this.bestPartition != null && this.bestPartition.score < this.threshold)
             return this.bestPartition;

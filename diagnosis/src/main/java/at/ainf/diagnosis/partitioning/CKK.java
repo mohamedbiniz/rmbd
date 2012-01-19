@@ -1,8 +1,8 @@
 package at.ainf.diagnosis.partitioning;
 
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
@@ -90,7 +90,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
     }
 
     public <E extends HittingSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
         ensureCapacity((int) Math.pow(2, hittingSets.size()));
         if (getScoringFunction() == null)
             throw new IllegalStateException("Scoring function is not set!");
@@ -161,7 +161,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
 
     protected boolean verifyPartition(Partition<Id> partition)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
         Set<Id> ent = partition.partition;
         // partition the rest of diagnoses
         for (HittingSet<Id> hs : getHittingSets()) {
@@ -182,7 +182,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
     }
 
     protected <E extends HittingSet<Id>> void findPartition(Differencing<E> diff)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
 
         if ((diff == null || diff.tail.isEmpty())) {
             if (diff.left.isEmpty())

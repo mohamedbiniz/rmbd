@@ -6,8 +6,8 @@ import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -44,7 +44,7 @@ public class MultithrValidTest {
     }
 
     @Test
-    public void testBruteForce2() throws OWLException, UnsatisfiableFormulasException, SolverException {
+    public void testBruteForce2() throws OWLException, InconsistentTheoryException, SolverException {
 
         InputStream st = ClassLoader.getSystemResourceAsStream("queryontologies/Univ.owl");
         OWLOntology ontology = manager.loadOntologyFromOntologyDocument(st);

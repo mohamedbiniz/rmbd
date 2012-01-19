@@ -5,8 +5,8 @@ import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 //import at.ainf.protegeview.controlpanel.ProbabilityTableModel;
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Partition;
@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -31,7 +32,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
-import java.io.File;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -55,14 +56,14 @@ public class QuerySelComparison {
     //private final String[] ontologies = {"CHEM-A.owl", "src/test/resources/koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl",
     //        "Economy-SDA.owl", "Transportation-SDA.owl"};
     // "koala.owl",
-    private String[] ontologies = {"UNIV.owl"};
+    private String[] ontologies = {"Univ.owl"};
     //private String[] ontologies = {"opengalen-no-propchainsmod.owl"};
 
     private final String queryontologies = "queryontologies";
 
     // chemical koala sweet univ minitambis
     // dice-A chem-A univ koala - NEW
-    private int MAX_RUNS = 30;
+    private int MAX_RUNS = 1;
     private static final double SIGMA = 85;
     private static final boolean BRUTE = false;
 
@@ -85,7 +86,7 @@ public class QuerySelComparison {
     }
 
     public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<HittingSet<OWLLogicalAxiom>> diags)
-            throws SolverException, UnsatisfiableFormulasException {
+            throws SolverException, InconsistentTheoryException {
 
         ScoringFunction f = null;
         if (scoringFunc.equals(ScoringFunc.ENTROPY))
@@ -170,7 +171,7 @@ public class QuerySelComparison {
             result.setIncludeReferencingThingAxioms(true);
             result.setIncludeOntologyAxioms(true);
             //  result.setIncludeTrivialEntailments(true);
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -189,8 +190,9 @@ public class QuerySelComparison {
         return search;
     }
 
+    @Ignore
     @Test
-    public void testKoala() throws NoConflictException, SolverException, UnsatisfiableFormulasException {
+    public void testKoala() throws NoConflictException, SolverException, InconsistentTheoryException {
 
         extremeDistribution = new ExtremeDistribution();
         String ontologyFileString = "src/test/resources/koala.owl";
@@ -239,6 +241,7 @@ public class QuerySelComparison {
         assertTrue(found);
     }
 
+    @Ignore
     @Test
     public void testLeadingDiagnoses() {
 
@@ -285,7 +288,7 @@ public class QuerySelComparison {
                                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             } catch (NoConflictException e) {
                                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            } catch (UnsatisfiableFormulasException e) {
+                            } catch (InconsistentTheoryException e) {
                                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
 
@@ -321,6 +324,8 @@ public class QuerySelComparison {
     @Test
     public void testSelectionStrategies() {
 
+
+        readParametersFromFile();
         HashMap<String, UserProbAndQualityTable> map_entropy = new HashMap<String, UserProbAndQualityTable>();
         HashMap<String, UserProbAndQualityTable> map_split = new HashMap<String, UserProbAndQualityTable>();
         moderateDistribution = new ModerateDistribution();
@@ -352,7 +357,7 @@ public class QuerySelComparison {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (UnsatisfiableFormulasException e) {
+            } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
@@ -443,6 +448,29 @@ public class QuerySelComparison {
         }
     }
 
+    private void readParametersFromFile() {
+        Properties properties = new Properties();
+        String config = ClassLoader.getSystemResource("config.properties").getFile();
+        BufferedInputStream stream = null;
+        try {
+            stream = new BufferedInputStream(new FileInputStream(config));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            properties.load(stream);
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        ontologies = properties.getProperty("ontologies").split(",");
+        for (int i = 0; i < ontologies.length; i++)
+            ontologies[i] = ontologies[i].trim() + ".owl";
+        MAX_RUNS= Integer.parseInt(properties.getProperty("runs") );
+
+    }
+
+    @Ignore
     @Test
     public void showMetrics() {
 
@@ -715,7 +743,7 @@ public class QuerySelComparison {
                         search.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                         if (actPa.dnx.isEmpty() && diagnoses.size() < NUMBER_OF_HITTING_SETS)
                             querySessionEnd = true;
-                    } catch (UnsatisfiableFormulasException e) {
+                    } catch (InconsistentTheoryException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                 } else {
@@ -723,7 +751,7 @@ public class QuerySelComparison {
                         search.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                         if (actPa.dx.isEmpty() && diagnoses.size() < NUMBER_OF_HITTING_SETS)
                             querySessionEnd = true;
-                    } catch (UnsatisfiableFormulasException e) {
+                    } catch (InconsistentTheoryException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                 }
@@ -731,7 +759,7 @@ public class QuerySelComparison {
                 querySessionEnd = true;
                 logger.error(e);
 
-            } catch (UnsatisfiableFormulasException e) {
+            } catch (InconsistentTheoryException e) {
                 querySessionEnd = true;
                 logger.error(e);
 
@@ -822,13 +850,13 @@ private void simulateQuerySession
               if (answer) {
                   try {
                       search.getTheory().addEntailedTest(actualQuery.getQueryAxioms());
-                  } catch (UnsatisfiableFormulasException e) {
+                  } catch (InconsistentTheoryException e) {
                       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                   }
               } else {
                   try {
                       search.getTheory().addNonEntailedTest(actualQuery.getQueryAxioms());
-                  } catch (UnsatisfiableFormulasException e) {
+                  } catch (InconsistentTheoryException e) {
                       e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                   }
               }

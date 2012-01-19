@@ -2,6 +2,8 @@ package at.ainf.owlapi3.model;
 
 import at.ainf.theory.Searchable;
 import at.ainf.theory.model.AbstractSearchableObject;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -15,14 +17,14 @@ import java.util.Set;
  * Time: 14:32
  * To change this template use File | Settings | File Templates.
  */
-public class OWLDiagnosisSearcher extends AbstractSearchableObject<OWLLogicalAxiom>
+public class OWLDiagnosisSearchableObject extends AbstractSearchableObject<OWLLogicalAxiom>
         implements Searchable<OWLLogicalAxiom> {
 
-    private static Logger logger = Logger.getLogger(OWLDiagnosisSearcher.class.getName());
+    private static Logger logger = Logger.getLogger(OWLDiagnosisSearchableObject.class.getName());
 
     OWLTheory theory;
 
-    public OWLDiagnosisSearcher(OWLTheory theory) {
+    public OWLDiagnosisSearchableObject(OWLTheory theory) {
         this.theory = theory;
     }
 
@@ -42,4 +44,11 @@ public class OWLDiagnosisSearcher extends AbstractSearchableObject<OWLLogicalAxi
         return consistent;
     }
 
+    public void addBackgroundFormulas(Set<OWLLogicalAxiom> formulas) throws InconsistentTheoryException, SolverException {
+        theory.addBackgroundFormulas(formulas);
+    }
+
+    public void removeBackgroundFormulas(Set<OWLLogicalAxiom> formulas) throws InconsistentTheoryException, SolverException {
+        theory.removeBackgroundFormulas(formulas);
+    }
 }

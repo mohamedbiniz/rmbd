@@ -3,9 +3,9 @@ package at.ainf.protegeview.backgroundsearch;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.ScoringFunction;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.storage.Partition;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -62,7 +62,7 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
             best = ckk.generatePartition(set);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
@@ -79,10 +79,12 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, search.getTheory());
         NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
         try {
-            query.partition = q.search(mnz, query.partition);
+            query.partition = q.search(mnz, query.partition, null);
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 

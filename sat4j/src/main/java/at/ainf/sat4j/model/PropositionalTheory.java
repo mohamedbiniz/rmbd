@@ -11,7 +11,7 @@ package at.ainf.sat4j.model;
 import at.ainf.theory.model.AbstractTheory;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
@@ -32,7 +32,7 @@ public class PropositionalTheory extends AbstractTheory<ISolver, IVecInt> implem
     }
 
     @Override
-    public void setBackgroundFormulas(Collection<IVecInt> expressions) throws UnsatisfiableFormulasException, SolverException {
+    public void setBackgroundFormulas(Collection<IVecInt> expressions) throws InconsistentTheoryException, SolverException {
         super.setBackgroundFormulas(expressions);
         for (IVecInt formula : expressions) {
             this.numOfLiterals += formula.size();

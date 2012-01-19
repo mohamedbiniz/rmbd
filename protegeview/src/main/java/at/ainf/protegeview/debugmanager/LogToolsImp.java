@@ -1,7 +1,11 @@
 package at.ainf.protegeview.debugmanager;
 
+import at.ainf.protegeview.menuactions.OpenDTabAction;
 import at.ainf.theory.storage.Partition;
 import at.ainf.theory.storage.HittingSet;
+import org.protege.editor.core.ProtegeManager;
+import org.protege.editor.core.ui.workspace.TabbedWorkspace;
+import org.protege.editor.core.ui.workspace.WorkspaceTabPlugin;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
@@ -26,6 +30,24 @@ public class LogToolsImp {
 
         }
         return result;
+    }
+
+    public void openDebugTab() {
+        /*org.protege.editor.core.ui.workspace.WorkspaceTab tab = null;
+        TabbedWorkspace tabbedWorkspace = (TabbedWorkspace)ProtegeManager.getInstance().getEditorKitManager().getEditorKits().get(0).getWorkspace();
+
+        if (tabbedWorkspace.containsTab("at.ainf.protegeview.WorkspaceTab")) {
+            tab = tabbedWorkspace.getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
+        }
+        else {
+            for (WorkspaceTabPlugin plugin : tabbedWorkspace.getOrderedPlugins())
+                if (plugin.getId().equals("at.ainf.protegeview.WorkspaceTab")) {
+                    tab = tabbedWorkspace.addTabForPlugin(plugin);
+                    break;
+                }
+
+        }
+        tabbedWorkspace.setSelectedTab(tab);*/
     }
 
     public String getRenderingSet(Set set) {

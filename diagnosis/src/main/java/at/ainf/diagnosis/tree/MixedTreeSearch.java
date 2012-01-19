@@ -11,8 +11,8 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -44,7 +44,7 @@ public class MixedTreeSearch<Id> implements TreeSearch<HittingSet<Id>, Set<Id>, 
         this.strategys = strategys;
     }
 
-    public Set<HittingSet<Id>> run(int numberOfHittingSets) throws NoConflictException, SolverException, UnsatisfiableFormulasException {
+    public Set<HittingSet<Id>> run(int numberOfHittingSets) throws NoConflictException, SolverException, InconsistentTheoryException {
         Set<HittingSet<Id>> hsSet = new HashSet<HittingSet<Id>>();
         while (!strategys.isEmpty()) {
             currentStrategy = strategys.removeFirst();
@@ -92,7 +92,7 @@ public class MixedTreeSearch<Id> implements TreeSearch<HittingSet<Id>, Set<Id>, 
         return currentStrategy.getMaxHittingSets();
     }
 
-    public Set<HittingSet<Id>> run() throws SolverException, NoConflictException, UnsatisfiableFormulasException {
+    public Set<HittingSet<Id>> run() throws SolverException, NoConflictException, InconsistentTheoryException {
         return run(0);
     }
 }

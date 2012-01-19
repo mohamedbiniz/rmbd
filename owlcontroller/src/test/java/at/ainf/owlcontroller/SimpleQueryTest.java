@@ -1,8 +1,8 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.SimpleStorage;
@@ -42,7 +42,7 @@ public class SimpleQueryTest {
     }
 
     @Test
-    public void univNoDiagnosesTest() throws OWLException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void univNoDiagnosesTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
@@ -96,7 +96,7 @@ public class SimpleQueryTest {
     }
 
     //@Test options in diag provider are not set correctly
-    public void queryMnTest() throws OWLException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void queryMnTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
@@ -140,7 +140,7 @@ public class SimpleQueryTest {
     }
 
     @Test
-    public void koalaTest() throws OWLException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void koalaTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();

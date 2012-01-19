@@ -1,8 +1,8 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -42,7 +42,7 @@ public class TheoryTest {
 
     @Test
     public void testTheory() throws OWLOntologyCreationException, URISyntaxException, SolverException,
-            OWLOntologyChangeException, OWLOntologyStorageException, IOException, UnsatisfiableFormulasException {
+            OWLOntologyChangeException, OWLOntologyStorageException, IOException, InconsistentTheoryException {
 
         URL path = ClassLoader.getSystemResource("ontologies/ecai.1.owl");
         OWLTheory th = createTheory(getManager().loadOntologyFromOntologyDocument(path.openStream()));
@@ -77,7 +77,7 @@ public class TheoryTest {
         return dataFactory.getOWLClass(IRI.create(str));
     }
 
-    public OWLTheory createTheory(OWLOntology ontology) throws SolverException, UnsatisfiableFormulasException {
+    public OWLTheory createTheory(OWLOntology ontology) throws SolverException, InconsistentTheoryException {
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));

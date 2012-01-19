@@ -1,8 +1,8 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -39,7 +39,7 @@ public class DiagnosisTests {
     }
 
     @Test
-    public void testUnsat() throws SolverException, URISyntaxException, OWLException, UnsatisfiableFormulasException {
+    public void testUnsat() throws SolverException, URISyntaxException, OWLException, InconsistentTheoryException {
 
         List<String> exclude = new LinkedList<String>();
 
@@ -108,7 +108,7 @@ public class DiagnosisTests {
         }
     }
 
-    private boolean test(File file, int number) throws URISyntaxException, SolverException, OWLException, UnsatisfiableFormulasException {
+    private boolean test(File file, int number) throws URISyntaxException, SolverException, OWLException, InconsistentTheoryException {
         if (new File(file + ".checked").exists())
             return false;
 
@@ -155,7 +155,7 @@ public class DiagnosisTests {
     }
 
     private OWLTheory createTheory(File file, OWLOntologyManager manager) throws URISyntaxException,
-            OWLOntologyCreationException, SolverException, UnsatisfiableFormulasException {
+            OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         OWLOntology ontology = manager.loadOntologyFromOntologyDocument(file);
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();

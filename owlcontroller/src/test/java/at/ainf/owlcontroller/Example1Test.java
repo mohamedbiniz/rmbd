@@ -1,8 +1,8 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -150,7 +150,7 @@ public class Example1Test extends AbstractExample {
 
 
     @BeforeClass
-    public static void setUp() throws UnsatisfiableFormulasException, OWLOntologyCreationException, SolverException {
+    public static void setUp() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException {
 
         file = new File(ClassLoader.getSystemResource("example1.owl").getFile());
         createOntology();
@@ -217,7 +217,7 @@ public class Example1Test extends AbstractExample {
     }
 
     @Test
-    public void testQueryEntailed() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void testQueryEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
         for (Query query : new Query[]{Query.X2}) {
@@ -251,7 +251,7 @@ public class Example1Test extends AbstractExample {
     }
 
     @Test
-    public void testQueryNotEntailed() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException, NoConflictException {
+    public void testQueryNotEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
 
 
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();

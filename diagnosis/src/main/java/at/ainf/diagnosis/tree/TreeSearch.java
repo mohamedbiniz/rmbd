@@ -10,8 +10,8 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public interface TreeSearch<T extends HittingSet<Id>, E extends Set<Id>, Id> {
 
-    public Set<T> run() throws SolverException, NoConflictException, UnsatisfiableFormulasException;
+    public Set<T> run() throws SolverException, NoConflictException, InconsistentTheoryException;
 
     public void setSearcher(Searcher<Id> searcher);
 
@@ -41,5 +41,5 @@ public interface TreeSearch<T extends HittingSet<Id>, E extends Set<Id>, Id> {
 
     public int getMaxHittingSets();
 
-    Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, UnsatisfiableFormulasException;
+    Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, InconsistentTheoryException;
 }

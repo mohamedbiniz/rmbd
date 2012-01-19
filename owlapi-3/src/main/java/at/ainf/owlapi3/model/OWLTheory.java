@@ -2,8 +2,8 @@ package at.ainf.owlapi3.model;
 
 import at.ainf.theory.model.AbstractTheory;
 import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import org.apache.log4j.Logger;
@@ -106,7 +106,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
         try {
             init(originalReasonerFactory,origOntology,origBackgroundAxioms);
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -114,7 +114,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     }
 
     private void init (OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
-        throws UnsatisfiableFormulasException, SolverException {
+        throws InconsistentTheoryException, SolverException {
          OWLOntologyManager man = ontology.getOWLOntologyManager();
         setOwlOntologyManager(man);
 
@@ -188,7 +188,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
                         try {
                             addBackgroundFormula(fac.getOWLClassAssertionAxiom(cl, test_individual));
-                        } catch (UnsatisfiableFormulasException e) {
+                        } catch (InconsistentTheoryException e) {
                             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                         } catch (SolverException e) {
                             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -200,7 +200,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     }
 
     public OWLTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
-            throws UnsatisfiableFormulasException, SolverException {
+            throws InconsistentTheoryException, SolverException {
         this.originalReasonerFactory = reasonerFactory;
         this.origOntology = ontology;
         this.origBackgroundAxioms = backgroundAxioms;
@@ -235,7 +235,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return negated;
     }
 
-    public void registerTestCases() throws SolverException, UnsatisfiableFormulasException {
+    public void registerTestCases() throws SolverException, InconsistentTheoryException {
         Set<OWLLogicalAxiom> tests = new HashSet<OWLLogicalAxiom>();
         for (Set<? extends OWLLogicalAxiom> testCase : getPositiveTests())
             tests.addAll(testCase);

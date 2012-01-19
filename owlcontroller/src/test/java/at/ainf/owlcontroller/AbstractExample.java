@@ -2,7 +2,7 @@ package at.ainf.owlcontroller;
 
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.HermiT.Reasoner;
@@ -78,7 +78,7 @@ public class AbstractExample {
 
         HashMap<ManchesterOWLSyntax, Double> map = new HashMap<ManchesterOWLSyntax, Double>();
 
-        public MyOWLTestTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Collection<OWLLogicalAxiom> backgroundAxioms) throws UnsatisfiableFormulasException, SolverException {
+        public MyOWLTestTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Collection<OWLLogicalAxiom> backgroundAxioms) throws InconsistentTheoryException, SolverException {
             super(reasonerFactory, ontology, backgroundAxioms);
             map.put (ManchesterOWLSyntax.SOME, 0.05);
             map.put (ManchesterOWLSyntax.ONLY, 0.05);
@@ -152,7 +152,7 @@ public class AbstractExample {
 
     }
 
-    public static void createOntology() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException {
+    public static void createOntology() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         ontology = manager.loadOntologyFromOntologyDocument(file);

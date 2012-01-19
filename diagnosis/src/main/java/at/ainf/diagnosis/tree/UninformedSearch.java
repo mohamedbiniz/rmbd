@@ -5,10 +5,7 @@ import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.HittingSetImpl;
 import at.ainf.theory.storage.Storage;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,6 +42,7 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<HittingSet
         this.hscount++;
         return hs;
     }
+
 
     protected Collection<Node<Id>> getOpenNodes() {
         return openNodes;

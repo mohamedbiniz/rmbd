@@ -1,8 +1,8 @@
 package at.ainf.protegeview.queryaskingview;
 
 import at.ainf.protegeview.WorkspaceTab;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.Partition;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
@@ -347,7 +347,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
             workspace.getSearch().getTheory().addEntailedTest(actQuery.partition);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
@@ -373,7 +373,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
             workspace.getSearch().getTheory().addNonEntailedTest(actQuery.partition);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
@@ -499,7 +499,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
                 workspace.getSearch().getTheory().addEntailedTest(positiveTestCases);
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (UnsatisfiableFormulasException e) {
+            } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
@@ -512,7 +512,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
                 workspace.getSearch().getTheory().addNonEntailedTest(negativeTestCases);
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (UnsatisfiableFormulasException e) {
+            } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }

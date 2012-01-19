@@ -7,6 +7,8 @@ import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -27,9 +29,19 @@ public class ResultsLstHs extends ResultsList {
         super(owlEditorKit);    // To change body of overridden methods use File | Settings | File Templates.
     }
 
-    public void showConfidenceDialog(ResultsListSection sec) {
-        JSlider slider = new JSlider(0,100,sec.getUserTargetConfidence());
-        Object complexMsg[] = {"How confident are you this is the target diagnosis?", slider};
+    public void showConfidenceDialog(final ResultsListSection sec) {
+        final JSlider slider = new JSlider(0,100,sec.getUserTargetConfidence());
+        String confStr = "Confidence Level: " + sec.getUserTargetConfidence();
+        final JLabel confidenceLevelPanel = new JLabel(confStr);
+        Object complexMsg[] = {"How confident are you this is the target diagnosis?", slider,confidenceLevelPanel};
+        slider.setMajorTickSpacing(10);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                confidenceLevelPanel.setText("Confidence Level: " + slider.getValue());
+            }
+        });
         JOptionPane optionPane = new JOptionPane();
         optionPane.setMessage(complexMsg);
         optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);

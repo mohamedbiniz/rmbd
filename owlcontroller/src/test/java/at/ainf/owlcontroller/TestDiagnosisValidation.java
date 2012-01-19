@@ -2,7 +2,7 @@ package at.ainf.owlcontroller;
 
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -78,7 +78,7 @@ public class TestDiagnosisValidation {
 
     @Test
     public void testDiagnosisValidation()
-            throws UnsatisfiableFormulasException, SolverException, NoConflictException, OWLOntologyCreationException {
+            throws InconsistentTheoryException, SolverException, NoConflictException, OWLOntologyCreationException {
         createOntology();
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
@@ -147,7 +147,7 @@ public class TestDiagnosisValidation {
 
     }
 
-    public static void createOntology() throws OWLOntologyCreationException, UnsatisfiableFormulasException, SolverException {
+    public static void createOntology() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         ontology = manager.loadOntologyFromOntologyDocument(file);

@@ -1,7 +1,7 @@
 package at.ainf.protegeview.backgroundsearch;
 
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.StorageItemAddedEvent;
 import at.ainf.theory.storage.StorageItemListener;
@@ -77,7 +77,7 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
             return Result.SOLVER_EXCEPTION;
         } catch (NoConflictException e) {
             return Result.NO_CONFLICT_EXCEPTION;
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             return Result.UNSAT_TESTS_EXCEPTION;
         }
 

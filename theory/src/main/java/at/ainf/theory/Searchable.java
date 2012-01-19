@@ -1,5 +1,6 @@
 package at.ainf.theory;
 
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 
 import java.util.Collection;
@@ -25,4 +26,8 @@ public interface Searchable<E> {
     Set<E> getFormulaStack();
 
     void pop(int k);
+
+    public void addBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
+
+    public void removeBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
 }

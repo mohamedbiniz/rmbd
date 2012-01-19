@@ -10,7 +10,7 @@ package at.ainf.choco2;
 
 import at.ainf.choco2.model.ConstraintTheory;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
@@ -32,7 +32,7 @@ public class TheoryTest {
     // private static Logger logger = Logger.getLogger(TheoryTest.class.getName());
 
     @Test
-    public void unsatTheory() throws SolverException, UnsatisfiableFormulasException {
+    public void unsatTheory() throws SolverException, InconsistentTheoryException {
 
         List<Constraint> changable = new LinkedList<Constraint>();
         List<Constraint> unchangable = new LinkedList<Constraint>();

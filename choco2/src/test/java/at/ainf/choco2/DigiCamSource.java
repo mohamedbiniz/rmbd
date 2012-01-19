@@ -11,7 +11,7 @@ package at.ainf.choco2;
 
 import at.ainf.choco2.model.ConstraintTheory;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import choco.cp.model.CPModel;
 import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
@@ -26,7 +26,7 @@ import static choco.Choco.*;
 public class DigiCamSource {
 
 
-    public ConstraintTheory fillTheory(Solver solver) throws UnsatisfiableFormulasException, SolverException {
+    public ConstraintTheory fillTheory(Solver solver) throws InconsistentTheoryException, SolverException {
         List<Constraint> changable = new LinkedList<Constraint>();
         List<Constraint> unchangable = new LinkedList<Constraint>();
 

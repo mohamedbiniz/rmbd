@@ -9,7 +9,7 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
+import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.storage.HittingSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -33,7 +33,7 @@ public class DepthLimitedSearch<Id> extends DepthFirstSearch<Id> {
         this.limit = Integer.MAX_VALUE;
     }
 
-    public Set<HittingSet<Id>> run() throws NoConflictException, SolverException, UnsatisfiableFormulasException {
+    public Set<HittingSet<Id>> run() throws NoConflictException, SolverException, InconsistentTheoryException {
         this.expandable = false;
         return super.run();
     }

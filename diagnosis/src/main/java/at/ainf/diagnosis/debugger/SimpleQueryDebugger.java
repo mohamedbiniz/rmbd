@@ -3,22 +3,23 @@ package at.ainf.diagnosis.debugger;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.ScoringFunction;
-import at.ainf.theory.model.ITheory;
-/*import at.ainf.querygen.partitioning.CKK;
-  import at.ainf.querygen.partitioning.QueryMinimizer;
-  import at.ainf.querygen.partitioning.ScoringFunction;*/
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.UnsatisfiableFormulasException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.*;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.*;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+/*import at.ainf.querygen.partitioning.CKK;
+  import at.ainf.querygen.partitioning.QueryMinimizer;
+  import at.ainf.querygen.partitioning.ScoringFunction;*/
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,14 +48,14 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     }
 
     public SimpleQueryDebugger(ITheory<Id> theory) {
-        this (theory, true);
+        this(theory, true);
     }
 
     public void init() {
         SimpleStorage<Id> storage = new SimpleStorage<Id>();
         search = new BreadthFirstSearch<Id>(storage);
         search.setSearcher(new NewQuickXplain<Id>());
-        if(theory != null) getTheory().reset();
+        if (theory != null) getTheory().reset();
         search.setTheory(getTheory());
         conflictSetsListener = new StorageConflictSetsListenerImpl();
         hittingSetsListener = new StorageHittingSetsListenerImpl();
@@ -88,10 +89,12 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         QueryMinimizer<Id> mnz = new QueryMinimizer<Id>(query, getTheory());
         NewQuickXplain<Id> q = new NewQuickXplain<Id>();
         try {
-            query.partition = q.search(mnz, query.partition);
+            query.partition = q.search(mnz, query.partition, null);
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
@@ -101,12 +104,20 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         }
 
 
-        for (HittingSet<Id> hs : query.dnx) {
+        for (
+                HittingSet<Id> hs
+                : query.dnx)
+
+        {
             if (search.getTheory().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DNX diagnosis might entail a query");
         }
 
-        for (HittingSet<Id> hs : query.dz) {
+        for (
+                HittingSet<Id> hs
+                : query.dz)
+
+        {
             if (search.getTheory().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query");
             if (!search.getTheory().diagnosisConsistent(hs, query.partition))
@@ -126,7 +137,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
             best = ckk.generatePartition(set);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
@@ -149,7 +160,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
             return false;
         } catch (NoConflictException e) {
             return false;
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             return false;
         }
         return true;
@@ -168,6 +179,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
             for (QueryDebuggerListener<Id> listener : listeners)
                 listener.hittingSetAdded(search.getStorage().getValidHittingSets());
         }
+
     }
 
     private List<QueryDebuggerListener<Id>> listeners = new LinkedList<QueryDebuggerListener<Id>>();
@@ -187,7 +199,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
             return false;
         } catch (NoConflictException e) {
             return false;
-        } catch (UnsatisfiableFormulasException e) {
+        } catch (InconsistentTheoryException e) {
             return false;
         }
         return true;

@@ -12,7 +12,7 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class AbstractStorage<T extends HittingSet<Id>, E extends Set<Id>, Id> implements Storage<T, E, Id> {
-    private static Logger logger = Logger.getLogger(SimpleStorage.class.getName());
+    private static Logger logger = Logger.getLogger(AbstractStorage.class.getName());
     protected Set<T> hittingSets = new TreeSet<T>();
     protected Set<T> validHittingSets = new TreeSet<T>();
     protected Set<E> conflicts = new LinkedHashSet<E>();
