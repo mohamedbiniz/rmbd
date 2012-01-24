@@ -1,9 +1,8 @@
 package at.ainf.theory.storage;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
+import at.ainf.theory.watchedset.MeasureUpdatedListener;
+
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +11,7 @@ import java.util.Set;
  * Time: 11:39
  * To change this template use File | Settings | File Templates.
  */
-public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet<Id>> {
+public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
     protected final Set<Id> hittingSet;
     boolean valid = false;
     private double measure = 0;
@@ -23,7 +22,7 @@ public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet
     private final String name;
     protected StorageListener listener;
 
-    public <T extends HittingSet<Id>> void setListener(StorageListener<T, Id> listener) {
+    public <T extends AxiomSet<Id>> void setListener(StorageListener<T, Id> listener) {
         this.listener = listener;
     }
 
@@ -43,11 +42,13 @@ public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet
         this.tempEntailments = Collections.unmodifiableSet(this.entailments);
     }
 
+
+
     public String getName() {
         return name;
     }
 
-    public HittingSetImpl(String name, double measure, Set<Id> hittingSet, Set<Id> entailments) {
+    public AxiomSetImpl(String name, double measure, Set<Id> hittingSet, Set<Id> entailments) {
         this.name = name;
         setMeasure(measure);
         this.hittingSet = Collections.unmodifiableSet(hittingSet);
@@ -74,12 +75,18 @@ public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet
             throw new IllegalArgumentException("Trying to set measure to NaN!");
         if (this.measure == value || this.listener == null) {
             this.measure = value;
+            for (MeasureUpdatedListener<Double> listener : measureUpdatedListenerList)
+                listener.notifiyMeasureUpdated(this, value);
         } else {
             boolean addValid = this.listener.remove(this);
+            for (MeasureUpdatedListener<Double> lsn : measureUpdatedListenerList)
+                lsn.notifiyMeasureUpdated(this, value);
             this.measure = value;
             this.listener.add(this, addValid);
         }
+
     }
+
 
     public double getMeasure() {
         return this.measure;
@@ -147,7 +154,7 @@ public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet
         if (o == null || getClass() != o.getClass()) return false;
         if (hittingSet == null)
             return false;
-        HittingSetImpl that = (HittingSetImpl) o;
+        AxiomSetImpl that = (AxiomSetImpl) o;
         return hittingSet.equals(that.hittingSet);
     }
 
@@ -166,7 +173,21 @@ public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet
         return str;
     }
 
-    public int compareTo(HittingSet<Id> that) {
+    List<MeasureUpdatedListener<Double>> measureUpdatedListenerList = new LinkedList<MeasureUpdatedListener<Double>>();
+
+    public void addMeasureUpdatedListener(MeasureUpdatedListener<Double> eDoubleMeasureUpdatedListener) {
+        measureUpdatedListenerList.add(eDoubleMeasureUpdatedListener);
+    }
+
+    public void removeMeasureUpdatedListener(MeasureUpdatedListener<Double> eDoubleMeasureUpdatedListener) {
+        measureUpdatedListenerList.remove(eDoubleMeasureUpdatedListener);
+    }
+
+    public void setWatchedElementMeasure(Double value) {
+        measure = value;
+    }
+
+    public int compareTo(AxiomSet<Id> that) {
         if (this.equals(that))
             return 0;
         int res = Double.valueOf(getMeasure()).compareTo(that.getMeasure());
@@ -177,4 +198,5 @@ public class HittingSetImpl<Id> implements HittingSet<Id>, Comparable<HittingSet
                 return -1;
         return res;
     }
+
 }

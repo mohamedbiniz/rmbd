@@ -1,7 +1,7 @@
 package at.ainf.queryselection;
 
-import at.ainf.theory.storage.HittingSet;
-import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.Node;
 
 import java.util.Collections;
@@ -14,7 +14,7 @@ import java.util.Set;
  * Time: 14:43
  * To change this template use File | Settings | File Templates.
  */
-public class ProbabilisticHittingSet<Id> extends HittingSetImpl<Id> implements HittingSet<Id>, QueryModuleDiagnosis<Id> {
+public class ProbabilisticHittingSet<Id> extends AxiomSetImpl<Id> implements AxiomSet<Id>, QueryModuleDiagnosis<Id> {
 
     private double userAssignedProbability;
     private double actualProbability;

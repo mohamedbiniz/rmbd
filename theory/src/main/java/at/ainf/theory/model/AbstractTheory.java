@@ -8,7 +8,7 @@
 
 package at.ainf.theory.model;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 
 import java.util.*;
 
@@ -369,15 +369,15 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         return fl;
     }
 
-    public boolean diagnosisEntails(HittingSet<T> hs, Set<T> ent) {
+    public boolean diagnosisEntails(AxiomSet<T> hs, Set<T> ent) {
         throw new RuntimeException("Unimplemented method");
     }
 
-    public boolean diagnosisConsistent(HittingSet<T> hs, Set<T> ent) {
+    public boolean diagnosisConsistent(AxiomSet<T> hs, Set<T> ent) {
         throw new RuntimeException("Unimplemented method");
     }
 
-    public void doBayesUpdate(Set<? extends HittingSet<T>> hittingSets) {
+    public void doBayesUpdate(Set<? extends AxiomSet<T>> hittingSets) {
         throw new RuntimeException("Unimplemented method");
     }
 

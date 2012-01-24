@@ -9,7 +9,7 @@
 package at.ainf.theory.model;
 
 import at.ainf.theory.Searchable;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 
 import java.util.Collection;
 import java.util.Set;
@@ -123,13 +123,15 @@ public interface ITheory<Id> extends Searchable<Id> {
 
     Set<Id> getEntailments(Set<Id> hittingSet) throws SolverException;
 
-    boolean diagnosisEntails(HittingSet<Id> hs, Set<Id> ent);
+    boolean diagnosisEntails(AxiomSet<Id> hs, Set<Id> ent);
 
-    boolean diagnosisConsistent(HittingSet<Id> hs, Set<Id> ent);
+    boolean diagnosisConsistent(AxiomSet<Id> hs, Set<Id> ent);
+
+    boolean supportEntailments();
 
     boolean isEntailed(Set<Id> n);
 
-    public void doBayesUpdate(Set<? extends HittingSet<Id>> hittingSets);
+    public void doBayesUpdate(Set<? extends AxiomSet<Id>> hittingSets);
 
     public Object getOriginalOntology();
 

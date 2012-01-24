@@ -1,6 +1,6 @@
 package at.ainf.queryselection;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,7 +9,7 @@ import at.ainf.theory.storage.HittingSet;
  * Time: 15:19
  * To change this template use File | Settings | File Templates.
  */
-public interface QueryModuleDiagnosis<Id> extends HittingSet<Id> {
+public interface QueryModuleDiagnosis<Id> extends AxiomSet<Id> {
     double getUserAssignedProbability();
 
     int getTimesInD_0();

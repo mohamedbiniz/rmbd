@@ -1,11 +1,5 @@
 package at.ainf.owlcontroller.listeners;
 
-import at.ainf.theory.storage.HittingSet;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-
-import java.util.EventListener;
-import java.util.Set;
-
 /**
  * Created by IntelliJ IDEA.
  * User: pfleiss

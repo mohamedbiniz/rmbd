@@ -3,7 +3,7 @@ package at.ainf.owlcontroller;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -86,16 +86,16 @@ public class OrderProbabTest {
             ((OWLAxiomNodeCostsEstimator)search.getNodeCostsEstimator()).setKeywordProbabilities(map, null);
 
 
-            Collection<? extends HittingSet<OWLLogicalAxiom>> res = search.run(9);
-            TreeSet<HittingSet<OWLLogicalAxiom>> result = new TreeSet<HittingSet<OWLLogicalAxiom>>();
+            Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
+            TreeSet<AxiomSet<OWLLogicalAxiom>> result = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
             double measure = 0.0;
-            for (HittingSet<OWLLogicalAxiom> hs : res) {
-                assertTrue(measure < ((HittingSet<OWLLogicalAxiom>) hs).getMeasure());
-                measure = ((HittingSet<OWLLogicalAxiom>) hs).getMeasure();
-                result.add((HittingSet<OWLLogicalAxiom>) hs);
+            for (AxiomSet<OWLLogicalAxiom> hs : res) {
+                assertTrue(measure < ((AxiomSet<OWLLogicalAxiom>) hs).getMeasure());
+                measure = ((AxiomSet<OWLLogicalAxiom>) hs).getMeasure();
+                result.add((AxiomSet<OWLLogicalAxiom>) hs);
             }
 
-            TreeSet<HittingSet<OWLLogicalAxiom>> copyResult = new TreeSet<HittingSet<OWLLogicalAxiom>>(result);
+            TreeSet<AxiomSet<OWLLogicalAxiom>> copyResult = new TreeSet<AxiomSet<OWLLogicalAxiom>>(result);
 
             map.put(ManchesterOWLSyntax.SOME, map.get(ManchesterOWLSyntax.SOME) + 0.01);
             map.put(ManchesterOWLSyntax.ONLY, map.get(ManchesterOWLSyntax.ONLY) + 0.01);
@@ -108,11 +108,11 @@ public class OrderProbabTest {
             result = sortDiagnoses(result);
             copyResult = sortDiagnoses(copyResult);
 
-            Iterator<HittingSet<OWLLogicalAxiom>> iterRes = result.iterator();
-            Iterator<HittingSet<OWLLogicalAxiom>> iterCopy = copyResult.iterator();
+            Iterator<AxiomSet<OWLLogicalAxiom>> iterRes = result.iterator();
+            Iterator<AxiomSet<OWLLogicalAxiom>> iterCopy = copyResult.iterator();
             while (iterRes.hasNext()) {
-                HittingSet<OWLLogicalAxiom> hsResult = iterRes.next();
-                HittingSet<OWLLogicalAxiom> hsResultCopy = iterCopy.next();
+                AxiomSet<OWLLogicalAxiom> hsResult = iterRes.next();
+                AxiomSet<OWLLogicalAxiom> hsResultCopy = iterCopy.next();
 
                 assertTrue(hsResult.equals(hsResultCopy));
                 double d = Math.abs(hsResult.getMeasure() - hsResultCopy.getMeasure());
@@ -124,9 +124,9 @@ public class OrderProbabTest {
 
     }
 
-    private TreeSet<HittingSet<OWLLogicalAxiom>> sortDiagnoses(TreeSet<HittingSet<OWLLogicalAxiom>> hittingSets) {
-        TreeSet<HittingSet<OWLLogicalAxiom>> phs = new TreeSet<HittingSet<OWLLogicalAxiom>>();
-        for (HittingSet<OWLLogicalAxiom> hs : hittingSets)
+    private TreeSet<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(TreeSet<AxiomSet<OWLLogicalAxiom>> axiomSets) {
+        TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        for (AxiomSet<OWLLogicalAxiom> hs : axiomSets)
             phs.add(hs);
         return (phs);
     }

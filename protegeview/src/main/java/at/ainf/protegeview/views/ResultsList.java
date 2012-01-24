@@ -1,7 +1,7 @@
 package at.ainf.protegeview.views;
 
 import at.ainf.diagnosis.tree.NodeCostsEstimator;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
@@ -119,7 +119,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
                 //NumberFormat nf = NumberFormat.getNumberInstance();
                 double p = -1;
                 if (es != null)
-                    p = ((HittingSet<OWLLogicalAxiom>)axiomsConf).getMeasure(); // p = es.getNodeSetCosts(axiomsConf);
+                    p = ((AxiomSet<OWLLogicalAxiom>)axiomsConf).getMeasure(); // p = es.getNodeSetCosts(axiomsConf);
                 num++;
                 if (es != null) {
                     model.addElement(new ResultsListSection(name,num,p,axiomsConf));

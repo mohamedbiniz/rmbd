@@ -10,7 +10,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
@@ -28,12 +28,12 @@ public class DepthLimitedSearch<Id> extends DepthFirstSearch<Id> {
     private int limit;
     private boolean expandable = false;
 
-    public DepthLimitedSearch(Storage<HittingSet<Id>, Set<Id>, Id> storage) {
+    public DepthLimitedSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
         super(storage);
         this.limit = Integer.MAX_VALUE;
     }
 
-    public Set<HittingSet<Id>> run() throws NoConflictException, SolverException, InconsistentTheoryException {
+    public Set<AxiomSet<Id>> run() throws NoConflictException, SolverException, InconsistentTheoryException {
         this.expandable = false;
         return super.run();
     }
@@ -48,7 +48,7 @@ public class DepthLimitedSearch<Id> extends DepthFirstSearch<Id> {
         }
     }
 
-    public DepthLimitedSearch(Storage<HittingSet<Id>, Set<Id>, Id> storage, int limit) {
+    public DepthLimitedSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage, int limit) {
         super(storage);
         this.limit = limit;
     }

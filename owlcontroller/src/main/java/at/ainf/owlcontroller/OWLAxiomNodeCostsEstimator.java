@@ -2,7 +2,7 @@ package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.tree.NodeCostsEstimator;
 import at.ainf.theory.model.ITheory;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
@@ -111,33 +111,33 @@ public class OWLAxiomNodeCostsEstimator implements NodeCostsEstimator<OWLLogical
         private Map<ManchesterOWLSyntax, Double> keywordProbabilities;
 
         public void setKeywordProbabilities(Map<ManchesterOWLSyntax, Double> keywordProbabilities,
-                                            Set<HittingSet<OWLLogicalAxiom>> hittingSets) {
+                                            Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
 
 
             this.keywordProbabilities = keywordProbabilities;
             updateAxiomProbabilities();
-            updateDiagnosisProbabilities(hittingSets);
+            updateDiagnosisProbabilities(axiomSets);
 
         }
 
-        private void updateDiagnosisProbabilities(Set<HittingSet<OWLLogicalAxiom>> hittingSets) {
+        private void updateDiagnosisProbabilities(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
 
-            if (hittingSets == null)
+            if (axiomSets == null)
                 return;
-            if (!hittingSets.isEmpty()) {
-                for (HittingSet<OWLLogicalAxiom> hittingSet : hittingSets) {
-                    double probability = getNodeSetCosts(hittingSet);
+            if (!axiomSets.isEmpty()) {
+                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
+                    double probability = getNodeSetCosts(axiomSet);
 
-                    hittingSet.setMeasure(probability);
-                    //hittingSet.setUserAssignedProbability(probability);
+                    axiomSet.setMeasure(probability);
+                    //axiomSet.setUserAssignedProbability(probability);
                 }
                 double sum = 0;
 
-                for (HittingSet<OWLLogicalAxiom> hittingSet : hittingSets) {
-                    sum += hittingSet.getMeasure();
+                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
+                    sum += axiomSet.getMeasure();
                 }
-                for (HittingSet<OWLLogicalAxiom> hittingSet : hittingSets) {
-                    hittingSet.setMeasure(hittingSet.getMeasure() / sum);
+                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
+                    axiomSet.setMeasure(axiomSet.getMeasure() / sum);
                 }
             }
         }

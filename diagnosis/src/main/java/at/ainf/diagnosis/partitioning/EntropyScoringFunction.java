@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 
@@ -41,9 +41,9 @@ public class EntropyScoringFunction<Id> implements ScoringFunction<Id> {
         return Math.log(value) / Math.log(base);
     }
 
-    private double sum(Set<? extends HittingSet> dx) {
+    private double sum(Set<? extends AxiomSet> dx) {
         double sum = 0;
-        for (HittingSet hs : dx)
+        for (AxiomSet hs : dx)
             sum += hs.getMeasure();
         return sum;
     }
@@ -52,9 +52,9 @@ public class EntropyScoringFunction<Id> implements ScoringFunction<Id> {
         return "Entropy";
     }
 
-    public void normalize(Set<? extends HittingSet<Id>> hittingSets) {
+    public void normalize(Set<? extends AxiomSet<Id>> hittingSets) {
         double sum = sum(hittingSets);
-        for (HittingSet<Id> hs : hittingSets) {
+        for (AxiomSet<Id> hs : hittingSets) {
             double value = hs.getMeasure() / sum;
             hs.setMeasure(value);
         }

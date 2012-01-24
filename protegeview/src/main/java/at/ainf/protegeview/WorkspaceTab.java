@@ -5,7 +5,7 @@ import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -54,7 +54,7 @@ public class
 
     private boolean init = true;
 
-    private TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
     private ITheory<OWLLogicalAxiom> theory;
 
@@ -99,9 +99,9 @@ public class
         //getWS().getSearch().run();
         switch (searcher.doBackgroundSearch()) {
             case FINISHED:
-                Collection<? extends HittingSet<OWLLogicalAxiom>> hittingsets = getSearch().getStorage().getValidHittingSets();
-                TreeSet<? extends HittingSet<OWLLogicalAxiom>> hsTree = (TreeSet<? extends HittingSet<OWLLogicalAxiom>>) hittingsets;
-                Set<? extends HittingSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
+                Collection<? extends AxiomSet<OWLLogicalAxiom>> hittingsets = getSearch().getStorage().getValidHittingSets();
+                TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = (TreeSet<? extends AxiomSet<OWLLogicalAxiom>>) hittingsets;
+                Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
                 Collection<Set<OWLLogicalAxiom>> conflSets = getSearch().getStorage().getConflictSets();
                 // addAxiomToResultsList(getConflictSetListModel(), "Conflict Set ", conflSets);
                 //addAxiomToResultsList(getHittingSetListModel(), "Diagnosis", hsReverse);
@@ -253,6 +253,18 @@ public class
         } catch (OWLOntologyCreationException ex) {
             System.out.println("Could not load ontology: " + ex.getMessage());
         }
+    }
+
+    public void doResetAct2() {
+        setTestcasesChange(true);
+        DebugManager.getInstance().setConflictSets(null);
+        DebugManager.getInstance().notifyConflictSetsChanged();
+        DebugManager.getInstance().setValidHittingSets(null);
+        DebugManager.getInstance().notifyHittingSetsChanged();
+        DebugManager.getInstance().notifyResetReq();
+        resetSearch();
+        resetButtonGroup();
+        createOWLTheory();
     }
 
     public void doResetAct() {
@@ -624,7 +636,7 @@ public class
         return theory;
     }
 
-    public TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
+    public TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
         return search;
     }
 
@@ -654,8 +666,24 @@ public class
     public String getStrTestcases() {
         String r = "";
 
-        for (int i = 0; i < testcasesModel.size(); i++)
-            r += testcasesModel.get(i).toString() + "| ";
+        boolean headwritten = false;
+        for (int i = 0; i < testcasesModel.size(); i++) {
+            String row = testcasesModel.get(i).toString();
+            if(row.startsWith("Positive Test Case") || row.startsWith("Negative Test Case") || row.startsWith("Entailed") || row.startsWith("Not entailed")) {
+                //if (headwritten) r += " ;";
+                r += ";" + testcasesModel.get(i).toString() + ";";
+                headwritten = true;
+
+            }
+            else {
+
+                r += testcasesModel.get(i).toString() + ", ";
+                headwritten = false;
+            }
+        }
+        if (r.contains("\n")) {
+            r=r.replaceAll("\n","");
+        }
 
         return r;
     }

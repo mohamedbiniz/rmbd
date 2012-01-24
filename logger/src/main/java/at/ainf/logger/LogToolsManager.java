@@ -121,6 +121,41 @@ public class LogToolsManager {
 
     }
 
+    public String getSe(Object object) {
+        Method method;
+        try {
+            method = object.getClass().getMethod("getSectionType", new Class[]{});
+            return (String) method.invoke(object, new Object[]{});
+
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return "";
+
+
+    }
+
+    public int getL(Object object) {
+        Method method;
+        try {
+            method = object.getClass().getMethod("getLineNumber", new Class[]{});
+            return (Integer) method.invoke(object, new Object[]{});
+
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return -1;
+
+    }
+
     public String getStrnTestcases(Object object) {
         Method method;
         try {
@@ -182,12 +217,13 @@ public class LogToolsManager {
                 r = (Set<Object>) nonEntailMethod.invoke(object, new Object[]{});
                 entailed = false;
             }
+
+            if (entailed)
+                result += "entailed;";
+            else
+                result += "not entailed;";
             for (Object axiom : r)
                 result += getRendering(axiom) + ", ";
-            if (entailed)
-                result += "entailed";
-            else
-                result += "not entailed";
 
             return result;
 
@@ -269,11 +305,11 @@ public class LogToolsManager {
         Method method;
         try {
 
-            String result = " ";
+            String result = ";";
 
             Method typeMethod = object.getClass().getMethod("getSectionType", new Class[]{});
             Object type = typeMethod.invoke(object, new Object[]{});
-            result += type.toString() + ": ";
+            result += type.toString() + ";";
             Method rendererMethod = object.getClass().getMethod("getAxioms", new Class[]{});
             Set<Object> set = (Set<Object>) rendererMethod.invoke(object, new Object[]{});
 

@@ -7,7 +7,7 @@ package at.ainf.theory.storage;
  * Time: 11:54
  * To change this template use File | Settings | File Templates.
  */
-public interface StorageListener<T extends HittingSet<Id>, Id>{
+public interface StorageListener<T extends AxiomSet<Id>, Id>{
     void add(T newObject, boolean addValid);
     boolean remove(T oldObject);
 }

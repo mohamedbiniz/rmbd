@@ -37,7 +37,7 @@ public class BackgroundSearchDialog extends JDialog {
             }
         });
         textArea = new JTextArea();
-        textArea.setText(" hitting sets: 0\n conflict sets: 0 \n");
+        textArea.setText(" hitting sets: 0\n conflict sets: 0\n open nodes: 0\n");
         textArea.setEditable(false);
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));

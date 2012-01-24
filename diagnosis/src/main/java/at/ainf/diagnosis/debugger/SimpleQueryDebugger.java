@@ -33,7 +33,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     protected ITheory<Id> theory;
 
-    protected TreeSearch<? extends HittingSet<Id>, Set<Id>, Id> search;
+    protected TreeSearch<? extends AxiomSet<Id>, Set<Id>, Id> search;
 
     protected StorageConflictSetsListener conflictSetsListener;
 
@@ -68,11 +68,11 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         return search.getStorage().getConflictSets();
     }
 
-    public Set<? extends HittingSet<Id>> getHittingSets() {
+    public Set<? extends AxiomSet<Id>> getHittingSets() {
         return search.getStorage().getHittingSets();
     }
 
-    public Set<? extends HittingSet<Id>> getValidHittingSets() {
+    public Set<? extends AxiomSet<Id>> getValidHittingSets() {
         return search.getStorage().getValidHittingSets();
     }
 
@@ -98,14 +98,14 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        for (HittingSet<Id> hs : query.dx) {
+        for (AxiomSet<Id> hs : query.dx) {
             if (!hs.getEntailments().containsAll(query.partition) && !search.getTheory().diagnosisEntails(hs, query.partition))
                 throw new IllegalStateException("DX diagnosis is not entailing a query");
         }
 
 
         for (
-                HittingSet<Id> hs
+                AxiomSet<Id> hs
                 : query.dnx)
 
         {
@@ -114,7 +114,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         }
 
         for (
-                HittingSet<Id> hs
+                AxiomSet<Id> hs
                 : query.dz)
 
         {
@@ -130,7 +130,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         CKK<Id> ckk = new CKK<Id>(theory, func);
         ckk.setThreshold(acceptanceThreshold);
 
-        TreeSet<HittingSet<Id>> set = new TreeSet<HittingSet<Id>>(getValidHittingSets());
+        TreeSet<AxiomSet<Id>> set = new TreeSet<AxiomSet<Id>>(getValidHittingSets());
 
         Partition<Id> best = null;
         try {

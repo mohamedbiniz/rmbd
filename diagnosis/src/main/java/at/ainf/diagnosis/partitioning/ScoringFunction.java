@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 
 import java.util.Set;
@@ -16,5 +16,5 @@ public interface ScoringFunction<Id> {
 
     double getScore(Partition<?> part);
 
-    void normalize(Set<? extends HittingSet<Id>> hittingSets);
+    void normalize(Set<? extends AxiomSet<Id>> hittingSets);
 }

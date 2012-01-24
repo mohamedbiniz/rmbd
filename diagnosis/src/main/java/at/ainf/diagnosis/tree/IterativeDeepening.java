@@ -10,7 +10,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
@@ -29,19 +29,19 @@ public class IterativeDeepening<Id> extends DepthLimitedSearch<Id> {
     private int startDepth;
     private int step;
 
-    public IterativeDeepening(Storage<HittingSet<Id>, Set<Id>, Id> storage) {
+    public IterativeDeepening(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
         super(storage);
         this.startDepth = 1;
         this.step = 1;
     }
 
-    public IterativeDeepening(Storage<HittingSet<Id>, Set<Id>, Id> storage, int startDepth, int step) {
+    public IterativeDeepening(Storage<AxiomSet<Id>, Set<Id>, Id> storage, int startDepth, int step) {
         super(storage);
         this.startDepth = startDepth;
         this.step = step;
     }
 
-    public Set<HittingSet<Id>> run() throws SolverException, NoConflictException, InconsistentTheoryException {
+    public Set<AxiomSet<Id>> run() throws SolverException, NoConflictException, InconsistentTheoryException {
         int iterationDepth = this.startDepth;
         do {
             setLimit(iterationDepth);

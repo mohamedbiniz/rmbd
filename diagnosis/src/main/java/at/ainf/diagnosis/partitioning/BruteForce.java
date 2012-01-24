@@ -3,7 +3,7 @@ package at.ainf.diagnosis.partitioning;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 
@@ -22,7 +22,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     private ITheory<Id> theory;
 
-    private Set<? extends HittingSet<Id>> hittingSets;
+    private Set<? extends AxiomSet<Id>> hittingSets;
 
     private int partitionsCount = 0;
 
@@ -41,7 +41,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         this.scoring = function;
     }
 
-    public <E extends HittingSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
+    public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
         if (this.scoring == null)
             throw new IllegalStateException("Scoring function is not set!");
@@ -66,13 +66,13 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return partition;
     }
 
-    protected <E extends HittingSet<Id>> void restoreEntailments(Set<E> hittingSets) {
+    protected <E extends AxiomSet<Id>> void restoreEntailments(Set<E> hittingSets) {
         for (E hs : hittingSets)
             hs.restoreEntailments();
     }
 
 
-    protected <E extends HittingSet<Id>> void removeCommonEntailments(Set<E> hittingSets) throws SolverException {
+    protected <E extends AxiomSet<Id>> void removeCommonEntailments(Set<E> hittingSets) throws SolverException {
         Set<Id> ent = getCommonEntailments(hittingSets);
         if (!ent.isEmpty())
             for (E hs : hittingSets) {
@@ -103,7 +103,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         if (ent == null || ent.isEmpty())
             return false;
         // partition the rest of diagnoses
-        for (HittingSet<Id> hs : getHittingSets()) {
+        for (AxiomSet<Id> hs : getHittingSets()) {
             if (!partition.dx.contains(hs)) {
                 if (hs.getEntailments().containsAll(ent))
                     partition.dx.add(hs);
@@ -118,9 +118,9 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return true;
     }
 
-    protected <E extends HittingSet<Id>> Set<Id> getCommonEntailments(Set<E> dx) throws SolverException {
+    protected <E extends AxiomSet<Id>> Set<Id> getCommonEntailments(Set<E> dx) throws SolverException {
         Set<Id> intersection = null;
-        for (HittingSet<Id> hs : dx) {
+        for (AxiomSet<Id> hs : dx) {
             if (intersection == null)
                 intersection = new LinkedHashSet<Id>(hs.getEntailments());
             else
@@ -131,7 +131,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return intersection;
     }
 
-    protected <E extends HittingSet<Id>> Partition<Id> findPartition(Set<E> hittingSets, Set<E> head)
+    protected <E extends AxiomSet<Id>> Partition<Id> findPartition(Set<E> hittingSets, Set<E> head)
             throws SolverException, InconsistentTheoryException {
 
         if (this.bestPartition != null && this.bestPartition.score < this.threshold)
@@ -188,8 +188,8 @@ public class BruteForce<Id> implements Partitioning<Id> {
         this.partitionsCount++;
     }
 
-    protected <E extends HittingSet<Id>> HittingSet<Id> getOriginalHittingSet(E el) {
-        for (HittingSet<Id> elem : getHittingSets()) {
+    protected <E extends AxiomSet<Id>> AxiomSet<Id> getOriginalHittingSet(E el) {
+        for (AxiomSet<Id> elem : getHittingSets()) {
             if (el.compareTo(elem) == 0)
                 return elem;
         }
@@ -205,11 +205,11 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return this.scoring;
     }
 
-    public Set<? extends HittingSet<Id>> getHittingSets() {
+    public Set<? extends AxiomSet<Id>> getHittingSets() {
         return hittingSets;
     }
 
-    protected void setHittingSets(Set<? extends HittingSet<Id>> hittingSets) {
+    protected void setHittingSets(Set<? extends AxiomSet<Id>> hittingSets) {
         this.hittingSets = hittingSets;
     }
 

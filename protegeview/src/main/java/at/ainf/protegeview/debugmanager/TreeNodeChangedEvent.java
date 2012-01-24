@@ -1,6 +1,6 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import java.util.EventObject;
 
@@ -13,15 +13,15 @@ import java.util.EventObject;
  */
 public class TreeNodeChangedEvent extends EventObject {
 
-    private HittingSet<OWLLogicalAxiom> treenode;
+    private AxiomSet<OWLLogicalAxiom> treenode;
 
-    public TreeNodeChangedEvent(Object source, HittingSet<OWLLogicalAxiom> treenode) {
+    public TreeNodeChangedEvent(Object source, AxiomSet<OWLLogicalAxiom> treenode) {
         super(source);
 
         this.treenode = treenode;
     }
 
-    public HittingSet<OWLLogicalAxiom> getTreenode(){
+    public AxiomSet<OWLLogicalAxiom> getTreenode(){
         return treenode;
     }
 }

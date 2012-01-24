@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class PropositionalTheory extends AbstractTheory<ISolver, IVecInt> implements
-        ITheory<IVecInt> {
+public class PropositionalTheory extends AbstractTheory<ISolver, IVecIntComparable> implements
+        ITheory<IVecIntComparable> {
 
     private boolean createNew = false;
     private int numOfLiterals = 0;
@@ -32,16 +32,16 @@ public class PropositionalTheory extends AbstractTheory<ISolver, IVecInt> implem
     }
 
     @Override
-    public void setBackgroundFormulas(Collection<IVecInt> expressions) throws InconsistentTheoryException, SolverException {
+    public void setBackgroundFormulas(Collection<IVecIntComparable> expressions) throws InconsistentTheoryException, SolverException {
         super.setBackgroundFormulas(expressions);
-        for (IVecInt formula : expressions) {
+        for (IVecIntComparable formula : expressions) {
             this.numOfLiterals += formula.size();
         }
     }
 
     @Override
-    protected IVecInt negate(IVecInt formula) {
-        IVecInt res = new VecInt();
+    protected IVecIntComparable negate(IVecIntComparable formula) {
+        IVecIntComparable res = new VecIntComparable();
         for (IteratorInt iter = formula.iterator(); iter.hasNext(); ) {
             int val = iter.next() * -1;
             res.push(val);
@@ -77,9 +77,9 @@ public class PropositionalTheory extends AbstractTheory<ISolver, IVecInt> implem
         }
     }
 
-    private void addFormulas(ISolver solver, Collection<IVecInt> formulas) throws ContradictionException {
-        for (IVecInt stat : formulas) {
-            IVecInt literals = stat;
+    private void addFormulas(ISolver solver, Collection<IVecIntComparable> formulas) throws ContradictionException {
+        for (IVecIntComparable stat : formulas) {
+            IVecIntComparable literals = stat;
             solver.addClause(literals);
         }
     }
@@ -96,17 +96,17 @@ public class PropositionalTheory extends AbstractTheory<ISolver, IVecInt> implem
     /**
      * Saves the approximate number of variables in {@link #DefaultTheory.numOfLiterals}
      */
-    public boolean push(Collection<IVecInt> formulas) {
+    public boolean push(Collection<IVecIntComparable> formulas) {
         boolean res = super.push(formulas);
         if (res)
-            for (IVecInt formula : formulas) {
+            for (IVecIntComparable formula : formulas) {
                 this.numOfLiterals += (formula).size();
             }
         return res;
     }
 
     @Override
-    public boolean push(IVecInt formula) {
+    public boolean push(IVecIntComparable formula) {
         boolean res = super.push(formula);
         if (res)
             this.numOfLiterals += (formula).size();
@@ -114,24 +114,28 @@ public class PropositionalTheory extends AbstractTheory<ISolver, IVecInt> implem
 
     }
 
-    public IVecInt addClause(int[] vector) {
-        VecInt anInt = new VecInt(vector);
+    public IVecIntComparable addClause(int[] vector) {
+        VecIntComparable anInt = new VecIntComparable(vector);
         addActiveFormula(anInt);
         return anInt;
     }
 
-    public List<IVecInt> addClauses(List<int[]> vectors) {
-        List<IVecInt> res = new LinkedList<IVecInt>();
+    public List<IVecIntComparable> addClauses(List<int[]> vectors) {
+        List<IVecIntComparable> res = new LinkedList<IVecIntComparable>();
         for (int[] vec : vectors)
             res.add(addClause(vec));
         return res;
     }
 
-    public Set<IVecInt> getEntailments(Set<IVecInt> hittingSet) throws SolverException {
+    public Set<IVecIntComparable> getEntailments(Set<IVecIntComparable> hittingSet) throws SolverException {
         throw new RuntimeException("This theory does not support computation of entailments!");
     }
 
-    public boolean isEntailed(Set<IVecInt> n) {
+    public boolean supportEntailments() {
+        return false;
+    }
+
+    public boolean isEntailed(Set<IVecIntComparable> n) {
         throw new RuntimeException("This theory does not support verification of entailments!");
     }
 }

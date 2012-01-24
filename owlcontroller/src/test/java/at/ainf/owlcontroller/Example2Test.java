@@ -3,7 +3,7 @@ package at.ainf.owlcontroller;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -234,7 +234,7 @@ public class Example2Test extends AbstractExample {
         search.setMaxHittingSets(0);
 
         TreeSet<Diag> set = new TreeSet<Diag>();
-        for (HittingSet<OWLLogicalAxiom> col : search.run(2)) {
+        for (AxiomSet<OWLLogicalAxiom> col : search.run(2)) {
             set.add(Diag.getDiagnosis(col));
         }
         TreeSet<Diag> expectedRes = new TreeSet<Diag>();
@@ -242,12 +242,12 @@ public class Example2Test extends AbstractExample {
         expectedRes.add(Diag.D4);
         assertTrue(set.equals(expectedRes));
         set = new TreeSet<Diag>();
-        for (HittingSet<OWLLogicalAxiom> col : search.run(3)) {
+        for (AxiomSet<OWLLogicalAxiom> col : search.run(3)) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D1);
         assertTrue(set.equals(expectedRes));
-        for (HittingSet<OWLLogicalAxiom> col : search.run(4)) {
+        for (AxiomSet<OWLLogicalAxiom> col : search.run(4)) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D3);

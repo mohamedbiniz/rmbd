@@ -5,7 +5,7 @@ import at.ainf.theory.model.ITheory;
 
 import at.ainf.theory.storage.Partition;
 //import at.ainf.querygen.partitioning.ScoringFunction;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 
 
 import java.util.Set;
@@ -21,9 +21,9 @@ public interface QueryDebugger<Id> {
 
     public Set<Set<Id>> getConflictSets();
 
-    public Set<? extends HittingSet<Id>> getHittingSets();
+    public Set<? extends AxiomSet<Id>> getHittingSets();
 
-    public Set<? extends HittingSet<Id>> getValidHittingSets();
+    public Set<? extends AxiomSet<Id>> getValidHittingSets();
 
     public ITheory<Id> getTheory();
 

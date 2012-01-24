@@ -1,7 +1,7 @@
 package at.ainf.protegeview.views;
 
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import at.ainf.diagnosis.tree.NodeCostsEstimator;
@@ -43,7 +43,7 @@ public class HittingSetView extends AbstractProtegeResultView implements Hitting
             public void valueChanged(ListSelectionEvent e) {
                 if (list.getSelectedValue() instanceof ResultsListSection) {
                     /*ResultsListSection section = ((ResultsListSection) list.getSelectedValue());
-                    HittingSet<OWLLogicalAxiom> hs = (HittingSet<OWLLogicalAxiom>) section
+                    AxiomSet<OWLLogicalAxiom> hs = (AxiomSet<OWLLogicalAxiom>) section
                             .getAxiomSet();
                     DebugManager.getInstance().setTreeNode(hs);
                     DebugManager.getInstance().notifyTreeNodeChanged();*/
@@ -64,14 +64,14 @@ public class HittingSetView extends AbstractProtegeResultView implements Hitting
 
     }
 
-    protected void updateListModel(Set<? extends HittingSet<OWLLogicalAxiom>> validHs) {
+    protected void updateListModel(Set<? extends AxiomSet<OWLLogicalAxiom>> validHs) {
         WorkspaceTab workspace = (WorkspaceTab) getOWLWorkspace().getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
          if(validHs == null) {
             ((DefaultListModel)list.getModel()).clear();
               return;
         }
-        TreeSet<? extends HittingSet<OWLLogicalAxiom>> hsTree = (TreeSet<? extends HittingSet<OWLLogicalAxiom>>) validHs;
-        Set<? extends HittingSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
+        TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = (TreeSet<? extends AxiomSet<OWLLogicalAxiom>>) validHs;
+        Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
         //workspace.addAxiomToResultsList( (DefaultListModel)list.getModel(), "Diagnosis", hsReverse);
         NodeCostsEstimator<OWLLogicalAxiom> es = null;
         if (workspace.getSearch() instanceof UniformCostSearch) {

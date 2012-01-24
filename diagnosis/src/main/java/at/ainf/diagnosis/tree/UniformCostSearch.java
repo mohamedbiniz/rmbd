@@ -2,8 +2,8 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.storage.HittingSet;
-import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
@@ -16,7 +16,7 @@ import java.util.*;
  * Time: 14:28
  * To change this template use File | Settings | File Templates.
  */
-public class UniformCostSearch<Id> extends AbstractTreeSearch<HittingSet<Id>, Set<Id>, Id> {
+public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id> {
 
     private int count = 0;
 
@@ -77,13 +77,13 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<HittingSet<Id>, Se
     }
 
     @Override
-    protected HittingSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
+    protected AxiomSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
         String name = "D_" + String.valueOf(++count);
         Set<Id> labels = node.getPathLabels();
         double probability = ((CostNode<Id>) node).getNodePathCosts();
         Set<Id> entailments = Collections.emptySet();
-        if (valid) entailments = getTheory().getEntailments(labels);
-        HittingSetImpl<Id> result = new HittingSetImpl<Id>(name, probability, labels, entailments);
+        if (getTheory().supportEntailments() && valid) entailments = getTheory().getEntailments(labels);
+        AxiomSetImpl<Id> result = new AxiomSetImpl<Id>(name, probability, labels, entailments);
         result.setNode(node);
         return result;
     }
@@ -110,17 +110,21 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<HittingSet<Id>, Se
     }
 
     @Override
-    protected Collection<Node<Id>> getOpenNodes() {
+    public Collection<Node<Id>> getOpenNodes() {
         return this.opensNodes;
     }
 
     @Override
     public Node<Id> popOpenNodes() {
+        for (OpenNodesListener l : oNodesLsteners)
+            l.updateOpenNodesRemoved();
         return this.opensNodes.poll();
     }
 
     @Override
     public void pushOpenNodes(Node<Id> idNode) {
+        for (OpenNodesListener l : oNodesLsteners)
+            l.updateOpenNodesAdded();
         this.opensNodes.add(idNode);
     }
 

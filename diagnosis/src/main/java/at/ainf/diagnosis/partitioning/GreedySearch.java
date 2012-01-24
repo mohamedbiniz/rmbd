@@ -3,8 +3,8 @@ package at.ainf.diagnosis.partitioning;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
-import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 
@@ -26,10 +26,10 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
 
 
     private class Measurable {
-        private HittingSet<Id> hs;
+        private AxiomSet<Id> hs;
         private double measure;
 
-        public Measurable(HittingSet<Id> hs, double measure) {
+        public Measurable(AxiomSet<Id> hs, double measure) {
             this.hs = hs;
             this.measure = measure;
         }
@@ -69,7 +69,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
     }
 
 
-    public <E extends HittingSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
+    public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
         if (getScoringFunction() == null)
             throw new IllegalStateException("Scoring function is not set!");
@@ -210,7 +210,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         map.get(lt).remove(rt);
         double together = lt.measure + rt.measure;
 
-        Measurable t = new Measurable(new HittingSetImpl<Id>("NULL:" + this.count++, 0,Collections.<Id>emptySet(), Collections.<Id>emptySet()), together);
+        Measurable t = new Measurable(new AxiomSetImpl<Id>("NULL:" + this.count++, 0,Collections.<Id>emptySet(), Collections.<Id>emptySet()), together);
         put(map, t, lt);
         put(map, t, rt);
     }

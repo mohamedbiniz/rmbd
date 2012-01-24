@@ -145,12 +145,12 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
     }
 
     protected OWLAxiomEditor getSectionEditor(OWLFrameObject frameObject,SectionType type) {
-        return new OWLAxiomEditor(((TcaeFrameSection) frameObject).getOWLEditorKit(), null);
+        return new OWLAxiomEditor(((TcaeFrameSection) frameObject).getOWLEditorKit(), null,type);
     }
 
     protected OWLAxiomEditor getSectionItemEditor(OWLFrameObject frameObject, SectionType type) {
         return new OWLAxiomEditor(((TcaeFrameSectionItem) frameObject).getOWLEditorKit(),
-                ((TcaeFrameSectionItem) frameObject).getAxioms());
+                ((TcaeFrameSectionItem) frameObject).getAxioms(),type);
     }
 
     protected boolean isFromUserConfirmed(Object retVal) {

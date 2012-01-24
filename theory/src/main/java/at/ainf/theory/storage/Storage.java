@@ -9,7 +9,7 @@ import java.util.Set;
  * Time: 15:57
  * To change this template use File | Settings | File Templates.
  */
-public interface Storage<E extends HittingSet<Id>, T extends Set<Id>, Id> {
+public interface Storage<E extends AxiomSet<Id>, T extends Set<Id>, Id> {
 
     boolean addConflict(T conflict);
 

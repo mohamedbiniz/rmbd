@@ -2,7 +2,7 @@ package at.ainf.owlcontroller;
 
 import at.ainf.owlcontroller.listeners.OWLControllerConflictSetListener;
 import at.ainf.owlcontroller.listeners.OWLControllerHittingSetListener;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
@@ -49,7 +49,7 @@ public class OWLControllerTest {
             }
         },OWLControllerConflictSetListener.class);
         controller.addControllerListener(new OWLControllerHittingSetListener() {
-            public void updateValidHittingSets(Set<? extends HittingSet<OWLLogicalAxiom>> validHittingSets) {
+            public void updateValidHittingSets(Set<? extends AxiomSet<OWLLogicalAxiom>> validHittingSets) {
                 // System.out.println("HittingSets: " + validHittingSets.size());
                 assert(validHittingSets.size() > 0);
             }

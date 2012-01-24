@@ -11,7 +11,7 @@ import java.util.*;
  * Time: 16:06
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractStorage<T extends HittingSet<Id>, E extends Set<Id>, Id> implements Storage<T, E, Id> {
+public abstract class AbstractStorage<T extends AxiomSet<Id>, E extends Set<Id>, Id> implements Storage<T, E, Id> {
     private static Logger logger = Logger.getLogger(AbstractStorage.class.getName());
     protected Set<T> hittingSets = new TreeSet<T>();
     protected Set<T> validHittingSets = new TreeSet<T>();
@@ -40,7 +40,7 @@ public abstract class AbstractStorage<T extends HittingSet<Id>, E extends Set<Id
     };
 
     public void resetStorage() {
-        for (HittingSet<Id> hs : this.getHittingSets())
+        for (AxiomSet<Id> hs : this.getHittingSets())
             hs.setListener(null);
         hittingSets.clear();
         conflicts.clear();

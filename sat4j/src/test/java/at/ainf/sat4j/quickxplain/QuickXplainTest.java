@@ -11,15 +11,15 @@ package at.ainf.sat4j.quickxplain;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.quickxplain.OldQuickXplain;
+import at.ainf.sat4j.model.IVecIntComparable;
 import at.ainf.sat4j.model.PropositionalTheory;
+import at.ainf.sat4j.model.VecIntComparable;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.junit.Test;
-import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ISolver;
-import org.sat4j.specs.IVecInt;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class QuickXplainTest {
 
     @Test
     public void testOld() throws SolverException, InconsistentTheoryException {
-        Searcher<IVecInt> quick = new OldQuickXplain<IVecInt>();
+        Searcher<IVecIntComparable> quick = new OldQuickXplain<IVecIntComparable>();
         for (int i = 0; i < 1000; i++) {
             runQuick(quick);
         }
@@ -41,13 +41,13 @@ public class QuickXplainTest {
 
     @Test
     public void testNew() throws SolverException, InconsistentTheoryException {
-        Searcher<IVecInt> quick = new NewQuickXplain<IVecInt>();
+        Searcher<IVecIntComparable> quick = new NewQuickXplain<IVecIntComparable>();
         for (int i = 0; i < 1000; i++) {
             runQuick(quick);
         }
     }
 
-    public void runQuick(Searcher<IVecInt> quick) throws SolverException, InconsistentTheoryException {
+    public void runQuick(Searcher<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException {
 
         int[] fm10 = new int[]{10};
 
@@ -56,9 +56,9 @@ public class QuickXplainTest {
         reasoner.setExpectedNumberOfClauses(20);
         reasoner.newVar(10);
         PropositionalTheory theory = new PropositionalTheory(reasoner);
-        theory.addBackgroundFormula(new VecInt(fm10));
+        theory.addBackgroundFormula(new VecIntComparable(fm10));
 
-        List<IVecInt> list = new LinkedList<IVecInt>();
+        List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
         check(quick, theory, list, true);
 
         List<int[]> vec = new ArrayList<int[]>();
@@ -75,17 +75,17 @@ public class QuickXplainTest {
         clause = new int[]{3};
         vec.add(clause);
 
-        Collection<IVecInt> test = theory.addClauses(vec);
+        Collection<IVecIntComparable> test = theory.addClauses(vec);
         list.addAll(theory.getActiveFormulas());
         check(quick, theory, list, true);
 
-        IVecInt fm4 = theory.addClause(new int[]{-4});
+        IVecIntComparable fm4 = theory.addClause(new int[]{-4});
         list.add(fm4);
 
-        IVecInt fm5 = theory.addClause(new int[]{5});
+        IVecIntComparable fm5 = theory.addClause(new int[]{5});
         list.add(fm5);
 
-        Collection<IVecInt> fl = check(quick, theory, list, false);
+        Collection<IVecIntComparable> fl = check(quick, theory, list, false);
 
         assertTrue(fl.size() == 5);
         assertTrue(fl.contains(fm4));
@@ -94,11 +94,11 @@ public class QuickXplainTest {
 
         list.clear();
 
-        IVecInt fm6 = theory.addClause(new int[]{6, -7});
+        IVecIntComparable fm6 = theory.addClause(new int[]{6, -7});
         list.add(fm6);
-        IVecInt fm7 = theory.addClause(new int[]{6, 7});
+        IVecIntComparable fm7 = theory.addClause(new int[]{6, 7});
         list.add(fm7);
-        IVecInt fm8 = theory.addClause(new int[]{-6});
+        IVecIntComparable fm8 = theory.addClause(new int[]{-6});
         list.add(fm8);
         list.add(fm5);
 
@@ -109,11 +109,11 @@ public class QuickXplainTest {
         assertTrue(fl.containsAll(list));
     }
 
-    private Collection<IVecInt> check(Searcher<IVecInt> quick, PropositionalTheory theory,
-                                      List<IVecInt> list, boolean value) throws SolverException,
+    private Collection<IVecIntComparable> check(Searcher<IVecIntComparable> quick, PropositionalTheory theory,
+                                      List<IVecIntComparable> list, boolean value) throws SolverException,
             InconsistentTheoryException {
         boolean res = false;
-        Collection<IVecInt> fl = null;
+        Collection<IVecIntComparable> fl = null;
         try {
             fl = quick.search(theory, list, null);
         } catch (NoConflictException e) {

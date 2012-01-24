@@ -4,7 +4,7 @@ import at.ainf.theory.model.AbstractTheory;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.*;
@@ -52,8 +52,8 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         this.includeTrivialEntailments = includeTrivialEntailments;
     }
 
-    public void doBayesUpdate(Set<? extends HittingSet<OWLLogicalAxiom>> hittingSets) {
-        for (HittingSet<OWLLogicalAxiom> hs : hittingSets) {
+    public void doBayesUpdate(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
+        for (AxiomSet<OWLLogicalAxiom> hs : hittingSets) {
             for (int i = 0; i < getTestsSize(); i++) {
                 Set<OWLLogicalAxiom> testcase = getTest(i);
                 List<Set<OWLLogicalAxiom>> olderTestcases = getTests(0, i);
@@ -443,7 +443,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return vis;
     }
 
-    public boolean diagnosisEntails(HittingSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
+    public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
@@ -470,7 +470,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return res;
     }
 
-    public boolean diagnosisEntails(HittingSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
+    public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
@@ -504,7 +504,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return res;
     }
 
-    public boolean diagnosisConsistent(HittingSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
+    public boolean diagnosisConsistent(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
@@ -538,7 +538,11 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return res;
     }
 
-    public boolean diagnosisConsistent(HittingSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
+    public boolean supportEntailments() {
+        return true;
+    }
+
+    public boolean diagnosisConsistent(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
