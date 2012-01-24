@@ -10,7 +10,7 @@ import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -47,7 +47,7 @@ public class FastDiagTest {
     @Test
     public void testFasterDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
         search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
         DualTreeOWLTheory th = loadTheory(manager, "queryontologies/koala.owl");
         search.setTheory(th);
@@ -94,7 +94,7 @@ public class FastDiagTest {
     @Test
     public void testConflictDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory th = Utils.loadTheory(manager, "queryontologies/koala.owl");
         search.setTheory(th);
@@ -104,7 +104,7 @@ public class FastDiagTest {
         OWLLogicalAxiom axiom = search.getStorage().getValidHittingSets().iterator().next().iterator().next();
         System.out.println(axiom);
 
-        for (HittingSet<OWLLogicalAxiom> hs : search.getStorage().getValidHittingSets())
+        for (AxiomSet<OWLLogicalAxiom> hs : search.getStorage().getValidHittingSets())
             System.out.println(Utils.renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();

@@ -4,7 +4,7 @@ import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.partitioning.*;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
@@ -86,7 +86,7 @@ public class PartitioningTest {
         assertEquals(4, debugger.getValidHittingSets().size());
 
         int i = 8;
-        for (HittingSet<OWLLogicalAxiom> hs : debugger.getValidHittingSets()) {
+        for (AxiomSet<OWLLogicalAxiom> hs : debugger.getValidHittingSets()) {
             hs.setMeasure((i--) / 100d);
         }
 

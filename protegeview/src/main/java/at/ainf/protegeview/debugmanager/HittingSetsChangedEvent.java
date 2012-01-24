@@ -1,6 +1,6 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.util.EventObject;
@@ -15,15 +15,15 @@ import java.util.Set;
  */
 public class HittingSetsChangedEvent extends EventObject {
 
-    private Set<? extends HittingSet<OWLLogicalAxiom>> valHS;
+    private Set<? extends AxiomSet<OWLLogicalAxiom>> valHS;
 
-    public HittingSetsChangedEvent(Object source, Set<? extends HittingSet<OWLLogicalAxiom>> valHS) {
+    public HittingSetsChangedEvent(Object source, Set<? extends AxiomSet<OWLLogicalAxiom>> valHS) {
         super(source);
 
         this.valHS = valHS;
     }
 
-    public Set<? extends HittingSet<OWLLogicalAxiom>> getValidHS(){
+    public Set<? extends AxiomSet<OWLLogicalAxiom>> getValidHS(){
         return valHS;
     }
 

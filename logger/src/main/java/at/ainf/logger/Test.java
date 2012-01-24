@@ -94,7 +94,7 @@ public class Test {
     @Before("protegeAppStart()")
     public void logProtegeAppStart() {
 
-        String identifier[] = {"Testuser", "A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1", "J1", "K1", "A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2", "I2", "J2", "K2"};
+        String identifier[] = {"Testuser", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29"};
         JComboBox comboBoxD = new JComboBox(identifier);
         comboBoxD.setSelectedItem("Testuser");
 
@@ -118,13 +118,13 @@ public class Test {
 
         aufgabe = (String) comboBox.getSelectedItem();
         o = (String)comboBoxOntology.getSelectedItem();
-        if(comboBoxOntology.getSelectedItem().equals("Koala"))
+        if (o.equals("Koala"))
             ontologyName = "ontologies/koala.owl";
-        else if(comboBoxOntology.getSelectedItem().equals("Uni"))
+        else if (o.equals("Uni"))
             ontologyName = "ontologies/uni.owl";
-        else if(comboBoxOntology.getSelectedItem().equals("GizK"))
-            ontologyName = "ontologies/giz.owl";
-        user = (String) comboBoxD.getSelectedItem();
+        else if (o.equals("Gizk"))
+            ontologyName = "ontologies/gizk.owl";
+        user = (String) "user" + comboBoxD.getSelectedItem();
         try {
             hostname = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
@@ -194,128 +194,128 @@ public class Test {
 
     @Before("execution(void org.protege.editor.owl.ui.inference.PrecomputeAction.actionPerformed(..))")
     public void logStartReasoner() {
-        logMsg("MENU reasoner started");
+        logMsg("User; Menu; reasoner started");
     }
 
 
      @Before("execution(void org.protege.editor.owl.ui.action.UndoAction.actionPerformed(..))")
     public void logUndo() {
-        logMsg("MENU undo done");
+        logMsg("User; Menu; undo done");
     }
 
 
     @Before("execution(void at.ainf.protegeview.WorkspaceTab.doCalculateHittingSet(..))")
     public void logCalculateHS() {
-        logMsg("TOOLBOX CLICKED calculate HS clicked");
+        logMsg("User; Toolbox; calculate HS clicked");
     }
 
     @Before("execution(void at.ainf.protegeview.WorkspaceTab.doResetAct(..))")
     public void logReset() {
-        logMsg("TOOLBOX CLICKED reset clicked");
+        logMsg("User; Toolbox; toolbox reset clicked");
     }
 
     @Before("execution(void at.ainf.protegeview.WorkspaceTab.doConfigOptions(..))")
     public void logConfigOptions() {
-        logMsg("TOOLBOX CLICKED config options clicked");
+        logMsg("User; Toolbox; config options clicked");
     }
 
     @Before("execution(void at.ainf.protegeview.WorkspaceTab.doConfigurationWizard(..))")
     public void logConfigWizard() {
-        logMsg("TOOLBOX CLICKED config wizard clicked");
+        logMsg("User; Toolbox; config wizard clicked");
     }
 
     @Before("execution(void at.ainf.protegeview.queryaskingview.QueryShowPanel.init(..))")
     public void logGetQuery() {
-        logMsg("TOOLBOX CLICKED user clicked get query");
+        logMsg("User; Toolbox; user clicked get query");
     }
 
     @Before("execution(void at.ainf.protegeview.queryaskingview.QueryShowPanel.applyChanged(..))")
     public void logConfirm(JoinPoint jp) {
-        logMsg("TOOLBOX CLICKED clicked confirm " + logToolsManager.getConfAxStr(jp.getThis()));
+        logMsg("User; Toolbox; clicked confirm ;" + logToolsManager.getConfAxStr(jp.getThis()));
     }
 
     @AfterReturning(value="execution(* at.ainf.protegeview.controlpanel.OptionsDialog.isOkClicked(..)) && this(options)",returning="isConfirmed")
     public void logApplyOpt(boolean isConfirmed, Object options) {
         if (isConfirmed) {
-            logMsg("TOOLBOX CLICKED user applied options" + options);
+            logMsg("User; Options; user applied options" + options);
         }
         else {
-            logMsg("TOOLBOX CLICKED user aborted options");
+            logMsg("User; Options; user aborted options");
         }
     }
 
 
     @Before("execution(* at.ainf.protegeview.testcasesentailmentsview.TcaeFramelist.getSectionEditor(..)) && args(object,type)")
     public void logTestcaseAddClk(Object object, Object type) {
-        logMsg("TCAE CLICKED user opened editor to add test case  " + object + type);
+        logMsg("User; tcae; user opened editor to add test case;" + type + ";" + object);
     }
 
     @Before("execution(* at.ainf.protegeview.testcasesentailmentsview.TcaeFramelist.getSectionItemEditor(..)) && args(object,type)")
     public void logTestcaseEdClk(Object object, Object type) {
-        logMsg("TCAE CLICKED user opened editor to edit test case  " + object + " " + type);
+        logMsg("User; tcae; user opened editor to edit test case;" + type + ";" + object);
     }
 
 
     @AfterReturning(value="execution(* at.ainf.protegeview.testcasesentailmentsview.TcaeFramelist.isFromUserConfirmed(..))",returning="isConfirmed")
     public void logUserConfirmation(boolean isConfirmed) {
         //boolean ok = isConfirmed != null && isConfirmed.equals(JOptionPane.OK_OPTION);
-        logMsg("TCAE CLICKED user aborted editor");
+        logMsg("User; AxiomEditor; user aborted editor");
     }
 
     @AfterReturning(value="execution(* at.ainf.protegeview.testcasesentailmentsview.axiomeditor.OWLAxiomEditor.getEditedObject(..))",returning="ret")
-    public void logEditedTestcase(Object ret) {
+    public void logEditedTestcase(JoinPoint jp, Object ret) {
 
         String res = "";
         Set<Object> ax = (Set<Object>) ret;
         for (Object axiom : ax)
             res += logToolsManager.getRendering(axiom) + ", ";
 
-        logMsg("TCAE CLICKED user confirmed edit edited testcase was " + res );
+        logMsg("User; AxiomEditor; user confirmed edit edited testcase was;" + logToolsManager.getSe(jp.getThis()) + ";" + res );
     }
 
     @Before("execution(* at.ainf.protegeview.views.ResultsListSection.setUserMarkedThisTarget(..)) &&  args(mark)")
     public void logUserMarkedTargetDiag(JoinPoint jp, boolean mark) {
         if   (mark) {
-            logMsg("HSVIEW CLICKED user marked diagnosis as target diag with confidence "
+            logMsg("User; hsview; CLICKED user marked diagnosis as target diag with confidence "
                                           + logToolsManager.getUserTargetConfidence(jp.getThis())
                                           + " axioms: "
                                           + logToolsManager.getAxiomSet(jp.getThis()));
         }
         else {
-            logMsg("HSVIEW CLICKED user unmarked diagnosis as target diag axioms: " + logToolsManager.getAxiomSet(jp.getThis()) );
+            logMsg("User; hsview; user unmarked diagnosis as target diag axioms: " + logToolsManager.getAxiomSet(jp.getThis()) );
         }
     }
 
     @Before("execution(void at.ainf.protegeview.queryaskingview.QueryShowPanel.setEntailedMarkers(..))")
     public void logYesTestcase(JoinPoint jp) {
-        logMsg ("QUERYVIEW CLICKED user clicked yes button " + logToolsManager.getQueryAxioms(jp.getThis()));
+        logMsg ("User; queryview; user clicked yes button ;" + logToolsManager.getQueryAxioms(jp.getThis()));
     }
 
     @Before("execution(void at.ainf.protegeview.queryaskingview.QueryShowPanel.setNonEntailedMarkers(..))")
     public void logNoTestcase(JoinPoint jp) {
 
-        logMsg ("QUERYVIEW CLICKED user clicked no button " + logToolsManager.getQueryAxioms(jp.getThis()));
+        logMsg ("User; queryview; user clicked no button ;" + logToolsManager.getQueryAxioms(jp.getThis()));
     }
 
     @Before("execution(void at.ainf.protegeview.configwizard.DebuggerWizard.applyPreferences(..))")
     public void logWizardApply() {
-        logMsg ("TOOLBOX CLICKED debugger wizard finished from user");
+        logMsg ("User; DebuggerWizard; debugger wizard finished from user");
 
     }
 
     @Before("execution(void org.protege.editor.core.ui.wizard.WizardController.cancelButtonPressed(..))")
     public void logCancelButtonPressed() {
-        logMsg ("TOOLBOX CLICKED user pressed cancel button in wizard");
+        logMsg ("User; DebuggerWizard; user pressed cancel button in wizard");
     }
 
     @Before("execution(void org.protege.editor.core.ui.wizard.WizardController.backButtonPressed(..))")
     public void logBackButtonPressed() {
-        logMsg ("TOOLBOX CLICKED user pressed back button in wizard");
+        logMsg ("User; DebuggerWizard; user pressed back button in wizard");
     }
 
     @Before("execution(void org.protege.editor.core.ui.wizard.WizardController.nextButtonPressed(..))")
     public void logNextButtonPressed() {
-        logMsg ("TOOLBOX CLICKED user pressed next button in wizard");
+        logMsg ("User; DebuggerWizard; user pressed next button in wizard");
     }
 
     @Before("execution(void at.ainf.protegeview.debugmanager.DebugManager.setConflictSets(..)) && args(object)")
@@ -324,10 +324,10 @@ public class Test {
         String result = "";
 
         if (conflicts == null)
-            logMsg("PROGRAM conflict sets were set to null to reset " );
+            logMsg("Program; Global; conflict sets were set to null to reset " );
 
         if (conflicts != null) {
-            result += "Num CS: " + conflicts.size() + " ";
+            result += "Num CS: ;" + conflicts.size() + "; ";
             for (Set<Object> conflict : conflicts) {
                 result += "[" + "size=" + conflict.size() + " ";
                 for (Object axiom : conflict) {
@@ -335,7 +335,7 @@ public class Test {
                 }
                 result +=  "] ";
             }
-            logMsg("PROGRAM conflict sets: " + result);
+            logMsg("Program; Global; conflict sets: " + result);
         }
     }
 
@@ -345,24 +345,24 @@ public class Test {
         String result = "";
 
         if (validHittingSets == null)
-            logMsg("PROGRAM hitting sets were set to null to reset " );
+            logMsg("Program; Global; hitting sets were set to null to reset " );
 
         if (validHittingSets != null) {
-            result += "Num HS: " + validHittingSets.size() + " ";
+            result += "Num HS: ;" + validHittingSets.size() + "; ";
             for (Set<Object> hs : validHittingSets) {
                 result += "[" + "size=" + validHittingSets.size() + " ";
                 result +=  logToolsManager.getHsRendering(hs) + "]  ";
             }
-            logMsg("PROGRAM hitting sets "  + result);
+            logMsg("Program; Global; hitting sets "  + result);
         }
     }
 
-    @Before("execution(void at.ainf.protegeview.queryaskingview.buttons.QueryQuestListItem.handleEntailed(..))")
+    @After("execution(void at.ainf.protegeview.queryaskingview.buttons.QueryQuestListItem.handleEntailed(..))")
     public void logAddEnt(JoinPoint jp) {
         if (!logToolsManager.getMarkedStatus(jp.getThis(),"isEntailedMarked"))
-            logMsg("QUERYVIEW CLICKED user marks axiom in query entailed: " + logToolsManager.getAxiom(jp.getThis()));
+            logMsg("User; queryview; CLICKED user marks axiom in query: ;entailed;" + logToolsManager.getL(jp.getThis()) + ";" + logToolsManager.getAxiom(jp.getThis()));
         else
-            logMsg("QUERYVIEW CLICKED user unmarked axiom in query entailed: " + logToolsManager.getAxiom(jp.getThis()));
+            logMsg("User; queryview; CLICKED user unmarked axiom in query: ;entailed;" + logToolsManager.getAxiom(jp.getThis()));
     }
 
     @Before("execution(void at.ainf.protegeview.queryaskingview.QueryShowPanel.setQueryListModel(..)) && args(axioms)")
@@ -372,28 +372,28 @@ public class Test {
         for(Object axiom : ax) {
             result += logToolsManager.getRendering(axiom) + ", ";
         }
-        logMsg("PROGRAM query axiom list is: " + result);
+        logMsg("Program; queryview; query axiom list is:; " + result);
     }
 
-    @Before("execution(void at.ainf.protegeview.queryaskingview.buttons.QueryQuestListItem.handleNotEntailed(..))")
+    @After("execution(void at.ainf.protegeview.queryaskingview.buttons.QueryQuestListItem.handleNotEntailed(..))")
     public void logAddNEnt(JoinPoint jp) {
         if (!logToolsManager.getMarkedStatus(jp.getThis(),"isNonEntailedMarked"))
-            logMsg("QUERYVIEW CLICKED user marks axiom in query non entailed: " + logToolsManager.getAxiom(jp.getThis()));
+            logMsg("User; queryview; CLICKED user marks axiom in query: ;non entailed;" + logToolsManager.getL(jp.getThis()) + ";"  + logToolsManager.getAxiom(jp.getThis()));
         else
-            logMsg("QUERYVIEW CLICKED user unmarked axiom in query non entailed: " + logToolsManager.getAxiom(jp.getThis()));
+            logMsg("User; queryview; CLICKED user unmarked axiom in query: ;non entailed;" + logToolsManager.getAxiom(jp.getThis()));
     }
 
     @Before("execution(void at.ainf.protegeview.queryaskingview.buttons.QueryQuestListItem.handleUnknownEntailed(..))")
     public void logNoUserIdea(JoinPoint jp) {
         if (!logToolsManager.getMarkedStatus(jp.getThis(),"isUnknowMarked"))
-            logMsg("QUERYVIEW CLICKED user marks axiom in query with unknow: " + logToolsManager.getAxiom(jp.getThis()));
+            logMsg("User; queryview; CLICKED user marks axiom in query with unknow: " + logToolsManager.getAxiom(jp.getThis()));
         else
-            logMsg("QUERYVIEW CLICKED user unmarked axiom in query with unknow: " + logToolsManager.getAxiom(jp.getThis()));
+            logMsg("User; queryview; CLICKED user unmarked axiom in query with unknow: " + logToolsManager.getAxiom(jp.getThis()));
     }
 
     @Before("execution(void at.ainf.protegeview.queryaskingview.QueryShowPanel.unmarkAxioms(..)) && args(entailed)")
     public void logUnmarkedAx(JoinPoint jp, boolean entailed) {
-        String message = "PROGRAM following " + (entailed ? "" : "not ") + "entailed axioms are unmarked: ";
+        String message = "Program; queryview; following " + (entailed ? "" : "not ") + "entailed axioms are unmarked: ";
 
         Set<String> axioms = logToolsManager.getQueryAx(jp.getThis(),entailed);
         for (String a : axioms)
@@ -404,22 +404,22 @@ public class Test {
 
     @Before("execution(* at.ainf.protegeview.testcasesentailmentsview.TcaeFramelist.removeItem(..)) && args(object)")
     public void logRemoveTestcase(Object object) {
-        logMsg("TCAE CLICKED user remove testcase" + logToolsManager.getRemoved(object));
+        logMsg("User; tcae; CLICKED user remove testcase" + logToolsManager.getRemoved(object));
     }
 
     @After("execution(void at.ainf.protegeview.WorkspaceTab.displaySection(..))")
     public void logTcaeVupdate(JoinPoint jp) {
-        logMsg("PROGRAM testcase view now " +logToolsManager.getStrnTestcases(jp.getThis()));
+        logMsg("Program; tcae; testcase view now " +logToolsManager.getStrnTestcases(jp.getThis()));
     }
 
     @AfterReturning(value="execution(* at.ainf.protegeview.queryaskingview.DiagProvider.getQuery(..))",returning="ret")
     public void logQuery(Object ret) {
-        logMsg("QUERYVIEW PROGRAM " + logToolsManager.getQueryRendering(ret) );
+        logMsg("Program; queryview; query stats ;" + logToolsManager.getQueryRendering(ret) );
     }
 
     @Before("execution(* at.ainf.protegeview.debugmanager.DebugManager.setTreeNode(..)) && args(object)")
     public void logTreenode(JoinPoint jp, Object object) {
-        logMsg("HSVIEW CLICKED show axiom in hs tree " + logToolsManager.getHsRendering(object));
+        logMsg("User; hsview; CLICKED show axiom in hs tree " + logToolsManager.getHsRendering(object));
     }
 
     @Before("execution(void at.ainf.protegeview.debugmanager.DebugManager.setAxiom(..)) && args(object)")
@@ -427,9 +427,9 @@ public class Test {
         String result = "";
 
         if (object == null)
-            logMsg("PROGRAM explain axiom is set to null to reset " );
+            logMsg("Program; AxiomExplain; explain axiom is set to null to reset " );
         else
-            logMsg("PROGRAM explain axiom is now set to " + logToolsManager.getRendering(object));
+            logMsg("Program; AxiomExplain; explain axiom is now set to " + logToolsManager.getRendering(object));
 
 
     }
@@ -437,14 +437,14 @@ public class Test {
     @Before("execution(* at.ainf.protegeview.views.ResultsListSection.setShowEntailments(..)) && args(object)")
     public void logShowEnt(JoinPoint jp, boolean object) {
         if (object)
-            logMsg("HSVIEW CLICKED marked show entailment of " + logToolsManager.getShowEntailemnts(jp.getThis()));
+            logMsg("User; hsview; CLICKED marked show entailment of " + logToolsManager.getShowEntailemnts(jp.getThis()));
         else
-            logMsg("HSVIEW CLICKED unmarked show entailment of " + logToolsManager.getShowEntailemnts(jp.getThis()));
+            logMsg("User; hsview; CLICKED unmarked show entailment of " + logToolsManager.getShowEntailemnts(jp.getThis()));
     }
 
     @Before("execution(* org.protege.editor.owl.ui.view.AbstractOWLEntityHierarchyViewComponent.transmitSelection(..))")
     public void logUserLooks(JoinPoint jp) {
-        logMsg("GLOBAL CLICKED user clicks on entity " + logToolsManager.getShowEntity(jp.getThis()));
+        logMsg("User; Global; CLICKED user clicks on entity " + logToolsManager.getShowEntity(jp.getThis()));
     }
 
     @Around("execution(* at.ainf.protegeview.backgroundsearch.BackgroundSearcher.doBackgroundSearch(..))")
@@ -458,7 +458,7 @@ public class Test {
         }
 
         start = System.nanoTime() - start;
-        logMsg("PROGRAM time needed for calc HS " + start + "ns ");
+        logMsg("Program; Toolbox; time needed for calc HS ;" + start + " ns ");
         return ret;
 
     }

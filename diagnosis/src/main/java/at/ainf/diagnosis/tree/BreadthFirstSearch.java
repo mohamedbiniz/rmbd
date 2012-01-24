@@ -8,7 +8,7 @@
 
 package at.ainf.diagnosis.tree;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class BreadthFirstSearch<Id> extends UninformedSearch<Id> {
 
-    public BreadthFirstSearch(Storage<HittingSet<Id>, Set<Id>, Id> storage) {
+    public BreadthFirstSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
         super(storage);
     }
 

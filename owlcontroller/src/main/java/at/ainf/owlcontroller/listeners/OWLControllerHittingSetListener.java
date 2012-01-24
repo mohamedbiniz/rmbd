@@ -1,6 +1,6 @@
 package at.ainf.owlcontroller.listeners;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.util.Set;
@@ -14,6 +14,6 @@ import java.util.Set;
  */
 public interface OWLControllerHittingSetListener extends OWLControllerListener {
 
-    void updateValidHittingSets (Set<? extends HittingSet<OWLLogicalAxiom>> validHittingSets);
+    void updateValidHittingSets (Set<? extends AxiomSet<OWLLogicalAxiom>> validHittingSets);
 
 }

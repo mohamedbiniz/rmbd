@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class MultithreadedBFS<Id> extends UninformedSearch<Id> {
 
-    public MultithreadedBFS(Storage<HittingSet<Id>, Set<Id>, Id> storage) {
+    public MultithreadedBFS(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
         super(storage);
     }
 

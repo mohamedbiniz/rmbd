@@ -1,6 +1,6 @@
 package at.ainf.protegeview.backgroundsearch;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -22,11 +22,11 @@ import java.util.concurrent.ExecutionException;
  */
 public class BackgroundSearcher {
 
-    private TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
+    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
 
     private Frame parent;
 
-    public BackgroundSearcher(TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, Frame parent) {
+    public BackgroundSearcher(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, Frame parent) {
         this.trSearch = search;
         this.parent = parent;
     }
@@ -38,6 +38,7 @@ public class BackgroundSearcher {
         BackgroundSearcherTask task = new BackgroundSearcherTask(trSearch,
                 dialog.getTextArea(),dialog.getProgressBar());
         trSearch.getStorage().addStorageItemListener(task);
+        trSearch.addOpenNodesListener(task);
         //BackgroundSearchManager.getInstance().addElementAddedToStorageListener(task);
         dialog.setWorker(task);
         task.addPropertyChangeListener(
@@ -54,6 +55,7 @@ public class BackgroundSearcher {
 
         try {
             BackgroundSearcherTask.Result res = task.get();
+            trSearch.removeOpenNodesListener(task);
             trSearch.getStorage().removeStorageItemListener(task);
             //BackgroundSearchManager.getInstance().removeElementAddedToStorageListener(task);
             DebugManager.getInstance().setValidHittingSets(trSearch.getStorage().getValidHittingSets());

@@ -88,6 +88,10 @@ public class ConstraintTheory extends AbstractTheory<Solver, Constraint> impleme
         throw new RuntimeException("This theory does not support computation of entailments!");
     }
 
+    public boolean supportEntailments() {
+        return false;
+    }
+
     public boolean isEntailed(Set<Constraint> n) {
         throw new RuntimeException("This theory does not support verification of entailments!");
     }

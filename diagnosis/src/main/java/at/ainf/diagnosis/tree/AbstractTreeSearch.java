@@ -12,7 +12,7 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.apache.log4j.Logger;
@@ -29,7 +29,7 @@ import static _dev.TimeLog.stop;
  * Time: 08:04:41
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set<Id>, Id> implements TreeSearch<T, E, Id> {
+public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<Id>, Id> implements TreeSearch<T, E, Id> {
 
     private int maxHittingSets = Integer.MAX_VALUE;
 
@@ -51,7 +51,7 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
 
     abstract public Node<Id> getNode();
 
-    protected abstract Collection<Node<Id>> getOpenNodes();
+    public abstract Collection<Node<Id>> getOpenNodes();
 
     public abstract Node<Id> popOpenNodes();
 
@@ -64,6 +64,16 @@ public abstract class AbstractTreeSearch<T extends HittingSet<Id>, E extends Set
     protected abstract E createConflictSet(Set<Id> quickConflict);
 
     protected abstract T createHittingSet(Node<Id> labels, boolean valid) throws SolverException;
+
+    protected List<OpenNodesListener> oNodesLsteners = new LinkedList<OpenNodesListener>();
+
+    public void addOpenNodesListener(OpenNodesListener l) {
+        oNodesLsteners.add(l);
+    }
+
+    public void removeOpenNodesListener(OpenNodesListener l) {
+        oNodesLsteners.remove(l);
+    }
 
     public Storage<T, E, Id> getStorage() {
         return this.storage;

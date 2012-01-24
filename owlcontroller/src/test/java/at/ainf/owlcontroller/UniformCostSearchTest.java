@@ -3,7 +3,7 @@ package at.ainf.owlcontroller;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -60,7 +60,7 @@ public class UniformCostSearchTest {
         search.setTheory(theory);
 
 
-        Collection<? extends HittingSet<OWLLogicalAxiom>> res = search.run(9);
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
 
     }
 
@@ -84,7 +84,7 @@ public class UniformCostSearchTest {
         search.setTheory(theory);
 
 
-        Collection<? extends HittingSet<OWLLogicalAxiom>> res = search.run(9);
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
 
     }
 

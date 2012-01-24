@@ -1,11 +1,7 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.protegeview.menuactions.OpenDTabAction;
 import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.HittingSet;
-import org.protege.editor.core.ProtegeManager;
-import org.protege.editor.core.ui.workspace.TabbedWorkspace;
-import org.protege.editor.core.ui.workspace.WorkspaceTabPlugin;
+import at.ainf.theory.storage.AxiomSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
@@ -65,24 +61,24 @@ public class LogToolsImp {
         String result = "";
         Partition<OWLLogicalAxiom> query =  (Partition<OWLLogicalAxiom>) queryObject  ;
 
-        result += "Query: score = " + query.score + " " + getRenderingSet(query.partition) + " ";
+        result += "Query: score = ;" + query.score + ";" + getRenderingSet(query.partition) + ";";
         result += "DX: size=" + query.dx.size();
         double sum = 0.0;
-        for (HittingSet hs : query.dx) {
+        for (AxiomSet hs : query.dx) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure();
         }
-        result += "sum(p)=" + sum + " ";
+        result += "sum(p)=" + sum + ";";
         result += "DNX: size=" + query.dnx.size();
         sum = 0.0;
-        for (HittingSet hs : query.dnx) {
+        for (AxiomSet hs : query.dnx) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure();
         }
-        result += "sum(p)=" + sum + " ";
+        result += "sum(p)=" + sum + ";";
         result += "D0: size=" + query.dz.size();
         sum = 0.0;
-        for (HittingSet hs : query.dz) {
+        for (AxiomSet hs : query.dz) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure();
         }
@@ -94,7 +90,7 @@ public class LogToolsImp {
     public String getHsRendering(Object o) {
         String result = "";
 
-        HittingSet<OWLLogicalAxiom> hs = (HittingSet<OWLLogicalAxiom>) o;
+        AxiomSet<OWLLogicalAxiom> hs = (AxiomSet<OWLLogicalAxiom>) o;
         result += "[";
         for (OWLLogicalAxiom axiom : hs)
             result += rend.render(axiom) + ", ";

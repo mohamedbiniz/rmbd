@@ -8,7 +8,7 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.listeners.OWLControllerConflictSetListener;
 import at.ainf.owlcontroller.listeners.OWLControllerHittingSetListener;
 import at.ainf.owlcontroller.listeners.OWLControllerListener;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.behaviors.Caching;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -88,7 +88,7 @@ public class OWLControllerImpl implements OWLController {
                             ((OWLControllerConflictSetListener)listener).updateConflictSets(conflicts);
                     }
 
-                    public void hittingSetAdded(Set<? extends HittingSet<OWLLogicalAxiom>> hittingSets) {
+                    public void hittingSetAdded(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
                         for (OWLControllerListener listener : listeners.get(OWLControllerHittingSetListener.class))
                             ((OWLControllerHittingSetListener)listener).updateValidHittingSets(hittingSets);
                     }

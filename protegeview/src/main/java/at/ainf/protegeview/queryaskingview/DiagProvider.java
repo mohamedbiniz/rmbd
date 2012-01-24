@@ -1,7 +1,7 @@
 package at.ainf.protegeview.queryaskingview;
 
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.HittingSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.backgroundsearch.BackgroundSearcher;
 import at.ainf.protegeview.backgroundsearch.EntailmentSearch;
@@ -20,15 +20,15 @@ public class DiagProvider {
 
     private boolean isQueryMinimizerActive = true;
 
-    private TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = null;
+    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = null;
 
     private int diagnos = 9;
 
 
 
-    private LinkedList<HittingSet<OWLLogicalAxiom>> diagList = null;
+    private LinkedList<AxiomSet<OWLLogicalAxiom>> diagList = null;
 
-    public DiagProvider(TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> s,
+    public DiagProvider(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> s,
                         boolean isQueryMinimizerActive,
                         int number) {
         this.search = s;
@@ -40,14 +40,14 @@ public class DiagProvider {
     }
     public void calculateLead() {
 
-        diagList = new LinkedList<HittingSet<OWLLogicalAxiom>>();
+        diagList = new LinkedList<AxiomSet<OWLLogicalAxiom>>();
         search.setMaxHittingSets(diagnos);
         BackgroundSearcher s = new BackgroundSearcher(search, null);
         s.doBackgroundSearch();
-        Collection<? extends HittingSet<OWLLogicalAxiom>> res = search.getStorage().getValidHittingSets();
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getStorage().getValidHittingSets();
 
-        for (HittingSet<OWLLogicalAxiom> hittingSet : res)
-            diagList.add(hittingSet);
+        for (AxiomSet<OWLLogicalAxiom> axiomSet : res)
+            diagList.add(axiomSet);
     }
 
     public Partition<OWLLogicalAxiom> getQuery() {

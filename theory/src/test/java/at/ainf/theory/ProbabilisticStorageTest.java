@@ -1,7 +1,7 @@
 package at.ainf.theory;
 
-import at.ainf.theory.storage.HittingSet;
-import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -45,18 +45,18 @@ public class ProbabilisticStorageTest {
             Set<Integer> hs = new HashSet<Integer>();
             hs.add(count++);
             hs.add(count);
-            HittingSet<Integer> hittingSet = new HittingSetImpl<Integer>("ID" + i, random.nextDouble(), hs, new HashSet<Integer>());
-            hittingSet.setValid(random.nextBoolean());
-            st.addHittingSet(hittingSet);
+            AxiomSet<Integer> axiomSet = new AxiomSetImpl<Integer>("ID" + i, random.nextDouble(), hs, new HashSet<Integer>());
+            axiomSet.setValid(random.nextBoolean());
+            st.addHittingSet(axiomSet);
         }
         int valid = st.getValidHittingSets().size();
         validateSet(st);
         for (int i = 0; i < HS_COUNT; i++) {
             logger.info("Computing test " + i);
-            Set<HittingSet<Integer>> hittingSets = new TreeSet<HittingSet<Integer>>(st.getHittingSets());
-            assertEquals(HS_COUNT, hittingSets.size());
+            Set<AxiomSet<Integer>> axiomSets = new TreeSet<AxiomSet<Integer>>(st.getHittingSets());
+            assertEquals(HS_COUNT, axiomSets.size());
             assertEquals(valid, st.getValidHittingSets().size());
-            for (HittingSet<Integer> hs : hittingSets) {
+            for (AxiomSet<Integer> hs : axiomSets) {
                 hs.setMeasure(random.nextDouble());
             }
             validateSet(st);
@@ -64,7 +64,7 @@ public class ProbabilisticStorageTest {
     }
 
     private void validateSet(SimpleStorage<? extends Object> st) {
-        for (HittingSet hs : st.getHittingSets()) {
+        for (AxiomSet hs : st.getHittingSets()) {
             boolean contains = st.getHittingSets().contains(hs);
             assertTrue(contains);
         }

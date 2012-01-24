@@ -1,7 +1,5 @@
 package at.ainf.theory.storage;
 
-import at.ainf.theory.storage.HittingSet;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -13,9 +11,9 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class Partition<T> {
-    public Set<HittingSet<T>> dx = new LinkedHashSet<HittingSet<T>>();
-    public Set<HittingSet<T>> dnx = new LinkedHashSet<HittingSet<T>>();
-    public Set<HittingSet<T>> dz = new LinkedHashSet<HittingSet<T>>();
+    public Set<AxiomSet<T>> dx = new LinkedHashSet<AxiomSet<T>>();
+    public Set<AxiomSet<T>> dnx = new LinkedHashSet<AxiomSet<T>>();
+    public Set<AxiomSet<T>> dz = new LinkedHashSet<AxiomSet<T>>();
 
     public Set<T> partition;
     public double score = 0;

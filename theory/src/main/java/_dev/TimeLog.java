@@ -66,6 +66,8 @@ public class TimeLog {
     public static void stop(String stop) {
         Event ev = timeMap.get(stop);
         long time = System.currentTimeMillis();
+        if (ev==null)
+             return ;
         ev.count++;
         long in = time - ev.time;
         ev.overall += in;

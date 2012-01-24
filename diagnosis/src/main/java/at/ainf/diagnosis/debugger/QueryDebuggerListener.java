@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.debugger;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 
 import java.util.Set;
 
@@ -15,6 +15,6 @@ public interface QueryDebuggerListener<Id> {
 
     public void conflictSetAdded(Set<Set<Id>> conflicts);
 
-    public void hittingSetAdded(Set<? extends HittingSet<Id>> hittingSets);
+    public void hittingSetAdded(Set<? extends AxiomSet<Id>> hittingSets);
 
 }

@@ -1,6 +1,6 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.protegeview.views.ResultsListSection;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
@@ -24,13 +24,13 @@ public class DebugManager {
 
 
 
-    private Set<? extends HittingSet<OWLLogicalAxiom>> validHittingSets;
+    private Set<? extends AxiomSet<OWLLogicalAxiom>> validHittingSets;
 
     private Set<Set<OWLLogicalAxiom>> conflictSets = null;
 
     private OWLLogicalAxiom axiom;
 
-    private HittingSet<OWLLogicalAxiom> treeNode;
+    private AxiomSet<OWLLogicalAxiom> treeNode;
 
     private Set<ResultsListSection> entSets = null;
 
@@ -45,11 +45,11 @@ public class DebugManager {
         notifyAxiomChanged();
     }
 
-    public Set<? extends HittingSet<OWLLogicalAxiom>> getValidHittingSets() {
+    public Set<? extends AxiomSet<OWLLogicalAxiom>> getValidHittingSets() {
         return validHittingSets;
     }
 
-    public <E extends HittingSet<OWLLogicalAxiom>> void setValidHittingSets(Set<E> validHittingSets) {
+    public <E extends AxiomSet<OWLLogicalAxiom>> void setValidHittingSets(Set<E> validHittingSets) {
         this.validHittingSets = validHittingSets;
     }
 
@@ -77,11 +77,11 @@ public class DebugManager {
         this.entSets = entSets;
     }
 
-    public HittingSet<OWLLogicalAxiom> getTreeNode() {
+    public AxiomSet<OWLLogicalAxiom> getTreeNode() {
         return treeNode;
     }
 
-    public void setTreeNode(HittingSet<OWLLogicalAxiom> treeNode) {
+    public void setTreeNode(AxiomSet<OWLLogicalAxiom> treeNode) {
         this.treeNode = treeNode;
     }
 

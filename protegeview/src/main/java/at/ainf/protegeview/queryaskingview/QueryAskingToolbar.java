@@ -5,6 +5,7 @@ import at.ainf.protegeview.controlpanel.DebugIconsLoader;
 import at.ainf.protegeview.queryaskingview.buttons.QueryButton;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -65,18 +66,20 @@ public class QueryAskingToolbar extends JPanel {
         };
       toolBar.add(new TcaeButtonsButton("Confirm Answer","Confirm", DebugIconsLoader.CONFIRM, UNDEFINED_CHAR,action));*/
 
-        toolBar.add(new JLabel("Should the ontology entail the set of axioms?"));
+        JLabel label = new JLabel("Should the ontology entail the set of axioms?");
+        label.setFont(label.getFont().deriveFont(Font.BOLD,12) );
+        toolBar.add(label);
 
         toolBar.add(Box.createHorizontalGlue());
         // toolBar.addSeparator();
 
-        noButton = new QueryButton("No to All","No for all axioms", DebugIconsLoader.NOFORALL,
+        noButton = new QueryButton("No","No for all axioms", DebugIconsLoader.NOFORALL,
                 KeyEvent.VK_N, null,  DebugIconsLoader.NOFORALLACTIVATED);
-        toolBar.add(noButton);
+        //toolBar.add(noButton);
 
-        yesButton = new QueryButton("Yes to All","Yes for all axioms", DebugIconsLoader.YESFORALL,
+        yesButton = new QueryButton("Yes","Yes for all axioms", DebugIconsLoader.YESFORALL,
                 KeyEvent.VK_Y, null,  DebugIconsLoader.YESFORALLACTIVATED);
-        toolBar.add(yesButton);
+        //toolBar.add(yesButton);
 
         noButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

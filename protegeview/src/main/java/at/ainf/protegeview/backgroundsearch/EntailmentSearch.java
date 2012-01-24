@@ -4,7 +4,7 @@ import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
 import at.ainf.diagnosis.partitioning.ScoringFunction;
 import at.ainf.diagnosis.partitioning.SplitScoringFunction;
 import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -27,9 +27,9 @@ import java.util.concurrent.ExecutionException;
 public class EntailmentSearch {
 
 
-    private TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
+    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
 
-    private List<HittingSet<OWLLogicalAxiom>> diags;
+    private List<AxiomSet<OWLLogicalAxiom>> diags;
 
     private ScoringFunction<OWLLogicalAxiom> func;
 
@@ -37,8 +37,8 @@ public class EntailmentSearch {
 
 
     public EntailmentSearch(
-            TreeSearch<? extends HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search,
-            List<HittingSet<OWLLogicalAxiom>> diags, boolean isQueryMinimizerActive) {
+            TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search,
+            List<AxiomSet<OWLLogicalAxiom>> diags, boolean isQueryMinimizerActive) {
         this.trSearch = search;
         this.diags = diags;
         String fun = QueryDebuggerPreference.getInstance().getScoringFunction();

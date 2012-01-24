@@ -1,5 +1,6 @@
 package at.ainf.protegeview.testcasesentailmentsview.axiomeditor;
 
+import at.ainf.protegeview.testcasesentailmentsview.SectionType;
 import org.protege.editor.core.prefs.Preferences;
 import org.protege.editor.core.prefs.PreferencesManager;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
@@ -58,7 +59,7 @@ public class OWLAxiomEditor extends AbstractOWLObjectEditor<Set<OWLLogicalAxiom>
 
     private Preferences preferences = PreferencesManager.getInstance().getApplicationPreferences(OWLAxiomEditor.class);
 
-    public OWLAxiomEditor(OWLEditorKit editorKit, Collection<OWLLogicalAxiom> expression) {
+    public OWLAxiomEditor(OWLEditorKit editorKit, Collection<OWLLogicalAxiom> expression, SectionType type) {
         //public OWLAxiomEditor(OWLEditorKit editorKit, OWLClassExpression expression) {
 
         this.editorKit = editorKit;
@@ -75,8 +76,15 @@ public class OWLAxiomEditor extends AbstractOWLObjectEditor<Set<OWLLogicalAxiom>
         editingComponent.setPreferredSize(new Dimension(600, 400));
 
         tabbedPane.addChangeListener(changeListener);
+        this.type = type;
     }
+    private SectionType type;
 
+    public String getSectionType() {
+
+        return  type.getLabel();
+
+    }
 
     public void addPanel(OWLAxiomEditorPanel editorPanel) {
         editors.add(editorPanel);

@@ -4,7 +4,7 @@ import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -82,7 +82,7 @@ public class SimpleQueryTest {
         search.run(search.getMaxHittingSets());
         //s.doBackgroundSearch();
 
-        Collection<? extends HittingSet<OWLLogicalAxiom>> res = search.getStorage().getValidHittingSets();
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getStorage().getValidHittingSets();
         System.out.println(res.size());
         //Partition<OWLLogicalAxiom> query = diagProvider.getBestQuery(diagnoses);
         //theory.addNonEntailedTest(query.partition);
@@ -127,7 +127,7 @@ public class SimpleQueryTest {
         // theory.setIncludeOntAxioms(true);
 
         /*DiagProvider diagProvider = new DiagProvider(search, false, 9);
-          LinkedList<HittingSet<OWLLogicalAxiom>> diagnoses = diagProvider.getDiagnoses(9);
+          LinkedList<AxiomSet<OWLLogicalAxiom>> diagnoses = diagProvider.getDiagnoses(9);
           Partition<OWLLogicalAxiom> query = diagProvider.getBestQuery(diagnoses);
         theory.addNonEntailedTest(query.partition);
         diagnoses = diagProvider.getDiagnoses(9);
@@ -165,13 +165,13 @@ public class SimpleQueryTest {
         search.setTheory(theory);
 
 
-        Collection<? extends HittingSet<OWLLogicalAxiom>> res = search.run(9);
-        TreeSet<HittingSet<OWLLogicalAxiom>> result = new TreeSet<HittingSet<OWLLogicalAxiom>>(res);
-        for (HittingSet<OWLLogicalAxiom> hs : result) {
-            TreeSet<HittingSet<OWLLogicalAxiom>> ts = new TreeSet<HittingSet<OWLLogicalAxiom>>();
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
+        TreeSet<AxiomSet<OWLLogicalAxiom>> result = new TreeSet<AxiomSet<OWLLogicalAxiom>>(res);
+        for (AxiomSet<OWLLogicalAxiom> hs : result) {
+            TreeSet<AxiomSet<OWLLogicalAxiom>> ts = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
             ts.add(hs);
             assertTrue(ts.contains(hs));
-            for (HittingSet<OWLLogicalAxiom> hs1 : result) {
+            for (AxiomSet<OWLLogicalAxiom> hs1 : result) {
 
                 if (hs.getName().equals(hs1.getName())) {
                     assertTrue(hs.equals(hs1));

@@ -1,8 +1,8 @@
 package at.ainf.protegeview.views.diagnosistreeview;
 
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.storage.HittingSet;
-import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.NodeCostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -126,7 +126,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
     }
 
 
-    public void setHittingSets(Set<? extends HittingSet<OWLLogicalAxiom>> hs) {
+    public void setHittingSets(Set<? extends AxiomSet<OWLLogicalAxiom>> hs) {
 
         /*axiomsByEntityMap.clear();
         usageCount = 0;
@@ -150,7 +150,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
         }
 
         for (Object hittingSet : hs) {
-            Node<OWLLogicalAxiom> node = (Node<OWLLogicalAxiom>) ((HittingSetImpl<OWLLogicalAxiom>) hittingSet).getNode();
+            Node<OWLLogicalAxiom> node = (Node<OWLLogicalAxiom>) ((AxiomSetImpl<OWLLogicalAxiom>) hittingSet).getNode();
             Node<OWLLogicalAxiom> parent = node.getParent();
 
             while (parent != null) {

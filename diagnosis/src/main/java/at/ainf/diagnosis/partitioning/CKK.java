@@ -3,7 +3,7 @@ package at.ainf.diagnosis.partitioning;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 
@@ -20,7 +20,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
     private static Logger logger = Logger.getLogger(CKK.class.getName());
 
-    private class Differencing<E extends HittingSet<Id>> {
+    private class Differencing<E extends AxiomSet<Id>> {
         private Set<E> left = new LinkedHashSet<E>();
         private Set<E> right = new LinkedHashSet<E>();
         private Set<E> tail = new LinkedHashSet<E>();
@@ -89,7 +89,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         super(theory, function);
     }
 
-    public <E extends HittingSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
+    public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
         ensureCapacity((int) Math.pow(2, hittingSets.size()));
         if (getScoringFunction() == null)
@@ -164,7 +164,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
             throws SolverException, InconsistentTheoryException {
         Set<Id> ent = partition.partition;
         // partition the rest of diagnoses
-        for (HittingSet<Id> hs : getHittingSets()) {
+        for (AxiomSet<Id> hs : getHittingSets()) {
             if (!partition.dx.contains(hs)) {
                 if (hs.getEntailments().containsAll(ent)) {
                     partition.dx.add(hs);
@@ -181,7 +181,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         return true;
     }
 
-    protected <E extends HittingSet<Id>> void findPartition(Differencing<E> diff)
+    protected <E extends AxiomSet<Id>> void findPartition(Differencing<E> diff)
             throws SolverException, InconsistentTheoryException {
 
         if ((diff == null || diff.tail.isEmpty())) {

@@ -1,5 +1,7 @@
 package at.ainf.theory.storage;
 
+import at.ainf.theory.watchedset.WatchedElement;
+
 import java.util.Set;
 
 /**
@@ -9,9 +11,9 @@ import java.util.Set;
  * Time: 09:31
  * To change this template use File | Settings | File Templates.
  */
-public interface HittingSet<Id> extends Set<Id>, Comparable<HittingSet<Id>> {
+public interface AxiomSet<Id> extends Set<Id>, Comparable<AxiomSet<Id>>, WatchedElement<Double> {
 
-    public <T extends HittingSet<Id>> void setListener(StorageListener<T, Id> listener);
+    public <T extends AxiomSet<Id>> void setListener(StorageListener<T, Id> listener);
 
     boolean isValid();
 

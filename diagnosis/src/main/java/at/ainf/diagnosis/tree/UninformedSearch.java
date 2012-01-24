@@ -1,8 +1,8 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
-import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.Storage;
 
 import java.util.*;
@@ -14,15 +14,15 @@ import java.util.*;
  * Time: 14:36
  * To change this template use File | Settings | File Templates.
  */
-public abstract class UninformedSearch<Id> extends AbstractTreeSearch<HittingSet<Id>, Set<Id>, Id>
-        implements TreeSearch<HittingSet<Id>, Set<Id>, Id> {
+public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id>
+        implements TreeSearch<AxiomSet<Id>, Set<Id>, Id> {
 
     private int hscount = 0;
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
 
-    public UninformedSearch(Storage<HittingSet<Id>, Set<Id>, Id> storage) {
+    public UninformedSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
         super(storage);
     }
 
@@ -32,27 +32,31 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<HittingSet
     }
 
     @Override
-    protected HittingSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
+    protected AxiomSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
         Set<Id> labels = node.getPathLabels();
         Set<Id> entailments = Collections.emptySet();
-        if (valid) entailments = getTheory().getEntailments(labels);
+        if (getTheory().supportEntailments() && valid) entailments = getTheory().getEntailments(labels);
         double measure = 1d / labels.size();
-        HittingSetImpl<Id> hs = new HittingSetImpl<Id>("HS" + this.hscount, measure, labels, entailments);
+        AxiomSetImpl<Id> hs = new AxiomSetImpl<Id>("HS" + this.hscount, measure, labels, entailments);
         hs.setNode(node);
         this.hscount++;
         return hs;
     }
 
 
-    protected Collection<Node<Id>> getOpenNodes() {
+    public Collection<Node<Id>> getOpenNodes() {
         return openNodes;
     }
 
     public Node<Id> popOpenNodes() {
+        for (OpenNodesListener l : oNodesLsteners)
+            l.updateOpenNodesRemoved();
         return this.openNodes.pop();
     }
 
     public void pushOpenNodes(Node<Id> node) {
+        for (OpenNodesListener l : oNodesLsteners)
+            l.updateOpenNodesAdded();
         this.openNodes.push(node);
     }
 

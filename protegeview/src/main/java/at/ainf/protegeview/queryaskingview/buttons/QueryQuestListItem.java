@@ -5,6 +5,8 @@ import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.protegeview.views.ResultsListSectionItem;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
+import javax.swing.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: pfleiss
@@ -56,11 +58,57 @@ public class QueryQuestListItem extends ResultsListSectionItem {
     public void handleEntailed() {
         entailedMarked = !entailedMarked;
         nonEntailedMarked = false;
+        if (entailedMarked) askUserLN();
+
+    }
+
+    int lineNumber;
+
+    public int getLineNumber() {
+        return lineNumber;
+
+    }
+
+    private void askUserLN() {
+
+        int number = 0;
+        boolean redo = true;
+
+        while (redo) {
+            /*JTextArea area = new JTextArea("");
+            Object complexMsg[] = {"Why line in the text did you use to answer this axiom:", area};
+            JOptionPane optionPane = new JOptionPane();
+            optionPane.setMessage(complexMsg);
+            optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
+            area.requestFocusInWindow();
+            JDialog dialog = optionPane.createDialog(null, "Line Number");
+            dialog.setVisible(true);*/
+
+            String sq  = (String) JOptionPane.showInputDialog(
+                    null,
+                    "Which line in the text did you use to answer this axiom:",
+                    "LineNumber",
+                    JOptionPane.QUESTION_MESSAGE);
+
+            try {
+                number = Integer.parseInt(sq);
+               redo = false;
+
+            }
+            catch(NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Please give a line number ", "NumberFormatException", JOptionPane.ERROR_MESSAGE);
+
+            }
+
+        }
+        lineNumber = number;
     }
 
     public void handleNotEntailed() {
         entailedMarked = false;
         nonEntailedMarked = !nonEntailedMarked;
+        if (nonEntailedMarked) askUserLN();
+
     }
 
     public void handleUnknownEntailed() {

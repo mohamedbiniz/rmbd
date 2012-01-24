@@ -9,21 +9,21 @@
 package at.ainf.sat4j.tree;
 
 import at.ainf.diagnosis.tree.*;
+import at.ainf.sat4j.model.IVecIntComparable;
 import at.ainf.sat4j.model.PropositionalTheory;
+import at.ainf.sat4j.model.VecIntComparable;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;
-import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
-import org.sat4j.specs.IVecInt;
 
 import java.util.*;
 
@@ -52,34 +52,34 @@ public class TreeEvaluation {
 
         if (logger.isInfoEnabled())
             logger.info("Starting the tree creation test.");
-        SimpleStorage<IVecInt> storage = new SimpleStorage<IVecInt>();
-        List<TreeSearch<HittingSet<IVecInt>, Set<IVecInt>, IVecInt>> search = new ArrayList<TreeSearch<HittingSet<IVecInt>, Set<IVecInt>, IVecInt>>();
-        search.add(new BreadthFirstSearch<IVecInt>(storage));
-        search.add(new DepthFirstSearch<IVecInt>(storage));
-        search.add(new DepthLimitedSearch<IVecInt>(storage));
-        search.add(new IterativeDeepening<IVecInt>(storage));
-        search.add(new MixedTreeSearch<IVecInt>(storage));
+        SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
+        List<TreeSearch<AxiomSet<IVecIntComparable>, Set<IVecIntComparable>, IVecIntComparable>> search = new ArrayList<TreeSearch<AxiomSet<IVecIntComparable>, Set<IVecIntComparable>, IVecIntComparable>>();
+        search.add(new BreadthFirstSearch<IVecIntComparable>(storage));
+        search.add(new DepthFirstSearch<IVecIntComparable>(storage));
+        search.add(new DepthLimitedSearch<IVecIntComparable>(storage));
+        search.add(new IterativeDeepening<IVecIntComparable>(storage));
+        search.add(new MixedTreeSearch<IVecIntComparable>(storage));
 
-        for (TreeSearch<HittingSet<IVecInt>, Set<IVecInt>, IVecInt> sr : search)
+        for (TreeSearch<AxiomSet<IVecIntComparable>, Set<IVecIntComparable>, IVecIntComparable> sr : search)
             run(sr);
 
     }
 
-    private void run(TreeSearch<HittingSet<IVecInt>, Set<IVecInt>, IVecInt> search) throws SolverException, ContradictionException, NoConflictException, InconsistentTheoryException {
-        search.setSearcher(new NewQuickXplain<IVecInt>());
+    private void run(TreeSearch<AxiomSet<IVecIntComparable>, Set<IVecIntComparable>, IVecIntComparable> search) throws SolverException, ContradictionException, NoConflictException, InconsistentTheoryException {
+        search.setSearcher(new NewQuickXplain<IVecIntComparable>());
 
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
-        th.addBackgroundFormula(new VecInt(clause));
+        th.addBackgroundFormula(new VecIntComparable(clause));
 
-        List<IVecInt> conflict1 = new LinkedList<IVecInt>();
-        Set<IVecInt> diagnosis1 = new TreeSet<IVecInt>();
-        Set<IVecInt> diagnosis2 = new TreeSet<IVecInt>();
-        Set<IVecInt> diagnosis3 = new TreeSet<IVecInt>();
-        Set<IVecInt> diagnosis4 = new TreeSet<IVecInt>();
+        List<IVecIntComparable> conflict1 = new LinkedList<IVecIntComparable>();
+        Set<IVecIntComparable> diagnosis1 = new TreeSet<IVecIntComparable>();
+        Set<IVecIntComparable> diagnosis2 = new TreeSet<IVecIntComparable>();
+        Set<IVecIntComparable> diagnosis3 = new TreeSet<IVecIntComparable>();
+        Set<IVecIntComparable> diagnosis4 = new TreeSet<IVecIntComparable>();
 
         // simple conflict conflict1-c4
-        IVecInt var = th.addClause(new int[]{-1, -2, 3});
+        IVecIntComparable var = th.addClause(new int[]{-1, -2, 3});
         conflict1.add(var);
         diagnosis1.add(var);
 
@@ -97,7 +97,7 @@ public class TreeEvaluation {
 
         //Storage.getStorage().resetStorage();
 
-        List<IVecInt> conflict2 = new LinkedList<IVecInt>();
+        List<IVecIntComparable> conflict2 = new LinkedList<IVecIntComparable>();
         var = th.addClause(new int[]{-3});
         conflict1.add(var);
         diagnosis4.add(var);
@@ -114,29 +114,38 @@ public class TreeEvaluation {
         // succeeds to create a root since th is unsat
         search.run();
 
-        Collection<HittingSet<IVecInt>> diagnoses = search.getStorage().getValidHittingSets();
+        Collection<AxiomSet<IVecIntComparable>> diagnoses = search.getStorage().getValidHittingSets();
         logger.debug("Diagnoses: " + diagnoses.toString());
         assertTrue(searchDub(diagnoses));
         assertTrue(diagnoses.size() == 4);
-        assertTrue(diagnoses.contains(diagnosis1));
-        assertTrue(diagnoses.contains(diagnosis2));
-        assertTrue(diagnoses.contains(diagnosis3));
-        assertTrue(diagnoses.contains(diagnosis4));
+        assertTrue(contains(diagnoses,diagnosis1));
+        assertTrue(contains(diagnoses,diagnosis2));
+        assertTrue(contains(diagnoses,diagnosis3));
+        assertTrue(contains(diagnoses,diagnosis4));
 
-        Collection<Set<IVecInt>> conflicts = search.getStorage().getConflictSets();
+        Collection<Set<IVecIntComparable>> conflicts = search.getStorage().getConflictSets();
         logger.debug("Conflict: " + conflicts.toString());
         assertTrue(searchDub(conflicts));
         assertTrue(conflicts.size() == 2);
-        assertTrue(conflicts.contains(conflict1));
-        assertTrue(conflicts.contains(conflict2));
+        assertTrue(contains(conflicts,conflict1));
+        assertTrue(contains(conflicts,conflict2));
+
+    }
+
+    private boolean contains (Collection<? extends Set<IVecIntComparable>> set, Collection<IVecIntComparable> e) {
+        for (Set<IVecIntComparable> i : set)
+            if (e.equals(i)) return true;
+
+        return false;
+
     }
 
 
-    private boolean searchDub(Collection<? extends Set<IVecInt>> conflicts) {
+    private boolean searchDub(Collection<? extends Set<IVecIntComparable>> conflicts) {
         short k = 0;
-        for (Collection<IVecInt> conflict1 : conflicts) {
+        for (Collection<IVecIntComparable> conflict1 : conflicts) {
             k = 0;
-            for (Collection<IVecInt> conflict2 : conflicts) {
+            for (Collection<IVecIntComparable> conflict2 : conflicts) {
                 if (conflict1.size() == conflict2.size() && conflict1.containsAll(conflict2))
                     k++;
                 if (k > 1)
@@ -148,12 +157,12 @@ public class TreeEvaluation {
 
     @Test
     public void testTests() throws SolverException, NoConflictException, InconsistentTheoryException {
-        SimpleStorage<IVecInt> storage = new SimpleStorage<IVecInt>();
-        BreadthFirstSearch<IVecInt> search = new BreadthFirstSearch<IVecInt>(storage);
-        search.setSearcher(new NewQuickXplain<IVecInt>());
+        SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
+        BreadthFirstSearch<IVecIntComparable> search = new BreadthFirstSearch<IVecIntComparable>(storage);
+        search.setSearcher(new NewQuickXplain<IVecIntComparable>());
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
-        VecInt vecInt = new VecInt(new int[]{-6});
-        LinkedList<IVecInt> bg = new LinkedList<IVecInt>();
+        VecIntComparable vecInt = new VecIntComparable(new int[]{-6});
+        LinkedList<IVecIntComparable> bg = new LinkedList<IVecIntComparable>();
         bg.add(vecInt);
         th.setBackgroundFormulas(bg);
 
@@ -173,23 +182,23 @@ public class TreeEvaluation {
         search.getStorage().resetStorage();
 
 
-        th.addPositiveTest(new VecInt(new int[]{2}));
+        th.addPositiveTest(new VecIntComparable(new int[]{2}));
         boolean test = false;
         try {
-            th.addNegativeTest(new VecInt(new int[]{2}));
+            th.addNegativeTest(new VecIntComparable(new int[]{2}));
         } catch (InconsistentTheoryException e) {
             test = true;
         }
         assertTrue(test);
 
         // specify 4 types of tests
-        IVecInt ntest = new VecInt(new int[]{-4});
+        IVecIntComparable ntest = new VecIntComparable(new int[]{-4});
         th.addNegativeTest(ntest);
-        IVecInt ptest = new VecInt(new int[]{2});
+        IVecIntComparable ptest = new VecIntComparable(new int[]{2});
         th.addPositiveTest(ptest);
-        th.addEntailedTest(new VecInt(new int[]{3}));
+        th.addEntailedTest(new VecIntComparable(new int[]{3}));
         // this is unsat with background
-        VecInt net = new VecInt(new int[]{-6});
+        VecIntComparable net = new VecIntComparable(new int[]{-6});
 
         // verify the results
         test = false;
@@ -201,14 +210,14 @@ public class TreeEvaluation {
         assertTrue(test);
 
         th.removeNonEntailedTest(net);
-        th.addNonEntailedTest(new VecInt(new int[]{5}));
+        th.addNonEntailedTest(new VecIntComparable(new int[]{5}));
 
         search.setTheory(th);
         search.run();
 
         assertEquals(search.getStorage().getHittingSetsCount(), 1);
 
-        for (Collection<IVecInt> hs : search.getStorage().getValidHittingSets()) {
+        for (Collection<IVecIntComparable> hs : search.getStorage().getValidHittingSets()) {
             logger.info(hs);
             assertTrue(hs.toString().equals("[-1,5]"));
         }
@@ -217,9 +226,9 @@ public class TreeEvaluation {
 
     @Test
     public void testStopAndGo() throws SolverException, NoConflictException, InconsistentTheoryException {
-        SimpleStorage<IVecInt> storage = new SimpleStorage<IVecInt>();
-        BreadthFirstSearch<IVecInt> search = new BreadthFirstSearch<IVecInt>(storage);
-        search.setSearcher(new NewQuickXplain<IVecInt>());
+        SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
+        BreadthFirstSearch<IVecIntComparable> search = new BreadthFirstSearch<IVecIntComparable>(storage);
+        search.setSearcher(new NewQuickXplain<IVecIntComparable>());
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
 
 

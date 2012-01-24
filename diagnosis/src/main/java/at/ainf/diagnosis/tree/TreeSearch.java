@@ -12,10 +12,11 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Set;
  * Time: 14:15:23
  * To change this template use File | Settings | File Templates.
  */
-public interface TreeSearch<T extends HittingSet<Id>, E extends Set<Id>, Id> {
+public interface TreeSearch<T extends AxiomSet<Id>, E extends Set<Id>, Id> {
 
     public Set<T> run() throws SolverException, NoConflictException, InconsistentTheoryException;
 
@@ -42,4 +43,11 @@ public interface TreeSearch<T extends HittingSet<Id>, E extends Set<Id>, Id> {
     public int getMaxHittingSets();
 
     Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, InconsistentTheoryException;
+
+    public void addOpenNodesListener (OpenNodesListener l);
+
+    public void removeOpenNodesListener (OpenNodesListener l);
+
+    public Collection<Node<Id>> getOpenNodes();
+
 }

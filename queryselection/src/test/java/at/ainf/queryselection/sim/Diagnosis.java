@@ -1,9 +1,10 @@
 package at.ainf.queryselection.sim;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.StorageListener;
 import at.ainf.queryselection.DiagnosisMemento;
 import at.ainf.queryselection.QueryModuleDiagnosis;
+import at.ainf.theory.watchedset.MeasureUpdatedListener;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -92,7 +93,7 @@ public class Diagnosis extends TreeSet<Object> implements QueryModuleDiagnosis<O
         this.probability = p;
     }
 
-    public <T extends HittingSet<Object>> void setListener(StorageListener<T, Object> tObjectStorageListener) {
+    public <T extends AxiomSet<Object>> void setListener(StorageListener<T, Object> tObjectStorageListener) {
         throw new IllegalStateException("This class can be used for test purposes only and cannot be stored!");
     }
 
@@ -164,7 +165,7 @@ public class Diagnosis extends TreeSet<Object> implements QueryModuleDiagnosis<O
         return result;
     }
 
-    public int compareTo(HittingSet o) {
+    public int compareTo(AxiomSet o) {
         if (this == o) return 0;
         if (this.equals(o)) return 0;
 
@@ -173,6 +174,18 @@ public class Diagnosis extends TreeSet<Object> implements QueryModuleDiagnosis<O
         if (diagnosis.probability - probability > 0)
             return -1;
         return 1;
+    }
+
+    public void addMeasureUpdatedListener(MeasureUpdatedListener<Double> doubleMeasureUpdatedListener) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void removeMeasureUpdatedListener(MeasureUpdatedListener<Double> doubleMeasureUpdatedListener) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setWatchedElementMeasure(Double value) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
 

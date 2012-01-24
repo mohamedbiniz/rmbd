@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 
 import java.util.Set;
 
@@ -17,10 +17,10 @@ public class SplitScoringFunction<Id> extends EntropyScoringFunction<Id> impleme
         return "Split";
     }
 
-    public void normalize(Set<? extends HittingSet<Id>> hittingSets) {
+    public void normalize(Set<? extends AxiomSet<Id>> hittingSets) {
         double size = hittingSets.size();
         if (size > 1)
-            for (HittingSet<Id> hs : hittingSets) {
+            for (AxiomSet<Id> hs : hittingSets) {
                hs.setMeasure(1 / size);
             }
     }

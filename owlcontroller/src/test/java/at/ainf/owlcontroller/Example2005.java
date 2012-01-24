@@ -6,7 +6,7 @@ import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -63,12 +63,12 @@ public class Example2005 {
 
         debugger.debug();
 
-        Set<? extends HittingSet<OWLLogicalAxiom>> hittingset = debugger.getHittingSets();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getHittingSets();
         Set<Set<OWLLogicalAxiom>> conflictset = debugger.getConflictSets();
 
         assertTrue(hittingset.size() == 3);
         assertTrue(hittingset.iterator().next().size() == 1);
-        Iterator<? extends HittingSet<OWLLogicalAxiom>> hittingSetItr = hittingset.iterator();
+        Iterator<? extends AxiomSet<OWLLogicalAxiom>> hittingSetItr = hittingset.iterator();
         assertTrue(MyOWLRendererParser.render(hittingSetItr.next().iterator().next()).equals("A3 SubClassOf A4 and A5"));
         assertTrue(MyOWLRendererParser.render(hittingSetItr.next().iterator().next()).equals("A4 SubClassOf C and (s only F)"));
         assertTrue(MyOWLRendererParser.render(hittingSetItr.next().iterator().next()).equals("A5 SubClassOf s some (not (F))"));
@@ -102,11 +102,11 @@ public class Example2005 {
 
         debugger.debug();
 
-        Set<? extends HittingSet<OWLLogicalAxiom>> hittingset = debugger.getHittingSets();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getHittingSets();
         Set<Set<OWLLogicalAxiom>> conflictset = debugger.getConflictSets();
 
         assertTrue(hittingset.size() == 3);
-        Iterator<? extends HittingSet<OWLLogicalAxiom>> hsItr = hittingset.iterator();
+        Iterator<? extends AxiomSet<OWLLogicalAxiom>> hsItr = hittingset.iterator();
         Set<OWLLogicalAxiom> hs = hsItr.next();
         assertTrue(hs.size() == 2);
         for (OWLLogicalAxiom a : hs) {

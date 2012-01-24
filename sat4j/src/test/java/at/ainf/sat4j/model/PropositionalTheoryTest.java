@@ -14,10 +14,8 @@ import static org.junit.Assert.*;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
 import org.junit.Test;
-import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
-import org.sat4j.specs.IVecInt;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ public class PropositionalTheoryTest {
     public void testTheory() throws ContradictionException, SolverException, InconsistentTheoryException {
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
-        th.addBackgroundFormula(new VecInt(clause));
+        th.addBackgroundFormula(new VecIntComparable(clause));
         assertTrue(th.hasBackgroundTheory());
 
         int count = th.getTheoryCount();
@@ -40,7 +38,7 @@ public class PropositionalTheoryTest {
         assertEquals(1, th.getTheoryCount());
 
         clause = new int[]{-3};
-        IVecInt fl = th.addClause(clause);
+        IVecIntComparable fl = th.addClause(clause);
         th.push(fl);
         assertEquals(2, th.getTheoryCount());
         assertFalse(th.isConsistent());
@@ -62,7 +60,7 @@ public class PropositionalTheoryTest {
             return;
 
         int ncl = (int) Math.round(Math.random() * 10);
-        List<IVecInt> list = new ArrayList<IVecInt>(ncl);
+        List<IVecIntComparable> list = new ArrayList<IVecIntComparable>(ncl);
         for (int i = 0; i < ncl; i++) {
             int length = (int) Math.round(Math.random() * 10);
             int[] lclause = new int[ncl];
@@ -71,7 +69,7 @@ public class PropositionalTheoryTest {
                 lclause[i] = from;
 
             }
-            IVecInt fl = th.addClause(lclause);
+            IVecIntComparable fl = th.addClause(lclause);
             list.add(fl);
         }
         th.push(list);
@@ -81,7 +79,7 @@ public class PropositionalTheoryTest {
     private void insertConflicts(PropositionalTheory th) throws ContradictionException {
 
         // simple conflict c1-c4
-        List<IVecInt> list = new ArrayList<IVecInt>(3);
+        List<IVecIntComparable> list = new ArrayList<IVecIntComparable>(3);
 
         int[] clause = new int[]{-1, -2, 3};
         list.add(th.addClause(clause));

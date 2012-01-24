@@ -8,7 +8,7 @@ import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -85,7 +85,7 @@ public class QuerySelComparison {
         PropertyConfigurator.configure(conf);
     }
 
-    public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<HittingSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<HittingSet<OWLLogicalAxiom>> diags)
+    public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diags)
             throws SolverException, InconsistentTheoryException {
 
         ScoringFunction f = null;
@@ -209,7 +209,7 @@ public class QuerySelComparison {
         search.setNodeCostsEstimator(es);
 
         search.run();
-        TreeSet<HittingSet<OWLLogicalAxiom>> alldiags = (TreeSet<HittingSet<OWLLogicalAxiom>>)
+        TreeSet<AxiomSet<OWLLogicalAxiom>> alldiags = (TreeSet<AxiomSet<OWLLogicalAxiom>>)
                 search.getStorage().getValidHittingSets();
 
         theory.clearTestCases();
@@ -217,9 +217,9 @@ public class QuerySelComparison {
 
         chooseUserProbab(UsersProbab.EXTREME, search, alldiags);
 
-        HittingSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(DiagProbab.GOOD, alldiags);
+        AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(DiagProbab.GOOD, alldiags);
 
-        Set<HittingSet<OWLLogicalAxiom>> diagnoses = search.run(9);
+        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.run(9);
 
         Partition<OWLLogicalAxiom> actPa = getBestQuery(search, diagnoses);
 
@@ -280,7 +280,7 @@ public class QuerySelComparison {
                             logger.info(ontologyFileString + " " + usersProbab + " " + diagProbab + " " + i
                                     + " choosing target diagnoses and user probabilities  ");
 
-                            chooseUserProbab(usersProbab, search, Collections.<HittingSet<OWLLogicalAxiom>>emptySet());
+                            chooseUserProbab(usersProbab, search, Collections.<AxiomSet<OWLLogicalAxiom>>emptySet());
                             logger.info("searching diagnoses for " + ontologyFileString);
                             try {
                                 search.run();
@@ -292,7 +292,7 @@ public class QuerySelComparison {
                                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
 
-                            Set<HittingSet<OWLLogicalAxiom>> diagnoses =
+                            Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                     Collections.unmodifiableSet(search.getStorage().getValidHittingSets());
                             Set<Set<OWLLogicalAxiom>> conflictSets = search.getStorage().getConflictSets();
 
@@ -361,7 +361,7 @@ public class QuerySelComparison {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
-            Set<HittingSet<OWLLogicalAxiom>> diagnoses =
+            Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                     Collections.unmodifiableSet(search.getStorage().getValidHittingSets());
 
             theory.clearTestCases();
@@ -380,7 +380,7 @@ public class QuerySelComparison {
 
                         diagnoses = chooseUserProbab(usersProbab, search, diagnoses);
                         testOrder(diagnoses);
-                        HittingSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<HittingSet<OWLLogicalAxiom>>(diagnoses));
+                        AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
 
                         for (int j = 0; j < 2; j++) {
                             scoringFunc = ScoringFunc.values()[j];
@@ -494,9 +494,9 @@ public class QuerySelComparison {
         }
     }
 
-    private void testOrder(Set<HittingSet<OWLLogicalAxiom>> diagnoses) {
+    private void testOrder(Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         double prob = 0;
-        for (HittingSet<OWLLogicalAxiom> diag : diagnoses) {
+        for (AxiomSet<OWLLogicalAxiom> diag : diagnoses) {
             if (diag.getMeasure() < prob)
                 throw new IllegalStateException("Set of the diagnoses is not ordered!");
             prob = diag.getMeasure();
@@ -520,21 +520,21 @@ public class QuerySelComparison {
 //        return sortDiagnoses(hittingSets);
 //    }
 
-    private Set<HittingSet<OWLLogicalAxiom>> sortDiagnoses(Set<HittingSet<OWLLogicalAxiom>> hittingSets) {
-        TreeSet<HittingSet<OWLLogicalAxiom>> phs = new TreeSet<HittingSet<OWLLogicalAxiom>>();
-        for (HittingSet<OWLLogicalAxiom> hs : hittingSets)
+    private Set<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
+        TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        for (AxiomSet<OWLLogicalAxiom> hs : axiomSets)
             phs.add(hs);
         return Collections.unmodifiableSet(phs);
     }
 
-    private double sum(Set<? extends HittingSet> dx) {
+    private double sum(Set<? extends AxiomSet> dx) {
         double sum = 0;
-        for (HittingSet hs : dx)
+        for (AxiomSet hs : dx)
             sum += hs.getMeasure();
         return sum;
     }
 
-    public <E extends HittingSet<OWLLogicalAxiom>> TreeSet<E> normalize(Set<E> hittingSets) {
+    public <E extends AxiomSet<OWLLogicalAxiom>> TreeSet<E> normalize(Set<E> hittingSets) {
         TreeSet<E> set = new TreeSet<E>();
         double sum = sum(hittingSets);
         for (E hs : hittingSets) {
@@ -624,7 +624,7 @@ public class QuerySelComparison {
             return "NaN";
     }
 
-    public <E extends HittingSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, E item) {
+    public <E extends AxiomSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, E item) {
         for (E o : col) {
             if (o.equals(item)) {
                 if (logger.isInfoEnabled())
@@ -637,13 +637,13 @@ public class QuerySelComparison {
 
     protected void simulateBruteForceOnl
             (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
-                    theory, HittingSet<OWLLogicalAxiom> targetDiag, TableList
+                    theory, AxiomSet<OWLLogicalAxiom> targetDiag, TableList
                     entry) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         Partition<OWLLogicalAxiom> actPa = null;
 
-        Set<HittingSet<OWLLogicalAxiom>> diagnoses = null;
+        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = null;
         int num_of_queries = 0;
 
         boolean userBreak = false;
@@ -656,7 +656,7 @@ public class QuerySelComparison {
         int queryCardinality = 0;
         while (!querySessionEnd) {
             try {
-                Collection<HittingSet<OWLLogicalAxiom>> lastD = diagnoses;
+                Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
                 logger.trace("numOfQueries: " + num_of_queries + " search for diagnoses");
 
                 userBreak = false;
@@ -676,24 +676,24 @@ public class QuerySelComparison {
                     diagnoses = search.run(NUMBER_OF_HITTING_SETS);
                     diagTime.setTime(System.currentTimeMillis() - diag);
                 } catch (SolverException e) {
-                    diagnoses = new TreeSet<HittingSet<OWLLogicalAxiom>>();
+                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
                 } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<HittingSet<OWLLogicalAxiom>>(search.getStorage().getValidHittingSets());
+                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getValidHittingSets());
 
                 }
 
                 if (diagnoses.isEmpty())
                     logger.error("No diagnoses found!");
 
-                Iterator<HittingSet<OWLLogicalAxiom>> descendSet = ((TreeSet<HittingSet<OWLLogicalAxiom>>) diagnoses).descendingIterator();
-                HittingSet<OWLLogicalAxiom> d = descendSet.next();
-                HittingSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
+                Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = ((TreeSet<AxiomSet<OWLLogicalAxiom>>) diagnoses).descendingIterator();
+                AxiomSet<OWLLogicalAxiom> d = descendSet.next();
+                AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
 
                 boolean isTargetDiagFirst = d.equals(targetDiag);
                 double dp = d.getMeasure();
                 if (logger.isInfoEnabled()) {
-                    HittingSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
+                    AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
                     logger.info("diagnoses: " + diagnoses.size() +
                             " first diagnosis: " + d + " is target: " + isTargetDiagFirst + " is in window: " + ((o == null) ? false : o.toString()));
                 }
@@ -735,7 +735,7 @@ public class QuerySelComparison {
                 boolean answer = generateQueryAnswer(search, actPa, targetDiag);
                 num_of_queries++;
                 // fine all dz diagnoses
-                for (HittingSet<OWLLogicalAxiom> ph : actPa.dz) {
+                for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
                     ph.setMeasure(0.5d * ph.getMeasure());
                 }
                 if (answer) {
@@ -770,10 +770,10 @@ public class QuerySelComparison {
         boolean targetDiagnosisIsMostProbable = false;
         if (diagnoses != null) {
             //TreeSet<ProbabilisticHittingSet> diags = new TreeSet<ProbabilisticHittingSet>(diagnoses);
-            for (HittingSet<OWLLogicalAxiom> ps : diagnoses)
+            for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
                 if (ps.equals(targetDiag))
                     targetDiagnosisIsInWind = true;
-            if (diagnoses.size() >= 1 && ((TreeSet<? extends HittingSet>) diagnoses).last().equals(targetDiag)) {
+            if (diagnoses.size() >= 1 && ((TreeSet<? extends AxiomSet>) diagnoses).last().equals(targetDiag)) {
                 targetDiagnosisIsMostProbable = true;
                 targetDiagnosisIsInWind = true;
             }
@@ -789,8 +789,8 @@ public class QuerySelComparison {
 
 
     private <E extends OWLObject> void prinths
-            (Collection<HittingSet<E>> c) {
-        for (HittingSet<E> hs : c) {
+            (Collection<AxiomSet<E>> c) {
+        for (AxiomSet<E> hs : c) {
             System.out.println(hs);
             print(hs);
         }
@@ -813,8 +813,8 @@ public class QuerySelComparison {
         }
     }
 
-    private void print(TreeSet<HittingSet<OWLLogicalAxiom>> diagnoses) {
-        for (HittingSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
+    private void print(TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+        for (AxiomSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
             System.out.println(hs.toString());
         }
     }
@@ -822,7 +822,7 @@ public class QuerySelComparison {
     /*
 private void simulateQuerySession
         (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
-                theory, HittingSet<OWLLogicalAxiom> targetDiag, QuerySelStrat
+                theory, AxiomSet<OWLLogicalAxiom> targetDiag, QuerySelStrat
                 strat, TableList
                 entry) {
     /*theory.clearTestCases();
@@ -888,7 +888,7 @@ private void simulateQuerySession
 
   private boolean generateQueryAnswer
           (UniformCostSearch<OWLLogicalAxiom> search, Query
-                  actualQuery, HittingSet<OWLLogicalAxiom> targetDiag) {
+                  actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
       boolean answer;
       ITheory<OWLLogicalAxiom> theory = search.getTheory();
 
@@ -905,7 +905,7 @@ private void simulateQuerySession
   }
     */
     private boolean generateQueryAnswer
-    (UniformCostSearch<OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, HittingSet<OWLLogicalAxiom> targetDiag) {
+    (UniformCostSearch<OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
 
@@ -938,18 +938,18 @@ private void simulateQuerySession
         return queryGenerator;
     }   */
 
-    private HittingSet<OWLLogicalAxiom> chooseTargetDiagnosis
+    private AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
             (DiagProbab
-                     diagProbab, TreeSet<HittingSet<OWLLogicalAxiom>> diagnoses) {
+                     diagProbab, TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
 
 
         double sum = 0;
-        TreeSet<HittingSet<OWLLogicalAxiom>> res;
-        TreeSet<HittingSet<OWLLogicalAxiom>> good = new TreeSet<HittingSet<OWLLogicalAxiom>>();
-        TreeSet<HittingSet<OWLLogicalAxiom>> avg = new TreeSet<HittingSet<OWLLogicalAxiom>>();
-        TreeSet<HittingSet<OWLLogicalAxiom>> bad = new TreeSet<HittingSet<OWLLogicalAxiom>>();
+        TreeSet<AxiomSet<OWLLogicalAxiom>> res;
+        TreeSet<AxiomSet<OWLLogicalAxiom>> good = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        TreeSet<AxiomSet<OWLLogicalAxiom>> avg = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        TreeSet<AxiomSet<OWLLogicalAxiom>> bad = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
-        for (HittingSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
+        for (AxiomSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
             if (sum <= 0.33) {
                 good.add(hs);
             } else if (sum >= 0.33 && sum <= 0.66) {
@@ -1000,8 +1000,8 @@ private void simulateQuerySession
 
 
         int i = 1;
-        HittingSet<OWLLogicalAxiom> next = null;
-        for (Iterator<HittingSet<OWLLogicalAxiom>> it = res.descendingIterator(); it.hasNext(); i++) {
+        AxiomSet<OWLLogicalAxiom> next = null;
+        for (Iterator<AxiomSet<OWLLogicalAxiom>> it = res.descendingIterator(); it.hasNext(); i++) {
             next = it.next();
             if (i == number)
                 break;
@@ -1045,9 +1045,9 @@ private void simulateQuerySession
         return min + rnd.nextDouble() * (max - min);
     }
 
-    private Set<HittingSet<OWLLogicalAxiom>> chooseUserProbab
+    private Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
             (UsersProbab
-                     usersProbab, UniformCostSearch<OWLLogicalAxiom> search, Set<HittingSet<OWLLogicalAxiom>> diagnoses) {
+                     usersProbab, UniformCostSearch<OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         Map<ManchesterOWLSyntax, Double> keywordProbs = new HashMap<ManchesterOWLSyntax, Double>();
         //ProbabilityTableModel m = new ProbabilityTableModel();
         ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(Utils.getProbabMap().keySet()));

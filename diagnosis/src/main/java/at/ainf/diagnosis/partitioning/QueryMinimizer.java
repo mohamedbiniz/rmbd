@@ -5,7 +5,7 @@ import at.ainf.theory.model.AbstractSearchableObject;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.HittingSet;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 
 import java.util.Set;
@@ -32,15 +32,15 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
     }
 
     private Boolean verifyQuery(Set<Id> query) {
-        for (HittingSet<Id> hs : partition.dx) {
+        for (AxiomSet<Id> hs : partition.dx) {
             if (!getTheory().diagnosisEntails(hs, query))
                 return true;
         }
-        for (HittingSet<Id> hs : partition.dnx) {
+        for (AxiomSet<Id> hs : partition.dnx) {
             if (getTheory().diagnosisConsistent(hs, query))
                 return true;
         }
-        for (HittingSet<Id> hs : partition.dz) {
+        for (AxiomSet<Id> hs : partition.dz) {
             if (getTheory().diagnosisEntails(hs, query) || !getTheory().diagnosisConsistent(hs, query))
                 return true;
 

@@ -3,8 +3,8 @@ package at.ainf.protegeview.queryaskingview;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.HittingSet;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import at.ainf.protegeview.debugmanager.ResetReqEvent;
@@ -219,6 +219,8 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
 
     public void init() {
 
+        if (workspace.getSearch()==null)
+            workspace.doResetAct2();
         if (diagProvider == null)
             diagProvider = new DiagProvider(workspace.getSearch(),
                     QueryDebuggerPreference.getInstance().isQueryMinimizerActive(), QueryDebuggerPreference.getInstance().getNumOfLeadingDiags());
@@ -353,9 +355,9 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
 
         // diagProvider.calculateLead();
 
-        Collection<HittingSet<OWLLogicalAxiom>> diag = new HashSet<HittingSet<OWLLogicalAxiom>>();
+        Collection<AxiomSet<OWLLogicalAxiom>> diag = new HashSet<AxiomSet<OWLLogicalAxiom>>();
 
-        for (HittingSet<OWLLogicalAxiom> q : workspace.getSearch().getStorage().getValidHittingSets()) {
+        for (AxiomSet<OWLLogicalAxiom> q : workspace.getSearch().getStorage().getValidHittingSets()) {
             diag.add(q);
         }
 
@@ -379,9 +381,9 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
 
         //diagProvider.calculateLead();
 
-        Collection<HittingSet<OWLLogicalAxiom>> diag = new HashSet<HittingSet<OWLLogicalAxiom>>();
+        Collection<AxiomSet<OWLLogicalAxiom>> diag = new HashSet<AxiomSet<OWLLogicalAxiom>>();
 
-        for (HittingSet<OWLLogicalAxiom> q : workspace.getSearch().getStorage().getValidHittingSets()) {
+        for (AxiomSet<OWLLogicalAxiom> q : workspace.getSearch().getStorage().getValidHittingSets()) {
             diag.add(q);
         }
 

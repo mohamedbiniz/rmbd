@@ -1,7 +1,7 @@
 package at.ainf.protegeview.views.diagnosistreeview;
 
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.storage.HittingSetImpl;
+import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.protegeview.debugmanager.*;
 import org.protege.editor.owl.ui.view.cls.AbstractOWLClassViewComponent;
@@ -38,7 +38,7 @@ public class DiagnosisTreeView extends AbstractOWLClassViewComponent implements 
         else
             ((DiagnosesTreeModel)tr.getModel()).setConflictSets(workspace.getSearch().getStorage().getConflictSets(), getOWLWorkspace());
         tr.hittingSets(DebugManager.getInstance().getValidHittingSets());
-        HittingSetImpl<OWLLogicalAxiom> hs = (HittingSetImpl<OWLLogicalAxiom>)DebugManager.getInstance().getTreeNode();
+        AxiomSetImpl<OWLLogicalAxiom> hs = (AxiomSetImpl<OWLLogicalAxiom>)DebugManager.getInstance().getTreeNode();
         if (hs == null)
             tr.setDisplayNodeChanged(null);
         else
@@ -67,7 +67,7 @@ public class DiagnosisTreeView extends AbstractOWLClassViewComponent implements 
         if (e.getTreenode() == null)
             tr.setDisplayNodeChanged(null);
         else
-            tr.setDisplayNodeChanged((Node<OWLLogicalAxiom>)((HittingSetImpl<OWLLogicalAxiom>)e.getTreenode()).getNode());
+            tr.setDisplayNodeChanged((Node<OWLLogicalAxiom>)((AxiomSetImpl<OWLLogicalAxiom>)e.getTreenode()).getNode());
     }
 
 }
