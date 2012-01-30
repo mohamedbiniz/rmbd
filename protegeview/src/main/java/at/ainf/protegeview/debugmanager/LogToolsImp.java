@@ -47,13 +47,13 @@ public class LogToolsImp {
     }
 
     public String getRenderingSet(Set set) {
-        String result = "[";
+        String result = "";
 
         for (Object axiom : set)
-            result += getRendering(axiom) + ", ";
+            result += getRendering(axiom) + ";";
 
-        result = result.substring(0,result.length()-2);
-        result +="]";
+        result = result.substring(0,result.length()-1);
+
         return result;
     }
 
@@ -61,28 +61,30 @@ public class LogToolsImp {
         String result = "";
         Partition<OWLLogicalAxiom> query =  (Partition<OWLLogicalAxiom>) queryObject  ;
 
-        result += "Query: score = ;" + query.score + ";" + getRenderingSet(query.partition) + ";";
-        result += "DX: size=" + query.dx.size();
+        result += "Query: ;score = ;" + query.score + ";" + getRenderingSet(query.partition) + ";";
+        result += "%DX: ;size=;" + query.dx.size() + ";";
         double sum = 0.0;
         for (AxiomSet hs : query.dx) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure();
         }
-        result += "sum(p)=" + sum + ";";
-        result += "DNX: size=" + query.dnx.size();
+        result += "sum(p)=;" + sum + ";";
+
+        result += "%DNX: ;size=;" + query.dnx.size() + ";";
         sum = 0.0;
         for (AxiomSet hs : query.dnx) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure();
         }
-        result += "sum(p)=" + sum + ";";
-        result += "D0: size=" + query.dz.size();
+        result += "sum(p)=;" + sum + ";";
+
+        result += "%D0: ;size=;" + query.dz.size() + ";";
         sum = 0.0;
         for (AxiomSet hs : query.dz) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure();
         }
-        result += "sum(p)=" + sum + " ";
+        result += "sum(p)=;" + sum + " ";
 
         return result;
     }
@@ -91,11 +93,10 @@ public class LogToolsImp {
         String result = "";
 
         AxiomSet<OWLLogicalAxiom> hs = (AxiomSet<OWLLogicalAxiom>) o;
-        result += "[";
+        result += "p=;" + hs.getMeasure() + ";";
         for (OWLLogicalAxiom axiom : hs)
-            result += rend.render(axiom) + ", ";
+            result += rend.render(axiom) + ";";
 
-        result += "p = " + hs.getMeasure() + "] ";
         if (result.contains("\n")) {
             result=result.replaceAll("\n","");
         }

@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -94,9 +95,9 @@ public class Test {
     @Before("protegeAppStart()")
     public void logProtegeAppStart() {
 
-        String identifier[] = {"Testuser", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29"};
+        String identifier[] = {"Test ", "UQ1", "UW1", "GQ1", "GW1", "UQ2", "UW2", "GQ2", "GW2", "UQ3", "UW3", "GQ3", "GW3", "UQ4", "UW4", "GQ4", "GW4", "UQ5", "UW5", "GQ5", "GW5", "UQ6", "UW6", "GQ6", "GW6", "UQ7", "UW7", "GQ7", "GW7",  "UQ8", "UW8", "GQ8", "GW8"};
         JComboBox comboBoxD = new JComboBox(identifier);
-        comboBoxD.setSelectedItem("Testuser");
+        comboBoxD.setSelectedItem("Test ");
 
         String aufgaben[] = {"Tutorial", "Task_1", "Task_2"};
         JComboBox comboBox = new JComboBox(aufgaben);
@@ -104,7 +105,7 @@ public class Test {
 
         String ontology[] = {"Koala", "Uni", "Gizk"};
         JComboBox comboBoxOntology = new JComboBox(ontology);
-        comboBoxOntology.setSelectedItem("Uni");
+        comboBoxOntology.setSelectedItem("Koala");
 
         Object complexMsg[] = {"Please input your Identifier:", comboBoxD,
                 "Which task are you doing:", comboBox,
@@ -268,7 +269,7 @@ public class Test {
         String res = "";
         Set<Object> ax = (Set<Object>) ret;
         for (Object axiom : ax)
-            res += logToolsManager.getRendering(axiom) + ", ";
+            res += logToolsManager.getRendering(axiom) + ";";
 
         logMsg("User; AxiomEditor; user confirmed edit edited testcase was;" + logToolsManager.getSe(jp.getThis()) + ";" + res );
     }
@@ -276,9 +277,9 @@ public class Test {
     @Before("execution(* at.ainf.protegeview.views.ResultsListSection.setUserMarkedThisTarget(..)) &&  args(mark)")
     public void logUserMarkedTargetDiag(JoinPoint jp, boolean mark) {
         if   (mark) {
-            logMsg("User; hsview; CLICKED user marked diagnosis as target diag with confidence "
+            logMsg("User; hsview; CLICKED user marked diagnosis as target diag with confidence;"
                                           + logToolsManager.getUserTargetConfidence(jp.getThis())
-                                          + " axioms: "
+                                          + ";axioms:;"
                                           + logToolsManager.getAxiomSet(jp.getThis()));
         }
         else {
@@ -318,24 +319,28 @@ public class Test {
         logMsg ("User; DebuggerWizard; user pressed next button in wizard");
     }
 
+    private static int cnt = 0;
+
     @Before("execution(void at.ainf.protegeview.debugmanager.DebugManager.setConflictSets(..)) && args(object)")
     public void logConflictSet(Object object) {
         Set<Set<Object>> conflicts = (Set<Set<Object>>) object;
         String result = "";
-
+        cnt++;
         if (conflicts == null)
             logMsg("Program; Global; conflict sets were set to null to reset " );
 
         if (conflicts != null) {
             result += "Num CS: ;" + conflicts.size() + "; ";
             for (Set<Object> conflict : conflicts) {
-                result += "[" + "size=" + conflict.size() + " ";
+                String r = result + "size=;" + conflict.size() + ";";
                 for (Object axiom : conflict) {
-                    result += logToolsManager.getRendering(axiom) + ", ";
+                    r += logToolsManager.getRendering(axiom) + ";";
                 }
-                result +=  "] ";
+                logMsg("Program; Global; conflict sets: ; cnt=;" + cnt + ";" + r );
+
             }
-            logMsg("Program; Global; conflict sets: " + result);
+
+
         }
     }
 
@@ -343,6 +348,7 @@ public class Test {
     public void logValHittingSet(Object object) {
         Set<Set<Object>> validHittingSets = (Set<Set<Object>>) object;
         String result = "";
+        cnt++;
 
         if (validHittingSets == null)
             logMsg("Program; Global; hitting sets were set to null to reset " );
@@ -350,16 +356,16 @@ public class Test {
         if (validHittingSets != null) {
             result += "Num HS: ;" + validHittingSets.size() + "; ";
             for (Set<Object> hs : validHittingSets) {
-                result += "[" + "size=" + validHittingSets.size() + " ";
-                result +=  logToolsManager.getHsRendering(hs) + "]  ";
+                String r = result + " " + "size=  ;" + hs.size() + ";";
+                r +=  logToolsManager.getHsRendering(hs);
+                logMsg("Program; Global; hitting sets;cnt=;" + cnt + ";" + r );
             }
-            logMsg("Program; Global; hitting sets "  + result);
         }
     }
 
     @After("execution(void at.ainf.protegeview.queryaskingview.buttons.QueryQuestListItem.handleEntailed(..))")
     public void logAddEnt(JoinPoint jp) {
-        if (!logToolsManager.getMarkedStatus(jp.getThis(),"isEntailedMarked"))
+        if (logToolsManager.getMarkedStatus(jp.getThis(),"isEntailedMarked"))
             logMsg("User; queryview; CLICKED user marks axiom in query: ;entailed;" + logToolsManager.getL(jp.getThis()) + ";" + logToolsManager.getAxiom(jp.getThis()));
         else
             logMsg("User; queryview; CLICKED user unmarked axiom in query: ;entailed;" + logToolsManager.getAxiom(jp.getThis()));
@@ -370,14 +376,14 @@ public class Test {
         String result = "";
         Set<Object> ax = (Set<Object>) axioms;
         for(Object axiom : ax) {
-            result += logToolsManager.getRendering(axiom) + ", ";
+            result += logToolsManager.getRendering(axiom) + ";";
         }
         logMsg("Program; queryview; query axiom list is:; " + result);
     }
 
     @After("execution(void at.ainf.protegeview.queryaskingview.buttons.QueryQuestListItem.handleNotEntailed(..))")
     public void logAddNEnt(JoinPoint jp) {
-        if (!logToolsManager.getMarkedStatus(jp.getThis(),"isNonEntailedMarked"))
+        if (logToolsManager.getMarkedStatus(jp.getThis(),"isNonEntailedMarked"))
             logMsg("User; queryview; CLICKED user marks axiom in query: ;non entailed;" + logToolsManager.getL(jp.getThis()) + ";"  + logToolsManager.getAxiom(jp.getThis()));
         else
             logMsg("User; queryview; CLICKED user unmarked axiom in query: ;non entailed;" + logToolsManager.getAxiom(jp.getThis()));
@@ -385,7 +391,7 @@ public class Test {
 
     @Before("execution(void at.ainf.protegeview.queryaskingview.buttons.QueryQuestListItem.handleUnknownEntailed(..))")
     public void logNoUserIdea(JoinPoint jp) {
-        if (!logToolsManager.getMarkedStatus(jp.getThis(),"isUnknowMarked"))
+        if (logToolsManager.getMarkedStatus(jp.getThis(),"isUnknowMarked"))
             logMsg("User; queryview; CLICKED user marks axiom in query with unknow: " + logToolsManager.getAxiom(jp.getThis()));
         else
             logMsg("User; queryview; CLICKED user unmarked axiom in query with unknow: " + logToolsManager.getAxiom(jp.getThis()));
@@ -409,12 +415,22 @@ public class Test {
 
     @After("execution(void at.ainf.protegeview.WorkspaceTab.displaySection(..))")
     public void logTcaeVupdate(JoinPoint jp) {
-        logMsg("Program; tcae; testcase view now " +logToolsManager.getStrnTestcases(jp.getThis()));
+        Map<String,String> res = logToolsManager.getStrnTestcases(jp.getThis());
+        cnt++;
+
+        for (String k : res.keySet())
+            logMsg("Program; tcae; testcase view now ;" + " cnt = ;" + cnt + ";" + k + ";" + res.get(k));
+
     }
 
     @AfterReturning(value="execution(* at.ainf.protegeview.queryaskingview.DiagProvider.getQuery(..))",returning="ret")
     public void logQuery(Object ret) {
-        logMsg("Program; queryview; query stats ;" + logToolsManager.getQueryRendering(ret) );
+        String r = logToolsManager.getQueryRendering(ret);
+        cnt++;
+
+        String[] l = r.split("%");
+        for (String ln : l)
+            logMsg("Program; queryview; query stats ;" + "cnt=;" + cnt + ";" + ln);
     }
 
     @Before("execution(* at.ainf.protegeview.debugmanager.DebugManager.setTreeNode(..)) && args(object)")

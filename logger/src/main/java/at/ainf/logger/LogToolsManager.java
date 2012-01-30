@@ -2,9 +2,7 @@ package at.ainf.logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -156,11 +154,11 @@ public class LogToolsManager {
 
     }
 
-    public String getStrnTestcases(Object object) {
+    public Map<String,String> getStrnTestcases(Object object) {
         Method method;
         try {
             method = object.getClass().getMethod("getStrTestcases", new Class[]{});
-            return ((String) method.invoke(object, new Object[]{}));
+            return (Map<String,String>) method.invoke(object, new Object[]{});
 
         } catch (NoSuchMethodException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -169,8 +167,7 @@ public class LogToolsManager {
         } catch (IllegalAccessException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        return "";
-
+        return new HashMap<String, String>();
     }
 
     public Set<String> getQueryAx(Object object, boolean ent) {
@@ -223,7 +220,7 @@ public class LogToolsManager {
             else
                 result += "not entailed;";
             for (Object axiom : r)
-                result += getRendering(axiom) + ", ";
+                result += getRendering(axiom) + ";";
 
             return result;
 
@@ -286,7 +283,7 @@ public class LogToolsManager {
             Set<Object> set = (Set<Object>) rendererMethod.invoke(object, new Object[]{});
 
             for (Object axiom : set)
-                result = result + logToolsManager.getRendering(axiom) + ", ";
+                result = result + logToolsManager.getRendering(axiom) + ";";
 
             return result;
 

@@ -663,29 +663,36 @@ public class
 
     }
 
-    public String getStrTestcases() {
-        String r = "";
+    public Map<String,String> getStrTestcases() {
 
-        boolean headwritten = false;
+        Map<String,String> res = new HashMap<String, String>();
+
+        res.put("PT","");
+        res.put("NT","");
+        res.put("ET","");
+        res.put("NET","");
+        String k = "";
         for (int i = 0; i < testcasesModel.size(); i++) {
             String row = testcasesModel.get(i).toString();
-            if(row.startsWith("Positive Test Case") || row.startsWith("Negative Test Case") || row.startsWith("Entailed") || row.startsWith("Not entailed")) {
-                //if (headwritten) r += " ;";
-                r += ";" + testcasesModel.get(i).toString() + ";";
-                headwritten = true;
-
-            }
+            if(row.startsWith("Positive Test Case"))
+                k = "PT";
+            else if (row.startsWith("Negative Test Case"))
+                k = "NT";
+            else if (row.startsWith("Entailed"))
+                k = "ET";
+            else if (row.startsWith("Not entailed"))
+                k = "NET";
             else {
-
-                r += testcasesModel.get(i).toString() + ", ";
-                headwritten = false;
+                res.put(k,res.get(k) + testcasesModel.get(i).toString() + ";");
             }
         }
-        if (r.contains("\n")) {
-            r=r.replaceAll("\n","");
+        for (String key : res.keySet()) {
+            String value = res.get(key);
+            if (value.contains("\n")) {
+                res.put(key,value.replaceAll("\n",""));
+            }
         }
-
-        return r;
+        return res;
     }
 
 
