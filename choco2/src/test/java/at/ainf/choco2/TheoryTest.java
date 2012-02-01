@@ -132,6 +132,8 @@ public class TheoryTest {
         Model md = new CPModel();
         CPSolver solver = new CPSolver();
 
+        CPSolver solver2 = new CPSolver();
+
         IntegerVariable i = makeIntVar("i", new int[]{0, 1});
         IntegerVariable j = makeIntVar("j", new int[]{0, 1});
         IntegerVariable k = makeIntVar("k", new int[]{0, 1, 2});
@@ -156,7 +158,7 @@ public class TheoryTest {
         md.removeConstraint(r2);
 
         md.addConstraints(r2, r3, r4);
-        assertTrue(solve(solver, md));
+        assertTrue(solve(solver2, md));
 
         md.removeConstraint(r2);
         md.removeConstraint(r3);
