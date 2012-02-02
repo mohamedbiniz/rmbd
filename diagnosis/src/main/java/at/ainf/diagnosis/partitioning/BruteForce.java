@@ -41,19 +41,10 @@ public class BruteForce<Id> implements Partitioning<Id> {
         this.scoring = function;
     }
 
+
     public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
-        if (this.scoring == null)
-            throw new IllegalStateException("Scoring function is not set!");
-        // save the original hitting sets
-        this.hittingSets = Collections.unmodifiableSet(hittingSets);
-        // preprocessing
-        Set<E> hs = new LinkedHashSet<E>(hittingSets);
-        removeCommonEntailments(hs);
-        for (Iterator<E> hsi = hs.iterator(); hsi.hasNext(); )
-            if (hsi.next().getEntailments().isEmpty())
-                hsi.remove();
-        getScoringFunction().normalize(hs);
+       Set<E> hs = preprocess(hittingSets);
 
         // find the best partition
         Set<E> desc = new LinkedHashSet<E>(new TreeSet<E>(hs).descendingSet());
@@ -64,6 +55,24 @@ public class BruteForce<Id> implements Partitioning<Id> {
             partition = getPostprocessor().run(getPartitions());
         restoreEntailments(hittingSets);
         return partition;
+    }
+
+    protected <E extends AxiomSet<Id>> Set<E> preprocess(Set<E> hittingSets) throws SolverException {
+        ensureCapacity((int) Math.pow(2, hittingSets.size()));
+        if (getScoringFunction() == null)
+            throw new IllegalStateException("Scoring function is not set!");
+        // save the original hitting sets
+
+        setHittingSets(Collections.unmodifiableSet(hittingSets));
+        // preprocessing
+        Set<E> hs = new LinkedHashSet<E>(hittingSets);
+        removeCommonEntailments(hs);
+        for (Iterator<E> hsi = hs.iterator(); hsi.hasNext(); )
+            if (hsi.next().getEntailments().isEmpty())
+                hsi.remove();
+        getScoringFunction().normalize(hs);
+
+        return new TreeSet<E>(hs);
     }
 
     protected <E extends AxiomSet<Id>> void restoreEntailments(Set<E> hittingSets) {

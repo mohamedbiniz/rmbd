@@ -206,14 +206,13 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         return rightPart;
     }
 
-    private void join(Map<Measurable, List<Measurable>> map, Measurable lt, Measurable rt) {
+    /*private void join(Map<Measurable, List<Measurable>> map, Measurable lt, Measurable rt) {
         map.get(lt).remove(rt);
         double together = lt.measure + rt.measure;
 
         Measurable t = new Measurable(new AxiomSetImpl<Id>("NULL:" + this.count++, 0,Collections.<Id>emptySet(), Collections.<Id>emptySet()), together);
         put(map, t, lt);
-        put(map, t, rt);
-    }
+        put(map, t, rt);} */
 
     private Collection<Measurable> convert(Collection<List<Measurable>> values) {
         LinkedHashSet<Measurable> m = new LinkedHashSet<Measurable>();

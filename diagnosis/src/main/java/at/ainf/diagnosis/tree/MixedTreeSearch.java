@@ -13,6 +13,7 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomRenderer;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -71,6 +72,10 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Set<Id>, Id
 
     public Collection<Node<Id>> getOpenNodes() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setAxiomRenderer(AxiomRenderer<Id> idAxiomRenderer) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setSearcher(Searcher<Id> searcher) {

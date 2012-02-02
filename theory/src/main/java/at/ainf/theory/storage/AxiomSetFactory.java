@@ -1,5 +1,7 @@
 package at.ainf.theory.storage;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -10,10 +12,18 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class AxiomSetFactory {
-    private static int cnt = 0;
 
-    public static <Id> AxiomSet<Id> createAxiomSet(double measure, Set<Id> hittingSet, Set<Id> entailments) {
-        cnt++;
-        return new AxiomSetImpl<Id>("axiomSet_" + cnt, measure, hittingSet, entailments);
+    private static Map<AxiomSet.TypeOfSet,Integer> map = new HashMap<AxiomSet.TypeOfSet, Integer>();
+
+    private static int getCnt(AxiomSet.TypeOfSet typeOfSet) {
+        if (!map.containsKey(typeOfSet))
+            map.put(typeOfSet,0);
+        map.put(typeOfSet,map.get(typeOfSet)+1);
+        return map.get(typeOfSet);
+    }
+
+    public static <Id> AxiomSet<Id> createAxiomSet(AxiomSet.TypeOfSet typeOfSet, double measure, Set<Id> hittingSet, Set<Id> entailments) {
+        String name = typeOfSet.toString() +     getCnt(typeOfSet);
+        return new AxiomSetImpl<Id>(typeOfSet, name, measure, hittingSet, entailments);
     }
 }
