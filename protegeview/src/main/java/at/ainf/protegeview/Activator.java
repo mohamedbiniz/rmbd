@@ -14,11 +14,7 @@ import org.osgi.framework.BundleContext;
 public class Activator implements BundleActivator {
 
     public void start(BundleContext bundleContext) throws Exception {
-        createLogTool();
-    }
 
-    public Object createLogTool() {
-        return new LogToolsImp();
     }
 
     public void stop(BundleContext bundleContext) throws Exception {
