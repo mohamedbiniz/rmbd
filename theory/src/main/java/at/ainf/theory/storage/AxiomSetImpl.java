@@ -1,6 +1,7 @@
 package at.ainf.theory.storage;
 
 import at.ainf.theory.watchedset.MeasureUpdatedListener;
+import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
 import java.util.*;
 
@@ -41,14 +42,18 @@ public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> 
     public void restoreEntailments() {
         this.tempEntailments = Collections.unmodifiableSet(this.entailments);
     }
-
-
-
     public String getName() {
         return name;
     }
 
-    public AxiomSetImpl(String name, double measure, Set<Id> hittingSet, Set<Id> entailments) {
+    public TypeOfSet getType() {
+        return typeOfSet;
+    }
+
+    private TypeOfSet typeOfSet;
+
+    protected AxiomSetImpl(TypeOfSet type, String name, double measure, Set<Id> hittingSet, Set<Id> entailments) {
+        this.typeOfSet = type;
         this.name = name;
         setMeasure(measure);
         this.hittingSet = Collections.unmodifiableSet(hittingSet);

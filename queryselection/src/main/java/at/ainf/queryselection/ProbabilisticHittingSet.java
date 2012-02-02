@@ -35,7 +35,7 @@ public class ProbabilisticHittingSet<Id> extends AxiomSetImpl<Id> implements Axi
 
     public ProbabilisticHittingSet(String name, double probability, boolean t, Set<Id> hittingSet, Set<Id> entailments,Node<Id> node) {
 
-        super(name, probability, hittingSet, entailments);
+        super(TypeOfSet.HITTING_SET,name, probability, hittingSet, entailments);
         this.isTarget = t;
         //this.node = node;
 
@@ -46,18 +46,18 @@ public class ProbabilisticHittingSet<Id> extends AxiomSetImpl<Id> implements Axi
     }
 
     public ProbabilisticHittingSet(String name, double probability, boolean t, Set<Id> hittingSet, Set<Id> entailments) {
-        super(name, probability, hittingSet, entailments);
+        super(TypeOfSet.HITTING_SET,name, probability, hittingSet, entailments);
     }
 
 
     public ProbabilisticHittingSet(String name, double probability, Set<Id> hittingSet, Set<Id> entailments) {
-        super(name, probability, hittingSet, entailments);
+        super(TypeOfSet.HITTING_SET,name, probability, hittingSet, entailments);
 
     }
 
 
     public ProbabilisticHittingSet(String name, double value) {
-        super(name, value, Collections.<Id>emptySet(), Collections.<Id>emptySet());
+        super(TypeOfSet.HITTING_SET,name, value, Collections.<Id>emptySet(), Collections.<Id>emptySet());
     }
 
     public double getUserAssignedProbability() {

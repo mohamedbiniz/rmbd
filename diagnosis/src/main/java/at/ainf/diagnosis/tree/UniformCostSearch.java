@@ -3,6 +3,7 @@ package at.ainf.diagnosis.tree;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetFactory;
 import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -66,8 +67,13 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Set<
     }
 
     @Override
-    protected Set<Id> createConflictSet(Set<Id> quickConflict) {
-        return quickConflict;
+    protected Set<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) {
+        double probability = 1d / quickConflict.size();
+        Set<Id> entailments = Collections.emptySet();
+        AxiomSetImpl<Id> result = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.CONFLICT_SET, probability, quickConflict, entailments);
+        result.setNode(node);
+        return result;
+        // return result;
     }
 
     @Override
@@ -83,7 +89,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Set<
         double probability = ((CostNode<Id>) node).getNodePathCosts();
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && valid) entailments = getTheory().getEntailments(labels);
-        AxiomSetImpl<Id> result = new AxiomSetImpl<Id>(name, probability, labels, entailments);
+        AxiomSetImpl<Id> result = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.HITTING_SET, probability, labels, entailments);
         result.setNode(node);
         return result;
     }

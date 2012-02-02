@@ -51,6 +51,7 @@ public class FastDiagTest {
         search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
         DualTreeOWLTheory th = loadTheory(manager, "queryontologies/koala.owl");
         search.setTheory(th);
+        search.setAxiomRenderer(new MyOWLRendererParser(null));
 
         search.run();
 
@@ -98,13 +99,13 @@ public class FastDiagTest {
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory th = Utils.loadTheory(manager, "queryontologies/koala.owl");
         search.setTheory(th);
-
+        search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();
 
         OWLLogicalAxiom axiom = search.getStorage().getValidHittingSets().iterator().next().iterator().next();
         System.out.println(axiom);
 
-        for (AxiomSet<OWLLogicalAxiom> hs : search.getStorage().getValidHittingSets())
+        for (Set<OWLLogicalAxiom> hs : search.getStorage().getValidHittingSets())
             System.out.println(Utils.renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();

@@ -91,18 +91,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
     public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
-        ensureCapacity((int) Math.pow(2, hittingSets.size()));
-        if (getScoringFunction() == null)
-            throw new IllegalStateException("Scoring function is not set!");
-        // save the original hitting sets
-        setHittingSets(Collections.unmodifiableSet(hittingSets));
-        // preprocessing
-        Set<E> hs = new LinkedHashSet<E>(hittingSets);
-        removeCommonEntailments(hs);
-        for (Iterator<E> hsi = hs.iterator(); hsi.hasNext(); )
-            if (hsi.next().getEntailments().isEmpty())
-                hsi.remove();
-        getScoringFunction().normalize(hs);
+        Set<E> hs = preprocess(hittingSets);
 
         // find the best partition
         Set<E> desc = new LinkedHashSet<E>(new TreeSet<E>(hs).descendingSet());
@@ -146,6 +135,8 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         restoreEntailments(hittingSets);
         return partition;
     }
+
+
 
     private boolean compare(Partition<Id> partition, Partition<Id> part) {
         if (part == null || partition == null)

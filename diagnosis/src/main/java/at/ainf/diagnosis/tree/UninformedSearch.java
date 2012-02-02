@@ -2,6 +2,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetFactory;
 import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.Storage;
 
@@ -27,8 +28,12 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
     }
 
     @Override
-    protected Set<Id> createConflictSet(Set<Id> quickConflict) {
-        return quickConflict;
+    protected Set<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) {
+        Set<Id> entailments = Collections.emptySet();
+        double measure = 1d / quickConflict.size();
+        AxiomSetImpl<Id> hs = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.CONFLICT_SET, measure, quickConflict, entailments);
+        hs.setNode(node);
+        return hs;
     }
 
     @Override
@@ -37,7 +42,7 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && valid) entailments = getTheory().getEntailments(labels);
         double measure = 1d / labels.size();
-        AxiomSetImpl<Id> hs = new AxiomSetImpl<Id>("HS" + this.hscount, measure, labels, entailments);
+        AxiomSetImpl<Id> hs = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.HITTING_SET, measure, labels, entailments);
         hs.setNode(node);
         this.hscount++;
         return hs;

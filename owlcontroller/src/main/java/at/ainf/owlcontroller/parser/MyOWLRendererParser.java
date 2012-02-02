@@ -1,9 +1,12 @@
 package at.ainf.owlcontroller.parser;
 
+import at.ainf.theory.storage.AxiomRenderer;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
+
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,7 +15,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
  * Time: 14:59
  * To change this template use File | Settings | File Templates.
  */
-public class MyOWLRendererParser {
+public class MyOWLRendererParser implements AxiomRenderer<OWLLogicalAxiom> {
 
     private static ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 
@@ -38,6 +41,18 @@ public class MyOWLRendererParser {
 
     }
 
+    public String renderAxioms(Set<OWLLogicalAxiom> axioms) {
+        if(axioms==null) return "";
+        String r = "[";
+        for(OWLLogicalAxiom a : axioms)
+            r += renderer.render (a) + ", ";
+        r = r.substring(0,r.length()-2)+ " ]";
+        return r;
 
+    }
 
+    public String renderAxiom(OWLLogicalAxiom axiom) {
+        if(axiom==null)  return "";
+        return renderer.render (axiom);
+    }
 }

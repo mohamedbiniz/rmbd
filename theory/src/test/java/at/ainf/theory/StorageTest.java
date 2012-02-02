@@ -1,6 +1,7 @@
 package at.ainf.theory;
 
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetFactory;
 import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
@@ -45,7 +46,7 @@ public class StorageTest {
             Set<Integer> hs = new HashSet<Integer>();
             hs.add(count++);
             hs.add(count);
-            AxiomSetImpl<Integer> hittingSet = new AxiomSetImpl<Integer>("ID" + i, random.nextDouble(), hs, new HashSet<Integer>());
+            AxiomSet<Integer> hittingSet = AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.HITTING_SET,random.nextDouble(), hs, new HashSet<Integer>());
             hittingSet.setValid(random.nextBoolean());
             st.addHittingSet(hittingSet);
         }

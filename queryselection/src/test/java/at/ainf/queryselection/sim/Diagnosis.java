@@ -125,6 +125,10 @@ public class Diagnosis extends TreeSet<Object> implements QueryModuleDiagnosis<O
         return this.name;
     }
 
+    public TypeOfSet getType() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void restoreEntailments() {
         throw new IllegalStateException("This implementation is for simulation purposes only!");
     }

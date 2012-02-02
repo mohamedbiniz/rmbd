@@ -12,6 +12,7 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomRenderer;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -49,5 +50,7 @@ public interface TreeSearch<T extends AxiomSet<Id>, E extends Set<Id>, Id> {
     public void removeOpenNodesListener (OpenNodesListener l);
 
     public Collection<Node<Id>> getOpenNodes();
+
+    public void setAxiomRenderer(AxiomRenderer<Id> renderer);
 
 }
