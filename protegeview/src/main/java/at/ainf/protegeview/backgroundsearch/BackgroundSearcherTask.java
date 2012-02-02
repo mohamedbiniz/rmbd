@@ -96,9 +96,9 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
 
     }
 
-    TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
-    BackgroundSearcherTask(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, JTextArea area, JProgressBar progressBar) {
+    BackgroundSearcherTask(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, JTextArea area, JProgressBar progressBar) {
         this.area = area;
         this.search = search;
         this.progressBar = progressBar;

@@ -33,7 +33,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     protected ITheory<Id> theory;
 
-    protected TreeSearch<? extends AxiomSet<Id>, Set<Id>, Id> search;
+    protected TreeSearch<? extends AxiomSet<Id>, Id> search;
 
     protected StorageConflictSetsListener conflictSetsListener;
 
@@ -64,7 +64,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     }
 
-    public Set<Set<Id>> getConflictSets() {
+    public Set<? extends AxiomSet<Id>> getConflictSets() {
         return search.getStorage().getConflictSets();
     }
 

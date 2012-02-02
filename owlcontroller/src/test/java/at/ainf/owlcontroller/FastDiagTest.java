@@ -47,7 +47,7 @@ public class FastDiagTest {
     @Test
     public void testFasterDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
         search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
         DualTreeOWLTheory th = loadTheory(manager, "queryontologies/koala.owl");
         search.setTheory(th);
@@ -95,7 +95,7 @@ public class FastDiagTest {
     @Test
     public void testConflictDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory th = Utils.loadTheory(manager, "queryontologies/koala.owl");
         search.setTheory(th);

@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class BreadthFirstSearch<Id> extends UninformedSearch<Id> {
 
-    public BreadthFirstSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
+    public BreadthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
     }
 

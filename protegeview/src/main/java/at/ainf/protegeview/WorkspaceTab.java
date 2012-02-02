@@ -54,7 +54,7 @@ public class
 
     private boolean init = true;
 
-    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
     private ITheory<OWLLogicalAxiom> theory;
 
@@ -102,7 +102,7 @@ public class
                 Collection<? extends AxiomSet<OWLLogicalAxiom>> hittingsets = getSearch().getStorage().getValidHittingSets();
                 TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = (TreeSet<? extends AxiomSet<OWLLogicalAxiom>>) hittingsets;
                 Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
-                Collection<Set<OWLLogicalAxiom>> conflSets = getSearch().getStorage().getConflictSets();
+                Collection<? extends AxiomSet<OWLLogicalAxiom>> conflSets = getSearch().getStorage().getConflictSets();
                 // addAxiomToResultsList(getConflictSetListModel(), "Conflict Set ", conflSets);
                 //addAxiomToResultsList(getHittingSetListModel(), "Diagnosis", hsReverse);
 
@@ -636,7 +636,7 @@ public class
         return theory;
     }
 
-    public TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
+    public TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
         return search;
     }
 

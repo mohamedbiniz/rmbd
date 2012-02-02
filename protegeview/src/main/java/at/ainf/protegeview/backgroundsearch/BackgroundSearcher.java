@@ -22,11 +22,11 @@ import java.util.concurrent.ExecutionException;
  */
 public class BackgroundSearcher {
 
-    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
+    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
 
     private Frame parent;
 
-    public BackgroundSearcher(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, Frame parent) {
+    public BackgroundSearcher(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Frame parent) {
         this.trSearch = search;
         this.parent = parent;
     }

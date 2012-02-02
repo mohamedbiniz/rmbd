@@ -30,19 +30,19 @@ import java.util.Set;
  * Time: 08:18:39
  * To change this template use File | Settings | File Templates.
  */
-public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Set<Id>, Id> {
+public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Id> {
 
-    private AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id> currentStrategy;
-    private LinkedList<AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id>> strategys = new LinkedList<AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id>>();
+    private AbstractTreeSearch<AxiomSet<Id>, Id> currentStrategy;
+    private LinkedList<AbstractTreeSearch<AxiomSet<Id>, Id>> strategys = new LinkedList<AbstractTreeSearch<AxiomSet<Id>, Id>>();
     private int diagnosesCount = 0;
     private ITheory<Id> theory;
 
-    public MixedTreeSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
+    public MixedTreeSearch(Storage<AxiomSet<Id>, Id> storage) {
         strategys.addLast(new BreadthFirstSearch<Id>(storage));
         strategys.addLast(new IterativeDeepening<Id>(storage));
     }
 
-    public MixedTreeSearch(LinkedList<AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id>> strategys) {
+    public MixedTreeSearch(LinkedList<AbstractTreeSearch<AxiomSet<Id>, Id>> strategys) {
         this.strategys = strategys;
     }
 
@@ -79,13 +79,13 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Set<Id>, Id
     }
 
     public void setSearcher(Searcher<Id> searcher) {
-        for (AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id> strategy : strategys)
+        for (AbstractTreeSearch<AxiomSet<Id>, Id> strategy : strategys)
             strategy.setSearcher(searcher);
     }
 
     public void setTheory(ITheory<Id> theory) {
         this.theory = theory;
-        for (AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id> strategy : strategys) strategy.setTheory(theory);
+        for (AbstractTreeSearch<AxiomSet<Id>, Id> strategy : strategys) strategy.setTheory(theory);
     }
 
     public ITheory<Id> getTheory() {
@@ -93,7 +93,7 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Set<Id>, Id
     }
 
 
-    public Storage<AxiomSet<Id>, Set<Id>, Id> getStorage() {
+    public Storage<AxiomSet<Id>, Id> getStorage() {
         return currentStrategy.getStorage();
     }
 
@@ -102,7 +102,7 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Set<Id>, Id
     }
 
     public void setMaxHittingSets(int maxDiagnoses) {
-        for (AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id> strategy : strategys)
+        for (AbstractTreeSearch<AxiomSet<Id>, Id> strategy : strategys)
             strategy.setMaxHittingSets(maxDiagnoses);
     }
 

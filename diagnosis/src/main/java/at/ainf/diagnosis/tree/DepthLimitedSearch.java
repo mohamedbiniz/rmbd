@@ -28,7 +28,7 @@ public class DepthLimitedSearch<Id> extends DepthFirstSearch<Id> {
     private int limit;
     private boolean expandable = false;
 
-    public DepthLimitedSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
+    public DepthLimitedSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
         this.limit = Integer.MAX_VALUE;
     }
@@ -48,7 +48,7 @@ public class DepthLimitedSearch<Id> extends DepthFirstSearch<Id> {
         }
     }
 
-    public DepthLimitedSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage, int limit) {
+    public DepthLimitedSearch(Storage<AxiomSet<Id>, Id> storage, int limit) {
         super(storage);
         this.limit = limit;
     }

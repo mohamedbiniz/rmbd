@@ -15,20 +15,20 @@ import java.util.*;
  * Time: 14:36
  * To change this template use File | Settings | File Templates.
  */
-public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id>
-        implements TreeSearch<AxiomSet<Id>, Set<Id>, Id> {
+public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id>
+        implements TreeSearch<AxiomSet<Id>, Id> {
 
     private int hscount = 0;
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
 
-    public UninformedSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
+    public UninformedSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
     }
 
     @Override
-    protected Set<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) {
+    protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) {
         Set<Id> entailments = Collections.emptySet();
         double measure = 1d / quickConflict.size();
         AxiomSetImpl<Id> hs = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.CONFLICT_SET, measure, quickConflict, entailments);

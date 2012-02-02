@@ -29,13 +29,13 @@ public class IterativeDeepening<Id> extends DepthLimitedSearch<Id> {
     private int startDepth;
     private int step;
 
-    public IterativeDeepening(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
+    public IterativeDeepening(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
         this.startDepth = 1;
         this.step = 1;
     }
 
-    public IterativeDeepening(Storage<AxiomSet<Id>, Set<Id>, Id> storage, int startDepth, int step) {
+    public IterativeDeepening(Storage<AxiomSet<Id>, Id> storage, int startDepth, int step) {
         super(storage);
         this.startDepth = startDepth;
         this.step = step;

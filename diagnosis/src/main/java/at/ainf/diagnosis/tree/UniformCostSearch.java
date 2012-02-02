@@ -17,7 +17,7 @@ import java.util.*;
  * Time: 14:28
  * To change this template use File | Settings | File Templates.
  */
-public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Set<Id>, Id> {
+public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> {
 
     private int count = 0;
 
@@ -67,7 +67,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Set<
     }
 
     @Override
-    protected Set<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) {
+    protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) {
         double probability = 1d / quickConflict.size();
         Set<Id> entailments = Collections.emptySet();
         AxiomSetImpl<Id> result = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.CONFLICT_SET, probability, quickConflict, entailments);

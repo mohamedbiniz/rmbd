@@ -18,6 +18,6 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 
-public class SimpleStorage<Id> extends AbstractStorage<AxiomSet<Id>, Set<Id>, Id> {
+public class SimpleStorage<Id> extends AbstractStorage<AxiomSet<Id>, Id> {
 
 }

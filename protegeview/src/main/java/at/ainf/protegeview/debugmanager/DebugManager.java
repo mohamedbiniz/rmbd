@@ -26,7 +26,7 @@ public class DebugManager {
 
     private Set<? extends AxiomSet<OWLLogicalAxiom>> validHittingSets;
 
-    private Set<Set<OWLLogicalAxiom>> conflictSets = null;
+    private Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets = null;
 
     private OWLLogicalAxiom axiom;
 
@@ -53,11 +53,11 @@ public class DebugManager {
         this.validHittingSets = validHittingSets;
     }
 
-    public Set<Set<OWLLogicalAxiom>> getConflictSets() {
+    public Set<? extends AxiomSet<OWLLogicalAxiom>> getConflictSets() {
         return conflictSets;
     }
 
-    public void setConflictSets(Set<Set<OWLLogicalAxiom>> conflictSets) {
+    public <E extends AxiomSet<OWLLogicalAxiom>> void setConflictSets(Set<E> conflictSets) {
         this.conflictSets = conflictSets;
     }
 

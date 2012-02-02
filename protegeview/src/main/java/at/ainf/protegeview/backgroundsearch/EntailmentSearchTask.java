@@ -35,9 +35,9 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
 
     private ScoringFunction<OWLLogicalAxiom> func;
 
-    TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
-    EntailmentSearchTask(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search,
+    EntailmentSearchTask(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
                          JTextArea area,
                          List<AxiomSet<OWLLogicalAxiom>> diags,
                          boolean isQueryMinimizerActive,
