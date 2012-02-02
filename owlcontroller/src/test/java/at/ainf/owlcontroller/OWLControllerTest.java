@@ -43,7 +43,7 @@ public class OWLControllerTest {
         OWLController controller = OwlControllerMngr.getOWLController();
         controller.updateActiveOntology(ontology, reasonerFactory);
         controller.addControllerListener(new OWLControllerConflictSetListener() {
-            public void updateConflictSets(Set<Set<OWLLogicalAxiom>> conflictSets) {
+            public void updateConflictSets(Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets) {
                 // System.out.println("Conflict Sets: " + conflictSets.size());
                 assert(conflictSets.size() > 0);
             }

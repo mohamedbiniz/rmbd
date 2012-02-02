@@ -64,7 +64,7 @@ public class Example2005 {
         debugger.debug();
 
         Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getHittingSets();
-        Set<Set<OWLLogicalAxiom>> conflictset = debugger.getConflictSets();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> conflictset = debugger.getConflictSets();
 
         assertTrue(hittingset.size() == 3);
         assertTrue(hittingset.iterator().next().size() == 1);
@@ -103,7 +103,7 @@ public class Example2005 {
         debugger.debug();
 
         Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getHittingSets();
-        Set<Set<OWLLogicalAxiom>> conflictset = debugger.getConflictSets();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> conflictset = debugger.getConflictSets();
 
         assertTrue(hittingset.size() == 3);
         Iterator<? extends AxiomSet<OWLLogicalAxiom>> hsItr = hittingset.iterator();

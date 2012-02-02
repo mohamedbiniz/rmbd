@@ -85,7 +85,7 @@ public class QuerySelComparison {
         PropertyConfigurator.configure(conf);
     }
 
-    public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diags)
+    public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diags)
             throws SolverException, InconsistentTheoryException {
 
         ScoringFunction f = null;
@@ -294,7 +294,7 @@ public class QuerySelComparison {
 
                             Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                     Collections.unmodifiableSet(search.getStorage().getValidHittingSets());
-                            Set<Set<OWLLogicalAxiom>> conflictSets = search.getStorage().getConflictSets();
+                            Set<AxiomSet<OWLLogicalAxiom>> conflictSets = search.getStorage().getConflictSets();
 
                             logger.info(ontologyFileString + " - with " + conflictSets.size() + " minimal conflict(s) and " + diagnoses.size() + " hitting set(s)");
 

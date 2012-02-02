@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class EntailmentSearch {
 
 
-    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
+    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
 
     private List<AxiomSet<OWLLogicalAxiom>> diags;
 
@@ -37,7 +37,7 @@ public class EntailmentSearch {
 
 
     public EntailmentSearch(
-            TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search,
+            TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
             List<AxiomSet<OWLLogicalAxiom>> diags, boolean isQueryMinimizerActive) {
         this.trSearch = search;
         this.diags = diags;

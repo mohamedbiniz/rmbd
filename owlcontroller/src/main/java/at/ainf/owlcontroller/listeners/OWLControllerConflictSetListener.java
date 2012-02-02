@@ -1,5 +1,6 @@
 package at.ainf.owlcontroller.listeners;
 
+import at.ainf.theory.storage.AxiomSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.util.Set;
@@ -13,6 +14,6 @@ import java.util.Set;
  */
 public interface OWLControllerConflictSetListener extends OWLControllerListener {
 
-    void updateConflictSets (Set<Set<OWLLogicalAxiom>> conflictSets);
+    void updateConflictSets (Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets);
 
 }

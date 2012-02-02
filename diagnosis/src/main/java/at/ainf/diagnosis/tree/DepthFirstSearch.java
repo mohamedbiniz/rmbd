@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class DepthFirstSearch<Id> extends UninformedSearch<Id> {
 
-    public DepthFirstSearch(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
+    public DepthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
     }
 

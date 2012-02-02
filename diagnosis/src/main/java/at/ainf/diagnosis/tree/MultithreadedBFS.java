@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class MultithreadedBFS<Id> extends UninformedSearch<Id> {
 
-    public MultithreadedBFS(Storage<AxiomSet<Id>, Set<Id>, Id> storage) {
+    public MultithreadedBFS(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
     }
 

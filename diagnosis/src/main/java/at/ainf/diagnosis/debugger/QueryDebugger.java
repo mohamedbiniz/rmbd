@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public interface QueryDebugger<Id> {
 
-    public Set<Set<Id>> getConflictSets();
+    public Set<? extends AxiomSet<Id>> getConflictSets();
 
     public Set<? extends AxiomSet<Id>> getHittingSets();
 

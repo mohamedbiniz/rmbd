@@ -4,6 +4,7 @@ import at.ainf.diagnosis.tree.NodeCostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.protegeview.debugmanager.*;
 import at.ainf.protegeview.WorkspaceTab;
+import at.ainf.theory.storage.AxiomSet;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -62,7 +63,7 @@ public class AxiomExplainView extends AbstractOWLViewComponent implements AxiomC
     }
 
     public void processAxiom (OWLLogicalAxiom axiom) {
-        Set<Set<OWLLogicalAxiom>> conflSetAxxx
+        Set<? extends AxiomSet<OWLLogicalAxiom>> conflSetAxxx
           = getWS().getSearch().getStorage().getConflictSets(axiom);
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         if (axiom != null) {

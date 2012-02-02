@@ -85,7 +85,7 @@ public class PerformanceTests {
         PropertyConfigurator.configure(conf);
     }
 
-    public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diags)
+    public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diags)
             throws SolverException, InconsistentTheoryException {
 
         ScoringFunction f = null;

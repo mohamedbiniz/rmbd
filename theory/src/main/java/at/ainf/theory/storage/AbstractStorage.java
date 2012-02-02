@@ -11,11 +11,11 @@ import java.util.*;
  * Time: 16:06
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractStorage<T extends AxiomSet<Id>, E extends Set<Id>, Id> implements Storage<T, E, Id> {
+public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Storage<T, Id> {
     private static Logger logger = Logger.getLogger(AbstractStorage.class.getName());
     protected Set<T> hittingSets = new TreeSet<T>();
     protected Set<T> validHittingSets = new TreeSet<T>();
-    protected Set<E> conflicts = new LinkedHashSet<E>();
+    protected Set<T> conflicts = new LinkedHashSet<T>();
 
     private StorageListener<T, Id> hittingSetListener = new StorageListener<T, Id>() {
         public boolean remove(T oldObject) {
@@ -47,7 +47,7 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, E extends Set<Id>,
         validHittingSets.clear();
     }
 
-    public boolean addConflict(E conflict) {
+    public boolean addConflict(T conflict) {
         if (logger.isInfoEnabled())
             logger.info("Adding a conflict: " + conflict);
         boolean r = conflicts.add(conflict);
@@ -60,17 +60,17 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, E extends Set<Id>,
         notifyConflictSetAdded();
     }
 
-    public void setConflicts(Set<E> conflicts) {
+    public void setConflicts(Set<T> conflicts) {
         this.conflicts.clear();
-        for (E conf : conflicts)
+        for (T conf : conflicts)
             addConflict(conf);
     }
 
-    public Set<E> getConflictSets() {
+    public Set<T> getConflictSets() {
         return Collections.unmodifiableSet(conflicts);
     }
 
-    public boolean removeConflictSet(E cs) {
+    public boolean removeConflictSet(T cs) {
         return this.conflicts.remove(cs);
     }
 
@@ -143,10 +143,10 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, E extends Set<Id>,
         return validHittingSets.size();
     }
 
-    public Set<E> getConflictSets(Id axiom) {
-        Set<E> conflicts = new LinkedHashSet<E>();
+    public Set<T> getConflictSets(Id axiom) {
+        Set<T> conflicts = new LinkedHashSet<T>();
 
-        for (E conflict : getConflictSets()) {
+        for (T conflict : getConflictSets()) {
             for (Id ax : conflict) {
                 if (ax.equals(axiom)) {
                     conflicts.add(conflict);

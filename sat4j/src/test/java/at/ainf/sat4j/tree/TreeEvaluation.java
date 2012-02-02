@@ -53,19 +53,19 @@ public class TreeEvaluation {
         if (logger.isInfoEnabled())
             logger.info("Starting the tree creation test.");
         SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
-        List<TreeSearch<AxiomSet<IVecIntComparable>, Set<IVecIntComparable>, IVecIntComparable>> search = new ArrayList<TreeSearch<AxiomSet<IVecIntComparable>, Set<IVecIntComparable>, IVecIntComparable>>();
+        List<TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable>> search = new ArrayList<TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable>>();
         search.add(new BreadthFirstSearch<IVecIntComparable>(storage));
         search.add(new DepthFirstSearch<IVecIntComparable>(storage));
         search.add(new DepthLimitedSearch<IVecIntComparable>(storage));
         search.add(new IterativeDeepening<IVecIntComparable>(storage));
         search.add(new MixedTreeSearch<IVecIntComparable>(storage));
 
-        for (TreeSearch<AxiomSet<IVecIntComparable>, Set<IVecIntComparable>, IVecIntComparable> sr : search)
+        for (TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable> sr : search)
             run(sr);
 
     }
 
-    private void run(TreeSearch<AxiomSet<IVecIntComparable>, Set<IVecIntComparable>, IVecIntComparable> search) throws SolverException, ContradictionException, NoConflictException, InconsistentTheoryException {
+    private void run(TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable> search) throws SolverException, ContradictionException, NoConflictException, InconsistentTheoryException {
         search.setSearcher(new NewQuickXplain<IVecIntComparable>());
 
         int[] clause = new int[]{5, 6};
@@ -123,7 +123,7 @@ public class TreeEvaluation {
         assertTrue(contains(diagnoses,diagnosis3));
         assertTrue(contains(diagnoses,diagnosis4));
 
-        Collection<Set<IVecIntComparable>> conflicts = search.getStorage().getConflictSets();
+        Collection<AxiomSet<IVecIntComparable>> conflicts = search.getStorage().getConflictSets();
         logger.debug("Conflict: " + conflicts.toString());
         assertTrue(searchDub(conflicts));
         assertTrue(conflicts.size() == 2);

@@ -80,7 +80,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
 
     private HashMap<Collection<OWLLogicalAxiom>,Entry> conflictSetMap;
 
-    public void setConflictSets(Set<Set<OWLLogicalAxiom>> conflictSets, OWLWorkspace owlworkspace) {
+    public void setConflictSets(Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets, OWLWorkspace owlworkspace) {
         WorkspaceTab workspace = (WorkspaceTab) owlworkspace.getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
 
         NodeCostsEstimator<OWLLogicalAxiom> es = null;

@@ -30,7 +30,7 @@ import static _dev.TimeLog.stop;
  * Time: 08:04:41
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<Id>, Id> implements TreeSearch<T, E, Id> {
+public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements TreeSearch<T, Id> {
 
     private int maxHittingSets = Integer.MAX_VALUE;
 
@@ -38,7 +38,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<I
 
     private static Logger loggerDual = Logger.getLogger("dualtreelogger");
 
-    private final Storage<T, E, Id> storage;
+    private final Storage<T, Id> storage;
 
     private Node<Id> root = null;
 
@@ -48,7 +48,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<I
 
     private AxiomRenderer<Id> axiomRenderer;
 
-    public AbstractTreeSearch(Storage<T, E, Id> storage) {
+    public AbstractTreeSearch(Storage<T, Id> storage) {
         this.storage = storage;
     }
 
@@ -64,7 +64,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<I
 
     public abstract void expand(Node<Id> node);
 
-    protected abstract E createConflictSet(Node<Id> node, Set<Id> quickConflict);
+    protected abstract T createConflictSet(Node<Id> node, Set<Id> quickConflict);
 
     protected abstract T createHittingSet(Node<Id> labels, boolean valid) throws SolverException;
 
@@ -78,7 +78,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<I
         oNodesLsteners.remove(l);
     }
 
-    public Storage<T, E, Id> getStorage() {
+    public Storage<T, Id> getStorage() {
         return this.storage;
     }
 
@@ -298,7 +298,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<I
         if (logger.isInfoEnabled())
             logger.info("Found conflict: " + quickConflict);
 
-        E conflictSet = createConflictSet(node, quickConflict);
+        T conflictSet = createConflictSet(node, quickConflict);
         if (axiomRenderer != null)
             logMessage(getDepth(node), "created conflict set: ", conflictSet);
         if (axiomRenderer != null)
@@ -329,16 +329,16 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<I
         }*/
     }
 
-    private void pruneConflictSets(Node<Id> node, E conflictSet) {
+    private void pruneConflictSets(Node<Id> node, T conflictSet) {
         // DAG: verify if there is a conflict that is a subset of the new conflict
-        Set<E> invalidConflicts = new LinkedHashSet<E>();
-        for (E e : getStorage().getConflictSets()) {
+        Set<T> invalidConflicts = new LinkedHashSet<T>();
+        for (T e : getStorage().getConflictSets()) {
             if (e.containsAll(conflictSet) && e.size() > conflictSet.size())
                 invalidConflicts.add(e);
         }
 
         if (!invalidConflicts.isEmpty()) {
-            for (E invalidConflict : invalidConflicts) {
+            for (T invalidConflict : invalidConflicts) {
                 if (axiomRenderer != null) logMessage(getDepth(node), "now conflict invalid: ", invalidConflict);
                 getStorage().removeConflictSet(invalidConflict);
             }
@@ -352,7 +352,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<I
         return node.isClosed() || hasClosedParent(node.getParent());
     }
 
-    private void updateTree(E conflictSet) {
+    private void updateTree(T conflictSet) {
         Node<Id> root = getRoot();
         updateNode(conflictSet, root);
         LinkedList<Node<Id>> children = new LinkedList<Node<Id>>(root.getChildren());
@@ -363,7 +363,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, E extends Set<I
         }
     }
 
-    private void updateNode(E conflict, Node<Id> node) {
+    private void updateNode(T conflict, Node<Id> node) {
         if (node == null || node.getConflict() == null)
             return;
         if (node.getConflict().containsAll(conflict)) {

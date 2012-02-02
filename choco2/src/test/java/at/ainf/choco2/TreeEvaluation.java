@@ -126,7 +126,7 @@ public class TreeEvaluation {
         }
 
         Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getValidHittingSets();
-        Collection<Set<Constraint>> conflicts = strategy.getStorage().getConflictSets();
+        Collection<AxiomSet<Constraint>> conflicts = strategy.getStorage().getConflictSets();
 
         System.out.println(diagnoses);
         logger.info("Diagnoses: " + diagnoses);

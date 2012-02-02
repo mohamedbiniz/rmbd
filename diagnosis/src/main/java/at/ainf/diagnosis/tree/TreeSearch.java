@@ -27,7 +27,7 @@ import java.util.Set;
  * Time: 14:15:23
  * To change this template use File | Settings | File Templates.
  */
-public interface TreeSearch<T extends AxiomSet<Id>, E extends Set<Id>, Id> {
+public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
     public Set<T> run() throws SolverException, NoConflictException, InconsistentTheoryException;
 
@@ -37,7 +37,7 @@ public interface TreeSearch<T extends AxiomSet<Id>, E extends Set<Id>, Id> {
 
     public ITheory<Id> getTheory();
 
-    public Storage<T, E, Id> getStorage();
+    public Storage<T, Id> getStorage();
 
     public void setMaxHittingSets(int maxHittingSets);
 

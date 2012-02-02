@@ -9,15 +9,15 @@ import java.util.Set;
  * Time: 15:57
  * To change this template use File | Settings | File Templates.
  */
-public interface Storage<E extends AxiomSet<Id>, T extends Set<Id>, Id> {
+public interface Storage<E extends AxiomSet<Id>, Id> {
 
-    boolean addConflict(T conflict);
+    boolean addConflict(E conflict);
 
-    void setConflicts(Set<T> conflicts);
+    void setConflicts(Set<E> conflicts);
 
-    Set<T> getConflictSets();
+    Set<E> getConflictSets();
 
-    boolean removeConflictSet(T cs);
+    boolean removeConflictSet(E cs);
 
     int getConflictsCount();
 
@@ -37,7 +37,7 @@ public interface Storage<E extends AxiomSet<Id>, T extends Set<Id>, Id> {
 
     void resetStorage();
 
-    Set<T> getConflictSets(Id axiom);
+    Set<E> getConflictSets(Id axiom);
 
     void normalizeValidHittingSets();
 

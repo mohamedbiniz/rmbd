@@ -20,7 +20,7 @@ public class DiagProvider {
 
     private boolean isQueryMinimizerActive = true;
 
-    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> search = null;
+    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = null;
 
     private int diagnos = 9;
 
@@ -28,7 +28,7 @@ public class DiagProvider {
 
     private LinkedList<AxiomSet<OWLLogicalAxiom>> diagList = null;
 
-    public DiagProvider(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, Set<OWLLogicalAxiom>, OWLLogicalAxiom> s,
+    public DiagProvider(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> s,
                         boolean isQueryMinimizerActive,
                         int number) {
         this.search = s;
