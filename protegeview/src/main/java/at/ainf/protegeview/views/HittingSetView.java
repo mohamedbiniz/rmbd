@@ -70,7 +70,7 @@ public class HittingSetView extends AbstractProtegeResultView implements Hitting
             ((DefaultListModel)list.getModel()).clear();
               return;
         }
-        TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = (TreeSet<? extends AxiomSet<OWLLogicalAxiom>>) validHs;
+        TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = new TreeSet<AxiomSet<OWLLogicalAxiom>>(validHs);
         Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
         //workspace.addAxiomToResultsList( (DefaultListModel)list.getModel(), "Diagnosis", hsReverse);
         NodeCostsEstimator<OWLLogicalAxiom> es = null;

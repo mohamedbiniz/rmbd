@@ -72,7 +72,7 @@ public class TcaeFrameSection extends AbstractOWLClassAxiomFrameSection<OWLLogic
         if (!descr.isAnonymous()) {
             return null; //ont.getSubClassAxiomsForSubClass(descr.asOWLClass());
         } else {
-            Set<OWLLogicalAxiom> axioms = new TreeSet<OWLLogicalAxiom>();
+            Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>();
             for (OWLLogicalAxiom ax : ont.getGeneralClassAxioms()) {
                 if (ax.equals(descr)) {
                     axioms.add (ax);

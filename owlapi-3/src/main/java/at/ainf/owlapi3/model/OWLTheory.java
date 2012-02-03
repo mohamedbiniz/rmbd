@@ -715,7 +715,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         if (!axiomGenerators.isEmpty())
             reasoner.precomputeInferences(infType);
 
-        Set<OWLLogicalAxiom> entailments = new TreeSet<OWLLogicalAxiom>();
+        Set<OWLLogicalAxiom> entailments = new LinkedHashSet<OWLLogicalAxiom>();
         //addDisjoint(reasoner, manager, entailments);
         //addSubclass(reasoner, manager, entailments);
         for (InferredAxiomGenerator<? extends OWLLogicalAxiom> axiomGenerator : axiomGenerators) {

@@ -34,7 +34,7 @@ public class OWLAxiomEditor extends AbstractOWLObjectEditor<Set<OWLLogicalAxiom>
 
     private java.util.List<OWLAxiomEditorPanel> activeEditors = new ArrayList<OWLAxiomEditorPanel>();
 
-    private Set<OWLAxiomEditorPanel> editors = new TreeSet<OWLAxiomEditorPanel>();
+    private Set<OWLAxiomEditorPanel> editors = new LinkedHashSet<OWLAxiomEditorPanel>();
 
     private boolean currentStatus = false;
 

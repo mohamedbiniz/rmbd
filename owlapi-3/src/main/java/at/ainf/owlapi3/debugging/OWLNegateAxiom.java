@@ -3,6 +3,7 @@ package at.ainf.owlapi3.debugging;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.NNF;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -47,7 +48,7 @@ public class OWLNegateAxiom extends NNF {
         OWLClassExpression negatedSubClass = getNegation(subClass);
 
 
-        Set<OWLClassExpression> exprs = new TreeSet<OWLClassExpression>();
+        Set<OWLClassExpression> exprs = new LinkedHashSet<OWLClassExpression>();
         exprs.add(negatedSubClass.accept(this));
         exprs.add(superClass.accept(this));
         return dataFactory.getOWLSubClassOfAxiom(dataFactory.getOWLObjectUnionOf(exprs), dataFactory.getOWLNothing());
@@ -67,7 +68,7 @@ public class OWLNegateAxiom extends NNF {
     }
 
     public OWLAxiom visit(OWLEquivalentClassesAxiom axiom) {
-        Set<OWLClassExpression> ops = new TreeSet<OWLClassExpression>();
+        Set<OWLClassExpression> ops = new LinkedHashSet<OWLClassExpression>();
         for (OWLClassExpression op : axiom.getClassExpressions()) {
             ops.add(op.accept(this));
         }
@@ -92,7 +93,7 @@ public class OWLNegateAxiom extends NNF {
 
 
     public OWLClassExpression visit(OWLObjectIntersectionOf desc) {
-        Set<OWLClassExpression> ops = new TreeSet<OWLClassExpression>();
+        Set<OWLClassExpression> ops = new LinkedHashSet<OWLClassExpression>();
         for (OWLClassExpression op : desc.getOperands()) {
             ops.add(op.accept(this));
         }
@@ -105,7 +106,7 @@ public class OWLNegateAxiom extends NNF {
 
 
     public OWLClassExpression visit(OWLObjectUnionOf desc) {
-        Set<OWLClassExpression> ops = new TreeSet<OWLClassExpression>();
+        Set<OWLClassExpression> ops = new LinkedHashSet<OWLClassExpression>();
         for (OWLClassExpression op : desc.getOperands()) {
             ops.add(op.accept(this));
         }
@@ -330,7 +331,7 @@ public class OWLNegateAxiom extends NNF {
             }
         } else {
             // Encode as a data union of and return result
-            Set<OWLDataOneOf> oneOfs = new TreeSet<OWLDataOneOf>();
+            Set<OWLDataOneOf> oneOfs = new LinkedHashSet<OWLDataOneOf>();
             for (OWLLiteral lit : node.getValues()) {
                 oneOfs.add(dataFactory.getOWLDataOneOf(lit));
             }
@@ -340,7 +341,7 @@ public class OWLNegateAxiom extends NNF {
     }
 
     public OWLDataRange visit(OWLDataIntersectionOf node) {
-        Set<OWLDataRange> ops = new TreeSet<OWLDataRange>();
+        Set<OWLDataRange> ops = new LinkedHashSet<OWLDataRange>();
         for (OWLDataRange op : node.getOperands()) {
             ops.add(op.accept(this));
         }
@@ -352,7 +353,7 @@ public class OWLNegateAxiom extends NNF {
     }
 
     public OWLDataRange visit(OWLDataUnionOf node) {
-        Set<OWLDataRange> ops = new TreeSet<OWLDataRange>();
+        Set<OWLDataRange> ops = new LinkedHashSet<OWLDataRange>();
         for (OWLDataRange op : node.getOperands()) {
             ops.add(op.accept(this));
         }

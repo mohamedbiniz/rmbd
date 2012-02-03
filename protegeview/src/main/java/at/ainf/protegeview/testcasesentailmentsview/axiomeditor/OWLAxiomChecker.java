@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.TreeSet;
 
 /**
@@ -37,7 +38,7 @@ public class OWLAxiomChecker implements OWLExpressionChecker<Collection<OWLLogic
 
     public Collection<OWLLogicalAxiom> createObject(String text) throws OWLExpressionParserException {
 
-        Collection<OWLLogicalAxiom> axioms = new TreeSet<OWLLogicalAxiom>();
+        Collection<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>();
 
         String[] splitted = text.split(",");
         for (String a : splitted) {
