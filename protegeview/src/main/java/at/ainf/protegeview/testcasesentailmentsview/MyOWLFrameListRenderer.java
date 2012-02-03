@@ -11,6 +11,7 @@ import org.semanticweb.owlapi.model.OWLObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,7 +46,7 @@ public class MyOWLFrameListRenderer implements ListCellRenderer {
         highlightKeywords = true;
         highlightUnsatisfiableClasses = true;
         highlightUnsatisfiableProperties = true;
-        crossedOutEntities = new TreeSet<OWLEntity>();
+        crossedOutEntities = new LinkedHashSet<OWLEntity>();
     }
 
 

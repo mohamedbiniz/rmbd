@@ -100,7 +100,7 @@ public class
         switch (searcher.doBackgroundSearch()) {
             case FINISHED:
                 Collection<? extends AxiomSet<OWLLogicalAxiom>> hittingsets = getSearch().getStorage().getValidHittingSets();
-                TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = (TreeSet<? extends AxiomSet<OWLLogicalAxiom>>) hittingsets;
+                TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = new TreeSet<AxiomSet<OWLLogicalAxiom>>(hittingsets);
                 Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
                 Collection<? extends AxiomSet<OWLLogicalAxiom>> conflSets = getSearch().getStorage().getConflictSets();
                 // addAxiomToResultsList(getConflictSetListModel(), "Conflict Set ", conflSets);
@@ -237,7 +237,7 @@ public class
                 number = Integer.parseInt(((OWLLiteral) value).getLiteral().substring(ty.toString().length()));
 
                 if (axioms.get(ty).get(number) == null) {
-                    axioms.get(ty).put(number, new TreeSet<OWLLogicalAxiom>());
+                    axioms.get(ty).put(number, new LinkedHashSet<OWLLogicalAxiom>());
                 }
                 axioms.get(ty).get(number).add((OWLLogicalAxiom) axiom.getAxiomWithoutAnnotations());
             }
@@ -427,7 +427,7 @@ public class
                         OWLAnnotation annot = factory.getOWLAnnotation(
                                 factory.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_COMMENT.getIRI()),
                                 factory.getOWLLiteral(type.toString() + c, "en"));
-                        TreeSet<OWLAnnotation> set = new TreeSet<OWLAnnotation>();
+                        LinkedHashSet<OWLAnnotation> set = new LinkedHashSet<OWLAnnotation>();
                         set.add(annot);
                         axiom = (OWLLogicalAxiom) axiom.getAnnotatedAxiom(set);
                         AddAxiom addAxiom = new AddAxiom(on, axiom);

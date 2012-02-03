@@ -61,7 +61,7 @@ public class TcaeFrameSectionItem implements OWLFrameSectionRow<OWLClassExpressi
         this.section = section;
         this.ontology = ontology;
         this.rootObject = rootObject;
-        this.axioms = new TreeSet<OWLLogicalAxiom>();
+        this.axioms = new LinkedHashSet<OWLLogicalAxiom>();
         this.axioms.add(axiom);
 
         type = ((TcaeFrameSection) section).getSectionType();

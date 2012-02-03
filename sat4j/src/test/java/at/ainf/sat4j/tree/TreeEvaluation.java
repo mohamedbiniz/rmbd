@@ -73,10 +73,10 @@ public class TreeEvaluation {
         th.addBackgroundFormula(new VecIntComparable(clause));
 
         List<IVecIntComparable> conflict1 = new LinkedList<IVecIntComparable>();
-        Set<IVecIntComparable> diagnosis1 = new TreeSet<IVecIntComparable>();
-        Set<IVecIntComparable> diagnosis2 = new TreeSet<IVecIntComparable>();
-        Set<IVecIntComparable> diagnosis3 = new TreeSet<IVecIntComparable>();
-        Set<IVecIntComparable> diagnosis4 = new TreeSet<IVecIntComparable>();
+        Set<IVecIntComparable> diagnosis1 = new LinkedHashSet<IVecIntComparable>();
+        Set<IVecIntComparable> diagnosis2 = new LinkedHashSet<IVecIntComparable>();
+        Set<IVecIntComparable> diagnosis3 = new LinkedHashSet<IVecIntComparable>();
+        Set<IVecIntComparable> diagnosis4 = new LinkedHashSet<IVecIntComparable>();
 
         // simple conflict conflict1-c4
         IVecIntComparable var = th.addClause(new int[]{-1, -2, 3});
