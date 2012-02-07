@@ -110,6 +110,10 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Id> {
         return currentStrategy.getMaxHittingSets();
     }
 
+    public void clearSearch() {
+
+    }
+
     public Set<AxiomSet<Id>> run() throws SolverException, NoConflictException, InconsistentTheoryException {
         return run(0);
     }

@@ -91,7 +91,8 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         Set<Id> labels = node.getPathLabels();
         double probability = ((CostNode<Id>) node).getNodePathCosts();
         Set<Id> entailments = Collections.emptySet();
-        if (getTheory().supportEntailments() && valid) entailments = getTheory().getEntailments(labels);
+        if (getTheory().supportEntailments() && valid && !getSearcher().isDual())
+            entailments = getTheory().getEntailments(labels);
         AbstrAxiomSet<Id> result = (AbstrAxiomSet<Id>) AxiomSetFactory.createHittingSet(probability, labels, entailments);
         result.setNode(node);
         return result;
@@ -99,7 +100,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
 
     @Override
     protected void finalizeSearch() {
-        getTheory().doBayesUpdate(getStorage().getValidHittingSets());
+        getTheory().doBayesUpdate(getStorage().getDiagnoses());
         getStorage().normalizeValidHittingSets();
     }
 

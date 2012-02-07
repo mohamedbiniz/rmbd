@@ -1,6 +1,7 @@
 package at.ainf.theory.storage;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -14,7 +15,18 @@ public class DualStorage<Id> extends SimpleStorage<Id> {
 
     @Override
     public Set<AxiomSet<Id>> getDiagnoses() {
-        return Collections.unmodifiableSet(getConflictSets());
+        Set<AxiomSet<Id>> diags = new LinkedHashSet<AxiomSet<Id>>();
+
+        for (AxiomSet<Id> d : getConflictSets()) {
+            if (d.isValid())
+              diags.add(d);
+        }
+        return Collections.unmodifiableSet(diags);
+
+    }
+
+    public void invalidateHittingSet(AxiomSet<Id> hs) {
+        hs.setValid(false);
     }
 
     @Override

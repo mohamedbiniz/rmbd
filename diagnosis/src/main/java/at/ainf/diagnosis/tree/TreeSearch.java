@@ -29,6 +29,8 @@ import java.util.Set;
  */
 public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
+    public void clearSearch();
+
     public Set<T> run() throws SolverException, NoConflictException, InconsistentTheoryException;
 
     public void setSearcher(Searcher<Id> searcher);

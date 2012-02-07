@@ -207,7 +207,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         for (Set<T> test : getNonentailedTests()) {
             push(test);
         }
-        boolean res = verifyRequirements();
+        boolean res = verifyConsistency();
         pop(getTheoryCount());
         return res;
     }
