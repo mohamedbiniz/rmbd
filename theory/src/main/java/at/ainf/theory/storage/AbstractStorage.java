@@ -170,7 +170,7 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
     }
 
     public void normalizeValidHittingSets() {
-        Set<T> hittingSets = getValidHittingSets();
+        Set<T> hittingSets = getDiagnoses();
         double sum = 0;
 
         for (T hittingSet : hittingSets) {

@@ -271,7 +271,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             push(test);
         }
 
-        if (!verifyRequirements()) {
+        if (!verifyConsistency()) {
             pop(getTheoryCount());
             return false;
         }

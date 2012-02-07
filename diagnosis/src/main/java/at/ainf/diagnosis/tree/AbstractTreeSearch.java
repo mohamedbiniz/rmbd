@@ -157,7 +157,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             stop();
         }
 
-        return getStorage().getValidHittingSets();
+        return getStorage().getDiagnoses();
     }
 
     protected abstract void finalizeSearch();
@@ -225,11 +225,11 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 Set<Id> diagnosis = node.getPathLabels();
 
                 boolean valid = true;
-                if (getTheory().hasTests())
-                    valid = getTheory().testDiagnosis(diagnosis);
+                if(!getSearcher().isDual()) {
+                    if (getTheory().hasTests())
+                        valid = getTheory().testDiagnosis(diagnosis);
+                }
                 T hs = createHittingSet(node, valid);
-                if (axiomRenderer != null)
-                    logMessage(getDepth(node), "created hitting set: ", hs);
 
                 hs.setValid(valid);
                 getStorage().addHittingSet(hs);
@@ -299,6 +299,16 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             logger.info("Found conflict: " + quickConflict);
 
         T conflictSet = createConflictSet(node, quickConflict);
+
+        if(getSearcher().isDual()) {
+            boolean valid = true;
+            if (getTheory().hasTests()) {
+                valid = getTheory().testDiagnosis(conflictSet);
+            }
+            conflictSet.setValid(valid);
+
+        }
+
         if (axiomRenderer != null)
             logMessage(getDepth(node), "created conflict set: ", conflictSet);
         if (axiomRenderer != null)

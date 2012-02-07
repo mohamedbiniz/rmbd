@@ -43,7 +43,8 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
     protected AxiomSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
         Set<Id> labels = node.getPathLabels();
         Set<Id> entailments = Collections.emptySet();
-        if (getTheory().supportEntailments() && valid) entailments = getTheory().getEntailments(labels);
+        if (getTheory().supportEntailments() && valid && !getSearcher().isDual())
+            entailments = getTheory().getEntailments(labels);
         double measure = 1d / labels.size();
         AbstrAxiomSet<Id> hs = (AbstrAxiomSet<Id>) AxiomSetFactory.createHittingSet(measure, labels, entailments);
         hs.setNode(node);

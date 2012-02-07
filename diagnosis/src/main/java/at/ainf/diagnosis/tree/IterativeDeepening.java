@@ -52,7 +52,7 @@ public class IterativeDeepening<Id> extends DepthLimitedSearch<Id> {
             iterationDepth += step;
 
         } while (iterationDepth < LIMIT && isExpandable());
-        return getStorage().getValidHittingSets();
+        return getStorage().getDiagnoses();
     }
 
     public void setStartDepth(int startDepth) {

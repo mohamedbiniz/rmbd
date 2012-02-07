@@ -59,28 +59,30 @@ public class PerformanceTests {
     //private final String[] ontologies = {"CHEM-A.owl", "src/test/resources/koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl",
     //        "Economy-SDA.owl", "Transportation-SDA.owl"};
     // "koala.owl",
-    private String[] ontologies = {"Univ.owl"};
+    protected String[] ontologies = {"Univ.owl"};
     //private String[] ontologies = {"opengalen-no-propchainsmod.owl"};
 
-    private final String queryontologies = "queryontologies";
+    protected final String queryontologies = "queryontologies";
 
     // chemical koala sweet univ minitambis
     // dice-A chem-A univ koala - NEW
-    private int MAX_RUNS = 1;
-    private static final double SIGMA = 85;
-    private static final boolean BRUTE = false;
+    protected int MAX_RUNS = 1;
+    protected static final double SIGMA = 85;
+    protected static final boolean BRUTE = false;
+    
+    protected static boolean userBrk = false;
 
-    private Random rnd = new Random();
-
-
-    private ModerateDistribution moderateDistribution;
-
-    private ExtremeDistribution extremeDistribution;
+    protected Random rnd = new Random();
 
 
-    private enum ScoringFunc {ENTROPY, SPLITINHALF}
+    protected ModerateDistribution moderateDistribution;
 
-    private ScoringFunc scoringFunc = ScoringFunc.ENTROPY;
+    protected ExtremeDistribution extremeDistribution;
+
+
+    protected enum ScoringFunc {ENTROPY, SPLITINHALF}
+
+    protected ScoringFunc scoringFunc = ScoringFunc.ENTROPY;
 
     @BeforeClass
     public static void setUp() {
@@ -121,7 +123,7 @@ public class PerformanceTests {
         return partition;
     }
 
-    private OWLOntology createOwlOntology(String fileName) {
+    protected OWLOntology createOwlOntology(String fileName) {
         String path = ClassLoader.getSystemResource(queryontologies).getPath();
         File ontF = new File(path + "/" + fileName);
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -135,7 +137,7 @@ public class PerformanceTests {
         return ontology;
     }
 
-    private OWLTheory createOWLTheory(OWLOntology ontology, boolean dual) {
+    protected OWLTheory createOWLTheory(OWLOntology ontology, boolean dual) {
         OWLTheory result = null;
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
@@ -186,7 +188,7 @@ public class PerformanceTests {
         return result;
     }
 
-    private UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
+    protected UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
 
         SimpleStorage<OWLLogicalAxiom> storage ;
         if (dual)
@@ -258,7 +260,7 @@ public class PerformanceTests {
                 for (DiagProbab diagProbab : DiagProbab.values()) {
                     //if (diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME)
 
-                    //for (int i = 0; i < MAX_RUNS; i++) {
+                    for (int i = 0; i < MAX_RUNS; i++) {
                         for (AxiomSet<OWLLogicalAxiom> d : diagnoses) {
                             TableList entry = null;
     
@@ -298,6 +300,7 @@ public class PerformanceTests {
     
     
                             }
+                        }
                     }
 
                 }
@@ -322,7 +325,7 @@ public class PerformanceTests {
         }
     }
 
-    private void readParametersFromFile() {
+    protected void readParametersFromFile() {
         Properties properties = new Properties();
         String config = ClassLoader.getSystemResource("config.properties").getFile();
         BufferedInputStream stream = null;
@@ -344,7 +347,7 @@ public class PerformanceTests {
 
     }
 
-    private void testOrder(Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+    protected void testOrder(Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         double prob = 0;
         for (AxiomSet<OWLLogicalAxiom> diag : diagnoses) {
             if (diag.getMeasure() < prob)
@@ -421,7 +424,7 @@ public class PerformanceTests {
 
     }
     */
-    private void print(UserProbAndQualityTable table) {
+    protected void print(UserProbAndQualityTable table) {
         if (table == null)
             return;
         for (UsersProbab usersProbab : UsersProbab.values()) {
@@ -554,7 +557,7 @@ public class PerformanceTests {
                     double d1p = d1.getMeasure();
                     double diff = 100 - (d1p * 100) / dp;
                     logger.trace("difference : " + (dp - d1p) + " - " + diff + " %");
-                    if (diff > SIGMA && isTargetDiagFirst && num_of_queries > 0) {
+                    if ( userBrk && diff > SIGMA && isTargetDiagFirst && num_of_queries > 0) {
                         // user brake
                         querySessionEnd = true;
                         userBreak = true;
@@ -790,7 +793,7 @@ private void simulateQuerySession
         return queryGenerator;
     }   */
 
-    private AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
+    protected AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
             (DiagProbab
                      diagProbab, TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
 
@@ -897,7 +900,7 @@ private void simulateQuerySession
         return min + rnd.nextDouble() * (max - min);
     }
 
-    private Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
+    protected Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
             (UsersProbab
                      usersProbab, UniformCostSearch<OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         Map<ManchesterOWLSyntax, Double> keywordProbs = new HashMap<ManchesterOWLSyntax, Double>();
