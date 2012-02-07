@@ -2,9 +2,9 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.storage.AbstrAxiomSet;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.AxiomSetFactory;
-import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
@@ -67,10 +67,13 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
     }
 
     @Override
-    protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) {
+    protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException {
         double probability = 1d / quickConflict.size();
         Set<Id> entailments = Collections.emptySet();
-        AxiomSetImpl<Id> result = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.CONFLICT_SET, probability, quickConflict, entailments);
+        if (getTheory().supportEntailments() && getSearcher().isDual()) entailments = getTheory().getEntailments(quickConflict);
+        if (entailments==null)
+            entailments = Collections.emptySet();
+        AbstrAxiomSet<Id> result = (AbstrAxiomSet<Id>) AxiomSetFactory.createConflictSet(probability, quickConflict, entailments );
         result.setNode(node);
         return result;
         // return result;
@@ -89,7 +92,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         double probability = ((CostNode<Id>) node).getNodePathCosts();
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && valid) entailments = getTheory().getEntailments(labels);
-        AxiomSetImpl<Id> result = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.HITTING_SET, probability, labels, entailments);
+        AbstrAxiomSet<Id> result = (AbstrAxiomSet<Id>) AxiomSetFactory.createHittingSet(probability, labels, entailments);
         result.setNode(node);
         return result;
     }

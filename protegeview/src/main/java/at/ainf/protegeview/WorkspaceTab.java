@@ -99,7 +99,7 @@ public class
         //getWS().getSearch().run();
         switch (searcher.doBackgroundSearch()) {
             case FINISHED:
-                Collection<? extends AxiomSet<OWLLogicalAxiom>> hittingsets = getSearch().getStorage().getValidHittingSets();
+                Collection<? extends AxiomSet<OWLLogicalAxiom>> hittingsets = getSearch().getStorage().getDiagnoses();
                 TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = new TreeSet<AxiomSet<OWLLogicalAxiom>>(hittingsets);
                 Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
                 Collection<? extends AxiomSet<OWLLogicalAxiom>> conflSets = getSearch().getStorage().getConflictSets();

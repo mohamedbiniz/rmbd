@@ -44,7 +44,7 @@ public class DiagProvider {
         search.setMaxHittingSets(diagnos);
         BackgroundSearcher s = new BackgroundSearcher(search, null);
         s.doBackgroundSearch();
-        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getStorage().getValidHittingSets();
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getStorage().getDiagnoses();
 
         for (AxiomSet<OWLLogicalAxiom> axiomSet : res)
             diagList.add(axiomSet);

@@ -153,7 +153,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             REDUCE_TO_UNSAT = true;
             updateAxioms(getOntology(), logicalAxioms, backgroundAxioms);
             getSolver().flush();
-            if (getSolver().isConsistent()) {
+            if (getSolver().verifyRequirements()) {
                 Set<OWLClass> entities = getSolver().getUnsatisfiableClasses().getEntities();
                 updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
                 entities.remove(BOTTOM_CLASS);
@@ -271,7 +271,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             push(test);
         }
 
-        if (!isConsistent()) {
+        if (!verifyRequirements()) {
             pop(getTheoryCount());
             return false;
         }
@@ -303,7 +303,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
             push(test);
         }
-        if (!isConsistent()) {
+        if (!verifyConsistency()) {
             pop(getTheoryCount());
             return false;
         }
@@ -328,8 +328,8 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return true;
     }
 
-    @Override
-    protected boolean verifyConsistency() {
+
+    public boolean verifyConsistency() {
         start("Overall consistency check including management");
         updateAxioms(getOntology(), getFormulaStack(), getBackgroundFormulas());
         boolean consistent = doConsistencyTest(getSolver());

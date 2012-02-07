@@ -48,8 +48,7 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
         return false;
     }
 
-    @Override
-    protected boolean verifyConsistency() throws SolverException {
+    public boolean verifyConsistency() throws SolverException {
         return verifyQuery(getFormulaStack());
     }
 

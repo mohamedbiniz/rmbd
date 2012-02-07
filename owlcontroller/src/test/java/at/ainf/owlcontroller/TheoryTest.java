@@ -86,7 +86,7 @@ public class TheoryTest {
 
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
-        assertTrue(theory.isConsistent());
+        assertTrue(theory.verifyRequirements());
 
         return theory;
     }

@@ -5,7 +5,6 @@ import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.AxiomSetFactory;
-import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.watchedset.WatchedTreeSet;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -46,8 +45,8 @@ public class TestWatchedTreeSet {
         Set<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
         set.add(axiom);
 
-        //return new AxiomSetImpl<OWLLogicalAxiom>(AxiomSet.TypeOfSet.HITTING_SET,name, measure,set, Collections.<OWLLogicalAxiom>emptySet());
-        return AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.HITTING_SET,measure,set, Collections.<OWLLogicalAxiom>emptySet());
+        //return new AbstrAxiomSet<OWLLogicalAxiom>(AxiomSet.TypeOfSet.HITTING_SET,name, measure,set, Collections.<OWLLogicalAxiom>emptySet());
+        return AxiomSetFactory.createHittingSet(measure, set, Collections.<OWLLogicalAxiom>emptySet() );
     }
 
     @Test

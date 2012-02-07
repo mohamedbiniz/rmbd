@@ -15,7 +15,9 @@ import java.util.Set;
  */
 public interface Searchable<E> {
 
-    public boolean isConsistent() throws SolverException;
+    public boolean verifyRequirements() throws SolverException;
+
+    public boolean verifyConsistency() throws SolverException;
 
     boolean push(Collection<E> u) throws SolverException;
 

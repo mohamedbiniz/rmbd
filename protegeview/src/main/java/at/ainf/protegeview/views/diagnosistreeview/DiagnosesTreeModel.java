@@ -2,7 +2,7 @@ package at.ainf.protegeview.views.diagnosistreeview;
 
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.AxiomSetImpl;
+import at.ainf.theory.storage.AbstrAxiomSet;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.NodeCostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -150,7 +150,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
         }
 
         for (Object hittingSet : hs) {
-            Node<OWLLogicalAxiom> node = (Node<OWLLogicalAxiom>) ((AxiomSetImpl<OWLLogicalAxiom>) hittingSet).getNode();
+            Node<OWLLogicalAxiom> node = (Node<OWLLogicalAxiom>) ((AbstrAxiomSet<OWLLogicalAxiom>) hittingSet).getNode();
             Node<OWLLogicalAxiom> parent = node.getParent();
 
             while (parent != null) {

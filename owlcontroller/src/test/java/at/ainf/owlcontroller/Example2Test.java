@@ -280,7 +280,7 @@ public class Example2Test extends AbstractExample {
             catch(NoConflictException e) {
             }
             Collection<Diag> res = new TreeSet<Diag>();
-            for (Collection<OWLLogicalAxiom> col : search.getStorage().getValidHittingSets()) {
+            for (Collection<OWLLogicalAxiom> col : search.getStorage().getDiagnoses()) {
                 res.add(Diag.getDiagnosis(col));
             }
             TreeSet<Diag> d_xPlus0;
@@ -318,7 +318,7 @@ public class Example2Test extends AbstractExample {
             theory.addNonEntailedTest(query.getAxioms());
             search.run();
             Collection<Diag> res = new TreeSet<Diag>();
-            for (Collection<OWLLogicalAxiom> col : search.getStorage().getValidHittingSets()) {
+            for (Collection<OWLLogicalAxiom> col : search.getStorage().getDiagnoses()) {
                 res.add(Diag.getDiagnosis(col));
             }
             TreeSet<Diag> d_nxPlus0;
@@ -351,7 +351,7 @@ public class Example2Test extends AbstractExample {
         theory.addNonEntailedTest(Query.X5.getAxioms());
         search.run();
         Collection<Diag> res = new TreeSet<Diag>();
-        for (Collection<OWLLogicalAxiom> col : search.getStorage().getValidHittingSets()) {
+        for (Collection<OWLLogicalAxiom> col : search.getStorage().getDiagnoses()) {
             res.add(Diag.getDiagnosis(col));
         }
         TreeSet<Diag> d_nxPlus0;

@@ -1,5 +1,6 @@
 package at.ainf.theory.storage;
 
+import at.ainf.theory.model.SolverException;
 import at.ainf.theory.watchedset.WatchedElement;
 
 import java.util.Set;
@@ -34,4 +35,6 @@ public interface AxiomSet<Id> extends Set<Id>, Comparable<AxiomSet<Id>>, Watched
     TypeOfSet getType();
 
     void restoreEntailments();
+
+
 }

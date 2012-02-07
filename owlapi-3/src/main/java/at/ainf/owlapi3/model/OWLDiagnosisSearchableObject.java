@@ -28,8 +28,8 @@ public class OWLDiagnosisSearchableObject extends AbstractSearchableObject<OWLLo
         this.theory = theory;
     }
 
-    @Override
-    protected boolean verifyConsistency() {
+
+    public boolean verifyConsistency() {
         OWLOntology ontology = theory.getOntology();
         theory.addAxioms(theory.getActiveFormulas(), ontology);
         theory.removeAxioms(getFormulaStack(), ontology);

@@ -33,7 +33,7 @@ public class PropositionalTheoryTest {
         assertEquals(0, count);
 
         insertConflicts(th);
-        assertTrue(th.isConsistent());
+        assertTrue(th.verifyRequirements());
 
         assertEquals(1, th.getTheoryCount());
 
@@ -41,7 +41,7 @@ public class PropositionalTheoryTest {
         IVecIntComparable fl = th.addClause(clause);
         th.push(fl);
         assertEquals(2, th.getTheoryCount());
-        assertFalse(th.isConsistent());
+        assertFalse(th.verifyRequirements());
         th.pop();
 
         assertEquals(1, th.getTheoryCount());
@@ -52,7 +52,7 @@ public class PropositionalTheoryTest {
 
         fl = th.addClause(clause);
         th.push(fl);
-        assertTrue(th.isConsistent());
+        assertTrue(th.verifyRequirements());
     }
 
     private void addTheories(int numberOfTheories, int from, PropositionalTheory th) throws SolverException {

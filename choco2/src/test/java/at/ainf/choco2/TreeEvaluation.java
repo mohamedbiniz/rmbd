@@ -125,8 +125,8 @@ public class TreeEvaluation {
             fail();
         }
 
-        Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getValidHittingSets();
-        Collection<AxiomSet<Constraint>> conflicts = strategy.getStorage().getConflictSets();
+        Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getDiagnoses();
+        Collection<AxiomSet<Constraint>> conflicts = strategy.getStorage().getConflicts();
 
         System.out.println(diagnoses);
         logger.info("Diagnoses: " + diagnoses);
@@ -168,8 +168,8 @@ public class TreeEvaluation {
             fail();
         }
 
-        Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getValidHittingSets();
-        Collection<Set<Constraint>> conflicts = strategy.getStorage().getConflictSets();
+        Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getDiagnoses();
+        Collection<Set<Constraint>> conflicts = strategy.getStorage().getConflicts();
 
         logger.info("Diagnoses: " + diagnoses);
         logger.info("Conflicts: " + conflicts);

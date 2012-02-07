@@ -86,7 +86,7 @@ public class OrderProbabTest {
             ((OWLAxiomNodeCostsEstimator)search.getNodeCostsEstimator()).setKeywordProbabilities(map, null);
 
 
-            Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
+            Collection<? extends AxiomSet<OWLLogicalAxiom>> res = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.run(9));
             TreeSet<AxiomSet<OWLLogicalAxiom>> result = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
             double measure = 0.0;
             for (AxiomSet<OWLLogicalAxiom> hs : res) {

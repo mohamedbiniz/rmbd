@@ -58,15 +58,15 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
      * @throws at.ainf.diagnosis.tree.exceptions.NoConflictException
      *
      */
-
+    
     public Set<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException {
         iterations = 0;
 
-        if (!c.isConsistent())
+        if (!c.verifyRequirements())
             throw new InconsistentTheoryException("Background theory or test cases are inconsistent! Finding conflicts is impossible!");
         c.push(u);
-        final boolean isCons = c.isConsistent();
+        final boolean isCons = c.verifyRequirements();
         c.pop();
 
         if (isCons) {
@@ -83,7 +83,7 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException {
         iterations++;
-        if (d != null && d.size() != 0 && !b.isConsistent())
+        if (d != null && d.size() != 0 && ! b.verifyRequirements())
             return null;
 
         if (c.size() == 1) {

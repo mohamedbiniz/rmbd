@@ -97,8 +97,9 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             totalTime += time;
             */
             //}
+            rollbackChanges(searchable, formulas, changes);
         }
-        rollbackChanges(searchable, formulas, changes);
+
 
         return conflictFormulas;
     }

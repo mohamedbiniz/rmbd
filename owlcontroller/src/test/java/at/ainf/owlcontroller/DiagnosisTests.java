@@ -125,7 +125,7 @@ public class DiagnosisTests {
 
 
         start();
-        assertTrue(th.isConsistent());
+        assertTrue(th.verifyRequirements());
         stop("Classified in ");
 
         //debugger.setMaxHittingSets(number);

@@ -104,13 +104,7 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         return this.stackCount.size();
     }
 
-    public boolean isConsistent() throws SolverException {
-        if (getResult() != null)
-            return getResult();
-
-        setResult(verifyConsistency());
-        return getResult();
+    public boolean verifyRequirements() throws SolverException {
+        return verifyConsistency();
     }
-
-    protected abstract boolean verifyConsistency() throws SolverException;
 }

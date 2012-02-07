@@ -210,7 +210,7 @@ public class QuerySelComparison {
 
         search.run();
         TreeSet<AxiomSet<OWLLogicalAxiom>> alldiags = (TreeSet<AxiomSet<OWLLogicalAxiom>>)
-                search.getStorage().getValidHittingSets();
+                search.getStorage().getDiagnoses();
 
         theory.clearTestCases();
         search.clearSearch();
@@ -293,7 +293,7 @@ public class QuerySelComparison {
                             }
 
                             Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                                    Collections.unmodifiableSet(search.getStorage().getValidHittingSets());
+                                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
                             Set<AxiomSet<OWLLogicalAxiom>> conflictSets = search.getStorage().getConflictSets();
 
                             logger.info(ontologyFileString + " - with " + conflictSets.size() + " minimal conflict(s) and " + diagnoses.size() + " hitting set(s)");
@@ -362,7 +362,7 @@ public class QuerySelComparison {
             }
 
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                    Collections.unmodifiableSet(search.getStorage().getValidHittingSets());
+                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
 
             theory.clearTestCases();
             search.clearSearch();
@@ -679,7 +679,7 @@ public class QuerySelComparison {
                     diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
                 } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getValidHittingSets());
+                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
 
                 }
 

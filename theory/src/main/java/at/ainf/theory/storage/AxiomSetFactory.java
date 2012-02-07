@@ -1,7 +1,5 @@
 package at.ainf.theory.storage;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -12,18 +10,20 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class AxiomSetFactory {
+    
+    private static int hsCnt = 0;
+    
+    private static int csCnt = 0;
 
-    private static Map<AxiomSet.TypeOfSet,Integer> map = new HashMap<AxiomSet.TypeOfSet, Integer>();
 
-    private static int getCnt(AxiomSet.TypeOfSet typeOfSet) {
-        if (!map.containsKey(typeOfSet))
-            map.put(typeOfSet,0);
-        map.put(typeOfSet,map.get(typeOfSet)+1);
-        return map.get(typeOfSet);
+    public static <Id> AxiomSet<Id> createHittingSet(double measure, Set<Id> hittingSet, Set<Id> entailments) {
+        String name = AxiomSet.TypeOfSet.HITTING_SET.toString() + hsCnt++;
+        return new HittingSet<Id>(name, measure, hittingSet, entailments);
     }
 
-    public static <Id> AxiomSet<Id> createAxiomSet(AxiomSet.TypeOfSet typeOfSet, double measure, Set<Id> hittingSet, Set<Id> entailments) {
-        String name = typeOfSet.toString() +     getCnt(typeOfSet);
-        return new AxiomSetImpl<Id>(typeOfSet, name, measure, hittingSet, entailments);
+    public static <Id> AxiomSet<Id> createConflictSet(double measure, Set<Id> hittingSet, Set<Id> entailments) {
+        String name = AxiomSet.TypeOfSet.CONFLICT_SET.toString() + csCnt++ ;
+        return new ConflictSet<Id>(name, measure, hittingSet, entailments);
     }
+
 }
