@@ -114,7 +114,7 @@ public class TreeEvaluation {
         // succeeds to create a root since th is unsat
         search.run();
 
-        Collection<AxiomSet<IVecIntComparable>> diagnoses = search.getStorage().getValidHittingSets();
+        Collection<AxiomSet<IVecIntComparable>> diagnoses = search.getStorage().getDiagnoses();
         logger.debug("Diagnoses: " + diagnoses.toString());
         assertTrue(searchDub(diagnoses));
         assertTrue(diagnoses.size() == 4);
@@ -217,7 +217,7 @@ public class TreeEvaluation {
 
         assertEquals(search.getStorage().getHittingSetsCount(), 1);
 
-        for (Collection<IVecIntComparable> hs : search.getStorage().getValidHittingSets()) {
+        for (Collection<IVecIntComparable> hs : search.getStorage().getDiagnoses()) {
             logger.info(hs);
             assertTrue(hs.toString().equals("[-1,5]"));
         }

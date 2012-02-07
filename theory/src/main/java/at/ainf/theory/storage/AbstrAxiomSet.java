@@ -1,7 +1,6 @@
 package at.ainf.theory.storage;
 
 import at.ainf.theory.watchedset.MeasureUpdatedListener;
-import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
 import java.util.*;
 
@@ -12,7 +11,7 @@ import java.util.*;
  * Time: 11:39
  * To change this template use File | Settings | File Templates.
  */
-public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
+public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
     protected final Set<Id> hittingSet;
     boolean valid = false;
     private double measure = 0;
@@ -52,7 +51,7 @@ public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> 
 
     private TypeOfSet typeOfSet;
 
-    protected AxiomSetImpl(TypeOfSet type, String name, double measure, Set<Id> hittingSet, Set<Id> entailments) {
+    protected AbstrAxiomSet(TypeOfSet type, String name, double measure, Set<Id> hittingSet, Set<Id> entailments) {
         this.typeOfSet = type;
         this.name = name;
         setMeasure(measure);
@@ -156,10 +155,10 @@ public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
         if (hittingSet == null)
             return false;
-        AxiomSetImpl that = (AxiomSetImpl) o;
+        AbstrAxiomSet that = (AbstrAxiomSet) o;
         return hittingSet.equals(that.hittingSet);
     }
 

@@ -13,8 +13,8 @@ import java.util.*;
  */
 public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Storage<T, Id> {
     private static Logger logger = Logger.getLogger(AbstractStorage.class.getName());
-    protected Set<T> hittingSets = new TreeSet<T>();
-    protected Set<T> validHittingSets = new TreeSet<T>();
+    protected Set<T> hittingSets = new LinkedHashSet<T>();
+    protected Set<T> validHittingSets = new LinkedHashSet<T>();
     protected Set<T> conflicts = new LinkedHashSet<T>();
 
     private StorageListener<T, Id> hittingSetListener = new StorageListener<T, Id>() {
@@ -60,14 +60,14 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
         notifyConflictSetAdded();
     }
 
-    public void setConflicts(Set<T> conflicts) {
+    public void setConflictSets(Set<T> conflicts) {
         this.conflicts.clear();
         for (T conf : conflicts)
             addConflict(conf);
     }
 
     public Set<T> getConflictSets() {
-        return Collections.unmodifiableSet(conflicts);
+        return Collections.unmodifiableSet(copy(conflicts));
     }
 
     public boolean removeConflictSet(T cs) {
@@ -76,6 +76,14 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
 
     public int getConflictsCount() {
         return this.conflicts.size();
+    }
+
+    public Set<T> getConflicts() {
+        return Collections.unmodifiableSet(getConflictSets());
+    }
+
+    public Set<T> getDiagnoses() {
+        return Collections.unmodifiableSet(getValidHittingSets());
     }
 
     protected void validHittingSetAdded() {
@@ -129,7 +137,7 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
     }
 
     private Set<T> copy(Set<T> set) {
-        Set<T> hs = new TreeSet<T>();
+        Set<T> hs = new LinkedHashSet<T>();
         for (T hset : set)
             hs.add(hset);
         return hs;
@@ -141,6 +149,10 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
 
     public int getHittingSetsCount() {
         return validHittingSets.size();
+    }
+
+    public int getDiagsCount() {
+        return getDiagnoses().size();
     }
 
     public Set<T> getConflictSets(Id axiom) {

@@ -55,7 +55,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     }
 
     private Set<T> getTestSet(T test) {
-        TreeSet<T> testSet = new TreeSet<T>();
+        LinkedHashSet<T> testSet = new LinkedHashSet<T>();
         testSet.add(test);
         return testSet;
     }
@@ -207,7 +207,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         for (Set<T> test : getNonentailedTests()) {
             push(test);
         }
-        boolean res = isConsistent();
+        boolean res = verifyRequirements();
         pop(getTheoryCount());
         return res;
     }
@@ -257,7 +257,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     }
 
     public Collection<Collection<T>> testDiagnoses(Collection<Collection<T>> diagnoses) throws SolverException {
-        Collection<Collection<T>> res = new TreeSet<Collection<T>>();
+        Collection<Collection<T>> res = new LinkedHashSet<Collection<T>>();
 
         for (Collection<T> diag : diagnoses) {
             if (testDiagnosis(diag))
@@ -277,7 +277,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
 
         for (Set<T> test : getNegativeTests()) {
             push(test);
-            if (isConsistent()) {
+            if (verifyRequirements()) {
                 pop(getTheoryCount());
                 return false;
             }
@@ -294,7 +294,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
 
     public void setBackgroundFormulas(Collection<T> fs) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas = new LinkedHashSet<T>(fs);
-        if (!isConsistent()) {
+        if (!verifyRequirements()) {
             this.backgroundFormulas.clear();
             throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }
@@ -304,7 +304,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
 
     public void addBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas.addAll(formulas);
-        if (!isConsistent()) {
+        if (!verifyRequirements()) {
             this.backgroundFormulas.removeAll(formulas);
             throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }
@@ -313,7 +313,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
 
     public void addBackgroundFormula(T formula) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas.add(formula);
-        if (!isConsistent()) {
+        if (!verifyRequirements()) {
             this.backgroundFormulas.remove(formula);
             throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }

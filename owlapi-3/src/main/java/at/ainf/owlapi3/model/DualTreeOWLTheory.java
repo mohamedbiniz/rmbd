@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -24,17 +25,14 @@ public class DualTreeOWLTheory extends OWLTheory {
         super(reasonerFactory, ontology, backgroundAxioms);
     }
 
-    @Override
-    protected boolean verifyConsistency() {
+    public boolean verifyRequirements() {
         OWLOntology ontology = getOntology();
-        addAxioms(getActiveFormulas(), ontology);
-        removeAxioms(getFormulaStack(), ontology);
-        Set<OWLLogicalAxiom> bf = getBackgroundFormulas();
-        addAxioms(bf, ontology);
+        Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getActiveFormulas());
+        axiomSet.removeAll(getFormulaStack());
+        updateAxioms(getOntology(),axiomSet, getBackgroundFormulas());
 
         boolean consistent = !doConsistencyTest(getSolver());
 
-        removeAxioms(bf, ontology);
         if (logger.isTraceEnabled())
             logger.trace(ontology.getOntologyID() + " is consistent: " + consistent);
         return consistent;

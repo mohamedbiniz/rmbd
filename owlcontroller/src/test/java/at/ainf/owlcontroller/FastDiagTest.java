@@ -8,9 +8,11 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -46,39 +48,78 @@ public class FastDiagTest {
 
     @Test
     public void testFasterDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
-        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        DualStorage<OWLLogicalAxiom> storage = new DualStorage<OWLLogicalAxiom>();
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
         search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
-        DualTreeOWLTheory th = loadTheory(manager, "queryontologies/koala.owl");
+        OWLTheory th = createTheory(manager, "queryontologies/koala.owl", true);
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
 
         search.run();
 
-        for (Set<OWLLogicalAxiom> hs : search.getStorage().getConflictSets())
+        for (Set<OWLLogicalAxiom> hs : search.getStorage().getDiagnoses())
             logger.info(Utils.renderAxioms(hs));
+    }
+
+    @Test
+    public void testResultsEqual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+
+        String ont = "koala.owl";
+
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
+        searchNormal.setTheory(theoryNormal);
+        searchNormal.run();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+
+        manager = OWLManager.createOWLOntologyManager();
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
+        searchDual.setTheory(theoryDual);
+        searchDual.run();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getStorage().getDiagnoses();
+
+      ////
+
+        assert(resultNormal.equals(resultDual));
+    }
+
+    @Test
+    public void testQx() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+        HashSet<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
+        OWLTheory th = createTheory(manager, "queryontologies/koala.owl", true);
+        MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
+        set.add(parser.parse("Marsupials DisjointWith Person"));
+        set.add(parser.parse("isHardWorking Domain Person"));
+        set.add(parser.parse("Koala SubClassOf Marsupials"));
+        set.add(parser.parse("Quokka SubClassOf Marsupials"));
+        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getActiveFormulas());
+        Collections.sort(l);
+        Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th,l,set);
+
+        System.out.println(Utils.renderAxioms(res));
+
     }
 
     @Test
     public void testFasterDiagnosisSearchQuick() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         HashSet<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
-        DualTreeOWLTheory th = loadTheory(manager, "queryontologies/koala.owl");
+        OWLTheory th = createTheory(manager, "queryontologies/koala.owl", true);
         MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
         set.add(parser.parse("Marsupials DisjointWith Person"));
         ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getActiveFormulas());
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
-        System.out.println(Utils.renderManyAxioms(l) + "\n"+Utils.renderAxioms(res));
+        System.out.println(Utils.renderManyAxioms(l) + "\n\n"+Utils.renderAxioms(res));
 
     }
 
-    public static DualTreeOWLTheory loadTheory(OWLOntologyManager manager, String path) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+    public OWLTheory createTheory(OWLOntologyManager manager, String path, boolean dual) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         InputStream st = ClassLoader.getSystemResourceAsStream(path);
-        return createTheory(manager.loadOntologyFromOntologyDocument(st));
-    }
-
-    public static DualTreeOWLTheory createTheory(OWLOntology ontology) throws SolverException, InconsistentTheoryException {
+        OWLOntology ontology = manager.loadOntologyFromOntologyDocument(st);
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));
@@ -86,8 +127,12 @@ public class FastDiagTest {
         }
 
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
-        DualTreeOWLTheory theory = new DualTreeOWLTheory(reasonerFactory, ontology, bax);
-        assert (theory.isConsistent());
+        OWLTheory theory = null;
+        if(dual)
+            theory = new DualTreeOWLTheory(reasonerFactory, ontology, bax);
+        else
+            theory = new OWLTheory(reasonerFactory, ontology, bax);
+        //assert (theory.verifyRequirements());
 
         return theory;
     }
@@ -97,15 +142,15 @@ public class FastDiagTest {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory th = Utils.loadTheory(manager, "queryontologies/koala.owl");
+        OWLTheory th = createTheory(manager, "queryontologies/koala.owl", false);
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();
 
-        OWLLogicalAxiom axiom = search.getStorage().getValidHittingSets().iterator().next().iterator().next();
+        OWLLogicalAxiom axiom = search.getStorage().getDiagnoses().iterator().next().iterator().next();
         System.out.println(axiom);
 
-        for (Set<OWLLogicalAxiom> hs : search.getStorage().getValidHittingSets())
+        for (Set<OWLLogicalAxiom> hs : search.getStorage().getDiagnoses())
             System.out.println(Utils.renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();

@@ -2,7 +2,6 @@ package at.ainf.theory;
 
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.AxiomSetFactory;
-import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -46,17 +45,17 @@ public class ProbabilisticStorageTest {
             Set<Integer> hs = new HashSet<Integer>();
             hs.add(count++);
             hs.add(count);
-            AxiomSet<Integer> axiomSet = AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.HITTING_SET, random.nextDouble(), hs, new HashSet<Integer>());
+            AxiomSet<Integer> axiomSet = AxiomSetFactory.createHittingSet(random.nextDouble(), hs, new HashSet<Integer>());
             axiomSet.setValid(random.nextBoolean());
             st.addHittingSet(axiomSet);
         }
-        int valid = st.getValidHittingSets().size();
+        int valid = st.getDiagnoses().size();
         validateSet(st);
         for (int i = 0; i < HS_COUNT; i++) {
             logger.info("Computing test " + i);
             Set<AxiomSet<Integer>> axiomSets = new TreeSet<AxiomSet<Integer>>(st.getHittingSets());
             assertEquals(HS_COUNT, axiomSets.size());
-            assertEquals(valid, st.getValidHittingSets().size());
+            assertEquals(valid, st.getDiagnoses().size());
             for (AxiomSet<Integer> hs : axiomSets) {
                 hs.setMeasure(random.nextDouble());
             }

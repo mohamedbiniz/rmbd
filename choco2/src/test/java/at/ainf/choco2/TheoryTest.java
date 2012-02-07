@@ -70,19 +70,19 @@ public class TheoryTest {
 
         // reasoning
         cth.push(changable.subList(0, 2));
-        boolean res = cth.isConsistent();
+        boolean res = cth.verifyRequirements();
         assertFalse(res);
         cth.pop();
 
         // reasoning
         cth.push(changable.subList(1, 4));
-        res = cth.isConsistent();
+        res = cth.verifyRequirements();
         assertTrue(res);
         cth.pop();
 
         // reasoning
         // cth.push(changable.subList(2, 5));
-        // res = cth.isConsistent();
+        // res = cth.verifyRequirements();
         // assertFalse(res);
         // cth.pop();
 

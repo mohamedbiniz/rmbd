@@ -1,6 +1,8 @@
 package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.partitioning.*;
+import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 //import at.ainf.protegeview.controlpanel.ProbabilityTableModel;
@@ -9,6 +11,7 @@ import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.Partition;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -132,7 +135,7 @@ public class PerformanceTests {
         return ontology;
     }
 
-    private OWLTheory createOWLTheory(OWLOntology ontology) {
+    private OWLTheory createOWLTheory(OWLOntology ontology, boolean dual) {
         OWLTheory result = null;
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
@@ -157,7 +160,10 @@ public class PerformanceTests {
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             //HashMap<ManchesterOWLSyntax, Double> map = mo.getProbMap();
 
-            result = new OWLTheory(reasonerFactory, ontology, bax);
+            if(dual)
+                result = new DualTreeOWLTheory(reasonerFactory, ontology, bax);
+            else
+                result = new OWLTheory(reasonerFactory, ontology, bax);
             result.activateReduceToUns();
 
             result.setIncludeTrivialEntailments(true);
@@ -180,22 +186,27 @@ public class PerformanceTests {
         return result;
     }
 
-    private UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th) {
+    private UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
 
-        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        SimpleStorage<OWLLogicalAxiom> storage ;
+        if (dual)
+            storage = new DualStorage<OWLLogicalAxiom>();
+        else
+            storage = new SimpleStorage<OWLLogicalAxiom>();
         UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        if (dual)
+            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        else
+            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);
 
         return search;
     }
 
-
-
     boolean NOOUTPUT = false;
 
     @Test
-    public void doPerformanceTests() {
+    public void doPerformanceTest() {
 
 
         readParametersFromFile();
@@ -215,8 +226,10 @@ public class PerformanceTests {
 
             OWLOntology ont = createOwlOntology(ontologyFileString);
 
-            OWLTheory theory = createOWLTheory(ont);
-            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
+
+            boolean dual = false;
+            OWLTheory theory = createOWLTheory(ont,dual);
+            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory,dual);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
             OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
@@ -235,7 +248,7 @@ public class PerformanceTests {
             }
 
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                    Collections.unmodifiableSet(search.getStorage().getValidHittingSets());
+                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
 
             theory.clearTestCases();
             search.clearSearch();
@@ -245,58 +258,46 @@ public class PerformanceTests {
                 for (DiagProbab diagProbab : DiagProbab.values()) {
                     //if (diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME)
 
-                    for (int i = 0; i < MAX_RUNS; i++) {
-                        TableList entry = null;
-
-                        logger.info(ontologyFileString + " " + usersProbab + " " + diagProbab + " " + i
-                                + " choosing target diagnoses and user probabilities  ");
-
-                        diagnoses = chooseUserProbab(usersProbab, search, diagnoses);
-                        testOrder(diagnoses);
-                        AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
-
-                        for (int j = 0; j < 2; j++) {
-                            scoringFunc = ScoringFunc.values()[j];
-                            try {
-                                theory.clearTestCases();
-                                search.clearSearch();
-
-
-                                if (entry == null && scoringFunc.equals(ScoringFunc.ENTROPY))
-                                    entry = entropy_result.getEntry(usersProbab, diagProbab);
-                                else if (entry == null && scoringFunc.equals(ScoringFunc.SPLITINHALF)) {
-                                    entry = split_result.getEntry(usersProbab, diagProbab);
-                                }
-                                logger.info(ontologyFileString + " " + usersProbab + " " + diagProbab + " " + i
-                                        + " starting simulation with " + scoringFunc);
-                                //if (ontologyFileString.equals("buggy-sweet-jpl.owl")
-                                //        && diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME && i > 9)
-                                simulateBruteForceOnl(search, theory, targetDiag, entry);
-                                entry = null;
-
-                            } catch (Exception e) {
-                                logger.error(e.getMessage(), e);
-                                j--;
-                            }
-
-                            printStatsAndClear("");
-                            //if   (i == 7 && usersProbab == UsersProbab.EXTREME && diagProbab == DiagProbab.AVERAGE) {
-
-
-                            /*QuerySelStrat[] s =  {QuerySelStrat.ENTROPY, QuerySelStrat.SPLIT};
-                            for (QuerySelStrat strat : s) {
+                    //for (int i = 0; i < MAX_RUNS; i++) {
+                        for (AxiomSet<OWLLogicalAxiom> d : diagnoses) {
+                            TableList entry = null;
+    
+                            logger.info(ontologyFileString + " " + usersProbab + " " + diagProbab + " " // + i
+                                    + " choosing target diagnoses and user probabilities  ");
+    
+                            diagnoses = chooseUserProbab(usersProbab, search, diagnoses);
+                            testOrder(diagnoses);
+                            AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
+                            targetDiag = d;
+    
+                            for (int j = 0; j < 2; j++) {
+                                scoringFunc = ScoringFunc.values()[j];
+                                try {
                                     theory.clearTestCases();
                                     search.clearSearch();
-                                    TableList entry = null;
-                                    if (strat == QuerySelStrat.ENTROPY)
-                                        entry = entropy_result.getEntry(usersProbab,diagProbab);
-                                    else if (strat == QuerySelStrat.SPLIT)
-                                        entry = split_result.getEntry(usersProbab,diagProbab);
-                                    simulateQuerySession(search, theory, targetDiag, strat, entry);
-                            }*/
-
-
-                        }
+    
+    
+                                    if (entry == null && scoringFunc.equals(ScoringFunc.ENTROPY))
+                                        entry = entropy_result.getEntry(usersProbab, diagProbab);
+                                    else if (entry == null && scoringFunc.equals(ScoringFunc.SPLITINHALF)) {
+                                        entry = split_result.getEntry(usersProbab, diagProbab);
+                                    }
+                                    logger.info(ontologyFileString + " " + usersProbab + " " + diagProbab + " " // + i
+                                            + " starting simulation with " + scoringFunc);
+                                    //if (ontologyFileString.equals("buggy-sweet-jpl.owl")
+                                    //        && diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME && i > 9)
+                                    simulateBruteForceOnl(search, theory, targetDiag, entry);
+                                    entry = null;
+    
+                                } catch (Exception e) {
+                                    logger.error(e.getMessage(), e);
+                                    j--;
+                                }
+    
+                                printStatsAndClear("");
+    
+    
+                            }
                     }
 
                 }
@@ -343,7 +344,6 @@ public class PerformanceTests {
 
     }
 
-
     private void testOrder(Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         double prob = 0;
         for (AxiomSet<OWLLogicalAxiom> diag : diagnoses) {
@@ -353,7 +353,22 @@ public class PerformanceTests {
         }
     }
 
-
+    //    public TreeSet<ProbabilisticHittingSet<OWLLogicalAxiom>> updateHittingSetProb(TreeSet<ProbabilisticHittingSet<OWLLogicalAxiom>> hittingSets,
+    //                                                                                  UniformCostSearch<OWLLogicalAxiom> search) {
+    //        for (ProbabilisticHittingSet<OWLLogicalAxiom> hittingSet : hittingSets) {
+    //            Set<OWLLogicalAxiom> labels = new TreeSet<OWLLogicalAxiom>();
+//            Iterator<OWLLogicalAxiom> iterator = hittingSet.iterator();
+//            while (iterator.hasNext())
+//                labels.add(iterator.next());
+//
+//            double probability = ((ConfEntailmentOwlTheory)search.getTheory()).getFailureProbabilityDiagnosis(labels);
+//
+//            hittingSet.setMeasure(probability);
+//            //hittingSet.setUserAssignedProbability(probability);
+//        }
+//        search.normalizeDiagnoses(hittingSets);
+//        return sortDiagnoses(hittingSets);
+//    }
 
     private Set<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
         TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
@@ -369,8 +384,43 @@ public class PerformanceTests {
         return sum;
     }
 
+    public <E extends AxiomSet<OWLLogicalAxiom>> TreeSet<E> normalize(Set<E> hittingSets) {
+        TreeSet<E> set = new TreeSet<E>();
+        double sum = sum(hittingSets);
+        for (E hs : hittingSets) {
+            double value = hs.getMeasure() / sum;
+            hs.setMeasure(value);
+            set.add(hs);
+        }
+        return set;
+    }
 
+    /*
+    private void printOl
+            (UserProbAndQualityTable
+                     table) {
+        for (UsersProbab usersProbab : UsersProbab.values()) {
+            logger.info(usersProbab + " \t");
+            for (DiagProbab diagProbab : DiagProbab.values()) {
+                TableList entry = table.getEntry(usersProbab, diagProbab);
+                double mean = entry.getMeanQuery();
+                double meanTargetDiagInWin = entry.getMeanTargetDiagInWin();
+                double max = entry.getMaxQuery();
+                int targetDiagIsMostProbableCounter = entry.getCouTargetDiagIsMostProbable();
+                double min = entry.getMinQuery();
+                int meanTargetDiagInWinCounter = entry.getTargetDiagInWindowCount();
+                double meanTargetDiagIsMostProbable = entry.getMeanTargetDiagIsMostProbable();
+                double meanWinSize = entry.getMeanWin();
+                double minWinSize = entry.getMinWin();
+                double maxWinSize = entry.getMaxWin();
+                logger.info(min + "/" + mean + "/" + max + "/" + meanTargetDiagInWin + "/" + meanTargetDiagInWinCounter +
+                        "/" + meanTargetDiagIsMostProbable + "/" + targetDiagIsMostProbableCounter
+                        + "/" + minWinSize + "/" + meanWinSize + "/" + maxWinSize + "\t  ");
+            }
+        }
 
+    }
+    */
     private void print(UserProbAndQualityTable table) {
         if (table == null)
             return;
@@ -473,20 +523,22 @@ public class PerformanceTests {
 
                 try {
                     long diag = System.currentTimeMillis();
-                    diagnoses = search.run(NUMBER_OF_HITTING_SETS);
+                    search.run(NUMBER_OF_HITTING_SETS);
+                    diagnoses = search.getStorage().getDiagnoses();
                     diagTime.setTime(System.currentTimeMillis() - diag);
                 } catch (SolverException e) {
                     diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
                 } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getValidHittingSets());
+                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
 
                 }
 
                 if (diagnoses.isEmpty())
                     logger.error("No diagnoses found!");
 
-                Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = ((TreeSet<AxiomSet<OWLLogicalAxiom>>) diagnoses).descendingIterator();
+                // cast should be corrected
+                Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
                 AxiomSet<OWLLogicalAxiom> d = descendSet.next();
                 AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
 
@@ -522,7 +574,6 @@ public class PerformanceTests {
 
                 long query = System.currentTimeMillis();
                 actPa = getBestQuery(search, diagnoses);
-                queryCardinality = actPa.partition.size();
                 queryTime.setTime(System.currentTimeMillis() - query);
 
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
@@ -530,6 +581,7 @@ public class PerformanceTests {
                     querySessionEnd = true;
                     break;
                 }
+                queryCardinality = actPa.partition.size();
 
                 logger.trace("numOfQueries: " + num_of_queries + " generate answer");
                 boolean answer = generateQueryAnswer(search, actPa, targetDiag);
@@ -573,7 +625,7 @@ public class PerformanceTests {
             for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
                 if (ps.equals(targetDiag))
                     targetDiagnosisIsInWind = true;
-            if (diagnoses.size() >= 1 && ((TreeSet<? extends AxiomSet>) diagnoses).last().equals(targetDiag)) {
+            if (diagnoses.size() >= 1 && ( new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).last().equals(targetDiag)) {
                 targetDiagnosisIsMostProbable = true;
                 targetDiagnosisIsInWind = true;
             }
@@ -619,7 +671,91 @@ public class PerformanceTests {
         }
     }
 
+    /*
+private void simulateQuerySession
+        (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
+                theory, AxiomSet<OWLLogicalAxiom> targetDiag, QuerySelStrat
+                strat, TableList
+                entry) {
+    /*theory.clearTestCases();
+    search.clearSearch();*/
+    /*
+      IQueryProvider queryProvider = createQueryProvider(strat, search);
 
+
+      Query actualQuery = null;
+      int num_of_queries = 0;
+      QInfo qinfo = null;
+
+      boolean querySessionEnd = false;
+      while (!querySessionEnd) {
+          try {
+              Query last = actualQuery;
+              actualQuery = queryProvider.getQuery(false);
+              if (actualQuery.equals(last)) {
+                  querySessionEnd = true;
+                  break;
+              }
+
+              boolean answer = generateQueryAnswer(search, actualQuery, targetDiag);
+              num_of_queries++;
+              if (answer) {
+                  try {
+                      search.getTheory().addEntailedTest(actualQuery.getQueryAxioms());
+                  } catch (InconsistentTheoryException e) {
+                      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                  }
+              } else {
+                  try {
+                      search.getTheory().addNonEntailedTest(actualQuery.getQueryAxioms());
+                  } catch (InconsistentTheoryException e) {
+                      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                  }
+              }
+              qinfo = queryProvider.setQueryAnswer(answer);
+          } catch (NoFurtherQueryException e) {
+              querySessionEnd = true;
+          } catch (SolverException e) {
+              querySessionEnd = true;
+          } catch (SingleDiagnosisLeftException e) {
+              querySessionEnd = true;
+          }
+      }
+      boolean w = false;
+      if (qinfo == null || !qinfo.getCurrentDiags().contains(targetDiag))
+          w = false;
+      else
+          w = true;
+      boolean wd = false;
+      if (qinfo != null) {
+
+          TreeSet<QueryModuleDiagnosis> diags = new TreeSet<QueryModuleDiagnosis>(qinfo.getCurrentDiags());
+          if (diags.size() >= 1 && diags.last().equals(targetDiag)) {
+              wd = true;
+          }
+      }
+      //entry.addEntr(num_of_queries, w, wd, 0, false, false, 1, queryTime, diagTime);
+
+  }
+
+  private boolean generateQueryAnswer
+          (UniformCostSearch<OWLLogicalAxiom> search, Query
+                  actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
+      boolean answer;
+      ITheory<OWLLogicalAxiom> theory = search.getTheory();
+
+      if (theory.diagnosisEntails(targetDiag, actualQuery.getQueryAxioms())) {
+          answer = true;
+      } else if (!theory.diagnosisConsistent(targetDiag, actualQuery.getQueryAxioms())) {
+          answer = false;
+      } else {
+          answer = rnd.nextBoolean();
+      }
+
+      return answer;
+
+  }
+    */
     private boolean generateQueryAnswer
     (UniformCostSearch<OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
         boolean answer;
@@ -639,7 +775,20 @@ public class PerformanceTests {
 
     }
 
-
+    /*private IQueryProvider createQueryProvider
+            (QuerySelStrat
+                     split, UniformCostSearch<OWLLogicalAxiom> search) {
+        DiagProvider diagProvider = new DiagProvider(search, false, 9);
+        IQueryProvider queryGenerator = null;
+        if (split == QuerySelStrat.SPLIT) {
+            queryGenerator = new SplitInHalfQSS();
+        } else if (split == QuerySelStrat.ENTROPY) {
+            queryGenerator = new MinScoreQSS();
+        }
+        queryGenerator.setNumOfLeadingDiagnoses(9);
+        //queryGenerator.setDiagnosisProvider(diagProvider);
+        return queryGenerator;
+    }   */
 
     private AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
             (DiagProbab

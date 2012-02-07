@@ -1,9 +1,9 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AbstrAxiomSet;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.AxiomSetFactory;
-import at.ainf.theory.storage.AxiomSetImpl;
 import at.ainf.theory.storage.Storage;
 
 import java.util.*;
@@ -28,10 +28,13 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
     }
 
     @Override
-    protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) {
+    protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException {
         Set<Id> entailments = Collections.emptySet();
+        if (getTheory().supportEntailments() && getSearcher().isDual())
+            entailments = getTheory().getEntailments(quickConflict);
+        if (entailments==null) entailments = Collections.emptySet();
         double measure = 1d / quickConflict.size();
-        AxiomSetImpl<Id> hs = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.CONFLICT_SET, measure, quickConflict, entailments);
+        AbstrAxiomSet<Id> hs = (AbstrAxiomSet<Id>) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments);
         hs.setNode(node);
         return hs;
     }
@@ -42,7 +45,7 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && valid) entailments = getTheory().getEntailments(labels);
         double measure = 1d / labels.size();
-        AxiomSetImpl<Id> hs = (AxiomSetImpl<Id>) AxiomSetFactory.createAxiomSet(AxiomSet.TypeOfSet.HITTING_SET, measure, labels, entailments);
+        AbstrAxiomSet<Id> hs = (AbstrAxiomSet<Id>) AxiomSetFactory.createHittingSet(measure, labels, entailments);
         hs.setNode(node);
         this.hscount++;
         return hs;

@@ -237,7 +237,7 @@ public class Example1Test extends AbstractExample {
             theory.addEntailedTest(query.getAxioms());
             search.run();
             Collection<Diagnosis> res = new TreeSet<Diagnosis>();
-            for (Collection<OWLLogicalAxiom> col : search.getStorage().getValidHittingSets()) {
+            for (Collection<OWLLogicalAxiom> col : search.getStorage().getDiagnoses()) {
                 res.add(Diagnosis.getDiagnosis(col));
             }
             assertTrue(query.getDx().equals(res));
@@ -271,7 +271,7 @@ public class Example1Test extends AbstractExample {
             theory.addNonEntailedTest(query.getAxioms());
             search.run();
             Collection<Diagnosis> res = new TreeSet<Diagnosis>();
-            for (Collection<OWLLogicalAxiom> col : search.getStorage().getValidHittingSets()) {
+            for (Collection<OWLLogicalAxiom> col : search.getStorage().getDiagnoses()) {
                 res.add(Diagnosis.getDiagnosis(col));
             }
             TreeSet<Diagnosis> d_nxPlus0;

@@ -32,42 +32,7 @@ public interface ITheory<Id> extends Searchable<Id> {
      */
     public Collection<Id> getActiveFormulas();
 
-    /**
-     * Returns a list of formulas stored in the
-     *
-     * @return
-     */
-    //public Collection<Id> getFormulaStack();
-
-    /**
-     * Creates a copy of the theory and adds all formulas from the given list.
-     *
-     * @return result
-     * @throws SolverException an exception that can be used to hanle client related
-     *                         problems. This exception will be propagated by the library to
-     *                         the diagnosis execution point.
-     */
     public boolean push() throws SolverException;
-
-    //public boolean push(Id formulas) throws SolverException;
-
-    //public boolean push(Collection<Id> formulas) throws SolverException;
-
-    //public void pop(int stackCount);
-
-    //public void pop();
-
-
-    /**
-     * Checks if the theory is consistent.
-     *
-     * @return <code>true</code> is given theory is consistent and
-     *         <code>false</code> otherwise.
-     * @throws SolverException an exception that can be used to handle reasoner related
-     *                         problems. This exception will be propagated by the library to
-     *                         the diagnosis execution point.
-     */
-    public boolean isConsistent() throws SolverException;
 
     public int getTheoryCount();
 

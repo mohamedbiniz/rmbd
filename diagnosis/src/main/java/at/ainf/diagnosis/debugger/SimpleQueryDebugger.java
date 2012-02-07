@@ -73,7 +73,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     }
 
     public Set<? extends AxiomSet<Id>> getValidHittingSets() {
-        return search.getStorage().getValidHittingSets();
+        return search.getStorage().getDiagnoses();
     }
 
     public void set_Theory(ITheory<Id> theory) {
@@ -177,7 +177,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     protected class StorageHittingSetsListenerImpl implements StorageHittingSetsListener {
         public void hittingSetAdded(StorageItemAddedEvent e) {
             for (QueryDebuggerListener<Id> listener : listeners)
-                listener.hittingSetAdded(search.getStorage().getValidHittingSets());
+                listener.hittingSetAdded(search.getStorage().getDiagnoses());
         }
 
     }

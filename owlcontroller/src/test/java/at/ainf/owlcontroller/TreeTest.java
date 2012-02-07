@@ -74,7 +74,7 @@ public class TreeTest {
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {D}, {C} }", logd);
+        assertEquals("Hitting sets { {C}, {D} }", logd);
         assertEquals("Conflicts { {C,D} }", logc);
 
         // test only nonentailed test case
@@ -87,7 +87,7 @@ public class TreeTest {
 
         logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {B}, {A} }", logd);
+        assertEquals("Hitting sets { {A}, {B} }", logd);
         assertEquals("Conflicts { {A,B,C,D} }", logc);
 
         // test both test casea
@@ -116,7 +116,7 @@ public class TreeTest {
 
         logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {D}, {C}, {B}, {A} }", logd);
+        assertEquals("Hitting sets { {A}, {B}, {C}, {D} }", logd);
         assertEquals("Conflicts { {A,B,C,D} }", logc);
 
     }
@@ -128,7 +128,7 @@ public class TreeTest {
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {A2,M2}, {M3,M2}, {M1}, {A1} }", logd);
+        assertEquals("Hitting sets { {A1}, {M1}, {M3,M2}, {A2,M2} }", logd);
         assertEquals("Conflicts { {M3,A1,A2,M1}, {A1,M1,M2} }", logc);
 
 
@@ -182,7 +182,7 @@ public class TreeTest {
             OWLLogicalAxiom nax = negateFormulas(axiom);
             manager.addAxiom(ontology, nax);
             OWLTheory th = new OWLTheory(reasonerFactory, ontology);
-            Assert.assertFalse(th.isConsistent());
+            Assert.assertFalse(th.verifyRequirements());
         }
 
     }
@@ -217,7 +217,7 @@ public class TreeTest {
         testOntology("ontologies/ecai.1.owl", false);
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {M2}, {M1}, {A1} }", logd);
+        assertEquals("Hitting sets { {A1}, {M1}, {M2} }", logd);
         assertEquals("Conflicts { {A1,M1,M2} }", logc);
     }
 
@@ -227,7 +227,7 @@ public class TreeTest {
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {M1}, {A2}, {A1}, {M3} }", logd);
+        assertEquals("Hitting sets { {M3}, {A1}, {A2}, {M1} }", logd);
         assertEquals("Conflicts { {M3,A1,A2,M1} }", logc);
     }
 
@@ -254,7 +254,7 @@ public class TreeTest {
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {A2,M2}, {M3,M2}, {M1}, {A1} }", logd);
+        assertEquals("Hitting sets { {A1}, {M1}, {M3,M2}, {A2,M2} }", logd);
         assertEquals("Conflicts { {M3,A1,A2,M1}, {A1,M1,M2} }", logc);
     }
 
@@ -291,7 +291,7 @@ public class TreeTest {
         OWLLogicalAxiom neg = debugger.getTheory().negateFormulas(ax);
         owlOntology.getOWLOntologyManager().addAxiom(owlOntology, neg);
         reasoner.flush();
-        boolean consistent = reasoner.isConsistent();
+        boolean consistent = reasoner.verifyRequirements();
         assertFalse(consistent);
     }               */
 
@@ -301,7 +301,7 @@ public class TreeTest {
 
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {D[ C A1 ]}, {M2}, {A1} }", logd);
+        assertEquals("Hitting sets { {A1}, {M2}, {D[ C A1 ]} }", logd);
         assertEquals("Conflicts { {A1,M2,D[ C A1 ]} }", logc);
     }
 

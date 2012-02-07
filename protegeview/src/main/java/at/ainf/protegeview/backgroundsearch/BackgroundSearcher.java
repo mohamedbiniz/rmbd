@@ -58,18 +58,18 @@ public class BackgroundSearcher {
             trSearch.removeOpenNodesListener(task);
             trSearch.getStorage().removeStorageItemListener(task);
             //BackgroundSearchManager.getInstance().removeElementAddedToStorageListener(task);
-            DebugManager.getInstance().setValidHittingSets(trSearch.getStorage().getValidHittingSets());
+            DebugManager.getInstance().setValidHittingSets(trSearch.getStorage().getDiagnoses());
             DebugManager.getInstance().notifyHittingSetsChanged();
-            DebugManager.getInstance().setConflictSets(trSearch.getStorage().getConflictSets());
+            DebugManager.getInstance().setConflictSets(trSearch.getStorage().getConflicts());
             DebugManager.getInstance().notifyConflictSetsChanged();
             return res;
         } catch (InterruptedException e) {
 
             return null;
         } catch(CancellationException e) {
-            DebugManager.getInstance().setValidHittingSets(trSearch.getStorage().getValidHittingSets());
+            DebugManager.getInstance().setValidHittingSets(trSearch.getStorage().getDiagnoses());
             DebugManager.getInstance().notifyHittingSetsChanged();
-            DebugManager.getInstance().setConflictSets(trSearch.getStorage().getConflictSets());
+            DebugManager.getInstance().setConflictSets(trSearch.getStorage().getConflicts());
             DebugManager.getInstance().notifyConflictSetsChanged();
             return  BackgroundSearcherTask.Result.CANCELED;
         } catch (ExecutionException e) {

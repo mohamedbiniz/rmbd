@@ -304,7 +304,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
         }
 
         Partition<OWLLogicalAxiom> last = actQuery;
-        if (workspace.getSearch().getStorage().getValidHittingSets().size() == 1) {
+        if (workspace.getSearch().getStorage().getDiagnoses().size() == 1) {
             JOptionPane.showMessageDialog(null, "There is only one diagnosis left", "Only one diagnosis", JOptionPane.INFORMATION_MESSAGE);
             return false;
         }
@@ -357,7 +357,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
 
         Collection<AxiomSet<OWLLogicalAxiom>> diag = new HashSet<AxiomSet<OWLLogicalAxiom>>();
 
-        for (AxiomSet<OWLLogicalAxiom> q : workspace.getSearch().getStorage().getValidHittingSets()) {
+        for (AxiomSet<OWLLogicalAxiom> q : workspace.getSearch().getStorage().getDiagnoses()) {
             diag.add(q);
         }
 
@@ -383,7 +383,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
 
         Collection<AxiomSet<OWLLogicalAxiom>> diag = new HashSet<AxiomSet<OWLLogicalAxiom>>();
 
-        for (AxiomSet<OWLLogicalAxiom> q : workspace.getSearch().getStorage().getValidHittingSets()) {
+        for (AxiomSet<OWLLogicalAxiom> q : workspace.getSearch().getStorage().getDiagnoses()) {
             diag.add(q);
         }
 

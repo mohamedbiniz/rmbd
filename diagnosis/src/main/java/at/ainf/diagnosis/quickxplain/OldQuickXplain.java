@@ -63,7 +63,7 @@ public class OldQuickXplain<E> extends BaseQuickXplain<E> {
     public Set<E> quickXplain(final Searchable<E> c, final FormulaList<E> u) throws NoConflictException, SolverException {
         // long subTime = 0;
         iterations++;
-        if (!c.isConsistent())
+        if (!c.verifyRequirements())
             return new TreeSet<E>();
         if (u.isEmpty())
             throw new NoConflictException("The unexlored formulas set is Empty");
@@ -108,7 +108,7 @@ public class OldQuickXplain<E> extends BaseQuickXplain<E> {
         while (isCoherent && iter.hasNext()) {
             E next = iter.next();
             c.push(next);
-            isCoherent = c.isConsistent();
+            isCoherent = c.verifyRequirements();
 
             k++;
         }

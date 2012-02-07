@@ -13,7 +13,11 @@ public interface Storage<E extends AxiomSet<Id>, Id> {
 
     boolean addConflict(E conflict);
 
-    void setConflicts(Set<E> conflicts);
+    void setConflictSets(Set<E> conflicts);
+
+    Set<E> getConflicts();
+
+    Set<E> getDiagnoses();
 
     Set<E> getConflictSets();
 
@@ -28,6 +32,8 @@ public interface Storage<E extends AxiomSet<Id>, Id> {
     Set<E> getHittingSets();
 
     int getHittingSetsCount();
+
+    int getDiagsCount();
 
     void setHittingSets(Set<E> hittingSets);
 
