@@ -12,6 +12,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by IntelliJ IDEA.
@@ -145,6 +146,20 @@ public class Utils {
         return theory;
     }
 
+    public static String getStringTime(long millis) {
+        long timeInHours = TimeUnit.MILLISECONDS.toHours(millis);
+        long timeInMinutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long timeInSec = TimeUnit.MILLISECONDS.toSeconds(millis);
+        long timeInMillisec = TimeUnit.MILLISECONDS.toMillis(millis);
+
+        long hours = timeInHours;
+        long minutes = timeInMinutes - timeInHours;
+        long seconds = timeInSec - timeInMinutes - timeInHours;
+        long milliseconds = timeInMillisec - timeInSec - timeInMinutes - timeInHours;
+        
+        return String.format("%d millisec (%d hours %d min, %d sec %d millisec)", millis, hours, minutes, seconds, milliseconds);
+    }
+    
     public static String renderManyAxioms(Collection<OWLLogicalAxiom> axioms) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         String result = "";
