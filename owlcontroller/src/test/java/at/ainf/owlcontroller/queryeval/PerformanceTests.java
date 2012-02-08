@@ -84,6 +84,74 @@ public class PerformanceTests {
 
     protected ScoringFunc scoringFunc = ScoringFunc.ENTROPY;
 
+    public OWLTheory createTheory(OWLOntologyManager manager, String path, boolean dual) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        InputStream st = ClassLoader.getSystemResourceAsStream(path);
+        OWLOntology ontology = manager.loadOntologyFromOntologyDocument(st);
+        Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
+        for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
+            bax.addAll(ontology.getClassAssertionAxioms(ind));
+            bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
+        }
+
+        OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
+        OWLTheory theory = null;
+        if(dual)
+            theory = new DualTreeOWLTheory(reasonerFactory, ontology, bax);
+        else
+            theory = new OWLTheory(reasonerFactory, ontology, bax);
+        //assert (theory.verifyRequirements());
+
+        return theory;
+    }
+
+    @Test
+    public void queryToDiags2()
+            throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        String ont = "Univ.owl";
+        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+
+        UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
+        searchNormal.setTheory(theoryNormal);
+        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theoryNormal);
+        es.updateKeywordProb(map);
+        searchNormal.setNodeCostsEstimator(es);
+        searchNormal.run();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+
+        manager = OWLManager.createOWLOntologyManager();
+        UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
+        searchDual.setTheory(theoryDual);
+        map = Utils.getProbabMap();
+        es = new OWLAxiomNodeCostsEstimator(theoryDual);
+        es.updateKeywordProb(map);
+        searchDual.setNodeCostsEstimator(es);
+
+        theoryNormal.clearTestCases();
+        searchNormal.clearSearch();
+
+        for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
+            TableList entry = new TableList();
+            simulateBruteForceOnl(searchNormal,theoryNormal,diagnoses,entry);
+            theoryNormal.clearTestCases();
+            searchNormal.clearSearch();
+            System.out.println("normal: " + entry.getMeanWin());
+        }
+
+        for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
+            TableList entry = new TableList();
+            simulateBruteForceOnl(searchDual,theoryDual,diagnoses,entry);
+            theoryDual.clearTestCases();
+            searchDual.clearSearch();
+            System.out.println("du: " + entry.getMeanWin());
+        }
+
+    }
+
     @BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlcontroller-log4j.properties").getFile();
