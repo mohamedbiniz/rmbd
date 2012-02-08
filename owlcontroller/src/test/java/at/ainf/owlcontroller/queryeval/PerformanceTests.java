@@ -38,6 +38,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static _dev.TimeLog.printOverallStats;
 import static _dev.TimeLog.printStatsAndClear;
@@ -108,6 +109,7 @@ public class PerformanceTests {
     public void queryToDiags2()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         String ont = "Univ.owl";
+        long t = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
@@ -134,22 +136,30 @@ public class PerformanceTests {
         theoryNormal.clearTestCases();
         searchNormal.clearSearch();
 
+        long timeNormal = System.currentTimeMillis();
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
             simulateBruteForceOnl(searchNormal,theoryNormal,diagnoses,entry);
             theoryNormal.clearTestCases();
             searchNormal.clearSearch();
-            System.out.println("normal: " + entry.getMeanWin());
+            logger.info("using hstree remaining queries " + entry.getMeanWin() + " " + Utils.renderAxioms(diagnoses));
         }
+        timeNormal = System.currentTimeMillis() - timeNormal;
 
+        long timeDual = System.currentTimeMillis();
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
             simulateBruteForceOnl(searchDual,theoryDual,diagnoses,entry);
             theoryDual.clearTestCases();
             searchDual.clearSearch();
-            System.out.println("du: " + entry.getMeanWin());
+            logger.info("using dual tree remaining queries " + entry.getMeanWin() + " " + Utils.renderAxioms(diagnoses));
         }
+        timeDual = System.currentTimeMillis() - timeDual;
 
+        long needed = System.currentTimeMillis() - t;
+        logger.info("needed overall " + needed);
+        logger.info("needed normal " + timeNormal);
+        logger.info("needed dual " + timeDual);
     }
 
     @BeforeClass
