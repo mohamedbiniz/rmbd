@@ -17,6 +17,7 @@ import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -97,7 +98,7 @@ public class FastDiagTest {
         set.add(parser.parse("Quokka SubClassOf Marsupials"));
         ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getActiveFormulas());
         Collections.sort(l);
-        Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th,l,set);
+        Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th, l, set);
 
         System.out.println(Utils.renderAxioms(res));
 
@@ -114,6 +115,92 @@ public class FastDiagTest {
         Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
         System.out.println(Utils.renderManyAxioms(l) + "\n\n"+Utils.renderAxioms(res));
+
+    }
+
+    @Test
+    public void testUnivNormal() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+        HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
+        HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
+        OWLTheory th = createTheory(manager, "queryontologies/Univ.owl", false);
+        MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
+        positiveTestcase.add(parser.parse("ProfessorInHCIorAI SubClassOf advisorOf only AIStudent"));
+        positiveTestcase.add(parser.parse("AIStudent DisjointWith HCIStudent"));
+        negativeTestcase.add(parser.parse("CS_Department SubClassOf affiliatedWith some CS_Library"));
+        negativeTestcase.add(parser.parse("hasAdvisor InverseOf advisorOf"));
+        th.addEntailedTest(positiveTestcase);
+        th.addNonEntailedTest(negativeTestcase);
+        HashSet<OWLLogicalAxiom> target = new HashSet<OWLLogicalAxiom>();
+        target.add(parser.parse("AssistantProfessor EquivalentTo TeachingFaculty and (hasTenure value false)"));
+        target.add(parser.parse("CS_Library SubClassOf affiliatedWith some EE_Library"));
+        target.add(parser.parse("hasAdvisor InverseOf advisorOf"));
+
+        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setTheory(th);
+        search.setAxiomRenderer(new MyOWLRendererParser(null));
+        search.run();
+        
+        for (AxiomSet<OWLLogicalAxiom> d : search.getStorage().getDiagnoses()) {
+            if (target.equals(d)) System.out.println("target is there  ");
+        }
+
+    }
+
+    @Ignore
+    @Test
+    public void testUnivDualSimpler() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+        HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
+        HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
+        OWLTheory th = createTheory(manager, "queryontologies/Univ.owl", true);
+        MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
+
+        //negativeTestcase.add(parser.parse("CS_Department SubClassOf affiliatedWith some CS_Library"));
+        negativeTestcase.add(parser.parse("hasAdvisor InverseOf advisorOf"));
+        th.addNonEntailedTest(negativeTestcase);
+
+        Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th,th.getActiveFormulas(),null);
+
+        //HashSet<OWLLogicalAxiom> target2 = new HashSet<OWLLogicalAxiom>();
+
+        //target2.add(parser.parse("AIStudent DisjointWith HCIStudent"));
+        //target2.add(parser.parse("CS_Library SubClassOf affiliatedWith some EE_Library"));
+        //target2.add(parser.parse("AssistantProfessor DisjointWith Lecturer"));
+
+        //System.out.println(Utils.renderAxioms(res));
+
+    }
+
+    @Ignore
+    @Test
+    public void testUnivDual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+        HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
+        HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
+        OWLTheory th = createTheory(manager, "queryontologies/Univ.owl", true);
+        MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
+        positiveTestcase.add(parser.parse("ProfessorInHCIorAI SubClassOf advisorOf only AIStudent"));
+        positiveTestcase.add(parser.parse("AIStudent DisjointWith HCIStudent"));
+        negativeTestcase.add(parser.parse("CS_Department SubClassOf affiliatedWith some CS_Library"));
+        negativeTestcase.add(parser.parse("hasAdvisor InverseOf advisorOf"));
+        th.addEntailedTest(positiveTestcase);
+        th.addNonEntailedTest(negativeTestcase);
+        HashSet<OWLLogicalAxiom> target = new HashSet<OWLLogicalAxiom>();
+        target.add(parser.parse("AssistantProfessor EquivalentTo TeachingFaculty and (hasTenure value false)"));
+        target.add(parser.parse("CS_Library SubClassOf affiliatedWith some EE_Library"));
+        target.add(parser.parse("hasAdvisor InverseOf advisorOf"));
+
+        SimpleStorage<OWLLogicalAxiom> storage = new DualStorage<OWLLogicalAxiom>();
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        search.setTheory(th);
+        search.setAxiomRenderer(new MyOWLRendererParser(null));
+        search.run();
+
+        for (AxiomSet<OWLLogicalAxiom> d : search.getStorage().getDiagnoses()) {
+            if (target.equals(d)) System.out.println("target is there");
+        }
+
 
     }
 

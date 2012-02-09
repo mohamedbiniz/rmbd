@@ -153,9 +153,9 @@ public class Utils {
         long timeInMillisec = TimeUnit.MILLISECONDS.toMillis(millis);
 
         long hours = timeInHours;
-        long minutes = timeInMinutes - timeInHours;
-        long seconds = timeInSec - timeInMinutes - timeInHours;
-        long milliseconds = timeInMillisec - timeInSec - timeInMinutes - timeInHours;
+        long minutes = timeInMinutes - TimeUnit.HOURS.toMinutes(timeInHours);
+        long seconds = timeInSec - TimeUnit.MINUTES.toSeconds(timeInMinutes);
+        long milliseconds = timeInMillisec - TimeUnit.SECONDS.toMillis(timeInSec);
         
         return String.format("%d millisec (%d hours %d min, %d sec %d millisec)", millis, hours, minutes, seconds, milliseconds);
     }

@@ -2,6 +2,7 @@ package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.partitioning.*;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlcontroller.Utils;
@@ -106,6 +107,38 @@ public class PerformanceTests {
     }
 
     @Test
+    public void testResultsEqualTime() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+
+        String ont = "Univ.owl";
+
+        long normal = System.currentTimeMillis();
+        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
+        searchNormal.setTheory(theoryNormal);
+        searchNormal.run();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+        normal = System.currentTimeMillis() - normal;
+
+        long dual = System.currentTimeMillis();
+        manager = OWLManager.createOWLOntologyManager();
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
+        searchDual.setTheory(theoryDual);
+        searchDual.run();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getStorage().getDiagnoses();
+        dual = System.currentTimeMillis() - dual;
+
+        System.out.println("normal " + Utils.getStringTime(normal));
+        System.out.println("dual " + Utils.getStringTime(dual));
+        
+        assert(resultNormal.equals(resultDual));
+
+    }
+
+    @Test
     public void queryToDiags2()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         String ont = "Univ.owl";
@@ -136,30 +169,66 @@ public class PerformanceTests {
         theoryNormal.clearTestCases();
         searchNormal.clearSearch();
 
-        long timeNormal = System.currentTimeMillis();
+        long timeNormalOverall = 0;
+        long timeDualOverall = 0;
+        int count = 0;
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
-            TableList entry = new TableList();
-            simulateBruteForceOnl(searchNormal,theoryNormal,diagnoses,entry);
-            theoryNormal.clearTestCases();
-            searchNormal.clearSearch();
-            logger.info("using hstree remaining queries " + entry.getMeanWin() + " " + Utils.renderAxioms(diagnoses));
-        }
-        timeNormal = System.currentTimeMillis() - timeNormal;
+            logger.info("iteration " + ++count);
+            if (count%2 != 0){
+                timeNormalOverall = computeHS(searchNormal, theoryNormal, timeNormalOverall, diagnoses);
+                timeDualOverall = computeDual(searchDual, theoryDual, timeDualOverall, diagnoses);
+            } else
+            {
+                timeDualOverall = computeDual(searchDual, theoryDual, timeDualOverall, diagnoses);
+                timeNormalOverall = computeHS(searchNormal, theoryNormal, timeNormalOverall, diagnoses);
+            }
 
-        long timeDual = System.currentTimeMillis();
-        for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
-            TableList entry = new TableList();
-            simulateBruteForceOnl(searchDual,theoryDual,diagnoses,entry);
-            theoryDual.clearTestCases();
-            searchDual.clearSearch();
-            logger.info("using dual tree remaining queries " + entry.getMeanWin() + " " + Utils.renderAxioms(diagnoses));
         }
-        timeDual = System.currentTimeMillis() - timeDual;
+
 
         long needed = System.currentTimeMillis() - t;
-        logger.info("needed overall " + needed);
-        logger.info("needed normal " + timeNormal);
-        logger.info("needed dual " + timeDual);
+        logger.info("needed overall " + Utils.getStringTime(needed));
+        logger.info("needed normal " + Utils.getStringTime(timeNormalOverall));
+        logger.info("needed dual " + Utils.getStringTime(timeDualOverall));
+
+    }
+
+    private long computeDual(UniformCostSearch<OWLLogicalAxiom> searchDual, OWLTheory theoryDual, long timeDualOverall, AxiomSet<OWLLogicalAxiom> diagnoses) {
+        TableList entry2 = new TableList();
+        long timeDual = System.currentTimeMillis();
+        diagnosesCalc = 0;
+        daStr = "";
+        conflictsCalc = 0;
+        simulateBruteForceOnl(searchDual,theoryDual,diagnoses,entry2);
+        timeDual = System.currentTimeMillis() - timeDual;
+        AxiomSet<OWLLogicalAxiom> diag2 = searchDual.getStorage().getDiagnoses().iterator().next();
+        boolean foundCorrectD2 = diag2.equals(diagnoses);
+        boolean hasNegativeTestcases = searchDual.getTheory().getNonentailedTests().size() > 0;
+        theoryDual.clearTestCases();
+        timeDualOverall += timeDual;
+        searchDual.clearSearch();
+        logger.info("dual tree iteration finished: window size "
+                + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() + " time " + Utils.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 + " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc + "has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr);
+        return timeDualOverall;
+    }
+
+    private long computeHS(UniformCostSearch<OWLLogicalAxiom> searchNormal, OWLTheory theoryNormal, long timeNormalOverall, AxiomSet<OWLLogicalAxiom> diagnoses) {
+        TableList entry = new TableList();
+        long timeNormal = System.currentTimeMillis();
+        diagnosesCalc = 0;
+        daStr = "";
+        conflictsCalc = 0;
+        simulateBruteForceOnl(searchNormal,theoryNormal,diagnoses,entry);
+        timeNormal = System.currentTimeMillis() - timeNormal;
+        AxiomSet<OWLLogicalAxiom> diag = searchNormal.getStorage().getDiagnoses().iterator().next();
+        boolean foundCorrectD = diag.equals(diagnoses);
+        boolean hasNegativeTestcases = searchNormal.getTheory().getNonentailedTests().size() > 0;
+        theoryNormal.clearTestCases();
+        searchNormal.clearSearch();
+        timeNormalOverall += timeNormal;
+        logger.info("hstree iteration finished: window size "
+                + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " + Utils.getStringTime(timeNormal) + " found correct diag " + foundCorrectD + " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc + "has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr);
+        return timeNormalOverall;
     }
 
     @BeforeClass
@@ -555,6 +624,10 @@ public class PerformanceTests {
             return "NaN";
     }
 
+    int diagnosesCalc = 0;
+
+    int conflictsCalc = 0;
+
     public <E extends AxiomSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, E item) {
         for (E o : col) {
             if (o.equals(item)) {
@@ -605,6 +678,11 @@ public class PerformanceTests {
                 try {
                     long diag = System.currentTimeMillis();
                     search.run(NUMBER_OF_HITTING_SETS);
+
+                    daStr += search.getStorage().getDiagnoses().size()+"/";
+                    diagnosesCalc += search.getStorage().getDiagnoses().size();
+                    conflictsCalc += search.getStorage().getConflicts().size();
+
                     diagnoses = search.getStorage().getDiagnoses();
                     diagTime.setTime(System.currentTimeMillis() - diag);
                 } catch (SolverException e) {
@@ -719,6 +797,7 @@ public class PerformanceTests {
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable, diagWinSize, userBreak, systemBreak, time, queryTime, diagTime);
 
     }
+    String daStr = "";
 
 
     private <E extends OWLObject> void prinths
