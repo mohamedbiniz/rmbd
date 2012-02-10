@@ -368,14 +368,15 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     }
 
     private boolean checkTestsConsistency() {
+        OWLReasoner solver = getSolver();
         for (Set<OWLLogicalAxiom> test : getNegativeTests()) {
-            if (!isEntailed(test)) {
+            if (!solver.isEntailed(test)) {
                 return true;
             }
         }
 
         for (Set<OWLLogicalAxiom> test : getNonentailedTests()) {
-            if (isEntailed(test)) {
+            if (solver.isEntailed(test)) {
                 return true;
             }
         }
@@ -385,7 +386,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
     public boolean isEntailed(Set<OWLLogicalAxiom> test) {
         start("Consistency + entailment");
-        updateAxioms(getOntology(), getFormulaStack());
+        //updateAxioms(getOntology(), getFormulaStack());
         OWLReasoner solver = getSolver();
         if (BUFFERED_SOLVER) solver.flush();
         if (!solver.isConsistent())
