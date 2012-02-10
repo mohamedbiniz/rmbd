@@ -1,11 +1,11 @@
 package at.ainf.owlapi3.model;
 
+import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import at.ainf.theory.model.AbstractTheory;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -105,7 +105,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     public void reset() {
 
         try {
-            init(originalReasonerFactory,origOntology,origBackgroundAxioms);
+            init(originalReasonerFactory, origOntology, origBackgroundAxioms);
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {
@@ -113,9 +113,9 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         }
     }
 
-    private void init (OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
-        throws InconsistentTheoryException, SolverException {
-         OWLOntologyManager man = ontology.getOWLOntologyManager();
+    private void init(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
+            throws InconsistentTheoryException, SolverException {
+        OWLOntologyManager man = ontology.getOWLOntologyManager();
         setOwlOntologyManager(man);
 
         try {
@@ -174,29 +174,29 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
     public void activateReduceToUns() {
         REDUCE_TO_UNSAT = true;
-            updateAxioms(getOntology(), getOriginalOntology().getLogicalAxioms(), getBackgroundFormulas());
-            getSolver().flush();
-            if (getSolver().isConsistent()) {
-                Set<OWLClass> entities = getSolver().getUnsatisfiableClasses().getEntities();
-                updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
-                entities.remove(BOTTOM_CLASS);
-                if (!entities.isEmpty()) {
-                    String iri = "http://ainf.at/testiri#";
-                    for (OWLClass cl : entities) {
-                        OWLDataFactory fac = getOriginalOntology().getOWLOntologyManager().getOWLDataFactory();
-                        OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "d_" + cl.getIRI().getFragment()));
+        updateAxioms(getOntology(), getOriginalOntology().getLogicalAxioms(), getBackgroundFormulas());
+        getSolver().flush();
+        if (getSolver().isConsistent()) {
+            Set<OWLClass> entities = getSolver().getUnsatisfiableClasses().getEntities();
+            updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
+            entities.remove(BOTTOM_CLASS);
+            if (!entities.isEmpty()) {
+                String iri = "http://ainf.at/testiri#";
+                for (OWLClass cl : entities) {
+                    OWLDataFactory fac = getOriginalOntology().getOWLOntologyManager().getOWLDataFactory();
+                    OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "d_" + cl.getIRI().getFragment()));
 
-                        try {
-                            addBackgroundFormula(fac.getOWLClassAssertionAxiom(cl, test_individual));
-                        } catch (InconsistentTheoryException e) {
-                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                        } catch (SolverException e) {
-                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                        }
+                    try {
+                        addBackgroundFormula(fac.getOWLClassAssertionAxiom(cl, test_individual));
+                    } catch (InconsistentTheoryException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    } catch (SolverException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                 }
-            } else
-                updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
+            }
+        } else
+            updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
     }
 
     public OWLTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
@@ -205,7 +205,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         this.origOntology = ontology;
         this.origBackgroundAxioms = backgroundAxioms;
 
-        init(reasonerFactory,ontology,backgroundAxioms);
+        init(reasonerFactory, ontology, backgroundAxioms);
 
     }
 
@@ -448,19 +448,9 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
-        // cleanup ontology
-        //Set<OWLLogicalAxiom> logicalAxioms = getOntology().getLogicalAxioms();
-        //removeAxioms(logicalAxioms, getOntology());
 
-        // add entailed test cases to simulate extension EX
-        for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
-            push(test);
-        }
-        // add axioms to the ontology
-        push(setminus(getOriginalOntology().getLogicalAxioms(), hs));
-        push(getBackgroundFormulas());
-        //removeAxioms(hs, getOntology());
-        //addAxioms(, getOntology());
+        updateAxioms(ontology, flatten(getPositiveTests()), flatten(getEntailedTests()),
+                getBackgroundFormulas(), setminus(getActiveFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
@@ -469,6 +459,13 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         //updateAxioms(getOntology(), logicalAxioms);
         push(stack);
         return res;
+    }
+
+    private Set<OWLLogicalAxiom> flatten(Collection<Set<OWLLogicalAxiom>> collection) {
+        Set<OWLLogicalAxiom> ax = new LinkedHashSet<OWLLogicalAxiom>();
+        for (Set<OWLLogicalAxiom> ps : collection)
+            ax.addAll(ps);
+        return ax;
     }
 
     public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
@@ -721,10 +718,10 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         //addSubclass(reasoner, manager, entailments);
         for (InferredAxiomGenerator<? extends OWLLogicalAxiom> axiomGenerator : axiomGenerators) {
             for (OWLLogicalAxiom ax : axiomGenerator.createAxioms(manager, reasoner)) {
-                 if (!getOntology().containsAxiom(ax) || isIncludeOntologyAxioms())
+                if (!getOntology().containsAxiom(ax) || isIncludeOntologyAxioms())
                     if (!ax.getClassesInSignature().contains(TOP_CLASS) || isIncludeReferencingThingAxioms()) {
                         entailments.add(ax);
-                     }
+                    }
 
                 //if (includeTrivialEntailments || (!getOntology().containsAxiom(ax) && !ax.getClassesInSignature().contains(TOP_CLASS)))
                 //    entailments.add(ax);
