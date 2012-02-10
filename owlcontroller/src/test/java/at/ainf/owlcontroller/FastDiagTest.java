@@ -148,31 +148,6 @@ public class FastDiagTest {
 
     }
 
-    @Ignore
-    @Test
-    public void testUnivDualSimpler() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
-        HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
-        HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
-        OWLTheory th = createTheory(manager, "queryontologies/Univ.owl", true);
-        MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
-
-        //negativeTestcase.add(parser.parse("CS_Department SubClassOf affiliatedWith some CS_Library"));
-        negativeTestcase.add(parser.parse("hasAdvisor InverseOf advisorOf"));
-        th.addNonEntailedTest(negativeTestcase);
-
-        Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th,th.getActiveFormulas(),null);
-
-        //HashSet<OWLLogicalAxiom> target2 = new HashSet<OWLLogicalAxiom>();
-
-        //target2.add(parser.parse("AIStudent DisjointWith HCIStudent"));
-        //target2.add(parser.parse("CS_Library SubClassOf affiliatedWith some EE_Library"));
-        //target2.add(parser.parse("AssistantProfessor DisjointWith Lecturer"));
-
-        //System.out.println(Utils.renderAxioms(res));
-
-    }
-
-    @Ignore
     @Test
     public void testUnivDual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
