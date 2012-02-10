@@ -66,7 +66,8 @@ public class Example2Test extends AbstractExample {
         D1(new Axiom[]{Axiom.AX1}),
         D2(new Axiom[]{Axiom.AX3}),
         D3(new Axiom[]{Axiom.AX4, Axiom.AX5}),
-        D4(new Axiom[]{Axiom.AX4, Axiom.AX2});
+        D4(new Axiom[]{Axiom.AX4, Axiom.AX2}),
+        D5(new Axiom[]{Axiom.AX4, Axiom.AX3});
 
         private TreeSet<Axiom> set = new TreeSet<Axiom>();
 
@@ -208,7 +209,7 @@ public class Example2Test extends AbstractExample {
         Query.X2.addToD0(new Diag[]{Diag.D1});
         Query.X3.addToD0(new Diag[]{});
         Query.X4.addToD0(new Diag[]{});
-        Query.X5.addToD0(new Diag[]{Diag.D1});
+        Query.X5.addToD0(new Diag[]{Diag.D1,Diag.D5});
         Query.X6.addToD0(new Diag[]{Diag.D3, Diag.D4});
         Query.X7.addToD0(new Diag[]{Diag.D1, Diag.D2, Diag.D3});
 

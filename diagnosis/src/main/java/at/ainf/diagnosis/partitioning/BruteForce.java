@@ -1,5 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
+import at.ainf.diagnosis.partitioning.postprocessor.Postprocessor;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -28,7 +29,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     private final ScoringFunction<Id> scoring;
 
-    private Postprocessor postprocessor = null;
+    private Postprocessor<Id> postprocessor = null;
 
     private ArrayList<Partition<Id>> partitions = new ArrayList<Partition<Id>>();
 
@@ -226,7 +227,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return partitionsCount;
     }
 
-    public Postprocessor getPostprocessor() {
+    public Postprocessor<Id> getPostprocessor() {
         return postprocessor;
     }
 
@@ -234,7 +235,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return partitions;
     }
 
-    public void setPostprocessor(Postprocessor proc) {
+    public void setPostprocessor(Postprocessor<Id> proc) {
         if (proc != null) {
             this.postprocessor = proc;
         } else {

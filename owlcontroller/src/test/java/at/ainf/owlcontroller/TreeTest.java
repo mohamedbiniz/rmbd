@@ -88,7 +88,7 @@ public class TreeTest {
         logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A}, {B} }", logd);
-        assertEquals("Conflicts { {A,B,C,D} }", logc);
+        assertEquals("Conflicts { {A,B} }", logc);
 
         // test both test casea
         debug.reset();
@@ -104,8 +104,8 @@ public class TreeTest {
 
         logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
-        assertEquals("Hitting sets { {C} }", logd);
-        assertEquals("Conflicts { {C,D} }", logc);
+        assertEquals("Hitting sets { {C}, {A,D}, {B,D} }", logd);
+        assertEquals("Conflicts { {A,B,C}, {C,D} }", logc);
 
         // test without test cases
 

@@ -1,5 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
+import at.ainf.diagnosis.partitioning.postprocessor.Postprocessor;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
@@ -17,7 +18,7 @@ import java.util.Set;
 public interface Partitioning<T> {
     <E extends AxiomSet<T>> Partition<T> generatePartition(Set<E> hittingSets) throws SolverException, InconsistentTheoryException;
 
-    void setPostprocessor(Postprocessor proc);
+    void setPostprocessor(Postprocessor<T> proc);
 
     public double getThreshold();
 
