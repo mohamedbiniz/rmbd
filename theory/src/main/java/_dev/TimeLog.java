@@ -90,7 +90,7 @@ public class TimeLog {
             String msg = message + ": " + key + " " + ev.message + " : " + ev.min + ", "
                     + ev.max + ", " + (ev.overall / ev.count)
                     + ", " + ev.overall + ", " + ev.count;
-            logger.trace(msg);
+            logger.info(msg);
             msgs.add(msg);
         }
         messages.add(msgs);
