@@ -157,7 +157,7 @@ public class Utils {
         long seconds = timeInSec - TimeUnit.MINUTES.toSeconds(timeInMinutes);
         long milliseconds = timeInMillisec - TimeUnit.SECONDS.toMillis(timeInSec);
         
-        return String.format("%d millisec (%d hours %d min, %d sec %d millisec)", millis, hours, minutes, seconds, milliseconds);
+        return String.format("%d ms (%d h %d m, %d s %d ms)", millis, hours, minutes, seconds, milliseconds);
     }
     
     public static String renderManyAxioms(Collection<OWLLogicalAxiom> axioms) {
