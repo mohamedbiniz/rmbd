@@ -44,6 +44,22 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     private final boolean BUFFERED_SOLVER = true;
     private boolean REDUCE_TO_UNSAT = false;
 
+    public boolean usingSubsets() {
+        return useSubsets;
+    }
+
+    public void useSubsets(boolean useSubsets) {
+        this.useSubsets = useSubsets;
+    }
+
+    private boolean useSubsets = true;
+
+    public Set<Set<OWLLogicalAxiom>> getSubSets() {
+        return subsets;
+    }
+
+    private Set<Set<OWLLogicalAxiom>> subsets = new HashSet<Set<OWLLogicalAxiom>>();
+
     public boolean isIncludeTrivialEntailments() {
         return includeTrivialEntailments;
     }
@@ -343,7 +359,8 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
     protected boolean doConsistencyTest(OWLReasoner reasoner) {
         boolean consistent, coherent = true;
-
+        if (useSubsets)
+            verifySubsets(ontology.getLogicalAxioms());
         start("Reasoner sync ");
         if (BUFFERED_SOLVER) reasoner.flush();
         stop();
@@ -359,7 +376,31 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         if (consistent) {
             if (checkTestsConsistency()) return false;
         }
+        
+        if (useSubsets && consistent)
+            saveAxioms(ontology.getLogicalAxioms());
         return consistent;
+    }
+
+    private void saveAxioms(Set<OWLLogicalAxiom> ax) {
+        for (Iterator<Set<OWLLogicalAxiom>> it = getSubSets().iterator();it.hasNext();)
+        {
+            Set<OWLLogicalAxiom> saved = it.next();
+            if (saved.size() < ax.size() && ax.containsAll(saved))
+                it.remove();
+        }
+        getSubSets().add(ax);
+    }
+
+    private boolean verifySubsets(Set<OWLLogicalAxiom> ax) {
+        if (getSubSets().contains(ax))
+            return true;
+        for (Set<OWLLogicalAxiom> saved : getSubSets())
+        {            
+            if (saved.size() >= ax.size() && saved.containsAll(ax))
+                return true;               
+        }
+        return false;
     }
 
     private boolean checkCoherency(OWLReasoner reasoner) {
