@@ -54,11 +54,35 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
     private boolean useSubsets = true;
 
-    public Set<Set<OWLLogicalAxiom>> getSubSets() {
+    public Set<SubSet> getSubSets() {
         return subsets;
     }
 
-    private Set<Set<OWLLogicalAxiom>> subsets = new HashSet<Set<OWLLogicalAxiom>>();
+    private class SubSet implements Comparable<SubSet>{
+        Set<OWLLogicalAxiom> set;
+        int calls = 0;
+        
+        public SubSet(Set<OWLLogicalAxiom> set){
+            this.set = set;            
+        }
+        public int size(){
+            return set.size();
+        }
+        
+        public boolean containsAll(Set<OWLLogicalAxiom> set){
+            boolean res = this.set.containsAll(set);
+            if (res) this.calls++;
+            return res;
+        }
+
+        public int compareTo(SubSet o) {
+            if (this.calls != o.calls)
+                return -1*Integer.valueOf(this.calls).compareTo(o.calls);
+            return -1*Integer.valueOf(size()).compareTo(o.size());
+        }
+    }
+    
+    private Set<SubSet> subsets = new TreeSet<SubSet>();
 
     public boolean isIncludeTrivialEntailments() {
         return includeTrivialEntailments;
@@ -383,19 +407,25 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     }
 
     private void saveAxioms(Set<OWLLogicalAxiom> ax) {
-        for (Iterator<Set<OWLLogicalAxiom>> it = getSubSets().iterator();it.hasNext();)
+        int count = 0;
+        int threshold = 20;
+        for (Iterator<SubSet> it = getSubSets().iterator();it.hasNext();)
         {
-            Set<OWLLogicalAxiom> saved = it.next();
-            if (saved.size() < ax.size() && ax.containsAll(saved))
+            SubSet saved = it.next();
+            if (count >= threshold) {
                 it.remove();
+                continue;
+            }
+            if (saved.size() < ax.size() && ax.containsAll(saved.set))
+                it.remove();
+            else
+                count++;            
         }
-        getSubSets().add(ax);
+        getSubSets().add(new SubSet(ax));
     }
 
     private boolean verifySubsets(Set<OWLLogicalAxiom> ax) {
-        if (getSubSets().contains(ax))
-            return true;
-        for (Set<OWLLogicalAxiom> saved : getSubSets())
+        for (SubSet saved : getSubSets())
         {            
             if (saved.size() >= ax.size() && saved.containsAll(ax))
                 return true;               

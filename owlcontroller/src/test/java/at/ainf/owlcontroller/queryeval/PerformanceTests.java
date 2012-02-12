@@ -732,8 +732,13 @@ public class PerformanceTests {
                 double dp = d.getMeasure();
                 if (logger.isInfoEnabled()) {
                     AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
-                    logger.trace("diagnoses: " + diagnoses.size() +
-                            " first diagnosis: " + d + " is target: " + isTargetDiagFirst + " is in window: " + ((o == null) ? false : o.toString()));
+                    double diagProbabilities = 0;
+                    for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
+                        diagProbabilities += tempd.getMeasure();
+                    logger.info("diagnoses: " + diagnoses.size() +
+                            " (" + diagProbabilities + ") first diagnosis: " + d +
+                            " is target: " + isTargetDiagFirst + " is in window: " +
+                            ((o == null) ? false : o.toString()));
                 }
 
                 if (d1 != null) {
