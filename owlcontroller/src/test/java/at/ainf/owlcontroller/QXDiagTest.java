@@ -8,7 +8,6 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
-import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
@@ -17,7 +16,6 @@ import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -37,8 +35,8 @@ import java.util.Set;
  * Time: 13:11
  * To change this template use File | Settings | File Templates.
  */
-public class FastDiagTest {
-    private static Logger logger = Logger.getLogger(FastDiagTest.class.getName());
+public class QXDiagTest {
+    private static Logger logger = Logger.getLogger(QXDiagTest.class.getName());
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
     @BeforeClass
