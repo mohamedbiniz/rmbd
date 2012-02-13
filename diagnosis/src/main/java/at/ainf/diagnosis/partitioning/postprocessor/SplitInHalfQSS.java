@@ -15,9 +15,7 @@ import java.util.List;
  */
 public class SplitInHalfQSS<T> extends AbstractQSS<T> {
 
-    public int getMinNumOfElimDiags(Partition<T> partition) {
-        return Math.min(partition.dx.size(), partition.dnx.size());
-    }
+
 
     public class MinNumOfElimDiagsComparator implements Comparator<Partition<T>> {
         public int compare(Partition<T> o1, Partition<T> o2) {
