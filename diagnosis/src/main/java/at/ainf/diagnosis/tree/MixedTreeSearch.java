@@ -114,6 +114,10 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Id> {
 
     }
 
+    public Set<AxiomSet<Id>> continueSearch() throws SolverException, NoConflictException, InconsistentTheoryException {
+        return null;
+    }
+
     public Set<AxiomSet<Id>> run() throws SolverException, NoConflictException, InconsistentTheoryException {
         return run(0);
     }

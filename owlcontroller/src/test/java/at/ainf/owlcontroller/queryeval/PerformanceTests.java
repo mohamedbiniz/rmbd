@@ -145,7 +145,7 @@ public class PerformanceTests {
     public void testDualTreePrunig() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ont = "example1302.owl";
-        boolean dual = false;
+        boolean dual = true;
         SimpleStorage<OWLLogicalAxiom> storage = null;
         Searcher<OWLLogicalAxiom> searcher = null;
         if (dual) {
@@ -169,24 +169,24 @@ public class PerformanceTests {
 
         System.out.println("First 2 Diagnoses and corresponding conflicts before negative testcase");
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getStorage().getDiagnoses())
-            System.out.println(Utils.renderAxioms(hs));
-        System.out.println();
-
+            System.out.println("HS " + Utils.renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getStorage().getConflicts())
-            System.out.println(Utils.renderAxioms(confl));
+            System.out.println("cs " + Utils.renderAxioms(confl));
 
-        HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
+        HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
+        //HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
         MyOWLRendererParser parser = new MyOWLRendererParser(theoryNormal.getOriginalOntology());
-        negativeTestcase.add(parser.parse("w Type C"));
+        //negativeTestcase.add(parser.parse("w Type C"));
+        positiveTestcase.add(parser.parse("w Type B"));
 
-        System.out.println("All Diagnoses and conflicts after negative testcase");
-        theoryNormal.addNonEntailedTest(negativeTestcase);
-        searchNormal.run();
+        System.out.println("All Diagnoses and conflicts after negative testcase: B(w)  ");
+        theoryNormal.addEntailedTest(positiveTestcase);
+        //theoryNormal.addNonEntailedTest(negativeTestcase);
+        searchNormal.continueSearch();
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getStorage().getDiagnoses())
-            System.out.println(Utils.renderAxioms(hs));
-        System.out.println();
+            System.out.println("HS " + Utils.renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getStorage().getConflicts())
-            System.out.println(Utils.renderAxioms(confl));
+            System.out.println("cs " + Utils.renderAxioms(confl));
 
         //System.out.println("normal " + Utils.getStringTime(normal) + " subsets: " + theoryNormal.getSubSets().size());
         //System.out.println("dual " + Utils.getStringTime(dual) + " subsets: " + theoryDual.getSubSets().size());
@@ -198,9 +198,12 @@ public class PerformanceTests {
     @Test
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        String ont = "Univ.owl";
-        compareAllDiagnoses(ont, true);
-        compareAllDiagnoses(ont, false);
+        readParametersFromFile();
+        for (String ont : ontologies) {
+            compareAllDiagnoses(ont, true);
+            compareAllDiagnoses(ont, false);
+        }
+
     }
 
     private void compareAllDiagnoses(String ontolofy, boolean useSubsets) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
