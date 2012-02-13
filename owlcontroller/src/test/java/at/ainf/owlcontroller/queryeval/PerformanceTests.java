@@ -200,7 +200,8 @@ public class PerformanceTests {
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         String ont = "Univ.owl";
-        compareAllDiagnoses(ont, true, 10);
+        for (int i = 5; i< 50; i+=5)
+            compareAllDiagnoses(ont, true, i);
         compareAllDiagnoses(ont, false, 0);
     }
 
@@ -260,7 +261,7 @@ public class PerformanceTests {
         }
 
         long needed = System.currentTimeMillis() - t;
-        logger.info("needed overall " + Utils.getStringTime(needed));
+        logger.info("needed overall (threshold=" + threshold + ")" + Utils.getStringTime(needed));
         logger.info("needed normal " + Utils.getStringTime(timeNormalOverall) +
                 " max " + Utils.getStringTime(timeNormalMax) +
                 " min " + Utils.getStringTime(timeNormalMin));
