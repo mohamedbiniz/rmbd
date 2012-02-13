@@ -110,6 +110,11 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             return run(getMaxHittingSets());
     }
 
+    public Set<T> continueSearch() throws
+            SolverException, NoConflictException, InconsistentTheoryException {
+        return run(-1);
+    }
+
     public void clearSearch() {
         getStorage().resetStorage();
         getOpenNodes().clear();
