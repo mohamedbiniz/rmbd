@@ -35,15 +35,15 @@
     <!-- http://www.semanticweb.org/ontologies/2012/1/Ontology1329136376685.owl#A -->
 
     <owl:Class rdf:about="&Ontology1329136376685;A">
-        <rdfs:subClassOf rdf:resource="&Ontology1329136376685;B"/>
+        <rdfs:subClassOf rdf:resource="&Ontology1329136376685;C"/>
     </owl:Class>
     
 
 
     <!-- http://www.semanticweb.org/ontologies/2012/1/Ontology1329136376685.owl#B -->
 
-    <owl:Class rdf:about="&Ontology1329136376685;B">
-        <rdfs:subClassOf rdf:resource="&Ontology1329136376685;C"/>
+    <owl:Class rdf:about="&Ontology1329136376685;R">
+        <rdfs:subClassOf rdf:resource="&Ontology1329136376685;B"/>
     </owl:Class>
     
 
@@ -54,32 +54,14 @@
         <rdfs:subClassOf rdf:resource="&Ontology1329136376685;D"/>
         <rdfs:subClassOf rdf:resource="&Ontology1329136376685;E"/>
     </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2012/1/Ontology1329136376685.owl#D -->
 
     <owl:Class rdf:about="&Ontology1329136376685;D">
-        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <rdfs:subClassOf rdf:resource="&Ontology1329136376685;R"/>
     </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2012/1/Ontology1329136376685.owl#E -->
 
     <owl:Class rdf:about="&Ontology1329136376685;E">
-        <rdfs:subClassOf rdf:resource="&Ontology1329136376685;F"/>
+        <rdfs:subClassOf rdf:resource="&Ontology1329136376685;R"/>
     </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/ontologies/2012/1/Ontology1329136376685.owl#F -->
-
-    <owl:Class rdf:about="&Ontology1329136376685;F">
-        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
-    </owl:Class>
-    
-
 
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -98,12 +80,7 @@
         <rdf:type rdf:resource="&Ontology1329136376685;A"/>
         <rdf:type>
             <owl:Class>
-                <owl:complementOf rdf:resource="&Ontology1329136376685;D"/>
-            </owl:Class>
-        </rdf:type>
-        <rdf:type>
-            <owl:Class>
-                <owl:complementOf rdf:resource="&Ontology1329136376685;F"/>
+                <owl:complementOf rdf:resource="&Ontology1329136376685;B"/>
             </owl:Class>
         </rdf:type>
     </owl:NamedIndividual>

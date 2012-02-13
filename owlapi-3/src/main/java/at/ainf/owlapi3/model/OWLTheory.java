@@ -44,25 +44,28 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     private final boolean BUFFERED_SOLVER = true;
     private boolean REDUCE_TO_UNSAT = false;
 
-    public boolean usingSubsets() {
-        return useSubsets;
+    private int threshold = 20;
+
+    public boolean caching() {
+        return useCache;
     }
 
-    public void useSubsets(boolean useSubsets) {
-        this.useSubsets = useSubsets;
+    public void useCache(boolean useCache, int threshold) {
+        this.useCache = useCache;
+        this.threshold = threshold;
     }
 
-    private boolean useSubsets = true;
+    private boolean useCache = true;
 
-    public Set<SubSet> getSubSets() {
-        return subsets;
+    public List<CacheEntry> getCache() {
+        return cache;
     }
 
-    private class SubSet implements Comparable<SubSet>{
+    private class CacheEntry implements Comparable<CacheEntry>{
         Set<OWLLogicalAxiom> set;
         int calls = 0;
         
-        public SubSet(Set<OWLLogicalAxiom> set){
+        public CacheEntry(Set<OWLLogicalAxiom> set){
             this.set = set;            
         }
         public int size(){
@@ -75,14 +78,20 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             return res;
         }
 
-        public int compareTo(SubSet o) {
+        public int compareTo(CacheEntry o) {
             if (this.calls != o.calls)
                 return -1*Integer.valueOf(this.calls).compareTo(o.calls);
             return -1*Integer.valueOf(size()).compareTo(o.size());
         }
+
+        @Override
+        public String toString() {
+            return "Cache entry: " + set.size()
+                    + " ax used " + calls;
+        }
     }
     
-    private Set<SubSet> subsets = new TreeSet<SubSet>();
+    private List<CacheEntry> cache = new ArrayList<CacheEntry>(threshold);
 
     public boolean isIncludeTrivialEntailments() {
         return includeTrivialEntailments;
@@ -383,8 +392,8 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
     protected boolean doConsistencyTest(OWLReasoner reasoner) {
         boolean consistent, coherent = true;
-        if (useSubsets)
-            verifySubsets(ontology.getLogicalAxioms());
+        if (useCache)
+            verifyCache(ontology.getLogicalAxioms());
         start("Reasoner sync ");
         if (BUFFERED_SOLVER) reasoner.flush();
         stop();
@@ -401,17 +410,17 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             if (checkTestsConsistency()) return false;
         }
         
-        if (useSubsets && consistent)
-            saveAxioms(ontology.getLogicalAxioms());
+        if (useCache && consistent)
+            updateCache(ontology.getLogicalAxioms());
         return consistent;
     }
 
-    private void saveAxioms(Set<OWLLogicalAxiom> ax) {
+    private void updateCache(Set<OWLLogicalAxiom> ax) {
         int count = 0;
-        int threshold = 20;
-        for (Iterator<SubSet> it = getSubSets().iterator();it.hasNext();)
+        Collections.sort(getCache());
+        for (Iterator<CacheEntry> it = getCache().iterator();it.hasNext();)
         {
-            SubSet saved = it.next();
+            CacheEntry saved = it.next();
             if (count >= threshold) {
                 it.remove();
                 continue;
@@ -419,13 +428,13 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             if (saved.size() < ax.size() && ax.containsAll(saved.set))
                 it.remove();
             else
-                count++;            
+                count++;
         }
-        getSubSets().add(new SubSet(ax));
+        getCache().add(new CacheEntry(ax));
     }
 
-    private boolean verifySubsets(Set<OWLLogicalAxiom> ax) {
-        for (SubSet saved : getSubSets())
+    private boolean verifyCache(Set<OWLLogicalAxiom> ax) {
+        for (CacheEntry saved : getCache())
         {            
             if (saved.size() >= ax.size() && saved.containsAll(ax))
                 return true;               
