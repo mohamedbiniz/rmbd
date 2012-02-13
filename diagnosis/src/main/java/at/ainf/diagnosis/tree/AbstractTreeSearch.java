@@ -319,10 +319,10 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         if (axiomRenderer != null)
             logMessage(getDepth(node), "pathlabels: ", pathLabels);
 
-        getStorage().addConflict(conflictSet);
-
         if(!getSearcher().isDual())
             pruneConflictSets(node, conflictSet);
+
+        getStorage().addConflict(conflictSet);
 
         // current node should ge a conflict only if a path from
         // this node to root does not include closed nodes

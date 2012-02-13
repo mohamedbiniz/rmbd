@@ -134,15 +134,15 @@ public class PerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getStorage().getDiagnoses();
         dual = System.currentTimeMillis() - dual;
 
-        System.out.println("normal " + Utils.getStringTime(normal) + " subsets: " + theoryNormal.getSubSets().size());
-        System.out.println("dual " + Utils.getStringTime(dual) + " subsets: " + theoryDual.getSubSets().size());
+        System.out.println("normal " + Utils.getStringTime(normal) + " subsets: " + theoryNormal.getCache().size());
+        System.out.println("dual " + Utils.getStringTime(dual) + " subsets: " + theoryDual.getCache().size());
 
         assert (resultNormal.equals(resultDual));
 
     }
 
     @Test
-    public void testDualTreePrunig() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+    public void testDualTreePrunnig() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ont = "example1302.owl";
         boolean dual = true;
@@ -167,7 +167,7 @@ public class PerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
         normal = System.currentTimeMillis() - normal;
 
-        System.out.println("First 2 Diagnoses and corresponding conflicts before negative testcase");
+        System.out.println("First 2 Diagnoses and corresponding conflicts before test case");
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getStorage().getDiagnoses())
             System.out.println("HS " + Utils.renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getStorage().getConflicts())
@@ -177,9 +177,10 @@ public class PerformanceTests {
         //HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
         MyOWLRendererParser parser = new MyOWLRendererParser(theoryNormal.getOriginalOntology());
         //negativeTestcase.add(parser.parse("w Type C"));
-        positiveTestcase.add(parser.parse("w Type B"));
+        positiveTestcase.add(parser.parse("w Type D"));
+        positiveTestcase.add(parser.parse("w Type C"));
 
-        System.out.println("All Diagnoses and conflicts after negative testcase: B(w)  ");
+        System.out.println("All Diagnoses and conflicts after test case: D(w)  ");
         theoryNormal.addEntailedTest(positiveTestcase);
         //theoryNormal.addNonEntailedTest(negativeTestcase);
         searchNormal.continueSearch();
@@ -198,15 +199,12 @@ public class PerformanceTests {
     @Test
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        readParametersFromFile();
-        for (String ont : ontologies) {
-            compareAllDiagnoses(ont, true);
-            compareAllDiagnoses(ont, false);
-        }
-
+        String ont = "Univ.owl";
+        compareAllDiagnoses(ont, true, 10);
+        compareAllDiagnoses(ont, false, 0);
     }
 
-    private void compareAllDiagnoses(String ontolofy, boolean useSubsets) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+    private void compareAllDiagnoses(String ontolofy, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         long t = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
@@ -214,7 +212,7 @@ public class PerformanceTests {
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontolofy, false);
         searchNormal.setTheory(theoryNormal);
-        theoryNormal.useSubsets(useSubsets);
+        theoryNormal.useCache(useSubsets, threshold);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
         OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
@@ -226,7 +224,7 @@ public class PerformanceTests {
         UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
         searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontolofy, true);
-        theoryDual.useSubsets(useSubsets);
+        theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();
         es = new OWLAxiomNodeCostsEstimator(theoryDual);
@@ -258,7 +256,7 @@ public class PerformanceTests {
             if (timeNormalMax < timeNormal) timeNormalMax = timeNormal;
             if (timeDualMax < timeDual) timeDualMax = timeDual;
             if (timeNormalMin > timeNormal) timeNormalMin = timeNormal;
-            if (timeDualMin > timeNormal) timeDualMin = timeNormal;
+            if (timeDualMin > timeNormal) timeDualMin = timeDual;
         }
 
         long needed = System.currentTimeMillis() - t;
@@ -289,7 +287,7 @@ public class PerformanceTests {
                 " time " + Utils.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative tests " + hasNegativeTestcases + " diagnoses in storage " + daStr +
-                " cached subsets " + theoryDual.getSubSets().size()
+                " cached subsets " + theoryDual.getCache().size()
         );
         return timeDual;
     }
@@ -312,7 +310,7 @@ public class PerformanceTests {
                 Utils.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr +
-                " cached subsets " + theoryNormal.getSubSets().size()
+                " cached subsets " + theoryNormal.getCache().size()
         );
         return timeNormal;
     }
