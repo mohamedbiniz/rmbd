@@ -11,12 +11,20 @@ import java.util.Comparator;
  * Time: 11:22
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractQSS<T> implements Postprocessor<T> {
+public abstract class AbstractQSS<T> implements QSS<T> {
 
     protected double log(double value, double base) {
         if (value == 0)
             return 0;
         return Math.log(value) / Math.log(base);
+    }
+
+    public int getMinNumOfElimDiags(Partition<T> partition) {
+        return Math.min(partition.dx.size(), partition.dnx.size());
+    }
+
+    public void setAnswerToLastQuery(boolean answer) {
+
     }
     
 }
