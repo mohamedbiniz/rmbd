@@ -18,4 +18,6 @@ public class Partition<T> {
     public Set<T> partition;
     public double score = 0;
     public double difference = Double.MAX_VALUE;
+
+
 }
