@@ -19,7 +19,7 @@ public abstract class AbstractQSS<T> implements QSS<T> {
         return Math.log(value) / Math.log(base);
     }
 
-    public int getMinNumOfElimDiags(Partition<T> partition) {
+    protected int getMinNumOfElimDiags(Partition<T> partition) {
         return Math.min(partition.dx.size(), partition.dnx.size());
     }
 
