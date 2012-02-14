@@ -74,7 +74,7 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 	    	preprocessC();
 	    	int numOfDiagsToElim = convertCToNumOfDiags(c);
 	        Partition<T> minScorePartition;
-	        if (getMinNumOfElimDiags((minScorePartition = selectMinScorePartition(partitions))) >= numOfDiagsToElim) {
+	        if (getMinNumOfElimDiags(( minScorePartition = selectMinScorePartition(partitions))) >= numOfDiagsToElim) {
 	            return minScorePartition;
 	        }
 	        for (; numOfDiagsToElim <= getMaxPossibleNumOfDiagsToEliminate(); numOfDiagsToElim++) {
