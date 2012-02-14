@@ -121,6 +121,12 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         this.root = null;
     }
 
+    public int getNumOfInvalidatedHS() {
+        return numOfInvalidatedHS;
+    }
+
+    protected int numOfInvalidatedHS;
+    
     public Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, InconsistentTheoryException {
 
         start("Overall run");
@@ -142,6 +148,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                         invalidHittingSets.add(hs);
                     }
                 }
+                numOfInvalidatedHS = invalidHittingSets.size();
                 for (T invHS : invalidHittingSets) {
                     getStorage().invalidateHittingSet(invHS);
                 }

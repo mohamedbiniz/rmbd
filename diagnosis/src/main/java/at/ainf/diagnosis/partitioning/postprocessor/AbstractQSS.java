@@ -23,7 +23,15 @@ public abstract class AbstractQSS<T> implements QSS<T> {
         return Math.min(partition.dx.size(), partition.dnx.size());
     }
 
-    public void setAnswerToLastQuery(boolean answer) {
+    public void updateNumOfCurrentLeadingDiags(int num) {
+
+    }
+
+    public void updateNumOfEliminatedLeadingDiags(int num) {
+
+    }
+
+    public void updateAnswerToLastQuery(boolean answer) {
 
     }
     

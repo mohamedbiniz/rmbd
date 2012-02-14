@@ -19,41 +19,38 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 
 	    protected double c;
 
+        protected int numOfLeadingDiags;
 
 	    public StaticRiskQSS(double c) {
 	        super();
 	        this.c = c;
 	    }
 
-        // required methods START
-
-        protected int getNumOfLeadingDiags(){
-            //TODO
-            return 0;
-        }
-
-        // required methods END
 
 
-	    protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions) {
+    public void updateNumOfCurrentLeadingDiags(int numOfLeadingDiags) {
+        this.numOfLeadingDiags = numOfLeadingDiags;
+    }
+
+    protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions) {
 	        return super.run(partitions);
 	    }
 
 	    protected int getMaxPossibleNumOfDiagsToEliminate() {
-	        return (int) Math.floor((double) (getNumOfLeadingDiags() / 2d));
+	        return (int) Math.floor((double) (numOfLeadingDiags / 2d));
 	    }
 
 	    protected void preprocessC(){
 	    	double maxPossibleC;
-            if ((maxPossibleC = (double)this.getMaxPossibleNumOfDiagsToEliminate() / (double)getNumOfLeadingDiags()) < c) {
+            if ((maxPossibleC = (double)this.getMaxPossibleNumOfDiagsToEliminate() / (double)numOfLeadingDiags) < c) {
 	            c = maxPossibleC;
 	        }else if (c < 0d)
                 c = 0;
 	    }
 
         protected int convertCToNumOfDiags(double c) {
-	        int num = (int) Math.ceil((double) getNumOfLeadingDiags() * c);
-	        if (num > ((double)getNumOfLeadingDiags() / 2d)) {
+	        int num = (int) Math.ceil((double) numOfLeadingDiags * c);
+	        if (num > ((double)numOfLeadingDiags / 2d)) {
 	            num--;
 	        }
 	        return num;

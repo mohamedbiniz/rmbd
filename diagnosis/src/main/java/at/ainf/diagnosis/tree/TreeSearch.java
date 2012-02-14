@@ -29,6 +29,8 @@ import java.util.Set;
  */
 public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
+    public int getNumOfInvalidatedHS();
+    
     public void clearSearch();
 
     public Set<T> continueSearch() throws SolverException, NoConflictException, InconsistentTheoryException;

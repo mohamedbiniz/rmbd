@@ -110,6 +110,10 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Id> {
         return currentStrategy.getMaxHittingSets();
     }
 
+    public int getNumOfInvalidatedHS() {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void clearSearch() {
 
     }
