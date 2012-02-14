@@ -8,5 +8,9 @@ package at.ainf.diagnosis.partitioning.postprocessor;
  * To change this template use File | Settings | File Templates.
  */
 public interface QSS<T> extends Postprocessor<T>{
-    void setAnswerToLastQuery(boolean answer);
+    void updateAnswerToLastQuery(boolean answer);
+
+    void updateNumOfCurrentLeadingDiags(int num);
+
+    void updateNumOfEliminatedLeadingDiags(int num);
 }

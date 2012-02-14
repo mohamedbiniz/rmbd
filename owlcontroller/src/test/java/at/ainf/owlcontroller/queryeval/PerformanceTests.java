@@ -199,19 +199,19 @@ public class PerformanceTests {
     @Test
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        String ont = "Univ.owl";
+        String ont = "koala.owl";
         for (int i = 5; i< 50; i+=5)
             compareAllDiagnoses(ont, true, i);
         compareAllDiagnoses(ont, false, 0);
     }
 
-    private void compareAllDiagnoses(String ontolofy, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+    private void compareAllDiagnoses(String ontology, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         long t = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontolofy, false);
+        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
@@ -224,7 +224,7 @@ public class PerformanceTests {
         manager = OWLManager.createOWLOntologyManager();
         UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
         searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontolofy, true);
+        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();

@@ -64,7 +64,7 @@ public class PenaltyQSS<T> extends MinScoreQSS<T> {
         penalty += (int)Math.floor((double)getNumOfAllDiags(lastQuery)/(double)2) - numOfEliminatedDiags;
     }
 
-    public void setAnswerToLastQuery(boolean answer) {
+    public void updateAnswerToLastQuery(boolean answer) {
         answerToLastQuery = answer;
     }
 
