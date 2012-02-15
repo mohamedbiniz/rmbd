@@ -73,7 +73,6 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
         public Partition<T> run(List<Partition<T>> partitions) {
 
 	    	preprocessBeforeRun(partitions);
-
             int numOfDiagsToElim = convertCToNumOfDiags(c);
 	        Partition<T> minScorePartition;
 
