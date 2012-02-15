@@ -14,6 +14,8 @@ import java.util.Set;
  */
 public interface AxiomSet<Id> extends Set<Id>, Comparable<AxiomSet<Id>>, WatchedElement<Double> {
 
+    void updateAxioms(Set<Id> axioms);
+
     public enum TypeOfSet { HITTING_SET, CONFLICT_SET, OTHER };
 
     public <T extends AxiomSet<Id>> void setListener(StorageListener<T, Id> listener);

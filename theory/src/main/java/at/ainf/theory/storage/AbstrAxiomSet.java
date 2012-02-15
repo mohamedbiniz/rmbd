@@ -12,7 +12,7 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
-    protected final Set<Id> hittingSet;
+    protected Set<Id> hittingSet;
     boolean valid = false;
     private double measure = 0;
     private final Set<Id> entailments;
@@ -21,6 +21,10 @@ public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<Axio
 
     private final String name;
     protected StorageListener listener;
+
+    public void updateAxioms(Set<Id> axioms) {
+        this.hittingSet = axioms;
+    }
 
     public <T extends AxiomSet<Id>> void setListener(StorageListener<T, Id> listener) {
         this.listener = listener;
