@@ -1,5 +1,7 @@
 package at.ainf.diagnosis.partitioning.postprocessor;
 
+import at.ainf.theory.storage.Partition;
+
 /**
  * Created by IntelliJ IDEA.
  * User: pfleiss
@@ -10,7 +12,7 @@ package at.ainf.diagnosis.partitioning.postprocessor;
 public interface QSS<T> extends Postprocessor<T>{
     void updateAnswerToLastQuery(boolean answer);
 
-    void updateNumOfLeadingDiags(int num);
+    void updateNumOfLeadingDiags(Partition<T> partition);
 
-    void updateC(int numOfEliminatedLeadingDiags);
+    void updateParameters(boolean answerToLastQuery);
 }

@@ -4,6 +4,7 @@ import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,6 +19,7 @@ public abstract class AbstractQSS<T> implements QSS<T> {
     protected int numOfLeadingDiags;
     protected Partition<T> lastQuery;
     protected boolean answerToLastQuery;
+    protected int numOfEliminatedLeadingDiags;
 
 
     protected double log(double value, double base) {
@@ -30,27 +32,40 @@ public abstract class AbstractQSS<T> implements QSS<T> {
         return Math.min(partition.dx.size(), partition.dnx.size());
     }
 
-    public void updateNumOfLeadingDiags(int numOfLeadingDiags) {
-            this.numOfLeadingDiags = numOfLeadingDiags;
-    }
-
-    public void updateC(int num) {
-
+    public void updateNumOfLeadingDiags(Partition<T> partition) {
+        numOfLeadingDiags = getNumOfLeadingDiags(partition);
     }
 
     public void updateAnswerToLastQuery(boolean answer) {
         answerToLastQuery = answer;
     }
 
+    protected void updateNumOfEliminatedLeadingDiags(boolean answer){
+        numOfEliminatedLeadingDiags = getNumOfEliminatedLeadingDiags(answer);
+    }
+
+    protected void preprocessBeforeUpdate(boolean answer){
+        updateAnswerToLastQuery(answer);
+        updateNumOfEliminatedLeadingDiags(answer);
+    }
+
+    protected void preprocessBeforeRun(List<Partition<T>> partitions){
+        updateNumOfLeadingDiags(partitions.get(0));
+    }
+
     protected int getNumOfLeadingDiags(Partition<T> partition){
         return partition.dx.size() + partition.dnx.size() + partition.dz.size();
     }
 
-    protected int getNumOfEliminatedLeadingDiags(boolean answerToLastQuery){
-        if (answerToLastQuery)
+    protected int getNumOfEliminatedLeadingDiags(boolean answer){
+        if (answer)
             return lastQuery.dnx.size();
         else
             return lastQuery.dx.size();
+    }
+
+    public void updateParameters(boolean answer) {
+        preprocessBeforeUpdate(answer);
     }
 
 
