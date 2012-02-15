@@ -108,7 +108,7 @@ public class Node<Id> {
         return arcLabel;
     }
 
-    public Set<Id> getConflict() {
+    public Set<Id> getAxiomSet() {
         return conflict;
     }
 

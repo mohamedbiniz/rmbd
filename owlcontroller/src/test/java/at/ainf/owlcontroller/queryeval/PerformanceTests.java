@@ -143,7 +143,7 @@ public class PerformanceTests {
     public void testDualTreePrunning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ont = "example1302.owl";
-        boolean dual = false;
+        boolean dual = true;
         SimpleStorage<OWLLogicalAxiom> storage = null;
         Searcher<OWLLogicalAxiom> searcher = null;
         if (dual) {
