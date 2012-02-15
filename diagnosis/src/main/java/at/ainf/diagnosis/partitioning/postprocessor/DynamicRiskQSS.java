@@ -34,16 +34,18 @@ public class DynamicRiskQSS<T> extends StaticRiskQSS<T> {
             if (c > cMax) c = cMax;
     }
 
-    protected double getCAdjust(int numOfElimDiags){
+    protected double getCAdjust(){
         double interval = cMax - cMin;
         double epsilon = 0.01d;
-        double adjust = ((Math.floor( ( (double)numOfLeadingDiags / 2d ) - epsilon ) - (double)numOfElimDiags) / (double)numOfLeadingDiags);
+        double adjust = ((Math.floor( ( (double)numOfLeadingDiags / 2d ) - epsilon ) - (double)numOfEliminatedLeadingDiags) / (double)numOfLeadingDiags);
         return adjust * interval * 2d;
     }
 
-    public void updateC(int numOfEliminatedLeadingDiags) {
+    public void updateParameters(boolean answerToLastQuery) {
 
-        double cAdjust = getCAdjust(numOfEliminatedLeadingDiags);
+        preprocessBeforeUpdate(answerToLastQuery);
+
+        double cAdjust = getCAdjust();
         if (c + cAdjust > cMax) {
             c = cMax;
         } else if (c + cAdjust < cMin) {

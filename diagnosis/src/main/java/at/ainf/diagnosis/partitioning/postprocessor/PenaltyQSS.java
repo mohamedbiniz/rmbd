@@ -33,13 +33,15 @@ public class PenaltyQSS<T> extends MinScoreQSS<T> {
 
 
     protected int getMaxPenaltyOfQuery(Partition<T> partition){
-        return (int)Math.floor((double) getNumOfLeadingDiags(partition)/(double)2) - getMinNumOfElimDiags(partition);
+        return (int)Math.floor((double) numOfLeadingDiags/(double)2) - getMinNumOfElimDiags(partition);
     }
 
 
-    private void updatePenalty(){
-        int numOfEliminatedDiags = getNumOfEliminatedLeadingDiags(answerToLastQuery);
-        penalty += (int)Math.floor((double) getNumOfLeadingDiags(lastQuery)/(double)2) - numOfEliminatedDiags;
+    public void updateParameters(boolean answerToLastQuery){
+
+        preprocessBeforeUpdate(answerToLastQuery);
+
+        penalty += (int)Math.floor((double) numOfLeadingDiags/(double)2) - numOfEliminatedLeadingDiags;
     }
 
 
@@ -70,11 +72,11 @@ public class PenaltyQSS<T> extends MinScoreQSS<T> {
 
 
     public Partition<T> run(List<Partition<T>> partitions) {
+        preprocessBeforeRun(partitions);
+
         List<Partition<T>> candidates = new LinkedList<Partition<T>>();
         List<Partition<T>> nonCandidates = new LinkedList<Partition<T>>();
 
-        if(lastQuery!=null)
-            updatePenalty();
 
         for (Partition<T> partition : partitions) {
             if (!canExceedMaxPenalty(partition))

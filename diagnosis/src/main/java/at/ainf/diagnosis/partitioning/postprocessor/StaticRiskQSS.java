@@ -64,21 +64,31 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
             return leastCautiousNonHighRiskQueries;
         }
 
-	    public Partition<T> run(List<Partition<T>> partitions) {
+	    protected void preprocessBeforeRun(List<Partition<T>> partitions){
+            // order of method calls IMPORTANT
+            updateNumOfLeadingDiags(partitions.get(0));
+            preprocessC();
+        }
 
-	    	preprocessC();
-	    	int numOfDiagsToElim = convertCToNumOfDiags(c);
+        public Partition<T> run(List<Partition<T>> partitions) {
+
+	    	preprocessBeforeRun(partitions);
+
+            int numOfDiagsToElim = convertCToNumOfDiags(c);
 	        Partition<T> minScorePartition;
-	        if (getMinNumOfElimDiags(( minScorePartition = selectMinScorePartition(partitions))) >= numOfDiagsToElim) {
+
+            if (getMinNumOfElimDiags(( minScorePartition = selectMinScorePartition(partitions))) >= numOfDiagsToElim) {
 	            return minScorePartition;
 	        }
-	        for (; numOfDiagsToElim <= getMaxPossibleNumOfDiagsToEliminate(); numOfDiagsToElim++) {
+
+            for (; numOfDiagsToElim <= getMaxPossibleNumOfDiagsToEliminate(); numOfDiagsToElim++) {
 	            LinkedList<Partition<T>> leastCautiousNonHighRiskPartitions = getLeastCautiousNonHighRiskPartitions(numOfDiagsToElim, partitions);     // candidateQueries = X_min,k
 	            if (leastCautiousNonHighRiskPartitions.isEmpty()) {
 	                continue;
 	            }
 	            return Collections.min(leastCautiousNonHighRiskPartitions, new ScoreComparator());
             }
+
             return Collections.min(partitions,new ScoreComparator());
 
 	    }
