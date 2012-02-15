@@ -10,7 +10,7 @@ package at.ainf.diagnosis.partitioning.postprocessor;
 public interface QSS<T> extends Postprocessor<T>{
     void updateAnswerToLastQuery(boolean answer);
 
-    void updateNumOfCurrentLeadingDiags(int num);
+    void updateNumOfLeadingDiags(int num);
 
-    void updateNumOfEliminatedLeadingDiags(int num);
+    void updateC(int numOfEliminatedLeadingDiags);
 }

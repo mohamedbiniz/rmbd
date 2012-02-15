@@ -17,17 +17,7 @@ public class SplitInHalfQSS<T> extends AbstractQSS<T> {
 
 
 
-    public class MinNumOfElimDiagsComparator implements Comparator<Partition<T>> {
-        public int compare(Partition<T> o1, Partition<T> o2) {
-            if (getMinNumOfElimDiags(o1) < getMinNumOfElimDiags(o2))
-                return -1;
-            else if (getMinNumOfElimDiags(o1) > getMinNumOfElimDiags(o2))
-                return 1;
-            else
-                return 0;
 
-        }
-    }
 
     public Partition<T> run(List<Partition<T>> partitions) {
         return Collections.max(partitions, new MinNumOfElimDiagsComparator());

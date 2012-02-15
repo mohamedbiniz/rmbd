@@ -21,6 +21,8 @@ public class DynamicRiskQSS<T> extends StaticRiskQSS<T> {
         this.cMax = cMax;
     }
 
+    /* IMPORTANT: numOfLeadingDiags in preprocessC() MUST BE EQUAL TO nomOfLeadingDiags in getCAdjust()*/
+
     protected void preprocessC(){
 	    	double maxPossibleCMax;
             if ((maxPossibleCMax = (double)this.getMaxPossibleNumOfDiagsToEliminate() / (double)numOfLeadingDiags) < cMax) {
@@ -39,9 +41,9 @@ public class DynamicRiskQSS<T> extends StaticRiskQSS<T> {
         return adjust * interval * 2d;
     }
 
-    public void updateNumOfEliminatedLeadingDiags(int num) {
+    public void updateC(int numOfEliminatedLeadingDiags) {
 
-        double cAdjust = getCAdjust(num);
+        double cAdjust = getCAdjust(numOfEliminatedLeadingDiags);
         if (c + cAdjust > cMax) {
             c = cMax;
         } else if (c + cAdjust < cMin) {

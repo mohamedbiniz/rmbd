@@ -231,12 +231,12 @@ public class StaticRiskQSS extends MinScoreQSS implements IDistributionAdaptatio
 //                    LinkedList<Query> queriesTemp = new LinkedList<Query>();
 //                    int index = 0;
 //                    for(Query qy : queriesSortedByAlpha){
-//                        if(qy.getProb_0() - qy.getD_0().size()/qy.getNumOfAllDiags() > 0){
+//                        if(qy.getProb_0() - qy.getD_0().size()/qy.getNumOfLeadingDiags() > 0){
 //                            searchIsPromising = true;
 //                            queriesTemp.add(index,qy);
 //                            index++;
 //                        }
-//                        //System.out.println("Should be > 0 --- is = " + (qy.getProb_0() - qy.getD_0().size()/qy.getNumOfAllDiags() ));
+//                        //System.out.println("Should be > 0 --- is = " + (qy.getProb_0() - qy.getD_0().size()/qy.getNumOfLeadingDiags() ));
 //                    }
 //                    Query[] qTempArr = new Query[0];
 //                    qTempArr = queriesTemp.toArray(qTempArr);

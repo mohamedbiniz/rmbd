@@ -65,8 +65,8 @@ public class DynamicRiskQSS extends StaticRiskQSS implements IDistributionAdapta
             *///////////////////////////////////
             double increment = 2d * ((Math.floor((double)this.askedQuery.getNumOfAllDiags() / 2d) - (double)numOfElimDiags) / (double)this.askedQuery.getNumOfAllDiags()) * interval;
             /*//////////////////////////////////
-            System.out.println("increment = 2 * (" + ( Math.floor(this.askedQuery.getNumOfAllDiags()/2)) + " - " +
-                     numOfElimDiags  + ") / " + this.askedQuery.getNumOfAllDiags() + ") * " + interval + " = " + increment);
+            System.out.println("increment = 2 * (" + ( Math.floor(this.askedQuery.getNumOfLeadingDiags()/2)) + " - " +
+                     numOfElimDiags  + ") / " + this.askedQuery.getNumOfLeadingDiags() + ") * " + interval + " = " + increment);
             *//////////////////////////////////
             if (this.percent + increment > kUpperBound) {
                 this.percent = kUpperBound;
@@ -77,7 +77,7 @@ public class DynamicRiskQSS extends StaticRiskQSS implements IDistributionAdapta
             }
             /*
             double max;
-            if(this.percent > (max=this.getMaxPossibleNumOfDiagsToEliminate()/this.askedQuery.getNumOfAllDiags())){
+            if(this.percent > (max=this.getMaxPossibleNumOfDiagsToEliminate()/this.askedQuery.getNumOfLeadingDiags())){
                 this.percent = max;
             }
             */
@@ -112,7 +112,7 @@ public class DynamicRiskQSS extends StaticRiskQSS implements IDistributionAdapta
 //        switch (strategy) {
 //            case 10: {
 //                double increment = 1.0f;
-//                if (q.getNumOfEliminatedDiags(q.getAnswer()) / q.getNumOfAllDiags() < 0.5f) {
+//                if (q.getNumOfEliminatedDiags(q.getAnswer()) / q.getNumOfLeadingDiags() < 0.5f) {
 //                    if (this.percent <= kUpperBound - increment) {
 //                        this.percent += increment;
 //                    } else {
@@ -130,7 +130,7 @@ public class DynamicRiskQSS extends StaticRiskQSS implements IDistributionAdapta
 //            case 11: {
 //                double proportion = 0f;
 //                double increment = 1.0f;
-//                if ((proportion = (q.getNumOfEliminatedDiags(q.getAnswer()) / Math.floor((double) q.getNumOfAllDiags() / (double) 2))) < 1.0f) {
+//                if ((proportion = (q.getNumOfEliminatedDiags(q.getAnswer()) / Math.floor((double) q.getNumOfLeadingDiags() / (double) 2))) < 1.0f) {
 //                    increment = (kUpperBound - kLowerBound) * (1 - proportion);
 //                    this.percent += increment;
 //                } else {

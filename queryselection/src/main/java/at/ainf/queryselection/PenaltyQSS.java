@@ -144,10 +144,10 @@ public class PenaltyQSS extends MinScoreQSS{
 
     private int getMaxPenaltyOfQuery(Query q){   // to obtain (preference) ordering of queries
         /*
-        if( (  (int)Math.floor((double)q.getNumOfAllDiags()/(double)2) - q.getMinNumOfElimDiags() ) == 0){
+        if( (  (int)Math.floor((double)q.getNumOfLeadingDiags()/(double)2) - q.getMinNumOfElimDiags() ) == 0){
              return -1;
         }else{
-            return (int)Math.floor((double)q.getNumOfAllDiags()/(double)2) - q.getMinNumOfElimDiags();
+            return (int)Math.floor((double)q.getNumOfLeadingDiags()/(double)2) - q.getMinNumOfElimDiags();
         }
         */
         return (int)Math.floor((double)q.getNumOfAllDiags()/(double)2) - q.getMinNumOfElimDiags();

@@ -19,7 +19,7 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 
 	    protected double c;
 
-        protected int numOfLeadingDiags;
+
 
 	    public StaticRiskQSS(double c) {
 	        super();
@@ -28,11 +28,9 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 
 
 
-    public void updateNumOfCurrentLeadingDiags(int numOfLeadingDiags) {
-        this.numOfLeadingDiags = numOfLeadingDiags;
-    }
 
-    protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions) {
+
+        protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions) {
 	        return super.run(partitions);
 	    }
 

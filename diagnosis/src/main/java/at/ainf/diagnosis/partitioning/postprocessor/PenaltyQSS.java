@@ -17,75 +17,82 @@ import java.util.List;
 public class PenaltyQSS<T> extends MinScoreQSS<T> {
 
     double maxPenalty;
-
     double penalty;
-    
-    private Partition<T> lastQuery;
-    
-    private boolean answerToLastQuery;
+
+
 
     public PenaltyQSS(double maxPenalty) {
         this.maxPenalty = maxPenalty;
         penalty = 0d;
     }
 
-    protected boolean isGreaterMaxPenalty (Partition<T> partition) {
+
+    protected boolean canExceedMaxPenalty(Partition<T> partition) {
         return penalty + getMaxPenaltyOfQuery(partition) > maxPenalty;
     }
 
-    protected int getNumOfAllDiags(Partition<T> partition) {
-        return partition.dx.size() + partition.dnx.size() + partition.dz.size();
-    }
 
     protected int getMaxPenaltyOfQuery(Partition<T> partition){
-        return (int)Math.floor((double)getNumOfAllDiags(partition)/(double)2) - getMinNumOfElimDiags(partition);
+        return (int)Math.floor((double) getNumOfLeadingDiags(partition)/(double)2) - getMinNumOfElimDiags(partition);
     }
 
-    public class MaxPenaltyComparator implements Comparator<Partition<T>> {
-        public int compare(Partition<T> o1, Partition<T> o2) {
-            if (getMaxPenaltyOfQuery(o1) < getMaxPenaltyOfQuery(o2))
-                return -1;
-            else if (getMaxPenaltyOfQuery(o1) > getMaxPenaltyOfQuery(o2))
-                return 1;
-            else
-                return 0;
-
-        }
-    }
 
     private void updatePenalty(){
-        int numOfEliminatedDiags;
-
-        if (answerToLastQuery)
-            numOfEliminatedDiags = lastQuery.dnx.size();
-        else
-            numOfEliminatedDiags = lastQuery.dx.size();
-
-        penalty += (int)Math.floor((double)getNumOfAllDiags(lastQuery)/(double)2) - numOfEliminatedDiags;
+        int numOfEliminatedDiags = getNumOfEliminatedLeadingDiags(answerToLastQuery);
+        penalty += (int)Math.floor((double) getNumOfLeadingDiags(lastQuery)/(double)2) - numOfEliminatedDiags;
     }
 
-    public void updateAnswerToLastQuery(boolean answer) {
-        answerToLastQuery = answer;
+
+    private Partition<T> bestNonCandidate(List<Partition<T>> nonCandidates){
+
+        List<Partition<T>> nonCandidatesFiltered = new LinkedList<Partition<T>>();
+
+        for(Partition<T> partition : nonCandidates){
+            if(partition.dx.size() != partition.dnx.size())
+                nonCandidatesFiltered.add(partition);
+        }
+
+        Partition<T> bestNonCandidate = Collections.max(nonCandidatesFiltered, new MinNumOfElimDiagsComparator());
+
+        for(Partition<T> partition : nonCandidatesFiltered){
+            if(getMinNumOfElimDiags(partition) == getMinNumOfElimDiags(bestNonCandidate) && partition.score < bestNonCandidate.score)
+                bestNonCandidate = partition;
+        }
+
+        return bestNonCandidate;
     }
+
+
+    private Partition<T> bestCandidate(List<Partition<T>> candidates){
+        Partition<T> bestCandidate = Collections.min(candidates,new ScoreComparator());
+        return bestCandidate;
+    }
+
 
     public Partition<T> run(List<Partition<T>> partitions) {
-        List<Partition<T>> c = new LinkedList<Partition<T>>();
+        List<Partition<T>> candidates = new LinkedList<Partition<T>>();
+        List<Partition<T>> nonCandidates = new LinkedList<Partition<T>>();
 
         if(lastQuery!=null)
             updatePenalty();
 
         for (Partition<T> partition : partitions) {
-            if (!isGreaterMaxPenalty(partition))
-                c.add(partition);
+            if (!canExceedMaxPenalty(partition))
+                candidates.add(partition);
+            else
+                nonCandidates.add(partition);
         }
         
-        // TODO what if we have no candidates?
-        if (c.isEmpty())
-            return null;
 
-        Partition<T> result = Collections.min(c,new ScoreComparator());
+        Partition<T> result;
+
+        if (candidates.isEmpty()){
+            result = bestNonCandidate(nonCandidates);
+        }else{
+            result = bestCandidate(candidates);
+        }
+
         lastQuery = result;
-        
         return result;
         
     }
