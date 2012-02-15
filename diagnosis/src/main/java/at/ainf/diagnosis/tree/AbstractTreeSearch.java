@@ -13,9 +13,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomRenderer;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Storage;
+import at.ainf.theory.storage.*;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -151,6 +149,19 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 numOfInvalidatedHS = invalidHittingSets.size();
                 for (T invHS : invalidHittingSets) {
                     getStorage().invalidateHittingSet(invHS);
+                }
+                if(!getSearcher().isDual())
+                {
+                    for (Iterator<T> it =  storage.getConflictSets().iterator(); it.hasNext(); ) {
+                        T ax = it.next();
+                        Set<Id> axioms = getSearcher().search(theory, ax, null);
+                        if (axioms.size() < ax.size()){
+                            AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());
+                            updateTree(conflict);
+                            it.remove();
+                        }
+
+                    }
                 }
             } else
                 createRoot();
@@ -376,7 +387,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         return node.isClosed() || hasClosedParent(node.getParent());
     }
 
-    private void updateTree(T conflictSet) {
+    private void updateTree(AxiomSet<Id> conflictSet) {
         Node<Id> root = getRoot();
         updateNode(conflictSet, root);
         LinkedList<Node<Id>> children = new LinkedList<Node<Id>>(root.getChildren());
@@ -387,18 +398,29 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }
     }
 
-    private void updateNode(T conflict, Node<Id> node) {
+    private void updateNode(AxiomSet<Id> conflict, Node<Id> node) {
         if (node == null || node.getConflict() == null)
             return;
         if (node.getConflict().containsAll(conflict)) {
+            Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getConflict());
+            invalidAxioms.removeAll(conflict);
             for (Iterator<Node<Id>> onodeit = getOpenNodes().iterator(); onodeit.hasNext(); ) {
                 Node<Id> openNode = onodeit.next();
-                if (!openNode.isRoot() && hasParent(node, openNode.getParent()))
+                if (!openNode.isRoot() && hasParent(node, openNode.getParent()) &&
+                        containsOneOf(node.getPathLabels(), invalidAxioms))
                     onodeit.remove();
             }
             node.setConflict(conflict);
-            expand(node);
+            //expand(node);
         }
+    }
+
+    protected boolean containsOneOf(Set<Id> pathLabels, Set<Id> temp) {
+        for (Id t : temp){
+            if (pathLabels.contains(t))
+                return true;
+        }
+        return false;
     }
 
     private boolean hasParent(Node<Id> node, Node<Id> parent) {

@@ -8,7 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
-import java.util.*;
+import java.util.PriorityQueue;
 
 /**
  * Created by IntelliJ IDEA.

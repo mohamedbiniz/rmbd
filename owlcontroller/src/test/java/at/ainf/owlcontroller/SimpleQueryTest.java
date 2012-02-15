@@ -1,14 +1,14 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.owlcontroller.parser.MyOWLRendererParser;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;

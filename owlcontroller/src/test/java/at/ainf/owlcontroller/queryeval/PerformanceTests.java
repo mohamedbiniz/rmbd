@@ -3,34 +3,32 @@ package at.ainf.owlcontroller.queryeval;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.partitioning.*;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
+import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.diagnosis.tree.UniformCostSearch;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
+import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlcontroller.Utils;
-//import at.ainf.protegeview.controlpanel.ProbabilityTableModel;
+import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
+import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.owlcontroller.queryeval.result.TableList;
+import at.ainf.owlcontroller.queryeval.result.Time;
+import at.ainf.owlcontroller.queryeval.result.UserProbAndQualityTable;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.Partition;
 import at.ainf.theory.storage.SimpleStorage;
-import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.tree.UniformCostSearch;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
-import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
-import at.ainf.owlcontroller.queryeval.result.TableList;
-import at.ainf.owlcontroller.queryeval.result.Time;
-import at.ainf.owlcontroller.queryeval.result.UserProbAndQualityTable;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -41,12 +39,11 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
-import static _dev.TimeLog.printOverallStats;
 import static _dev.TimeLog.printStatsAndClear;
-import static _dev.TimeLog.start;
 import static junit.framework.Assert.assertTrue;
+
+//import at.ainf.protegeview.controlpanel.ProbabilityTableModel;
 
 /**
  * Created by IntelliJ IDEA.
@@ -143,7 +140,7 @@ public class PerformanceTests {
     }
 
     @Test
-    public void testDualTreePrunnig() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+    public void testDualTreePrunning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ont = "example1302.owl";
         boolean dual = false;
@@ -202,10 +199,10 @@ public class PerformanceTests {
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         String ont = "Univ.owl";
         for (int i = 5; i<=50; i=i+5){
-	    logger.info("Running dianogses compare (" + i + ")");
+	    logger.info("Running diagnosis compare " + ont + " (" + i + ")");
             compareAllDiagnoses(ont, true, i);
         }
-        logger.info("Running diagnosis compare without caching");
+        logger.info("Running diagnosis compare " + ont + " without caching");
         compareAllDiagnoses(ont, false, 0);
     }
 
