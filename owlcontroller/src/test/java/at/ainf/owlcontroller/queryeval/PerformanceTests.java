@@ -2,6 +2,8 @@ package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.partitioning.*;
+import at.ainf.diagnosis.partitioning.postprocessor.QSS;
+import at.ainf.diagnosis.partitioning.postprocessor.QSSFactory;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
@@ -139,6 +141,31 @@ public class PerformanceTests {
 
     }
 
+    enum QSSType { MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY };
+
+    protected QSS<OWLLogicalAxiom> createQSSWithDefaultParam(QSSType type) {
+        switch(type) {
+            case MINSCORE:
+                return QSSFactory.createMinScoreQSS();
+            case SPLITINHALF:
+                return QSSFactory.createSplitInHalfQSS();
+            case STATICRISK:
+                return QSSFactory.createStaticRiskQSS(0.3);
+            case DYNAMICRISK:
+                return QSSFactory.createDynamicRiskQSS(0,0.5,0.25);
+            case PENALTY:
+                return QSSFactory.createPenaltyQSS(10);
+            default:
+                return null;
+        }
+    }
+
+    protected Partitioning<OWLLogicalAxiom> createQueryGenerator(ITheory<OWLLogicalAxiom> theory, QSS<OWLLogicalAxiom> qss) {
+        Partitioning<OWLLogicalAxiom> p=new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        p.setPostprocessor(qss);
+        return p;
+    }
+
     @Test
     public void testDualTreePrunning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
@@ -197,13 +224,15 @@ public class PerformanceTests {
     @Test
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        String ont = "Univ.owl";
+        readParametersFromFile();
+        for (String ont : ontologies) {
         for (int i = 5; i<=50; i=i+5){
 	    logger.info("Running diagnosis compare " + ont + " (" + i + ")");
             compareAllDiagnoses(ont, true, i);
         }
         logger.info("Running diagnosis compare " + ont + " without caching");
         compareAllDiagnoses(ont, false, 0);
+        }
     }
 
     private void compareAllDiagnoses(String ontolofy, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
