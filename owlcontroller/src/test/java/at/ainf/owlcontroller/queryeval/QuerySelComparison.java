@@ -1,25 +1,24 @@
 package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.partitioning.*;
-import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
-import at.ainf.owlcontroller.Utils;
-//import at.ainf.protegeview.controlpanel.ProbabilityTableModel;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
+import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
 import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
 import at.ainf.owlcontroller.queryeval.result.UserProbAndQualityTable;
+import at.ainf.theory.model.ITheory;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.Partition;
+import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -39,6 +38,8 @@ import java.util.*;
 import static _dev.TimeLog.printOverallStats;
 import static _dev.TimeLog.printStatsAndClear;
 import static junit.framework.Assert.assertTrue;
+
+//import at.ainf.protegeview.controlpanel.ProbabilityTableModel;
 
 /**
  * Created by IntelliJ IDEA.
