@@ -158,7 +158,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                         if (axioms.size() < ax.size()){
                             AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());
                             updateTree(conflict);
-                            it.remove();
+                            ax.updateAxioms(conflict);
                         }
 
                     }

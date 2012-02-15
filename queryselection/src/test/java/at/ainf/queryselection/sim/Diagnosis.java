@@ -93,6 +93,10 @@ public class Diagnosis extends TreeSet<Object> implements QueryModuleDiagnosis<O
         this.probability = p;
     }
 
+    public void updateAxioms(Set<Object> axioms) {
+        throw new IllegalStateException("This class can be used for test purposes only and cannot be stored!");
+    }
+
     public <T extends AxiomSet<Object>> void setListener(StorageListener<T, Object> tObjectStorageListener) {
         throw new IllegalStateException("This class can be used for test purposes only and cannot be stored!");
     }
