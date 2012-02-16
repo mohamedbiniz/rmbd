@@ -170,55 +170,64 @@ public class PerformanceTests {
     public void testDualTreePrunning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ont = "example1302.owl";
-        boolean dual = true;
-        SimpleStorage<OWLLogicalAxiom> storage = null;
-        Searcher<OWLLogicalAxiom> searcher = null;
-        if (dual) {
-            searcher = new FastDiagnosis<OWLLogicalAxiom>();
-            storage = new DualStorage<OWLLogicalAxiom>();
-        }
-        else {
-          searcher = new NewQuickXplain<OWLLogicalAxiom>();
-          storage = new SimpleStorage<OWLLogicalAxiom>();
-        }
+        List<String> testCases = new LinkedList<String>();
+        testCases.add("w Type D");
+        runComparison(ont, testCases);
+        testCases.add("w Type C");
+        runComparison(ont, testCases);
+    }
 
-        long normal = System.currentTimeMillis();
+    private void runComparison(String ont, List<String> testCases) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+        logger.info("----- Computing dual case -----");
+        Searcher<OWLLogicalAxiom> dualSearcher = new FastDiagnosis<OWLLogicalAxiom>();
+        SimpleStorage<OWLLogicalAxiom> dualStorage = new DualStorage<OWLLogicalAxiom>();
+
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual =
+                new BreadthFirstSearch<OWLLogicalAxiom>(dualStorage);
+
+        computeQueryExample(ont, true, dualSearcher, searchDual, testCases);
+
+        logger.info("----- Computing normal case -----");
+        Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
+        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal =
+                new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+
+        computeQueryExample(ont, false, searcher, searchNormal, testCases);
+
+        assert (storage.getDiagnoses().containsAll(dualStorage.getDiagnoses()));
+        assert (storage.getConflicts().containsAll(dualStorage.getConflicts()));
+        assert (dualStorage.getDiagnoses().containsAll(storage.getDiagnoses()));
+        assert (dualStorage.getConflicts().containsAll(storage.getConflicts()));
+    }
+
+    private void computeQueryExample(String ont, boolean dual, Searcher<OWLLogicalAxiom> searcher, TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal, List<String> testCases) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
         searchNormal.setSearcher(searcher);
         OWLTheory theoryNormal = createTheory(manager, ont, dual);
         searchNormal.setTheory(theoryNormal);
         searchNormal.run(2);
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
-        normal = System.currentTimeMillis() - normal;
 
-        System.out.println("First 2 Diagnoses and corresponding conflicts before test case");
+        logger.info("First 2 Diagnoses and corresponding conflicts before test case");
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getStorage().getDiagnoses())
-            System.out.println("HS " + Utils.renderAxioms(hs));
+            logger.info("HS " + Utils.renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getStorage().getConflicts())
-            System.out.println("cs " + Utils.renderAxioms(confl));
+            logger.info("cs " + Utils.renderAxioms(confl));
 
         HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
-        //HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
         MyOWLRendererParser parser = new MyOWLRendererParser(theoryNormal.getOriginalOntology());
-        //negativeTestcase.add(parser.parse("w Type C"));
-        positiveTestcase.add(parser.parse("w Type D"));
-        positiveTestcase.add(parser.parse("w Type C"));
+        for (String testcase: testCases)
+            positiveTestcase.add(parser.parse(testcase));
 
-        System.out.println("All Diagnoses and conflicts after test case: C(w) D(w)  ");
+        logger.info("All diagnoses and conflicts with test cases");
         theoryNormal.addEntailedTest(positiveTestcase);
-        //theoryNormal.addNonEntailedTest(negativeTestcase);
         searchNormal.continueSearch();
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getStorage().getDiagnoses())
-            System.out.println("HS " + Utils.renderAxioms(hs));
+            logger.info("HS " + Utils.renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getStorage().getConflicts())
-            System.out.println("cs " + Utils.renderAxioms(confl));
-
-        //System.out.println("normal " + Utils.getStringTime(normal) + " subsets: " + theoryNormal.getSubSets().size());
-        //System.out.println("dual " + Utils.getStringTime(dual) + " subsets: " + theoryDual.getSubSets().size());
-
-        //assert (resultNormal.equals(resultDual));
-
+            logger.info("cs " + Utils.renderAxioms(confl));
     }
 
     @Test
