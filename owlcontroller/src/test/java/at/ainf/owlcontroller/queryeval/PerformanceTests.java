@@ -134,8 +134,8 @@ public class PerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getStorage().getDiagnoses();
         dual = System.currentTimeMillis() - dual;
 
-        System.out.println("normal " + Utils.getStringTime(normal) + " subsets: " + theoryNormal.getCache().size());
-        System.out.println("dual " + Utils.getStringTime(dual) + " subsets: " + theoryDual.getCache().size());
+        logger.info("normal " + Utils.getStringTime(normal) + " subsets: " + theoryNormal.getCache().size());
+        logger.info("dual " + Utils.getStringTime(dual) + " subsets: " + theoryDual.getCache().size());
 
         assert (resultNormal.equals(resultDual));
 
@@ -235,8 +235,8 @@ public class PerformanceTests {
     @Test
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        readParametersFromFile();
-        for (String ont : ontologies) {
+        ParametersFromFile params = readParametersFromFile();
+        for (String ont : params.ontologies) {
             for (int i = 10; i <= 10; i = i + 5) {
                 logger.info("Running diagnosis compare " + ont + " (" + i + ")");
                 compareAllDiagnoses(ont, true, i);
@@ -484,7 +484,9 @@ public class PerformanceTests {
     public void doPerformanceTest() {
 
 
-        readParametersFromFile();
+        ParametersFromFile params = readParametersFromFile();
+        ontologies = params.ontologies;
+        MAX_RUNS = params.MAX_RUNS;
         HashMap<String, UserProbAndQualityTable> map_entropy = new HashMap<String, UserProbAndQualityTable>();
         HashMap<String, UserProbAndQualityTable> map_split = new HashMap<String, UserProbAndQualityTable>();
         moderateDistribution = new ModerateDistribution();
@@ -598,7 +600,15 @@ public class PerformanceTests {
         }
     }
 
-    protected void readParametersFromFile() {
+    
+    class ParametersFromFile {
+        public String[] ontologies;
+        public int MAX_RUNS;
+    }
+    
+    protected ParametersFromFile readParametersFromFile() {
+
+        ParametersFromFile result = new ParametersFromFile();
         Properties properties = new Properties();
         String config = ClassLoader.getSystemResource("config.properties").getFile();
         BufferedInputStream stream = null;
@@ -613,10 +623,12 @@ public class PerformanceTests {
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        ontologies = properties.getProperty("ontologies").split(",");
-        for (int i = 0; i < ontologies.length; i++)
-            ontologies[i] = ontologies[i].trim() + ".owl";
-        MAX_RUNS = Integer.parseInt(properties.getProperty("runs"));
+
+        result.ontologies = properties.getProperty("ontologies").split(",");
+        for (int i = 0; i < result.ontologies.length; i++)
+            result.ontologies[i] = result.ontologies[i].trim() + ".owl";
+        result.MAX_RUNS = Integer.parseInt(properties.getProperty("runs"));
+        return result;
 
     }
 
@@ -935,7 +947,7 @@ public class PerformanceTests {
     private <E extends OWLObject> void prinths
             (Collection<AxiomSet<E>> c) {
         for (AxiomSet<E> hs : c) {
-            System.out.println(hs);
+            logger.info(hs);
             print(hs);
         }
 

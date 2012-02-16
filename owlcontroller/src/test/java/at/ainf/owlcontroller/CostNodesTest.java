@@ -47,7 +47,7 @@ public class CostNodesTest {
 
         while(nodes.peek() != null) {
             CostNode<OWLLogicalAxiom> node = nodes.poll();
-            System.out.println(node.getName() + " " + node.getNodePathCosts());
+            logger.info(node.getName() + " " + node.getNodePathCosts());
         }
 
 
