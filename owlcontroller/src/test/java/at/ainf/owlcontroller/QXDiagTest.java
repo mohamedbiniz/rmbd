@@ -5,8 +5,8 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
+import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -98,7 +98,7 @@ public class QXDiagTest {
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th, l, set);
 
-        System.out.println(Utils.renderAxioms(res));
+        logger.info(Utils.renderAxioms(res));
 
     }
 
@@ -112,7 +112,7 @@ public class QXDiagTest {
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
-        System.out.println(Utils.renderManyAxioms(l) + "\n\n"+Utils.renderAxioms(res));
+        logger.info(Utils.renderManyAxioms(l) + "\n\n"+Utils.renderAxioms(res));
 
     }
 
@@ -141,7 +141,7 @@ public class QXDiagTest {
         search.run();
         
         for (AxiomSet<OWLLogicalAxiom> d : search.getStorage().getDiagnoses()) {
-            if (target.equals(d)) System.out.println("target is there  ");
+            if (target.equals(d)) logger.info("target is there  ");
         }
 
     }
@@ -171,9 +171,8 @@ public class QXDiagTest {
         search.run();
 
         for (AxiomSet<OWLLogicalAxiom> d : search.getStorage().getDiagnoses()) {
-            if (target.equals(d)) System.out.println("target is there");
+            if (target.equals(d)) logger.info("target is there");
         }
-
 
     }
 
@@ -208,10 +207,11 @@ public class QXDiagTest {
         search.run();
 
         OWLLogicalAxiom axiom = search.getStorage().getDiagnoses().iterator().next().iterator().next();
-        System.out.println(axiom);
+        logger.info(axiom);
+
 
         for (Set<OWLLogicalAxiom> hs : search.getStorage().getDiagnoses())
-            System.out.println(Utils.renderAxioms(hs));
+            logger.info(Utils.renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getActiveFormulas(), null);

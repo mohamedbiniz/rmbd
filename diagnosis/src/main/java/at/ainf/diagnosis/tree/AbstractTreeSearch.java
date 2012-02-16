@@ -15,6 +15,7 @@ import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomRenderer;
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.AxiomSetFactory;
 import at.ainf.theory.storage.Storage;
 import org.apache.log4j.Logger;
 
@@ -126,7 +127,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
     }
 
     protected int numOfInvalidatedHS;
-    
+
     public Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, InconsistentTheoryException {
 
         start("Overall run");
@@ -152,8 +153,26 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 for (T invHS : invalidHittingSets) {
                     getStorage().invalidateHittingSet(invHS);
                 }
-            } else
+                if (!getSearcher().isDual()) {
+                    for (T ax : storage.getConflictSets()) {
+                        Set<Id> axioms = getSearcher().search(theory, ax, null);
+                        if (axioms.size() < ax.size()) {
+                            AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());
+                            updateTree(conflict);
+                            ax.updateAxioms(conflict);
+                        }
+
+                    }
+                } else {
+                    for (T next : invalidHittingSets) {
+                        updateTree(next);
+                    }
+                }
+            }
+            if (getRoot() == null){
                 createRoot();
+            }
+
 
             if (numberOfHittingSets == getStorage().getDiagnoses().size()) {
                 return getStorage().getDiagnoses();
@@ -237,7 +256,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 Set<Id> diagnosis = node.getPathLabels();
 
                 boolean valid = true;
-                if(!getSearcher().isDual()) {
+                if (!getSearcher().isDual()) {
                     if (getTheory().hasTests())
                         valid = getTheory().testDiagnosis(diagnosis);
                 }
@@ -296,10 +315,10 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         if (node != null) {
             if (logger.isDebugEnabled())
                 logger.debug("Calculating a conflict for the node: " + node);
-            if (node.getConflict() != null) {
+            if (node.getAxiomSet() != null) {
                 if (logger.isDebugEnabled())
-                    logger.debug("The conflict is already calculated: " + node.getConflict());
-                return node.getConflict();
+                    logger.debug("The conflict is already calculated: " + node.getAxiomSet());
+                return node.getAxiomSet();
             }
             pathLabels = node.getPathLabels();
         }
@@ -312,7 +331,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
         T conflictSet = createConflictSet(node, quickConflict);
 
-        if(getSearcher().isDual()) {
+        if (getSearcher().isDual()) {
             boolean valid = true;
             if (getTheory().hasTests()) {
                 valid = getTheory().testDiagnosis(conflictSet);
@@ -326,7 +345,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         if (axiomRenderer != null)
             logMessage(getDepth(node), "pathlabels: ", pathLabels);
 
-        if(!getSearcher().isDual())
+        if (!getSearcher().isDual())
             pruneConflictSets(node, conflictSet);
 
         getStorage().addConflict(conflictSet);
@@ -376,9 +395,12 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         return node.isClosed() || hasClosedParent(node.getParent());
     }
 
-    private void updateTree(T conflictSet) {
+    private void updateTree(AxiomSet<Id> conflictSet) {
         Node<Id> root = getRoot();
         updateNode(conflictSet, root);
+        if (getRoot() == null) {
+            return;
+        }
         LinkedList<Node<Id>> children = new LinkedList<Node<Id>>(root.getChildren());
         while (!children.isEmpty()) {
             Node<Id> node = children.removeFirst();
@@ -387,18 +409,34 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }
     }
 
-    private void updateNode(T conflict, Node<Id> node) {
-        if (node == null || node.getConflict() == null)
+    private void updateNode(AxiomSet<Id> axSet, Node<Id> node) {
+        if (node == null || node.getAxiomSet() == null)
             return;
-        if (node.getConflict().containsAll(conflict)) {
+        if (node.getAxiomSet().containsAll(axSet)) {
+            Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet());
+            invalidAxioms.removeAll(axSet);
             for (Iterator<Node<Id>> onodeit = getOpenNodes().iterator(); onodeit.hasNext(); ) {
                 Node<Id> openNode = onodeit.next();
-                if (!openNode.isRoot() && hasParent(node, openNode.getParent()))
+                if (!openNode.isRoot() && hasParent(node, openNode.getParent()) &&
+                        containsOneOf(node.getPathLabels(), invalidAxioms))
                     onodeit.remove();
             }
-            node.setConflict(conflict);
-            expand(node);
+            if (node.getAxiomSet().equals(axSet)) {
+                if (node.isRoot())
+                    clearSearch();
+                else
+                    node.getParent().removeChild(node);
+            } else
+                node.setConflict(axSet);
         }
+    }
+
+    protected boolean containsOneOf(Set<Id> pathLabels, Set<Id> temp) {
+        for (Id t : temp) {
+            if (pathLabels.contains(t))
+                return true;
+        }
+        return false;
     }
 
     private boolean hasParent(Node<Id> node, Node<Id> parent) {
@@ -411,14 +449,14 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public boolean canReuseConflict(Node<Id> node) {
         // check if this is a root
-        if (node.isRoot() || node.getConflict() != null) return false;
+        if (node.isRoot() || node.getAxiomSet() != null) return false;
         Collection<Id> pathLabels = node.getPathLabels();
         for (Set<Id> localConflict : getStorage().getConflictSets()) {
             if (!intersectsWith(pathLabels, localConflict)) {
                 node.setConflict(localConflict);
                 if (logger.isDebugEnabled())
                     logger.debug("Reusing conflict: " + localConflict);
-                if (axiomRenderer!=null) logMessage(getDepth(node), "reusing conflict ", localConflict);
+                if (axiomRenderer != null) logMessage(getDepth(node), "reusing conflict ", localConflict);
                 return true;
             }
         }

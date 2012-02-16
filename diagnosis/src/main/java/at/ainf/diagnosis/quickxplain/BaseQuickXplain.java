@@ -75,7 +75,8 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
         Set<Id> conflictFormulas = null;
 
-        formulas = applyChanges(searchable, formulas, changes);
+        if (changes != null)
+            formulas = applyChanges(searchable, formulas, changes);
 
         long time = 0;
         try {

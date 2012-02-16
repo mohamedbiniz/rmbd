@@ -47,7 +47,7 @@ public class CostNode<T> extends Node<T> implements Comparable<CostNode<T>> {
 
     public ArrayList<Node<T>> expandNode() {
         ArrayList<Node<T>> newNodes = new ArrayList<Node<T>>();
-        for (T arcLabel : getConflict()) {
+        for (T arcLabel : getAxiomSet()) {
             CostNode<T> node = new CostNode<T>(this, arcLabel);
             newNodes.add(node);
             CostNode<T> parent = (CostNode<T>) node.getParent();

@@ -1,9 +1,9 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.owlcontroller.parser.MyOWLRendererParser;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;

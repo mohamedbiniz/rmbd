@@ -8,7 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
-import java.util.*;
+import java.util.PriorityQueue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,7 +47,7 @@ public class CostNodesTest {
 
         while(nodes.peek() != null) {
             CostNode<OWLLogicalAxiom> node = nodes.poll();
-            System.out.println(node.getName() + " " + node.getNodePathCosts());
+            logger.info(node.getName() + " " + node.getNodePathCosts());
         }
 
 
