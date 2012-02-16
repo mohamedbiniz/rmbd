@@ -17,9 +17,9 @@ import java.util.Set;
 public abstract class AbstractQSS<T> implements QSS<T> {
 
     protected int numOfLeadingDiags;
-    protected Partition<T> lastQuery;
+    protected Partition<T> lastQuery = null;
     protected boolean answerToLastQuery;
-    protected int numOfEliminatedLeadingDiags;
+    protected int numOfEliminatedLeadingDiags = 0;
 
 
     protected double log(double value, double base) {
@@ -41,7 +41,8 @@ public abstract class AbstractQSS<T> implements QSS<T> {
     }
 
     protected void updateNumOfEliminatedLeadingDiags(boolean answer){
-        numOfEliminatedLeadingDiags = getNumOfEliminatedLeadingDiags(answer);
+        if(lastQuery != null)
+            numOfEliminatedLeadingDiags = getNumOfEliminatedLeadingDiags(answer);
     }
 
     protected void preprocessBeforeUpdate(boolean answer){

@@ -43,6 +43,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 import static _dev.TimeLog.printStatsAndClear;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 //import at.ainf.protegeview.controlpanel.ProbabilityTableModel;
@@ -141,7 +142,7 @@ public class PerformanceTests {
 
     }
 
-    enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY}
+    enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS}
 
     ;
 
@@ -164,7 +165,7 @@ public class PerformanceTests {
 
     protected Partitioning<OWLLogicalAxiom> createQueryGenerator(ITheory<OWLLogicalAxiom> theory, QSS<OWLLogicalAxiom> qss) {
         Partitioning<OWLLogicalAxiom> p = new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
-        p.setPostprocessor(qss);
+        if (qss!=null) p.setPostprocessor(qss);
         return p;
     }
 
@@ -245,14 +246,134 @@ public class PerformanceTests {
             compareAllDiagnoses(ont, false, 0);
         }
     }
+    
+    class DurationStat {
+        long min = Long.MAX_VALUE;
+        long max = 0;
+        long overall = 0;
+        
+        int cnt = 0;
 
-    private void compareAllDiagnoses(String ontolofy, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+        public long getMin() {
+            return min;
+        }
+
+        public long getMax() {
+            return max;
+        }
+        
+        public long getMean() {
+            return overall / cnt;
+        }
+
+        public long getOverall() {
+            return overall;
+        }
+
+        public void add(long time) {
+            if(min>time) 
+                min = time;
+            else if (max<time)
+                max = time;
+            overall += time;
+            cnt++;
+        }
+    }
+
+    @Test
+    public void compareAllDiagnosesAndQss() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+        ParametersFromFile params = readParametersFromFile();
+        for (String ontology : params.ontologies) {
+            long t = System.currentTimeMillis();
+            OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+
+            UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+            searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+            OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
+            searchNormal.setTheory(theoryNormal);
+            theoryNormal.useCache(false, 0);
+            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+            OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theoryNormal);
+            es.updateKeywordProb(map);
+            searchNormal.setNodeCostsEstimator(es);
+            searchNormal.run();
+            Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+
+            manager = OWLManager.createOWLOntologyManager();
+            UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+            searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);
+            theoryDual.useCache(false, 0);
+            searchDual.setTheory(theoryDual);
+            map = Utils.getProbabMap();
+            es = new OWLAxiomNodeCostsEstimator(theoryDual);
+            es.updateKeywordProb(map);
+            searchDual.setNodeCostsEstimator(es);
+
+            theoryNormal.clearTestCases();
+            searchNormal.clearSearch();
+
+            Map<QSSType,DurationStat> ntimes = new HashMap<QSSType, DurationStat>();
+            Map<QSSType,DurationStat> dtimes = new HashMap<QSSType, DurationStat>();
+            Map<QSSType,List<Double>> nqueries1 = new HashMap<QSSType, List<Double>>();
+            Map<QSSType,List<Double>> dqueries1 = new HashMap<QSSType, List<Double>>();
+            //DurationStat timeNormalStat = new DurationStat();
+            //DurationStat timeDualStat = new DurationStat();
+            
+            int count = 0;
+            //List<Double> nqueries = new LinkedList<Double>();
+            //List<Double> dqueries = new LinkedList<Double>();
+
+            for (QSSType type : QSSType.values()) {
+                ntimes.put(type,new DurationStat());
+                dtimes.put(type,new DurationStat());
+                nqueries1.put(type,new LinkedList<Double>());
+                dqueries1.put(type,new LinkedList<Double>());
+                for (AxiomSet<OWLLogicalAxiom> diagnosis : resultNormal) {
+                    logger.info("iteration " + ++count);
+                    long timeNormal, timeDual;
+                    if (count % 2 != 0) {
+                        timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries1.get(type), type);
+                        timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries1.get(type), type);
+                    } else {
+                        timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries1.get(type), type);
+                        timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries1.get(type), type);
+                    }
+                    ntimes.get(type).add(timeNormal);
+                    dtimes.get(type).add(timeDual);
+                }
+            }
+
+            long needed = System.currentTimeMillis() - t;
+            logger.info("needed overall " + Utils.getStringTime(needed));
+            for (QSSType type : QSSType.values()) {
+                logger.info("needed normal " + type + " " + Utils.getStringTime(ntimes.get(type).getOverall()) +
+                        " max " + Utils.getStringTime(ntimes.get(type).getMax()) +
+                        " min " + Utils.getStringTime(ntimes.get(type).getMin()) +
+                        " avg " + Utils.getStringTime(ntimes.get(type).getMean()) +
+                        " Queries max " + Collections.max(nqueries1.get(type))+
+                        " min " + Collections.min(nqueries1.get(type)) +
+                        " avg " + avg(nqueries1.get(type))
+                );
+                logger.info("needed dual " + type + " " + Utils.getStringTime(dtimes.get(type).getOverall()) +
+                        " max " + Utils.getStringTime(dtimes.get(type).getMax()) +
+                        " min " + Utils.getStringTime(dtimes.get(type).getMin())+
+                        " avg " + Utils.getStringTime(dtimes.get(type).getMean()) +
+                        " Queries max " + Collections.max(dqueries1.get(type))+
+                        " min " + Collections.min(dqueries1.get(type)) +
+                        " avg " + avg(dqueries1.get(type)));
+            }
+        }
+
+    }
+
+    private void compareAllDiagnoses(String ontology, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         long t = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontolofy, false);
+        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
@@ -265,7 +386,7 @@ public class PerformanceTests {
         manager = OWLManager.createOWLOntologyManager();
         UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
         searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontolofy, true);
+        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();
@@ -290,11 +411,11 @@ public class PerformanceTests {
             logger.info("iteration " + ++count);
             long timeNormal, timeDual;
             if (count % 2 != 0) {
-                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries);
-                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries);
+                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, null);
+                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, null);
             } else {
-                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries);
-                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries);
+                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, null);
+                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, null);
             }
             timeNormalOverall += timeNormal;
             timeDualOverall += timeDual;
@@ -331,13 +452,15 @@ public class PerformanceTests {
         return res/nqueries.size();
     }
 
-    private long computeDual(UniformCostSearch<OWLLogicalAxiom> searchDual, OWLTheory theoryDual, AxiomSet<OWLLogicalAxiom> diagnosis, List<Double> queries) {
+    private long computeDual(UniformCostSearch<OWLLogicalAxiom> searchDual, OWLTheory theoryDual, AxiomSet<OWLLogicalAxiom> diagnosis, List<Double> queries, QSSType type) {
         TableList entry2 = new TableList();
         long timeDual = System.currentTimeMillis();
         diagnosesCalc = 0;
         daStr = "";
         conflictsCalc = 0;
-        simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2);
+        QSS<OWLLogicalAxiom> qss = null;
+        if (type!=null) qss = createQSSWithDefaultParam(type);
+        simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, qss);
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = searchDual.getStorage().getDiagnoses().iterator().next();
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -355,13 +478,15 @@ public class PerformanceTests {
         return timeDual;
     }
 
-    private long computeHS(UniformCostSearch<OWLLogicalAxiom> searchNormal, OWLTheory theoryNormal, AxiomSet<OWLLogicalAxiom> diagnoses, List<Double> queries) {
+    private long computeHS(UniformCostSearch<OWLLogicalAxiom> searchNormal, OWLTheory theoryNormal, AxiomSet<OWLLogicalAxiom> diagnoses, List<Double> queries, QSSType type) {
         TableList entry = new TableList();
         long timeNormal = System.currentTimeMillis();
         diagnosesCalc = 0;
         daStr = "";
         conflictsCalc = 0;
-        simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry);
+        QSS<OWLLogicalAxiom> qss = null;
+        if (type!=null) qss = createQSSWithDefaultParam(type);
+        simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, qss);
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = searchNormal.getStorage().getDiagnoses().iterator().next();
         boolean foundCorrectD = diag.equals(diagnoses);
@@ -585,7 +710,7 @@ public class PerformanceTests {
                                             + " starting simulation with " + scoringFunc);
                                     //if (ontologyFileString.equals("buggy-sweet-jpl.owl")
                                     //        && diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME && i > 9)
-                                    simulateBruteForceOnl(search, theory, targetDiag, entry);
+                                    simulateBruteForceOnl(search, theory, targetDiag, entry, null);
                                     entry = null;
 
                                 } catch (Exception e) {
@@ -802,7 +927,7 @@ public class PerformanceTests {
     protected void simulateBruteForceOnl
             (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
                     theory, AxiomSet<OWLLogicalAxiom> targetDiag, TableList
-                    entry) {
+                    entry, QSS<OWLLogicalAxiom> qss) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         Partition<OWLLogicalAxiom> actPa = null;
@@ -818,6 +943,7 @@ public class PerformanceTests {
         Time queryTime = new Time();
         Time diagTime = new Time();
         int queryCardinality = 0;
+        Partitioning<OWLLogicalAxiom> queryGenerator = createQueryGenerator(theory,qss);
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
@@ -897,7 +1023,10 @@ public class PerformanceTests {
                 logger.trace("numOfQueries: " + num_of_queries + " search for  query");
 
                 long query = System.currentTimeMillis();
-                actPa = getBestQuery(search, diagnoses);
+                //actPa = getBestQuery(search, diagnoses);
+
+                actPa = queryGenerator.generatePartition(diagnoses);
+
                 queryTime.setTime(System.currentTimeMillis() - query);
 
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
@@ -909,6 +1038,9 @@ public class PerformanceTests {
 
                 logger.trace("numOfQueries: " + num_of_queries + " generate answer");
                 boolean answer = generateQueryAnswer(search, actPa, targetDiag);
+                
+                if(qss!=null) qss.updateParameters(answer);
+
                 num_of_queries++;
                 // fine all dz diagnoses
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {

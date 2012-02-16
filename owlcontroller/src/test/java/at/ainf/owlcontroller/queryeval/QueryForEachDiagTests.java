@@ -101,7 +101,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
 
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
-            simulateBruteForceOnl(searchNormal,theoryNormal,diagnoses,entry);
+            simulateBruteForceOnl(searchNormal,theoryNormal,diagnoses,entry, null);
             theoryNormal.clearTestCases();
             searchNormal.clearSearch();
             assert(entry.getMeanWin() == 1);
@@ -109,7 +109,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
 
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
-            simulateBruteForceOnl(searchDual,theoryDual,diagnoses,entry);
+            simulateBruteForceOnl(searchDual,theoryDual,diagnoses,entry, null);
             theoryDual.clearTestCases();
             searchDual.clearSearch();
             assert (entry.getMeanWin() == 1);

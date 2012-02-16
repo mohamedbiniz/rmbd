@@ -10,9 +10,5 @@ import at.ainf.theory.storage.Partition;
  * To change this template use File | Settings | File Templates.
  */
 public interface QSS<T> extends Postprocessor<T>{
-    void updateAnswerToLastQuery(boolean answer);
-
-    void updateNumOfLeadingDiags(Partition<T> partition);
-
     void updateParameters(boolean answerToLastQuery);
 }
