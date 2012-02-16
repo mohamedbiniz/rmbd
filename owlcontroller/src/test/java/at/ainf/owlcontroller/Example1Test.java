@@ -1,13 +1,14 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.owlcontroller.parser.MyOWLRendererParser;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.SimpleStorage;
+import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -61,8 +62,7 @@ public class Example1Test extends AbstractExample {
             return super.toString() + ": " + renderer.render(axiom);
         }
     }
-
-
+    private static Logger logger = Logger.getLogger(Example1Test.class.getName());
     enum Diagnosis {
         D1(new Axiom[]{Axiom.AX1}),
         D2(new Axiom[]{Axiom.AX2}),
@@ -283,7 +283,7 @@ public class Example1Test extends AbstractExample {
             theory.removeNonEntailedTest(query.getAxioms());
         }
         for (Query query : result.keySet())
-            System.out.println(query + " " + result.get(query));
+            logger.info(query + " " + result.get(query));
 
     }
 

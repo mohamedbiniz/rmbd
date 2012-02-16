@@ -18,6 +18,7 @@ import choco.kernel.model.constraints.Constraint;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.solver.ContradictionException;
 import choco.kernel.solver.Solver;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -29,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TheoryTest {
 
-    // private static Logger logger = Logger.getLogger(TheoryTest.class.getName());
+    private static Logger logger = Logger.getLogger(TheoryTest.class.getName());
 
     @Test
     public void unsatTheory() throws SolverException, InconsistentTheoryException {
@@ -105,9 +106,9 @@ public class TheoryTest {
         CPSolver solver = new CPSolver();
         boolean res = solve(solver, md);
         if (res) {
-            System.out.println("i" + solver.getVar(i).getVal());
-            System.out.println("j" + solver.getVar(j).getVal());
-            System.out.println("z" + solver.getVar(z).getVal());
+            logger.info("i" + solver.getVar(i).getVal());
+            logger.info("j" + solver.getVar(j).getVal());
+            logger.info("z" + solver.getVar(z).getVal());
         }
 
     }

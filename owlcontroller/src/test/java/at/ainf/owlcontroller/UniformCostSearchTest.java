@@ -1,14 +1,14 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.SimpleStorage;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -141,17 +141,16 @@ public class UniformCostSearchTest {
 
     public void printDiagnoses(Collection<? extends Set<OWLLogicalAxiom>> diagnos) {
         int num = 0;
-        System.out.println("********************************************************************************");
+
         for (Collection<OWLLogicalAxiom> axioms : diagnos) {
             num++;
             //System.out.println(getFullDiagString(axioms, num));
             for (OWLLogicalAxiom axiom : axioms) {
                 //System.out.println(getAxiomString(axiom));
             }
-            System.out.println("");
-        }
-        System.out.println("********************************************************************************");
 
+        }
+        //System.out.println("********************************************************************************");
     }
 
     public void createTh() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {

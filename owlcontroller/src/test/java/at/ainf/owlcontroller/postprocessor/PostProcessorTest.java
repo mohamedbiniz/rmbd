@@ -1,8 +1,9 @@
 package at.ainf.owlcontroller.postprocessor;
 
-import at.ainf.diagnosis.partitioning.*;
+import at.ainf.diagnosis.partitioning.CKK;
+import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
+import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.postprocessor.MinScoreQSS;
-import at.ainf.diagnosis.partitioning.postprocessor.Postprocessor;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -29,7 +30,9 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.

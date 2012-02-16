@@ -3027,7 +3027,7 @@ public class ManchesterOWLSyntaxEditorParser {
 
     public OWLAxiom parseClassAxiomRemainder(OWLClassExpression startExpression) throws ParserException {
         String kw = consumeToken();
-        System.out.println("Parse class axiom rem: " + startExpression);
+        //System.out.println("Parse class axiom rem: " + startExpression);
         if (kw.equalsIgnoreCase(SUB_CLASS_OF)) {
             OWLClassExpression superClass = parseClassExpression();
             return dataFactory.getOWLSubClassOfAxiom(startExpression, superClass);
@@ -3051,7 +3051,7 @@ public class ManchesterOWLSyntaxEditorParser {
             return parseClassAxiomRemainder(ce);
 
         } else {
-            System.out.println("Throwing exception!");
+            // System.out.println("Throwing exception!");
             throw createException(SUB_CLASS_OF, DISJOINT_WITH, EQUIVALENT_TO, AND, OR);
         }
     }

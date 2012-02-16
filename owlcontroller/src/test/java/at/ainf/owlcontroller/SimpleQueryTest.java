@@ -1,14 +1,14 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.owlcontroller.parser.MyOWLRendererParser;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.parser.MyOWLRendererParser;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -83,7 +83,7 @@ public class SimpleQueryTest {
         //s.doBackgroundSearch();
 
         Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getStorage().getDiagnoses();
-        System.out.println(res.size());
+        logger.info(res.size());
         //Partition<OWLLogicalAxiom> query = diagProvider.getBestQuery(diagnoses);
         //theory.addNonEntailedTest(query.partition);
         //diagnoses = diagProvider.getDiagnoses(9);
