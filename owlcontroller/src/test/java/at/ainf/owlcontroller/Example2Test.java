@@ -8,6 +8,7 @@ import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
+import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -61,6 +62,8 @@ public class Example2Test extends AbstractExample {
             return super.toString() + ": " + renderer.render(axiom);
         }
     }
+
+    private static Logger logger = Logger.getLogger(CostNodesTest.class.getName());
 
     enum Diag {
         D1(new Axiom[]{Axiom.AX1}),
@@ -295,7 +298,7 @@ public class Example2Test extends AbstractExample {
             theory.removeEntailedTest(query.getAxioms());
         }
         for (Query query : result.keySet())
-            System.out.println(query + " " + result.get(query));
+            logger.info(query + " " + result.get(query));
 
     }
 
@@ -331,7 +334,7 @@ public class Example2Test extends AbstractExample {
             theory.removeNonEntailedTest(query.getAxioms());
         }
         for (Query query : result.keySet())
-            System.out.println(query + " " + result.get(query));
+            logger.info(query + " " + result.get(query));
 
     }
 
@@ -356,7 +359,7 @@ public class Example2Test extends AbstractExample {
             res.add(Diag.getDiagnosis(col));
         }
         TreeSet<Diag> d_nxPlus0;
-        System.out.println(res);
+        logger.info(res);
         d_nxPlus0 = new TreeSet<Diag>();
         d_nxPlus0.addAll(Query.X5.getD_nx());
         d_nxPlus0.addAll(Query.X5.getD_0());

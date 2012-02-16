@@ -128,7 +128,8 @@ public class TreeEvaluation {
         Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getDiagnoses();
         Collection<AxiomSet<Constraint>> conflicts = strategy.getStorage().getConflicts();
 
-        System.out.println(diagnoses);
+        logger.info(diagnoses);
+        
         logger.info("Diagnoses: " + diagnoses);
         logger.info("Conflicts: " + conflicts);
 
@@ -154,7 +155,9 @@ public class TreeEvaluation {
             e.printStackTrace();
         }
 
-        System.out.println(cth);
+        logger.info(cth);
+
+
         SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
         BreadthFirstSearch strategy = new BreadthFirstSearch<Constraint>(storage);
         strategy.setSearcher(new NewQuickXplain<Constraint>());

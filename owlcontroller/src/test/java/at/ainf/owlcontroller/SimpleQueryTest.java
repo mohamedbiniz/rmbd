@@ -83,7 +83,7 @@ public class SimpleQueryTest {
         //s.doBackgroundSearch();
 
         Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getStorage().getDiagnoses();
-        System.out.println(res.size());
+        logger.info(res.size());
         //Partition<OWLLogicalAxiom> query = diagProvider.getBestQuery(diagnoses);
         //theory.addNonEntailedTest(query.partition);
         //diagnoses = diagProvider.getDiagnoses(9);

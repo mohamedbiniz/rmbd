@@ -245,7 +245,8 @@ public class TreeTest {
                 entailments.retainAll(inferredAxioms);
         }
         String log = Utils.logCollection(entailments);
-        System.out.print(log);
+        logger.info(log);
+
     }
 
     @Test

@@ -141,17 +141,16 @@ public class UniformCostSearchTest {
 
     public void printDiagnoses(Collection<? extends Set<OWLLogicalAxiom>> diagnos) {
         int num = 0;
-        System.out.println("********************************************************************************");
+
         for (Collection<OWLLogicalAxiom> axioms : diagnos) {
             num++;
             //System.out.println(getFullDiagString(axioms, num));
             for (OWLLogicalAxiom axiom : axioms) {
                 //System.out.println(getAxiomString(axiom));
             }
-            System.out.println("");
-        }
-        System.out.println("********************************************************************************");
 
+        }
+        //System.out.println("********************************************************************************");
     }
 
     public void createTh() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
