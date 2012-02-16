@@ -425,7 +425,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 if (node.isRoot())
                     clearSearch();
                 else
-                    node.getParent().getChildren().remove(node);
+                    node.getParent().removeChild(node);
             } else
                 node.setConflict(axSet);
         }

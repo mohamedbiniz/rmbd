@@ -141,10 +141,12 @@ public class PerformanceTests {
 
     }
 
-    enum QSSType { MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY };
+    enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY}
+
+    ;
 
     protected QSS<OWLLogicalAxiom> createQSSWithDefaultParam(QSSType type) {
-        switch(type) {
+        switch (type) {
             case MINSCORE:
                 return QSSFactory.createMinScoreQSS();
             case SPLITINHALF:
@@ -152,7 +154,7 @@ public class PerformanceTests {
             case STATICRISK:
                 return QSSFactory.createStaticRiskQSS(0.3);
             case DYNAMICRISK:
-                return QSSFactory.createDynamicRiskQSS(0,0.5,0.25);
+                return QSSFactory.createDynamicRiskQSS(0, 0.5, 0.25);
             case PENALTY:
                 return QSSFactory.createPenaltyQSS(10);
             default:
@@ -161,7 +163,7 @@ public class PerformanceTests {
     }
 
     protected Partitioning<OWLLogicalAxiom> createQueryGenerator(ITheory<OWLLogicalAxiom> theory, QSS<OWLLogicalAxiom> qss) {
-        Partitioning<OWLLogicalAxiom> p=new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        Partitioning<OWLLogicalAxiom> p = new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
         p.setPostprocessor(qss);
         return p;
     }
@@ -218,7 +220,7 @@ public class PerformanceTests {
 
         HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
         MyOWLRendererParser parser = new MyOWLRendererParser(theoryNormal.getOriginalOntology());
-        for (String testcase: testCases)
+        for (String testcase : testCases)
             positiveTestcase.add(parser.parse(testcase));
 
         logger.info("All diagnoses and conflicts with test cases");
@@ -235,12 +237,12 @@ public class PerformanceTests {
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         readParametersFromFile();
         for (String ont : ontologies) {
-        for (int i = 5; i<=50; i=i+5){
-	    logger.info("Running diagnosis compare " + ont + " (" + i + ")");
-            compareAllDiagnoses(ont, true, i);
-        }
-        logger.info("Running diagnosis compare " + ont + " without caching");
-        compareAllDiagnoses(ont, false, 0);
+            for (int i = 10; i <= 10; i = i + 5) {
+                logger.info("Running diagnosis compare " + ont + " (" + i + ")");
+                compareAllDiagnoses(ont, true, i);
+            }
+            logger.info("Running diagnosis compare " + ont + " without caching");
+            compareAllDiagnoses(ont, false, 0);
         }
     }
 
