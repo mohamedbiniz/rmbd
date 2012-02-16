@@ -103,10 +103,19 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
     public void doBayesUpdate(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
         for (AxiomSet<OWLLogicalAxiom> hs : hittingSets) {
+            Set<OWLLogicalAxiom> positive = new LinkedHashSet<OWLLogicalAxiom>();
+            
             for (int i = 0; i < getTestsSize(); i++) {
                 Set<OWLLogicalAxiom> testcase = getTest(i);
-                List<Set<OWLLogicalAxiom>> olderTestcases = getTests(0, i);
-                Set<OWLLogicalAxiom> positive = getPositiveTests(olderTestcases);
+                
+                if(i-1>-1) {
+                    Set<OWLLogicalAxiom> olderTC = getTest(i-1);
+                    if (getTypeOfTest(olderTC))
+                        positive.addAll(olderTC);
+                }
+
+                //List<Set<OWLLogicalAxiom>> olderTestcases = getTests(0, i);
+                //Set<OWLLogicalAxiom> positive = getPositiveTests(olderTestcases);
 
                 double value = (hs.getMeasure() / 2) > 0 ? (hs.getMeasure() / 2) : Double.MIN_VALUE;
 
