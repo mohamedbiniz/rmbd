@@ -22,6 +22,7 @@ public class MinScoreQSS<T> extends AbstractQSS<T> {
     public Partition<T> run(List<Partition<T>> partitions) {
 
         return Collections.min(partitions,new ScoreComparator());
+
     }
 
 
