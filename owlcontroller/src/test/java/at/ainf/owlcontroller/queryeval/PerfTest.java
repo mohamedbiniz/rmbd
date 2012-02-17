@@ -50,7 +50,7 @@ public class PerfTest {
     @Ignore @Test
     public void testDualTreePruning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-        String ont = "example1302.owl";
+        String ont = "queryontologies/example1302.owl";
         List<String> testCases = new LinkedList<String>();
         testCases.add("w Type D");
         runComparison(ont, testCases);

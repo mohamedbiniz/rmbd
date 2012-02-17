@@ -101,7 +101,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         this.includeTrivialEntailments = includeTrivialEntailments;
     }
 
-    /*public void doBayesUpdate(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
+    public void doBayesUpdate(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
         for (AxiomSet<OWLLogicalAxiom> hs : hittingSets) {
             Set<OWLLogicalAxiom> positive = new LinkedHashSet<OWLLogicalAxiom>();
             
@@ -126,9 +126,9 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
                 }
             }
         }
-    } */
+    }
 
-    public void doBayesUpdate(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
+    /* public void doBayesUpdate(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
         for (AxiomSet<OWLLogicalAxiom> hs : hittingSets) {
             for (int i = 0; i < getTestsSize(); i++) {
                 Set<OWLLogicalAxiom> testcase = getTest(i);
@@ -148,7 +148,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
                 }
             }
         }
-    }
+    } */
 
     private Set<OWLLogicalAxiom> getPositiveTests(List<Set<OWLLogicalAxiom>> list) {
         Set<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();

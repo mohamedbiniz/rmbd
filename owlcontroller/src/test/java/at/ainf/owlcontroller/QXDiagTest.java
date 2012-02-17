@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by IntelliJ IDEA.
  * User: pfleiss
@@ -139,10 +141,12 @@ public class QXDiagTest {
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();
-        
+
+        boolean targetIsThere = false;
         for (AxiomSet<OWLLogicalAxiom> d : search.getStorage().getDiagnoses()) {
-            if (target.equals(d)) logger.info("target is there  ");
+            if (target.equals(d)) targetIsThere = true;
         }
+        assertTrue(targetIsThere);
 
     }
 
@@ -170,9 +174,11 @@ public class QXDiagTest {
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();
 
+        boolean targetIsThere = false;
         for (AxiomSet<OWLLogicalAxiom> d : search.getStorage().getDiagnoses()) {
-            if (target.equals(d)) logger.info("target is there");
+            if (target.equals(d)) targetIsThere = true;
         }
+        assertTrue(targetIsThere);
 
     }
 

@@ -941,9 +941,9 @@ public class PerformanceTests {
                 logger.trace("numOfQueries: " + num_of_queries + " search for  query");
 
                 long query = System.currentTimeMillis();
-                actPa = getBestQuery(search, diagnoses);
+                //actPa = getBestQuery(search, diagnoses);
 
-                // actPa = queryGenerator.generatePartition(diagnoses);
+                actPa = queryGenerator.generatePartition(diagnoses);
 
                 queryTime.setTime(System.currentTimeMillis() - query);
 

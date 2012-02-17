@@ -42,9 +42,18 @@ public class BruteForce<Id> implements Partitioning<Id> {
         this.scoring = function;
     }
 
+    protected void reset() {
+        partitionsCount = 0;
+        hittingSets = null;
+        partitions = new ArrayList<Partition<Id>>();
+        bestPartition = null;
+
+    }
 
     public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
+
+        reset();
        Set<E> hs = preprocess(hittingSets);
 
         // find the best partition
