@@ -62,7 +62,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
 
     protected void addToTestList(Set<T> test, boolean type) {
         tests.add(test);
-        typeOfTest.put(test, true);
+        typeOfTest.put(test,  type);
     }
 
     public boolean addPositiveTest(T test) throws SolverException, InconsistentTheoryException {
