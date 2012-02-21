@@ -397,21 +397,21 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     private void updateTree(AxiomSet<Id> conflictSet) {
         Node<Id> root = getRoot();
-        updateNode(conflictSet, root);
         if (getRoot() == null) {
             return;
         }
-        LinkedList<Node<Id>> children = new LinkedList<Node<Id>>(root.getChildren());
+        LinkedList<Node<Id>> children = new LinkedList<Node<Id>>();
+        children.add(root);
         while (!children.isEmpty()) {
             Node<Id> node = children.removeFirst();
-            updateNode(conflictSet, node);
-            children.addAll(node.getChildren());
+            Set<Node<Id>> nodeChildren = updateNode(conflictSet, node);
+            children.addAll(nodeChildren);
         }
     }
 
-    private void updateNode(AxiomSet<Id> axSet, Node<Id> node) {
+    private Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) {
         if (node == null || node.getAxiomSet() == null)
-            return;
+            return Collections.emptySet();
         if (node.getAxiomSet().containsAll(axSet)) {
             Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet());
             invalidAxioms.removeAll(axSet);
@@ -429,6 +429,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             } else
                 node.setConflict(axSet);
         }
+        return node.getChildren();
     }
 
     protected boolean containsOneOf(Set<Id> pathLabels, Set<Id> temp) {
