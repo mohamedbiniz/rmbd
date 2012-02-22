@@ -761,6 +761,7 @@ public class PerformanceTests {
         Time queryTime = new Time();
         Time diagTime = new Time();
         int queryCardinality = 0;
+        long reactionTime = 0;
         Partitioning<OWLLogicalAxiom> queryGenerator = createQueryGenerator(theory, qss);
         while (!querySessionEnd) {
             try {
@@ -845,7 +846,10 @@ public class PerformanceTests {
 
                 actPa = queryGenerator.generatePartition(diagnoses);
 
-                queryTime.setTime(System.currentTimeMillis() - query);
+                long querytime = System.currentTimeMillis() - query;
+                queryTime.setTime(querytime);
+                if (num_of_queries == 0)
+                    reactionTime = querytime;
 
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
                     // system brake
@@ -910,7 +914,7 @@ public class PerformanceTests {
         logger.info("Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
                 + targetDiagnosisIsMostProbable + " is in window " + targetDiagnosisIsInWind + " size of window  " + diagWinSize);
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
-                diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, ((OWLTheory)theory).getConsistencyCount());
+                diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, ((OWLTheory)theory).getConsistencyCount());
 
     }
 
