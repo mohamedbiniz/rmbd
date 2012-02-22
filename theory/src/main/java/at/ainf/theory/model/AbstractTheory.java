@@ -30,6 +30,8 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     private List<Set<T>> tests = new LinkedList<Set<T>>();
     private Map<Set<T>, Boolean> typeOfTest = new HashMap<Set<T>, Boolean>();
 
+
+
     protected AbstractTheory() {
 
     }
