@@ -657,6 +657,7 @@ public class QuerySelComparison {
         Time queryTime = new Time();
         Time diagTime = new Time();
         int queryCardinality = 0;
+        long reactionTime = 0;
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
@@ -726,7 +727,11 @@ public class QuerySelComparison {
                 long query = System.currentTimeMillis();
                 actPa = getBestQuery(search, diagnoses);
                 queryCardinality = actPa.partition.size();
-                queryTime.setTime(System.currentTimeMillis() - query);
+
+                long querytime = System.currentTimeMillis() - query;
+                queryTime.setTime(querytime);
+                if (num_of_queries == 0)
+                    reactionTime = querytime;
 
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
                     // system brake
@@ -787,7 +792,7 @@ public class QuerySelComparison {
         logger.info("Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
                 + targetDiagnosisIsMostProbable + " is in window " + targetDiagnosisIsInWind + " size of window  " + diagWinSize);
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind,
-                targetDiagnosisIsMostProbable, diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, theory.getConsistencyCount());
+                targetDiagnosisIsMostProbable, diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, theory.getConsistencyCount());
 
     }
 

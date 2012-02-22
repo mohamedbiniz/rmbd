@@ -32,11 +32,12 @@ public class TableList {
     private LinkedList<Time> queryTime = new LinkedList<Time>();
     private LinkedList<Time> diagTime = new LinkedList<Time>();
     private int consistencyChecks;
+    private long reactionTime;
 
 
     public void addEntr(Integer query, int queryCardinality, Boolean isDiagInWindow,
                         Boolean mostProbable, Integer sizeOfWindow, Boolean userB,
-                        Boolean systemB, long time, Time queryTime, Time diagTime, int consistencyChecks) {
+                        Boolean systemB, long time, Time queryTime, Time diagTime, long reactionTime, int consistencyChecks) {
         queriesList.add(query);
         queriesCardList.add(queryCardinality);
         diagInWin.add(isDiagInWindow);
@@ -50,10 +51,11 @@ public class TableList {
         queryTime.setCalls(query);
         diagTime.setCalls(query);
         this.consistencyChecks = consistencyChecks;
+        this.reactionTime = reactionTime;
     }
     
     public long getReactionTime(){
-        return this.queryTime.getFirst().total;
+        return this.reactionTime;
     }
     
     public int getConsistencyChecks(){
