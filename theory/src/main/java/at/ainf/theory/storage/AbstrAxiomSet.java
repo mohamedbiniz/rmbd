@@ -12,7 +12,7 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
-    protected Set<Id> hittingSet;
+    protected Set<Id> axioms;
     boolean valid = false;
     private double measure = 0;
     private final Set<Id> entailments;
@@ -23,7 +23,7 @@ public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<Axio
     protected StorageListener listener;
 
     public void updateAxioms(Set<Id> axioms) {
-        this.hittingSet = axioms;
+        this.axioms = axioms;
     }
 
     public <T extends AxiomSet<Id>> void setListener(StorageListener<T, Id> listener) {
@@ -45,6 +45,7 @@ public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<Axio
     public void restoreEntailments() {
         this.tempEntailments = Collections.unmodifiableSet(this.entailments);
     }
+
     public String getName() {
         return name;
     }
@@ -55,11 +56,11 @@ public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<Axio
 
     private TypeOfSet typeOfSet;
 
-    protected AbstrAxiomSet(TypeOfSet type, String name, double measure, Set<Id> hittingSet, Set<Id> entailments) {
+    protected AbstrAxiomSet(TypeOfSet type, String name, double measure, Set<Id> axioms, Set<Id> entailments) {
         this.typeOfSet = type;
         this.name = name;
         setMeasure(measure);
-        this.hittingSet = Collections.unmodifiableSet(hittingSet);
+        this.axioms = Collections.unmodifiableSet(axioms);
         this.entailments = Collections.unmodifiableSet(entailments);
         setEntailments(entailments);
     }
@@ -105,70 +106,72 @@ public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<Axio
     }
 
     public int size() {
-        return hittingSet.size();
+        return axioms.size();
     }
 
     public boolean isEmpty() {
-        return hittingSet.isEmpty();
+        return axioms.isEmpty();
     }
 
     public boolean contains(Object o) {
-        return hittingSet.contains(o);
+        return axioms.contains(o);
     }
 
     public Iterator<Id> iterator() {
-        return this.hittingSet.iterator();
+        return this.axioms.iterator();
     }
 
     public Object[] toArray() {
-        return hittingSet.toArray();
+        return axioms.toArray();
     }
 
     public <T> T[] toArray(T[] a) {
-        return hittingSet.toArray(a);
+        return axioms.toArray(a);
     }
 
     public boolean add(Id id) {
-        return hittingSet.add(id);
+        return axioms.add(id);
     }
 
     public boolean remove(Object o) {
-        return hittingSet.remove(o);
+        return axioms.remove(o);
     }
 
     public boolean containsAll(Collection<?> c) {
-        return hittingSet.containsAll(c);
+        return axioms.containsAll(c);
     }
 
     public boolean addAll(Collection<? extends Id> c) {
-        return hittingSet.addAll(c);
+        return axioms.addAll(c);
     }
 
     public boolean retainAll(Collection<?> c) {
-        return hittingSet.retainAll(c);
+        return axioms.retainAll(c);
     }
 
     public boolean removeAll(Collection<?> c) {
-        return hittingSet.removeAll(c);
+        return axioms.removeAll(c);
     }
 
     public void clear() {
-        hittingSet.clear();
+        axioms.clear();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if (hittingSet == null)
-            return false;
-        AbstrAxiomSet that = (AbstrAxiomSet) o;
-        return hittingSet.equals(that.hittingSet);
+
+        if ( Set.class.isInstance(o)) {
+            Set that = (Set) o;
+            return axioms != null && axioms.equals(that);
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return hittingSet.hashCode();
+        return axioms.hashCode();
     }
 
     @Override

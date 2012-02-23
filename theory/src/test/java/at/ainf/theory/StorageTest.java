@@ -8,10 +8,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -34,6 +31,27 @@ public class StorageTest {
        }
 
     private final int HS_COUNT = 50;
+
+    @Test
+    public void testAXcreation(){
+        Set<String> hs = new HashSet<String>();
+        hs.add("one");
+        hs.add("two");
+        hs.add("three");
+        AxiomSet<String> ax1 = AxiomSetFactory.createConflictSet(0.1, hs, new HashSet<String>());
+        AxiomSet<String> ax2 = AxiomSetFactory.createConflictSet(0.1, hs, new HashSet<String>());
+        Set<String> um = Collections.unmodifiableSet(hs);
+        
+        Set<String> hs2 = new HashSet<String>();
+        hs2.add("four");
+        AxiomSet<String> ax3 = AxiomSetFactory.createConflictSet(0.1, hs2, new HashSet<String>());
+        
+        assertTrue(ax1.equals(ax2));
+        assertTrue(ax1.equals(hs));
+        assertTrue(ax1.equals(um));
+        assertTrue(!ax3.equals(ax1));
+    }
+
     @Test
     public void testHittingSets() {
         Random random = new Random();

@@ -506,16 +506,16 @@ public class QuerySelComparison {
 
     //    public TreeSet<ProbabilisticHittingSet<OWLLogicalAxiom>> updateHittingSetProb(TreeSet<ProbabilisticHittingSet<OWLLogicalAxiom>> hittingSets,
     //                                                                                  UniformCostSearch<OWLLogicalAxiom> search) {
-    //        for (ProbabilisticHittingSet<OWLLogicalAxiom> hittingSet : hittingSets) {
+    //        for (ProbabilisticHittingSet<OWLLogicalAxiom> axioms : hittingSets) {
     //            Set<OWLLogicalAxiom> labels = new TreeSet<OWLLogicalAxiom>();
-//            Iterator<OWLLogicalAxiom> iterator = hittingSet.iterator();
+//            Iterator<OWLLogicalAxiom> iterator = axioms.iterator();
 //            while (iterator.hasNext())
 //                labels.add(iterator.next());
 //
 //            double probability = ((ConfEntailmentOwlTheory)search.getTheory()).getFailureProbabilityDiagnosis(labels);
 //
-//            hittingSet.setMeasure(probability);
-//            //hittingSet.setUserAssignedProbability(probability);
+//            axioms.setMeasure(probability);
+//            //axioms.setUserAssignedProbability(probability);
 //        }
 //        search.normalizeDiagnoses(hittingSets);
 //        return sortDiagnoses(hittingSets);
@@ -602,6 +602,8 @@ public class QuerySelComparison {
                         + "\t" + formD(entry.getMinTime(queryTime)) + "\t" + formD(entry.getAvgTime(queryTime)) + "\t" + formD(entry.getMaxTime(queryTime))
                         + "\t" + formD(entry.getMinTime(diagTime)) + "\t" + formD(entry.getAvgTime(diagTime)) + "\t" + formD(entry.getMaxTime(diagTime))
                         + "\t" + formD(entry.getAvgQueryCardinality())
+                        + "\t" + formD(entry.getReactionTime())
+                        + "\t" + formD(entry.getConsistencyChecks())
                         + "\t"
                         //+ "\t" + formD(meanTargetDiagInWin) + "\t" + formD(meanTargetDiagInWinCounter)
                         //+ "\t" + formD(meanTargetDiagIsMostProbable) + "\t" + formD(targetDiagIsMostProbableCounter)
@@ -655,6 +657,7 @@ public class QuerySelComparison {
         Time queryTime = new Time();
         Time diagTime = new Time();
         int queryCardinality = 0;
+        long reactionTime = 0;
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
@@ -724,7 +727,11 @@ public class QuerySelComparison {
                 long query = System.currentTimeMillis();
                 actPa = getBestQuery(search, diagnoses);
                 queryCardinality = actPa.partition.size();
-                queryTime.setTime(System.currentTimeMillis() - query);
+
+                long querytime = System.currentTimeMillis() - query;
+                queryTime.setTime(querytime);
+                if (num_of_queries == 0)
+                    reactionTime = querytime;
 
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
                     // system brake
@@ -784,7 +791,8 @@ public class QuerySelComparison {
             diagWinSize = diagnoses.size();
         logger.info("Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
                 + targetDiagnosisIsMostProbable + " is in window " + targetDiagnosisIsInWind + " size of window  " + diagWinSize);
-        entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable, diagWinSize, userBreak, systemBreak, time, queryTime, diagTime);
+        entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind,
+                targetDiagnosisIsMostProbable, diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, theory.getConsistencyCount());
 
     }
 

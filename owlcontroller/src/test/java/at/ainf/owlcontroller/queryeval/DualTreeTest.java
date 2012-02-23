@@ -5,9 +5,11 @@ import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -17,8 +19,8 @@ import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -26,10 +28,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,9 +37,13 @@ import java.util.Set;
  * Time: 19:23
  * To change this template use File | Settings | File Templates.
  */
-public class PerfTest {
+public class DualTreeTest extends BasePerformanceTests{
 
-    private static Logger logger = Logger.getLogger(PerfTest.class.getName());
+    private static Logger logger = Logger.getLogger(DualTreeTest.class.getName());
+
+    String[] ontologies = {"koala.owl"}; //, "Univ.owl"};
+
+    private static final boolean TEST_CACHING = false;
 
     @BeforeClass
     public static void setUp() {
@@ -120,7 +123,6 @@ public class PerfTest {
     public void testResultsEqualTime() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ont = "koala.owl";
-        //String ont = "koala.owl";
 
         long normal = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -168,5 +170,101 @@ public class PerfTest {
 
         return theory;
     }
+
+
+    @Test
+    public void computeAllDiagnoses()
+            throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+
+        for (String ont : ontologies) {
+            if (TEST_CACHING) {
+                for (int i = 10; i <= 10; i = i + 5) {
+                    logger.info("Running diagnosis compare " + ont + " (" + i + ")");
+                    compareAllDiagnoses(ont, true, i);
+                }
+            }
+            logger.info("Running diagnosis compare " + ont + " without caching");
+            compareAllDiagnoses(ont, false, 0);
+        }
+    }
+
+
+    private void compareAllDiagnoses(String ontology, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+        long t = System.currentTimeMillis();
+        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+
+        UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
+        searchNormal.setTheory(theoryNormal);
+        theoryNormal.useCache(useSubsets, threshold);
+        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theoryNormal);
+        es.updateKeywordProb(map);
+        searchNormal.setNodeCostsEstimator(es);
+        searchNormal.run();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+
+        manager = OWLManager.createOWLOntologyManager();
+        UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);
+        theoryDual.useCache(useSubsets, threshold);
+        searchDual.setTheory(theoryDual);
+        map = Utils.getProbabMap();
+        es = new OWLAxiomNodeCostsEstimator(theoryDual);
+        es.updateKeywordProb(map);
+        searchDual.setNodeCostsEstimator(es);
+
+        theoryNormal.clearTestCases();
+        searchNormal.clearSearch();
+
+        long timeNormalOverall = 0;
+        long timeDualOverall = 0;
+        long timeNormalMax = 0;
+        long timeNormalMin = Long.MAX_VALUE;
+        long timeDualMax = 0;
+        long timeDualMin = Long.MAX_VALUE;
+        int count = 0;
+        List<Double> nqueries = new LinkedList<Double>();
+        List<Double> dqueries = new LinkedList<Double>();
+
+        for (AxiomSet<OWLLogicalAxiom> diagnosis : resultNormal) {
+            logger.info("iteration " + ++count);
+            long timeNormal, timeDual;
+            if (count % 2 != 0) {
+                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, QSSType.MINSCORE);
+                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, QSSType.MINSCORE);
+            } else {
+                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, QSSType.MINSCORE);
+                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, QSSType.MINSCORE);
+            }
+            timeNormalOverall += timeNormal;
+            timeDualOverall += timeDual;
+            if (timeNormalMax < timeNormal) timeNormalMax = timeNormal;
+            if (timeDualMax < timeDual) timeDualMax = timeDual;
+            if (timeNormalMin > timeNormal) timeNormalMin = timeNormal;
+            if (timeDualMin > timeNormal) timeDualMin = timeDual;
+        }
+
+        long needed = System.currentTimeMillis() - t;
+        logger.info("needed overall " + Utils.getStringTime(needed));
+        logger.info("needed normal " + Utils.getStringTime(timeNormalOverall) +
+                " max " + Utils.getStringTime(timeNormalMax) +
+                " min " + Utils.getStringTime(timeNormalMin) +
+                " avg " + Utils.getStringTime(timeNormalOverall / count) +
+                " Queries max " + Collections.max(nqueries) +
+                " min " + Collections.min(nqueries) +
+                " avg " + avg(nqueries)
+        );
+        logger.info("needed dual " + Utils.getStringTime(timeDualOverall) +
+                " max " + Utils.getStringTime(timeDualMax) +
+                " min " + Utils.getStringTime(timeDualMin) +
+                " avg " + Utils.getStringTime(timeDualOverall / count) +
+                " Queries max " + Collections.max(dqueries) +
+                " min " + Collections.min(dqueries) +
+                " avg " + avg(dqueries));
+    }
+
 
 }
