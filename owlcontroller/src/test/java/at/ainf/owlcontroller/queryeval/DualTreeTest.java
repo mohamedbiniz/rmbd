@@ -1,8 +1,6 @@
 package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.partitioning.postprocessor.QSS;
-import at.ainf.diagnosis.partitioning.postprocessor.QSSFactory;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
@@ -14,7 +12,6 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
-import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
@@ -33,8 +30,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import java.io.InputStream;
 import java.util.*;
 
-import static junit.framework.Assert.assertTrue;
-
 /**
  * Created by IntelliJ IDEA.
  * User: pfleiss
@@ -42,12 +37,12 @@ import static junit.framework.Assert.assertTrue;
  * Time: 19:23
  * To change this template use File | Settings | File Templates.
  */
-public class DualTreeTest extends PerformanceTests{
+public class DualTreeTest extends BasePerformanceTests{
 
     private static Logger logger = Logger.getLogger(DualTreeTest.class.getName());
-  
+
     String[] ontologies = {"koala.owl"}; //, "Univ.owl"};
-    
+
     private static final boolean TEST_CACHING = false;
 
     @BeforeClass
@@ -177,24 +172,21 @@ public class DualTreeTest extends PerformanceTests{
     }
 
 
-
     @Test
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        
+
         for (String ont : ontologies) {
-            if (TEST_CACHING){
-            for (int i = 10; i <= 10; i = i + 5) {
-                logger.info("Running diagnosis compare " + ont + " (" + i + ")");
-                compareAllDiagnoses(ont, true, i);
-            }
+            if (TEST_CACHING) {
+                for (int i = 10; i <= 10; i = i + 5) {
+                    logger.info("Running diagnosis compare " + ont + " (" + i + ")");
+                    compareAllDiagnoses(ont, true, i);
+                }
             }
             logger.info("Running diagnosis compare " + ont + " without caching");
             compareAllDiagnoses(ont, false, 0);
         }
     }
-
-
 
 
     private void compareAllDiagnoses(String ontology, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
@@ -241,11 +233,11 @@ public class DualTreeTest extends PerformanceTests{
             logger.info("iteration " + ++count);
             long timeNormal, timeDual;
             if (count % 2 != 0) {
-                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, null);
-                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, null);
+                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, QSSType.MINSCORE);
+                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, QSSType.MINSCORE);
             } else {
-                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, null);
-                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, null);
+                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, QSSType.MINSCORE);
+                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, QSSType.MINSCORE);
             }
             timeNormalOverall += timeNormal;
             timeDualOverall += timeDual;
@@ -260,25 +252,19 @@ public class DualTreeTest extends PerformanceTests{
         logger.info("needed normal " + Utils.getStringTime(timeNormalOverall) +
                 " max " + Utils.getStringTime(timeNormalMax) +
                 " min " + Utils.getStringTime(timeNormalMin) +
-                " avg " + Utils.getStringTime(timeNormalOverall/count) +
-                " Queries max " + Collections.max(nqueries)+
+                " avg " + Utils.getStringTime(timeNormalOverall / count) +
+                " Queries max " + Collections.max(nqueries) +
                 " min " + Collections.min(nqueries) +
                 " avg " + avg(nqueries)
         );
         logger.info("needed dual " + Utils.getStringTime(timeDualOverall) +
                 " max " + Utils.getStringTime(timeDualMax) +
-                " min " + Utils.getStringTime(timeDualMin)+
-                " avg " + Utils.getStringTime(timeDualOverall/count) +
-                " Queries max " + Collections.max(dqueries)+
+                " min " + Utils.getStringTime(timeDualMin) +
+                " avg " + Utils.getStringTime(timeDualOverall / count) +
+                " Queries max " + Collections.max(dqueries) +
                 " min " + Collections.min(dqueries) +
                 " avg " + avg(dqueries));
     }
-
-
-
-
-
-
 
 
 }

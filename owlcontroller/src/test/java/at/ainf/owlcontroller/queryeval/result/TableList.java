@@ -33,6 +33,7 @@ public class TableList {
     private LinkedList<Time> diagTime = new LinkedList<Time>();
     private int consistencyChecks;
     private long reactionTime;
+    private int calls = 0;
 
 
     public void addEntr(Integer query, int queryCardinality, Boolean isDiagInWindow,
@@ -50,16 +51,17 @@ public class TableList {
         this.diagTime.add(diagTime);
         queryTime.setCalls(query);
         diagTime.setCalls(query);
-        this.consistencyChecks = consistencyChecks;
-        this.reactionTime = reactionTime;
+        this.consistencyChecks += consistencyChecks;
+        this.reactionTime += reactionTime;
+        this.calls++;
     }
     
-    public long getReactionTime(){
-        return this.reactionTime;
+    public double getReactionTime(){
+        return this.reactionTime/calls;
     }
     
-    public int getConsistencyChecks(){
-        return this.consistencyChecks;
+    public double getConsistencyChecks(){
+        return this.consistencyChecks/calls;
     }
 
     public int getMaxQuery() {
