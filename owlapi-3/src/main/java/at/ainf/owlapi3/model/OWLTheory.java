@@ -404,6 +404,20 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return true;
     }
 
+    public int getConsistencyCount() {
+        // TODO remove logging
+        int res = consistencyCount;
+        this.consistencyCount = 0;
+        return res;
+    }
+
+    private void incrementConsistencyChecks()
+    {
+        // TODO remove logging
+        this.consistencyCount++;
+    }
+
+    private int consistencyCount = 0;
 
     public boolean verifyConsistency() {
         start("Overall consistency check including management");
@@ -425,6 +439,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         if (BUFFERED_SOLVER) reasoner.flush();
         stop();
         start("Consistency test");
+        incrementConsistencyChecks();
         consistent = reasoner.isConsistent();
         stop();
         start("Coherency test");
