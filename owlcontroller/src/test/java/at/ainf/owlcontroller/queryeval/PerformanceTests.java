@@ -2,7 +2,6 @@ package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.partitioning.*;
 import at.ainf.diagnosis.partitioning.postprocessor.QSS;
-import at.ainf.diagnosis.partitioning.postprocessor.QSSFactory;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -33,7 +32,6 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -51,10 +49,10 @@ import static junit.framework.Assert.assertTrue;
  * Time: 16:36
  * To change this template use File | Settings | File Templates.
  */
-public class PerformanceTests {
+public class PerformanceTests extends BasePerformanceTests {
 
     private static Logger logger = Logger.getLogger(PerformanceTests.class.getName());
-    public static final int NUMBER_OF_HITTING_SETS = 9;
+
 
 
     //private final String[] ontologies = {"CHEM-A.owl", "src/test/resources/koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl",
@@ -68,12 +66,10 @@ public class PerformanceTests {
     // chemical koala sweet univ minitambis
     // dice-A chem-A univ koala - NEW
     protected int MAX_RUNS = 1;
-    protected static final double SIGMA = 85;
+
     protected static final boolean BRUTE = false;
 
-    protected static boolean userBrk = false;
 
-    protected Random rnd = new Random();
 
 
     protected ModerateDistribution moderateDistribution;
@@ -81,9 +77,9 @@ public class PerformanceTests {
     protected ExtremeDistribution extremeDistribution;
 
 
-    protected enum ScoringFunc {ENTROPY, SPLITINHALF}
+    protected QSSType[] ScoringFunc = {QSSType.MINSCORE, QSSType.SPLITINHALF};
 
-    protected ScoringFunc scoringFunc = ScoringFunc.ENTROPY;
+    protected QSSType scoringFunc = QSSType.MINSCORE;
 
     public OWLTheory createTheory(OWLOntologyManager manager, String path, boolean dual) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         InputStream st = ClassLoader.getSystemResourceAsStream(path);
@@ -106,12 +102,6 @@ public class PerformanceTests {
     }
 
 
-    protected Partitioning<OWLLogicalAxiom> createQueryGenerator(ITheory<OWLLogicalAxiom> theory, QSS<OWLLogicalAxiom> qss) {
-        Partitioning<OWLLogicalAxiom> p = new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
-        if (qss != null) p.setPostprocessor(qss);
-        return p;
-    }
-
 
     @BeforeClass
     public static void setUp() {
@@ -119,39 +109,7 @@ public class PerformanceTests {
         PropertyConfigurator.configure(conf);
     }
 
-    public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diags)
-            throws SolverException, InconsistentTheoryException {
-
-        ScoringFunction f = null;
-        if (scoringFunc.equals(ScoringFunc.ENTROPY))
-            f = new EntropyScoringFunction();
-        else if (scoringFunc.equals(ScoringFunc.SPLITINHALF))
-            f = new SplitScoringFunction();
-
-        Partitioning<OWLLogicalAxiom> algo;
-        String name;
-        if (BRUTE) {
-            algo = new BruteForce<OWLLogicalAxiom>(search.getTheory(), f);
-            name = "BRUTE";
-        } else {
-            algo = new CKK<OWLLogicalAxiom>(search.getTheory(), f);
-            name = "GREEDY";
-        }
-        Partition<OWLLogicalAxiom> partition = algo.generatePartition(diags);
-        /*
-        if ((partition == null || partition.score > 0.95d) && !BRUTE) {
-            name = "BRUTE";
-            partition = new BruteForce<OWLLogicalAxiom>(search.getTheory(), f).generatePartition(diags);
-        }
-        */
-        if (partition != null)
-            logger.trace(name + ": " + partition.score + " dx:" + partition.dx.size()
-                    + " dnx:" + partition.dnx.size() + " dz:" + partition.dz.size());
-        else
-            logger.error("No partition is found for diagnoses " + diags);
-        return partition;
-    }
-
+ 
     protected OWLOntology createOwlOntology(String fileName) {
         String path = ClassLoader.getSystemResource(queryontologies).getPath();
         File ontF = new File(path + "/" + fileName);
@@ -258,7 +216,7 @@ public class PerformanceTests {
             OWLOntology ont = createOwlOntology(ontologyFileString);
 
 
-            boolean dual = false;
+            boolean dual = params.dual;
             OWLTheory theory = createOWLTheory(ont, dual);
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
@@ -290,7 +248,7 @@ public class PerformanceTests {
                     //if (diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME)
 
                     for (int i = 0; i < MAX_RUNS; i++) {
-                        for (AxiomSet<OWLLogicalAxiom> d : diagnoses) {
+                        //for (AxiomSet<OWLLogicalAxiom> d : diagnoses) {
                             TableList entry = null;
 
                             logger.trace(ontologyFileString + " " + usersProbab + " " + diagProbab + " " // + i
@@ -299,25 +257,25 @@ public class PerformanceTests {
                             diagnoses = chooseUserProbab(usersProbab, search, diagnoses);
                             testOrder(diagnoses);
                             AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
-                            targetDiag = d;
+                            //targetDiag = d;
 
                             for (int j = 0; j < 2; j++) {
-                                scoringFunc = ScoringFunc.values()[j];
+                                scoringFunc = ScoringFunc[j];
                                 try {
                                     theory.clearTestCases();
                                     search.clearSearch();
 
 
-                                    if (entry == null && scoringFunc.equals(ScoringFunc.ENTROPY))
+                                    if (entry == null && scoringFunc.equals(QSSType.MINSCORE))
                                         entry = entropy_result.getEntry(usersProbab, diagProbab);
-                                    else if (entry == null && scoringFunc.equals(ScoringFunc.SPLITINHALF)) {
+                                    else if (entry == null && scoringFunc.equals(QSSType.SPLITINHALF)) {
                                         entry = split_result.getEntry(usersProbab, diagProbab);
                                     }
-                                    logger.trace(ontologyFileString + " " + usersProbab + " " + diagProbab + " " // + i
+                                    logger.info(ontologyFileString + " " + usersProbab + " " + diagProbab + " " // + i
                                             + " starting simulation with " + scoringFunc);
                                     //if (ontologyFileString.equals("buggy-sweet-jpl.owl")
                                     //        && diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME && i > 9)
-                                    simulateBruteForceOnl(search, theory, targetDiag, entry, null);
+                                    simulateBruteForceOnl(search, theory, targetDiag, entry, createQSSWithDefaultParam(scoringFunc));
                                     entry = null;
 
                                 } catch (Exception e) {
@@ -341,16 +299,16 @@ public class PerformanceTests {
                 for (String ontologyStr : map_entropy.keySet()) {
                     String message = "Entropy : " + ontologyStr;
                     System.out.println(message);
-                    logger.trace(message);
+                    logger.info(message);
                     print(map_entropy.get(ontologyStr));
                 }
                 for (String ontologyStr : map_split.keySet()) {
                     String message = "Split : " + ontologyStr;
                     System.out.println(message);
-                    logger.trace(message);
+                    logger.info(message);
                     print(map_split.get(ontologyStr));
                 }
-            }
+           // }
         }
     }
 
@@ -358,6 +316,7 @@ public class PerformanceTests {
     class ParametersFromFile {
         public String[] ontologies;
         public int MAX_RUNS;
+        public boolean dual;
     }
 
     protected ParametersFromFile readParametersFromFile() {
@@ -382,6 +341,7 @@ public class PerformanceTests {
         for (int i = 0; i < result.ontologies.length; i++)
             result.ontologies[i] = result.ontologies[i].trim() + ".owl";
         result.MAX_RUNS = Integer.parseInt(properties.getProperty("runs"));
+        result.dual = Boolean.parseBoolean(properties.getProperty("method"));
         return result;
 
     }
@@ -548,94 +508,12 @@ public class PerformanceTests {
         }
     }
 
-    protected double avg(List<Double> nqueries) {
-        double res = 0;
-        for (Double qs : nqueries){
-            res += qs;
-        }
-        return res/nqueries.size();
-    }
-
-
-    protected long computeDual(UniformCostSearch<OWLLogicalAxiom> searchDual, OWLTheory theoryDual, AxiomSet<OWLLogicalAxiom> diagnosis, List<Double> queries, QSSType type) {
-        TableList entry2 = new TableList();
-        long timeDual = System.currentTimeMillis();
-        int diagnosesCalc = 0;
-        String daStr = "";
-        int conflictsCalc = 0;
-        QSS<OWLLogicalAxiom> qss = null;
-        if (type!=null) qss = createQSSWithDefaultParam(type);
-        simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, qss);
-        timeDual = System.currentTimeMillis() - timeDual;
-        AxiomSet<OWLLogicalAxiom> diag2 = searchDual.getStorage().getDiagnoses().iterator().next();
-        boolean foundCorrectD2 = diag2.equals(diagnosis);
-        boolean hasNegativeTestcases = searchDual.getTheory().getNonentailedTests().size() > 0;
-        theoryDual.clearTestCases();
-        searchDual.clearSearch();
-        logger.info("dual tree iteration finished: window size "
-                + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() +
-                " time " + Utils.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
-                " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
-                " has negative tests " + hasNegativeTestcases + " diagnoses in storage " + daStr +
-                " cached subsets " + theoryDual.getCache().size()
-        );
-        assertTrue(foundCorrectD2);
-        queries.add(entry2.getMeanQuery());
-        return timeDual;
-    }
-
-    protected long computeHS(UniformCostSearch<OWLLogicalAxiom> searchNormal, OWLTheory theoryNormal, AxiomSet<OWLLogicalAxiom> diagnoses, List<Double> queries, QSSType type) {
-        TableList entry = new TableList();
-        long timeNormal = System.currentTimeMillis();
-        int diagnosesCalc = 0;
-        String daStr = "";
-        int conflictsCalc = 0;
-        QSS<OWLLogicalAxiom> qss = null;
-        if (type!=null) qss = createQSSWithDefaultParam(type);
-        simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, qss);
-        timeNormal = System.currentTimeMillis() - timeNormal;
-        AxiomSet<OWLLogicalAxiom> diag = searchNormal.getStorage().getDiagnoses().iterator().next();
-        boolean foundCorrectD = diag.equals(diagnoses);
-        boolean hasNegativeTestcases = searchNormal.getTheory().getNonentailedTests().size() > 0;
-        theoryNormal.clearTestCases();
-        searchNormal.clearSearch();
-        logger.info("hstree iteration finished: window size "
-                + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
-                Utils.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
-                " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
-                " has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr +
-                " cached subsets " + theoryNormal.getCache().size()
-        );
-        assertTrue(foundCorrectD);
-        queries.add(entry.getMeanQuery());
-        return timeNormal;
-    }
 
     @Test
     public void testCompareDiagnosisMethods() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         compareDualWithHS("koala.owl");
     }
 
-    enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS}
-
-    ;
-
-    protected QSS<OWLLogicalAxiom> createQSSWithDefaultParam(QSSType type) {
-        switch (type) {
-            case MINSCORE:
-                return QSSFactory.createMinScoreQSS();
-            case SPLITINHALF:
-                return QSSFactory.createSplitInHalfQSS();
-            case STATICRISK:
-                return QSSFactory.createStaticRiskQSS(0.3);
-            case DYNAMICRISK:
-                return QSSFactory.createDynamicRiskQSS(0, 0.5, 0.25);
-            case PENALTY:
-                return QSSFactory.createPenaltyQSS(10);
-            default:
-                return null;
-        }
-    }
 
     class DurationStat {
         long min = Long.MAX_VALUE;
@@ -681,21 +559,10 @@ public class PerformanceTests {
                 if (entry == null)
                     continue;
                 double meanQuery = entry.getMeanQuery();
-                double meanTargetDiagInWin = entry.getMeanTargetDiagInWin();
                 double maxQuery = entry.getMaxQuery();
-                int targetDiagIsMostProbableCounter = entry.getCouTargetDiagIsMostProbable();
                 double minQuery = entry.getMinQuery();
-                int meanTargetDiagInWinCounter = entry.getTargetDiagInWindowCount();
-                double meanTargetDiagIsMostProbable = entry.getMeanTargetDiagIsMostProbable();
-                double meanWinSize = entry.getMeanWin();
-                double minWinSize = entry.getMinWin();
-                double maxWinSize = entry.getMaxWin();
                 LinkedList<Time> queryTime = entry.getQueryTime();
                 LinkedList<Time> diagTime = entry.getDiagTime();
-                int userBreakCount = entry.getUserBreakCount();
-                int systemBreakCount = entry.getSystemBreakCount();
-                long reaction = entry.getReactionTime();
-                int consistencyChecks = entry.getConsistencyChecks();
 
                 String message = formD(minQuery) + "\t" + formD(meanQuery) + "\t" + formD(maxQuery)
                         + "\t" + formD(entry.getMinTime()) + "\t" + formD(entry.getMeanTime()) + "\t" + formD(entry.getMaxTime())
@@ -704,13 +571,13 @@ public class PerformanceTests {
                         + "\t" + formD(entry.getAvgQueryCardinality())
                         + "\t" + formD(entry.getReactionTime())
                         + "\t" + formD(entry.getConsistencyChecks())
-                        + "\t"
+                        + "\t | \t"
                         //+ "\t" + formD(meanTargetDiagInWin) + "\t" + formD(meanTargetDiagInWinCounter)
                         //+ "\t" + formD(meanTargetDiagIsMostProbable) + "\t" + formD(targetDiagIsMostProbableCounter)
                         //+ "\t" + formD(minWinSize) + "\t" + formD(meanWinSize) + "\t" + formD(maxWinSize)
                         //+ "\t" + formD(userBreakCount) + "\t" + formD(systemBreakCount) + "\t  "
                         ;
-                logger.info(message);
+                logger.info(usersProbab + " " + diagProbab + " \t" + message);
                 System.out.print(message);
             }
             System.out.println("");
@@ -727,230 +594,16 @@ public class PerformanceTests {
             return "NaN";
     }
 
-    int diagnosesCalc = 0;
-
-    int conflictsCalc = 0;
-
-    public <E extends AxiomSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, E item) {
-        for (E o : col) {
-            if (o.equals(item)) {
-                if (logger.isTraceEnabled())
-                    logger.trace("Target dianosis " + o + "is in the window");
-                return o;
-            }
-        }
-        return null;
-    }
-
-    protected void simulateBruteForceOnl
-            (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
-                    theory, AxiomSet<OWLLogicalAxiom> targetDiag, TableList
-                    entry, QSS<OWLLogicalAxiom> qss) {
-        //DiagProvider diagProvider = new DiagProvider(search, false, 9);
-
-        Partition<OWLLogicalAxiom> actPa = null;
-
-        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = null;
-        int num_of_queries = 0;
-
-        boolean userBreak = false;
-        boolean systemBreak = false;
-
-        boolean querySessionEnd = false;
-        long time = System.currentTimeMillis();
-        Time queryTime = new Time();
-        Time diagTime = new Time();
-        int queryCardinality = 0;
-        long reactionTime = 0;
-        Partitioning<OWLLogicalAxiom> queryGenerator = createQueryGenerator(theory, qss);
-        while (!querySessionEnd) {
-            try {
-                Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
-                logger.trace("numOfQueries: " + num_of_queries + " search for diagnoses");
-
-                userBreak = false;
-                systemBreak = false;
-
-                if (actPa != null && actPa.dx.size() == 1 && actPa.dz.size() == 1 && actPa.dnx.isEmpty()) {
-                    logger.error("Help!");
-                    printc(theory.getEntailedTests());
-                    printc(theory.getNonentailedTests());
-                    print(actPa.partition);
-                    prinths(actPa.dx);
-                    prinths(actPa.dz);
-                }
-
-                try {
-                    long diag = System.currentTimeMillis();
-                    search.run(NUMBER_OF_HITTING_SETS);
-
-                    daStr += search.getStorage().getDiagnoses().size() + "/";
-                    diagnosesCalc += search.getStorage().getDiagnoses().size();
-                    conflictsCalc += search.getStorage().getConflicts().size();
-
-                    diagnoses = search.getStorage().getDiagnoses();
-                    diagTime.setTime(System.currentTimeMillis() - diag);
-                } catch (SolverException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-
-                } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
-
-                }
-
-                if (diagnoses.isEmpty())
-                    logger.error("No diagnoses found!");
-
-                // cast should be corrected
-                Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
-                AxiomSet<OWLLogicalAxiom> d = descendSet.next();
-                AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
-
-                boolean isTargetDiagFirst = d.equals(targetDiag);
-                double dp = d.getMeasure();
-                if (logger.isInfoEnabled()) {
-                    AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
-                    double diagProbabilities = 0;
-                    for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
-                        diagProbabilities += tempd.getMeasure();
-                    logger.info("diagnoses: " + diagnoses.size() +
-                            " (" + diagProbabilities + ") first diagnosis: " + d +
-                            " is target: " + isTargetDiagFirst + " is in window: " +
-                            ((o == null) ? false : o.toString()));
-                }
-
-                if (d1 != null) {
-                    double d1p = d1.getMeasure();
-                    double diff = 100 - (d1p * 100) / dp;
-                    logger.trace("difference : " + (dp - d1p) + " - " + diff + " %");
-                    if (userBrk && diff > SIGMA && isTargetDiagFirst && num_of_queries > 0) {
-                        // user brake
-                        querySessionEnd = true;
-                        userBreak = true;
-                        break;
-                    }
-                }
-
-                if (diagnoses.equals(lastD) || diagnoses.size() < 2) {
-                    // system brake
-                    querySessionEnd = true;
-                    systemBreak = true;
-                    break;
-                }
-                Partition<OWLLogicalAxiom> last = actPa;
-
-                logger.trace("numOfQueries: " + num_of_queries + " search for  query");
-
-                long query = System.currentTimeMillis();
-                //actPa = getBestQuery(search, diagnoses);
-
-                actPa = queryGenerator.generatePartition(diagnoses);
-
-                long querytime = System.currentTimeMillis() - query;
-                queryTime.setTime(querytime);
-                if (num_of_queries == 0)
-                    reactionTime = querytime;
-
-                if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
-                    // system brake
-                    querySessionEnd = true;
-                    break;
-                }
-                queryCardinality = actPa.partition.size();
-
-                logger.trace("numOfQueries: " + num_of_queries + " generate answer");
-                boolean answer = generateQueryAnswer(search, actPa, targetDiag);
-
-                if (qss != null) qss.updateParameters(answer);
-
-                num_of_queries++;
-                // fine all dz diagnoses
-                for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
-                    ph.setMeasure(0.5d * ph.getMeasure());
-                }
-                if (answer) {
-                    try {
-                        search.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-                        if (actPa.dnx.isEmpty() && diagnoses.size() < NUMBER_OF_HITTING_SETS)
-                            querySessionEnd = true;
-                    } catch (InconsistentTheoryException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-                } else {
-                    try {
-                        search.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-                        if (actPa.dx.isEmpty() && diagnoses.size() < NUMBER_OF_HITTING_SETS)
-                            querySessionEnd = true;
-                    } catch (InconsistentTheoryException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-                }
-            } catch (SolverException e) {
-                querySessionEnd = true;
-                logger.error(e);
-
-            } catch (InconsistentTheoryException e) {
-                querySessionEnd = true;
-                logger.error(e);
-
-            }
-        }
-        time = System.currentTimeMillis() - time;
-        boolean targetDiagnosisIsInWind = false;
-        boolean targetDiagnosisIsMostProbable = false;
-        if (diagnoses != null) {
-            //TreeSet<ProbabilisticHittingSet> diags = new TreeSet<ProbabilisticHittingSet>(diagnoses);
-            for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
-                if (ps.equals(targetDiag))
-                    targetDiagnosisIsInWind = true;
-            if (diagnoses.size() >= 1 && (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).last().equals(targetDiag)) {
-                targetDiagnosisIsMostProbable = true;
-                targetDiagnosisIsInWind = true;
-            }
-        }
-        int diagWinSize = 0;
-        if (diagnoses != null)
-            diagWinSize = diagnoses.size();
-        logger.info("Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
-                + targetDiagnosisIsMostProbable + " is in window " + targetDiagnosisIsInWind + " size of window  " + diagWinSize);
-        entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
-                diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, ((OWLTheory)theory).getConsistencyCount());
-
-    }
-
-    String daStr = "";
 
 
-    private <E extends OWLObject> void prinths
-            (Collection<AxiomSet<E>> c) {
-        for (AxiomSet<E> hs : c) {
-            logger.info(hs);
-            print(hs);
-        }
 
-    }
 
-    private <E extends OWLObject> void printc
-            (Collection<? extends Collection<E>> c) {
-        for (Collection<E> hs : c) {
-            System.out.println("Test case:");
-            print(hs);
-        }
-    }
 
-    private <E extends OWLObject> void print
-            (Collection<E> c) {
-        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-        for (E el : c) {
-            System.out.println(renderer.render(el));
-        }
-    }
 
-    private void print(TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
-        for (AxiomSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
-            System.out.println(hs.toString());
-        }
-    }
+
+
+
+
 
     /*
 private void simulateQuerySession
@@ -1037,24 +690,7 @@ private void simulateQuerySession
 
   }
     */
-    private boolean generateQueryAnswer
-    (UniformCostSearch<OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
-        boolean answer;
-        ITheory<OWLLogicalAxiom> theory = search.getTheory();
 
-        if (theory.diagnosisEntails(targetDiag, actualQuery.partition)) {
-            answer = true;
-            assertTrue(!actualQuery.dnx.contains(targetDiag));
-        } else if (!theory.diagnosisConsistent(targetDiag, actualQuery.partition)) {
-            answer = false;
-            assertTrue(!actualQuery.dx.contains(targetDiag));
-        } else {
-            answer = rnd.nextBoolean();
-        }
-
-        return answer;
-
-    }
 
     /*private IQueryProvider createQueryProvider
             (QuerySelStrat
@@ -1264,5 +900,39 @@ private void simulateQuerySession
         }
         keywordList.addAll(cp);
     }
+
+    /*  private Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diags)
+        throws SolverException, InconsistentTheoryException {
+
+    ScoringFunction f = null;
+    if (scoringFunc.equals(ScoringFunc.ENTROPY))
+        f = new EntropyScoringFunction();
+    else if (scoringFunc.equals(ScoringFunc.SPLITINHALF))
+        f = new SplitScoringFunction();
+
+    Partitioning<OWLLogicalAxiom> algo;
+    String name;
+    if (BRUTE) {
+        algo = new BruteForce<OWLLogicalAxiom>(search.getTheory(), f);
+        name = "BRUTE";
+    } else {
+        algo = new CKK<OWLLogicalAxiom>(search.getTheory(), f);
+        name = "GREEDY";
+    }
+    Partition<OWLLogicalAxiom> partition = algo.generatePartition(diags);
+    *//*
+        if ((partition == null || partition.score > 0.95d) && !BRUTE) {
+            name = "BRUTE";
+            partition = new BruteForce<OWLLogicalAxiom>(search.getTheory(), f).generatePartition(diags);
+        }
+        *//*
+        if (partition != null)
+            logger.trace(name + ": " + partition.score + " dx:" + partition.dx.size()
+                    + " dnx:" + partition.dnx.size() + " dz:" + partition.dz.size());
+        else
+            logger.error("No partition is found for diagnoses " + diags);
+        return partition;
+    }*/
+
 
 }
