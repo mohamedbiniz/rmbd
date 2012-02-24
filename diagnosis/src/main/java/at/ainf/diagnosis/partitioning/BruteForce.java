@@ -50,6 +50,14 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     }
 
+    protected <E extends AxiomSet<Id>> String toString(Set<E> hittingSets) {
+        StringBuilder res = new StringBuilder();
+        for (E hittingSet : hittingSets) {
+            res.append(hittingSet.toString()).append(" ");
+        }
+        return res.toString();
+    }
+
     public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
 

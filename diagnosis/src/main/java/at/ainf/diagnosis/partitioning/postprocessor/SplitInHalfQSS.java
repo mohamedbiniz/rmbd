@@ -15,10 +15,6 @@ import java.util.List;
  */
 public class SplitInHalfQSS<T> extends AbstractQSS<T> {
 
-
-
-
-
     public Partition<T> run(List<Partition<T>> partitions) {
         return Collections.max(partitions, new MinNumOfElimDiagsComparator());
     }

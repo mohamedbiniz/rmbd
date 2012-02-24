@@ -275,7 +275,7 @@ public class PerformanceTests extends BasePerformanceTests {
                                             + " starting simulation with " + scoringFunc);
                                     //if (ontologyFileString.equals("buggy-sweet-jpl.owl")
                                     //        && diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME && i > 9)
-                                    simulateBruteForceOnl(search, theory, targetDiag, entry, createQSSWithDefaultParam(scoringFunc));
+                                    simulateBruteForceOnl(search, theory, targetDiag, entry, scoringFunc);
                                     entry = null;
 
                                 } catch (Exception e) {
@@ -577,7 +577,7 @@ public class PerformanceTests extends BasePerformanceTests {
                         //+ "\t" + formD(minWinSize) + "\t" + formD(meanWinSize) + "\t" + formD(maxWinSize)
                         //+ "\t" + formD(userBreakCount) + "\t" + formD(systemBreakCount) + "\t  "
                         ;
-                logger.info(usersProbab + " " + diagProbab + " \t" + message);
+                logger.info("Result \t" + usersProbab + " " + diagProbab + " \t" + message);
                 System.out.print(message);
             }
             System.out.println("");

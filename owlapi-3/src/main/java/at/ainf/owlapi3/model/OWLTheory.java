@@ -433,8 +433,8 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
     protected boolean doConsistencyTest(OWLReasoner reasoner) {
         boolean consistent, coherent = true;
-        if (useCache)
-            verifyCache(ontology.getLogicalAxioms());
+        //if (useCache)
+        //    verifyCache(ontology.getLogicalAxioms());
         start("Reasoner sync ");
         if (BUFFERED_SOLVER) reasoner.flush();
         stop();
@@ -452,8 +452,8 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             if (checkTestsConsistency()) return false;
         }
         
-        if (useCache && consistent)
-            updateCache(ontology.getLogicalAxioms());
+        //if (useCache && consistent)
+        //    updateCache(ontology.getLogicalAxioms());
         return consistent;
     }
 

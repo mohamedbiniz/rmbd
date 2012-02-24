@@ -131,12 +131,15 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         }
 
         if (logger.isInfoEnabled())
-            logger.info("Searched through " + count + "/" + getPartitionsCount() + " partitionsCount");
+            logger.info("Searched through " + count + "/" + getPartitionsCount() + " partitionsCount"); 
+        if (partition == null || getPartitions().isEmpty())
+            logger.error("No partition found! " + getPartitions().size() + " " +toString(hs));
         if (getPostprocessor() != null)
             partition = getPostprocessor().run(getPartitions());
         restoreEntailments(hittingSets);
         return partition;
     }
+
 
 
 

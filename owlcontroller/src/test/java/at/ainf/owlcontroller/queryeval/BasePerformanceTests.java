@@ -30,7 +30,7 @@ public abstract class BasePerformanceTests {
 
     public static final int NUMBER_OF_HITTING_SETS = 9;
     protected static final double SIGMA = 85;
-    protected static boolean userBrk = false;
+    protected static boolean userBrk = true;
 
     private static Logger logger = Logger.getLogger(BasePerformanceTests.class.getName());
 
@@ -111,8 +111,10 @@ public abstract class BasePerformanceTests {
     protected void simulateBruteForceOnl
             (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
                     theory, AxiomSet<OWLLogicalAxiom> targetDiag, TableList
-                    entry, QSS<OWLLogicalAxiom> qss) {
+                    entry, QSSType scoringFunc) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
+
+        QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
 
         Partition<OWLLogicalAxiom> actPa = null;
 
@@ -185,7 +187,7 @@ public abstract class BasePerformanceTests {
                             ((o == null) ? false : o.toString()));
                 }
 
-                if (d1 != null) {
+                if (d1 != null && scoringFunc != QSSType.SPLITINHALF) {
                     double d1p = d1.getMeasure();
                     double diff = 100 - (d1p * 100) / dp;
                     logger.trace("difference : " + (dp - d1p) + " - " + diff + " %");
@@ -318,15 +320,16 @@ public abstract class BasePerformanceTests {
         }
     }
 
-    protected long computeDual(UniformCostSearch<OWLLogicalAxiom> searchDual, OWLTheory theoryDual, AxiomSet<OWLLogicalAxiom> diagnosis, List<Double> queries, PerformanceTests.QSSType type) {
+    protected long computeDual(UniformCostSearch<OWLLogicalAxiom> searchDual, OWLTheory theoryDual,
+                               AxiomSet<OWLLogicalAxiom> diagnosis, List<Double> queries, QSSType type) {
         TableList entry2 = new TableList();
         long timeDual = System.currentTimeMillis();
         int diagnosesCalc = 0;
         String daStr = "";
         int conflictsCalc = 0;
-        QSS<OWLLogicalAxiom> qss = null;
-        if (type != null) qss = createQSSWithDefaultParam(type);
-        simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, qss);
+        //QSS<OWLLogicalAxiom> qss = null;
+        //if (type != null) qss = createQSSWithDefaultParam(type);
+        simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, type);
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = searchDual.getStorage().getDiagnoses().iterator().next();
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -353,9 +356,9 @@ public abstract class BasePerformanceTests {
         int diagnosesCalc = 0;
         String daStr = "";
         int conflictsCalc = 0;
-        QSS<OWLLogicalAxiom> qss = null;
-        if (type != null) qss = createQSSWithDefaultParam(type);
-        simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, qss);
+        //QSS<OWLLogicalAxiom> qss = null;
+        //if (type != null) qss = createQSSWithDefaultParam(type);
+        simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, type);
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = searchNormal.getStorage().getDiagnoses().iterator().next();
         boolean foundCorrectD = diag.equals(diagnoses);
