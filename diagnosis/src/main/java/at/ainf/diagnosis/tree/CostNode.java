@@ -14,7 +14,7 @@ import java.util.Set;
 public class CostNode<T> extends Node<T> implements Comparable<CostNode<T>> {
 
     private double nodePathCosts = 0;
-    private NodeCostsEstimator<T> costsEstimator;
+    private CostsEstimator<T> costsEstimator;
 
     private static int counter;
 
@@ -52,7 +52,7 @@ public class CostNode<T> extends Node<T> implements Comparable<CostNode<T>> {
             newNodes.add(node);
             CostNode<T> parent = (CostNode<T>) node.getParent();
             T axiom = node.getArcLabel();
-            double fProb = getCostsEstimator().getNodeCosts(axiom);
+            double fProb = getCostsEstimator().getAxiomCosts(axiom);
             double nodePathCosts = (parent.getNodePathCosts() / (1 - fProb)) * fProb;
             if (nodePathCosts == 0)
                 node.setNodePathCosts(Double.MIN_VALUE);
@@ -67,7 +67,7 @@ public class CostNode<T> extends Node<T> implements Comparable<CostNode<T>> {
         double probability = 1.0;
 
         for (T axiom : activeFormulars) {
-            double invCosts = 1 - getCostsEstimator().getNodeCosts(axiom);
+            double invCosts = 1 - getCostsEstimator().getAxiomCosts(axiom);
             probability *= invCosts;
         }
         // in some cases double is not big enough...
@@ -77,11 +77,11 @@ public class CostNode<T> extends Node<T> implements Comparable<CostNode<T>> {
 
     }
 
-    public NodeCostsEstimator<T> getCostsEstimator() {
+    public CostsEstimator<T> getCostsEstimator() {
         return costsEstimator;
     }
 
-    public void setCostsEstimator(NodeCostsEstimator<T> costsEstimator) {
+    public void setCostsEstimator(CostsEstimator<T> costsEstimator) {
         this.costsEstimator = costsEstimator;
     }
 

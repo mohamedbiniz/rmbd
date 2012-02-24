@@ -1,6 +1,6 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.diagnosis.tree.NodeCostsEstimator;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.storage.AxiomSet;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -16,7 +16,7 @@ import java.util.*;
  * Time: 14:14
  * To change this template use File | Settings | File Templates.
  */
-public class OWLAxiomNodeCostsEstimator implements NodeCostsEstimator<OWLLogicalAxiom> {
+public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
 
     private ITheory<OWLLogicalAxiom> theory;
 
@@ -47,7 +47,7 @@ public class OWLAxiomNodeCostsEstimator implements NodeCostsEstimator<OWLLogical
         };
 
 
-    public OWLAxiomNodeCostsEstimator(ITheory<OWLLogicalAxiom> t) {
+    public OWLAxiomCostsEstimator(ITheory<OWLLogicalAxiom> t) {
         this.keywordProbabilities = createKeywordProbs();
         this.theory = t;
         updateAxiomProbabilities();
@@ -72,23 +72,23 @@ public class OWLAxiomNodeCostsEstimator implements NodeCostsEstimator<OWLLogical
         return map;
     }
 
-    public double getNodeSetCosts(Set<OWLLogicalAxiom> labelSet) {
+    public double getAxiomSetCosts(Set<OWLLogicalAxiom> labelSet) {
             double probability = 1.0;
             for (OWLLogicalAxiom axiom : labelSet) {
-                probability *= getNodeCosts(axiom);
+                probability *= getAxiomCosts(axiom);
             }
             Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
             activeFormulas.removeAll(labelSet);
             for (OWLLogicalAxiom axiom : activeFormulas) {
-                if (probability * (1 - getNodeCosts(axiom)) == 0)
+                if (probability * (1 - getAxiomCosts(axiom)) == 0)
                     probability = Double.MIN_VALUE;
                 else
-                    probability *= (1 - getNodeCosts(axiom));
+                    probability *= (1 - getAxiomCosts(axiom));
             }
             return probability;
         }
 
-        public double getNodeCosts(OWLLogicalAxiom axiom) {
+        public double getAxiomCosts(OWLLogicalAxiom axiom) {
             Double p = axiomsProbabilities.get(axiom);
             if (p != null)
                 return p;
@@ -126,7 +126,7 @@ public class OWLAxiomNodeCostsEstimator implements NodeCostsEstimator<OWLLogical
                 return;
             if (!axiomSets.isEmpty()) {
                 for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
-                    double probability = getNodeSetCosts(axiomSet);
+                    double probability = getAxiomSetCosts(axiomSet);
 
                     axiomSet.setMeasure(probability);
                     //axiomSet.setUserAssignedProbability(probability);

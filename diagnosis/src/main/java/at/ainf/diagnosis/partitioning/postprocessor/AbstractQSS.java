@@ -107,7 +107,7 @@ public abstract class AbstractQSS<T> implements QSS<T> {
             else if (getScore(o1) > getScore(o2))
                 return 1;
             else
-                return 0;
+                return -1*((Integer)o1.dx.size()).compareTo(o2.dx.size());
 
         }
     }

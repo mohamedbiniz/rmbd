@@ -53,6 +53,16 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         this.storage = storage;
     }
 
+    private CostsEstimator<Id> costsEstimator;
+
+    public CostsEstimator<Id> getCostsEstimator() {
+        return costsEstimator;
+    }
+
+    public void setCostsEstimator(CostsEstimator<Id> costsEstimator) {
+        this.costsEstimator = costsEstimator;
+    }
+
     abstract public Node<Id> getNode();
 
     public abstract Collection<Node<Id>> getOpenNodes();
@@ -324,8 +334,14 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             SolverException, NoConflictException, InconsistentTheoryException {
         // if conflict was already calculated
         Set<Id> quickConflict;
-        Collection<Id> list = new ArrayList<Id>(getTheory().getActiveFormulas());
-        Collections.sort((List<? extends Comparable>) list);
+        List<Id> list = new ArrayList<Id>(getTheory().getActiveFormulas());
+        Collections.sort(list, new Comparator<Id>() {
+            public int compare(Id o1, Id o2) {
+                double nodeCosts = getCostsEstimator().getAxiomCosts(o1);
+                return -1*Double.valueOf(nodeCosts).compareTo(getCostsEstimator().getAxiomCosts(o2));
+            }
+        });
+
         Set<Id> pathLabels = null;
         if (node != null) {
             if (logger.isDebugEnabled())
@@ -338,7 +354,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             pathLabels = node.getPathLabels();
         }
 
-        quickConflict = getSearcher().search(getTheory(), list, pathLabels);
+        quickConflict = getSearcher().search(getTheory(), list , pathLabels);
 
         //if(!searcher.isDual()) {
         if (logger.isInfoEnabled())
@@ -429,7 +445,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             return Collections.emptySet();
         if (node.getAxiomSet().containsAll(axSet)) {
             Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet());
-            if (!getSearcher().isDual())
+            //if (!getSearcher().isDual())
                 invalidAxioms.removeAll(axSet);
             for (Iterator<Node<Id>> onodeit = getOpenNodes().iterator(); onodeit.hasNext(); ) {
                 Node<Id> openNode = onodeit.next();

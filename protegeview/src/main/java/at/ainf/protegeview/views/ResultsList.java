@@ -1,6 +1,6 @@
 package at.ainf.protegeview.views;
 
-import at.ainf.diagnosis.tree.NodeCostsEstimator;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.theory.storage.AxiomSet;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
@@ -107,7 +107,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
 
     }
 
-    public void addAxiomToResultsList(NodeCostsEstimator<OWLLogicalAxiom> es, String name, Collection<? extends Set<OWLLogicalAxiom>> axioms, Map<Set<OWLLogicalAxiom>, Integer> map2) {
+    public void addAxiomToResultsList(CostsEstimator<OWLLogicalAxiom> es, String name, Collection<? extends Set<OWLLogicalAxiom>> axioms, Map<Set<OWLLogicalAxiom>, Integer> map2) {
 
         DefaultListModel model = (DefaultListModel) getModel();
         if (!model.isEmpty()) {
@@ -119,7 +119,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
                 //NumberFormat nf = NumberFormat.getNumberInstance();
                 double p = -1;
                 if (es != null)
-                    p = ((AxiomSet<OWLLogicalAxiom>)axiomsConf).getMeasure(); // p = es.getNodeSetCosts(axiomsConf);
+                    p = ((AxiomSet<OWLLogicalAxiom>)axiomsConf).getMeasure(); // p = es.getAxiomSetCosts(axiomsConf);
                 num++;
                 if (es != null) {
                     model.addElement(new ResultsListSection(name,num,p,axiomsConf));
@@ -131,7 +131,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
             else if (name.equals("Conflict Set ")) {
                 double p = -1;
                 if (es != null)
-                    p = es.getNodeSetCosts(axiomsConf);
+                    p = es.getAxiomSetCosts(axiomsConf);
                 num++;
                 if (es != null) {
                     model.addElement(new ResultsListSection(name,num,p,axiomsConf));
@@ -143,7 +143,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
             else if (name.equals("Entailments of Diagnosis")) {
                 double p = -1;
                 if (es != null)
-                    p = es.getNodeSetCosts(axiomsConf);
+                    p = es.getAxiomSetCosts(axiomsConf);
 
                 num++;
                 if (es != null) {

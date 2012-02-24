@@ -1,6 +1,6 @@
 package at.ainf.protegeview.views;
 
-import at.ainf.diagnosis.tree.NodeCostsEstimator;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.protegeview.debugmanager.*;
 import at.ainf.protegeview.WorkspaceTab;
@@ -73,9 +73,9 @@ public class AxiomExplainView extends AbstractOWLViewComponent implements AxiomC
             setHeaderText (" ");
         }
         //getWS().addAxiomToResultsList(model, "Conflict Set ", conflSetAxxx);
-        NodeCostsEstimator<OWLLogicalAxiom> es = null;
+        CostsEstimator<OWLLogicalAxiom> es = null;
         if (getWS().getSearch() instanceof UniformCostSearch) {
-            es = ((UniformCostSearch<OWLLogicalAxiom>) getWS().getSearch()).getNodeCostsEstimator();
+            es = ((UniformCostSearch<OWLLogicalAxiom>) getWS().getSearch()).getCostsEstimator();
         }
         list.addAxiomToResultsList(null,"Conflict Set ", conflSetAxxx, null);
     }

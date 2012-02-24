@@ -29,7 +29,7 @@ import static junit.framework.Assert.assertTrue;
 public abstract class BasePerformanceTests {
 
     public static final int NUMBER_OF_HITTING_SETS = 9;
-    protected static final double SIGMA = 85;
+    protected static double SIGMA = 85;
     protected static boolean userBrk = true;
 
     private static Logger logger = Logger.getLogger(BasePerformanceTests.class.getName());
@@ -214,11 +214,6 @@ public abstract class BasePerformanceTests {
 
                 actPa = queryGenerator.generatePartition(diagnoses);
 
-                long querytime = System.currentTimeMillis() - query;
-                queryTime.setTime(querytime);
-                if (num_of_queries == 0)
-                    reactionTime = querytime;
-
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
                     // system brake
                     querySessionEnd = true;
@@ -226,12 +221,18 @@ public abstract class BasePerformanceTests {
                 }
                 queryCardinality = actPa.partition.size();
 
+
+                long querytime = System.currentTimeMillis() - query;
+                queryTime.setTime(querytime);
+                reactionTime += querytime;
+                num_of_queries++;
+
                 logger.trace("numOfQueries: " + num_of_queries + " generate answer");
                 boolean answer = generateQueryAnswer(search, actPa, targetDiag);
 
                 if (qss != null) qss.updateParameters(answer);
 
-                num_of_queries++;
+
                 // fine all dz diagnoses
                 // TODO do we need this fine?
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
@@ -269,9 +270,7 @@ public abstract class BasePerformanceTests {
         boolean targetDiagnosisIsMostProbable = false;
         if (diagnoses != null) {
             //TreeSet<ProbabilisticHittingSet> diags = new TreeSet<ProbabilisticHittingSet>(diagnoses);
-            for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
-                if (ps.equals(targetDiag))
-                    targetDiagnosisIsInWind = true;
+            targetDiagnosisIsInWind = isInWindow(targetDiag, diagnoses);
             if (diagnoses.size() >= 1 && (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).last().equals(targetDiag)) {
                 targetDiagnosisIsMostProbable = true;
                 targetDiagnosisIsInWind = true;
@@ -281,7 +280,9 @@ public abstract class BasePerformanceTests {
         if (diagnoses != null)
             diagWinSize = diagnoses.size();
 
-        int consistencyCount = theory.getConsistencyCount();
+        int consistencyCount = theory.getConsistencyCount() / num_of_queries;
+        reactionTime = reactionTime / num_of_queries;
+
         logger.info("Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
                 + targetDiagnosisIsMostProbable + ", is in window " + targetDiagnosisIsInWind + ", size of window  " + diagWinSize
                 + ", reaction " + reactionTime + ", consistency checks " + consistencyCount);
@@ -289,6 +290,15 @@ public abstract class BasePerformanceTests {
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
 
+    }
+
+    private boolean isInWindow(AxiomSet<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+        for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
+            if (ps.equals(targetDiag)){
+                System.out.println(ps.getName());
+                return true;
+            }
+        return false;
     }
 
     protected <E extends AxiomSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, E item) {
@@ -331,11 +341,10 @@ public abstract class BasePerformanceTests {
         //if (type != null) qss = createQSSWithDefaultParam(type);
         simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, type);
         timeDual = System.currentTimeMillis() - timeDual;
-        AxiomSet<OWLLogicalAxiom> diag2 = searchDual.getStorage().getDiagnoses().iterator().next();
+        AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getStorage().getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
         boolean hasNegativeTestcases = searchDual.getTheory().getNonentailedTests().size() > 0;
-        theoryDual.clearTestCases();
-        searchDual.clearSearch();
+
         logger.info("dual tree iteration finished: window size "
                 + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() +
                 " time " + Utils.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
@@ -344,8 +353,16 @@ public abstract class BasePerformanceTests {
                 " cached subsets " + theoryDual.getCache().size()
         );
         Assert.assertTrue(foundCorrectD2);
+        theoryDual.clearTestCases();
+        searchDual.clearSearch();
         queries.add(entry2.getMeanQuery());
         return timeDual;
+    }
+
+    protected AxiomSet<OWLLogicalAxiom> getMostProbable(Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+        TreeSet<AxiomSet<OWLLogicalAxiom>> ts = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        ts.addAll(diagnoses);
+        return ts.last();
     }
 
     protected long computeHS(UniformCostSearch<OWLLogicalAxiom> searchNormal,
@@ -360,7 +377,7 @@ public abstract class BasePerformanceTests {
         //if (type != null) qss = createQSSWithDefaultParam(type);
         simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, type);
         timeNormal = System.currentTimeMillis() - timeNormal;
-        AxiomSet<OWLLogicalAxiom> diag = searchNormal.getStorage().getDiagnoses().iterator().next();
+        AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getStorage().getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
         boolean hasNegativeTestcases = searchNormal.getTheory().getNonentailedTests().size() > 0;
         theoryNormal.clearTestCases();

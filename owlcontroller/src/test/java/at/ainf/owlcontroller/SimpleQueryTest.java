@@ -64,7 +64,7 @@ public class SimpleQueryTest {
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setTheory(theory);
-        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
+        search.setCostsEstimator(new OWLAxiomCostsEstimator(theory));
         //theory.getAxiomGenerators().add(new InferredEquivalentClassAxiomGenerator());
         //theory.getAxiomGenerators().add(new InferredDisjointClassesAxiomGenerator());
         //theory.getAxiomGenerators().add(new InferredPropertyAssertionGenerator());
@@ -117,7 +117,7 @@ public class SimpleQueryTest {
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
+        search.setCostsEstimator(new OWLAxiomCostsEstimator(theory));
         search.setTheory(theory);
 
         //theory.getAxiomGenerators().add(new InferredEquivalentClassAxiomGenerator());
@@ -161,7 +161,7 @@ public class SimpleQueryTest {
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
+        search.setCostsEstimator(new OWLAxiomCostsEstimator(theory));
         search.setTheory(theory);
 
 

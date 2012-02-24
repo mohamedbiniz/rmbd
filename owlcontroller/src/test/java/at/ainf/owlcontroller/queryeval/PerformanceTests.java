@@ -1,27 +1,22 @@
 package at.ainf.owlcontroller.queryeval;
 
-import at.ainf.diagnosis.partitioning.*;
-import at.ainf.diagnosis.partitioning.postprocessor.QSS;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
 import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
 import at.ainf.owlcontroller.queryeval.result.UserProbAndQualityTable;
-import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.DualStorage;
-import at.ainf.theory.storage.Partition;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -221,9 +216,9 @@ public class PerformanceTests extends BasePerformanceTests {
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
             es.updateKeywordProb(map);
-            search.setNodeCostsEstimator(es);
+            search.setCostsEstimator(es);
 
             logger.trace("searching diagnoses for " + ontologyFileString);
             try {
@@ -434,9 +429,9 @@ public class PerformanceTests extends BasePerformanceTests {
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(false, 0);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theoryNormal);
+        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
-        searchNormal.setNodeCostsEstimator(es);
+        searchNormal.setCostsEstimator(es);
         searchNormal.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
 
@@ -447,9 +442,9 @@ public class PerformanceTests extends BasePerformanceTests {
         theoryDual.useCache(false, 0);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();
-        es = new OWLAxiomNodeCostsEstimator(theoryDual);
+        es = new OWLAxiomCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
-        searchDual.setNodeCostsEstimator(es);
+        searchDual.setCostsEstimator(es);
 
         theoryNormal.clearTestCases();
         searchNormal.clearSearch();
@@ -884,7 +879,7 @@ private void simulateQuerySession
                 }
                 break;
         }
-        ((OWLAxiomNodeCostsEstimator) search.getNodeCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
+        ((OWLAxiomCostsEstimator) search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
         return sortDiagnoses(diagnoses);
 
 

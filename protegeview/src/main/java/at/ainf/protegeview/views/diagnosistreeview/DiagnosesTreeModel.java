@@ -4,7 +4,7 @@ import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.AbstrAxiomSet;
 import at.ainf.diagnosis.tree.Node;
-import at.ainf.diagnosis.tree.NodeCostsEstimator;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.OWLModelManager;
@@ -83,9 +83,9 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
     public void setConflictSets(Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets, OWLWorkspace owlworkspace) {
         WorkspaceTab workspace = (WorkspaceTab) owlworkspace.getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
 
-        NodeCostsEstimator<OWLLogicalAxiom> es = null;
+        CostsEstimator<OWLLogicalAxiom> es = null;
         if (workspace.getSearch() instanceof UniformCostSearch) {
-            es = ((UniformCostSearch<OWLLogicalAxiom>) workspace.getSearch()).getNodeCostsEstimator();
+            es = ((UniformCostSearch<OWLLogicalAxiom>) workspace.getSearch()).getCostsEstimator();
         }
 
         if (conflictSets == null) {
@@ -97,7 +97,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
         for (Set<OWLLogicalAxiom> conflictSet : conflictSets) {
             conflictSetMap.put(conflictSet,new Entry(number));
             if (es != null)
-                conflictSetMap.get(conflictSet).probability = es.getNodeSetCosts(conflictSet);
+                conflictSetMap.get(conflictSet).probability = es.getAxiomSetCosts(conflictSet);
             number++;
         }
 

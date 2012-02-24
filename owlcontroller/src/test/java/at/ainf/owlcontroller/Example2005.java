@@ -58,7 +58,7 @@ public class Example2005 {
         //search.setTheory(theory);
 
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
-        QueryDebugger<OWLLogicalAxiom> debugger = new ProbabilityQueryDebugger<OWLLogicalAxiom>(t,new OWLAxiomNodeCostsEstimator(t));
+        QueryDebugger<OWLLogicalAxiom> debugger = new ProbabilityQueryDebugger<OWLLogicalAxiom>(t,new OWLAxiomCostsEstimator(t));
         debugger.updateMaxHittingSets(0);
 
         debugger.debug();

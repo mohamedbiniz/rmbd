@@ -23,23 +23,13 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
 
     private PriorityQueue<Node<Id>> opensNodes = new PriorityQueue<Node<Id>>();
 
-    private NodeCostsEstimator<Id> nodeCostsEstimator;
-
-    public NodeCostsEstimator<Id> getNodeCostsEstimator() {
-        return nodeCostsEstimator;
-    }
-
-    public void setNodeCostsEstimator(NodeCostsEstimator<Id> nodeCostsEstimator) {
-        this.nodeCostsEstimator = nodeCostsEstimator;
-    }
-
     public UniformCostSearch(SimpleStorage<Id> storage) {
         super(storage);
     }
 
-    public UniformCostSearch(SimpleStorage<Id> storage, NodeCostsEstimator<Id> estimator) {
+    public UniformCostSearch(SimpleStorage<Id> storage, CostsEstimator<Id> estimator) {
         super(storage);
-        this.nodeCostsEstimator = estimator;
+        setCostsEstimator(estimator);
     }
 
     public void createRoot() throws NoConflictException,
@@ -50,11 +40,11 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
 
 
         CostNode<Id> node = new CostNode<Id>(conflict);
-        node.setCostsEstimator(getNodeCostsEstimator());
+        node.setCostsEstimator(getCostsEstimator());
         //double probability = 1.0;
 
         //for (Id axiom : getTheory().getActiveFormulas()) {
-        //    probability *= (1 - getNodeCostsEstimator().getNodeCosts(axiom));
+        //    probability *= (1 - getNodeCostsEstimator().getAxiomCosts(axiom));
         //}
 
         node.setNodePathCosts(node.getRootNodeCosts(getTheory().getActiveFormulas()));
@@ -68,7 +58,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
 
     @Override
     protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException {
-        double probability = 1d / quickConflict.size();
+        double probability =  getCostsEstimator().getAxiomSetCosts(quickConflict);
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && getSearcher().isDual()) entailments = getTheory().getEntailments(quickConflict);
         if (entailments==null)
@@ -87,7 +77,6 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
 
     @Override
     protected AxiomSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
-        String name = "D_" + String.valueOf(++count);
         Set<Id> labels = node.getPathLabels();
         double probability = ((CostNode<Id>) node).getNodePathCosts();
         Set<Id> entailments = Collections.emptySet();
