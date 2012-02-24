@@ -25,7 +25,7 @@ public class QueryQuestListItem extends ResultsListSectionItem {
     private boolean unknowMarked = false;
 
     public QueryQuestListItem(OWLLogicalAxiom axiom, WorkspaceTab workspaceTab) {
-        super(axiom, axiom, ((UniformCostSearch<OWLLogicalAxiom>) workspaceTab.getSearch()).getNodeCostsEstimator());
+        super(axiom, axiom, ((UniformCostSearch<OWLLogicalAxiom>) workspaceTab.getSearch()).getCostsEstimator());
         workspace=workspaceTab;
 
 

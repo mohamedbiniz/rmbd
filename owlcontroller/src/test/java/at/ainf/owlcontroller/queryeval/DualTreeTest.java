@@ -9,7 +9,7 @@ import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -43,7 +43,7 @@ public class DualTreeTest extends BasePerformanceTests {
 
     private static Logger logger = Logger.getLogger(DualTreeTest.class.getName());
 
-    String[] ontologies = {"koala.owl"}; //, "Univ.owl"};
+    String[] ontologies = {"Univ.owl"}; //, "Univ.owl"};
 
     private static final boolean TEST_CACHING = false;
 
@@ -214,16 +214,17 @@ public class DualTreeTest extends BasePerformanceTests {
     private void compareAllDiagnoses(String ontology, boolean useSubsets, int threshold) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         long t = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        userBrk = false;
+        userBrk = true;
+        SIGMA = 85;
         UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theoryNormal);
+        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
-        searchNormal.setNodeCostsEstimator(es);
+        searchNormal.setCostsEstimator(es);
         searchNormal.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
 
@@ -234,9 +235,9 @@ public class DualTreeTest extends BasePerformanceTests {
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();
-        es = new OWLAxiomNodeCostsEstimator(theoryDual);
+        es = new OWLAxiomCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
-        searchDual.setNodeCostsEstimator(es);
+        searchDual.setCostsEstimator(es);
 
         theoryNormal.clearTestCases();
         searchNormal.clearSearch();

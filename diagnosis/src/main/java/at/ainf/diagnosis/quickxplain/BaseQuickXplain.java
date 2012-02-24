@@ -21,8 +21,7 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.apache.log4j.Logger;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 import static _dev.TimeLog.start;
 import static _dev.TimeLog.stop;
@@ -73,10 +72,13 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     public Set<Id> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException {
 
+
         Set<Id> conflictFormulas = null;
 
         if (changes != null)
             formulas = applyChanges(searchable, formulas, changes);
+
+
 
         long time = 0;
         try {

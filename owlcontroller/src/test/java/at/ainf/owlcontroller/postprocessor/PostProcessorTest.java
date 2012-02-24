@@ -10,7 +10,7 @@ import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.ITheory;
@@ -121,9 +121,9 @@ public class PostProcessorTest {
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(th);
+        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(th);
         es.updateKeywordProb(map);
-        search.setNodeCostsEstimator(es);
+        search.setCostsEstimator(es);
 
         CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(th, new EntropyScoringFunction<OWLLogicalAxiom>());
         ckk.setThreshold(0.01);

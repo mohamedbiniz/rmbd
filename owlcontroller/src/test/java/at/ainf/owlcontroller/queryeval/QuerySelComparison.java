@@ -6,7 +6,7 @@ import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomNodeCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
 import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
@@ -205,9 +205,9 @@ public class QuerySelComparison {
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
         //ProbabilityTableModel mo = new ProbabilityTableModel();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
         es.updateKeywordProb(map);
-        search.setNodeCostsEstimator(es);
+        search.setCostsEstimator(es);
 
         search.run();
         TreeSet<AxiomSet<OWLLogicalAxiom>> alldiags = (TreeSet<AxiomSet<OWLLogicalAxiom>>)
@@ -267,9 +267,9 @@ public class QuerySelComparison {
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
             es.updateKeywordProb(map);
-            search.setNodeCostsEstimator(es);
+            search.setCostsEstimator(es);
 
             logger.info("found all diagnoses for " + ontologyFileString);
             for (UsersProbab usersProbab : UsersProbab.values()) {
@@ -347,9 +347,9 @@ public class QuerySelComparison {
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            OWLAxiomNodeCostsEstimator es = new OWLAxiomNodeCostsEstimator(theory);
+            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
             es.updateKeywordProb(map);
-            search.setNodeCostsEstimator(es);
+            search.setCostsEstimator(es);
 
             logger.info("searching diagnoses for " + ontologyFileString);
             try {
@@ -1124,7 +1124,7 @@ private void simulateQuerySession
                 }
                 break;
         }
-        ((OWLAxiomNodeCostsEstimator)search.getNodeCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
+        ((OWLAxiomCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
         return sortDiagnoses(diagnoses);
 
 

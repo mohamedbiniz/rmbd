@@ -1,6 +1,6 @@
 package at.ainf.protegeview.views;
 
-import at.ainf.diagnosis.tree.NodeCostsEstimator;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import org.protege.editor.core.ui.list.MListItem;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -11,9 +11,9 @@ public class ResultsListSectionItem implements MListItem {
 
     protected OWLLogicalAxiom axiom;
 
-    private NodeCostsEstimator<OWLLogicalAxiom> estimator;
+    private CostsEstimator<OWLLogicalAxiom> estimator;
 
-    public ResultsListSectionItem(OWLObject object, OWLLogicalAxiom axiom, NodeCostsEstimator<OWLLogicalAxiom> es) {
+    public ResultsListSectionItem(OWLObject object, OWLLogicalAxiom axiom, CostsEstimator<OWLLogicalAxiom> es) {
         this.object = object;
         this.estimator = es;
         this.axiom  = axiom;
@@ -55,7 +55,7 @@ public class ResultsListSectionItem implements MListItem {
 
     public String getTooltip() {
         if (estimator != null) {
-            return "axiom error probability: " + estimator.getNodeCosts(axiom);
+            return "axiom error probability: " + estimator.getAxiomCosts(axiom);
         } else {
             return null;
         }

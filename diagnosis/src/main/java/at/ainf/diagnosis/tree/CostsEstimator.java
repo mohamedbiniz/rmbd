@@ -10,11 +10,11 @@ import java.util.Set;
  * Time: 17:27
  * To change this template use File | Settings | File Templates.
  */
-public interface NodeCostsEstimator<Id> {
+public interface CostsEstimator<Id> {
 
-    double getNodeSetCosts(Set<Id> labelSet);
+    double getAxiomSetCosts(Set<Id> labelSet);
 
-    double getNodeCosts(Id label);
+    double getAxiomCosts(Id label);
 
 
 }

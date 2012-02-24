@@ -81,9 +81,9 @@ public class OrderProbabTest {
             //search.setNormalize_axioms (false);
             //search.setNormalize_diagnoses (true);
             search.setTheory(theory);
-            search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory));
+            search.setCostsEstimator(new OWLAxiomCostsEstimator(theory));
 
-            ((OWLAxiomNodeCostsEstimator)search.getNodeCostsEstimator()).setKeywordProbabilities(map, null);
+            ((OWLAxiomCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(map, null);
 
 
             Collection<? extends AxiomSet<OWLLogicalAxiom>> res = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.run(9));
@@ -104,7 +104,7 @@ public class OrderProbabTest {
             map.put(ManchesterOWLSyntax.OR, map.get(ManchesterOWLSyntax.OR) + 0.01);
             map.put(ManchesterOWLSyntax.EQUIVALENT_TO, map.get(ManchesterOWLSyntax.EQUIVALENT_TO) + 0.01);
             map.put(ManchesterOWLSyntax.SUBCLASS_OF, map.get(ManchesterOWLSyntax.SUBCLASS_OF) + 0.01);
-            ((OWLAxiomNodeCostsEstimator)search.getNodeCostsEstimator()).setKeywordProbabilities(map, result);
+            ((OWLAxiomCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(map, result);
             result = sortDiagnoses(result);
             copyResult = sortDiagnoses(copyResult);
 
