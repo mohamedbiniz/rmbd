@@ -13,7 +13,7 @@ import java.util.*;
  */
 public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
     protected Set<Id> axioms;
-    boolean valid = false;
+    boolean valid = true;
     private double measure = 0;
     private final Set<Id> entailments;
     private Set<Id> tempEntailments = null;

@@ -30,6 +30,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import java.io.InputStream;
 import java.util.*;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by IntelliJ IDEA.
  * User: pfleiss
@@ -37,7 +39,7 @@ import java.util.*;
  * Time: 19:23
  * To change this template use File | Settings | File Templates.
  */
-public class DualTreeTest extends BasePerformanceTests{
+public class DualTreeTest extends BasePerformanceTests {
 
     private static Logger logger = Logger.getLogger(DualTreeTest.class.getName());
 
@@ -53,7 +55,6 @@ public class DualTreeTest extends BasePerformanceTests{
 
     @Test
     public void testDualTreePruning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
-
         String ont = "queryontologies/example1302.owl";
         List<String> testCases = new LinkedList<String>();
         runComparison(ont, -1, testCases);
@@ -82,11 +83,32 @@ public class DualTreeTest extends BasePerformanceTests{
 
         computeQueryExample(ont, runs, false, searcher, searchNormal, testCases);
 
-        assert (storage.getDiagnoses().containsAll(dualStorage.getDiagnoses()));
-        assert (storage.getConflicts().containsAll(dualStorage.getConflicts()));
-        assert (dualStorage.getDiagnoses().containsAll(storage.getDiagnoses()));
-        assert (dualStorage.getConflicts().containsAll(storage.getConflicts()));
+        //prinths(storage.getDiagnoses());
+        //prinths(dualStorage.getDiagnoses());
+        assertTrue(compare(storage.getDiagnoses(), dualStorage.getDiagnoses()));
+        assertTrue(compare(storage.getConflicts(), dualStorage.getConflicts()));
+        //assert (dualStorage.getDiagnoses().containsAll(storage.getDiagnoses()));
+        //assert (dualStorage.getConflicts().containsAll(storage.getConflicts()));
     }
+
+
+    private boolean compare(Set<AxiomSet<OWLLogicalAxiom>> diagnoses, Set<AxiomSet<OWLLogicalAxiom>> diagnoses1) {
+        if (diagnoses.size() != diagnoses1.size()) return false;
+        for (AxiomSet<OWLLogicalAxiom> diagnose : diagnoses) {
+            if (!findDiagnosis(diagnoses1, diagnose)) return false;
+        }
+        return true;
+    }
+
+    private boolean findDiagnosis(Set<AxiomSet<OWLLogicalAxiom>> diagnoses1, AxiomSet<OWLLogicalAxiom> diagnose) {
+        for (AxiomSet<OWLLogicalAxiom> owlLogicalAxioms : diagnoses1) {
+            if (diagnose.equals(owlLogicalAxioms)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void computeQueryExample(String ont, int runs, boolean dual, Searcher<OWLLogicalAxiom> searcher, TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal, List<String> testCases) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
 
