@@ -71,7 +71,7 @@ public abstract class BasePerformanceTests {
             (Collection<E> c) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         for (E el : c) {
-            System.out.println(renderer.render(el));
+            System.out.print(renderer.render(el) + ",");
         }
     }
 
@@ -81,7 +81,7 @@ public abstract class BasePerformanceTests {
         }
     }*/
 
-    private <E extends OWLObject> void prinths
+    protected <E extends OWLObject> void prinths
             (Collection<AxiomSet<E>> c) {
         for (AxiomSet<E> hs : c) {
             logger.info(hs);

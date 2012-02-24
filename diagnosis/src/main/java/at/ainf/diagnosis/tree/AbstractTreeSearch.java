@@ -167,6 +167,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                     for (T next : invalidHittingSets) {
                         updateTree(next);
                     }
+                    if (getRoot()!= null && getOpenNodes().isEmpty())
+                        expandLeafNodes(getRoot());
                 }
             }
             if (getRoot() == null){
@@ -189,6 +191,19 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }
 
         return getStorage().getDiagnoses();
+    }
+
+    protected void expandLeafNodes(Node<Id> node) {
+        if (node.getChildren().isEmpty() && !node.isClosed())
+        {
+            ArrayList<Node<Id>> nodeList = node.expandNode();
+            nodeList.removeAll(getOpenNodes());
+            addNodes(nodeList);
+            return;
+        }
+        for (Node<Id> idNode : node.getChildren()) {
+            expandLeafNodes(idNode);
+        }
     }
 
     protected abstract void finalizeSearch();
@@ -414,11 +429,12 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             return Collections.emptySet();
         if (node.getAxiomSet().containsAll(axSet)) {
             Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet());
-            invalidAxioms.removeAll(axSet);
+            if (!getSearcher().isDual())
+                invalidAxioms.removeAll(axSet);
             for (Iterator<Node<Id>> onodeit = getOpenNodes().iterator(); onodeit.hasNext(); ) {
                 Node<Id> openNode = onodeit.next();
-                if (!openNode.isRoot() && hasParent(node, openNode.getParent()) &&
-                        containsOneOf(node.getPathLabels(), invalidAxioms))
+                if (!openNode.isRoot() && hasParent(node, openNode.getParent())
+                        && containsOneOf(openNode.getPathLabels(), invalidAxioms))
                     onodeit.remove();
             }
             if (node.getAxiomSet().equals(axSet)) {
@@ -426,6 +442,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                     clearSearch();
                 else
                     node.getParent().removeChild(node);
+                return Collections.emptySet();
             } else
                 node.setConflict(axSet);
         }
@@ -434,8 +451,10 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     protected boolean containsOneOf(Set<Id> pathLabels, Set<Id> temp) {
         for (Id t : temp) {
-            if (pathLabels.contains(t))
+            if (pathLabels.contains(t)){
+                //System.out.println("Contains!");
                 return true;
+            }
         }
         return false;
     }
@@ -452,8 +471,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         // check if this is a root
         if (node.isRoot() || node.getAxiomSet() != null) return false;
         Collection<Id> pathLabels = node.getPathLabels();
-        for (Set<Id> localConflict : getStorage().getConflictSets()) {
-            if (!intersectsWith(pathLabels, localConflict)) {
+        for (AxiomSet<Id> localConflict : getStorage().getConflictSets()) {
+            if (localConflict.isValid() && !intersectsWith(pathLabels, localConflict)) {
                 node.setConflict(localConflict);
                 if (logger.isDebugEnabled())
                     logger.debug("Reusing conflict: " + localConflict);
