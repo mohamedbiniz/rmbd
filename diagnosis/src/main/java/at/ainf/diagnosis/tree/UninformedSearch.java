@@ -25,6 +25,7 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
 
     public UninformedSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
+        setCostsEstimator(new SimpleCostsEstimator());
     }
 
     @Override
