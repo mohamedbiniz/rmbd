@@ -55,16 +55,17 @@ public class DualTreeTest extends BasePerformanceTests {
 
     @Test
     public void testDualTreePruning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
-        String ont = "queryontologies/example1302.owl";
+        String ont = "queryontologies/dualpaper.owl";
         List<String> testCases = new LinkedList<String>();
         runComparison(ont, -1, testCases);
-        testCases.add("w Type B");
-        runComparison(ont, 3, testCases);
-        testCases.add("C SubClassOf F");
-        runComparison(ont, 3, testCases);
+        //testCases.add("C SubClassOf not (D or E)");
+        //runComparison(ont, 2, testCases);
+        testCases.add("A SubClassOf B");
+        runComparison(ont, 2, testCases);
     }
 
     private void runComparison(String ont, int runs, List<String> testCases) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+
         logger.info("----- Computing dual case -----");
         Searcher<OWLLogicalAxiom> dualSearcher = new FastDiagnosis<OWLLogicalAxiom>();
         SimpleStorage<OWLLogicalAxiom> dualStorage = new DualStorage<OWLLogicalAxiom>();
@@ -73,7 +74,7 @@ public class DualTreeTest extends BasePerformanceTests {
                 new BreadthFirstSearch<OWLLogicalAxiom>(dualStorage);
 
         computeQueryExample(ont, runs, true, dualSearcher, searchDual, testCases);
-
+        /*
         logger.info("----- Computing normal case -----");
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -82,11 +83,11 @@ public class DualTreeTest extends BasePerformanceTests {
                 new BreadthFirstSearch<OWLLogicalAxiom>(storage);
 
         computeQueryExample(ont, runs, false, searcher, searchNormal, testCases);
-
+        */
         //prinths(storage.getDiagnoses());
         //prinths(dualStorage.getDiagnoses());
-        assertTrue(compare(storage.getDiagnoses(), dualStorage.getDiagnoses()));
-        assertTrue(compare(storage.getConflicts(), dualStorage.getConflicts()));
+        //assertTrue(compare(storage.getDiagnoses(), dualStorage.getDiagnoses()));
+        //assertTrue(compare(storage.getConflicts(), dualStorage.getConflicts()));
         //assert (dualStorage.getDiagnoses().containsAll(storage.getDiagnoses()));
         //assert (dualStorage.getConflicts().containsAll(storage.getConflicts()));
     }
