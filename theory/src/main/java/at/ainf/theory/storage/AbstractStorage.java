@@ -79,7 +79,7 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
     }
 
     public Set<T> getConflicts() {
-        return Collections.unmodifiableSet(getConflictSets());
+        return getConflictSets();
     }
 
     public Set<T> getDiagnoses() {

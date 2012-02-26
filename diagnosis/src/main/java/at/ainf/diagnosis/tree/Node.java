@@ -29,24 +29,24 @@ public class Node<Id> {
     //private final Id ARC_OF_ROOT = null;
 
     // PARENT: if node is the root parent = null
-    private final Node<Id> parent;
+    private Node<Id> parent;
 
     private final Set<Node<Id>> children = new LinkedHashSet<Node<Id>>();
 
     // ARCLABEL: if node is the root arcLabel = -1
-    private final Id arcLabel;
+    private Id arcLabel;
 
     // CONFLICT: if the node is not calculated or closed conflict = null
     private Set<Id> conflict = null;
 
     public Node(Node<Id> parent, Id arcLabel) {
         parent.addChild(this);
-        this.parent = parent;
         this.arcLabel = arcLabel;
         //this.conflict = NOT_CALCULATED;
     }
 
-    private boolean addChild(Node<Id> node) {
+    public boolean addChild(Node<Id> node) {
+        node.parent = this;
         return this.children.add(node);
     }
 
@@ -69,10 +69,20 @@ public class Node<Id> {
     public ArrayList<Node<Id>> expandNode() {
         ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
         for (Id arcLabel : this.conflict) {
-            Node<Id> node = new Node<Id>(this, arcLabel);
-            newNodes.add(node);
+            if (!hasChild(getChildren(), arcLabel)) {
+                Node<Id> node = new Node<Id>(this, arcLabel);
+                newNodes.add(node);
+            }
         }
         return newNodes;
+    }
+
+    private boolean hasChild(Set<Node<Id>> children, Id arcLabel) {
+        for (Node<Id> child : children) {
+            if (child.getArcLabel().equals(arcLabel))
+                return true;
+        }
+        return false;
     }
 
     // setter and getter
@@ -82,7 +92,8 @@ public class Node<Id> {
         Node<Id> node = this;
         // steps from this node to root and adds the arcLables of each node
         while (node.parent != null) {
-            pathLabels.add(node.getArcLabel());
+            if (node.getArcLabel() != null)
+                pathLabels.add(node.getArcLabel());
             node = node.getParent();
         }
         return pathLabels;
@@ -129,5 +140,13 @@ public class Node<Id> {
             node = node.getParent();
         }
         return level;
+    }
+
+    public void removeArcLabel() {
+        this.arcLabel = null;
+    }
+
+    public void removeAxioms() {
+        this.conflict = null;
     }
 }

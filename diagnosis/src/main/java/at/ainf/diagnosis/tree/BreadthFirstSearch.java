@@ -11,8 +11,7 @@ package at.ainf.diagnosis.tree;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
