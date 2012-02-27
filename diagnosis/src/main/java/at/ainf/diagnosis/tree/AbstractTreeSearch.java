@@ -18,6 +18,7 @@ import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.AxiomSetFactory;
 import at.ainf.theory.storage.Storage;
 import org.apache.log4j.Logger;
+import sun.plugin.javascript.navig4.Link;
 
 import java.util.*;
 
@@ -463,8 +464,9 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                     parent.removeChild(node);
                     addNodes(parent.expandNode());
                 }
-                return Collections.emptySet();*/                
-                for (Node<Id> cnode : node.getChildren()) {
+                return Collections.emptySet();*/
+                Set<Node<Id>> children = new LinkedHashSet<Node<Id>>(node.getChildren());
+                for (Node<Id> cnode : children) {
                     if (getOpenNodes().contains(cnode)) {
                         getOpenNodes().remove(cnode);
                         node.removeChild(cnode);
@@ -473,10 +475,16 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                         if (cnode.isClosed())
                         {                            
                             Set<Id> pathLabels = cnode.getPathLabels();
-                            for (AxiomSet<Id> cs : getStorage().getConflictSets())
+                            for (T cs : getStorage().getConflictSets())
                             {
-                                if (cs.containsAll(pathLabels))
-                                    cs.remove(cnode.getArcLabel());
+                                if (cs.containsAll(pathLabels)){
+                                    getStorage().removeConflictSet(cs);
+                                    Set<Id> axioms = new LinkedHashSet<Id>(cs);
+                                    axioms.remove(cnode.getArcLabel());
+                                    T conflictSet =
+                                            (T) AxiomSetFactory.createConflictSet(cs.getMeasure(), axioms, cs.getEntailments());
+                                    getStorage().addConflict(conflictSet);
+                                }
                             }
                         }    
                         cnode.removeArcLabel();

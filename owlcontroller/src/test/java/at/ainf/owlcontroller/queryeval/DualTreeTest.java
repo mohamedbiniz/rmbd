@@ -58,8 +58,8 @@ public class DualTreeTest extends BasePerformanceTests {
         String ont = "queryontologies/dualpaper.owl";
         List<String> testCases = new LinkedList<String>();
         runComparison(ont, -1, testCases);
-        //testCases.add("C SubClassOf not (D or E)");
-        //runComparison(ont, 2, testCases);
+        testCases.add("C SubClassOf not (D or E)");
+        runComparison(ont, 2, testCases);
         testCases.add("A SubClassOf B");
         runComparison(ont, 2, testCases);
     }
@@ -74,7 +74,7 @@ public class DualTreeTest extends BasePerformanceTests {
                 new BreadthFirstSearch<OWLLogicalAxiom>(dualStorage);
 
         computeQueryExample(ont, runs, true, dualSearcher, searchDual, testCases);
-        /*
+
         logger.info("----- Computing normal case -----");
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -83,13 +83,13 @@ public class DualTreeTest extends BasePerformanceTests {
                 new BreadthFirstSearch<OWLLogicalAxiom>(storage);
 
         computeQueryExample(ont, runs, false, searcher, searchNormal, testCases);
-        */
+
         //prinths(storage.getDiagnoses());
         //prinths(dualStorage.getDiagnoses());
-        //assertTrue(compare(storage.getDiagnoses(), dualStorage.getDiagnoses()));
-        //assertTrue(compare(storage.getConflicts(), dualStorage.getConflicts()));
-        //assert (dualStorage.getDiagnoses().containsAll(storage.getDiagnoses()));
-        //assert (dualStorage.getConflicts().containsAll(storage.getConflicts()));
+        if (runs < 0) {
+            assertTrue(compare(storage.getDiagnoses(), dualStorage.getDiagnoses()));
+            assertTrue(compare(storage.getConflicts(), dualStorage.getConflicts()));
+        }
     }
 
 
@@ -199,7 +199,7 @@ public class DualTreeTest extends BasePerformanceTests {
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
 
-        for (String ont : ontologies) {
+            String ont = "koala.owl";
             if (TEST_CACHING) {
                 for (int i = 10; i <= 10; i = i + 5) {
                     logger.info("Running diagnosis compare " + ont + " (" + i + ")");
@@ -208,7 +208,7 @@ public class DualTreeTest extends BasePerformanceTests {
             }
             logger.info("Running diagnosis compare " + ont + " without caching");
             compareAllDiagnoses(ont, false, 0);
-        }
+        
     }
 
 

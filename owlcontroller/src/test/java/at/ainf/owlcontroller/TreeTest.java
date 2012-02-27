@@ -129,7 +129,7 @@ public class TreeTest {
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A1}, {M1}, {M3,M2}, {A2,M2} }", logd);
-        assertEquals("Conflicts { {A1,M1,M2}, {M3,A1,A2,M1} }", logc);
+        assertEquals("Conflicts { {M3,A1,A2,M1}, {A1,M1,M2} }", logc);
 
 
         // testConsistency that there are no changes in the theory
@@ -256,7 +256,7 @@ public class TreeTest {
         String logd = Utils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
         String logc = Utils.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A1}, {M1}, {M3,M2}, {A2,M2} }", logd);
-        assertEquals("Conflicts { {A1,M1,M2}, {M3,A1,A2,M1} }", logc);
+        assertEquals("Conflicts { {M3,A1,A2,M1}, {A1,M1,M2} }", logc);
     }
 
     @Test
