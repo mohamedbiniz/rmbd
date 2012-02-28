@@ -225,11 +225,11 @@ public class PerformanceTests extends BasePerformanceTests {
             try {
                 search.run();
             } catch (SolverException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
