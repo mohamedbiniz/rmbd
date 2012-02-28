@@ -72,7 +72,7 @@ public class PerformanceTests extends BasePerformanceTests {
     protected ExtremeDistribution extremeDistribution;
 
 
-    protected QSSType[] ScoringFunc = {QSSType.MINSCORE, QSSType.SPLITINHALF};
+    protected QSSType[] ScoringFunc = {QSSType.MINSCORE};//, QSSType.SPLITINHALF};
 
     protected QSSType scoringFunc = QSSType.MINSCORE;
 
@@ -194,6 +194,7 @@ public class PerformanceTests extends BasePerformanceTests {
         ParametersFromFile params = readParametersFromFile();
         ontologies = params.ontologies;
         MAX_RUNS = params.MAX_RUNS;
+        boolean dual = params.dual;
         HashMap<String, UserProbAndQualityTable> map_entropy = new HashMap<String, UserProbAndQualityTable>();
         HashMap<String, UserProbAndQualityTable> map_split = new HashMap<String, UserProbAndQualityTable>();
         moderateDistribution = new ModerateDistribution();
@@ -205,13 +206,13 @@ public class PerformanceTests extends BasePerformanceTests {
             UserProbAndQualityTable entropy_result = new UserProbAndQualityTable();
 
             rnd.setSeed(1641998975);
-
-            logger.trace("creating objects for " + ontologyFileString);
+            if (logger.isTraceEnabled())
+                logger.trace("creating objects for " + ontologyFileString);
 
             OWLOntology ont = createOwlOntology(ontologyFileString);
 
 
-            boolean dual = params.dual;
+
             OWLTheory theory = createOWLTheory(ont, dual);
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
@@ -219,8 +220,8 @@ public class PerformanceTests extends BasePerformanceTests {
             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
             es.updateKeywordProb(map);
             search.setCostsEstimator(es);
-
-            logger.trace("searching diagnoses for " + ontologyFileString);
+            if (logger.isTraceEnabled())
+                logger.trace("searching diagnoses for " + ontologyFileString);
             try {
                 search.run();
             } catch (SolverException e) {
@@ -254,7 +255,7 @@ public class PerformanceTests extends BasePerformanceTests {
                             AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
                             //targetDiag = d;
 
-                            for (int j = 0; j < 2; j++) {
+                            for (int j = 0; j < ScoringFunc.length; j++) {
                                 scoringFunc = ScoringFunc[j];
                                 try {
                                     theory.clearTestCases();
