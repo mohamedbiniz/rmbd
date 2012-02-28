@@ -268,7 +268,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             try {
                 if (!canReuseConflict(node))
                     calculateConflict(node);
-                if (!node.isClosed())
+                if (!node.isClosed() && node.getAxiomSet() != null)
                     expand(node);
             } catch (NoConflictException e) {
                 // if(!getSearcher().isDual()) {
