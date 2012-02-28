@@ -100,6 +100,13 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             totalTime += time;
             */
             //}
+
+
+            if (isDual())  {
+                searchable.pop();
+                searchable.push(conflictFormulas);
+                searchable.verifyRequirements();
+            }
             rollbackChanges(searchable, formulas, changes);
         }
 

@@ -176,7 +176,9 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 } else {
                     for (T next : invalidHittingSets) {
                         updateTree(next);
+                        getStorage().removeConflictSet(next);
                     }
+                    getTheory().registerTestCases();
                   //  if (getRoot() != null && getOpenNodes().isEmpty())
                   //      expandLeafNodes(getRoot());
                 }
@@ -367,7 +369,9 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         if (getSearcher().isDual()) {
             boolean valid = true;
             if (getTheory().hasTests()) {
+                getTheory().addBackgroundFormulas(pathLabels);
                 valid = getTheory().testDiagnosis(conflictSet);
+                getTheory().removeBackgroundFormulas(pathLabels);
             }
             conflictSet.setValid(valid);
 
@@ -405,7 +409,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }*/
     }
 
-    private void pruneConflictSets(Node<Id> node, T conflictSet) {
+    private void pruneConflictSets(Node<Id> node, T conflictSet) throws SolverException, InconsistentTheoryException {
         // DAG: verify if there is a conflict that is a subset of the new conflict
         Set<T> invalidConflicts = new LinkedHashSet<T>();
         for (T e : getStorage().getConflictSets()) {
@@ -428,7 +432,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         return node.isClosed() || hasClosedParent(node.getParent());
     }
 
-    private void updateTree(AxiomSet<Id> conflictSet) {
+    private void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
         Node<Id> root = getRoot();
         if (getRoot() == null) {
             return;
@@ -442,7 +446,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }
     }
 
-    private Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) {
+    private Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
         if (node == null || node.getAxiomSet() == null)
             return Collections.emptySet();
         if (node.getAxiomSet().containsAll(axSet)) {
@@ -471,6 +475,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                         node.removeChild(cnode);
                     } else {
                         // update conflicts
+                       /*
                         if (cnode.isClosed())
                         {                            
                             Set<Id> pathLabels = cnode.getPathLabels();
@@ -482,8 +487,10 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                                     hs.updateAxioms(axioms);
                                 }
                             }
-                        }    
+                        }
+                        getTheory().addPositiveTest(cnode.getArcLabel());
                         cnode.removeArcLabel();
+                        */
                     }
                 }
                 node.removeAxioms();
