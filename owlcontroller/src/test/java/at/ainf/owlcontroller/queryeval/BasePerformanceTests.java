@@ -294,8 +294,9 @@ public abstract class BasePerformanceTests {
 
     private boolean isInWindow(AxiomSet<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
-            if (ps.equals(targetDiag)){
-                System.out.println(ps.getName());
+            if (ps.equals(targetDiag)) {
+                if (logger.isDebugEnabled())
+                    logger.debug("Target diagnosis is in window " + ps.getName());
                 return true;
             }
         return false;
