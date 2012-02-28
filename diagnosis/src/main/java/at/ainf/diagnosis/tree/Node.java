@@ -99,12 +99,14 @@ public class Node<Id> {
         return pathLabels;
     }
 
+    private boolean closed = false;
+
     public boolean isClosed() {
-        return conflict == null;
+        return this.closed;
     }
 
     public void setClosed() {
-        this.conflict = null;
+        this.closed = true;
     }
 
     public boolean isRoot() {
