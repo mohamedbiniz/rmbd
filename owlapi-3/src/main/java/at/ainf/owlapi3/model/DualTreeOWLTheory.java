@@ -29,7 +29,7 @@ public class DualTreeOWLTheory extends OWLTheory {
         OWLOntology ontology = getOntology();
         Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getActiveFormulas());
         axiomSet.removeAll(getFormulaStack());
-        updateAxioms(getOntology(),axiomSet, getBackgroundFormulas());
+        updateAxioms(getOntology(), axiomSet, getBackgroundFormulas());
 
         boolean consistent = !doConsistencyTest(getSolver());
 

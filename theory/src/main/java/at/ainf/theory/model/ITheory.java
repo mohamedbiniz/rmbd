@@ -104,4 +104,5 @@ public interface ITheory<Id> extends Searchable<Id> {
 
     public void reset();
 
+    //boolean testDiagnosis(Id conflictSet, Set<Id> pathLabels);
 }

@@ -293,6 +293,8 @@ public abstract class BasePerformanceTests {
     }
 
     private boolean isInWindow(AxiomSet<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+        if (diagnoses == null || targetDiag == null)
+            return false;
         for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
             if (ps.equals(targetDiag)) {
                 if (logger.isDebugEnabled())

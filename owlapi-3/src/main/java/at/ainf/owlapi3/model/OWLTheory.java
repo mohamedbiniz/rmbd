@@ -338,6 +338,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         // apply diagnosis
         kb.removeAll(diag);
         push(kb);
+        /*
         push(getBackgroundFormulas());
         for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
             push(test);
@@ -346,7 +347,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         for (Set<OWLLogicalAxiom> test : getPositiveTests()) {
             push(test);
         }
-
+        */
         if (!verifyConsistency()) {
             pop(getTheoryCount());
             return false;
