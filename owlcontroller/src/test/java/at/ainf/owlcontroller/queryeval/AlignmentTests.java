@@ -462,7 +462,7 @@ public class AlignmentTests extends BasePerformanceTests {
                     search.setCostsEstimator(es);
     
 
-
+                    long time = System.nanoTime();
                     try {
                         search.run();
                     } catch (SolverException e) {
@@ -472,16 +472,20 @@ public class AlignmentTests extends BasePerformanceTests {
                     } catch (InconsistentTheoryException e) {
                         logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
+                    time=System.nanoTime() - time;
+                    String t = Utils.getStringTime(time/1000000);
     
                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                             Collections.unmodifiableSet(search.getStorage().getDiagnoses());
-                    search.clearSearch();
                     //logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size());
                     
                     int n=0;
                     for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
                         if (targetDg.containsAll(d)) n++;
-                    logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size() + " "+n);
+                    int cs = search.getStorage().getConflicts().size();
+                    search.clearSearch();
+                    logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size()
+                            + " conflicts: " + cs + " time " + t + " target "+n);
                     
                 }
             }
