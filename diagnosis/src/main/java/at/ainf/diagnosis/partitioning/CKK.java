@@ -137,11 +137,9 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         if (getPostprocessor() != null)
             partition = getPostprocessor().run(getPartitions());
         restoreEntailments(hittingSets);
+        lastPartition = partition;
         return partition;
     }
-
-
-
 
     private boolean compare(Partition<Id> partition, Partition<Id> part) {
         if (part == null || partition == null)
