@@ -443,7 +443,7 @@ public class AlignmentTests extends BasePerformanceTests {
         Map<String,List<String>> mapOntos = readOntologiesFromFile(properties);
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {
-                for (BackgroundO background : new BackgroundO[]{ BackgroundO.O1_O2 }) {
+                for (BackgroundO background : BackgroundO.values()) {
                     String[] targetAxioms = properties.getProperty(m.trim()+"."+o.trim()).split(",");
                     OWLOntology ontology = createOwlOntology(m.trim(),o.trim());
                     Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
