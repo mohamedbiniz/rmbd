@@ -502,8 +502,8 @@ public class AlignmentTests extends BasePerformanceTests {
                 String[] targetAxioms = properties.getProperty(m.trim()+"."+o.trim()).split(",");
                 OWLOntology ontology = createOwlOntology(m.trim(),o.trim());
                 Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
-                OWLOntology ontology1 = createOwlOntology(o.split("-")[0]);
-                OWLOntology ontology2 = createOwlOntology(o.split("-")[1]);
+                OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
+                OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
                 OWLTheory theory = createOWLTheory(ontology, false);
                 UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
                 //ProbabilityTableModel mo = new ProbabilityTableModel();
@@ -511,11 +511,9 @@ public class AlignmentTests extends BasePerformanceTests {
                 OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
                 es.updateKeywordProb(map);
                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                 search.setCostsEstimator(es);
 
-                if (logger.isInfoEnabled())
-                    logger.info ("searching diagnoses for "+o+m);
                 try {
                     search.run();
                 } catch (SolverException e) {
@@ -530,13 +528,19 @@ public class AlignmentTests extends BasePerformanceTests {
                         Collections.unmodifiableSet(search.getStorage().getDiagnoses());
                 search.clearSearch();
 
-                //TableList e = new TableList();
-                //simulateBruteForceOnl(search, theory, targetDg, e, QSSType.MINSCORE);
-
-                boolean target = false;
+                AxiomSet<OWLLogicalAxiom> targetDiag=null;
                 for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
-                    if (targetDg.contains(d)) target = true;
-                if (!target) logger.info("target notf "+m+o);
+                    if (targetDg.containsAll(d)) targetDiag = d;
+
+                TableList e = new TableList();
+                simulateBruteForceOnl(search, theory, targetDiag, e, QSSType.MINSCORE);
+
+//                boolean target = false;
+//                for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
+//                    if (targetDg.contains(d)) target = true;
+//                if (!target) logger.info("target notf "+m+o);
+
+
             }
         }
         
