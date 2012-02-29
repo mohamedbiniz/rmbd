@@ -78,7 +78,7 @@ public class DiagnosisTests {
         exclude.add("GeoSkills.owl");
 
 
-        String testDir = ClassLoader.getSystemResource("sat").getPath();
+        String testDir = ClassLoader.getSystemResource("alignment").getPath();
         //String testDir =   "C:\\Daten\\OpBO";
         LinkedList<File> files = new LinkedList<File>();
         collectAllFiles(new File(testDir), files);
