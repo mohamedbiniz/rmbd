@@ -34,9 +34,9 @@ public abstract class BasePerformanceTests {
 
     private static Logger logger = Logger.getLogger(BasePerformanceTests.class.getName());
 
-    private int diagnosesCalc = 0;
-    private int conflictsCalc = 0;
-    private String daStr = "";
+    protected int diagnosesCalc = 0;
+    protected int conflictsCalc = 0;
+    protected String daStr = "";
 
     enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS}
 
@@ -58,7 +58,7 @@ public abstract class BasePerformanceTests {
         return p;
     }
 
-    private <E extends OWLObject> void printc
+    protected <E extends OWLObject> void printc
             (Collection<? extends Collection<E>> c) {
         for (Collection<E> hs : c) {
             System.out.println("Test case:");
@@ -67,7 +67,7 @@ public abstract class BasePerformanceTests {
     }
 
 
-    private <E extends OWLObject> void print
+    public <E extends OWLObject> void print
             (Collection<E> c) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         for (E el : c) {
@@ -89,7 +89,7 @@ public abstract class BasePerformanceTests {
         }
     }
 
-    private boolean generateQueryAnswer
+    public boolean generateQueryAnswer
             (UniformCostSearch<OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
@@ -292,7 +292,7 @@ public abstract class BasePerformanceTests {
 
     }
 
-    private boolean isInWindow(AxiomSet<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+    protected boolean isInWindow(AxiomSet<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         if (diagnoses == null || targetDiag == null)
             return false;
         for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)

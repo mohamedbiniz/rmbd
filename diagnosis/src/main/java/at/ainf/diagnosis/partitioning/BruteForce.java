@@ -72,6 +72,20 @@ public class BruteForce<Id> implements Partitioning<Id> {
         if (getPostprocessor() != null)
             partition = getPostprocessor().run(getPartitions());
         restoreEntailments(hittingSets);
+        lastPartition = partition;
+        return partition;
+    }
+
+    protected Partition<Id> lastPartition;
+
+    public <E extends AxiomSet<Id>> Partition<Id> nextPartition () {
+        getPartitions().remove(lastPartition);
+        Partition<Id> partition;
+        if (getPostprocessor() != null)
+            partition = getPostprocessor().run(getPartitions());
+        else
+            partition = getPartitions().get(0);
+        lastPartition = partition;
         return partition;
     }
 

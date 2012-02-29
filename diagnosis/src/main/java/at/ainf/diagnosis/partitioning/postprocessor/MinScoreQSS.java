@@ -20,8 +20,11 @@ public class MinScoreQSS<T> extends AbstractQSS<T> {
 
     
     public Partition<T> run(List<Partition<T>> partitions) {
-        if (partitions!=null && partitions.size() > 0)
-            return Collections.min(partitions,new ScoreComparator());
+        if (partitions!=null && partitions.size() > 0) {
+            lastQuery = Collections.min(partitions,new ScoreComparator());
+            return lastQuery;
+        }
+
         return null;
     }
 

@@ -77,7 +77,8 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 	        Partition<T> minScorePartition;
 
             if (getMinNumOfElimDiags(( minScorePartition = selectMinScorePartition(partitions))) >= numOfDiagsToElim) {
-	            return minScorePartition;
+                lastQuery = minScorePartition;
+	            return lastQuery;
 	        }
 
             for (; numOfDiagsToElim <= getMaxPossibleNumOfDiagsToEliminate(); numOfDiagsToElim++) {
@@ -85,10 +86,12 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 	            if (leastCautiousNonHighRiskPartitions.isEmpty()) {
 	                continue;
 	            }
-	            return Collections.min(leastCautiousNonHighRiskPartitions, new ScoreComparator());
+                lastQuery = Collections.min(leastCautiousNonHighRiskPartitions, new ScoreComparator());
+	            return lastQuery;
             }
 
-            return Collections.min(partitions,new ScoreComparator());
+            lastQuery = Collections.min(partitions,new ScoreComparator());
+            return lastQuery;
 
 	    }
 
