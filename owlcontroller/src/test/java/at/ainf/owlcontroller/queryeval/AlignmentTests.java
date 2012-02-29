@@ -58,8 +58,8 @@ public class AlignmentTests extends BasePerformanceTests {
         Set<String> targetDiag = new LinkedHashSet<String>();
         readData(filename, axioms, targetDiag);
         System.out.println("Read " + axioms.size() + " " + targetDiag.size());
-        assertEquals(axioms.size(), 41-5);
-        assertEquals(targetDiag.size(), 15);
+        assertEquals(axioms.size(), 36);
+        assertEquals(targetDiag.size(), 13);
 
         filename = "/home/kostya/java/files/CMT-CRS.txt";
         axioms.clear();
@@ -95,13 +95,13 @@ public class AlignmentTests extends BasePerformanceTests {
                 }
                 if (sub.contains(">")) {
                     source = sub.substring(0, sub.indexOf(">")).trim();
-                    target = sub.substring(sub.indexOf("=") + 1, sub.indexOf("|"));
+                    target = sub.substring(sub.indexOf(">") + 1, sub.indexOf("|")).trim();
                     axioms.put(createAxiom(sourceNamespace, source, targetNamespace, target),
                             Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
                 }
                 if (sub.contains("<")) {
                     source = sub.substring(0, sub.indexOf("<")).trim();
-                    target = sub.substring(sub.indexOf("=") + 1, sub.indexOf("|"));
+                    target = sub.substring(sub.indexOf("<") + 1, sub.indexOf("|")).trim();
                     axioms.put(createAxiom(targetNamespace, target, sourceNamespace, source),
                             Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
                 }
