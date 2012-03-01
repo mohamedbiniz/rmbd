@@ -6,7 +6,7 @@ import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
 import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
@@ -205,7 +205,7 @@ public class QuerySelComparison {
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
         //ProbabilityTableModel mo = new ProbabilityTableModel();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
 
@@ -267,7 +267,7 @@ public class QuerySelComparison {
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
+            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
             es.updateKeywordProb(map);
             search.setCostsEstimator(es);
 
@@ -347,7 +347,7 @@ public class QuerySelComparison {
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
+            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
             es.updateKeywordProb(map);
             search.setCostsEstimator(es);
 
@@ -1124,7 +1124,7 @@ private void simulateQuerySession
                 }
                 break;
         }
-        ((OWLAxiomCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
+        ((OWLAxiomKeywordCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
         return sortDiagnoses(diagnoses);
 
 

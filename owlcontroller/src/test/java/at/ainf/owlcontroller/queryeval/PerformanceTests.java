@@ -6,7 +6,7 @@ import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
 import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
@@ -27,7 +27,6 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import rationals.expr.Iteration;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -212,7 +211,7 @@ public class PerformanceTests extends BasePerformanceTests {
             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
+            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
             es.updateKeywordProb(map);
             search.setCostsEstimator(es);
 
@@ -232,7 +231,7 @@ public class PerformanceTests extends BasePerformanceTests {
             UniformCostSearch<OWLLogicalAxiom> dualsearch = createUniformCostSearch(dualtheory, true);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             //HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-            OWLAxiomCostsEstimator des = new OWLAxiomCostsEstimator(dualtheory);
+            OWLAxiomKeywordCostsEstimator des = new OWLAxiomKeywordCostsEstimator(dualtheory);
             des.updateKeywordProb(map);
             dualsearch.setCostsEstimator(des);
 
@@ -446,7 +445,7 @@ public class PerformanceTests extends BasePerformanceTests {
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(false, 0);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theoryNormal);
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
         searchNormal.run();
@@ -459,7 +458,7 @@ public class PerformanceTests extends BasePerformanceTests {
         theoryDual.useCache(false, 0);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();
-        es = new OWLAxiomCostsEstimator(theoryDual);
+        es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
 
@@ -886,7 +885,7 @@ private void simulateQuerySession
                 }
                 break;
         }
-        ((OWLAxiomCostsEstimator) search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
+        ((OWLAxiomKeywordCostsEstimator) search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
         return sortDiagnoses(diagnoses);
 
 

@@ -9,7 +9,7 @@ import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -223,7 +223,7 @@ public class DualTreeTest extends BasePerformanceTests {
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theoryNormal);
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
         searchNormal.run();
@@ -236,7 +236,7 @@ public class DualTreeTest extends BasePerformanceTests {
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();
-        es = new OWLAxiomCostsEstimator(theoryDual);
+        es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
 

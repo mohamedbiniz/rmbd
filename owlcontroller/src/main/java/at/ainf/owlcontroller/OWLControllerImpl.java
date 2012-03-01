@@ -46,7 +46,7 @@ public class OWLControllerImpl implements OWLController {
 
             pico.addComponent(ProbabilityQueryDebugger.class);
             pico.addComponent(OWLTheory.class);
-            pico.addComponent(OWLAxiomCostsEstimator.class);
+            pico.addComponent(OWLAxiomKeywordCostsEstimator.class);
             pico.addComponent(new TreeSet<OWLLogicalAxiom>());
             pico.addComponent(factory);
             pico.addComponent(ontology);
