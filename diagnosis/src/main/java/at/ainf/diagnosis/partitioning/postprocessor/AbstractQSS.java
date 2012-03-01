@@ -1,5 +1,8 @@
 package at.ainf.diagnosis.partitioning.postprocessor;
 
+import at.ainf.diagnosis.partitioning.Partitioning;
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 
@@ -20,6 +23,7 @@ public abstract class AbstractQSS<T> implements QSS<T> {
     protected Partition<T> lastQuery = null;
     protected boolean answerToLastQuery;
     protected int numOfEliminatedLeadingDiags = 0;
+    private Partitioning<T> partitionSearcher;
 
 
     protected double log(double value, double base) {
@@ -50,7 +54,7 @@ public abstract class AbstractQSS<T> implements QSS<T> {
         updateNumOfEliminatedLeadingDiags(answer);
     }
 
-    protected void preprocessBeforeRun(List<Partition<T>> partitions){
+    protected void preprocessBeforeRun(List<Partition<T>> partitions) {
         updateNumOfLeadingDiags(partitions.get(0));
     }
 
@@ -98,6 +102,14 @@ public abstract class AbstractQSS<T> implements QSS<T> {
             pr += diagnosis.getMeasure();
 
         return pr;
+    }
+
+    protected Partitioning<T> getPartitionSearcher() {
+        return partitionSearcher;
+    }
+
+    public void setPartitionSearcher(Partitioning<T> partitioning) {
+        this.partitionSearcher = partitioning;
     }
 
     public class ScoreComparator implements Comparator<Partition<T>> {

@@ -110,7 +110,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         if (logger.isDebugEnabled())
             logger.debug("Searched through " + getPartitionsCount() + " partitionsCount");
         if (getPostprocessor() != null)
-            partition = getPostprocessor().run(getPartitions());
+            partition = getPostprocessor().run(getPartitions(), partition);
         lastPartition = partition;
 
         return partition;

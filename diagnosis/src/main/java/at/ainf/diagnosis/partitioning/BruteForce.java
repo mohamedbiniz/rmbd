@@ -69,8 +69,9 @@ public class BruteForce<Id> implements Partitioning<Id> {
         Partition<Id> partition = findPartition(desc, new LinkedHashSet<E>());
         if (logger.isDebugEnabled())
             logger.debug("Searched through " + getPartitionsCount() + " partitionsCount");
-        if (getPostprocessor() != null)
-            partition = getPostprocessor().run(getPartitions());
+        if (getPostprocessor() != null){
+            partition = getPostprocessor().run(getPartitions(), partition);          
+        }
         restoreEntailments(hittingSets);
         lastPartition = partition;
         return partition;
@@ -78,13 +79,12 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     protected Partition<Id> lastPartition;
 
-    public <E extends AxiomSet<Id>> Partition<Id> nextPartition () {
+    public <E extends AxiomSet<Id>> Partition<Id> nextPartition () throws SolverException, InconsistentTheoryException {
         getPartitions().remove(lastPartition);
-        Partition<Id> partition;
+        Partition<Id> partition = getPartitions().get(0);
+        if (!partition.isVerified) verifyPartition(partition);
         if (getPostprocessor() != null)
-            partition = getPostprocessor().run(getPartitions());
-        else
-            partition = getPartitions().get(0);
+            partition = getPostprocessor().run(getPartitions(), partition);
         lastPartition = partition;
         return partition;
     }
@@ -135,7 +135,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         this.threshold = threshold;
     }
 
-    protected boolean verifyPartition(Partition<Id> partition)
+    public boolean verifyPartition(Partition<Id> partition)
             throws SolverException, InconsistentTheoryException {
         Set<Id> ent = getCommonEntailments(partition.dx);
         partition.partition = Collections.unmodifiableSet(ent);
@@ -269,6 +269,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
     public void setPostprocessor(Postprocessor<Id> proc) {
         if (proc != null) {
             this.postprocessor = proc;
+            proc.setPartitionSearcher(this);
         } else {
             this.partitions = null;
         }
