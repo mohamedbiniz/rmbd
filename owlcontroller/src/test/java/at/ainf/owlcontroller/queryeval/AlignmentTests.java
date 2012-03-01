@@ -4,6 +4,7 @@ import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.postprocessor.QSS;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
@@ -286,13 +287,11 @@ public class AlignmentTests extends BasePerformanceTests {
         return search;
     }
 
-    protected void simulateBruteForceOnl
-            (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
-                    theory, Set<OWLLogicalAxiom> targetDiag, TableList
-                    entry, QSSType scoringFunc) {
+    protected void simulateBruteForceOnl (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory theory, Set<OWLLogicalAxiom> targetDiag, TableList entry, QSSType scoringFunc, String message) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
+        //userBrk=false;
 
         Partition<OWLLogicalAxiom> actPa = null;
 
@@ -473,9 +472,9 @@ public class AlignmentTests extends BasePerformanceTests {
         if (num_of_queries!=0)  consistencyCount = theory.getConsistencyCount() / num_of_queries;
         if (num_of_queries!=0) reactionTime = reactionTime / num_of_queries;
 
-        logger.info("Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
+        logger.info(message + " Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
                 + targetDiagnosisIsMostProbable + ", is in window " + targetDiagnosisIsInWind + ", size of window  " + diagWinSize
-                + ", reaction " + reactionTime + ", consistency checks " + consistencyCount);
+                + ", reaction " + reactionTime + ", user " + userBreak + ", systemBrake " + systemBreak + ", consistency checks " + consistencyCount);
 
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
@@ -587,6 +586,152 @@ public class AlignmentTests extends BasePerformanceTests {
         }
         }
     
+    public AxiomSet<OWLLogicalAxiom> getTargetDiag(Set<AxiomSet<OWLLogicalAxiom>> diagnoses, final CostsEstimator<OWLLogicalAxiom> e, String m) {
+        Comparator<AxiomSet<OWLLogicalAxiom>> c = new Comparator<AxiomSet<OWLLogicalAxiom>>() {
+            public int compare(AxiomSet<OWLLogicalAxiom> o1, AxiomSet<OWLLogicalAxiom> o2) {
+                double sumO1 = 0;
+                for (OWLLogicalAxiom axiom : o1)
+                    sumO1 += e.getAxiomCosts(axiom);
+
+                double sumO2 = 0;
+                for (OWLLogicalAxiom axiom : o2)
+                    sumO2 += e.getAxiomCosts(axiom);
+
+                if (sumO1 < sumO2)
+                    return -1;
+                else if (sumO1 == sumO2)
+                    return 0;
+                else 
+                    return 1;
+            }
+        }; 
+        if (m.equals("owlctxmatch"))
+            return Collections.max(diagnoses,c);
+        else
+            return Collections.min(diagnoses,c);
+    }
+    
+    enum TargetSource {FROM_FILE, FROM_30_DIAGS};
+
+    @Test
+    public void doOnlyOneQuerySession() throws SolverException, InconsistentTheoryException, IOException {
+        Properties properties = readProps();
+        Map<String,List<String>> mapOntos = readOntologiesFromFile(properties);
+
+        QSSType[] qssTypes = new QSSType[] { QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK };
+        String m = "hmatch";
+        String o = "PCS-CRS";
+        TargetSource targetSource =  TargetSource.FROM_FILE;
+        QSSType type = QSSType.SPLITINHALF;
+                        String[] targetAxioms = properties.getProperty(m.trim()+"."+o.trim()).split(",");
+                        OWLOntology ontology = createOwlOntology(m.trim(),o.trim());
+                        Set<OWLLogicalAxiom> targetDg;
+                        OWLTheory theory = createOWLTheory(ontology, false);
+                        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
+                        //ProbabilityTableModel mo = new ProbabilityTableModel();
+                        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+
+                        String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                + m.trim()
+                                + "-incoherent-evaluation/"
+                                + o.trim()
+                                +".txt").getPath();
+
+                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory,path);
+                        //es.updateKeywordProb(map);
+                        targetDg=null;
+
+                        search.setCostsEstimator(es);
+                        if (targetSource == TargetSource.FROM_30_DIAGS) {
+                            try {
+                                search.run(30);
+                            } catch (SolverException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (NoConflictException e) {
+                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (InconsistentTheoryException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+
+                            Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                            search.clearSearch();
+                            AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses,es,m);
+                            targetDg = new LinkedHashSet<OWLLogicalAxiom>();
+                            for (OWLLogicalAxiom axiom : targD)
+                                targetDg.add(axiom);
+                        }
+
+                        if (targetSource == TargetSource.FROM_FILE)
+                            targetDg = getDiagnosis(targetAxioms, ontology);
+
+                        TableList e = new TableList();
+                        String message = "act " + m + " - " + o + " - "+targetSource + " " + type;
+                        simulateBruteForceOnl(search, theory, targetDg, e, type,message);
+                    
+    }
+    
+    @Test
+    public void doTwoTests() throws SolverException, InconsistentTheoryException, IOException {
+        Properties properties = readProps();
+        Map<String,List<String>> mapOntos = readOntologiesFromFile(properties);
+        
+        QSSType[] qssTypes = new QSSType[] { QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK };
+        for (String m : mapOntos.keySet()) {
+            for (String o : mapOntos.get(m)) {
+                for (TargetSource targetSource : TargetSource.values()) {
+                    for (QSSType type : qssTypes) {
+                        String[] targetAxioms = properties.getProperty(m.trim()+"."+o.trim()).split(",");
+                        OWLOntology ontology = createOwlOntology(m.trim(),o.trim());
+                        Set<OWLLogicalAxiom> targetDg;
+                        OWLTheory theory = createOWLTheory(ontology, false);
+                        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
+                        //ProbabilityTableModel mo = new ProbabilityTableModel();
+                        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+
+                        String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                + m.trim()
+                                + "-incoherent-evaluation/"
+                                + o.trim()
+                                +".txt").getPath();
+
+                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory,path);
+                        //es.updateKeywordProb(map);
+                        targetDg=null;
+
+                        search.setCostsEstimator(es);
+                        if (targetSource == TargetSource.FROM_30_DIAGS) {
+                            try {
+                                search.run(30);
+                            } catch (SolverException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (NoConflictException e) {
+                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (InconsistentTheoryException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+
+                            Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                            search.clearSearch();
+                            AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses,es,m);
+                            targetDg = new LinkedHashSet<OWLLogicalAxiom>();
+                            for (OWLLogicalAxiom axiom : targD)
+                                targetDg.add(axiom);
+                        }
+
+                        if (targetSource == TargetSource.FROM_FILE)
+                            targetDg = getDiagnosis(targetAxioms, ontology);
+
+                        TableList e = new TableList();
+                        String message = "act " + m + " - " + o + " - "+targetSource + " " + type;
+                        simulateBruteForceOnl(search, theory, targetDg, e, type,message);
+                    }
+                }
+            }
+        }
+    }
+
 
     @Test
     public void doAlignmentTest() throws SolverException, InconsistentTheoryException, IOException {
@@ -633,7 +778,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
                 TableList e = new TableList();
                 logger.info (m+" - "+o);
-                simulateBruteForceOnl(search, theory, targetDg, e, QSSType.MINSCORE);
+                simulateBruteForceOnl(search, theory, targetDg, e, QSSType.MINSCORE, "");
 
 //                boolean target = false;
 //                for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
