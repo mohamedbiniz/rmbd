@@ -2,7 +2,7 @@ package at.ainf.diagnosis.debugger;
 
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
-import at.ainf.diagnosis.partitioning.ScoringFunction;
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -16,10 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-/*import at.ainf.querygen.partitioning.CKK;
-  import at.ainf.querygen.partitioning.QueryMinimizer;
-  import at.ainf.querygen.partitioning.ScoringFunction;*/
 
 /**
  * Created by IntelliJ IDEA.
@@ -126,7 +122,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     }
 
 
-    public Partition<Id> getQuery(ScoringFunction<Id> func, boolean minimize, double acceptanceThreshold) {
+    public Partition<Id> getQuery(Scoring<Id> func, boolean minimize, double acceptanceThreshold) {
         CKK<Id> ckk = new CKK<Id>(theory, func);
         ckk.setThreshold(acceptanceThreshold);
 

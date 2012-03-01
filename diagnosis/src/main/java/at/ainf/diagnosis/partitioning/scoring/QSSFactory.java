@@ -1,4 +1,4 @@
-package at.ainf.diagnosis.partitioning.postprocessor;
+package at.ainf.diagnosis.partitioning.scoring;
 
 /**
  * Created by IntelliJ IDEA.

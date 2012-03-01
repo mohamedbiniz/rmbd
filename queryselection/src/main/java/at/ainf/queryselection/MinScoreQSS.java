@@ -107,7 +107,7 @@ public class MinScoreQSS extends AbstractQuerySelectionStrategy {
 
             System.out.println("Number of current diagnoses: " + this.getCurrentDiagnoses().size());
 
-            System.out.println("Query " + this.getStep() + ": has score = " + q.getScore());
+            System.out.println("Query " + this.getStep() + ": has score = " + q.getPartitionScore());
             System.out.println("Query " + this.getStep() + ": D_X = " + q.d_XToString(true) + "\t\t P(D_X) = " + q.getProb_X());
             System.out.println("Query " + this.getStep() + ": D_notX = " + q.d_notXToString(true) + "\t\t P(D_notX) = " + q.getProb_notX());
             System.out.println("Query " + this.getStep() + ": D_0 = " + q.d_0ToString(true) + "\t\t P(D_0) = " + q.getProb_0());
@@ -145,7 +145,7 @@ public class MinScoreQSS extends AbstractQuerySelectionStrategy {
 
             //System.out.println("Number of current diagnoses: " + this.getCurrentDiagnoses().size());
 
-            //System.out.println("Query " + this.getStep() + ": has score = " + q.getScore());
+            //System.out.println("Query " + this.getStep() + ": has score = " + q.getPartitionScore());
             //System.out.println("Query " + this.getStep() + ": D_X = " + q.d_XToString(true) + "\t\t P(D_X) = " + q.getProb_X());
             //System.out.println("Query " + this.getStep() + ": D_notX = " + q.d_notXToString(true) + "\t\t P(D_notX) = " + q.getProb_notX());
             //System.out.println("Query " + this.getStep() + ": D_0 = " + q.d_0ToString(true) + "\t\t P(D_0) = " + q.getProb_0());

@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
-import at.ainf.diagnosis.partitioning.postprocessor.Postprocessor;
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -27,9 +27,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     private int partitionsCount = 0;
 
-    private final ScoringFunction<Id> scoring;
-
-    private Postprocessor<Id> postprocessor = null;
+    private Scoring<Id> scoring = null;
 
     private ArrayList<Partition<Id>> partitions = new ArrayList<Partition<Id>>();
 
@@ -37,9 +35,10 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     private double threshold = 0.01d;
 
-    public BruteForce(ITheory<Id> theory, ScoringFunction<Id> function) {
+    public BruteForce(ITheory<Id> theory, Scoring<Id> function) {
         this.theory = theory;
         this.scoring = function;
+        this.scoring.setPartitionSearcher(this);
     }
 
     protected void reset() {
@@ -69,22 +68,20 @@ public class BruteForce<Id> implements Partitioning<Id> {
         Partition<Id> partition = findPartition(desc, new LinkedHashSet<E>());
         if (logger.isDebugEnabled())
             logger.debug("Searched through " + getPartitionsCount() + " partitionsCount");
-        if (getPostprocessor() != null){
-            partition = getPostprocessor().run(getPartitions(), partition);          
+        if (getScoring() != null){
+            partition = getScoring().runPostprocessor(getPartitions(), partition);
         }
         restoreEntailments(hittingSets);
-        lastPartition = partition;
         return partition;
     }
 
-    protected Partition<Id> lastPartition;
 
-    public <E extends AxiomSet<Id>> Partition<Id> nextPartition () throws SolverException, InconsistentTheoryException {
+    public <E extends AxiomSet<Id>> Partition<Id> nextPartition (Partition<Id> lastPartition) throws SolverException, InconsistentTheoryException {
         getPartitions().remove(lastPartition);
         Partition<Id> partition = getPartitions().get(0);
         if (!partition.isVerified) verifyPartition(partition);
-        if (getPostprocessor() != null)
-            partition = getPostprocessor().run(getPartitions(), partition);
+        if (getScoring() != null)
+            partition = getScoring().runPostprocessor(getPartitions(), partition);
         lastPartition = partition;
         return partition;
     }
@@ -211,7 +208,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         head.add(hs);
         Partition<Id> partHead = null;
 
-        //if (this.bestPartition == null || (getScoringFunction().getScore(part) <= this.bestPartition.score))
+        //if (this.bestPartition == null || (getScoringFunction().getPartitionScore(part) <= this.bestPartition.score))
         partHead = findPartition(tail, head);
 
         head.remove(hs);
@@ -242,7 +239,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return theory;
     }
 
-    public ScoringFunction<Id> getScoringFunction() {
+    public Scoring<Id> getScoringFunction() {
         return this.scoring;
     }
 
@@ -258,22 +255,12 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return partitionsCount;
     }
 
-    public Postprocessor<Id> getPostprocessor() {
-        return postprocessor;
+    public Scoring<Id> getScoring() {
+        return scoring;
     }
 
     public List<Partition<Id>> getPartitions() {
         return partitions;
     }
-
-    public void setPostprocessor(Postprocessor<Id> proc) {
-        if (proc != null) {
-            this.postprocessor = proc;
-            proc.setPartitionSearcher(this);
-        } else {
-            this.partitions = null;
-        }
-    }
-
 
 }

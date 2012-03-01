@@ -75,7 +75,7 @@ public class PenaltyQSS extends MinScoreQSS{
             Collections.sort(candidateQueries,new QueryScoreComparator());
             /*//////////////////
             for(Query q : candidateQueries){
-                System.out.println("sc = " + q.getScore());
+                System.out.println("sc = " + q.getPartitionScore());
             }
             *//////////////////
             return candidateQueries.getFirst();

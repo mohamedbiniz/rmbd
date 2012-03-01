@@ -1,5 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -63,7 +64,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         }
     }
 
-    public GreedySearch(ITheory<Id> theory, ScoringFunction<Id> function) {
+    public GreedySearch(ITheory<Id> theory, Scoring<Id> function) {
         super(theory, function);
     }
 
@@ -109,9 +110,8 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
 
         if (logger.isDebugEnabled())
             logger.debug("Searched through " + getPartitionsCount() + " partitionsCount");
-        if (getPostprocessor() != null)
-            partition = getPostprocessor().run(getPartitions(), partition);
-        lastPartition = partition;
+        if (getScoring() != null)
+            partition = getScoring().runPostprocessor(getPartitions(), partition);
 
         return partition;
     }

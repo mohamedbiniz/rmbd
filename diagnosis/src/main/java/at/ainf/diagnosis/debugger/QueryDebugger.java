@@ -1,10 +1,9 @@
 package at.ainf.diagnosis.debugger;
 
-import at.ainf.diagnosis.partitioning.ScoringFunction;
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.theory.model.ITheory;
 
 import at.ainf.theory.storage.Partition;
-//import at.ainf.querygen.partitioning.ScoringFunction;
 import at.ainf.theory.storage.AxiomSet;
 
 
@@ -29,7 +28,7 @@ public interface QueryDebugger<Id> {
 
     public void init();
 
-    Partition<Id> getQuery(ScoringFunction<Id> f, boolean minimizeQuery, double acceptanceThreshold);
+    Partition<Id> getQuery(Scoring<Id> f, boolean minimizeQuery, double acceptanceThreshold);
 
     void updateMaxHittingSets(int number);
 

@@ -93,7 +93,7 @@ public class TcaeFrameSection extends AbstractOWLClassAxiomFrameSection<OWLLogic
 
     protected void refillInferred() {
         /*getOWLModelManager().getReasonerPreferences().executeTask(ReasonerPreferences.OptionalInferenceTask.SHOW_INFERRED_SUPER_CLASSES, new Runnable() {
-                public void run() {
+                public void runPostprocessor() {
                     if (getOWLModelManager().getReasoner().isSatisfiable(getRootObject())) {
                     	OWLClass thing = getOWLModelManager().getOWLDataFactory().getOWLThing();
                         for (Node<OWLClass> inferredSuperClasses : getOWLModelManager().getReasoner().getSuperClasses(getRootObject(), true)) {

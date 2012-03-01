@@ -1,25 +1,30 @@
-package at.ainf.diagnosis.partitioning;
+package at.ainf.diagnosis.partitioning.scoring;
 
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
- * User: kostya
- * Date: 11.05.11
- * Time: 09:29
+ * User: pfleiss
+ * Date: 10.02.12
+ * Time: 11:19
  * To change this template use File | Settings | File Templates.
  */
-public class EntropyScoringFunction<Id> implements ScoringFunction<Id> {
+public class MinScoreQSS<T> extends AbstractQSS<T> {
 
-    private static Logger logger = Logger.getLogger(EntropyScoringFunction.class.getName());
+    private static Logger logger = Logger.getLogger(MinScoreQSS.class.getName());
 
     public double getScore(Partition<?> partition) {
         if (partition == null || partition.dx.isEmpty())
             return Double.MAX_VALUE;
+        if (partition.score < Double.MAX_VALUE)
+            return partition.score;
         double pX = sum(partition.dx) + sum(partition.dz) / 2;
         double pNX = sum(partition.dnx) + sum(partition.dz) / 2;
 
@@ -35,12 +40,6 @@ public class EntropyScoringFunction<Id> implements ScoringFunction<Id> {
         return sc;
     }
 
-    private double log(double value, double base) {
-        if (value == 0)
-            return 0;
-        return Math.log(value) / Math.log(base);
-    }
-
     private double sum(Set<? extends AxiomSet> dx) {
         double sum = 0;
         for (AxiomSet hs : dx)
@@ -52,13 +51,22 @@ public class EntropyScoringFunction<Id> implements ScoringFunction<Id> {
         return "Entropy";
     }
 
-    public void normalize(Set<? extends AxiomSet<Id>> hittingSets) {
+    public void normalize(Set<? extends AxiomSet<T>> hittingSets) {
         double sum = sum(hittingSets);
-        for (AxiomSet<Id> hs : hittingSets) {
+        for (AxiomSet<T> hs : hittingSets) {
             double value = hs.getMeasure() / sum;
             hs.setMeasure(value);
         }
 
+    }
+    
+    public Partition<T> runPostprocessor(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
+        //if (partitions!=null && partitions.size() > 0) {
+        //    lastQuery = Collections.min(partitions,new ScoreComparator());
+        //    return lastQuery;
+        //}
+
+        return currentBest;
     }
 
 

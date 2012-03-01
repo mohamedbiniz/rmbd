@@ -2,7 +2,7 @@ package at.ainf.protegeview.backgroundsearch;
 
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
-import at.ainf.diagnosis.partitioning.ScoringFunction;
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.storage.Partition;
 import at.ainf.theory.model.SolverException;
@@ -15,7 +15,6 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -33,7 +32,7 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
 
     private List<AxiomSet<OWLLogicalAxiom>> diags;
 
-    private ScoringFunction<OWLLogicalAxiom> func;
+    private Scoring<OWLLogicalAxiom> func;
 
     TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
@@ -41,7 +40,7 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
                          JTextArea area,
                          List<AxiomSet<OWLLogicalAxiom>> diags,
                          boolean isQueryMinimizerActive,
-                         ScoringFunction<OWLLogicalAxiom> scoringFunc) {
+                         Scoring<OWLLogicalAxiom> scoringFunc) {
         this.area = area;
         this.search = search;
         this.isQueryMinimizerActive = isQueryMinimizerActive;

@@ -1,11 +1,11 @@
-package at.ainf.diagnosis.partitioning.postprocessor;
+package at.ainf.diagnosis.partitioning.scoring;
 
+import at.ainf.diagnosis.partitioning.BigFunctions;
 import at.ainf.diagnosis.partitioning.Partitioning;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +26,7 @@ public abstract class AbstractQSS<T> implements QSS<T> {
     private Partitioning<T> partitionSearcher;
 
 
-    protected double log(double value, double base) {
+    protected double log(double value, int base) {
         if (value == 0)
             return 0;
         return Math.log(value) / Math.log(base);
@@ -86,14 +86,17 @@ public abstract class AbstractQSS<T> implements QSS<T> {
         }
     }
 
-    protected double getScore(Partition<T> partition) {
+
+
+    protected double getPartitionScore(Partition<T> partition) {
         double sumDx = getSumProb(partition.dx);
         double sumDnx = getSumProb(partition.dnx);
         double sumD0 = getSumProb(partition.dz);
 
-        return sumDx * log(sumDx, 2d)
-               + sumDnx * log( sumDnx, 2d)
-               + sumD0 + 1d;
+
+        return sumDx * log(sumDx, 2)
+                + sumDnx * log(sumDnx, 2)
+                + sumD0 + 1d;
     }
 
     protected double getSumProb(Set<AxiomSet<T>> set) {
@@ -114,9 +117,9 @@ public abstract class AbstractQSS<T> implements QSS<T> {
 
     public class ScoreComparator implements Comparator<Partition<T>> {
         public int compare(Partition<T> o1, Partition<T> o2) {
-            if (getScore(o1) < getScore(o2))
+            if (getPartitionScore(o1) < getPartitionScore(o2))
                 return -1;
-            else if (getScore(o1) > getScore(o2))
+            else if (getPartitionScore(o1) > getPartitionScore(o2))
                 return 1;
             else
                 return -1*((Integer)o1.dx.size()).compareTo(o2.dx.size());

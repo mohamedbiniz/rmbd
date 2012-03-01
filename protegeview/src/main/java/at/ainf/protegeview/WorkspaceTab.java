@@ -96,7 +96,7 @@ public class
         Frame parent = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);
 
         BackgroundSearcher searcher = new BackgroundSearcher(getSearch(), parent);
-        //getWS().getSearch().run();
+        //getWS().getSearch().runPostprocessor();
         switch (searcher.doBackgroundSearch()) {
             case FINISHED:
                 Collection<? extends AxiomSet<OWLLogicalAxiom>> hittingsets = getSearch().getStorage().getDiagnoses();

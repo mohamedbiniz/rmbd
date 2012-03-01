@@ -1,6 +1,4 @@
-package at.ainf.diagnosis.partitioning.postprocessor;
-
-import at.ainf.theory.storage.Partition;
+package at.ainf.diagnosis.partitioning.scoring;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,6 +7,6 @@ import at.ainf.theory.storage.Partition;
  * Time: 19:19
  * To change this template use File | Settings | File Templates.
  */
-public interface QSS<T> extends Postprocessor<T>{
+public interface QSS<T> extends Scoring<T> {
     void updateParameters(boolean answerToLastQuery);
 }

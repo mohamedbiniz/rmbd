@@ -140,7 +140,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, InconsistentTheoryException {
 
-        start("Overall run");
+        start("Overall runPostprocessor");
         start("Diagnosis", "diagnosis");
         try {
             theory.registerTestCases();
@@ -149,7 +149,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 throw new SolverException("the background theory doesn't meet requirements");
 
             if (logger.isInfoEnabled())
-                logger.info("run started");
+                logger.info("runPostprocessor started");
 
             if (getRoot() != null) {
                 // verify hitting sets and remove invalid

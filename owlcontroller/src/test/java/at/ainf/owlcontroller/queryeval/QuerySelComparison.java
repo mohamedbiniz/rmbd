@@ -1,6 +1,8 @@
 package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.partitioning.*;
+import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -89,11 +91,11 @@ public class QuerySelComparison {
     public Partition<OWLLogicalAxiom> getBestQuery(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diags)
             throws SolverException, InconsistentTheoryException {
 
-        ScoringFunction f = null;
+        Scoring<OWLLogicalAxiom> f = null;
         if (scoringFunc.equals(ScoringFunc.ENTROPY))
-            f = new EntropyScoringFunction();
+            f = QSSFactory.createMinScoreQSS();
         else if (scoringFunc.equals(ScoringFunc.SPLITINHALF))
-            f = new SplitScoringFunction();
+            f = QSSFactory.createSplitInHalfQSS();
 
         Partitioning<OWLLogicalAxiom> algo;
         String name;

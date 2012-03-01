@@ -121,7 +121,7 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
         if (axiomProb.get(label) != null) {
             double p = (1 - axiomProb.get(label)) / 10;
             if (p==0)
-                return Double.MIN_VALUE;
+                return Math.pow(10,-100);//Double.MIN_VALUE;
             else
                 return p;
             }

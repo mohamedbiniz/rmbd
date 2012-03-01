@@ -261,7 +261,7 @@ public class Query implements Observer {
     }
 
     /*
-     public double getScore(){
+     public double getPartitionScore(){
          if(this.getProb_X() > 0f){
              double score = (double)this.getProb_X() * (Math.log((double)this.getProb_X()) / Math.log((double)2)) +
                  this.getProb_notX() * (Math.log((double)this.getProb_notX()) / Math.log((double)2)) +

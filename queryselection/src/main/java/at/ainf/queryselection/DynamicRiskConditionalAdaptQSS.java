@@ -29,7 +29,7 @@ public class DynamicRiskConditionalAdaptQSS extends DynamicRiskQSS implements ID
         int numOfDiagsToElim = percentToNumber(perc);
         Query q;
         if ((q = selectMinScoreQuery()).getMinNumOfElimDiags() >= numOfDiagsToElim) {
-            //System.out.println("DynRiskNoAdapt: MinScore query has score: " + q.getScore());
+            //System.out.println("DynRiskNoAdapt: MinScore query has score: " + q.getPartitionScore());
             return q;
         }
         this.tooHighRiskCounter++;

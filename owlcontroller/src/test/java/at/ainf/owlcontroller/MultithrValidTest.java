@@ -2,8 +2,8 @@ package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.partitioning.BruteForce;
-import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
 import at.ainf.diagnosis.partitioning.Partitioning;
+import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -66,7 +66,7 @@ public class MultithrValidTest {
         assertEquals(true, debugger.debug());
 
         long time = System.currentTimeMillis();
-        Partitioning<OWLLogicalAxiom> algo = new BruteForce<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        Partitioning<OWLLogicalAxiom> algo = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> part = algo.generatePartition(debugger.getValidHittingSets());
         time = System.currentTimeMillis() - time;
         logger.info(part.score + " dx:" + part.dx.size() + " dnx:" + part.dnx.size() + " dz:" + part.dz.size());
