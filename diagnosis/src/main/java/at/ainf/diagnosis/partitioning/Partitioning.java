@@ -18,11 +18,13 @@ import java.util.Set;
 public interface Partitioning<T> {
     <E extends AxiomSet<T>> Partition<T> generatePartition(Set<E> hittingSets) throws SolverException, InconsistentTheoryException;
 
-    <E extends AxiomSet<T>> Partition<T> nextPartition();
+    <E extends AxiomSet<T>> Partition<T> nextPartition() throws SolverException, InconsistentTheoryException;
 
     void setPostprocessor(Postprocessor<T> proc);
 
     public double getThreshold();
 
     public void setThreshold(double threshold);
+
+    boolean verifyPartition(Partition<T> partition) throws SolverException, InconsistentTheoryException;
 }

@@ -16,8 +16,8 @@ public class Partition<T> {
     public Set<AxiomSet<T>> dz = new LinkedHashSet<AxiomSet<T>>();
 
     public Set<T> partition;
-    public double score = 0;
+    public double score = Double.MAX_VALUE;
     public double difference = Double.MAX_VALUE;
-
+    public boolean isVerified = false;
 
 }

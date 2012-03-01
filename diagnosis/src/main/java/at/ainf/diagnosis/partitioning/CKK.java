@@ -114,12 +114,20 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         Partition<Id> partition = null;
         double bestdiff = Double.MAX_VALUE;
         int count = 0;
+        Collections.sort(getPartitions(), new Comparator<Partition<Id>>() {
+            public int compare(Partition<Id> o1, Partition<Id> o2) {
+                return Double.valueOf(o1.difference).compareTo(o2.difference);
+            }
+        });
         for (Partition<Id> part : getPartitions()) {
-            if ((part.difference < bestdiff || (part.difference == bestdiff && compare(partition, part))) && verifyPartition(part)) {
+            if ((part.difference < bestdiff || (part.difference == bestdiff && compare(partition, part)))
+                    && verifyPartition(part)) {
+
                 double score = getScoringFunction().getScore(part);
                 double best = getScoringFunction().getScore(partition);
                 if ((score < best) || (score == best && diff(part) < diff(partition))) {
                     partition = part;
+                    updateDifference(partition);
                     if (partition.difference < bestdiff)
                         bestdiff = partition.difference;
                 }
@@ -134,11 +142,28 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
             logger.info("Searched through " + count + "/" + getPartitionsCount() + " partitionsCount"); 
         if (partition == null || getPartitions().isEmpty())
             logger.error("No partition found! " + getPartitions().size() + " " +toString(hs));
-        if (getPostprocessor() != null)
-            partition = getPostprocessor().run(getPartitions());
+        if (getPostprocessor() != null){
+            partition = getPostprocessor().run(getPartitions(), partition);
+        }
+
         restoreEntailments(hittingSets);
         lastPartition = partition;
         return partition;
+    }
+
+    private void updateDifference(Partition<Id> partition) {
+        double left = sumProbabilities(partition.dx);
+        double right = sumProbabilities(partition.dnx);
+        double none = sumProbabilities(partition.dz);
+        partition.difference = Math.abs(left-right) + none/2;
+    }
+
+    private double sumProbabilities(Set<AxiomSet<Id>> partition) {
+        double sum = 0;
+        for (AxiomSet<Id> ids : partition) {
+            sum += ids.getMeasure();
+        }
+        return sum;
     }
 
     private boolean compare(Partition<Id> partition, Partition<Id> part) {
@@ -154,7 +179,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
     }
 
 
-    protected boolean verifyPartition(Partition<Id> partition)
+    public boolean verifyPartition(Partition<Id> partition)
             throws SolverException, InconsistentTheoryException {
         Set<Id> ent = partition.partition;
         // partition the rest of diagnoses
@@ -172,17 +197,17 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
                     partition.dz.add(hs);
             }
         }
+        partition.isVerified = true;
         return true;
     }
 
     protected <E extends AxiomSet<Id>> void findPartition(Differencing<E> diff)
             throws SolverException, InconsistentTheoryException {
-
-        if ((diff == null || diff.tail.isEmpty())) {
+        // diff == null
+        if (diff.tail.isEmpty()) {
             if (diff.left.isEmpty())
                 return;
             else {
-                incPartitionsCount();
                 Partition<Id> part = new Partition<Id>();
                 for (E el : diff.left)
                     part.dx.add(el);
@@ -194,6 +219,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
                     logger.debug("Adding partition with common entailments: " + part.partition);
                 part.difference = diff.difference;
                 getPartitions().add(part);
+                incPartitionsCount();
                 return;
             }
         }

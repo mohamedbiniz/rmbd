@@ -1,5 +1,7 @@
 package at.ainf.diagnosis.partitioning.postprocessor;
 
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 
@@ -19,13 +21,13 @@ public class MinScoreQSS<T> extends AbstractQSS<T> {
 
 
     
-    public Partition<T> run(List<Partition<T>> partitions) {
-        if (partitions!=null && partitions.size() > 0) {
-            lastQuery = Collections.min(partitions,new ScoreComparator());
-            return lastQuery;
-        }
+    public Partition<T> run(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
+        //if (partitions!=null && partitions.size() > 0) {
+        //    lastQuery = Collections.min(partitions,new ScoreComparator());
+        //    return lastQuery;
+        //}
 
-        return null;
+        return currentBest;
     }
 
 

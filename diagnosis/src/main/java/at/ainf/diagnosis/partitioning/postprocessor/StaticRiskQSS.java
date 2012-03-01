@@ -1,5 +1,7 @@
 package at.ainf.diagnosis.partitioning.postprocessor;
 
+import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.Partition;
 
 import java.util.Collections;
@@ -30,8 +32,8 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 
 
 
-        protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions) {
-	        return super.run(partitions);
+        protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
+	        return super.run(partitions, currentBest);
 	    }
 
 	    protected int getMaxPossibleNumOfDiagsToEliminate() {
@@ -64,19 +66,19 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
             return leastCautiousNonHighRiskQueries;
         }
 
-	    protected void preprocessBeforeRun(List<Partition<T>> partitions){
+	    protected void preprocessBeforeRun(List<Partition<T>> partitions) {
             // order of method calls IMPORTANT
             updateNumOfLeadingDiags(partitions.get(0));
             preprocessC();
         }
 
-        public Partition<T> run(List<Partition<T>> partitions) {
+        public Partition<T> run(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
 
 	    	preprocessBeforeRun(partitions);
             int numOfDiagsToElim = convertCToNumOfDiags(c);
 	        Partition<T> minScorePartition;
 
-            if (getMinNumOfElimDiags(( minScorePartition = selectMinScorePartition(partitions))) >= numOfDiagsToElim) {
+            if (getMinNumOfElimDiags(( minScorePartition = selectMinScorePartition(partitions, currentBest))) >= numOfDiagsToElim) {
                 lastQuery = minScorePartition;
 	            return lastQuery;
 	        }

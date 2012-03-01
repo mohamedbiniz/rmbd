@@ -71,7 +71,7 @@ public class PenaltyQSS<T> extends MinScoreQSS<T> {
     }
 
 
-    public Partition<T> run(List<Partition<T>> partitions) {
+    public Partition<T> run(List<Partition<T>> partitions, Partition<T> currentBest) {
         preprocessBeforeRun(partitions);
 
         List<Partition<T>> candidates = new LinkedList<Partition<T>>();
