@@ -6,7 +6,7 @@ import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -80,7 +80,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
         searchNormal.setTheory(theoryNormal);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theoryNormal);
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
         searchNormal.run();
@@ -92,7 +92,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();
-        es = new OWLAxiomCostsEstimator(theoryDual);
+        es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
 

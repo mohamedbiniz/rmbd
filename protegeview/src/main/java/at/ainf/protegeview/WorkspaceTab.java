@@ -1,6 +1,6 @@
 package at.ainf.protegeview;
 
-import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -590,7 +590,7 @@ public class
             }*/
 
             search.setTheory(theory);
-            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
+            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
             es.updateKeywordProb(map);
             ((UniformCostSearch<OWLLogicalAxiom>)search).setCostsEstimator(es);
             for (Set<OWLLogicalAxiom> axiom : posTests) {

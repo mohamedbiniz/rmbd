@@ -10,7 +10,7 @@ import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.ITheory;
@@ -121,7 +121,7 @@ public class PostProcessorTest {
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(th);
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(th);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
 

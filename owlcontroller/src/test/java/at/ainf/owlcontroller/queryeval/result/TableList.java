@@ -49,8 +49,10 @@ public class TableList {
         this.time.add(time);
         this.queryTime.add(queryTime);
         this.diagTime.add(diagTime);
-        queryTime.setCalls(query);
-        diagTime.setCalls(query);
+        if(query!=0) {
+            queryTime.setCalls(query);
+            diagTime.setCalls(query);
+        }
         this.consistencyChecks += consistencyChecks;
         this.reactionTime += reactionTime;
         this.calls++;

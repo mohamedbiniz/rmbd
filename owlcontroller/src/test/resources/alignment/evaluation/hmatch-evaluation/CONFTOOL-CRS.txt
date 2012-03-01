@@ -1,0 +1,10 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/CRS.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://CRS.owl
+
++ Conference = conference | 0.6875
++ Event = event | 0.6764705882352942
++ Participant = participant | 0.6071428571428571
++ Person = person | 0.6
+< Working_event = event | 0.65

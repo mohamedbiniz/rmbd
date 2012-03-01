@@ -1,193 +1,128 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.tree.CostsEstimator;
+import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.theory.model.ITheory;
-import at.ainf.theory.storage.AxiomSet;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
+import org.semanticweb.owlapi.model.OWLOntology;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
  * User: pfleiss
- * Date: 08.11.11
- * Time: 14:14
+ * Date: 01.03.12
+ * Time: 11:05
  * To change this template use File | Settings | File Templates.
  */
 public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
 
-    private ITheory<OWLLogicalAxiom> theory;
-
-    private ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
-                ManchesterOWLSyntax.ONLY,
-                ManchesterOWLSyntax.MIN,
-                ManchesterOWLSyntax.MAX,
-                ManchesterOWLSyntax.EXACTLY,
-                ManchesterOWLSyntax.AND,
-                ManchesterOWLSyntax.OR,
-                ManchesterOWLSyntax.NOT,
-                ManchesterOWLSyntax.VALUE,
-                ManchesterOWLSyntax.INVERSE,
-                ManchesterOWLSyntax.SUBCLASS_OF,
-                ManchesterOWLSyntax.EQUIVALENT_TO,
-                ManchesterOWLSyntax.DISJOINT_CLASSES,
-                ManchesterOWLSyntax.DISJOINT_WITH,
-                ManchesterOWLSyntax.FUNCTIONAL,
-                ManchesterOWLSyntax.INVERSE_OF,
-                ManchesterOWLSyntax.SUB_PROPERTY_OF,
-                ManchesterOWLSyntax.SAME_AS,
-                ManchesterOWLSyntax.DIFFERENT_FROM,
-                ManchesterOWLSyntax.RANGE,
-                ManchesterOWLSyntax.DOMAIN,
-                ManchesterOWLSyntax.TYPE,
-                ManchesterOWLSyntax.TRANSITIVE,
-                ManchesterOWLSyntax.SYMMETRIC
-        };
-
-
-    public OWLAxiomCostsEstimator(ITheory<OWLLogicalAxiom> t) {
-        this.keywordProbabilities = createKeywordProbs();
-        this.theory = t;
-        updateAxiomProbabilities();
+    Map<OWLLogicalAxiom,Double> axiomProb;
+    
+    protected double STATIC_COSTS = 0.001;
+    
+    protected OWLTheory theory;
+    
+    public OWLAxiomCostsEstimator(OWLTheory t, String file) throws IOException {
+        Map<String, Double> axioms = new LinkedHashMap<String, Double>();
+        Set<String> targetDiag = new LinkedHashSet<String>();
+        readData(file, axioms, targetDiag);
+        axiomProb = getAx(t.getOriginalOntology().getLogicalAxioms(),axioms);
+        theory = t;
     }
 
-    public void updateKeywordProb(Map<ManchesterOWLSyntax, Double> keywordProbabilities) {
-        this.keywordProbabilities = keywordProbabilities;
-        updateAxiomProbabilities();
+    protected Map<OWLLogicalAxiom,Double> getAx(Set<OWLLogicalAxiom> logicalAxioms, Map<String,Double> axioms) {
+        Map<OWLLogicalAxiom,Double> res=new LinkedHashMap<OWLLogicalAxiom, Double>();
+        for (String targetAxiom : axioms.keySet()) {
+            for (OWLLogicalAxiom axiom : logicalAxioms) {
+                if (axiom.toString().contains(targetAxiom.trim()))
+                    res.put(axiom,axioms.get(targetAxiom));
+            }
+        }
+        return res;
     }
 
-    private Map<ManchesterOWLSyntax, Double> createKeywordProbs() {
+    public void readData(String filename, Map<String, Double> axioms, Set<String> targetDiag) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        String line;
+        String sourceNamespace = "";
+        String targetNamespace = "";
+        while ((line = br.readLine()) != null) {
+            if (line.startsWith("sourceNamespace"))
+                sourceNamespace = line.substring(line.indexOf("=") + 1).trim();
+            if (line.startsWith("targetNamespace"))
+                targetNamespace = line.substring(line.indexOf("=") + 1).trim();
+            if (line.startsWith(">") || line.startsWith("<") || line.startsWith("+") || line.startsWith("-")) {
+                String status = line.substring(0, 2).trim();
+                String sub = line.substring(2);
+                String source = "";
+                String target = "";
+                if (sub.contains("=")) {
+                    source = sub.substring(0, sub.indexOf("=")).trim();
+                    target = sub.substring(sub.indexOf("=") + 1, sub.indexOf("|")).trim();
+                    axioms.put(createAxiom(sourceNamespace, source, targetNamespace, target),
+                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                    axioms.put(createAxiom(targetNamespace, target, sourceNamespace, source),
+                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                }
+                if (sub.contains(">")) {
+                    source = sub.substring(0, sub.indexOf(">")).trim();
+                    target = sub.substring(sub.indexOf(">") + 1, sub.indexOf("|")).trim();
+                    axioms.put(createAxiom(sourceNamespace, source, targetNamespace, target),
+                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                }
+                if (sub.contains("<")) {
+                    source = sub.substring(0, sub.indexOf("<")).trim();
+                    target = sub.substring(sub.indexOf("<") + 1, sub.indexOf("|")).trim();
+                    axioms.put(createAxiom(targetNamespace, target, sourceNamespace, source),
+                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                }
+                if (status.equals("-")) {
+                    targetDiag.add(createAxiom(sourceNamespace, source, targetNamespace, target));
+                    if (sub.contains("="))
+                        targetDiag.add(createAxiom(targetNamespace, target, sourceNamespace, source));
+                }
+                if (status.equals(">")) {
+                    targetDiag.add(createAxiom(sourceNamespace, source, targetNamespace, target));
+                }
+                if (status.equals("<")) {
+                    targetDiag.add(createAxiom(targetNamespace, target, sourceNamespace, source));
+                }
 
-        Map<ManchesterOWLSyntax, Double> map = new HashMap<ManchesterOWLSyntax, Double>();
-
-        for (ManchesterOWLSyntax keyword : keywords)
-            map.put(keyword, 0.01);
-        map.put(ManchesterOWLSyntax.SOME, 0.05);
-        map.put(ManchesterOWLSyntax.ONLY, 0.05);
-        map.put(ManchesterOWLSyntax.AND, 0.001);
-        map.put(ManchesterOWLSyntax.OR, 0.001);
-        map.put(ManchesterOWLSyntax.NOT, 0.01);
-        return map;
+            }
+        }
     }
 
+    private String createAxiom(String sourceNamespace, String source, String targetNamespace, String target) {
+        return "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
+    }
+    
     public double getAxiomSetCosts(Set<OWLLogicalAxiom> labelSet) {
-            double probability = 1.0;
-            for (OWLLogicalAxiom axiom : labelSet) {
-                probability *= getAxiomCosts(axiom);
-            }
-            Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
-            activeFormulas.removeAll(labelSet);
-            for (OWLLogicalAxiom axiom : activeFormulas) {
-                if (probability * (1 - getAxiomCosts(axiom)) == 0)
-                    probability = Double.MIN_VALUE;
-                else
-                    probability *= (1 - getAxiomCosts(axiom));
-            }
-            return probability;
+        double probability = 1.0;
+        for (OWLLogicalAxiom axiom : labelSet) {
+            probability *= getAxiomCosts(axiom);
         }
-
-        public double getAxiomCosts(OWLLogicalAxiom axiom) {
-            Double p = axiomsProbabilities.get(axiom);
-            if (p != null)
-                return p;
-
-            ManchesterOWLSyntaxOWLObjectRendererImpl impl = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-            String renderedAxiom = impl.render(axiom); // String renderedAxiom = modelManager.getRendering(axiom);
-            double result = 1.0;
-
-            for (ManchesterOWLSyntax keyword : this.keywordProbabilities.keySet()) {
-                int occurrence = getNumOccurrences(keyword, renderedAxiom);
-                double probability = getProbability(keyword);
-
-                result = result * Math.pow(1.0 - probability, occurrence);
-            }
-
-            return 1 - result;
+        Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
+        activeFormulas.removeAll(labelSet);
+        for (OWLLogicalAxiom axiom : activeFormulas) {
+            if (probability * (1 - getAxiomCosts(axiom)) == 0)
+                probability = Double.MIN_VALUE;
+            else
+                probability *= (1 - getAxiomCosts(axiom));
         }
+        return probability;
+    }
 
-        private Map<OWLLogicalAxiom, Double> axiomsProbabilities = null;
-        private Map<ManchesterOWLSyntax, Double> keywordProbabilities;
-
-        public void setKeywordProbabilities(Map<ManchesterOWLSyntax, Double> keywordProbabilities,
-                                            Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
-
-
-            this.keywordProbabilities = keywordProbabilities;
-            updateAxiomProbabilities();
-            updateDiagnosisProbabilities(axiomSets);
-
-        }
-
-        private void updateDiagnosisProbabilities(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
-
-            if (axiomSets == null)
-                return;
-            if (!axiomSets.isEmpty()) {
-                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
-                    double probability = getAxiomSetCosts(axiomSet);
-
-                    axiomSet.setMeasure(probability);
-                    //axiomSet.setUserAssignedProbability(probability);
-                }
-                double sum = 0;
-
-                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
-                    sum += axiomSet.getMeasure();
-                }
-                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
-                    axiomSet.setMeasure(axiomSet.getMeasure() / sum);
-                }
-            }
-        }
-
-        private void updateAxiomProbabilities() {
-            Map<OWLLogicalAxiom, Double> axiomsProbs = new HashMap<OWLLogicalAxiom, Double>();
-            ManchesterOWLSyntaxOWLObjectRendererImpl impl = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-            Collection<OWLLogicalAxiom> activeFormulas = theory.getActiveFormulas();
-            double sum = 0;
-            for (OWLLogicalAxiom axiom : activeFormulas) {
-                String renderedAxiom = impl.render(axiom); // String renderedAxiom = modelManager.getRendering(axiom);
-                double result = 1.0;
-
-                for (ManchesterOWLSyntax keyword : this.keywordProbabilities.keySet()) {
-                    int occurrence = getNumOccurrences(keyword, renderedAxiom);
-                    double probability = getProbability(keyword);
-
-                    result = result * Math.pow(1.0 - probability, occurrence);
-                }
-                axiomsProbs.put(axiom, 1 - result);
-                sum += 1 - result;
-            }
-            /*if (normalize_axioms) {
-                for (Id axiom : axiomsProbs.keySet())
-                    axiomsProbs.put(axiom, axiomsProbs.get(axiom) / sum);
-            }*/
-
-
-            this.axiomsProbabilities = Collections.unmodifiableMap(axiomsProbs);
-        }
-
-        private double getProbability(ManchesterOWLSyntax keyword) {
-            return keywordProbabilities.get(keyword);
-        }
-
-        private int getNumOccurrences(ManchesterOWLSyntax keyword, String str) {
-            int cnt = 0;
-            int last = 0;
-
-            if (keyword == null) {
-                System.out.println();
-            }
-            last = str.indexOf(keyword.toString());
-            while (last > -1) {
-                cnt++;
-                last = str.indexOf(keyword.toString(), last + 1);
-            }
-
-            return cnt;
-
-        }
-
+    
+    public double getAxiomCosts(OWLLogicalAxiom label) {
+        if (axiomProb.get(label) != null) 
+            return 1 - axiomProb.get(label);
+        else
+            return STATIC_COSTS;
+    }
+    
+    
 }

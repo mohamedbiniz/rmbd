@@ -230,7 +230,7 @@ public class Example2Test extends AbstractExample {
 
         if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
         theory = new OWLTheory(reasonerFactory, ontology, bax);
-        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
 
@@ -270,7 +270,7 @@ public class Example2Test extends AbstractExample {
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
-            search.setCostsEstimator(new OWLAxiomCostsEstimator(theory));
+            search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setTheory(theory);
             search.setMaxHittingSets(0);
@@ -314,7 +314,7 @@ public class Example2Test extends AbstractExample {
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
-            search.setCostsEstimator(new OWLAxiomCostsEstimator(theory));
+            search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setTheory(theory);
             search.setMaxHittingSets(0);
@@ -346,7 +346,7 @@ public class Example2Test extends AbstractExample {
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
         theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setCostsEstimator(new OWLAxiomCostsEstimator(theory));
+        search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
         search.setTheory(theory);
         search.setMaxHittingSets(0);

@@ -9,6 +9,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
@@ -20,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -44,14 +46,14 @@ public class AlignmentTests extends BasePerformanceTests {
     private static Logger logger = Logger.getLogger(AlignmentTests.class.getName());
 
     private Properties p = null;
-
+    
     @BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlcontroller-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
     }
 
-    @Test
+    @Ignore @Test
     public void readTest() throws IOException {
         String filename = "/home/kostya/java/files/CMT-CONFTOOL.txt";
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
@@ -68,6 +70,24 @@ public class AlignmentTests extends BasePerformanceTests {
         System.out.println("Read " + axioms.size() + " " + targetDiag.size());
         assertEquals(axioms.size(), 2*(17-5));
         assertEquals(targetDiag.size(), 7);
+    }
+
+    @Test
+    public void readTest2() throws IOException {
+        String filename = "C:\\axiome\\ontologies\\coma-evaluation/CMT-CONFTOOL.txt";
+        Map<String, Double> axioms = new LinkedHashMap<String, Double>();
+        Set<String> targetDiag = new LinkedHashSet<String>();
+        readData(filename, axioms, targetDiag);
+        System.out.println("Read " + axioms.size() + " " + targetDiag.size());
+    }
+
+    @Test
+    public void readTest1() throws IOException {
+        String filename = "C:\\axiome\\ontologies\\coma-evaluation/CMT-CONFTOOL.txt";
+        Map<String, Double> axioms = new LinkedHashMap<String, Double>();
+        Set<String> targetDiag = new LinkedHashSet<String>();
+        readData(filename, axioms, targetDiag);
+        System.out.println("Read " + axioms.size() + " " + targetDiag.size());
     }
 
     public void readData(String filename, Map<String, Double> axioms, Set<String> targetDiag) throws IOException {
@@ -192,8 +212,8 @@ public class AlignmentTests extends BasePerformanceTests {
             result.setIncludeTrivialEntailments(true);
             // QueryDebuggerPreference.getInstance().setTestIncoherencyToInconsistency(true);
 
-            result.setIncludeSubClassOfAxioms(false);
-            result.setIncludeClassAssertionAxioms(false);
+            result.setIncludeSubClassOfAxioms(true);
+            result.setIncludeClassAssertionAxioms(true);
             result.setIncludeEquivalentClassAxioms(false);
             result.setIncludeDisjointClassAxioms(false);
             result.setIncludePropertyAssertAxioms(false);
@@ -236,10 +256,10 @@ public class AlignmentTests extends BasePerformanceTests {
         }
         return ontology;
     }
-
+    
     protected Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
 
-        Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>();
+        Set<OWLLogicalAxiom> res=new LinkedHashSet<OWLLogicalAxiom>();
         for (String targetAxiom : targetAxioms) {
             for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
                 if (axiom.toString().contains(targetAxiom.trim()))
@@ -386,13 +406,14 @@ public class AlignmentTests extends BasePerformanceTests {
                 num_of_queries++;
 
                 logger.trace("numOfQueries: " + num_of_queries + " generate answer");
-                boolean answer = true;
+                boolean answer=true;
                 boolean hasAn = false;
                 while (!hasAn) {
                     try {
                         answer = generateQueryAnswer(search, actPa, targetDiag);
                         hasAn = true;
-                    } catch (NoDecisionPossibleException e) {
+                    }
+                    catch (NoDecisionPossibleException e) {
                         actPa = queryGenerator.nextPartition();
                     }
                 }
@@ -438,7 +459,8 @@ public class AlignmentTests extends BasePerformanceTests {
         if (diagnoses != null) {
             //TreeSet<ProbabilisticHittingSet> diags = new TreeSet<ProbabilisticHittingSet>(diagnoses);
             targetDiagnosisIsInWind = isInWindow(targetDiag, diagnoses);
-            if (diagnoses.size() >= 1 && (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).last().equals(targetDiag)) {
+            if (diagnoses.size() >= 1 && targetDiag.
+                    containsAll((new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).last())) {
                 targetDiagnosisIsMostProbable = true;
                 targetDiagnosisIsInWind = true;
             }
@@ -447,8 +469,9 @@ public class AlignmentTests extends BasePerformanceTests {
         if (diagnoses != null)
             diagWinSize = diagnoses.size();
 
-        int consistencyCount = theory.getConsistencyCount() / num_of_queries;
-        reactionTime = reactionTime / num_of_queries;
+        int consistencyCount = 0;
+        if (num_of_queries!=0)  consistencyCount = theory.getConsistencyCount() / num_of_queries;
+        if (num_of_queries!=0) reactionTime = reactionTime / num_of_queries;
 
         logger.info("Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
                 + targetDiagnosisIsMostProbable + ", is in window " + targetDiagnosisIsInWind + ", size of window  " + diagWinSize
@@ -461,7 +484,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     protected <E extends AxiomSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, Set<OWLLogicalAxiom> item) {
         for (E o : col) {
-            if (o.equals(item)) {
+            if (item.containsAll(o)) {
                 if (logger.isTraceEnabled())
                     logger.trace("Target dianosis " + o + "is in the window");
                 return o;
@@ -472,7 +495,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     protected boolean isInWindow(Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
-            if (ps.equals(targetDiag)) {
+            if (targetDiag.containsAll(ps)) {
                 if (logger.isDebugEnabled())
                     logger.debug("Target diagnosis is in window " + ps.getName());
                 return true;
@@ -486,7 +509,7 @@ public class AlignmentTests extends BasePerformanceTests {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
 
-        AxiomSet<OWLLogicalAxiom> target = AxiomSetFactory.createHittingSet(0.5, t, new LinkedHashSet<OWLLogicalAxiom>());
+        AxiomSet<OWLLogicalAxiom> target = AxiomSetFactory.createHittingSet(0.5,t,new LinkedHashSet<OWLLogicalAxiom>());
         if (theory.diagnosisEntails(target, actualQuery.partition)) {
             answer = true;
             assertTrue(!actualQuery.dnx.contains(target));
@@ -504,19 +527,20 @@ public class AlignmentTests extends BasePerformanceTests {
     class NoDecisionPossibleException extends Exception {
 
     }
+    
 
 
-    enum BackgroundO {EMPTY, O1, O2, O1_O2}
+    enum BackgroundO { EMPTY, O1, O2, O1_O2 }
 
     @Test
     public void search() throws SolverException, InconsistentTheoryException {
         Properties properties = readProps();
-        Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
+        Map<String,List<String>> mapOntos = readOntologiesFromFile(properties);
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {
                 for (BackgroundO background : BackgroundO.values()) {
-                    String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                    OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                    String[] targetAxioms = properties.getProperty(m.trim()+"."+o.trim()).split(",");
+                    OWLOntology ontology = createOwlOntology(m.trim(),o.trim());
                     Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
                     OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
                     OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
@@ -524,14 +548,14 @@ public class AlignmentTests extends BasePerformanceTests {
                     UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
                     //ProbabilityTableModel mo = new ProbabilityTableModel();
                     HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-                    OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
+                    OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                     es.updateKeywordProb(map);
-                    if (background == BackgroundO.O1 || background == BackgroundO.O1_O2)
+                    if(background == BackgroundO.O1 || background == BackgroundO.O1_O2)
                         theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                    if (background == BackgroundO.O2 || background == BackgroundO.O1_O2)
+                    if(background == BackgroundO.O2 || background == BackgroundO.O1_O2)
                         theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                     search.setCostsEstimator(es);
-
+    
 
                     long time = System.nanoTime();
                     try {
@@ -543,35 +567,35 @@ public class AlignmentTests extends BasePerformanceTests {
                     } catch (InconsistentTheoryException e) {
                         logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
-                    time = System.nanoTime() - time;
-                    String t = Utils.getStringTime(time / 1000000);
-
+                    time=System.nanoTime() - time;
+                    String t = Utils.getStringTime(time/1000000);
+    
                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                             Collections.unmodifiableSet(search.getStorage().getDiagnoses());
                     //logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size());
-
-                    int n = 0;
+                    
+                    int n=0;
                     for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
                         if (targetDg.containsAll(d)) n++;
                     int cs = search.getStorage().getConflicts().size();
                     search.clearSearch();
                     logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size()
-                            + " conflicts: " + cs + " time " + t + " target " + n);
-
+                            + " conflicts: " + cs + " time " + t + " target "+n);
+                    
                 }
             }
         }
-    }
-
+        }
+    
 
     @Test
-    public void doAlignmentTest() throws SolverException, InconsistentTheoryException {
+    public void doAlignmentTest() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = readProps();
-        Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
+        Map<String,List<String>> mapOntos = readOntologiesFromFile(properties);
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {
-                String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                String[] targetAxioms = properties.getProperty(m.trim()+"."+o.trim()).split(",");
+                OWLOntology ontology = createOwlOntology(m.trim(),o.trim());
                 Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
                 OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
                 OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
@@ -579,44 +603,51 @@ public class AlignmentTests extends BasePerformanceTests {
                 UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
                 //ProbabilityTableModel mo = new ProbabilityTableModel();
                 HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory);
-                es.updateKeywordProb(map);
-                theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+
+                String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                        + m.trim()
+                        + "-incoherent-evaluation/"
+                        + o.trim()
+                        +".txt").getPath();
+
+                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory,path);
+                //es.updateKeywordProb(map);
+
+                //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                 search.setCostsEstimator(es);
 
-                try {
-                    search.run();
-                } catch (SolverException e) {
-                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                } catch (NoConflictException e) {
-                    logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                } catch (InconsistentTheoryException e) {
-                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
+//                try {
+//                    search.run();
+//                } catch (SolverException e) {
+//                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//                } catch (NoConflictException e) {
+//                    logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//                } catch (InconsistentTheoryException e) {
+//                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//                }
 
                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                         Collections.unmodifiableSet(search.getStorage().getDiagnoses());
                 search.clearSearch();
 
-                AxiomSet<OWLLogicalAxiom> targetDiag = null;
-                for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
-                    if (targetDg.containsAll(d)) targetDiag = d;
-
                 TableList e = new TableList();
-                simulateBruteForceOnl(search, theory, targetDiag, e, QSSType.MINSCORE);
+                logger.info (m+" - "+o);
+                simulateBruteForceOnl(search, theory, targetDg, e, QSSType.MINSCORE);
 
 //                boolean target = false;
 //                for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
-//                    if (targetDg.contains(d)) target = true;
+//                    if (targetDg.containsAll(d)) target = true;
 //                if (!target) logger.info("target notf "+m+o);
 
 
             }
         }
-
-
+        
+        
+        
+        
     }
 
-
+    
 }
