@@ -1,4 +1,4 @@
-package at.ainf.diagnosis.partitioning.postprocessor;
+package at.ainf.diagnosis.partitioning.scoring;
 
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -33,7 +33,7 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 
 
         protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
-	        return super.run(partitions, currentBest);
+	        return super.runPostprocessor(partitions, currentBest);
 	    }
 
 	    protected int getMaxPossibleNumOfDiagsToEliminate() {
@@ -72,7 +72,7 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
             preprocessC();
         }
 
-        public Partition<T> run(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
+        public Partition<T> runPostprocessor(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
 
 	    	preprocessBeforeRun(partitions);
             int numOfDiagsToElim = convertCToNumOfDiags(c);

@@ -1,8 +1,7 @@
 package at.ainf.protegeview.backgroundsearch;
 
-import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
-import at.ainf.diagnosis.partitioning.ScoringFunction;
-import at.ainf.diagnosis.partitioning.SplitScoringFunction;
+import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.theory.storage.Partition;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -13,7 +12,6 @@ import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -31,7 +29,7 @@ public class EntailmentSearch {
 
     private List<AxiomSet<OWLLogicalAxiom>> diags;
 
-    private ScoringFunction<OWLLogicalAxiom> func;
+    private Scoring<OWLLogicalAxiom> func;
 
     private boolean isQueryMinimizerActive;
 
@@ -43,9 +41,9 @@ public class EntailmentSearch {
         this.diags = diags;
         String fun = QueryDebuggerPreference.getInstance().getScoringFunction();
         if (fun.equals("Entropy"))
-            this.func = new EntropyScoringFunction<OWLLogicalAxiom>();
+            this.func = QSSFactory.createMinScoreQSS();
         else if (fun.equals("Split"))
-            this.func = new SplitScoringFunction<OWLLogicalAxiom>();
+            this.func = QSSFactory.createSplitInHalfQSS();
         this.isQueryMinimizerActive = isQueryMinimizerActive;
     }
 

@@ -1,6 +1,4 @@
-package at.ainf.diagnosis.partitioning.postprocessor;
-
-import java.util.LinkedList;
+package at.ainf.diagnosis.partitioning.scoring;
 
 /**
  * Created by IntelliJ IDEA.

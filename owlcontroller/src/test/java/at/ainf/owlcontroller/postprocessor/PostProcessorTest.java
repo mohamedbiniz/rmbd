@@ -1,9 +1,8 @@
 package at.ainf.owlcontroller.postprocessor;
 
 import at.ainf.diagnosis.partitioning.CKK;
-import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
-import at.ainf.diagnosis.partitioning.postprocessor.MinScoreQSS;
+import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -125,9 +124,8 @@ public class PostProcessorTest {
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
 
-        CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(th, new EntropyScoringFunction<OWLLogicalAxiom>());
+        CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(th, new MinScoreQSS<OWLLogicalAxiom>());
         ckk.setThreshold(0.01);
-        ckk.setPostprocessor(new MinScoreQSS<OWLLogicalAxiom>());
 
         Set<? extends AxiomSet<OWLLogicalAxiom>> diagnoses = search.run(9);
 

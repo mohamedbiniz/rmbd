@@ -93,7 +93,7 @@ public class TreeEvaluation {
 
         //Storage.getStorage().setTheory(th);
         // fails to create a root since th is sat
-        //search.run();
+        //search.runPostprocessor();
 
         //Storage.getStorage().resetStorage();
 

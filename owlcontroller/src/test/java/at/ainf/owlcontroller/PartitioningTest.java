@@ -2,6 +2,7 @@ package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.partitioning.*;
+import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -50,7 +51,7 @@ public class PartitioningTest {
         assertEquals(true, debugger.debug());
         assertEquals(3, debugger.getValidHittingSets().size());
 
-        Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> part = brute.generatePartition(debugger.getValidHittingSets());
         logger.debug(part);
     }
@@ -64,13 +65,13 @@ public class PartitioningTest {
         assertEquals(true, debugger.debug());
         assertEquals(3, debugger.getValidHittingSets().size());
 
-        Partitioning<OWLLogicalAxiom> greedy = new GreedySearch<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        Partitioning<OWLLogicalAxiom> greedy = new GreedySearch<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partg = greedy.generatePartition(debugger.getValidHittingSets());
         logger.debug(partg);
-        Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partb = brute.generatePartition(debugger.getValidHittingSets());
         logger.debug(partb);
-        greedy = new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        greedy = new CKK<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partg1 = greedy.generatePartition(debugger.getValidHittingSets());
         logger.debug(partg1);
         //assertEquals(partb, partg);
@@ -90,13 +91,13 @@ public class PartitioningTest {
             hs.setMeasure((i--) / 100d);
         }
 
-        Partitioning<OWLLogicalAxiom> greedy = new GreedySearch<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        Partitioning<OWLLogicalAxiom> greedy = new GreedySearch<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partg = greedy.generatePartition(debugger.getValidHittingSets());
         logger.debug(partg);
-        Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partb = brute.generatePartition(debugger.getValidHittingSets());
         logger.debug(partb);
-        greedy = new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        greedy = new CKK<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partg1 = greedy.generatePartition(debugger.getValidHittingSets());
         logger.debug(partg1);
         assertTrue(partb.score == partg.score);
@@ -112,13 +113,13 @@ public class PartitioningTest {
         assertEquals(true, debugger.debug());
         //assertEquals(4, debugger.getHittingSets().size());
 
-        Partitioning<OWLLogicalAxiom> algo = new BruteForce<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        Partitioning<OWLLogicalAxiom> algo = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         testOntology(theory, "Brute", algo);
 
-        algo = new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        algo = new CKK<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         testOntology(theory, "CKK", algo);
 
-        algo = new GreedySearch<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
+        algo = new GreedySearch<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         testOntology(theory, "Greedy", algo);
     }
 

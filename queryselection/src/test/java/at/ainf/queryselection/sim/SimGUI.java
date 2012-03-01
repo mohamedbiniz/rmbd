@@ -132,8 +132,8 @@ public class SimGUI {
             LinkedList<Query> qus = queryProvider.getCurrentQueries();
             LinkedList<Double> sc = new LinkedList<Double>();
             for(Query query : qus){
-                System.out.println(query.getScore());
-                sc.add(query.getScore());
+                System.out.println(query.getPartitionScore());
+                sc.add(query.getPartitionScore());
             }
             *///DEBUG
             //////////////////// GUI-OUTPUT /////////////////////

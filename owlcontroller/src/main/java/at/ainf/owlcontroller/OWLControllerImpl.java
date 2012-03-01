@@ -81,7 +81,7 @@ public class OWLControllerImpl implements OWLController {
 
     public void doCalcHS() {
         /*Thread t = new Thread() {
-            public void run() {*/
+            public void runPostprocessor() {*/
                 QueryDebuggerListener<OWLLogicalAxiom> l = new QueryDebuggerListener<OWLLogicalAxiom>() {
                     public void conflictSetAdded(Set<? extends AxiomSet<OWLLogicalAxiom>> conflicts) {
                         for (OWLControllerListener listener : listeners.get(OWLControllerConflictSetListener.class))

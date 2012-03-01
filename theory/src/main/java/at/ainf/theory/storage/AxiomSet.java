@@ -3,6 +3,7 @@ package at.ainf.theory.storage;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.watchedset.WatchedElement;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**

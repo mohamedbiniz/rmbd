@@ -1,9 +1,8 @@
-package at.ainf.diagnosis.partitioning.postprocessor;
+package at.ainf.diagnosis.partitioning.scoring;
 
 import at.ainf.theory.storage.Partition;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -71,7 +70,7 @@ public class PenaltyQSS<T> extends MinScoreQSS<T> {
     }
 
 
-    public Partition<T> run(List<Partition<T>> partitions, Partition<T> currentBest) {
+    public Partition<T> runPostprocessor(List<Partition<T>> partitions, Partition<T> currentBest) {
         preprocessBeforeRun(partitions);
 
         List<Partition<T>> candidates = new LinkedList<Partition<T>>();

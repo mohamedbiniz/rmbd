@@ -1,13 +1,11 @@
 package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.partitioning.CKK;
-import at.ainf.diagnosis.partitioning.EntropyScoringFunction;
 import at.ainf.diagnosis.partitioning.Partitioning;
-import at.ainf.diagnosis.partitioning.SplitScoringFunction;
-import at.ainf.diagnosis.partitioning.postprocessor.MinScoreQSS;
-import at.ainf.diagnosis.partitioning.postprocessor.QSS;
-import at.ainf.diagnosis.partitioning.postprocessor.QSSFactory;
-import at.ainf.diagnosis.partitioning.postprocessor.SplitInHalfQSS;
+import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
+import at.ainf.diagnosis.partitioning.scoring.QSS;
+import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
+import at.ainf.diagnosis.partitioning.scoring.SplitInHalfQSS;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -53,20 +51,6 @@ public abstract class BasePerformanceTests {
             res += qs;
         }
         return res / nqueries.size();
-    }
-
-    protected Partitioning<OWLLogicalAxiom> createQueryGenerator(ITheory<OWLLogicalAxiom> theory, QSS<OWLLogicalAxiom> qss) {
-
-        Partitioning<OWLLogicalAxiom> p;
-        if(qss instanceof MinScoreQSS)
-        p= new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
-        else if(qss instanceof SplitInHalfQSS)
-        p= new CKK<OWLLogicalAxiom>(theory, new SplitScoringFunction<OWLLogicalAxiom>());
-        else
-        p= new CKK<OWLLogicalAxiom>(theory, new EntropyScoringFunction<OWLLogicalAxiom>());
-
-        if (qss != null) p.setPostprocessor(qss);
-        return p;
     }
 
     protected <E extends OWLObject> void printc
@@ -141,7 +125,8 @@ public abstract class BasePerformanceTests {
         Time diagTime = new Time();
         int queryCardinality = 0;
         long reactionTime = 0;
-        Partitioning<OWLLogicalAxiom> queryGenerator = createQueryGenerator(theory, qss);
+        Partitioning<OWLLogicalAxiom> queryGenerator = new CKK<OWLLogicalAxiom>(theory, qss);
+
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;

@@ -1,5 +1,6 @@
 package at.ainf.theory.storage;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class Partition<T> {
 
     public Set<T> partition;
     public double score = Double.MAX_VALUE;
-    public double difference = Double.MAX_VALUE;
+    public BigDecimal difference = new BigDecimal(Double.MAX_VALUE);
     public boolean isVerified = false;
 
 }
