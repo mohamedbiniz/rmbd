@@ -547,7 +547,8 @@ public class AlignmentTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {
-                for (BackgroundO background : BackgroundO.values()) {
+                BackgroundO[] backgrounds = new BackgroundO[] { BackgroundO.O1_O2 };
+                for (BackgroundO background : backgrounds ) {
                     String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
                     OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                     Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
@@ -584,8 +585,10 @@ public class AlignmentTests extends BasePerformanceTests {
                     //logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size());
 
                     int n = 0;
+                    Set<AxiomSet<OWLLogicalAxiom>> set = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
                     for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
-                        if (targetDg.containsAll(d)) n++;
+                        if (targetDg.containsAll(d)) set.add(d);
+                    n = set.size();
                     int cs = search.getStorage().getConflicts().size();
                     search.clearSearch();
                     logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size()
