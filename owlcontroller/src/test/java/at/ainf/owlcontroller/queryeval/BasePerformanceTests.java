@@ -29,7 +29,7 @@ import static junit.framework.Assert.assertTrue;
 
 public abstract class BasePerformanceTests {
 
-    public static final int NUMBER_OF_HITTING_SETS = 9;
+    public static int NUMBER_OF_HITTING_SETS = 9;
     protected static double SIGMA = 85;
     protected static boolean userBrk = true;
 
