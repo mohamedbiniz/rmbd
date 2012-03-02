@@ -77,8 +77,53 @@ public class DiagnosisTests {
         // unused
         exclude.add("GeoSkills.owl");
 
+        // matched
+        exclude.add("CMT.owl");
+        exclude.add("coma_CMT-CONFTOOL.owl");
+        exclude.add("coma_CMT-EKAW.owl"); // bad
+        exclude.add("coma_CONFTOOL-EKAW.owl");
+        exclude.add("coma_CONFTOOL-SIGKDD.owl");
+        exclude.add("coma_CRS-CONFTOOL.owl");
+        exclude.add("coma_CRS-EKAW.owl");
+        exclude.add("coma_CRS-PCS.owl");
+        exclude.add("coma_PCS-CONFTOOL.owl");
+        exclude.add("coma_PCS-EKAW.owl"); // bad
+        exclude.add("CONFTOOL.owl");
+        exclude.add("CRS.owl");
+        exclude.add("EKAW.owl");
+        exclude.add("falcon_CONFTOOL-EKAW.owl"); // bad
+        exclude.add("falcon_CRS-CONFTOOL.owl");
+        exclude.add("falcon_CRS-SIGKDD.owl");
+        exclude.add("hmatch_CMT-CONFTOOL.owl");
+        exclude.add("hmatch_CMT-CRS.owl");
+        exclude.add("hmatch_CONFTOOL-CMT.owl");
+        exclude.add("hmatch_CONFTOOL-CRS.owl");
+        exclude.add("hmatch_CONFTOOL-EKAW.owl"); // bad
+        exclude.add("hmatch_CONFTOOL-SIGKDD.owl");
+        exclude.add("hmatch_CRS-CMT.owl");
+        exclude.add("hmatch_CRS-EKAW.owl"); // bad
+        exclude.add("hmatch_CRS-PCS.owl");
+        exclude.add("hmatch_CRS-SIGKDD.owl");
+        exclude.add("hmatch_EKAW-CMT.owl"); // bad
+        exclude.add("hmatch_EKAW-CONFTOOL.owl");
+        exclude.add("hmatch_EKAW-CRS.owl"); // bad
+        exclude.add("hmatch_EKAW-PCS.owl"); // bad
+        exclude.add("hmatch_EKAW-SIGKDD.owl"); // bad
+        exclude.add("hmatch_PCS-CONFTOOL.owl");
+        exclude.add("hmatch_PCS-CRS.owl");
+        exclude.add("hmatch_PCS-EKAW.owl");
+        exclude.add("hmatch_SIGKDD-EKAW.owl");
+        //exclude.add("owlctxmatch_CMT-CONFTOOL.owl"); // bad
+        exclude.add("owlctxmatch_CONFTOOL-EKAW.owl"); // bad
+        exclude.add("owlctxmatch_CRS-CMT.owl");
+        exclude.add("owlctxmatch_SIGKDD-EKAW.owl"); // bad
+        exclude.add("PCS.owl");
+        exclude.add("SIGKDD.owl");
 
-        String testDir = ClassLoader.getSystemResource("alignment").getPath();
+
+
+
+        String testDir = ClassLoader.getSystemResource("alignment/ontologies").getPath();
         //String testDir =   "C:\\Daten\\OpBO";
         LinkedList<File> files = new LinkedList<File>();
         collectAllFiles(new File(testDir), files);
@@ -86,10 +131,12 @@ public class DiagnosisTests {
             try {
                 if (!exclude.contains(file.getName()) && (file.getName().endsWith(".owl")
                         || file.getName().endsWith("._owl_") || file.getName().endsWith(".owl2"))) {
+                    logger.info("started " + file.getName());
                     test(file, 9);
                     printStatsAndClear("Leading diagnoses " + file.getName());
                     test(file, -1);
                     printStatsAndClear("All diagnoses " + file.getName());
+                    logger.info("stopped " + file.getName());
                 }
             } catch (Exception e) {
                 //file.renameTo(new File(file + ".checked"));
