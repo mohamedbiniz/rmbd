@@ -289,9 +289,9 @@ public class AlignmentTests extends BasePerformanceTests {
         return search;
     }
 
-    protected void simulateBruteForceOnl(UniformCostSearch<OWLLogicalAxiom> search,
-                                         OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
-                                         TableList entry, QSSType scoringFunc, String message) {
+    protected String simulateBruteForceOnl(UniformCostSearch<OWLLogicalAxiom> search,
+                                           OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
+                                           TableList entry, QSSType scoringFunc, String message) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
@@ -417,7 +417,7 @@ public class AlignmentTests extends BasePerformanceTests {
                         answer = generateQueryAnswer(search, actPa, targetDiag);
                         hasAn = true;
                     } catch (NoDecisionPossibleException e) {
-                        hasQueryWithNoDecisionPossible=true;
+                        hasQueryWithNoDecisionPossible = true;
                         actPa = queryGenerator.nextPartition(actPa);
                         if (actPa == null) {
                             logger.error("All partitions were tested and none provided an answer to the target diagnosis!");
@@ -481,15 +481,20 @@ public class AlignmentTests extends BasePerformanceTests {
         if (num_of_queries != 0) consistencyCount = theory.getConsistencyCount() / num_of_queries;
         if (num_of_queries != 0) reactionTime = reactionTime / num_of_queries;
 
-        logger.info(message + " , Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
+        message += " , Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
                 + targetDiagnosisIsMostProbable + ", is in window " + targetDiagnosisIsInWind + ", size of window  " + diagWinSize
                 + ", reaction " + reactionTime + ", user " + userBreak +
                 ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
-                ", consistency checks " + consistencyCount);
+                ", consistency checks " + consistencyCount;
+        logger.info(message);
 
+        String msg = time + ", " + num_of_queries + ", " + targetDiagnosisIsMostProbable + ", " + targetDiagnosisIsInWind + ", " + diagWinSize
+                + ", " + reactionTime + ", " + userBreak +
+                ", " + systemBreak + ", " + hasQueryWithNoDecisionPossible +
+                ", " + consistencyCount;
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
-
+        return msg;
     }
 
     protected <E extends AxiomSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, Set<OWLLogicalAxiom> item) {
@@ -605,7 +610,7 @@ public class AlignmentTests extends BasePerformanceTests {
                 int numOfOntologyAxiomsO1 = 0;
                 int numOfMatchingAxiomO1 = 0;
                 for (OWLLogicalAxiom axiom : o1) {
-                    if (e.getAxiomCosts(axiom)==0.001)
+                    if (e.getAxiomCosts(axiom) == 0.001)
                         numOfMatchingAxiomO1++;
                     else
                         numOfOntologyAxiomsO1++;
@@ -615,7 +620,7 @@ public class AlignmentTests extends BasePerformanceTests {
                 int numOfOntologyAxiomsO2 = 0;
                 int numOfMatchingAxiomO2 = 0;
                 for (OWLLogicalAxiom axiom : o2) {
-                    if (e.getAxiomCosts(axiom)==0.001)
+                    if (e.getAxiomCosts(axiom) == 0.001)
                         numOfMatchingAxiomO2++;
                     else
                         numOfOntologyAxiomsO2++;
@@ -706,7 +711,7 @@ public class AlignmentTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
-        TargetSource[] targetSources=new TargetSource[]{TargetSource.FROM_FILE};
+        TargetSource[] targetSources = new TargetSource[]{TargetSource.FROM_FILE};
         NUMBER_OF_HITTING_SETS = 4;
 
 
@@ -714,8 +719,8 @@ public class AlignmentTests extends BasePerformanceTests {
             for (String o : mapOntos.get(m)) {
                 for (TargetSource targetSource : targetSources) {
                     for (QSSType type : qssTypes) {
-                        BackgroundO[] backgr = new BackgroundO[]{BackgroundO.EMPTY,BackgroundO.O1_O2};
-                        for(BackgroundO background : backgr) {
+                        BackgroundO[] backgr = new BackgroundO[]{BackgroundO.EMPTY, BackgroundO.O1_O2};
+                        for (BackgroundO background : backgr) {
                             String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
@@ -733,7 +738,7 @@ public class AlignmentTests extends BasePerformanceTests {
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
                             OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
                             OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
-                            if(background == BackgroundO.O1_O2) {
+                            if (background == BackgroundO.O1_O2) {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
@@ -770,7 +775,7 @@ public class AlignmentTests extends BasePerformanceTests {
                                     + ", ontology " + o
                                     + ", source " + targetSource
                                     + ", qss " + type
-                                    + ", background " + background ;
+                                    + ", background " + background;
                             simulateBruteForceOnl(search, theory, targetDg, e, type, message);
                         }
                     }
@@ -778,16 +783,17 @@ public class AlignmentTests extends BasePerformanceTests {
             }
         }
     }
-    
+
     @Test
     public void doTwoTests() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = readProps();
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
-        for (String m : mapOntos.keySet()) {
-            for (String o : mapOntos.get(m)) {
-                for (TargetSource targetSource : TargetSource.values()) {
+        for (TargetSource targetSource : TargetSource.values()) {
+            for (String m : mapOntos.keySet()) {
+                for (String o : mapOntos.get(m)) {
+                    String out ="STAT, " + m +  ", " + o;
                     for (QSSType type : qssTypes) {
                         String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
                         OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
@@ -831,10 +837,12 @@ public class AlignmentTests extends BasePerformanceTests {
                         if (targetSource == TargetSource.FROM_FILE)
                             targetDg = getDiagnosis(targetAxioms, ontology);
 
-                        TableList e = new TableList();
+                        TableList e = new TableList();  
+                        out += "," + type + ",";
                         String message = "act " + m + " - " + o + " - " + targetSource + " " + type;
-                        simulateBruteForceOnl(search, theory, targetDg, e, type, message);
+                        out += simulateBruteForceOnl(search, theory, targetDg, e, type, message);
                     }
+                    logger.info(out);
                 }
             }
         }

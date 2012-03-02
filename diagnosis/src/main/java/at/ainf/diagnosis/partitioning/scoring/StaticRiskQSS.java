@@ -19,83 +19,86 @@ import java.util.List;
 
 public class StaticRiskQSS<T> extends MinScoreQSS<T> {
 
-	    protected double c;
+    protected double c;
 
 
-
-	    public StaticRiskQSS(double c) {
-	        super();
-	        this.c = c;
-	    }
-
+    public StaticRiskQSS(double c) {
+        super();
+        this.c = c;
+    }
 
 
+    protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
+        return super.runPostprocessor(partitions, currentBest);
+    }
 
+    protected int getMaxPossibleNumOfDiagsToEliminate() {
+        return (int) Math.floor((double) (numOfLeadingDiags / 2d));
+    }
 
-        protected Partition<T> selectMinScorePartition(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
-	        return super.runPostprocessor(partitions, currentBest);
-	    }
+    protected void preprocessC() {
+        double maxPossibleC;
+        if ((maxPossibleC = (double) this.getMaxPossibleNumOfDiagsToEliminate() / (double) numOfLeadingDiags) < c) {
+            c = maxPossibleC;
+        } else if (c < 0d)
+            c = 0;
+    }
 
-	    protected int getMaxPossibleNumOfDiagsToEliminate() {
-	        return (int) Math.floor((double) (numOfLeadingDiags / 2d));
-	    }
+    protected int convertCToNumOfDiags(double c) {
+        int num = (int) Math.ceil((double) numOfLeadingDiags * c);
+        if (num > ((double) numOfLeadingDiags / 2d)) {
+            num--;
+        }
+        return num;
+    }
 
-	    protected void preprocessC(){
-	    	double maxPossibleC;
-            if ((maxPossibleC = (double)this.getMaxPossibleNumOfDiagsToEliminate() / (double)numOfLeadingDiags) < c) {
-	            c = maxPossibleC;
-	        }else if (c < 0d)
-                c = 0;
-	    }
-
-        protected int convertCToNumOfDiags(double c) {
-	        int num = (int) Math.ceil((double) numOfLeadingDiags * c);
-	        if (num > ((double)numOfLeadingDiags / 2d)) {
-	            num--;
-	        }
-	        return num;
-	    }
-
-        protected LinkedList<Partition<T>> getLeastCautiousNonHighRiskPartitions(int numOfDiagsToElim, List<Partition<T>> partitions){
-            LinkedList<Partition<T>> leastCautiousNonHighRiskQueries = new LinkedList<Partition<T>>();
-            for(Partition<T> p : partitions){
-                if(getMinNumOfElimDiags(p) == numOfDiagsToElim){
-                     leastCautiousNonHighRiskQueries.add(p);
-                }
+    protected LinkedList<Partition<T>> getLeastCautiousNonHighRiskPartitions(int numOfDiagsToElim, List<Partition<T>> partitions) {
+        LinkedList<Partition<T>> leastCautiousNonHighRiskQueries = new LinkedList<Partition<T>>();
+        for (Partition<T> p : partitions) {
+            if (getMinNumOfElimDiags(p) == numOfDiagsToElim) {
+                leastCautiousNonHighRiskQueries.add(p);
             }
-            return leastCautiousNonHighRiskQueries;
+        }
+        return leastCautiousNonHighRiskQueries;
+    }
+
+    protected void preprocessBeforeRun(List<Partition<T>> partitions) {
+        // order of method calls IMPORTANT
+        updateNumOfLeadingDiags(partitions.get(0));
+        preprocessC();
+    }
+
+    public Partition<T> runPostprocessor(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
+        int count = 0;
+        for (Partition<T> partition : partitions) {
+            if (count++ > partitions.size()*0.3)
+                break;
+            if (!partition.isVerified)
+                getPartitionSearcher().verifyPartition(partition);
         }
 
-	    protected void preprocessBeforeRun(List<Partition<T>> partitions) {
-            // order of method calls IMPORTANT
-            updateNumOfLeadingDiags(partitions.get(0));
-            preprocessC();
-        }
+        preprocessBeforeRun(partitions);
+        int numOfDiagsToElim = convertCToNumOfDiags(c);
+        Partition<T> minScorePartition;
 
-        public Partition<T> runPostprocessor(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
-
-	    	preprocessBeforeRun(partitions);
-            int numOfDiagsToElim = convertCToNumOfDiags(c);
-	        Partition<T> minScorePartition;
-
-            if (getMinNumOfElimDiags(( minScorePartition = selectMinScorePartition(partitions, currentBest))) >= numOfDiagsToElim) {
-                lastQuery = minScorePartition;
-	            return lastQuery;
-	        }
-
-            for (; numOfDiagsToElim <= getMaxPossibleNumOfDiagsToEliminate(); numOfDiagsToElim++) {
-	            LinkedList<Partition<T>> leastCautiousNonHighRiskPartitions = getLeastCautiousNonHighRiskPartitions(numOfDiagsToElim, partitions);     // candidateQueries = X_min,k
-	            if (leastCautiousNonHighRiskPartitions.isEmpty()) {
-	                continue;
-	            }
-                lastQuery = Collections.min(leastCautiousNonHighRiskPartitions, new ScoreComparator());
-	            return lastQuery;
-            }
-
-            lastQuery = Collections.min(partitions,new ScoreComparator());
+        if (getMinNumOfElimDiags((minScorePartition = selectMinScorePartition(partitions, currentBest))) >= numOfDiagsToElim) {
+            lastQuery = minScorePartition;
             return lastQuery;
+        }
 
-	    }
+        for (; numOfDiagsToElim <= getMaxPossibleNumOfDiagsToEliminate(); numOfDiagsToElim++) {
+            LinkedList<Partition<T>> leastCautiousNonHighRiskPartitions = getLeastCautiousNonHighRiskPartitions(numOfDiagsToElim, partitions);     // candidateQueries = X_min,k
+            if (leastCautiousNonHighRiskPartitions.isEmpty()) {
+                continue;
+            }
+            lastQuery = Collections.min(leastCautiousNonHighRiskPartitions, new ScoreComparator());
+            return lastQuery;
+        }
+
+        lastQuery = Collections.min(partitions, new ScoreComparator());
+        return lastQuery;
+
+    }
 
 
 }

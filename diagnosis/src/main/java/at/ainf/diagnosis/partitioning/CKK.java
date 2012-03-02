@@ -94,7 +94,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
     private int count = 0;
     BigDecimal bestdiff = new BigDecimal(Double.MAX_VALUE);
 
-    protected void reset(){
+    protected void reset() {
         super.reset();
         count = 0;
         bestdiff = new BigDecimal(Double.MAX_VALUE);
@@ -129,9 +129,9 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         partition = nextPartition(partition);
 
         if (logger.isInfoEnabled())
-            logger.info("Searched through " + count + "/" + getPartitionsCount() + " partitionsCount"); 
+            logger.info("Searched through " + count + "/" + getPartitionsCount() + " partitionsCount");
         if (partition == null || getPartitions().isEmpty())
-            logger.error("No partition found! " + getPartitions().size() + " " +toString(hs));
+            logger.error("No partition found! " + getPartitions().size() + " " + toString(hs));
         partition = getScoring().runPostprocessor(getPartitions(), partition);
 
         restoreEntailments(hittingSets);
@@ -147,7 +147,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
     }
 
     public <E extends AxiomSet<Id>> Partition<Id> nextPartition(Partition<Id> partition) throws SolverException, InconsistentTheoryException {
-        if (partition != null){
+        if (partition != null) {
             getPartitions().remove(partition);
             partition = null;
             sort(getPartitions());
@@ -157,24 +157,31 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
         bestdiff = new BigDecimal(Double.MAX_VALUE);
         count = 0;
+        List<Partition<Id>> empty = new LinkedList<Partition<Id>>();
         for (Partition<Id> part : getPartitions()) {
-            if ((part.difference.compareTo(bestdiff) < 0 || (partition != null && partition.dnx.size() == 0) ||
-                    (part.difference.equals(bestdiff) && compare(partition, part))) && verifyPartition(part)) {
-
-                double score = getScoringFunction().getScore(part);
-                double best = getScoringFunction().getScore(partition);
-                if ((score < best) || (score == best && diff(part) < diff(partition))) {
-                    partition = part;
-                    updateDifference(partition);
-                    if (partition.difference.compareTo(bestdiff) < 0)
-                        bestdiff = partition.difference;
+            if (
+                    (part.difference.compareTo(bestdiff) < 0 ||
+                            (partition != null && partition.dnx.size() == 0) ||
+                            (part.difference.equals(bestdiff) && compare(partition, part))
+                    ) && verifyPartition(part)) {
+                if (part.dnx.isEmpty())
+                    empty.add(part);
+                else {
+                    double score = getScoringFunction().getScore(part);
+                    double best = getScoringFunction().getScore(partition);
+                    if ((score < best) || (score == best && diff(part) < diff(partition))) {
+                        partition = part;
+                        updateDifference(partition);
+                        if (partition.difference.compareTo(bestdiff) < 0)
+                            bestdiff = partition.difference;
+                    }
                 }
                 count++;
             }
-
             if (partition != null && partition.score < getThreshold())
                 break;
         }
+        getPartitions().removeAll(empty);
         return partition;
     }
 
