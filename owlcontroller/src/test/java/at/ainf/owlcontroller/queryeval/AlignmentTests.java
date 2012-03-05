@@ -610,22 +610,22 @@ public class AlignmentTests extends BasePerformanceTests {
                 int numOfOntologyAxiomsO1 = 0;
                 int numOfMatchingAxiomO1 = 0;
                 for (OWLLogicalAxiom axiom : o1) {
-                    if (e.getAxiomCosts(axiom) == 0.001)
+                    if (e.getAxiomCosts(axiom) != 0.001)
                         numOfMatchingAxiomO1++;
                     else
                         numOfOntologyAxiomsO1++;
                 }
-                double percAxiomFromOntO1 = (double) numOfOntologyAxiomsO1 / (numOfOntologyAxiomsO1 + numOfMatchingAxiomO1);
+                double percAxiomFromOntO1 = (double) numOfOntologyAxiomsO1;// / (numOfOntologyAxiomsO1 + numOfMatchingAxiomO1);
 
                 int numOfOntologyAxiomsO2 = 0;
                 int numOfMatchingAxiomO2 = 0;
                 for (OWLLogicalAxiom axiom : o2) {
-                    if (e.getAxiomCosts(axiom) == 0.001)
+                    if (e.getAxiomCosts(axiom) != 0.001)
                         numOfMatchingAxiomO2++;
                     else
                         numOfOntologyAxiomsO2++;
                 }
-                double percAxiomFromOntO2 = (double) numOfOntologyAxiomsO2 / (numOfOntologyAxiomsO2 + numOfMatchingAxiomO2);
+                double percAxiomFromOntO2 = (double) numOfOntologyAxiomsO2;// / (numOfOntologyAxiomsO2 + numOfMatchingAxiomO2);
 
 
                 if (percAxiomFromOntO1 < percAxiomFromOntO2)
@@ -649,10 +649,10 @@ public class AlignmentTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
-        String m = "hmatch";
-        String o = "CRS-EKAW";
-        TargetSource targetSource = TargetSource.FROM_FILE;
-        QSSType type = QSSType.MINSCORE;
+        String m = "owlctxmatch";
+        String o = "SIGKDD-EKAW";
+        TargetSource targetSource = TargetSource.FROM_30_DIAGS; //TargetSource.FROM_FILE;
+        QSSType type = QSSType.SPLITINHALF;
         String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
         OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
