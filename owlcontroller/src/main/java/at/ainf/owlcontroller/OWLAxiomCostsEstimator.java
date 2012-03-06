@@ -29,9 +29,15 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
     public OWLAxiomCostsEstimator(OWLTheory t, String file) throws IOException {
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
-        readData(file, axioms, targetDiag);
+        if (file!=null)
+            readData(file, axioms, targetDiag);
         axiomProb = getAx(t.getOriginalOntology().getLogicalAxioms(),axioms);
         theory = t;
+    }
+
+    public OWLAxiomCostsEstimator(OWLTheory theory, Map<OWLLogicalAxiom, Double> probMap) {
+        this.theory = theory;
+        axiomProb = probMap;
     }
 
     protected Map<OWLLogicalAxiom,Double> getAx(Set<OWLLogicalAxiom> logicalAxioms, Map<String,Double> axioms) {
@@ -39,7 +45,7 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
         for (String targetAxiom : axioms.keySet()) {
             for (OWLLogicalAxiom axiom : logicalAxioms) {
                 if (axiom.toString().contains(targetAxiom.trim()))
-                    res.put(axiom,axioms.get(targetAxiom));
+                    res.put(axiom, axioms.get(targetAxiom));
             }
         }
         return res;

@@ -172,8 +172,8 @@ public class BruteForce<Id> implements Partitioning<Id> {
     protected <E extends AxiomSet<Id>> Partition<Id> findPartition(Set<E> hittingSets, Set<E> head)
             throws SolverException, InconsistentTheoryException {
 
-        if (this.bestPartition != null && this.bestPartition.score < this.threshold)
-            return this.bestPartition;
+        //if (this.bestPartition != null && this.bestPartition.score < this.threshold)
+        //    return this.bestPartition;
         if ((hittingSets == null || hittingSets.isEmpty())) {
             if (head.isEmpty())
                 return new Partition<Id>();
@@ -187,8 +187,9 @@ public class BruteForce<Id> implements Partitioning<Id> {
                 if (verifyPartition(part)) {
                     if (logger.isDebugEnabled())
                         logger.debug("Created partition: \n dx:" + part.dx + "\n dnx:" + part.dnx + "\n dz:" + part.dz);
-                    if (getPartitions() != null)
+                    if (getPartitions() != null && !getPartitions().contains(part)) {
                         getPartitions().add(part);
+                    }
                     return part;
                 }
                 return null;
