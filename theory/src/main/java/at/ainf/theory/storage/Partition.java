@@ -21,4 +21,28 @@ public class Partition<T> {
     public BigDecimal difference = new BigDecimal(Double.MAX_VALUE);
     public boolean isVerified = false;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Partition partition1 = (Partition) o;
+
+        if (!dnx.equals(partition1.dnx)) return false;
+        if (!dx.equals(partition1.dx)) return false;
+        if (!dz.equals(partition1.dz)) return false;
+        //if (!partition.equals(partition1.partition)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = dx.hashCode();
+        result = 31 * result + dnx.hashCode();
+        result = 31 * result + dz.hashCode();
+        //result = 31 * result + partition.hashCode();
+        return result;
+    }
 }

@@ -113,7 +113,7 @@ public class DiagnosisTests {
         exclude.add("hmatch_PCS-CRS.owl");
         exclude.add("hmatch_PCS-EKAW.owl");
         exclude.add("hmatch_SIGKDD-EKAW.owl");
-        //exclude.add("owlctxmatch_CMT-CONFTOOL.owl"); // bad
+        // exclude.add("owlctxmatch_CMT-CONFTOOL.owl"); // bad
         exclude.add("owlctxmatch_CONFTOOL-EKAW.owl"); // bad
         exclude.add("owlctxmatch_CRS-CMT.owl");
         exclude.add("owlctxmatch_SIGKDD-EKAW.owl"); // bad

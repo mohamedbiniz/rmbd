@@ -321,7 +321,7 @@ public abstract class BasePerformanceTests {
             case STATICRISK:
                 return QSSFactory.createStaticRiskQSS(0.3);
             case DYNAMICRISK:
-                return QSSFactory.createDynamicRiskQSS(0, 0.5, 0.25);
+                return QSSFactory.createDynamicRiskQSS(0, 0.5, 0.3);
             case PENALTY:
                 return QSSFactory.createPenaltyQSS(10);
             default:
