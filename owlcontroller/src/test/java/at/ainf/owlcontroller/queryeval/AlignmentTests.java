@@ -80,6 +80,7 @@ public class AlignmentTests extends BasePerformanceTests {
         assertEquals(targetDiag.size(), 7);
     }
 
+
     @Test
     public void readTest2() throws IOException {
         String filename = "C:\\axiome\\ontologies\\coma-evaluation/CMT-CONFTOOL.txt";
@@ -156,26 +157,6 @@ public class AlignmentTests extends BasePerformanceTests {
     protected Properties readProps() {
         Properties properties = new Properties();
         String config = ClassLoader.getSystemResource("alignment/alignment.properties").getFile();
-        BufferedInputStream stream = null;
-        try {
-            stream = new BufferedInputStream(new FileInputStream(config));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        try {
-            properties.load(stream);
-            stream.close();
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        return properties;
-
-    }
-
-    protected Properties readTestProps() {
-        Properties properties = new Properties();
-        String config = ClassLoader.getSystemResource("alignment/papertest.properties").getFile();
         BufferedInputStream stream = null;
         try {
             stream = new BufferedInputStream(new FileInputStream(config));
@@ -1133,7 +1114,7 @@ public class AlignmentTests extends BasePerformanceTests {
         addAxiomPaperTest(ontology, "s1 hasSupervisor t1", 0.1, probMap);
         addAxiomPaperTest(ontology, "Student_1 SubClassOf hasSupervisor only Prof_1", 0.1, probMap);
 
-        Properties properties = readTestProps();
+        //Properties properties = readTestProps();
         //Map<OWLLogicalAxiom,Double> probMap = new LinkedHashMap<OWLLogicalAxiom, Double>();
         /*for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
             String axiomStr = MyOWLRendererParser.render(axiom).trim();
@@ -1254,7 +1235,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
 
 
-        Properties properties = readTestProps();
+        //Properties properties = readTestProps();
         //Map<OWLLogicalAxiom,Double> probMap = new LinkedHashMap<OWLLogicalAxiom, Double>();
         /*for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
             String axiomStr = MyOWLRendererParser.render(axiom).trim();
@@ -1409,7 +1390,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
 
 
-                    Properties properties = readTestProps();
+                    //Properties properties = readTestProps();
                     //Map<OWLLogicalAxiom,Double> probMap = new LinkedHashMap<OWLLogicalAxiom, Double>();
                     /*for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
                         String axiomStr = MyOWLRendererParser.render(axiom).trim();
