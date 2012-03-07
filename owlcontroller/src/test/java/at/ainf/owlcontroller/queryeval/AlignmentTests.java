@@ -80,7 +80,7 @@ public class AlignmentTests extends BasePerformanceTests {
         assertEquals(targetDiag.size(), 7);
     }
 
-
+    @Ignore
     @Test
     public void readTest2() throws IOException {
         String filename = "C:\\axiome\\ontologies\\coma-evaluation/CMT-CONFTOOL.txt";
@@ -90,6 +90,7 @@ public class AlignmentTests extends BasePerformanceTests {
         System.out.println("Read " + axioms.size() + " " + targetDiag.size());
     }
 
+    @Ignore
     @Test
     public void readTest1() throws IOException {
         String filename = "C:\\axiome\\ontologies\\coma-evaluation/CMT-CONFTOOL.txt";
@@ -156,7 +157,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     protected Properties readProps() {
         Properties properties = new Properties();
-        String config = ClassLoader.getSystemResource("alignment/alignment.properties").getFile();
+        String config = ClassLoader.getSystemResource("alignment/alignment.full.properties").getFile();
         BufferedInputStream stream = null;
         try {
             stream = new BufferedInputStream(new FileInputStream(config));
@@ -227,7 +228,7 @@ public class AlignmentTests extends BasePerformanceTests {
             result.setIncludeDisjointClassAxioms(false);
             result.setIncludePropertyAssertAxioms(false);
             result.setIncludeReferencingThingAxioms(false);
-            result.setIncludeOntologyAxioms(false);
+            result.setIncludeOntologyAxioms(true);
             //  result.setIncludeTrivialEntailments(true);
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -806,6 +807,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     enum BackgroundO {EMPTY, O1, O2, O1_O2}
 
+    @Ignore
     @Test
     public void search() throws SolverException, InconsistentTheoryException {
         Properties properties = readProps();
@@ -903,6 +905,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     enum TargetSource {FROM_FILE, FROM_30_DIAGS}
 
+    @Ignore
     @Test
     public void doOnlyOneQuerySession() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = readProps();
@@ -965,6 +968,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     }
 
+    @Ignore
     @Test
     public void doHardTwoTests() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = readProps();
@@ -1051,6 +1055,7 @@ public class AlignmentTests extends BasePerformanceTests {
         m.put(ax1,probab);
     }
 
+    @Ignore
     @Test
     public void doPaperTestOld() throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
         //Properties properties = readProps();
@@ -1170,6 +1175,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     }
 
+    @Ignore
     @Test
     public void doPaperSm() throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
         //Properties properties = readProps();
@@ -1306,6 +1312,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     }
 
+    @Ignore
     @Test
     public void doPaperTest() throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
@@ -1510,7 +1517,7 @@ public class AlignmentTests extends BasePerformanceTests {
         }
     }
 
-
+    @Ignore
     @Test
     public void doAlignmentTest() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = readProps();
