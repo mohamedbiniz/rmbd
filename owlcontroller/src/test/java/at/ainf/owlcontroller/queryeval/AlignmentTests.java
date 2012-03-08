@@ -453,10 +453,11 @@ public class AlignmentTests extends BasePerformanceTests {
 
                 int eliminatedInLeading = getEliminationRate(search.getTheory(),actPa,diagnoses,answer);
                 int eliminatedInRemaining = getEliminationRate(search.getTheory(),actPa,remainingAllDiags,answer);
+                int eliminatedInRemainingSize = remainingAllDiags.size();
                 int eliminatedInfull = getEliminationRate(search.getTheory(),actPa,allDiags,answer);
                 deleteDiag(search.getTheory(),actPa,remainingAllDiags,answer);
                 logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiags.size() +
-                            "; in all remaining diags ;" + eliminatedInRemaining + "/" + remainingAllDiags.size() +
+                            "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
                         "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size());
                 // fine all dz diagnoses
                 // TODO do we need this fine?
