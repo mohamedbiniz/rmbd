@@ -15,6 +15,7 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
+import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
@@ -1459,59 +1460,72 @@ public class AlignmentTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
-        for (TargetSource targetSource : TargetSource.values()) {
-            for (String m : mapOntos.keySet()) {
-                for (String o : mapOntos.get(m)) {
-                    String out ="STAT, " + m +  ", " + o;
-                    for (QSSType type : qssTypes) {
-                        String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                        OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
-                        Set<OWLLogicalAxiom> targetDg;
-                        OWLTheory theory = createOWLTheory(ontology, false);
-                        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
-                        //ProbabilityTableModel mo = new ProbabilityTableModel();
-                        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        for (boolean dual : new boolean[] {false, true}) {
+           for (TargetSource targetSource : TargetSource.values()) {
+                for (String m : mapOntos.keySet()) {
+                    for (String o : mapOntos.get(m)) {
+                        String out ="STAT, " + m +  ", " + o;
+                        for (QSSType type : qssTypes) {
+                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                            OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                            Set<OWLLogicalAxiom> targetDg;
+                            OWLTheory theory = createOWLTheory(ontology, dual);
+                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            //ProbabilityTableModel mo = new ProbabilityTableModel();
+                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
-                        String path = ClassLoader.getSystemResource("alignment/evaluation/"
-                                + m.trim()
-                                + "-incoherent-evaluation/"
-                                + o.trim()
-                                + ".txt").getPath();
+                            String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                    + m.trim()
+                                    + "-incoherent-evaluation/"
+                                    + o.trim()
+                                    + ".txt").getPath();
 
-                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
-                        //es.updateKeywordProb(map);
-                        targetDg = null;
+                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
 
-                        search.setCostsEstimator(es);
-                        if (targetSource == TargetSource.FROM_30_DIAGS) {
-                            try {
-                                search.run(30);
-                            } catch (SolverException e) {
-                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            } catch (NoConflictException e) {
-                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            } catch (InconsistentTheoryException e) {
-                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    //                        double[] p = new ModerateDistribution().getProbabilities(ontology.getLogicalAxioms().size());
+    //                        Map<OWLLogicalAxiom,Double> axmap = new LinkedHashMap<OWLLogicalAxiom, Double>();
+    //                        int i = 0;
+    //                        for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
+    //                            axmap.put(axiom,p[i]);
+    //                            i++;
+    //                        }
+    //                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, axmap);
+
+
+                            //es.updateKeywordProb(map);
+                            targetDg = null;
+
+                            search.setCostsEstimator(es);
+                            if (targetSource == TargetSource.FROM_30_DIAGS) {
+                                try {
+                                    search.run(30);
+                                } catch (SolverException e) {
+                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                } catch (NoConflictException e) {
+                                    logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                } catch (InconsistentTheoryException e) {
+                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                }
+
+                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                        Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                                search.clearSearch();
+                                AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
+                                targetDg = new LinkedHashSet<OWLLogicalAxiom>();
+                                for (OWLLogicalAxiom axiom : targD)
+                                    targetDg.add(axiom);
                             }
 
-                            Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
-                            search.clearSearch();
-                            AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
-                            targetDg = new LinkedHashSet<OWLLogicalAxiom>();
-                            for (OWLLogicalAxiom axiom : targD)
-                                targetDg.add(axiom);
+                            if (targetSource == TargetSource.FROM_FILE)
+                                targetDg = getDiagnosis(targetAxioms, ontology);
+
+                            TableList e = new TableList();
+                            out += "," + type + ",";
+                            String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message);
                         }
-
-                        if (targetSource == TargetSource.FROM_FILE)
-                            targetDg = getDiagnosis(targetAxioms, ontology);
-
-                        TableList e = new TableList();  
-                        out += "," + type + ",";
-                        String message = "act " + m + " - " + o + " - " + targetSource + " " + type;
-                        out += simulateBruteForceOnl(search, theory, targetDg, e, type, message);
+                        logger.info(out);
                     }
-                    logger.info(out);
                 }
             }
         }
