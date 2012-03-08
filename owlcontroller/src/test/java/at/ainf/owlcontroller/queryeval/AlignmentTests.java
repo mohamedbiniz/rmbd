@@ -335,6 +335,7 @@ public class AlignmentTests extends BasePerformanceTests {
         int queryCardinality = 0;
         long reactionTime = 0;
         Partitioning<OWLLogicalAxiom> queryGenerator = new CKK<OWLLogicalAxiom>(theory, qss);
+        Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(allDiags);
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
@@ -450,7 +451,13 @@ public class AlignmentTests extends BasePerformanceTests {
 
                 if (qss != null) qss.updateParameters(answer);
 
-
+                double eliminatedInLeading = getEliminationRate(search.getTheory(),actPa,diagnoses,answer);
+                double eliminatedInRemaining = getEliminationRate(search.getTheory(),actPa,remainingAllDiags,answer);
+                double eliminatedInfull = getEliminationRate(search.getTheory(),actPa,allDiags,answer);
+                deleteDiag(search.getTheory(),actPa,remainingAllDiags,answer);
+                logger.info("elimination rates: in all diags ;" + eliminatedInfull +
+                            "; in all remaining diags ;" + eliminatedInRemaining +
+                            "; in leading ;" + eliminatedInLeading);
                 // fine all dz diagnoses
                 // TODO do we need this fine?
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
@@ -517,6 +524,35 @@ public class AlignmentTests extends BasePerformanceTests {
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
         return msg;
+    }
+    
+    private double getEliminationRate(ITheory<OWLLogicalAxiom> theory, Partition<OWLLogicalAxiom> partition, 
+                                      Set<AxiomSet<OWLLogicalAxiom>> d, boolean answer) {
+        double deleted = 0;
+        for (AxiomSet<OWLLogicalAxiom> diagnosis : d) {
+            if (answer && !theory.diagnosisConsistent(diagnosis, partition.partition)) {
+                deleted++;
+            }
+            else if (!answer && theory.diagnosisEntails(diagnosis, partition.partition)) {
+                deleted++;
+            }
+        }
+        return deleted / d.size();
+    }
+
+    private void deleteDiag(ITheory<OWLLogicalAxiom> theory, Partition<OWLLogicalAxiom> partition,
+                                      Set<AxiomSet<OWLLogicalAxiom>> d, boolean answer) {
+        Set<AxiomSet<OWLLogicalAxiom>> t = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
+        for (AxiomSet<OWLLogicalAxiom> diagnosis : d) {
+            if (answer && !theory.diagnosisConsistent(diagnosis, partition.partition)) {
+                t.add(diagnosis);
+            }
+            else if (!answer && theory.diagnosisEntails(diagnosis, partition.partition)) {
+                t.add(diagnosis);
+            }
+        }
+        d.removeAll(t);
+
     }
 
     protected String simulateBruteForcePaperTest(UniformCostSearch<OWLLogicalAxiom> search,
@@ -1453,7 +1489,9 @@ public class AlignmentTests extends BasePerformanceTests {
         }
 
     }
-
+    
+    Set<AxiomSet<OWLLogicalAxiom>> allDiags;
+    
     @Test
     public void doTwoTests() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = readProps();
@@ -1496,6 +1534,20 @@ public class AlignmentTests extends BasePerformanceTests {
                             targetDg = null;
 
                             search.setCostsEstimator(es);
+                            // 
+                            try {
+                                search.run();
+                            } catch (SolverException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (NoConflictException e) {
+                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (InconsistentTheoryException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+
+                            allDiags = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            search.clearSearch();
+                            
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
                                 try {
                                     search.run(30);
