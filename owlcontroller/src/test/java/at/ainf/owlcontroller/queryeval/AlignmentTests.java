@@ -451,13 +451,13 @@ public class AlignmentTests extends BasePerformanceTests {
 
                 if (qss != null) qss.updateParameters(answer);
 
-                double eliminatedInLeading = getEliminationRate(search.getTheory(),actPa,diagnoses,answer);
-                double eliminatedInRemaining = getEliminationRate(search.getTheory(),actPa,remainingAllDiags,answer);
-                double eliminatedInfull = getEliminationRate(search.getTheory(),actPa,allDiags,answer);
+                int eliminatedInLeading = getEliminationRate(search.getTheory(),actPa,diagnoses,answer);
+                int eliminatedInRemaining = getEliminationRate(search.getTheory(),actPa,remainingAllDiags,answer);
+                int eliminatedInfull = getEliminationRate(search.getTheory(),actPa,allDiags,answer);
                 deleteDiag(search.getTheory(),actPa,remainingAllDiags,answer);
-                logger.info("elimination rates: in all diags ;" + eliminatedInfull +
-                            "; in all remaining diags ;" + eliminatedInRemaining +
-                            "; in leading ;" + eliminatedInLeading);
+                logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiags.size() +
+                            "; in all remaining diags ;" + eliminatedInRemaining + "/" + remainingAllDiags.size() +
+                        "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size());
                 // fine all dz diagnoses
                 // TODO do we need this fine?
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
@@ -526,9 +526,9 @@ public class AlignmentTests extends BasePerformanceTests {
         return msg;
     }
     
-    private double getEliminationRate(ITheory<OWLLogicalAxiom> theory, Partition<OWLLogicalAxiom> partition, 
+    private int getEliminationRate(ITheory<OWLLogicalAxiom> theory, Partition<OWLLogicalAxiom> partition,
                                       Set<AxiomSet<OWLLogicalAxiom>> d, boolean answer) {
-        double deleted = 0;
+        int deleted = 0;
         for (AxiomSet<OWLLogicalAxiom> diagnosis : d) {
             if (answer && !theory.diagnosisConsistent(diagnosis, partition.partition)) {
                 deleted++;
@@ -537,7 +537,8 @@ public class AlignmentTests extends BasePerformanceTests {
                 deleted++;
             }
         }
-        return deleted / d.size();
+        return deleted;
+
     }
 
     private void deleteDiag(ITheory<OWLLogicalAxiom> theory, Partition<OWLLogicalAxiom> partition,
