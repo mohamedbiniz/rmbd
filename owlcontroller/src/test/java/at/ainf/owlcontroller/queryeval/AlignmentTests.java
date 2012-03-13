@@ -224,7 +224,7 @@ public class AlignmentTests extends BasePerformanceTests {
             // QueryDebuggerPreference.getInstance().setTestIncoherencyToInconsistency(true);
 
             result.setIncludeSubClassOfAxioms(false);
-            result.setIncludeClassAssertionAxioms(true);
+            result.setIncludeClassAssertionAxioms(false);
             result.setIncludeEquivalentClassAxioms(false);
             result.setIncludeDisjointClassAxioms(false);
             result.setIncludePropertyAssertAxioms(false);
@@ -451,19 +451,34 @@ public class AlignmentTests extends BasePerformanceTests {
 
                 if (qss != null) qss.updateParameters(answer);
 
-                int eliminatedInLeading = getEliminationRate(search.getTheory(),actPa,diagnoses,answer);
-                int eliminatedInRemaining = getEliminationRate(search.getTheory(),actPa,remainingAllDiags,answer);
-                int eliminatedInRemainingSize = remainingAllDiags.size();
-                int eliminatedInfull = getEliminationRate(search.getTheory(),actPa,allDiags,answer);
-                deleteDiag(search.getTheory(),actPa,remainingAllDiags,answer);
-                logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiags.size() +
-                            "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
-                        "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size());
+                
                 // fine all dz diagnoses
                 // TODO do we need this fine?
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
                     ph.setMeasure(0.5d * ph.getMeasure());
                 }
+
+                int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
+                int eliminatedInRemaining = getEliminationRate(search.getTheory(),remainingAllDiags,answer,actPa);
+                int eliminatedInRemainingSize = remainingAllDiags.size();
+                int eliminatedInfull = getEliminationRate(search.getTheory(),allDiags,answer,actPa);
+                for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
+                    if (!remainingAllDiags.contains(diagnosis))
+                        logger.info ("");
+                }
+                    
+                deleteDiag(search.getTheory(),remainingAllDiags,answer,actPa.partition);
+                AxiomSet<OWLLogicalAxiom> foundTarget;
+                foundTarget=null;
+                for (AxiomSet<OWLLogicalAxiom> axiom : allDiags)
+                    if (targetDiag.containsAll(axiom)) {
+                        if(foundTarget!=null)
+                            logger.info("");
+                        foundTarget = axiom;
+                    }
+                logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiags.size() +
+                        "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
+                        "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size()+" "+foundTarget);
                 if (answer) {
                     try {
                         search.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
@@ -481,6 +496,7 @@ public class AlignmentTests extends BasePerformanceTests {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                 }
+                
             } catch (SolverException e) {
                 querySessionEnd = true;
                 logger.error(e);
@@ -526,30 +542,83 @@ public class AlignmentTests extends BasePerformanceTests {
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
         return msg;
     }
+
+    @Test
+    public void calcOnlyDiagnoses() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
+
+        String m = "coma";
+        String o = "CRS-EKAW";
+        QSSType type = QSSType.SPLITINHALF;
+        Properties properties = readProps();
+        String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+        OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+        Set<OWLLogicalAxiom> targetDg;
+        OWLTheory theory = createOWLTheory(ontology, false);
+        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
+            String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                    + m.trim()
+                    + "-incoherent-evaluation/"
+                    + o.trim()
+                    + ".txt").getPath();
+            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
     
-    private int getEliminationRate(ITheory<OWLLogicalAxiom> theory, Partition<OWLLogicalAxiom> partition,
-                                      Set<AxiomSet<OWLLogicalAxiom>> d, boolean answer) {
+            targetDg = null;
+    
+            search.setCostsEstimator(es);
+
+            search.run();
+    
+            allDiags = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+            search.clearSearch();
+
+            search.run(9);
+            TreeSet<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>();
+        MyOWLRendererParser parser = new MyOWLRendererParser(ontology);
+        testcase.add(parser.parse("conference DisjointWith session"));
+        testcase.add(parser.parse("Conference_Session SubClassOf conference"));
+        testcase.add(parser.parse("conference SubClassOf Conference_Session"));
+
+        theory.addNonEntailedTest(testcase);
+        deleteDiag(theory,allDiags,false,testcase);
+
+        search.run(9);
+        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
+        /*for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
+            if(!theory.testDiagnosis(diagnosis))
+                logger.info("prob");
+        }*/
+        
+        for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
+            assertTrue(allDiags.contains(diagnosis));
+        }
+
+    }
+
+
+    
+    private int getEliminationRate(ITheory<OWLLogicalAxiom> theory, Set<AxiomSet<OWLLogicalAxiom>> d,
+                                     boolean a, Partition<OWLLogicalAxiom> partition) 
+            throws SolverException {
         int deleted = 0;
         for (AxiomSet<OWLLogicalAxiom> diagnosis : d) {
-            if (answer && !theory.diagnosisConsistent(diagnosis, partition.partition)) {
+            if (a && !((OWLTheory)theory).diagnosisConsistentWithoutEntailedTc(diagnosis, partition.partition))
                 deleted++;
-            }
-            else if (!answer && theory.diagnosisEntails(diagnosis, partition.partition)) {
+            else if (!a && ((OWLTheory)theory).diagnosisEntailsWithoutEntailedTC(diagnosis, partition.partition))
                 deleted++;
-            }
         }
         return deleted;
 
     }
 
-    private void deleteDiag(ITheory<OWLLogicalAxiom> theory, Partition<OWLLogicalAxiom> partition,
-                                      Set<AxiomSet<OWLLogicalAxiom>> d, boolean answer) {
+    private void deleteDiag(ITheory<OWLLogicalAxiom> theory, Set<AxiomSet<OWLLogicalAxiom>> d,
+                            boolean answer, Set<OWLLogicalAxiom> partition)
+            throws SolverException {
         Set<AxiomSet<OWLLogicalAxiom>> t = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
         for (AxiomSet<OWLLogicalAxiom> diagnosis : d) {
-            if (answer && !theory.diagnosisConsistent(diagnosis, partition.partition)) {
+            if (answer && !((OWLTheory)theory).diagnosisConsistentWithoutEntailedTc(diagnosis, partition)) {
                 t.add(diagnosis);
             }
-            else if (!answer && theory.diagnosisEntails(diagnosis, partition.partition)) {
+            else if (!answer && ((OWLTheory)theory).diagnosisEntailsWithoutEntailedTC(diagnosis, partition)) {
                 t.add(diagnosis);
             }
         }
@@ -1493,7 +1562,98 @@ public class AlignmentTests extends BasePerformanceTests {
     }
     
     Set<AxiomSet<OWLLogicalAxiom>> allDiags;
-    
+
+    @Test
+    public void doQueryEliminationRateTest() throws SolverException, InconsistentTheoryException, IOException {
+        Properties properties = readProps();
+        Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
+
+        QSSType[] qssTypes = new QSSType[]{QSSType.SPLITINHALF, };
+        for (boolean dual : new boolean[] {false}) {
+            for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
+                for (String m : new String[]{"coma"}) {
+                    for (String o : new String[]{"CRS-EKAW"}) {
+                        String out ="STAT, " + m +  ", " + o;
+                        for (QSSType type : qssTypes) {
+                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                            OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                            Set<OWLLogicalAxiom> targetDg;
+                            OWLTheory theory = createOWLTheory(ontology, dual);
+                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            //ProbabilityTableModel mo = new ProbabilityTableModel();
+                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+
+                            String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                    + m.trim()
+                                    + "-incoherent-evaluation/"
+                                    + o.trim()
+                                    + ".txt").getPath();
+
+                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+
+                            //                        double[] p = new ModerateDistribution().getProbabilities(ontology.getLogicalAxioms().size());
+                            //                        Map<OWLLogicalAxiom,Double> axmap = new LinkedHashMap<OWLLogicalAxiom, Double>();
+                            //                        int i = 0;
+                            //                        for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
+                            //                            axmap.put(axiom,p[i]);
+                            //                            i++;
+                            //                        }
+                            //                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, axmap);
+
+
+                            //es.updateKeywordProb(map);
+                            targetDg = null;
+
+                            search.setCostsEstimator(es);
+                            //
+                            try {
+                                search.run();
+                            } catch (SolverException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (NoConflictException e) {
+                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (InconsistentTheoryException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+
+                            allDiags = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            search.clearSearch();
+
+                            if (targetSource == TargetSource.FROM_30_DIAGS) {
+                                try {
+                                    search.run(30);
+                                } catch (SolverException e) {
+                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                } catch (NoConflictException e) {
+                                    logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                } catch (InconsistentTheoryException e) {
+                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                }
+
+                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                        Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                                search.clearSearch();
+                                AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
+                                targetDg = new LinkedHashSet<OWLLogicalAxiom>();
+                                for (OWLLogicalAxiom axiom : targD)
+                                    targetDg.add(axiom);
+                            }
+
+                            if (targetSource == TargetSource.FROM_FILE)
+                                targetDg = getDiagnosis(targetAxioms, ontology);
+
+                            TableList e = new TableList();
+                            out += "," + type + ",";
+                            String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message);
+                        }
+                        logger.info(out);
+                    }
+                }
+            }
+        }
+    }
+
     @Test
     public void doTwoTests() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = readProps();
