@@ -579,7 +579,12 @@ public class AlignmentTests extends BasePerformanceTests {
         testcase.add(parser.parse("conference SubClassOf Conference_Session"));
 
         theory.addNonEntailedTest(testcase);
-        deleteDiag(theory,allDiags,false,testcase);
+        Set<AxiomSet<OWLLogicalAxiom>> toRemove = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
+        for (AxiomSet<OWLLogicalAxiom> axiomSet : allDiags)
+            if(!theory.testDiagnosis(axiomSet))
+                toRemove.add(axiomSet);
+        allDiags.removeAll(toRemove);
+        //deleteDiag(theory,allDiags,false,testcase);
 
         search.run(9);
         Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
