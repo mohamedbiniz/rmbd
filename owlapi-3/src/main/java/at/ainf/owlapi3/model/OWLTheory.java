@@ -567,6 +567,22 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return vis;
     }
 
+    public boolean diagnosisEntailsWithoutEntailedTC(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
+        // cleanup stack
+        Collection<OWLLogicalAxiom> stack = getFormulaStack();
+        pop(getTheoryCount());
+
+        updateAxioms(ontology, getBackgroundFormulas(), setminus(getActiveFormulas(), hs));
+
+        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
+
+        // restore the state of the theory prior to the test
+        pop(getTheoryCount());
+        //updateAxioms(getOntology(), logicalAxioms);
+        push(stack);
+        return res;
+    }
+
     public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
@@ -622,6 +638,33 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     protected Set<OWLLogicalAxiom> setminus(Set<OWLLogicalAxiom> logicalAxioms, Set<OWLLogicalAxiom> hs) {
         Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>(logicalAxioms);
         res.removeAll(hs);
+        return res;
+    }
+
+    public boolean diagnosisConsistentWithoutEntailedTc(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
+        // cleanup stack
+        Collection<OWLLogicalAxiom> stack = getFormulaStack();
+        pop(getTheoryCount());
+
+        // add axioms to the ontology
+        push(setminus(getActiveFormulas(), hs));
+        push(getBackgroundFormulas());
+        push(ent);
+        //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
+        //removeAxioms(hs, getOntology());
+        //addAxioms(ent, getOntology());
+        //addAxioms(getBackgroundFormulas(), getOntology());
+
+        boolean res = verifyConsistency();
+
+        // restore the state of the theory prior to the test
+        pop(getTheoryCount());
+        //removeAxioms(ent, getOntology());
+        //removeAxioms(getBackgroundFormulas(), getOntology());
+        //removeAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
+        //addAxioms(logicalAxioms, getOntology());
+        //updateAxioms(getOntology(), logicalAxioms);
+        push(stack);
         return res;
     }
 
