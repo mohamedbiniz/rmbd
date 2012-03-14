@@ -188,4 +188,40 @@
       <defaultViewConfigFileName value="tab_layout_plugin.xml"/>
     </extension>
 
+    <extension id="QDP_Diagnosis"
+               point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="QDP - Diagnosis"/>
+        <class value="org.protege.editor.core.ui.workspace.WorkspaceViewsTab"/>
+        <defaultViewConfigFileName value="viewconfig-ontologytab.xml"/>
+        <index value="QDP1"/>
+        <editorKitId value="OWLEditorKit"/>
+    </extension>
+
+    <extension id="QDP_Query"
+               point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="QDP - Query"/>
+        <class value="org.protege.editor.core.ui.workspace.WorkspaceViewsTab"/>
+        <defaultViewConfigFileName value="viewconfig-ontologytab.xml"/>
+        <index value="QDP2"/>
+        <editorKitId value="OWLEditorKit"/>
+    </extension>
+
+    <extension id="QDP_Options"
+               point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="QDP - Options"/>
+        <class value="org.protege.editor.core.ui.workspace.WorkspaceViewsTab"/>
+        <defaultViewConfigFileName value="viewconfig-ontologytab.xml"/>
+        <index value="QDP3"/>
+        <editorKitId value="OWLEditorKit"/>
+    </extension>
+
+    <extension id="QDP_Testcases"
+               point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="QDP - Testcases"/>
+        <class value="org.protege.editor.core.ui.workspace.WorkspaceViewsTab"/>
+        <defaultViewConfigFileName value="viewconfig-ontologytab.xml"/>
+        <index value="QDP4"/>
+        <editorKitId value="OWLEditorKit"/>
+    </extension>
+
 </plugin>

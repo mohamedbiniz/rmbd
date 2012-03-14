@@ -15,7 +15,6 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
-import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
@@ -33,7 +32,6 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.*;
@@ -313,7 +311,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     protected String simulateBruteForceOnl(UniformCostSearch<OWLLogicalAxiom> search,
                                            OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
-                                           TableList entry, QSSType scoringFunc, String message) {
+                                           TableList entry, QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, UniformCostSearch<OWLLogicalAxiom> secondsearch, OWLTheory t3) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
@@ -335,7 +333,7 @@ public class AlignmentTests extends BasePerformanceTests {
         int queryCardinality = 0;
         long reactionTime = 0;
         Partitioning<OWLLogicalAxiom> queryGenerator = new CKK<OWLLogicalAxiom>(theory, qss);
-        Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(allDiags);
+        Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags = null;
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
@@ -457,28 +455,36 @@ public class AlignmentTests extends BasePerformanceTests {
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
                     ph.setMeasure(0.5d * ph.getMeasure());
                 }
+                if(allDiagnoses!=null) {
 
-                int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
-                int eliminatedInRemaining = getEliminationRate(search.getTheory(),remainingAllDiags,answer,actPa);
-                int eliminatedInRemainingSize = remainingAllDiags.size();
-                int eliminatedInfull = getEliminationRate(search.getTheory(),allDiags,answer,actPa);
-                for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
-                    if (!remainingAllDiags.contains(diagnosis))
-                        logger.info ("");
-                }
-                    
-                deleteDiag(search.getTheory(),remainingAllDiags,answer,actPa.partition);
-                AxiomSet<OWLLogicalAxiom> foundTarget;
-                foundTarget=null;
-                for (AxiomSet<OWLLogicalAxiom> axiom : allDiags)
-                    if (targetDiag.containsAll(axiom)) {
-                        if(foundTarget!=null)
-                            logger.info("");
-                        foundTarget = axiom;
+                    try {
+                        secondsearch.run();
+                    } catch (NoConflictException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
-                logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiags.size() +
-                        "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
-                        "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size()+" "+foundTarget);
+                    remainingAllDiags = secondsearch.getStorage().getDiagnoses();
+                    int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
+                    int eliminatedInRemaining = getEliminationRate(secondsearch.getTheory(),remainingAllDiags,answer,actPa);
+                    int eliminatedInRemainingSize = remainingAllDiags.size();
+                    int eliminatedInfull = getEliminationRate(t3,allDiagnoses,answer,actPa);
+                    // deleteDiag(search.getTheory(),remainingAllDiags,answer,actPa.partition);
+
+                    AxiomSet<OWLLogicalAxiom> foundTarget;
+                    foundTarget=null;
+                    for (AxiomSet<OWLLogicalAxiom> axiom : allDiagnoses)
+                        if (targetDiag.containsAll(axiom)) {
+                            if(foundTarget!=null)
+                                logger.info("");
+                            foundTarget = axiom;
+                        }
+                    if (answer)
+                        secondsearch.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                    else
+                        secondsearch.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                    logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiagnoses.size() +
+                            "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
+                            "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size()+" "+foundTarget);
+                }
                 if (answer) {
                     try {
                         search.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
@@ -554,6 +560,7 @@ public class AlignmentTests extends BasePerformanceTests {
         OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = createOWLTheory(ontology, false);
+        Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                     + m.trim()
@@ -568,7 +575,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
             search.run();
     
-            allDiags = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+            allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
             search.clearSearch();
 
             search.run(9);
@@ -580,10 +587,10 @@ public class AlignmentTests extends BasePerformanceTests {
 
         theory.addNonEntailedTest(testcase);
         Set<AxiomSet<OWLLogicalAxiom>> toRemove = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
-        for (AxiomSet<OWLLogicalAxiom> axiomSet : allDiags)
+        for (AxiomSet<OWLLogicalAxiom> axiomSet : allD)
             if(!theory.testDiagnosis(axiomSet))
                 toRemove.add(axiomSet);
-        allDiags.removeAll(toRemove);
+        allD.removeAll(toRemove);
         //deleteDiag(theory,allDiags,false,testcase);
 
         search.run(9);
@@ -594,7 +601,7 @@ public class AlignmentTests extends BasePerformanceTests {
         }*/
         
         for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
-            assertTrue(allDiags.contains(diagnosis));
+            assertTrue(allD.contains(diagnosis));
         }
 
     }
@@ -1077,7 +1084,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
         TableList e = new TableList();
         String message = "act " + m + " - " + o + " - " + targetSource + " " + type;
-        simulateBruteForceOnl(search, theory, targetDg, e, type, message);
+        simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
     }
 
@@ -1153,7 +1160,7 @@ public class AlignmentTests extends BasePerformanceTests {
                                     + ", source " + targetSource
                                     + ", qss " + type
                                     + ", background " + background;
-                            simulateBruteForceOnl(search, theory, targetDg, e, type, message);
+                            simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
                         }
                     }
                 }
@@ -1566,7 +1573,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
     }
     
-    Set<AxiomSet<OWLLogicalAxiom>> allDiags;
+
 
     @Test
     public void doQueryEliminationRateTest() throws SolverException, InconsistentTheoryException, IOException {
@@ -1593,6 +1600,12 @@ public class AlignmentTests extends BasePerformanceTests {
                                     + "-incoherent-evaluation/"
                                     + o.trim()
                                     + ".txt").getPath();
+
+                            OWLTheory theory2 = createOWLTheory(ontology, dual);
+                            OWLTheory t3 = createOWLTheory(ontology, dual);
+                            UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
+                            search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2,path));
+
 
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
 
@@ -1621,7 +1634,7 @@ public class AlignmentTests extends BasePerformanceTests {
                                 logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
 
-                            allDiags = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
                             search.clearSearch();
 
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
@@ -1650,7 +1663,7 @@ public class AlignmentTests extends BasePerformanceTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message);
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
                         }
                         logger.info(out);
                     }
@@ -1685,6 +1698,12 @@ public class AlignmentTests extends BasePerformanceTests {
                                     + o.trim()
                                     + ".txt").getPath();
 
+                            OWLTheory theory2 = createOWLTheory(ontology, dual);
+                            OWLTheory t3 = createOWLTheory(ontology, dual);
+                            UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
+                            search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2,path));
+
+
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
 
     //                        double[] p = new ModerateDistribution().getProbabilities(ontology.getLogicalAxioms().size());
@@ -1712,7 +1731,7 @@ public class AlignmentTests extends BasePerformanceTests {
                                 logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
 
-                            allDiags = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
                             search.clearSearch();
                             
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
@@ -1741,7 +1760,7 @@ public class AlignmentTests extends BasePerformanceTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message);
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
                         }
                         logger.info(out);
                     }
@@ -1796,7 +1815,7 @@ public class AlignmentTests extends BasePerformanceTests {
 
                 TableList e = new TableList();
                 logger.info(m + " - " + o);
-                simulateBruteForceOnl(search, theory, targetDg, e, QSSType.MINSCORE, "");
+                simulateBruteForceOnl(search, theory, targetDg, e, QSSType.MINSCORE, "", null, null, null);
 
 //                boolean target = false;
 //                for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
