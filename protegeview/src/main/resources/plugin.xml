@@ -57,13 +57,6 @@
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
-    <extension id="at.ainf.protegeview.DebugTabVw"
-            point="org.protege.editor.core.application.ViewComponent">
-        <label value="Debug Tab"/>
-        <class value="at.ainf.protegeview.DebugTabVw"/>
-        <headerColor value="810000"/>
-        <category value="Debugger"/>
-    </extension>
 
     <extension id="at.ainf.protegeview.basis.Ehook"
             point="org.protege.editor.core.application.EditorKitHook">
