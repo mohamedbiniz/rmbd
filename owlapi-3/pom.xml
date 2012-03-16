@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.semanticweb.owl</groupId>
             <artifactId>owlapi</artifactId>
-            <version>3.2.3.Svn_1824_patched_2011_07_26_0357</version>
+            <version>3.2.5_svn_1944</version>
         </dependency>
         <!--<dependency>
             <groupId>org.semanticweb</groupId>

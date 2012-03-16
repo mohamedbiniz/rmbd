@@ -62,7 +62,7 @@
     <properties>
         <java.source.version>1.5</java.source.version>
         <java.target.version>1.5</java.target.version>
-        <junit.version>4.5</junit.version>
+        <junit.version>4.8.2</junit.version>
         <distributionRepositoryId>releases</distributionRepositoryId>
         <distributionRepositoryUrl>
             dav:http://scs-iwas.uni-klu.ac.at/nexus/content/repositories/releases
