@@ -177,7 +177,7 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
             sum += hittingSet.getMeasure();
         }
 
-        if (sum == 0)
+        if (sum == 0 && hittingSets.size() != 0)
             throw new IllegalStateException("Sum of probabilities of all diagnoses is 0!");
 
         for (T hittingSet : hittingSets) {
