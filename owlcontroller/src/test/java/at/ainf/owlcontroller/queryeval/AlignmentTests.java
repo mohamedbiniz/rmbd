@@ -455,7 +455,7 @@ public class AlignmentTests extends BasePerformanceTests {
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
                     ph.setMeasure(0.5d * ph.getMeasure());
                 }
-                if(allDiagnoses!=null) {
+                if(false && allDiagnoses!=null) {
 
                     try {
                         secondsearch.run();
@@ -485,6 +485,10 @@ public class AlignmentTests extends BasePerformanceTests {
                             "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
                             "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size()+" "+foundTarget);
                 }
+
+                int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
+                logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size() );
+
                 if (answer) {
                     try {
                         search.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
