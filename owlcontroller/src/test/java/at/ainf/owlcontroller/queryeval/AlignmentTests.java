@@ -455,7 +455,7 @@ public class AlignmentTests extends BasePerformanceTests {
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
                     ph.setMeasure(0.5d * ph.getMeasure());
                 }
-                if(false && allDiagnoses!=null) {
+                if(allDiagnoses!=null) {
 
                     try {
                         secondsearch.run();
@@ -486,8 +486,8 @@ public class AlignmentTests extends BasePerformanceTests {
                             "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size()+" "+foundTarget);
                 }
 
-                int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
-                logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size() );
+                /*int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
+                logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size() );*/
 
                 if (answer) {
                     try {
@@ -1682,7 +1682,7 @@ public class AlignmentTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {false, true}) {
+        for (boolean dual : new boolean[] {false}) {
            for (TargetSource targetSource : TargetSource.values()) {
                 for (String m : mapOntos.keySet()) {
                     for (String o : mapOntos.get(m)) {
@@ -1765,6 +1765,8 @@ public class AlignmentTests extends BasePerformanceTests {
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
                             out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+
+                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, null, null);
                         }
                         logger.info(out);
                     }
