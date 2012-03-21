@@ -7,6 +7,7 @@ import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import org.apache.log4j.Logger;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -163,8 +164,8 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     }
 
 
-    protected static final OWLClass TOP_CLASS = OWLDataFactoryImpl.getInstance().getOWLThing();
-    protected static final OWLClass BOTTOM_CLASS = OWLDataFactoryImpl.getInstance().getOWLNothing();
+    protected static final OWLClass TOP_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
+    protected static final OWLClass BOTTOM_CLASS = OWLManager.getOWLDataFactory().getOWLNothing();
 
     protected boolean isReduceToUnsat() {
         return REDUCE_TO_UNSAT;

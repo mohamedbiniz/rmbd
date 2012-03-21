@@ -19,7 +19,9 @@ public class ProbabilityQueryDebugger<Id> extends SimpleQueryDebugger<Id> {
 
     public void init() {
         SimpleStorage<Id> storage = new SimpleStorage<Id>();
-        search = new UniformCostSearch<Id>(storage, costsEstimator);
+        UniformCostSearch<Id> sl = new UniformCostSearch<Id>(storage);
+        sl.setCostsEstimator(costsEstimator);
+        search = sl;
         search.setSearcher(new NewQuickXplain<Id>());
         if(theory != null) getTheory().reset();
         search.setTheory(getTheory());

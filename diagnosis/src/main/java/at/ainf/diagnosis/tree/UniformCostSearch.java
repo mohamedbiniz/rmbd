@@ -27,11 +27,6 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         super(storage);
     }
 
-    public UniformCostSearch(SimpleStorage<Id> storage, CostsEstimator<Id> estimator) {
-        super(storage);
-        setCostsEstimator(estimator);
-    }
-
     public void createRoot() throws NoConflictException,
             SolverException, InconsistentTheoryException {
         // if there is already a root
