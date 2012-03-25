@@ -49,10 +49,10 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     public void init() {
         SimpleStorage<Id> storage = new SimpleStorage<Id>();
-        search = new BreadthFirstSearch<Id>(storage);
-        search.setSearcher(new NewQuickXplain<Id>());
         if (theory != null) getTheory().reset();
-        search.setTheory(getTheory());
+        search = new BreadthFirstSearch<Id>(storage,new NewQuickXplain<Id>(),getTheory());
+        //search.setSearcher(new NewQuickXplain<Id>());
+        //search.setTheory(getTheory());
         conflictSetsListener = new StorageConflictSetsListenerImpl();
         hittingSetsListener = new StorageHittingSetsListenerImpl();
         search.getStorage().addStorageConflictSetsListener(conflictSetsListener);
