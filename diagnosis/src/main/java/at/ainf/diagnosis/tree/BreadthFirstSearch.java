@@ -8,7 +8,11 @@
 
 package at.ainf.diagnosis.tree;
 
+import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.theory.model.ITheory;
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.theory.storage.Storage;
 
 import java.util.*;
@@ -24,6 +28,12 @@ public class BreadthFirstSearch<Id> extends UninformedSearch<Id> {
 
     public BreadthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
+    }
+
+    public BreadthFirstSearch(Storage<AxiomSet<Id>,Id> storage, Searcher<Id> idNewQuickXplain, ITheory<Id> theory) {
+        super(storage);
+        setSearcher(idNewQuickXplain);
+        setTheory(theory);
     }
 
     public void expand(Node<Id> node) {
