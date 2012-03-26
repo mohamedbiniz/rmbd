@@ -23,42 +23,51 @@ targetNamespace = http://EKAW.owl
 + Chair_PC < PC_Chair | 1.0
 - Chair_PC > Proceedings_Publisher | 1.0
 - Chair_PC < Proceedings_Publisher | 1.0
+
 - Assistant > Proceedings_Publisher | 1.0
 - Assistant < Proceedings_Publisher | 1.0
 + Participant > Late-Registered_Participant | 1.0
+
 - Participant < Late-Registered_Participant | 1.0
 - Participant > Proceedings_Publisher | 1.0
 - Participant < Proceedings_Publisher | 1.0
 + Member > Late-Registered_Participant | 1.0
+
 - Member < Late-Registered_Participant | 1.0
 + Member > SC_Member | 1.0
 - Member < SC_Member | 1.0
 - Member > Proceedings_Publisher | 1.0
 - Member < Proceedings_Publisher | 1.0
+
 - Regular > Late-Registered_Participant | 1.0
 - Regular < Late-Registered_Participant | 1.0
 - Regular > Proceedings_Publisher | 1.0
 - Regular < Proceedings_Publisher | 1.0
 - Scholar > Student | 1.0
 - Scholar < Student | 1.0
+
 - Scholar > Proceedings_Publisher | 1.0
 - Scholar < Proceedings_Publisher | 1.0
+
 - Student > Late-Registered_Participant | 1.0
 - Student < Late-Registered_Participant | 1.0
 + Student > Student | 1.0
 + Student < Student | 1.0
+
 - Student > Proceedings_Publisher | 1.0
 - Student < Proceedings_Publisher | 1.0
 - Volunteer > Proceedings_Publisher | 1.0
 - Volunteer < Proceedings_Publisher | 1.0
 - Administrator > Proceedings_Publisher | 1.0
 - Administrator < Proceedings_Publisher | 1.0
+
 - Author > Proceedings_Publisher | 1.0
 - Author < Proceedings_Publisher | 1.0
 - Member_PC > SC_Member | 1.0
 - Member_PC < SC_Member | 1.0
 + Member_PC > PC_Member | 1.0
 + Member_PC < PC_Member | 1.0
+
 - Member_PC > Proceedings_Publisher | 1.0
 - Member_PC < Proceedings_Publisher | 1.0
 - Science_Worker > Proceedings_Publisher | 1.0
