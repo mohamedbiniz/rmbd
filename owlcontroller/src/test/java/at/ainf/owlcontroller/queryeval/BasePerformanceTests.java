@@ -23,6 +23,9 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
@@ -84,7 +87,7 @@ public abstract class BasePerformanceTests {
         }
     }
 
-    public boolean generateQueryAnswer
+    protected boolean generateQueryAnswer
             (UniformCostSearch<OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
@@ -321,7 +324,7 @@ public abstract class BasePerformanceTests {
             case STATICRISK:
                 return QSSFactory.createStaticRiskQSS(0.3);
             case DYNAMICRISK:
-                return QSSFactory.createDynamicRiskQSS(0, 0.5, 0.3);
+                return QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
             case PENALTY:
                 return QSSFactory.createPenaltyQSS(10);
             default:

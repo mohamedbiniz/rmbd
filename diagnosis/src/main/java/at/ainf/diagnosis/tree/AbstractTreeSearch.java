@@ -166,7 +166,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 if (!getSearcher().isDual()) {
                     for (T ax : storage.getConflictSets()) {
                         Set<Id> axioms = getSearcher().search(theory, ax, null);
-                        if (axioms.size() < ax.size()) {
+                        if (!axioms.equals(ax)) {
                             AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());
                             updateTree(conflict);
                             ax.updateAxioms(conflict);
