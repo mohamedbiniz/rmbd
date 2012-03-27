@@ -44,6 +44,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     private static Logger logger = Logger.getLogger(UnsolvableTests.class.getName());
 
+    private boolean showElRates = false;
+
     @BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlcontroller-log4j.properties").getFile();
@@ -51,7 +53,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     protected Properties readProps() {
-        return readProps("alignment.unsolvable.properties");
+        return readProps("alignment.properties");
 
     }
 
@@ -459,7 +461,8 @@ public class UnsolvableTests extends BasePerformanceTests {
                 }
 
                 int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
-                logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size() );
+                if(showElRates)
+                    logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size() );
 
                 if (answer) {
                     try {
@@ -664,7 +667,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {true,false}) {
+        for (boolean dual : new boolean[] {true}) {
             for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                 for (String m : mapOntos.keySet()) {
                     for (String o : mapOntos.get(m)) {

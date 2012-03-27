@@ -3,6 +3,7 @@ package at.ainf.owlcontroller;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomSet;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.HermiT.Reasoner;
@@ -68,6 +69,25 @@ public class Utils {
     public static OWLTheory loadTheory(OWLOntologyManager manager, String path) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         InputStream st = ClassLoader.getSystemResourceAsStream(path);
         return createTheory(manager.loadOntologyFromOntologyDocument(st));
+    }
+    
+    public static String printAllT(OWLTheory theory) {
+        String result = "";
+        
+        result += "Positive TC\n";
+        for (Set<OWLLogicalAxiom> tc : theory.getPositiveTests())
+            result += renderAxioms(tc) + "\n";
+        result += "Negative TC\n";
+        for (Set<OWLLogicalAxiom> tc : theory.getNegativeTests())
+            result += renderAxioms(tc) + "\n";
+        result += "Entailed TC\n";
+        for (Set<OWLLogicalAxiom> tc : theory.getEntailedTests())
+            result += renderAxioms(tc) + "\n";
+        result += "Not Entailed TC\n";
+        for (Set<OWLLogicalAxiom> tc : theory.getNonentailedTests())
+            result += renderAxioms(tc) + "\n";
+        
+        return result;
     }
 
     public static <E extends Set<OWLLogicalAxiom>> String logCollection(Logger logger, String name, Set<E> col) {
