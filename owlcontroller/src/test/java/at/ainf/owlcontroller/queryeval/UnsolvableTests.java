@@ -44,7 +44,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     private static Logger logger = Logger.getLogger(UnsolvableTests.class.getName());
 
-    private boolean showElRates = false;
+
+    private boolean showElRates = true;
 
     @BeforeClass
     public static void setUp() {
@@ -53,7 +54,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     protected Properties readProps() {
-        return readProps("alignment.properties");
+        return readProps("alignment.unsolvable.properties");
 
     }
 
