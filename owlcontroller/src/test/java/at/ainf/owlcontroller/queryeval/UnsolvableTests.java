@@ -12,6 +12,7 @@ import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
+import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
 import at.ainf.theory.model.ITheory;
@@ -328,6 +329,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 try {
                     long diag = System.currentTimeMillis();
+                    search.clearSearch();
                     search.run(NUMBER_OF_HITTING_SETS);
 
                     daStr += search.getStorage().getDiagnoses().size() + "/";
@@ -660,6 +662,1496 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         if (cnt==0) return -1;
         return sum / cnt;
+    }
+
+    private void addTc(OWLTheory theory) throws SolverException, InconsistentTheoryException {
+        MyOWLRendererParser parser = new MyOWLRendererParser(theory.getOriginalOntology());
+        Set<OWLLogicalAxiom> tc ;
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Early-Registered_Participant DisjointWith Late-Registered_Participant"));
+        tc.add(parser.parse("PC_Chair DisjointWith Workshop_Chair"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Early-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("PC_Chair DisjointWith Tutorial_Chair"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf PC_Chair"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Organisation SubClassOf Organization"));
+        tc.add(parser.parse("PC_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Possible_Reviewer SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Session_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Member SubClassOf Participant"));
+        tc.add(parser.parse("Member_PC SubClassOf PC_Member"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("SC_Member SubClassOf PC_Member"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair DisjointWith Tutorial_Chair"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Member SubClassOf Member_PC"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        tc.add(parser.parse("PC_Chair DisjointWith Workshop_Chair"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("SC_Member SubClassOf Member"));
+        theory.addEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addEntailedTest(tc);
+
+
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf PC_Chair"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Person SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Early-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Early-Registered_Participant DisjointWith Late-Registered_Participant"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        tc.add(parser.parse("PC_Chair DisjointWith Workshop_Chair"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf PC_Chair"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Person SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Early-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Early-Registered_Participant DisjointWith Late-Registered_Participant"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        tc.add(parser.parse("PC_Chair DisjointWith Tutorial_Chair"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf PC_Chair"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Person SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Early-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Organisation SubClassOf Organization"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Chair DisjointWith Tutorial_Chair"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf PC_Chair"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Person SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Organisation SubClassOf Organization"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        tc.add(parser.parse("PC_Chair DisjointWith Tutorial_Chair"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Person SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Organisation SubClassOf Organization"));
+        tc.add(parser.parse("PC_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Session_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Person SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Organisation SubClassOf Organization"));
+        tc.add(parser.parse("PC_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Session_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf PC_Chair"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Person SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Session_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Chair_PC SubClassOf Person"));
+        tc.add(parser.parse("Chair_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Participant"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf PC_Member"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Participant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Chair_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("SC_Member SubClassOf PC_Member"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Chair_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Chair_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Author"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Person"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Author"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Person"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Author SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Author"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Author SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Author"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Author SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Author"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Author SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Author"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Author SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Author"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Author"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Author SubClassOf Proceedings_Publisher"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Participant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Scholar SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Administrator"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Participant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Scholar SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Session_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Scholar"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Volunteer"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Scholar SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Scholar SubClassOf Proceedings_Publisher"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Science_Worker"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Session_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Tutorial_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("PC_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Assistant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Science_Worker SubClassOf Proceedings_Publisher"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Assistant SubClassOf Proceedings_Publisher"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Student SubClassOf Participant"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Regular"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Person SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Regular SubClassOf Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Regular"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Regular"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Regular"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Member_PC SubClassOf Person"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("PC_Member SubClassOf Possible_Reviewer"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Regular"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("PC_Chair DisjointWith Tutorial_Chair"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf SC_Member"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Early-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Member"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Participant"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Regular"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Student"));
+        tc.add(parser.parse("PC_Member SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Regular"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Workshop_Chair SubClassOf PC_Member"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        tc.add(parser.parse("PC_Chair DisjointWith Tutorial_Chair"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Person"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Participant SubClassOf Person"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Scholar SubClassOf Person"));
+        tc.add(parser.parse("Scholar SubClassOf Student"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Student"));
+        tc.add(parser.parse("Volunteer SubClassOf Person"));
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Early-Registered_Participant SubClassOf Conference_Participant"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Member"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Participant"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Regular"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Student"));
+        tc.add(parser.parse("PC_Member SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Conference_Participant SubClassOf Person"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Regular"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Administrator SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Assistant SubClassOf Person"));
+        tc.add(parser.parse("Author SubClassOf Person"));
+        tc.add(parser.parse("Member SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Member SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Participant SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Participant SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Regular SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Science_Worker SubClassOf Person"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Member"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Participant"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Regular"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Student"));
+        tc.add(parser.parse("PC_Member SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Regular"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+        tc.add(parser.parse("Organization DisjointWith Person"));
+        tc.add(parser.parse("Organisation DisjointWith Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Student"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Member SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Participant"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Regular"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Regular SubClassOf Proceedings_Publisher"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Conference_Participant"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Member_PC"));
+        tc.add(parser.parse("SC_Member SubClassOf Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Member_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Member_PC SubClassOf SC_Member"));
+        tc.add(parser.parse("Student SubClassOf Late-Registered_Participant"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Member"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Student"));
+        tc.add(parser.parse("Student SubClassOf Scholar"));
+        tc.add(parser.parse("Student SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Student SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Late-Registered_Participant SubClassOf Member"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Chair_PC SubClassOf Proceedings_Publisher"));
+        tc.add(parser.parse("Proceedings_Publisher SubClassOf Person"));
+        theory.addNonEntailedTest(tc);
+
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        tc.add(parser.parse("Volunteer SubClassOf Proceedings_Publisher"));
+        theory.addNonEntailedTest(tc);
+    }
+
+    @Test
+    public void doUnsolvable() throws SolverException, InconsistentTheoryException, IOException {
+        Properties properties = readProps();
+        Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
+
+        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+        for (boolean dual : new boolean[] {true}) {
+            for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
+                for (String m : mapOntos.keySet()) {
+                    for (String o : mapOntos.get(m)) {
+                        String out ="STAT, " + m +  ", " + o;
+                        for (BasePerformanceTests.QSSType type : qssTypes) {
+                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                            OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                            Set<OWLLogicalAxiom> targetDg;
+                            OWLTheory theory = createOWLTheory(ontology, dual);
+                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            //ProbabilityTableModel mo = new ProbabilityTableModel();
+                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+
+                            String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                    + m.trim()
+                                    + "-incoherent-evaluation/"
+                                    + o.trim()
+                                    + ".txt").getPath();
+
+
+                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+
+
+
+                             addTc(theory);
+
+
+                            //es.updateKeywordProb(map);
+                            targetDg = null;
+
+                            search.setCostsEstimator(es);
+                            //
+                            try {
+                                search.run(9);
+                            } catch (SolverException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (NoConflictException e) {
+                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (InconsistentTheoryException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+
+                            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
+                            
+                            MyOWLRendererParser parser = new MyOWLRendererParser(ontology) ;
+                            Set<OWLLogicalAxiom>  tc  =  new LinkedHashSet<OWLLogicalAxiom>();
+                            tc.add(parser.parse("Proceedings_Publisher SubClassOf Organisation"));
+                            theory.addEntailedTest(tc);
+
+                            try {
+                                search.run(9);
+                            } catch (SolverException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (NoConflictException e) {
+                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (InconsistentTheoryException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            search.clearSearch();
+
+
+
+                            if (targetSource == TargetSource.FROM_FILE)
+                                targetDg = getDiagnosis(targetAxioms, ontology);
+
+                            TableList e = new TableList();
+                            out += "," + type + ",";
+                            String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
+                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+
+                        }
+                        logger.info(out);
+                    }
+                }
+            }
+        }
     }
     
     @Test
