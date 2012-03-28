@@ -49,8 +49,15 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     private AxiomRenderer<Id> axiomRenderer;
 
+    private TreeLogic<T,Id> treeLogic;
+
     public AbstractTreeSearch(Storage<T, Id> storage) {
         this.storage = storage;
+    }
+
+    public void setLogic(TreeLogic<T,Id> treeLog) {
+        this.treeLogic = treeLog;
+        treeLogic.setTreeSearch(this);
     }
 
     private CostsEstimator<Id> costsEstimator;
@@ -186,7 +193,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 for (T invHS : invalidHittingSets) {
                     getStorage().invalidateHittingSet(invHS);
                 }
-                updateHsTree(invalidHittingSets);
+                treeLogic.updateHsTree(invalidHittingSets);
             }
             if (getRoot() == null) {
                 createRoot();
@@ -294,7 +301,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
                 Set<Id> diagnosis = node.getPathLabels();
 
-                boolean valid = proveValidnessDiagnosis(diagnosis);
+                boolean valid = treeLogic.proveValidnessDiagnosis(diagnosis);
                 
                 T hs = createHittingSet(node, valid);
 
@@ -388,7 +395,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
         T conflictSet = createConflictSet(node, quickConflict);
 
-        proveValidnessConflict(conflictSet);
+        treeLogic.proveValidnessConflict(conflictSet);
 
         if (axiomRenderer != null)
             logMessage(getDepth(node), "created conflict set: ", conflictSet);
@@ -396,7 +403,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             logMessage(getDepth(node), "pathlabels: ", pathLabels);
 
 
-            pruneConflictSets(node, conflictSet);
+            treeLogic.pruneConflictSets(node, conflictSet);
 
         getStorage().addConflict(conflictSet);
 
@@ -447,7 +454,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         return node.isClosed() || hasClosedParent(node.getParent());
     }
 
-    private void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
+    public void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
         Node<Id> root = getRoot();
         if (getRoot() == null) {
             return;
@@ -456,7 +463,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         children.add(root);
         while (!children.isEmpty()) {
             Node<Id> node = children.removeFirst();
-            Set<Node<Id>> nodeChildren = updateNode(conflictSet, node);
+            Set<Node<Id>> nodeChildren = treeLogic.updateNode(conflictSet, node);
             children.addAll(nodeChildren);
         }
     }

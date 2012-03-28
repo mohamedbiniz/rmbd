@@ -25,6 +25,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
 
     public UniformCostSearch(SimpleStorage<Id> storage) {
         super(storage);
+        setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
     }
 
     public void createRoot() throws NoConflictException,

@@ -83,9 +83,21 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Id> {
             strategy.setSearcher(searcher);
     }
 
+    public Searcher<Id> getSearcher() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void setTheory(ITheory<Id> theory) {
         this.theory = theory;
         for (AbstractTreeSearch<AxiomSet<Id>, Id> strategy : strategys) strategy.setTheory(theory);
+    }
+
+    public void setLogic(TreeLogic<AxiomSet<Id>, Id> treeLog) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public ITheory<Id> getTheory() {

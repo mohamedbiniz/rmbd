@@ -28,12 +28,14 @@ public class BreadthFirstSearch<Id> extends UninformedSearch<Id> {
 
     public BreadthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
+        setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
     }
 
     public BreadthFirstSearch(Storage<AxiomSet<Id>,Id> storage, Searcher<Id> idNewQuickXplain, ITheory<Id> theory) {
         super(storage);
         setSearcher(idNewQuickXplain);
         setTheory(theory);
+        setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
     }
 
     public void expand(Node<Id> node) {
