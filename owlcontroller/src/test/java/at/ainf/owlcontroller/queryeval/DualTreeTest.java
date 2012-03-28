@@ -4,6 +4,7 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
+import at.ainf.diagnosis.tree.DualTreeLogic;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -70,8 +71,9 @@ public class DualTreeTest extends BasePerformanceTests {
         Searcher<OWLLogicalAxiom> dualSearcher = new FastDiagnosis<OWLLogicalAxiom>();
         SimpleStorage<OWLLogicalAxiom> dualStorage = new DualStorage<OWLLogicalAxiom>();
 
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual =
+        BreadthFirstSearch<OWLLogicalAxiom> searchDual =
                 new BreadthFirstSearch<OWLLogicalAxiom>(dualStorage);
+        searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>());
 
         computeQueryExample(ont, runs, true, dualSearcher, searchDual, testCases);
 
@@ -235,6 +237,7 @@ public class DualTreeTest extends BasePerformanceTests {
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
+        searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
         map = Utils.getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);

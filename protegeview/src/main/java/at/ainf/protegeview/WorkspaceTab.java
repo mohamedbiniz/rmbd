@@ -1,5 +1,6 @@
 package at.ainf.protegeview;
 
+import at.ainf.diagnosis.tree.HsTreeLogic;
 import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;

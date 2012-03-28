@@ -39,7 +39,13 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
     public void setSearcher(Searcher<Id> searcher);
 
+    public Searcher<Id> getSearcher();
+
+    public void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException ;  
+
     public void setTheory(ITheory<Id> theory);
+
+    public void setLogic(TreeLogic<T,Id> treeLog);
 
     public ITheory<Id> getTheory();
 

@@ -6,6 +6,7 @@ import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.CostsEstimator;
+import at.ainf.diagnosis.tree.DualTreeLogic;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
@@ -129,8 +130,10 @@ public class BaseAlignmentTests extends BasePerformanceTests {
         else
             storage = new SimpleStorage<OWLLogicalAxiom>();
         UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
-        if (dual)
+        if (dual) {
+            search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
             search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        }
         else
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);
