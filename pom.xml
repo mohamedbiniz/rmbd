@@ -20,7 +20,6 @@
     <modules>
         <module>diagnosis</module>
         <module>owlapi-3</module>
-        <module>queryselection</module>
         <module>sat4j</module>
         <module>choco2</module>
         <module>logger</module>
