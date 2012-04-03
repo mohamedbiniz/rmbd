@@ -770,9 +770,9 @@ public class UnsolvableTests extends BasePerformanceTests {
         Properties properties = readProps();
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
-        showElRates=false;
+        showElRates=true;
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {true}) {
+        for (boolean dual : new boolean[] {false}) {
             for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                 for (String m : mapOntos.keySet()) {
                     for (String o : mapOntos.get(m)) {
