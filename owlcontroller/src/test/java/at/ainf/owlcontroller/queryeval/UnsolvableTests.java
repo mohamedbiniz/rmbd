@@ -688,6 +688,10 @@ public class UnsolvableTests extends BasePerformanceTests {
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);
                             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
+                            OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
+                            theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                            theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
@@ -772,7 +776,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         showElRates=true;
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {true}) {
+        for (boolean dual : new boolean[] {false}) {
             for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                 for (String m : mapOntos.keySet()) {
                     for (String o : mapOntos.get(m)) {
