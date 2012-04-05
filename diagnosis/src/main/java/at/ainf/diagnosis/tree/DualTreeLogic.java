@@ -40,7 +40,7 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T,Id
          
     }
 
-    public void updateHsTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
+    public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
         
             for (T next : invalidHittingSets) {
                 tree.updateTree(next);

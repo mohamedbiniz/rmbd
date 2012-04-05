@@ -15,7 +15,7 @@ import java.util.*;
  * Time: 16:07
  * To change this template use File | Settings | File Templates.
  */
-public class HsTreeLogic<T extends AxiomSet<Id>,Id> implements TreeLogic<T,Id> {
+public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id> {
 
 
     private TreeSearch<T, Id> tree;
@@ -26,12 +26,12 @@ public class HsTreeLogic<T extends AxiomSet<Id>,Id> implements TreeLogic<T,Id> {
     }
 
     public boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
-        
+
         if (tree.getTheory().hasTests())
             return tree.getTheory().testDiagnosis(diagnosis);
 
         return true;
-        
+
     }
 
     public void pruneConflictSets(Node<Id> idNode, T conflictSet) throws SolverException, InconsistentTheoryException {
@@ -50,10 +50,10 @@ public class HsTreeLogic<T extends AxiomSet<Id>,Id> implements TreeLogic<T,Id> {
             }
             tree.updateTree(conflictSet);
         }
-        
+
     }
 
-    public void updateHsTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
+    public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
 
         for (T ax : tree.getStorage().getConflictSets()) {
             Set<Id> axioms = tree.getSearcher().search(tree.getTheory(), ax, null);
@@ -62,29 +62,9 @@ public class HsTreeLogic<T extends AxiomSet<Id>,Id> implements TreeLogic<T,Id> {
                 tree.updateTree(conflict);
                 ax.updateAxioms(conflict);
             }
-
         }
-        
     }
 
-    protected boolean containsOneOf(Set<Id> pathLabels, Set<Id> temp) {
-        for (Id t : temp) {
-            if (pathLabels.contains(t)) {
-                //System.out.println("Contains!");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean hasParent(Node<Id> node, Node<Id> parent) {
-        if (parent.equals(node))
-            return true;
-        else if (parent.isRoot())
-            return false;
-        return hasParent(node, parent.getParent());
-    }
-    
     public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
         if (node == null || node.getAxiomSet() == null)
             return Collections.emptySet();
@@ -92,19 +72,37 @@ public class HsTreeLogic<T extends AxiomSet<Id>,Id> implements TreeLogic<T,Id> {
             Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet());
             //if (!getSearcher().isDual())
             invalidAxioms.removeAll(axSet);
-            for (Iterator<Node<Id>> onodeit = tree.getOpenNodes().iterator(); onodeit.hasNext(); ) {
-                Node<Id> openNode = onodeit.next();
-                if (!openNode.isRoot() && hasParent(node, openNode.getParent())
-                        && containsOneOf(openNode.getPathLabels(), invalidAxioms))
-                    onodeit.remove();
+
+            for (Id invalidAxiom : invalidAxioms) {
+                Node<Id> invalidChild = findInvalidChild(node, invalidAxiom);
+                node.removeChild(invalidChild);
             }
-            
+
             node.setConflict(axSet);
         }
         return node.getChildren();
     }
 
-    public void setTreeSearch(TreeSearch<T,Id> tree) {
+    private Node<Id> findInvalidChild(Node<Id> node, Id invalidAxiom) {
+        for (Node<Id> idNode : node.getChildren()) {
+            if (idNode.getArcLabel().equals(invalidAxiom)) {
+                removeChildren(idNode);
+                return idNode;
+            }
+        }
+        throw new IllegalStateException("Invalid child does not exists!");
+    }
+
+    private void removeChildren(Node<Id> idNode) {
+        if (!tree.getOpenNodes().remove(idNode))
+        {
+            for (Node<Id> node : idNode.getChildren()) {
+                removeChildren(node);
+            }
+        }
+    }
+
+    public void setTreeSearch(TreeSearch<T, Id> tree) {
         this.tree = tree;
     }
 }

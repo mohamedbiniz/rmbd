@@ -25,7 +25,7 @@ public interface TreeLogic<T extends AxiomSet<Id>,Id> {
 
     public void pruneConflictSets(Node<Id> node, T conflictSet) throws SolverException, InconsistentTheoryException;
 
-    public void updateHsTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException;
+    public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException;
 
     public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException;
     
