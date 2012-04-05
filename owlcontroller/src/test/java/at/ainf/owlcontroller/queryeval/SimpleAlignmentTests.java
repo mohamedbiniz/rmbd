@@ -87,7 +87,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
     @Test
     public void doOnlyOneQuerySession() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = readProps();
+        Properties properties = readProps("alignment/alignment.properties");
         //Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
@@ -157,7 +157,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
     @Ignore
     @Test
     public void doHardTwoTests() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = readProps();
+        Properties properties = readProps("alignment/alignment.properties");
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
@@ -489,7 +489,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
     @Ignore
     @Test
     public void search() throws SolverException, InconsistentTheoryException {
-        Properties properties = readProps();
+        Properties properties = readProps("alignment/alignment.properties");
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {

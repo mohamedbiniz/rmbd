@@ -42,9 +42,7 @@ public abstract class BasePerformanceTests {
     protected int conflictsCalc = 0;
     protected String daStr = "";
 
-    enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS}
-
-    ;
+    enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
 
     protected Random rnd = new Random();
 
