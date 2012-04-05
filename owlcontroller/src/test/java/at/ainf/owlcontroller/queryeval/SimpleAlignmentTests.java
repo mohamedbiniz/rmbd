@@ -35,6 +35,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static junit.framework.Assert.assertTrue;
+
 /**
  * Created by IntelliJ IDEA.
  * User: kostya
@@ -91,7 +93,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
         String m = "owlctxmatch";
         String o = "SIGKDD-EKAW";
-        TargetSource targetSource = TargetSource.FROM_30_DIAGS; //TargetSource.FROM_FILE;
+        TargetSource targetSource = TargetSource.FROM_FILE;
         QSSType type = QSSType.SPLITINHALF;
         String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
         OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
@@ -117,18 +119,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
         search.setCostsEstimator(es);
         if (targetSource == TargetSource.FROM_30_DIAGS) {
-            try {
-                search.run(30);
-            } catch (SolverException e) {
-                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (NoConflictException e) {
-                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (InconsistentTheoryException e) {
-                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-
-            Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = run(search, 30);
             search.clearSearch();
             AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
             targetDg = new LinkedHashSet<OWLLogicalAxiom>();
@@ -136,13 +127,31 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                 targetDg.add(axiom);
         }
 
-        if (targetSource == TargetSource.FROM_FILE)
+        if (targetSource == TargetSource.FROM_FILE) {
             targetDg = getDiagnosis(targetAxioms, ontology);
+            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = run(search, -1);
+            assertTrue(diagnoses.contains(targetDg));
+            search.clearSearch();
+        }
 
         TableList e = new TableList();
         String message = "act " + m + " - " + o + " - " + targetSource + " " + type;
         simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
+    }
+
+    private Set<AxiomSet<OWLLogicalAxiom>> run(UniformCostSearch<OWLLogicalAxiom> search, int diags) {
+        try {
+            search.run(diags);
+        } catch (SolverException e) {
+            logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (NoConflictException e) {
+            logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InconsistentTheoryException e) {
+            logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        
+        return Collections.unmodifiableSet(search.getStorage().getDiagnoses());
     }
 
     @Ignore
@@ -188,15 +197,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
                             search.setCostsEstimator(es);
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
-                                try {
-                                    search.run(30);
-                                } catch (SolverException e) {
-                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                                } catch (NoConflictException e) {
-                                    logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                                } catch (InconsistentTheoryException e) {
-                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                                }
+                                run(search, 30);
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getStorage().getDiagnoses());
@@ -313,7 +314,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
         // brute force statt ckk
 
 //                try {
-//                    search.run();
+//                    run.run();
 //                } catch (SolverException e) {
 //                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //                } catch (NoConflictException e) {
@@ -456,7 +457,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
             // brute force statt ckk
 
             //                try {
-            //                    search.run();
+            //                    run.run();
             //                } catch (SolverException e) {
             //                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             //                } catch (NoConflictException e) {
@@ -547,7 +548,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
     private String simulateBruteForcePaperTest(UniformCostSearch<OWLLogicalAxiom> search,
                                                OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
                                                TableList entry, QSSType scoringFunc, String message) {
-        //DiagProvider diagProvider = new DiagProvider(search, false, 9);
+        //DiagProvider diagProvider = new DiagProvider(run, false, 9);
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
         //userBrk=false;
@@ -571,7 +572,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
-                logger.trace("numOfQueries: " + num_of_queries + " search for diagnoses");
+                logger.trace("numOfQueries: " + num_of_queries + " run for diagnoses");
 
                 userBreak = false;
                 systemBreak = false;
@@ -648,10 +649,10 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                 }
                 Partition<OWLLogicalAxiom> last = actPa;
 
-                logger.trace("numOfQueries: " + num_of_queries + " search for  query");
+                logger.trace("numOfQueries: " + num_of_queries + " run for  query");
 
                 long query = System.currentTimeMillis();
-                //actPa = getBestQuery(search, diagnoses);
+                //actPa = getBestQuery(run, diagnoses);
 
                 actPa = queryGenerator.generatePartition(diagnoses);
                 minimizePartition(actPa, theory);

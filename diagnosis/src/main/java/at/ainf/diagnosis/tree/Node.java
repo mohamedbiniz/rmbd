@@ -126,11 +126,12 @@ public class Node<Id> {
     }
 
     public void setConflict(Set<Id> conflict) {
+        /*
         for (Node<Id> child : children) {
             child.setClosed();
         }
-
-        children.clear();
+        */
+        //children.clear();
         this.conflict = conflict;
     }
 

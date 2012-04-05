@@ -193,7 +193,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 for (T invHS : invalidHittingSets) {
                     getStorage().invalidateHittingSet(invHS);
                 }
-                treeLogic.updateHsTree(invalidHittingSets);
+                treeLogic.updateTree(invalidHittingSets);
             }
             if (getRoot() == null) {
                 createRoot();
@@ -466,78 +466,6 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             Set<Node<Id>> nodeChildren = treeLogic.updateNode(conflictSet, node);
             children.addAll(nodeChildren);
         }
-    }
-
-    private Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
-        if (node == null || node.getAxiomSet() == null)
-            return Collections.emptySet();
-        if (node.getAxiomSet().containsAll(axSet)) {
-            Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet());
-            //if (!getSearcher().isDual())
-            invalidAxioms.removeAll(axSet);
-            for (Iterator<Node<Id>> onodeit = getOpenNodes().iterator(); onodeit.hasNext(); ) {
-                Node<Id> openNode = onodeit.next();
-                if (!openNode.isRoot() && hasParent(node, openNode.getParent())
-                        && containsOneOf(openNode.getPathLabels(), invalidAxioms))
-                    onodeit.remove();
-            }
-            if (getSearcher().isDual() && node.getAxiomSet().equals(axSet)) {
-                /*if (node.isRoot())
-                    this.root = null;
-                else{
-                    Node<Id> parent = node.getParent();
-                    parent.removeChild(node);
-                    addNodes(parent.expandNode());
-                }
-                return Collections.emptySet();*/
-                Set<Node<Id>> children = new LinkedHashSet<Node<Id>>(node.getChildren());
-                for (Node<Id> cnode : children) {
-                    if (getOpenNodes().contains(cnode)) {
-                        getOpenNodes().remove(cnode);
-                        node.removeChild(cnode);
-                    } else {
-                        // update conflicts
-                       /*
-                        if (cnode.isClosed())
-                        {                            
-                            Set<Id> pathLabels = cnode.getPathLabels();
-                            for (T hs : getStorage().getHittingSets())
-                            {
-                                if (hs.containsAll(pathLabels)){
-                                    Set<Id> axioms = new LinkedHashSet<Id>(hs);
-                                    axioms.remove(cnode.getArcLabel());
-                                    hs.updateAxioms(axioms);
-                                }
-                            }
-                        }
-                        getTheory().addPositiveTest(cnode.getArcLabel());
-                        cnode.removeArcLabel();
-                        */
-                    }
-                }
-                node.removeAxioms();
-            } else
-                node.setConflict(axSet);
-        }
-        return node.getChildren();
-    }
-
-    protected boolean containsOneOf(Set<Id> pathLabels, Set<Id> temp) {
-        for (Id t : temp) {
-            if (pathLabels.contains(t)) {
-                //System.out.println("Contains!");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean hasParent(Node<Id> node, Node<Id> parent) {
-        if (parent.equals(node))
-            return true;
-        else if (parent.isRoot())
-            return false;
-        return hasParent(node, parent.getParent());
     }
 
     public boolean canReuseConflict(Node<Id> node) {

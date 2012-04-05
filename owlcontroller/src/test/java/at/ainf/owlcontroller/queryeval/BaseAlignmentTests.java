@@ -6,11 +6,11 @@ import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.DualTreeLogic;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
 import at.ainf.theory.model.ITheory;
@@ -130,10 +130,8 @@ public class BaseAlignmentTests extends BasePerformanceTests {
         else
             storage = new SimpleStorage<OWLLogicalAxiom>();
         UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
-        if (dual) {
-            search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
+        if (dual)
             search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
-        }
         else
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);
@@ -390,6 +388,8 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                     }
                 }
 
+                //testTragetDiag(targetDiag, theory, search);
+
             } catch (SolverException e) {
                 querySessionEnd = true;
                 logger.error(e);
@@ -436,6 +436,45 @@ public class BaseAlignmentTests extends BasePerformanceTests {
         return msg;
     }
 
+    private void testTragetDiag(Set<OWLLogicalAxiom> targetDiag, OWLTheory theory, UniformCostSearch<OWLLogicalAxiom> search)  {
+        Set<Set<OWLLogicalAxiom>> entTests = new LinkedHashSet<Set<OWLLogicalAxiom>>(theory.getEntailedTests());
+        for (Set<OWLLogicalAxiom> entTest : entTests) {
+            theory.removeEntailedTest(entTest);
+        }
+
+        for (Set<OWLLogicalAxiom> owlLogicalAxioms : entTests) {
+            for (OWLLogicalAxiom owlLogicalAxiom : owlLogicalAxioms) {
+                try {
+                    theory.addEntailedTest(owlLogicalAxiom);
+                    search.run(-1);
+                    Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
+                    if (!diagnoses.contains(targetDiag)) {
+                        String message = "Target diag is eliminated by: " + owlLogicalAxiom;
+                        logger.error(message);
+                        System.out.println(message);
+                    }
+                } catch (SolverException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (NoConflictException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (InconsistentTheoryException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                search.clearSearch();
+                theory.removeEntailedTest(owlLogicalAxiom);
+            }
+        }
+        for (Set<OWLLogicalAxiom> entTest : entTests) {
+            try {
+                theory.addEntailedTest(entTest);
+            } catch (SolverException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (InconsistentTheoryException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+    }
+
     private int getEliminationRate(ITheory<OWLLogicalAxiom> theory, Set<AxiomSet<OWLLogicalAxiom>> d,
                                    boolean a, Partition<OWLLogicalAxiom> partition)
             throws SolverException {
@@ -448,6 +487,16 @@ public class BaseAlignmentTests extends BasePerformanceTests {
         }
         return deleted;
 
+    }
+
+    protected Set<OWLLogicalAxiom> createTestCase(String[] tests, OWLTheory theory) {
+        MyOWLRendererParser parser = new MyOWLRendererParser(theory.getOriginalOntology());
+        Set<OWLLogicalAxiom> tc;
+        tc = new LinkedHashSet<OWLLogicalAxiom>();
+        for (String test : tests) {
+            tc.add(parser.parse(test));
+        }
+        return tc;
     }
 
     protected boolean generateQueryAnswer
