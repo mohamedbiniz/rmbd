@@ -1,10 +1,5 @@
 package at.ainf.owlcontroller.queryeval;
 
-import at.ainf.diagnosis.partitioning.CKK;
-import at.ainf.diagnosis.partitioning.Partitioning;
-import at.ainf.diagnosis.partitioning.QueryMinimizer;
-import at.ainf.diagnosis.partitioning.scoring.QSS;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -12,25 +7,18 @@ import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
-import at.ainf.owlcontroller.queryeval.result.Time;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.AxiomSetFactory;
-import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -60,7 +48,7 @@ public class AlignmentTests extends BaseAlignmentTests {
         String m = "coma";
         String o = "CRS-EKAW";
         QSSType type = QSSType.SPLITINHALF;
-        Properties properties = readProps();
+        Properties properties = readProps("alignment/alignment.full.properties");
         String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
         OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
@@ -131,7 +119,7 @@ public class AlignmentTests extends BaseAlignmentTests {
 
     @Test
     public void doQueryEliminationRateTest() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = readProps();
+        Properties properties = readProps("alignment/alignment.properties");
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.SPLITINHALF,};
@@ -226,9 +214,10 @@ public class AlignmentTests extends BaseAlignmentTests {
         }
     }
 
+
     @Test
     public void doTwoTests() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = readProps();
+        Properties properties = readProps("alignment/alignment.properties");
         Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
@@ -274,7 +263,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             targetDg = null;
 
                             search.setCostsEstimator(es);
-                            // 
+                            /*
                             try {
                                 search.run();
                             } catch (SolverException e) {
@@ -287,7 +276,7 @@ public class AlignmentTests extends BaseAlignmentTests {
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
                             search.clearSearch();
-
+                            */
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
                                 try {
                                     search.run(30);
@@ -314,7 +303,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
                             //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, null, null);
                         }

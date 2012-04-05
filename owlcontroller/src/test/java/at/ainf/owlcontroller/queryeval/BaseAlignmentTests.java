@@ -545,9 +545,9 @@ public class BaseAlignmentTests extends BasePerformanceTests {
         return ontologies;
     }
 
-    protected Properties readProps() {
+    protected Properties readProps(String propsName) {
         Properties properties = new Properties();
-        String config = ClassLoader.getSystemResource("alignment/alignment.full.properties").getFile();
+        String config = ClassLoader.getSystemResource(propsName).getFile();
         BufferedInputStream stream = null;
         try {
             stream = new BufferedInputStream(new FileInputStream(config));
