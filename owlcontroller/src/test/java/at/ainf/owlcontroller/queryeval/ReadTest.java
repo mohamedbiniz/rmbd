@@ -27,7 +27,7 @@ public class ReadTest extends BaseAlignmentTests {
         readData(filename, axioms, targetDiag);
         System.out.println("Read " + axioms.size() + " " + targetDiag.size());
         assertEquals(axioms.size(), 36);
-        assertEquals(targetDiag.size(), 13);
+        assertEquals(targetDiag.size(), 6);
 
         filename = ClassLoader.getSystemResource("alignment/evaluation/hmatch-incoherent-evaluation/CMT-CRS.txt").getFile();
         axioms.clear();
@@ -35,7 +35,7 @@ public class ReadTest extends BaseAlignmentTests {
         readData(filename, axioms, targetDiag);
         System.out.println("Read " + axioms.size() + " " + targetDiag.size());
         assertEquals(axioms.size(), 2 * (17 - 5));
-        assertEquals(targetDiag.size(), 7);
+        assertEquals(targetDiag.size(), 4);
     }
 
     @Test
