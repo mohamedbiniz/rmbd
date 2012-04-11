@@ -4,6 +4,6 @@ sourceNamespace = http://CRS.owl
 targetNamespace = http://PCS.owl
 
 + author = Author | 0.4166698
-< conference = Conference | 0.35
++ conference = Conference | 0.35
 + program = Programme | 0.24499999
-+ person = Electronic_proceeding | 0.44302744
+- person = Electronic_proceeding | 0.44302744

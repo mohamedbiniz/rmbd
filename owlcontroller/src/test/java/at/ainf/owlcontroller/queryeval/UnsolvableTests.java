@@ -13,7 +13,6 @@ import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
-import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
 import at.ainf.theory.model.ITheory;
@@ -55,31 +54,6 @@ public class UnsolvableTests extends BasePerformanceTests {
         PropertyConfigurator.configure(conf);
     }
 
-    protected Properties readProps() {
-        return readProps("alignment.unsolvable.properties");
-
-    }
-
-    protected Properties readProps(String str) {
-        Properties properties = new Properties();
-        String config = ClassLoader.getSystemResource("alignment/"+str  ).getFile();
-        BufferedInputStream stream = null;
-        try {
-            stream = new BufferedInputStream(new FileInputStream(config));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        try {
-            properties.load(stream);
-            stream.close();
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        return properties;
-
-    }
-
     protected Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
 
         Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>();
@@ -90,19 +64,6 @@ public class UnsolvableTests extends BasePerformanceTests {
             }
         }
         return res;
-    }
-
-    protected Map<String, List<String>> readOntologiesFromFile(Properties properties) {
-
-        String[] testsuites = properties.getProperty("alignment.testsuites").split(",");
-
-        Map<String, List<String>> ontologies = new HashMap<String, List<String>>();
-
-        for (String testsuite : testsuites) {
-            List<String> ontologie = Arrays.asList(properties.getProperty(testsuite.trim()).split(","));
-            ontologies.put(testsuite, ontologie);
-        }
-        return ontologies;
     }
 
     enum TargetSource {FROM_FILE, FROM_30_DIAGS}
@@ -549,8 +510,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void calcOneDiagAndMore() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = readProps("alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
+        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
 
         for (boolean dual : new boolean[] {true, false}) {
             
@@ -667,13 +628,33 @@ public class UnsolvableTests extends BasePerformanceTests {
         return sum / cnt;
     }
 
+    @Test
+    public void testDaReadMethods() throws IOException, SolverException, InconsistentTheoryException {
+        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
 
+        for (String m : mapOntos.keySet()) {
+          for (String o : mapOntos.get(m)) {
+            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+            String[] targetAxioms2 = AlignmentUtils.getDiagnosis(m,o);
+            boolean eq = AlignmentUtils.compareDiagnoses(targetAxioms,targetAxioms2);
+            if(!eq) {
+                OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
+                System.out.println(targetAxioms.toString());
+                System.out.println(targetAxioms2.toString());
+            }
+            assertTrue(m + " " + o,eq);
+          }
+        }
+    }
 
 
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = readProps("alignment.properties");
-        Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
+        Properties properties = AlignmentUtils.readProps("alignment.properties");
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        boolean background_add = false;
         showElRates = false;
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
@@ -683,15 +664,20 @@ public class UnsolvableTests extends BasePerformanceTests {
                     for (String o : mapOntos.get(m)) {
                         String out ="STAT, " + m +  ", " + o;
                         for (BasePerformanceTests.QSSType type : qssTypes) {
-                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
+                            //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
+                            String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);
                             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
-                            OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
-                            OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
-                            theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                            theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                            if (background_add) {
+                                OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
+                                OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
+                                theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                                theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                            }
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
@@ -771,8 +757,9 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void doUnsolvableTest() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = readProps();
-        Map<String, List<String>> mapOntos = readOntologiesFromFile(properties);
+        Properties properties = AlignmentUtils.readProps();
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        boolean background_add = false;
 
         showElRates=true;
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
@@ -782,18 +769,20 @@ public class UnsolvableTests extends BasePerformanceTests {
                     for (String o : mapOntos.get(m)) {
                         String out ="STAT, " + m +  ", " + o;
                         for (BasePerformanceTests.QSSType type : qssTypes) {
-                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                            //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                            String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);
                             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
-                            OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
+                            if (background_add) {
+                                OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
+                                OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
+                                theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                                theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                            }
                             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-
-                            theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                            theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()

@@ -15,7 +15,7 @@ targetNamespace = http://EKAW.owl
 + Conference < Conference | 1.0
 + Person > Person | 1.0
 + Person < Person | 1.0
-- Person > Proceedings_Publisher | 1.0
++ Person > Proceedings_Publisher | 1.0
 - Person < Proceedings_Publisher | 1.0
 + Organization > Organisation | 1.0
 + Organization < Organisation | 1.0
