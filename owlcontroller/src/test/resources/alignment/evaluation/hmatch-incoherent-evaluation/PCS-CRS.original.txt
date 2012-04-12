@@ -13,6 +13,6 @@ targetNamespace = http://CRS.owl
 + Programme = program | 1.0
 < Rejected_paper = article | 0.8200000000000001
 - Report = article | 0.8
-+ Report = document | 0.8
+< Report = document | 0.8
 + Review = review | 1.0
 - System = program | 0.8
