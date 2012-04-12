@@ -630,7 +630,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void testDaReadMethods() throws IOException, SolverException, InconsistentTheoryException {
-        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
+        Properties properties = AlignmentUtils.readProps("alignment.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
 
         for (String m : mapOntos.keySet()) {
