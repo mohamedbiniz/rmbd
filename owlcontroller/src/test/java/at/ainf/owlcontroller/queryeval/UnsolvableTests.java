@@ -479,11 +479,11 @@ public class UnsolvableTests extends BasePerformanceTests {
         if (num_of_queries != 0) consistencyCount = theory.getConsistencyCount() / num_of_queries;
         if (num_of_queries != 0) reactionTime = reactionTime / num_of_queries;
 
-        message += " , Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
-                + targetDiagnosisIsMostProbable + ", is in window " + targetDiagnosisIsInWind + ", size of window  " + diagWinSize
-                + ", reaction " + reactionTime + ", user " + userBreak +
-                ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
-                ", consistency checks " + consistencyCount;
+//        message += " , Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
+//                + targetDiagnosisIsMostProbable + ", is in window " + targetDiagnosisIsInWind + ", size of window  " + diagWinSize
+//                + ", reaction " + reactionTime + ", user " + userBreak +
+//                ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
+//                ", consistency checks " + consistencyCount;
         message += "," + time + "," + num_of_queries + ","
                 + targetDiagnosisIsMostProbable + "," + targetDiagnosisIsInWind + "," + diagWinSize
                 + "," + reactionTime + "," + userBreak +
