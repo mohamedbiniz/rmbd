@@ -259,6 +259,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             entities.remove(BOTTOM_CLASS);
             if (!entities.isEmpty()) {
                 String iri = "http://ainf.at/testiri#";
+                // TODO module d extraction machen
                 for (OWLClass cl : entities) {
                     OWLDataFactory fac = getOriginalOntology().getOWLOntologyManager().getOWLDataFactory();
                     OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "d_" + cl.getIRI().getFragment()));
