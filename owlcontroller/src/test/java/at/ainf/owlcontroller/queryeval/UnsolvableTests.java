@@ -484,6 +484,11 @@ public class UnsolvableTests extends BasePerformanceTests {
                 + ", reaction " + reactionTime + ", user " + userBreak +
                 ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
                 ", consistency checks " + consistencyCount;
+        message += "," + time + "," + num_of_queries + ","
+                + targetDiagnosisIsMostProbable + "," + targetDiagnosisIsInWind + "," + diagWinSize
+                + "," + reactionTime + "," + userBreak +
+                "," + systemBreak + "," + hasQueryWithNoDecisionPossible +
+                "," + consistencyCount;
         logger.info(message);
 
         String msg = time + ", " + num_of_queries + ", " + targetDiagnosisIsMostProbable + ", " + targetDiagnosisIsInWind + ", " + diagWinSize
@@ -743,7 +748,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                                 TableList e = new TableList();
                                 out += "," + type + ",";
-                                String message = "act," + m + "," + o + "," + targetSource + "," + type + ",d," + dual + ",ontosinbackground," + background;
+                                String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
                                 //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
 
                                 out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
