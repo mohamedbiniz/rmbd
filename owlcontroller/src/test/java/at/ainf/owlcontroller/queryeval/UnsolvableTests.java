@@ -657,7 +657,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = AlignmentUtils.readProps("alignment.properties");
+        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
         //boolean background_add = false;
         showElRates = false;
