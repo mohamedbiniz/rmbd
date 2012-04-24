@@ -86,8 +86,6 @@ public class UnsolvableTests extends BasePerformanceTests {
     protected OWLTheory createOWLTheory(OWLOntology ontology, boolean dual) {
         OWLTheory result = null;
 
-        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
-
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
@@ -660,7 +658,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
+        Properties properties = AlignmentUtils.readProps("alignment.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
         //boolean background_add = false;
         showElRates = false;
@@ -678,6 +676,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                                 String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
                                 OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                                ontology = new OWLIncoherencyExtractor(
+                                      new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
                                 Set<OWLLogicalAxiom> targetDg;
                                 OWLTheory theory = createOWLTheory(ontology, dual);
                                 UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
