@@ -10,6 +10,7 @@ import at.ainf.diagnosis.tree.DualTreeLogic;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
@@ -84,6 +85,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     protected OWLTheory createOWLTheory(OWLOntology ontology, boolean dual) {
         OWLTheory result = null;
+
+        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 
