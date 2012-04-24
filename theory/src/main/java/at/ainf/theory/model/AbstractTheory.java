@@ -303,6 +303,9 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         this.activeFormulas.removeAll(backgroundFormulas);
     }
 
+    public void removeActiveFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
+        this.activeFormulas.remove(formulas);
+    }
 
     public void addBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas.addAll(formulas);

@@ -15,6 +15,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
+import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
+import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.*;
 
@@ -250,7 +252,6 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
     }
 
     public void activateReduceToUns() {
-        REDUCE_TO_UNSAT = true;
         updateAxioms(getOntology(), getOriginalOntology().getLogicalAxioms(), getBackgroundFormulas());
         getSolver().flush();
         if (getSolver().isConsistent()) {
