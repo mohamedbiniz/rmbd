@@ -22,10 +22,9 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
+import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,19 +45,63 @@ public class TestModuleExtract {
 
     @Test
     public void  testExtractor() throws OWLOntologyCreationException {
-        InputStream st = ClassLoader.getSystemResourceAsStream("alignment/ontologies/hmatch_EKAW-PCS.owl");
-        OWLOntology ontology = manager.loadOntologyFromOntologyDocument(st);
-        OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology);
-        OWLOntology extracted = ex.getIncoherentPartAsOntology();
-        logger.info("ontology: " + ontology.getLogicalAxiomCount() + " " + ontology.getSignature(true).size());
-        logger.info("module: " + extracted.getLogicalAxiomCount() + " " + extracted.getSignature(true).size());
 
+        String testDir = ClassLoader.getSystemResource("alignment/ontologies").getPath();
+        LinkedList<File> files = new LinkedList<File>();
+        collectAllFiles(new File(testDir), files);
+        testDir = ClassLoader.getSystemResource("big/").getPath();
+        collectAllFiles(new File(testDir), files);
+        testDir = ClassLoader.getSystemResource("queryontologies/").getPath();
+        collectAllFiles(new File(testDir), files);
+        for (File file : files) {
+            if (file.getName().endsWith(".owl") && !file.getName().endsWith("cton.owl")) {
+                OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(file);
+                long timeOne = System.currentTimeMillis();
+                OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology);
+                OWLOntology extracted = ex.getIncoherentPartAsOntology();
+                timeOne = System.currentTimeMillis() - timeOne;
+                long timeMu = System.currentTimeMillis();
+                OWLIncoherencyExtractor ex2 = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology);
+                Set<OWLOntology> m = ex2.getIncoherentPartAsOntologies();
+                double meanLog = 0.0;
+                double meanAll = 0.0;
+                double meanSig = 0.0;
+                for (OWLOntology o : m) {
+                    meanLog += o.getLogicalAxiomCount();
+                    meanAll += o.getAxiomCount();
+                    meanSig += o.getSignature(true).size();
+                }
+                meanLog = meanLog / m.size();
+                meanAll = meanAll / m.size();
+                meanSig = meanSig / m.size();
+                timeMu = System.currentTimeMillis() - timeMu;
+                logger.info("ontology:," + file.getName() + ","
+                        + timeOne + "," + timeMu + ","
+                        + meanLog + "," + meanAll +"," + meanSig
+                        + "," + m.size() + ","
+                        + ontology.getLogicalAxiomCount() + "," + ontology.getAxiomCount() + ","
+                        + ontology.getSignature(true).size() + ","
+                        + extracted.getLogicalAxiomCount() + "," + extracted.getAxiomCount() + ","
+                        + extracted.getSignature(true).size());
+            }
+        }
+
+    }
+
+    private void collectAllFiles(File testDir, List<File> files) {
+        if (testDir.isFile()) {
+            files.add(testDir);
+            return;
+        }
+        for (File file : testDir.listFiles()) {
+            collectAllFiles(file, files);
+        }
     }
 
     @Test
     public void testResultsEqual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-        String ontos[] = {"Transportation-SDA.owl"};
+        String ontos[] = {"queryontologies/Economy-SDA.owl", "queryontologies/Transportation-SDA.owl"};
 
         for (String ont : ontos) {
         int runs = 1;
@@ -71,7 +114,7 @@ public class TestModuleExtract {
                 manager = OWLManager.createOWLOntologyManager();
                 TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
                 searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-                OWLOntology ontology = loadOntology("queryontologies/" + ont);
+                OWLOntology ontology = loadOntology (  ont);
                 long pre = System.currentTimeMillis();
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
                 p[i] = System.currentTimeMillis() - pre;
@@ -85,7 +128,7 @@ public class TestModuleExtract {
                 manager = OWLManager.createOWLOntologyManager();
                 TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
                 searchDual.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-                OWLOntology ontology2 = loadOntology("queryontologies/" + ont);
+                OWLOntology ontology2 = loadOntology(  ont);
                 OWLTheory theoryDual = createTheory(manager, ontology2, false);
                 searchDual.setTheory(theoryDual);
                 long stop2 = System.currentTimeMillis();
@@ -93,7 +136,10 @@ public class TestModuleExtract {
                 stop2a[i] = System.currentTimeMillis() - stop2 ;
                 Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getStorage().getDiagnoses();
 
-
+                logger.info(ont + ",hs," + searchNormal.getStorage().getDiagnoses().size()
+                    + ",cs," + searchNormal.getStorage().getConflicts().size());
+                logger.info(ont + ",hs," + searchDual.getStorage().getDiagnoses().size()
+                            + ",cs," + searchDual.getStorage().getConflicts().size());
             assert(resultNormal.equals(resultDual));
         }
 
