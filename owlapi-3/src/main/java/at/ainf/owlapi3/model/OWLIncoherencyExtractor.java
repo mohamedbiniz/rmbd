@@ -53,4 +53,33 @@ public class OWLIncoherencyExtractor {
         return r;
     }
 
+    public Set<OWLOntology> getIncoherentPartAsOntologies() {
+
+        if(!reasoner.isConsistent())
+            return Collections.emptySet();
+
+        Set<OWLOntology> result =new LinkedHashSet<OWLOntology>();
+        Set<OWLClass> entities = reasoner.getUnsatisfiableClasses().getEntities();
+        Set<OWLEntity> setOfEntities = new LinkedHashSet<OWLEntity>();
+        for (OWLClass entity : entities)
+            setOfEntities.add((OWLEntity)entity);
+
+        setOfEntities.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+        if (!entities.isEmpty()) {
+            SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
+            IRI moduleIRI = IRI.create("http://ainf.at/IncoherencyModule");
+            try {
+                for (OWLEntity entitiy : entities) {
+                    Set<OWLEntity> e = new LinkedHashSet<OWLEntity>();
+                    e.add(entitiy);
+                    result.add(sme.extractAsOntology(e, IRI.create("http://ainf.at/IncoherencyModule"
+                            + entitiy.toString())));
+                }
+            } catch (OWLOntologyCreationException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+        return result;
+    }
+
 }
