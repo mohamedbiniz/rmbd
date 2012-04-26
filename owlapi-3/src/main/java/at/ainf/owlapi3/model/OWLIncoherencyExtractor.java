@@ -31,26 +31,46 @@ public class OWLIncoherencyExtractor {
     }
 
     public OWLOntology getIncoherentPartAsOntology() {
-        if(!reasoner.isConsistent())
-            return ontology;
+        if(reasoner.isConsistent()) {
+            OWLOntology r=null;
+            Set<OWLClass> entities = reasoner.getUnsatisfiableClasses().getEntities();
 
-        OWLOntology r=null;
-        Set<OWLClass> entities = reasoner.getUnsatisfiableClasses().getEntities();
-        Set<OWLEntity> setOfEntities = new LinkedHashSet<OWLEntity>();
-        for (OWLClass entity : entities)
-            setOfEntities.add((OWLEntity)entity);
+            Set<OWLEntity> setOfEntities = new LinkedHashSet<OWLEntity>();
+            for (OWLClass entity : entities)
+                setOfEntities.add((OWLEntity)entity);
 
-        setOfEntities.remove(OWLManager.getOWLDataFactory().getOWLNothing());
-        if (!entities.isEmpty()) {
-            SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
-            IRI moduleIRI = IRI.create("http://ainf.at/IncoherencyModule");
-            try {
-                r = sme.extractAsOntology(setOfEntities, moduleIRI);
-            } catch (OWLOntologyCreationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            setOfEntities.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+            if (!entities.isEmpty()) {
+                SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
+                IRI moduleIRI = IRI.create("http://ainf.at/IncoherencyModule");
+                try {
+                    r = sme.extractAsOntology(setOfEntities, moduleIRI);
+                } catch (OWLOntologyCreationException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
             }
+            return r;
         }
-        return r;
+        else {
+//            Set<OWLAxiom> a = ontology.getABoxAxioms(false);
+//            ontology.getOWLOntologyManager().removeAxioms(ontology,a);
+//            reasoner.flush();
+//            Set<OWLClass> e = reasoner.getUnsatisfiableClasses().getEntities();
+//
+//            try {
+//                OWLOntology test =
+//                    ontology.getOWLOntologyManager().createOntology(IRI.create("test"),Collections.singleton(ontology));
+//                    ontology.getOWLOntologyManager().removeAxioms(test,a);
+//                    OWLOntology t = ontology;
+//                    ontology = test;
+//                    reasoner.flush();
+//            } catch (OWLOntologyCreationException e1) {
+//                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//            }
+//            Set<OWLClass> f = reasoner.getUnsatisfiableClasses().getEntities();
+
+            return ontology;
+        }
     }
 
     public Set<OWLOntology> getIncoherentPartAsOntologies() {

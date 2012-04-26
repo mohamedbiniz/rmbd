@@ -658,13 +658,13 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = AlignmentUtils.readProps("alignment.properties");
+        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
         //boolean background_add = false;
         showElRates = false;
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {false,true}) {
+        for (boolean dual : new boolean[] {true, false}) {
             for (boolean background : new boolean[]{false,true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String m : mapOntos.keySet()) {

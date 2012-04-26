@@ -16,15 +16,21 @@ import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
+import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
+
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,6 +49,7 @@ public class TestModuleExtract {
         PropertyConfigurator.configure(conf);
     }
 
+    @Ignore
     @Test
     public void  testExtractor() throws OWLOntologyCreationException {
 
@@ -98,11 +105,13 @@ public class TestModuleExtract {
         }
     }
 
+    @Ignore
     @Test
     public void testResultsEqual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-        String ontos[] = {"queryontologies/Economy-SDA.owl", "queryontologies/Transportation-SDA.owl"};
+        String ontos[] = {"queryontologies/uni_3.owl"};
 
+        //String ontos[] = {"queryontologies/Economy-SDA.owl", "queryontologies/Transportation-SDA.owl"};
         for (String ont : ontos) {
         int runs = 1;
         long p[] = new long[runs];
@@ -117,7 +126,7 @@ public class TestModuleExtract {
                 OWLOntology ontology = loadOntology (  ont);
                 long pre = System.currentTimeMillis();
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
-                p[i] = System.currentTimeMillis() - pre;
+            p[i] = System.currentTimeMillis() - pre;
                 OWLTheory theoryNormal = createTheory(manager, ontology, false);
                 searchNormal.setTheory(theoryNormal);
                 long stop1 = System.currentTimeMillis();
@@ -140,7 +149,7 @@ public class TestModuleExtract {
                     + ",cs," + searchNormal.getStorage().getConflicts().size());
                 logger.info(ont + ",hs," + searchDual.getStorage().getDiagnoses().size()
                             + ",cs," + searchDual.getStorage().getConflicts().size());
-            assert(resultNormal.equals(resultDual));
+            assertTrue(resultNormal.equals(resultDual));
         }
 
         double meanPre = calcMean(p);
