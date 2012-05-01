@@ -29,6 +29,7 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.util.OWLOntologyMerger;
 
 import java.io.*;
 import java.util.*;
@@ -655,6 +656,260 @@ public class UnsolvableTests extends BasePerformanceTests {
         }
     }
 
+    public OWLOntology createOntologyFromTxtOAEI(String file) {
+
+        try {
+            OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+
+            InputStream st = ClassLoader.getSystemResourceAsStream("oaei11/mouse.owl");
+            OWLOntology mouse = man.loadOntologyFromOntologyDocument(st);
+            st = ClassLoader.getSystemResourceAsStream("oaei11/human.owl");
+            OWLOntology human = man.loadOntologyFromOntologyDocument(st);
+
+            OWLOntologyMerger merger = new OWLOntologyMerger(man);
+            OWLOntology merged = merger.createMergedOntology(man, IRI.create("matched" + file + ".txt"));
+            Set<OWLLogicalAxiom> mappAx = getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/", file);
+            for (OWLLogicalAxiom axiom : mappAx)
+                man.applyChange(new AddAxiom(merged,axiom));
+
+            return merged;
+        } catch (OWLOntologyCreationException e) {
+            return null;
+        }
+    }
+
+    public Set<OWLLogicalAxiom> getAxiomsInMappingOAEI(String path, String source) {
+        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+
+        Map<OWLLogicalAxiom,Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
+        Set<OWLLogicalAxiom> targetDiagnosis = new LinkedHashSet<OWLLogicalAxiom>();
+        try {
+            readDataOAEI(path + source + ".txt", axioms, targetDiagnosis, man);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return axioms.keySet();
+    }
+
+    public void readDataOAEI(String filename, Map<OWLLogicalAxiom, Double> axioms, Set<OWLLogicalAxiom> targetDiag, OWLOntologyManager man) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        String line;
+        String sourceNamespace = "";
+        String targetNamespace = "";
+        while ((line = br.readLine()) != null) {
+            if (line.startsWith("sourceNamespace"))
+                sourceNamespace = line.substring(line.indexOf("=") + 1).trim();
+            if (line.startsWith("targetNamespace"))
+                targetNamespace = line.substring(line.indexOf("=") + 1).trim();
+            if (line.startsWith(">") || line.startsWith("<") || line.startsWith("+") || line.startsWith("-")) {
+                String status = line.substring(0, 2).trim();
+                String sub = line.substring(2);
+                String source = "";
+                String target = "";
+                if (sub.contains("=")) {
+                    source = sub.substring(0, sub.indexOf("=")).trim();
+                    target = sub.substring(sub.indexOf("=") + 1, sub.indexOf("|")).trim();
+                    axioms.put(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man),
+                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                    axioms.put(createAxiomOAEI(targetNamespace, target, sourceNamespace, source, man),
+                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                }
+                if (sub.contains(">")) {
+                    source = sub.substring(0, sub.indexOf(">")).trim();
+                    target = sub.substring(sub.indexOf(">") + 1, sub.indexOf("|")).trim();
+                    axioms.put(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man),
+                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                }
+                if (sub.contains("<")) {
+                    source = sub.substring(0, sub.indexOf("<")).trim();
+                    target = sub.substring(sub.indexOf("<") + 1, sub.indexOf("|")).trim();
+                    axioms.put(createAxiomOAEI(targetNamespace, target, sourceNamespace, source, man),
+                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                }
+                if (status.equals("-")) {
+                    targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
+                    if (sub.contains("="))
+                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source, man));
+                }
+                if (status.equals(">")) {
+                    targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
+                }
+                if (status.equals("<")) {
+                    targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source, man));
+                }
+
+            }
+        }
+    }
+
+    public Set<OWLLogicalAxiom> getTargetDOAEI(String path, String source) {
+        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+
+        Map<OWLLogicalAxiom,Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
+        Set<OWLLogicalAxiom> targetDiagnosis = new LinkedHashSet<OWLLogicalAxiom>();
+        try {
+            readDataOAEI(path + source + ".txt", axioms, targetDiagnosis, man);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return targetDiagnosis;
+    }
+
+    protected OWLTheory createTheoryOAEI(OWLOntology ontology, boolean dual) {
+        OWLTheory result = null;
+
+        ontology = new OWLIncoherencyExtractor(
+                new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+
+
+        Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
+
+        for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
+            bax.addAll(ontology.getClassAssertionAxioms(ind));
+            bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
+            bax.addAll(ontology.getDataPropertyAssertionAxioms(ind));
+        }
+
+        /*String iri = "http://ainf.at/testiri#";
+
+        for (OWLClass ind : ontology.getClassesInSignature()) {
+            OWLDataFactory fac = OWLManager.getOWLDataFactory();
+            OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "{"+ind.getIRI().getFragment()+"}"));
+
+            bax.add(fac.getOWLClassAssertionAxiom (ind,test_individual));
+        }*/
+
+        OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
+        try {
+            //ProbabilityTableModel mo = new ProbabilityTableModel();
+            //HashMap<ManchesterOWLSyntax, Double> map = mo.getProbMap();
+
+            if (dual)
+                result = new DualTreeOWLTheory(reasonerFactory, ontology, bax);
+            else
+                result = new OWLTheory(reasonerFactory, ontology, bax);
+            result.activateReduceToUns();
+
+            result.setIncludeTrivialEntailments(false);
+            // QueryDebuggerPreference.getInstance().setTestIncoherencyToInconsistency(true);
+
+            result.setIncludeSubClassOfAxioms(false);
+            result.setIncludeClassAssertionAxioms(false);
+            result.setIncludeEquivalentClassAxioms(false);
+            result.setIncludeDisjointClassAxioms(false);
+            result.setIncludePropertyAssertAxioms(false);
+            result.setIncludeReferencingThingAxioms(false);
+            result.setIncludeOntologyAxioms(true);
+            //  result.setIncludeTrivialEntailments(true);
+        } catch (InconsistentTheoryException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (SolverException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return result;
+    }
+
+
+    public Set<OWLLogicalAxiom> getLogicalAxiomsOfOntologiesOAEI() throws OWLOntologyCreationException {
+        Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
+
+        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+        InputStream st = ClassLoader.getSystemResourceAsStream("oaei11/mouse.owl");
+        OWLOntology mouse = man.loadOntologyFromOntologyDocument(st);
+        st = ClassLoader.getSystemResourceAsStream("oaei11/human.owl");
+        OWLOntology human = man.loadOntologyFromOntologyDocument(st);
+
+        r.addAll(mouse.getLogicalAxioms());
+        r.addAll(human.getLogicalAxioms());
+
+        return r;
+    }
+
+    private OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
+        OWLDataFactory factory = man.getOWLDataFactory();
+        OWLClass clsA = factory.getOWLClass(IRI.create(sourceNamespace + "#" +  source));
+        OWLClass clsB = factory.getOWLClass(IRI.create(targetNamespace + "#" +  target));
+        OWLLogicalAxiom axiom = factory.getOWLSubClassOfAxiom(clsA, clsB);
+
+        return axiom;
+        // "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
+    }
+
+    @Test
+    public void docomparehsdualOAEI() throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
+        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        //boolean background_add = false;
+        showElRates = false;
+
+        String[] files = new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt",
+        "MapSSS"};
+        //String files[] = new String[]{"AgrMaker"};
+
+        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+        for (boolean dual : new boolean[] {true, false}) {
+            for (boolean background : new boolean[]{true}) {
+                for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
+                    for (String file : files) {
+
+                            String out ="STAT, " + file;
+                            for (BasePerformanceTests.QSSType type : qssTypes) {
+
+                                //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
+                                //String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
+                                //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+
+                                OWLOntology ontology = createOntologyFromTxtOAEI(file);
+
+                                Set<OWLLogicalAxiom> targetDg;
+                                OWLTheory theory = createTheoryOAEI(ontology, dual);
+                                UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+
+                                LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
+                                bx.addAll(getLogicalAxiomsOfOntologiesOAEI());
+                                bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
+                                theory.addBackgroundFormulas(bx);
+
+                                //ProbabilityTableModel mo = new ProbabilityTableModel();
+                                HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+
+                                String path = ClassLoader.getSystemResource("oaei11/" +file+ ".txt").getPath();
+
+                                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+
+
+                                targetDg = null;
+
+                                search.setCostsEstimator(es);
+
+                                Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                                search.clearSearch();
+
+
+
+                                if (targetSource == TargetSource.FROM_FILE)
+                                    targetDg = getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
+                                            file);
+
+                                TableList e = new TableList();
+                                out += "," + type + ",";
+                                String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background;
+                                //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+
+                                out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+
+                            }
+                            logger.info(out);
+
+                    }
+                }
+            }
+        }
+    }
 
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
