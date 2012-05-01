@@ -107,6 +107,25 @@ public class TestModuleExtract {
 
     @Ignore
     @Test
+    public void testMouse() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+
+        String ont = "queryontologies/human.owl";
+
+        manager = OWLManager.createOWLOntologyManager();
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        OWLOntology ontology = loadOntology (  ont);
+        OWLTheory theoryNormal = createTheory(manager, ontology, false);
+        searchNormal.setTheory(theoryNormal);
+        searchNormal.run();
+
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+
+
+    }
+
+    @Ignore
+    @Test
     public void testResultsEqual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ontos[] = {"queryontologies/uni_3.owl"};
