@@ -851,7 +851,9 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     @Test
-    public void docomparehsdualOAEI() throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
+    public void doTestsOAEIAnatomyTrack()
+
+            throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
         Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
         //boolean background_add = false;
