@@ -728,9 +728,14 @@ public class UnsolvableTests extends BasePerformanceTests {
                             Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
                 }
                 if (status.equals("-")) {
-                    targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
-                    if (sub.contains("="))
-                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source, man));
+                    if (sub.contains("=")) {
+                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
+                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
+                    }
+                    else if(sub.contains("<"))
+                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
+                    else if(sub.contains(">"))
+                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
                 }
                 if (status.equals(">")) {
                     targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
@@ -845,9 +850,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         //boolean background_add = false;
         showElRates = false;
 
-        String[] files = new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt",
-        "MapSSS"};
-        //String files[] = new String[]{"AgrMaker"};
+        String[] files = new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[] {true, false}) {

@@ -102,9 +102,14 @@ public class OAEI2011 {
                             Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
                 }
                 if (status.equals("-")) {
-                    targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
-                    if (sub.contains("="))
-                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source, man));
+                    if (sub.contains("=")) {
+                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
+                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
+                    }
+                    else if(sub.contains("<"))
+                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
+                    else if(sub.contains(">"))
+                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
                 }
                 if (status.equals(">")) {
                     targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
@@ -202,7 +207,7 @@ public class OAEI2011 {
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
-        String matching = "CSA";
+        String matching = "MapSSS";
 
         // OWLOntology ontology = loadOntology(OWLManager.createOWLOntologyManager(), "oaei11/" + matching+".owl");
 
@@ -215,6 +220,13 @@ public class OAEI2011 {
 
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
         bx.addAll(getLogicalAxiomsOfOntologiesOAEI());
+
+        Set<OWLLogicalAxiom> schn = new LinkedHashSet<OWLLogicalAxiom>();
+        schn.addAll(getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/", "reference_2011"));
+        schn.retainAll(getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/", matching));
+
+        bx.addAll(schn);
+
         bx.retainAll(theoryNormal.getOriginalOntology().getLogicalAxioms());
         //bx.addAll(getAxiomsInSourceAndOther("c:/daten/work/tasks/oaei2011/ontos/", matching, "reference_2011"));
         theoryNormal.addBackgroundFormulas(bx);
