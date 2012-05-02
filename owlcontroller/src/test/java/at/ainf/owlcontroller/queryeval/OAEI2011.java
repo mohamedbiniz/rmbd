@@ -208,7 +208,7 @@ public class OAEI2011 {
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
-        String matching = "MaasMtch";
+        String matching = "CSA";
 
         // OWLOntology ontology = loadOntology(OWLManager.createOWLOntologyManager(), "oaei11/" + matching+".owl");
 
@@ -225,8 +225,7 @@ public class OAEI2011 {
         Set<OWLLogicalAxiom> schn = new LinkedHashSet<OWLLogicalAxiom>();
         schn.addAll(getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/", "reference_2011"));
         schn.retainAll(getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/", matching));
-
-        bx.addAll(schn);
+        //bx.addAll(schn);
 
         bx.retainAll(theoryNormal.getOriginalOntology().getLogicalAxioms());
         //bx.addAll(getAxiomsInSourceAndOther("c:/daten/work/tasks/oaei2011/ontos/", matching, "reference_2011"));
