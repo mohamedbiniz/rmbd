@@ -133,6 +133,7 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
             }
         else
             return STATIC_COSTS;
+
     }
     
     

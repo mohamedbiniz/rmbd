@@ -284,6 +284,9 @@ public class UnsolvableTests extends BasePerformanceTests {
                 userBreak = false;
                 systemBreak = false;
 
+                // marker
+                long reactQuery = System.currentTimeMillis();
+
                 if (actPa != null && actPa.dx.size() == 1 && actPa.dz.size() == 1 && actPa.dnx.isEmpty()) {
                     logger.error("Help!");
                     printc(theory.getEntailedTests());
@@ -367,10 +370,9 @@ public class UnsolvableTests extends BasePerformanceTests {
                 }
                 queryCardinality = actPa.partition.size();
 
-
                 long querytime = System.currentTimeMillis() - query;
                 queryTime.setTime(querytime);
-                reactionTime += querytime;
+                reactionTime += System.currentTimeMillis() - reactQuery;
                 num_of_queries++;
 
                 logger.trace("numOfQueries: " + num_of_queries + " generate answer");
@@ -851,9 +853,10 @@ public class UnsolvableTests extends BasePerformanceTests {
         showElRates = false;
 
         String[] files = new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
+        //String[] files = new String[]{"AgrMaker"};
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {true, false}) {
+        for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
