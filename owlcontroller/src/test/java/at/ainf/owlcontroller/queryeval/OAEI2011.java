@@ -106,9 +106,9 @@ public class OAEI2011 {
                         targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
                         targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
                     }
-                    else if(sub.contains("<"))
-                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
                     else if(sub.contains(">"))
+                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
+                    else if(sub.contains("<"))
                         targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
                 }
                 if (status.equals(">")) {
@@ -207,7 +207,7 @@ public class OAEI2011 {
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
-        String matching = "MapSSS";
+        String matching = "Aroma";
 
         // OWLOntology ontology = loadOntology(OWLManager.createOWLOntologyManager(), "oaei11/" + matching+".owl");
 
