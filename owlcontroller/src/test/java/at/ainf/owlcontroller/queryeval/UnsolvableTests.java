@@ -739,9 +739,9 @@ public class UnsolvableTests extends BasePerformanceTests {
                         targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
                         targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
                     }
-                    else if(sub.contains("<"))
-                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
                     else if(sub.contains(">"))
+                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
+                    else if(sub.contains("<"))
                         targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
                 }
                 if (status.equals(">")) {
@@ -857,10 +857,12 @@ public class UnsolvableTests extends BasePerformanceTests {
         //boolean background_add = false;
         showElRates = false;
 
-        String[] files = new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
+        String[] files =
+                  new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
         //String[] files = new String[]{"AgrMaker"};
 
-        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
+                {BasePerformanceTests.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
