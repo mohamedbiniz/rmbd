@@ -298,7 +298,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 try {
                     long diag = System.currentTimeMillis();
-                    search.clearSearch();
+                    //search.clearSearch();
                     search.run(NUMBER_OF_HITTING_SETS);
 
                     daStr += search.getStorage().getDiagnoses().size() + "/";
@@ -322,6 +322,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 for (Set<OWLLogicalAxiom> diagnose : diagnoses)
                         infoCa += diagnose.size() + "/";
                 logger.info("cardinality of diagnoses " + infoCa);
+                logger.info("num of hitting sets " + search.getStorage().getHittingSets().size());
 
                 // cast should be corrected
                 Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
@@ -859,9 +860,9 @@ public class UnsolvableTests extends BasePerformanceTests {
         //boolean background_add = false;
         showElRates = false;
 
-        //String[] files =
-        //          new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
-        String[] files = new String[]{"Aroma"};
+        String[] files =
+                  new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
+        //String[] files = new String[]{"Aroma"};
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
                 {BasePerformanceTests.QSSType.DYNAMICRISK};
