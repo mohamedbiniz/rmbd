@@ -7,6 +7,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.Utils;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
@@ -207,7 +208,7 @@ public class OAEI2011 {
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
-        String matching = "Aroma";
+        String matching = "MaasMtch";
 
         // OWLOntology ontology = loadOntology(OWLManager.createOWLOntologyManager(), "oaei11/" + matching+".owl");
 
@@ -233,6 +234,9 @@ public class OAEI2011 {
 
         searchNormal.run (9);
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+        for (Set<OWLLogicalAxiom> diagnosis : resultNormal)
+            System.out.println(Utils.renderAxioms(diagnosis));
+
     }
 
 
