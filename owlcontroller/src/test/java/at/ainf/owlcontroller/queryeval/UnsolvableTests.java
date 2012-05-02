@@ -318,6 +318,11 @@ public class UnsolvableTests extends BasePerformanceTests {
                 if (diagnoses.isEmpty())
                     logger.error("No diagnoses found!");
 
+                String infoCa = "";
+                for (Set<OWLLogicalAxiom> diagnose : diagnoses)
+                        infoCa += diagnose.size() + "/";
+                logger.info("cardinality of diagnoses " + infoCa);
+
                 // cast should be corrected
                 Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
                 AxiomSet<OWLLogicalAxiom> d = descendSet.next();
@@ -852,8 +857,8 @@ public class UnsolvableTests extends BasePerformanceTests {
         //boolean background_add = false;
         showElRates = false;
 
-        String[] files = new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
-        //String[] files = new String[]{"AgrMaker"};
+        //String[] files = new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
+        String[] files = new String[]{"AgrMaker"};
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[] {false}) {
