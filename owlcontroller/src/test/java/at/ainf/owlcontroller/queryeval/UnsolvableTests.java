@@ -950,8 +950,8 @@ public class UnsolvableTests extends BasePerformanceTests {
                         OWLTheory theory = createOWLTheory(ontology, dual);
                         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
-                        OWLOntology ontology1 = CreationUtils.createOwlOntology(pathOnt,o.split("-")[0].trim());
-                        OWLOntology ontology2 = CreationUtils.createOwlOntology(pathOnt,o.split("-")[1].trim());
+                        OWLOntology ontology1 = CreationUtils.createOwlOntology("alignment",o.split("-")[0].trim());
+                        OWLOntology ontology2 = CreationUtils.createOwlOntology("alignment",o.split("-")[1].trim());
                         theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                         theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
 
