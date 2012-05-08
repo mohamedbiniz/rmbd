@@ -12,6 +12,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.CreationUtils;
 import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.queryeval.result.TableList;
@@ -842,10 +843,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     private OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
-        OWLDataFactory factory = man.getOWLDataFactory();
-        OWLClass clsA = factory.getOWLClass(IRI.create(sourceNamespace + "#" +  source));
-        OWLClass clsB = factory.getOWLClass(IRI.create(targetNamespace + "#" +  target));
-        OWLLogicalAxiom axiom = factory.getOWLSubClassOfAxiom(clsA, clsB);
+        OWLLogicalAxiom axiom = OAEI2011.createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man);
 
         return axiom;
         // "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
@@ -925,6 +923,100 @@ public class UnsolvableTests extends BasePerformanceTests {
                 }
             }
         }
+    }
+
+    protected void doOverallTreeTest (boolean dual) throws IOException, SolverException, InconsistentTheoryException {
+        Properties properties = AlignmentUtils.readProps("alignment.allFiles.properties");
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        showElRates = false;
+
+        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+
+
+        for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
+            for (String m : mapOntos.keySet()) {
+                for (String o : mapOntos.get(m)) {
+                    String out ="STAT, " + m +  ", " + o;
+                    for (BasePerformanceTests.QSSType type : qssTypes) {
+
+                        String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
+
+                        String pathOnt = "alignment/" + m.trim() + "_incoherent_matched_ontologies";
+                        OWLOntology ontology = CreationUtils.createOwlOntology(pathOnt, o.trim());
+                        //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                        ontology = new OWLIncoherencyExtractor(
+                                new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                        Set<OWLLogicalAxiom> targetDg;
+                        OWLTheory theory = createOWLTheory(ontology, dual);
+                        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+
+                        OWLOntology ontology1 = CreationUtils.createOwlOntology(pathOnt,o.split("-")[0].trim());
+                        OWLOntology ontology2 = CreationUtils.createOwlOntology(pathOnt,o.split("-")[1].trim());
+                        theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                        theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+
+
+                        String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                + m.trim()
+                                + "-incoherent-evaluation/"
+                                + o.trim()
+                                + ".txt").getPath();
+
+                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+
+
+                        targetDg = null;
+
+                        search.setCostsEstimator(es);
+
+                        search.clearSearch();
+
+                        if (targetSource == TargetSource.FROM_30_DIAGS) {
+                            try {
+                                search.run(30);
+                            } catch (SolverException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (NoConflictException e) {
+                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (InconsistentTheoryException e) {
+                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+
+                            Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                            search.clearSearch();
+                            AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
+                            targetDg = new LinkedHashSet<OWLLogicalAxiom>();
+                            for (OWLLogicalAxiom axiom : targD)
+                                targetDg.add(axiom);
+                        }
+
+                        if (targetSource == TargetSource.FROM_FILE)
+                            targetDg = getDiagnosis(targetAxioms, ontology);
+
+                        TableList e = new TableList();
+                        out += "," + type + ",";
+                        String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + dual
+                                + "," + type;
+                        //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+
+                        out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+
+                    }
+                    logger.info(out);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void doOverallDualTreeTest() throws SolverException, InconsistentTheoryException, IOException {
+        doOverallTreeTest(true);
+    }
+
+    @Test
+    public void doOverallHsTreeTest() throws SolverException, InconsistentTheoryException, IOException {
+        doOverallTreeTest(false);
     }
 
     @Test

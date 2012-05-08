@@ -135,7 +135,7 @@ public class OAEI2011 {
 
     }
 
-    private OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
+    static OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
         OWLDataFactory factory = man.getOWLDataFactory();
         OWLClass clsA = factory.getOWLClass(IRI.create(sourceNamespace + "#" +  source));
         OWLClass clsB = factory.getOWLClass(IRI.create(targetNamespace + "#" +  target));
@@ -230,6 +230,13 @@ public class OAEI2011 {
         bx.retainAll(theoryNormal.getOriginalOntology().getLogicalAxioms());
         //bx.addAll(getAxiomsInSourceAndOther("c:/daten/work/tasks/oaei2011/ontos/", matching, "reference_2011"));
         theoryNormal.addBackgroundFormulas(bx);
+
+        Runtime.getRuntime().  addShutdownHook  (
+            new Thread() {
+                @Override public void run() {
+                    System.out.println("VM gets now closed");
+                }
+            });
 
         searchNormal.run ();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
