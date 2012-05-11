@@ -57,18 +57,16 @@ public class OWLIncoherencyExtractor {
         incoherentEntities.remove(OWLManager.getOWLDataFactory().getOWLNothing());
 
         OWLOntology r=null;
-        if (!incoherentEntities.isEmpty()) {
-            SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
-            IRI moduleIRI = IRI.create("http://ainf.at/IncoherencyModule");
-            try {
-                r = sme.extractAsOntology(incoherentEntities, moduleIRI);
-            } catch (OWLOntologyCreationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            return r;
+        SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
+        IRI moduleIRI = IRI.create("http://ainf.at/IncoherencyModule");
+        try {
+        if (!incoherentEntities.isEmpty())
+            return sme.extractAsOntology(incoherentEntities, moduleIRI);
+        else
+            return OWLManager.createOWLOntologyManager().createOntology(moduleIRI);
         }
-        else {
-            return ontology;
+        catch(OWLOntologyCreationException e) {
+            return null;
         }
     }
 

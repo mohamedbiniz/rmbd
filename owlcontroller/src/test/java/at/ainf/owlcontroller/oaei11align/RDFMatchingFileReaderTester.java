@@ -46,6 +46,33 @@ public class RDFMatchingFileReaderTester {
     }
 
     @Test
+    public  void testConsistency() throws SolverException, InconsistentTheoryException {
+        for (File file : new File(ClassLoader.getSystemResource("oaei11conference/ontology").getFile()).listFiles()) {
+            String name = file.getName().substring(0,file.getName().length() - 4);
+            OWLOntology ontology = CreationUtils.createOwlOntology ("oaei11conference/ontology",name);
+
+
+            OWLOntology extracted = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+            try {
+                BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+                DualTreeOWLTheory theory = new DualTreeOWLTheory(new Reasoner.ReasonerFactory(),extracted, Collections.<OWLLogicalAxiom>emptySet());
+
+                search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+                search.setTheory(theory);
+
+                search.run(9);
+                System.out.println(file.getName() + " " + search.getStorage().getDiagnoses().size());
+            } catch (NoConflictException e) {
+                System.out.println(file.getName() + " cons");
+                //e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (InconsistentTheoryException e) {
+                System.out.println(file.getName() + " cons");
+            }
+
+        }
+    }
+
+    @Test
     public void testParser() throws SolverException, InconsistentTheoryException{
         for (File file : new File(ClassLoader.getSystemResource("oaei11conference/matchings").getFile()).listFiles()) {
             String fileName = file.getName();
@@ -65,7 +92,14 @@ public class RDFMatchingFileReaderTester {
             OWLOntology extracted = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
 
             BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
-            DualTreeOWLTheory theory = new DualTreeOWLTheory(new Reasoner.ReasonerFactory(),extracted, Collections.<OWLLogicalAxiom>emptySet());
+            DualTreeOWLTheory theory = null;
+            try {
+                theory = new DualTreeOWLTheory(new Reasoner.ReasonerFactory(),extracted, Collections.<OWLLogicalAxiom>emptySet());
+            }
+            catch(InconsistentTheoryException e) {
+                System.out.println(file.getName() + " cons");
+                continue;
+            }
 
             Set<OWLLogicalAxiom> ontology1CutExtracted = CreationUtils.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
             Set<OWLLogicalAxiom> ontology2CutExtracted = CreationUtils.getIntersection(extracted.getLogicalAxioms(),ontology2.getLogicalAxioms());
