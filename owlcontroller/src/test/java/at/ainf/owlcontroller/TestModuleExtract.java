@@ -109,7 +109,7 @@ public class TestModuleExtract {
     @Test
     public void testMouse() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-        String ont = "queryontologies/human.owl";
+        String ont = "oaei11/human.owl";
 
         manager = OWLManager.createOWLOntologyManager();
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
