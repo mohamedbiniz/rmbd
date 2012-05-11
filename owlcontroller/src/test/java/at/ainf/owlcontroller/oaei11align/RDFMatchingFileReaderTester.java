@@ -1,14 +1,17 @@
 package at.ainf.owlcontroller.oaei11align;
 
+import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.CreationUtils;
 import at.ainf.owlcontroller.RDFUtils;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -61,15 +64,15 @@ public class RDFMatchingFileReaderTester {
 
             OWLOntology extracted = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
 
-            BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
-            OWLTheory theory = new OWLTheory(new Reasoner.ReasonerFactory(),extracted, Collections.<OWLLogicalAxiom>emptySet());
+            BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+            DualTreeOWLTheory theory = new DualTreeOWLTheory(new Reasoner.ReasonerFactory(),extracted, Collections.<OWLLogicalAxiom>emptySet());
 
-            Set<OWLLogicalAxiom> ontology1CutExtracted = CreationUtils.getIntersection(extracted.getLogicalAxioms(),ontology1.getLogicalAxioms());
+            Set<OWLLogicalAxiom> ontology1CutExtracted = CreationUtils.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
             Set<OWLLogicalAxiom> ontology2CutExtracted = CreationUtils.getIntersection(extracted.getLogicalAxioms(),ontology2.getLogicalAxioms());
             theory.addBackgroundFormulas(ontology1CutExtracted);
             theory.addBackgroundFormulas(ontology2CutExtracted);
 
-            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
             search.setTheory(theory);
 
             try {
