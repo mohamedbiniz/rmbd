@@ -14,6 +14,7 @@ import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.CreationUtils;
 import at.ainf.owlcontroller.OWLAxiomCostsEstimator;
+import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
@@ -925,12 +926,33 @@ public class UnsolvableTests extends BasePerformanceTests {
         }
     }
 
-    protected void doOverallTreeTest (boolean dual) throws IOException, SolverException, InconsistentTheoryException {
+    protected void doOverallTreeTest (boolean dual) throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
         Properties properties = AlignmentUtils.readProps("alignment.allFiles.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
         showElRates = false;
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+
+        boolean b = true;
+        String[] norm = new String[]{"koala", "Univ", "Transportation-SDA", "Economy-SDA"};
+        for (String ont : norm) {
+            OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", ont);
+            ontology = new OWLIncoherencyExtractor(
+                    new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+            OWLTheory theory = createOWLTheory(ontology, dual);
+            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+            es.updateKeywordProb (Utils.getProbabMap());
+            search.setCostsEstimator(es);
+            long time = System.currentTimeMillis();
+            search.run();
+            time = System.currentTimeMillis() - time;
+            System.out.println(dual + " diagnoses: " + search.getStorage().getDiagnoses().size() +
+                    " conflictSets:" + search.getStorage().getConflicts().size() + " time: " + time);
+
+
+        }
+        if(b) return;
 
 
         for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
@@ -1010,12 +1032,14 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     @Test
-    public void doOverallDualTreeTest() throws SolverException, InconsistentTheoryException, IOException {
+    public void doOverallDualTreeTest()
+            throws SolverException, InconsistentTheoryException, IOException, NoConflictException {
         doOverallTreeTest(true);
     }
 
     @Test
-    public void doOverallHsTreeTest() throws SolverException, InconsistentTheoryException, IOException {
+    public void doOverallHsTreeTest()
+            throws SolverException, InconsistentTheoryException, IOException, NoConflictException {
         doOverallTreeTest(false);
     }
 

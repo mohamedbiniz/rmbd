@@ -339,30 +339,6 @@ public class OAEI2011 {
 
 
 
-    public Set<OWLLogicalAxiom> getAxiomsInSourceAndOther(String path, String source, String destination) {
-        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-
-        Map<OWLLogicalAxiom,Double> axiomsReference = new HashMap<OWLLogicalAxiom, Double>();
-        Set<OWLLogicalAxiom> targetDiagnosisReference = new LinkedHashSet<OWLLogicalAxiom>();
-        try {
-            readDataOAEI(path + source + ".txt", axiomsReference, targetDiagnosisReference, man);
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        Map<OWLLogicalAxiom,Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
-        Set<OWLLogicalAxiom> targetDiagnosis = new LinkedHashSet<OWLLogicalAxiom>();
-        try {
-            readDataOAEI(path + destination + ".txt", axioms, targetDiagnosis, man);
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        Set<OWLLogicalAxiom> both = new LinkedHashSet<OWLLogicalAxiom>();
-        both.addAll(axiomsReference.keySet());
-        both.retainAll(axioms.keySet());
-        return both;
-    }
-
     @Test
     public void compareMatching() throws IOException {
         String path = "c:/daten/work/tasks/oaei2011/ontos/";
