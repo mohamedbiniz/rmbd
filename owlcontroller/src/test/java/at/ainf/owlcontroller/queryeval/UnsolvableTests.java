@@ -864,8 +864,9 @@ public class UnsolvableTests extends BasePerformanceTests {
         //String[] files = new String[]{"Aroma"};
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {false}) {
+                {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
+                        BasePerformanceTests.QSSType.DYNAMICRISK};
+        for (boolean dual : new boolean[] {true, false}) {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
