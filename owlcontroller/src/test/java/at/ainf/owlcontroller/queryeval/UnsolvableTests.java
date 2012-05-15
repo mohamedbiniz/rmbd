@@ -939,7 +939,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         showElRates = false;
         BasePerformanceTests.QSSType[] qssTypes =
                 new BasePerformanceTests.QSSType[]{ BasePerformanceTests.QSSType.MINSCORE};
-        String[] norm = new String[]{"Transportation-SDA"};
+        String[] norm = new String[]{"Univ"};
 
 
         for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
