@@ -32,6 +32,8 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxRenderer;
 
 import java.io.*;
 import java.util.*;
@@ -939,7 +941,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         showElRates = false;
         BasePerformanceTests.QSSType[] qssTypes =
                 new BasePerformanceTests.QSSType[]{ BasePerformanceTests.QSSType.MINSCORE};
-        String[] norm = new String[]{"Univ"};
+        String[] norm = new String[]{"Transportation-SDA"};
 
 
         for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
@@ -948,7 +950,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = getAllD(o);
                 for (BasePerformanceTests.QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.GOOD}) {
-                        for (int i = 0; i < 1700; i++) {
+                        for (int i = 0; i < 1; i++) {
 
 
                             OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o);
@@ -972,7 +974,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             search.clearSearch();
 
-                            targetDg = chooseTargetDiagnosis(diagProbab,diagnoses);
+                            targetDg = getDualTreeTranspErrDiag();
 
 
                             TableList e = new TableList();
@@ -1091,6 +1093,23 @@ public class UnsolvableTests extends BasePerformanceTests {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+    }
+
+    private Set<OWLLogicalAxiom> getDualTreeTranspErrDiag() {
+        Set<OWLLogicalAxiom> result = new LinkedHashSet<OWLLogicalAxiom>();
+        Set<String> target = new LinkedHashSet<String>();
+        target.add("ContainerAndRoRoCargoShip SubClassOf PartialContainerShip");
+        target.add("InternationalAirport SubClassOf CommercialAirport");
+        target.add("LightTruck SubClassOf Automobile");
+        target.add("ShipCabin SubClassOf HumanHabitationArtifact");
+        target.add("AirTransitway DisjointWith TransitRoute");
+        target.add("CargoShip DisjointWith PassengerShip");
+        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies","Transportation-SDA");
+        for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
+            if (target.contains(new ManchesterOWLSyntaxOWLObjectRendererImpl().render(axiom)))
+                result.add(axiom);
+        }
+        return result;
     }
 
     private AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
