@@ -934,7 +934,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     @Test
-    protected void doSearchNoDiagFound() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
+    public void doSearchNoDiagFound() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
 
         showElRates = false;
         BasePerformanceTests.QSSType[] qssTypes =
