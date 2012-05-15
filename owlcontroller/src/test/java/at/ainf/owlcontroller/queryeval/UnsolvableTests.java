@@ -483,6 +483,8 @@ public class UnsolvableTests extends BasePerformanceTests {
                 targetDiagnosisIsInWind = true;
             }
         }
+        if(!targetDiagnosisIsInWind)
+            logger.error("target diagnosis is not in window!");
         int diagWinSize = 0;
         if (diagnoses != null)
             diagWinSize = diagnoses.size();
@@ -931,10 +933,70 @@ public class UnsolvableTests extends BasePerformanceTests {
         }
     }
 
+    @Test
+    protected void doSearchNoDiagFound() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
+
+        showElRates = false;
+        BasePerformanceTests.QSSType[] qssTypes =
+                new BasePerformanceTests.QSSType[]{ BasePerformanceTests.QSSType.MINSCORE};
+        String[] norm = new String[]{"Transportation-SDA"};
+
+
+        for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
+            for (String o : norm) {
+                String out ="STAT, " + o;
+                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = getAllD(o);
+                for (BasePerformanceTests.QSSType type : qssTypes) {
+                    for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.GOOD}) {
+                        for (int i = 0; i < 15; i++) {
+
+
+                            OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o);
+                            //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                            long preprocessModulExtract = System.currentTimeMillis();
+                            ontology = new OWLIncoherencyExtractor(
+                                    new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                            preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
+                            Set<OWLLogicalAxiom> targetDg;
+                            OWLTheory theory = createOWLTheory(ontology, true);
+                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
+
+                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+                            es.updateKeywordProb(map);
+                            search.setCostsEstimator(es);
+
+                            targetDg = null;
+
+                            search.setCostsEstimator(es);
+
+                            search.clearSearch();
+
+                            targetDg = chooseTargetDiagnosis(diagProbab,diagnoses);
+
+
+                            TableList e = new TableList();
+                            out += "," + type + ",";
+                            String message = "act," + "," + o.trim() + "," + targetSource + "," +
+                                    ","+type + ","+preprocessModulExtract+","+diagProbab+","+i;
+                            logger.info("target diagnosis:" + targetDg.size() + " " + Utils.renderAxioms(targetDg));
+                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+
+                            //logger.info(out);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     protected void doOverallTreeTestEconomy(boolean dual) throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
 
         showElRates = false;
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+        //String[] norm = new String[]{"Transportation-SDA"};
         String[] norm = new String[]{"Transportation-SDA", "Economy-SDA"};
 
 
@@ -997,6 +1059,17 @@ public class UnsolvableTests extends BasePerformanceTests {
     public void doOverallHsTreeTestEconomy()
             throws SolverException, InconsistentTheoryException, IOException, NoConflictException {
         doOverallTreeTestEconomy(false);
+    }
+
+    @Test
+    public void hookTest() {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                System.out.println("User aborted shutdown hook");
+            }
+        });
+
+        while(true);
     }
 
     private TreeSet<AxiomSet<OWLLogicalAxiom>> getAllD(String o) {
