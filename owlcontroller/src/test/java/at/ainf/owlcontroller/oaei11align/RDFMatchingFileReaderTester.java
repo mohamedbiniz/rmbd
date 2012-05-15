@@ -18,9 +18,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
-import org.semanticweb.owlapi.model.AddAxiom;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import java.io.File;
 import java.util.Collections;
@@ -43,6 +42,44 @@ public class RDFMatchingFileReaderTester {
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlcontroller-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
+    }
+
+    @Test
+    public void testConsistency() throws SolverException, InconsistentTheoryException{
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings").getFile()).listFiles();
+        for (int i = 2-2; i < i+1; i++) {
+            if (f[i].isDirectory() )
+                continue;
+            String fileName = f[i].getName();
+            StringTokenizer t = new StringTokenizer(fileName,"-");
+            String matcher = t.nextToken();
+            String o1 = t.nextToken();
+            String o2 = t.nextToken();
+            o2 = o2.substring(0,o2.length()-4);
+            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1);
+            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2);
+            OWLOntology merged = CreationUtils.mergeOntologies(ontology1, ontology2);
+            String n = f[i].getName().substring(0,f[i].getName().length()-4);
+            Set<OWLLogicalAxiom> mapping = RDFUtils.readRdfMapping("oaei11conference/matchings",n).keySet();
+            for (OWLLogicalAxiom axiom : mapping)
+                merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
+
+            Set<OWLEntity> incoherentEntities = new LinkedHashSet<OWLEntity>();
+            OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(merged);
+
+            if (reasoner.isConsistent()) {
+                    if (reasoner.getUnsatisfiableClasses().getEntities().size() == 1)
+                        logger.info(","+f[i].getName() + ",ok");
+                    else
+                        logger.info("," + f[i].getName() + ",incoherent");
+                }
+                else {
+                    logger.info("," + f[i].getName() + ",inconsistent");
+                }
+
+
+
+        }
     }
 
     @Test
