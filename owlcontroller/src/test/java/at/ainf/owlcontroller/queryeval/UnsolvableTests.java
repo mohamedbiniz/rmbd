@@ -271,6 +271,8 @@ public class UnsolvableTests extends BasePerformanceTests {
         boolean userBreak = false;
         boolean systemBreak = false;
 
+        boolean possibleError = false;
+
         boolean querySessionEnd = false;
         long time = System.currentTimeMillis();
         boolean hasQueryWithNoDecisionPossible = false;
@@ -321,6 +323,12 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 if (diagnoses.isEmpty())
                     logger.error("No diagnoses found!");
+
+                if (diagnoses.size()==0) {
+
+                    possibleError = true;
+                    break;
+                }
 
                 String infoCa = "";
                 for (Set<OWLLogicalAxiom> diagnose : diagnoses)
@@ -502,13 +510,20 @@ public class UnsolvableTests extends BasePerformanceTests {
 //                ", consistency checks " + consistencyCount;
         message += "," + time + "," + num_of_queries + ","
                 + targetDiagnosisIsMostProbable + "," + targetDiagnosisIsInWind + "," + diagWinSize
-                + "," + reactionTime + "," + userBreak +
+                + "," + reactionTime + "," + userBreak + "," + possibleError +
                 "," + systemBreak + "," + hasQueryWithNoDecisionPossible +
                 "," + consistencyCount;
         logger.info(message);
+        if (!targetDiagnosisIsInWind || possibleError) {
+            logger.info("Possible an error occured: ");
+            logger.info("target diagnosis: " + Utils.renderAxioms(targetDiag));
+            logger.info("diagnoses in window");
+            for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
+                logger.info("diagnosis: " + Utils.renderAxioms(diagnosis));
+        }
 
         String msg = time + ", " + num_of_queries + ", " + targetDiagnosisIsMostProbable + ", " + targetDiagnosisIsInWind + ", " + diagWinSize
-                + ", " + reactionTime + ", " + userBreak +
+                + ", " + reactionTime + ", " + userBreak + "," + possibleError +
                 ", " + systemBreak + ", " + hasQueryWithNoDecisionPossible +
                 ", " + consistencyCount;
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
