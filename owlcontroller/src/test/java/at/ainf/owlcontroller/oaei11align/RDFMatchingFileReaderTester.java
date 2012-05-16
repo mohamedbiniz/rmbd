@@ -46,8 +46,8 @@ public class RDFMatchingFileReaderTester {
 
     @Test
     public void testConsistency() throws SolverException, InconsistentTheoryException{
-        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings").getFile()).listFiles();
-        for (int i = 2-2; i < i+1; i++) {
+    File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getFile()).listFiles();
+        for (int i = 2-2; i < f.length; i++) {
             if (f[i].isDirectory() )
                 continue;
             String fileName = f[i].getName();
@@ -56,13 +56,18 @@ public class RDFMatchingFileReaderTester {
             String o1 = t.nextToken();
             String o2 = t.nextToken();
             o2 = o2.substring(0,o2.length()-4);
-            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1);
+
+            String n = f[i].getName().substring(0,f[i].getName().length()-4);
+            OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",o1,o2,
+                    "oaei11conference/matchings/incoherent",n);
+
+            /*OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1);
             OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2);
             OWLOntology merged = CreationUtils.mergeOntologies(ontology1, ontology2);
             String n = f[i].getName().substring(0,f[i].getName().length()-4);
-            Set<OWLLogicalAxiom> mapping = RDFUtils.readRdfMapping("oaei11conference/matchings",n).keySet();
+        Set<OWLLogicalAxiom> mapping = RDFUtils.readRdfMapping("oaei11conference/matchings/incoherent",n).keySet();
             for (OWLLogicalAxiom axiom : mapping)
-                merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
+                merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));*/
 
             Set<OWLEntity> incoherentEntities = new LinkedHashSet<OWLEntity>();
             OWLReasoner reasoner = new Reasoner.ReasonerFactory().createReasoner(merged);

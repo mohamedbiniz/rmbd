@@ -1,7 +1,9 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.owlcontroller.oaei11align.RdfMatchingFileParser;
+import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,6 +11,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,5 +37,16 @@ public class RDFUtils {
         }
 
         return handler.getMappings();
+    }
+
+    public static OWLOntology createOntologyWithMappings(String pathToOntologies,
+                                                 String o1, String o2, String pathToMapping, String mappingName) {
+        OWLOntology ontology1 = CreationUtils.createOwlOntology(pathToOntologies,o1);
+        OWLOntology ontology2 = CreationUtils.createOwlOntology(pathToOntologies,o2);
+        OWLOntology merged = CreationUtils.mergeOntologies(ontology1, ontology2);
+        Set<OWLLogicalAxiom> mapping = RDFUtils.readRdfMapping(pathToMapping,mappingName).keySet();
+        for (OWLLogicalAxiom axiom : mapping)
+            merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
+        return merged;
     }
 }

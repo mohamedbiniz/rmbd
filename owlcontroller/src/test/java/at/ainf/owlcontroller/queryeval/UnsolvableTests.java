@@ -1009,7 +1009,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                     TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = getAllD(o);
                     for (BasePerformanceTests.QSSType type : qssTypes) {
                         for (DiagProbab diagProbab : DiagProbab.values()) {
-                            for (int i = 0; i < 15; i++) {
+                            for (int i = 0; i < 20; i++) {
 
 
                         OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o);
@@ -1193,8 +1193,8 @@ public class UnsolvableTests extends BasePerformanceTests {
         showElRates = false;
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {true, false}) {
-            for (boolean background : new boolean[]{false,true}) {
+        for (boolean dual : new boolean[] {true}) {
+            for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String m : mapOntos.keySet()) {
                         for (String o : mapOntos.get(m)) {
