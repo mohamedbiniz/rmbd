@@ -27,11 +27,14 @@ public class CreationUtils {
 
     public static OWLOntology createOwlOntology(String path, String name) {
         String directory = ClassLoader.getSystemResource(path).getPath();
-        File ontF = new File(directory + "/" + name + ".owl");
+        return createOwlOntology(new File(directory + "/" + name));
+    }
+
+    public static OWLOntology createOwlOntology(File file) {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntology ontology = null;
         try {
-            ontology = manager.loadOntologyFromOntologyDocument(ontF);
+            ontology = manager.loadOntologyFromOntologyDocument(file);
         } catch (OWLOntologyCreationException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

@@ -493,8 +493,10 @@ public class UnsolvableTests extends BasePerformanceTests {
                 targetDiagnosisIsInWind = true;
             }
         }
-        if(!targetDiagnosisIsInWind)
+        if(!targetDiagnosisIsInWind)              {
+            possibleError = true;
             logger.error("target diagnosis is not in window!");
+        }
         int diagWinSize = 0;
         if (diagnoses != null)
             diagWinSize = diagnoses.size();
@@ -514,12 +516,17 @@ public class UnsolvableTests extends BasePerformanceTests {
                 "," + systemBreak + "," + hasQueryWithNoDecisionPossible +
                 "," + consistencyCount;
         logger.info(message);
-        if (!targetDiagnosisIsInWind || possibleError) {
+        if (possibleError) {
             logger.info("Possible an error occured: ");
             logger.info("target diagnosis: " + Utils.renderAxioms(targetDiag));
-            logger.info("diagnoses in window");
-            for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
-                logger.info("diagnosis: " + Utils.renderAxioms(diagnosis));
+            if (diagnoses == null) {
+                logger.info("diagnoses is null!");
+            }
+            else {
+                logger.info("diagnoses in window: " + diagnoses.size());
+                for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
+                    logger.info("diagnosis: " + Utils.renderAxioms(diagnosis));
+            }
         }
 
         String msg = time + ", " + num_of_queries + ", " + targetDiagnosisIsMostProbable + ", " + targetDiagnosisIsInWind + ", " + diagWinSize
@@ -968,7 +975,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                         for (int i = 0; i < 1500; i++) {
 
 
-                            OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o);
+                            OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o+".owl");
                             //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             long preprocessModulExtract = System.currentTimeMillis();
                             ontology = new OWLIncoherencyExtractor(
@@ -1027,7 +1034,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             for (int i = 0; i < 20; i++) {
 
 
-                        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o);
+                        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o+".owl");
                         //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                         long preprocessModulExtract = System.currentTimeMillis();
                         ontology = new OWLIncoherencyExtractor(
@@ -1091,7 +1098,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     private TreeSet<AxiomSet<OWLLogicalAxiom>> getAllD(String o) {
-        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o);
+        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o+".owl");
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
         OWLTheory theory = createOWLTheory(ontology, false);
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
@@ -1120,7 +1127,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         target.add("ShipCabin SubClassOf HumanHabitationArtifact");
         target.add("AirTransitway DisjointWith TransitRoute");
         target.add("CargoShip DisjointWith PassengerShip");
-        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies","Transportation-SDA");
+        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies","Transportation-SDA.owl");
         for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
             if (target.contains(new ManchesterOWLSyntaxOWLObjectRendererImpl().render(axiom)))
                 result.add(axiom);

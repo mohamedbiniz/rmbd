@@ -59,7 +59,7 @@ public class RDFMatchingFileReaderTester {
 
             String n = f[i].getName().substring(0,f[i].getName().length()-4);
             OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",o1,o2,
-                    "oaei11conference/matchings/incoherent",n);
+                    "oaei11conference/matchings/incoherent",n+".rdf");
 
             /*OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1);
             OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2);
@@ -96,11 +96,11 @@ public class RDFMatchingFileReaderTester {
             String o1 = t.nextToken();
             String o2 = t.nextToken();
             o2 = o2.substring(0,o2.length()-4);
-            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1);
-            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2);
+            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1+".owl");
+            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2+".owl");
             OWLOntology merged = CreationUtils.mergeOntologies(ontology1, ontology2);
             String n = file.getName().substring(0,file.getName().length()-4);
-            Set<OWLLogicalAxiom> mapping = RDFUtils.readRdfMapping("oaei11conference/matchings",n).keySet();
+            Set<OWLLogicalAxiom> mapping = RDFUtils.readRdfMapping("oaei11conference/matchings",n + ".rdf").keySet();
             for (OWLLogicalAxiom axiom : mapping)
                 merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
 
