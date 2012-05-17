@@ -123,14 +123,15 @@ public class DiagnosisTests {
 
 
 
-        String testDir = ClassLoader.getSystemResource("alignment/ontologies").getPath();
+        //String testDir = ClassLoader.getSystemResource("alignment/ontologies").getPath();
+        String testDir = ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getPath();
         //String testDir =   "C:\\Daten\\OpBO";
         LinkedList<File> files = new LinkedList<File>();
         collectAllFiles(new File(testDir), files);
         for (File file : files)
             try {
-                if (!exclude.contains(file.getName()) && (file.getName().endsWith(".owl")
-                        || file.getName().endsWith("._owl_") || file.getName().endsWith(".owl2"))) {
+                if (!exclude.contains(file.getName()) && (file.getName().endsWith(".owl") || file.getName().endsWith("._owl_")
+                        || file.getName().endsWith(".owl2")|| file.getName().endsWith(".rdf")) ) {
                     logger.info("started " + file.getName());
                     test(file, 9);
                     printStatsAndClear("Leading diagnoses " + file.getName());
@@ -161,7 +162,21 @@ public class DiagnosisTests {
 
         //SimpleDebugger debugger = new SimpleDebugger();
         logger.info("Processing " + file);
-        OWLTheory th = createTheory(file, OWLManager.createOWLOntologyManager());
+        OWLOntology ontology = null;
+        if (file.getName().endsWith(".rdf")) {
+            String pathOntologies = "oaei11conference/ontology";
+            String o1 = file.getName().split("-")[1];
+            String o2 = file.getName().split("-")[2];
+            o2 = o2.substring(0,o2.length()-4);
+            String pathMapping = "oaei11conference/matchings/" + file.getParentFile().getName();
+            String mappingName = file.getName();
+            ontology = RDFUtils.createOntologyWithMappings(pathOntologies,o1,o2,pathMapping,mappingName);
+        }
+        else {
+            ontology = CreationUtils.createOwlOntology(file);
+
+        }
+        OWLTheory th = createTheory(ontology);
         //debugger.setTheory(th);
         SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(th);
         OWLOntology on = th.getOriginalOntology();
@@ -201,10 +216,10 @@ public class DiagnosisTests {
         logger.info(message);
     }
 
-    private OWLTheory createTheory(File file, OWLOntologyManager manager) throws URISyntaxException,
+    private OWLTheory createTheory(OWLOntology ontology) throws URISyntaxException,
             OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        OWLOntology ontology = manager.loadOntologyFromOntologyDocument(file);
+
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
         Set<OWLLogicalAxiom> background = new HashSet<OWLLogicalAxiom>();

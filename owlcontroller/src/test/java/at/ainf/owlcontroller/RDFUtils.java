@@ -27,7 +27,7 @@ public class RDFUtils {
 
         try {
             SAXParser saxParser = factory.newSAXParser();
-            saxParser.parse( ClassLoader.getSystemResource(path+"/"+name + ".rdf").getPath(), handler );
+            saxParser.parse( ClassLoader.getSystemResource(path+"/"+name ).getPath(), handler );
         } catch (ParserConfigurationException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SAXException e) {
@@ -41,8 +41,8 @@ public class RDFUtils {
 
     public static OWLOntology createOntologyWithMappings(String pathToOntologies,
                                                  String o1, String o2, String pathToMapping, String mappingName) {
-        OWLOntology ontology1 = CreationUtils.createOwlOntology(pathToOntologies,o1);
-        OWLOntology ontology2 = CreationUtils.createOwlOntology(pathToOntologies,o2);
+        OWLOntology ontology1 = CreationUtils.createOwlOntology(pathToOntologies,o1+".owl");
+        OWLOntology ontology2 = CreationUtils.createOwlOntology(pathToOntologies,o2+".owl");
         OWLOntology merged = CreationUtils.mergeOntologies(ontology1, ontology2);
         Set<OWLLogicalAxiom> mapping = RDFUtils.readRdfMapping(pathToMapping,mappingName).keySet();
         for (OWLLogicalAxiom axiom : mapping)
