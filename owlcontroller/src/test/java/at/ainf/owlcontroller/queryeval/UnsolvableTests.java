@@ -1094,6 +1094,30 @@ public class UnsolvableTests extends BasePerformanceTests {
             }
         });
 
+        new Thread() {
+            public void run() {
+                while(true) {
+                    try {
+                        while (System.in.available()>0) {
+                            char pressedKey = (char) System.in.read();
+                            switch(pressedKey) {
+                                case 'c':
+                                    System.out.println("statistics");
+                                    System.exit(0);
+                                case 'i':
+                                    System.out.println("statistics");
+                                default:
+                                    System.out.println("press <i> for statistics or <c> to cancel");
+                            }
+
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+            }
+        }.start();
+
         while(true);
     }
 
