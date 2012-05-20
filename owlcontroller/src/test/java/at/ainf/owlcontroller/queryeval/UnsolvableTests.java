@@ -5,9 +5,7 @@ import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.DualTreeLogic;
-import at.ainf.diagnosis.tree.UniformCostSearch;
+import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
@@ -1238,8 +1236,10 @@ public class UnsolvableTests extends BasePerformanceTests {
         //boolean background_add = false;
         showElRates = false;
 
+        Timer timer = new Timer();
+
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {true}) {
+        for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String m : mapOntos.keySet()) {
@@ -1329,8 +1329,12 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
                                 //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
 
+                                TimeoutTask task = new TimeoutTask (2*60*1000,m.trim(),o.trim() );
+                                task.setSearch(search);
+                                timer.scheduleAtFixedRate(task, 0, TimeoutTask.CYCLE_TIME);
                                 out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
-
+                                task.cancel();
+                                task.setSearch(null);
                             }
                             logger.info(out);
                         }
