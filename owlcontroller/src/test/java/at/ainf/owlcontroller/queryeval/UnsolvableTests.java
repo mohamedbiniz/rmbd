@@ -1329,7 +1329,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
                                 //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
 
-                                TimeoutTask task = new TimeoutTask (2*60*1000,m.trim(),o.trim() );
+                                TimeoutTask task = new TimeoutTask (3*3600*1000,m.trim(),o.trim() );
                                 task.setSearch(search);
                                 timer.scheduleAtFixedRate(task, 0, TimeoutTask.CYCLE_TIME);
                                 out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);

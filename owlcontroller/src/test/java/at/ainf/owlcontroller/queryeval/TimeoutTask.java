@@ -16,7 +16,7 @@ import java.util.TimerTask;
  */
 public class TimeoutTask extends TimerTask {
 
-    public static int CYCLE_TIME = 5*1000;
+    public static int CYCLE_TIME = 60000;
 
     private String matcher = "";
     private String o = "";
