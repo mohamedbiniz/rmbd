@@ -5,7 +5,7 @@ import at.ainf.theory.storage.AxiomSet;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,6 +33,43 @@ public class TimeoutTask extends TimerTask {
         this.o = ontology;
     }
 
+    private Set<Integer> getCardinalities(Set<AxiomSet<OWLLogicalAxiom>> set) {
+        Set<Integer> r = new LinkedHashSet<Integer>();
+        for (Set<OWLLogicalAxiom> s : set)
+            r.add(s.size());
+        return r;
+    }
+
+    private Integer getMin(Set<Integer> set) {
+        try {
+            return Collections.min(set);
+
+        }
+        catch(NoSuchElementException e) {
+            return -1;
+        }
+    }
+
+    private Double getMean(Set<Integer> set) {
+        if (set.isEmpty())
+            return -1.0;
+
+        Double r = 0.0;
+        for (Integer a : set)
+            r +=  a;
+        return r / set.size();
+    }
+
+    private Integer getMax(Set<Integer> set) {
+        try {
+            return Collections.max(set);
+
+        }
+        catch(NoSuchElementException e) {
+            return -1;
+        }
+    }
+
     @Override
     public void run() {
         TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> s = getSearch();
@@ -40,11 +77,25 @@ public class TimeoutTask extends TimerTask {
         if(s==null)
             logger.info("Statistics: " + matcher + "," + o + " search is null");
         else {
-            int numD = s.getStorage().getDiagnoses().size();
-            int numC = s.getStorage().getConflicts().size();
+            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = s.getStorage().getDiagnoses();
+            Set<AxiomSet<OWLLogicalAxiom>> conflicts = s.getStorage().getConflicts();
+            Set<Integer> conflictsCard = getCardinalities(conflicts);
+            Set<Integer>  diagnosesCard = getCardinalities(diagnoses);
+
+            int numD =diagnoses.size();
+            int minDcard = getMin(diagnosesCard);
+            double meanDcard = getMean(diagnosesCard);
+            int maxDcard = getMax(diagnosesCard);
+            int numC = conflicts.size();
+            int minCcard = getMin(conflictsCard);
+            double meanCcard = getMean(conflictsCard);
+            int maxCcard = getMax(conflictsCard);
             int openNodes = s.getOpenNodes().size();
 
-            logger.info("Statistics: " + matcher + "," + o + "," + numD + "," + numC + "," + openNodes);
+            logger.info("Statistics: " + matcher + "," + o + ","
+                    + numD + "," + minDcard + "," + meanDcard + "," + maxDcard + ","
+                    + numC + "," + minCcard + "," + meanCcard + "," + maxCcard + ","
+                    + openNodes );
         }
 
         if (cycles > maxCycles) {

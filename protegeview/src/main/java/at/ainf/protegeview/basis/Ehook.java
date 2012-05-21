@@ -29,7 +29,7 @@ public class Ehook extends OWLEditorKitHook implements OWLModelManagerListener {
     }
 
     public void handleChange(OWLModelManagerChangeEvent event) {
-         logger.info(event.getType());
+        logger.info(event.getType());
         if (event.getType().equals(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
             OWLReasonerFactory factory = owlEditorKit.getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory();
             OWLOntology ontology = owlEditorKit.getModelManager().getActiveOntology();

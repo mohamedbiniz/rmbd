@@ -1,4 +1,4 @@
-package at.ainf.owlcontroller;
+package at.ainf.owlcontroller.costestimation;
 
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;

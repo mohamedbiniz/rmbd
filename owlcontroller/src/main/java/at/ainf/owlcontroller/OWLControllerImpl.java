@@ -5,6 +5,7 @@ import at.ainf.diagnosis.debugger.QueryDebugger;
 import at.ainf.diagnosis.debugger.QueryDebuggerListener;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.listeners.OWLControllerConflictSetListener;
 import at.ainf.owlcontroller.listeners.OWLControllerHittingSetListener;
 import at.ainf.owlcontroller.listeners.OWLControllerListener;
