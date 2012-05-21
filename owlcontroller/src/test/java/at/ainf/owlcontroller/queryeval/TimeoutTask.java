@@ -41,7 +41,7 @@ public class TimeoutTask extends TimerTask {
             logger.info("Statistics: " + matcher + "," + o + " search is null");
         else {
             int numD = s.getStorage().getDiagnoses().size();
-            int numC = s.getStorage().getDiagnoses().size();
+            int numC = s.getStorage().getConflicts().size();
             int openNodes = s.getOpenNodes().size();
 
             logger.info("Statistics: " + matcher + "," + o + "," + numD + "," + numC + "," + openNodes);
