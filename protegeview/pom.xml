@@ -52,9 +52,13 @@
                             at.ainf.owlcontroller.jar;
                             at.ainf.controller.jar;
                             org.picocontainer.picocontainer.jar</Bundle-ClassPath>
-                        <Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
+                        <!--<Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
                             org.protege.editor.core.application;bundle-version="4.1",org.protege.editor.owl;bundle-version="4.1",
                             org.semanticweb.owl.owlapi;bundle-version="3.0"
+                        </Require-Bundle>-->
+                        <Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
+                            org.protege.editor.core.application,org.protege.editor.owl,
+                            org.semanticweb.owl.owlapi
                         </Require-Bundle>
                         <Private-Package>at.ainf.protegeview.*</Private-Package>
                     </instructions>

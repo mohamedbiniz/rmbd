@@ -16,7 +16,7 @@ public class ShowHSTreeButton extends MListButton {
 
 
     public ShowHSTreeButton(ActionListener actionListener) {
-        super("Show Diagnosis in HS Tree", Color.GREEN, actionListener);
+        super("Show Diagnosis in HS TreeType", Color.GREEN, actionListener);
 
     }
 

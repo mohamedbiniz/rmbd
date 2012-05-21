@@ -1,7 +1,6 @@
 package at.ainf.protegeview;
 
-import at.ainf.diagnosis.tree.HsTreeLogic;
-import at.ainf.owlcontroller.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -22,7 +21,6 @@ import at.ainf.protegeview.testcasesentailmentsview.TcaeFrameSection;
 import at.ainf.protegeview.testcasesentailmentsview.TcaeFrameSectionItem;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.protege.editor.core.ui.wizard.Wizard;
-import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.inference.ProtegeOWLReasonerInfo;
 import org.protege.editor.owl.ui.OWLWorkspaceViewsTab;
 import org.semanticweb.owlapi.apibinding.OWLManager;
