@@ -33,29 +33,4 @@ public class OWLControllerTest {
         PropertyConfigurator.configure(conf);
     }
 
-    @Test
-    public void controllerTest() throws OWLOntologyCreationException {
-
-        OWLOntology ontology = OWLManager.createOWLOntologyManager()
-                .loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("queryontologies/Univ.owl"));
-        OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
-
-        OWLController controller = OwlControllerMngr.getOWLController();
-        controller.updateActiveOntology(ontology, reasonerFactory);
-        controller.addControllerListener(new OWLControllerConflictSetListener() {
-            public void updateConflictSets(Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets) {
-                // System.out.println("Conflict Sets: " + conflictSets.size());
-                assert(conflictSets.size() > 0);
-            }
-        },OWLControllerConflictSetListener.class);
-        controller.addControllerListener(new OWLControllerHittingSetListener() {
-            public void updateValidHittingSets(Set<? extends AxiomSet<OWLLogicalAxiom>> validHittingSets) {
-                // System.out.println("HittingSets: " + validHittingSets.size());
-                assert(validHittingSets.size() > 0);
-            }
-        },OWLControllerHittingSetListener.class);
-
-        controller.doCalcHS();
-
-    }
 }

@@ -4,17 +4,31 @@ import at.ainf.diagnosis.debugger.ProbabilityQueryDebugger;
 import at.ainf.diagnosis.debugger.QueryDebugger;
 import at.ainf.diagnosis.debugger.QueryDebuggerListener;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
+import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.tree.BreadthFirstSearch;
+import at.ainf.diagnosis.tree.DualTreeLogic;
+import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.listeners.OWLControllerConflictSetListener;
 import at.ainf.owlcontroller.listeners.OWLControllerHittingSetListener;
 import at.ainf.owlcontroller.listeners.OWLControllerListener;
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.DualStorage;
+import at.ainf.theory.storage.SimpleStorage;
+import at.ainf.theory.storage.Storage;
 import org.picocontainer.DefaultPicoContainer;
 import org.picocontainer.behaviors.Caching;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+
+import static at.ainf.owlcontroller.SearchConfiguration.TreeType.*;
+import static at.ainf.owlcontroller.SearchConfiguration.QSS.*;
+import static at.ainf.owlcontroller.SearchConfiguration.SearchType.*;
 
 import java.util.*;
 
@@ -27,85 +41,67 @@ import java.util.*;
  */
 public class OWLControllerImpl implements OWLController {
 
-    private Map<OWLOntology,DefaultPicoContainer> containers;
+    private SearchConfiguration config;
 
-    private OWLOntology activeOntology;
+    private SearchConfiguration readConfiguration() {
+        SearchConfiguration config = ConfigFileManager.readConfiguration();
 
-    public OWLControllerImpl  () {
-        containers = new HashMap<OWLOntology, DefaultPicoContainer>();
-
-    }
-
-    public void updateActiveOntology(OWLOntology ontology, OWLReasonerFactory factory) {
-
-        if (containers.get(ontology) != null) {
-            activeOntology = ontology;
-        }
-        else {
-            DefaultPicoContainer pico = new DefaultPicoContainer(new Caching());
-            activeOntology = ontology;
-
-            pico.addComponent(ProbabilityQueryDebugger.class);
-            pico.addComponent(OWLTheory.class);
-            pico.addComponent(OWLAxiomKeywordCostsEstimator.class);
-            pico.addComponent(new TreeSet<OWLLogicalAxiom>());
-            pico.addComponent(factory);
-            pico.addComponent(ontology);
-            containers.put(ontology, pico);
+        if (config == null) {
+            ConfigFileManager.writeConfiguration(ConfigFileManager.getDefaultConfig());
+            config = ConfigFileManager.readConfiguration();
         }
 
+        return config;
     }
 
-    public void activateSimpleDebugger() {
-        containers.get(activeOntology).removeComponent(ProbabilityQueryDebugger.class);
-        containers.get(activeOntology).addComponent(SimpleQueryDebugger.class);
-    }
-
-    public void activateProbDebugger() {
-        containers.get(activeOntology).removeComponent(SimpleQueryDebugger.class);
-        containers.get(activeOntology).addComponent(ProbabilityQueryDebugger.class);
-    }
-
-    protected OWLTheory getActualTheory() {
-        if (activeOntology != null)
-            return (OWLTheory) getActualQueryDebugger().getTheory();
+    private Storage<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createStorage() {
+        if (config.treeType == REITER)
+            return new SimpleStorage<OWLLogicalAxiom>();
+        else if (config.treeType == DUAL)
+            return new DualStorage<OWLLogicalAxiom>();
         else
-            throw new NullPointerException("There is no active Ontology");
+            return null;
     }
 
-    protected QueryDebugger<OWLLogicalAxiom> getActualQueryDebugger() {
-        if (activeOntology != null)
-            return (QueryDebugger<OWLLogicalAxiom>) containers.get(activeOntology).getComponent(QueryDebugger.class);
-        else
-            throw new NullPointerException("There is no active Ontology");
+    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createSearch(Storage<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> storage, OWLTheory theory) {
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = null;
+
+        if (config.searchType == BREATHFIRST)
+            search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        else if (config.searchType == UNIFORM_COST) {
+            search = new UniformCostSearch<OWLLogicalAxiom>((SimpleStorage<OWLLogicalAxiom>)storage);
+            ((UniformCostSearch<OWLLogicalAxiom>)search).setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+        }
+
+        if (config.treeType == REITER)
+            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        else if (config.treeType == DUAL) {
+            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
+        }
+
+        search.setTheory(theory);
+
+        return search;
     }
 
-    public void doCalcHS() {
-        /*Thread t = new Thread() {
-            public void runPostprocessor() {*/
-                QueryDebuggerListener<OWLLogicalAxiom> l = new QueryDebuggerListener<OWLLogicalAxiom>() {
-                    public void conflictSetAdded(Set<? extends AxiomSet<OWLLogicalAxiom>> conflicts) {
-                        for (OWLControllerListener listener : listeners.get(OWLControllerConflictSetListener.class))
-                            ((OWLControllerConflictSetListener)listener).updateConflictSets(conflicts);
-                    }
+    public OWLControllerImpl(OWLReasonerFactory factory, OWLOntology ontology) {
+        config = readConfiguration();
 
-                    public void hittingSetAdded(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
-                        for (OWLControllerListener listener : listeners.get(OWLControllerHittingSetListener.class))
-                            ((OWLControllerHittingSetListener)listener).updateValidHittingSets(hittingSets);
-                    }
-                };
-                getActualQueryDebugger().addQueryDebuggerListener(l);
-                getActualQueryDebugger().resume();
-                getActualQueryDebugger().removeQueryDebuggerListener(l);
-                /*for (OWLControllerListener listener : listeners.get(OWLControllerConflictSetListener.class))
-                     ((OWLControllerConflictSetListener)listener).updateConflictSets(getActualQueryDebugger().getConflictSets());
-                for (OWLControllerListener listener : listeners.get(OWLControllerHittingSetListener.class))
-                    ((OWLControllerHittingSetListener)listener).updateValidHittingSets(getActualQueryDebugger().getValidHittingSets());*/
 
-            /*}
-        };
-        t.start();*/
+
+        if (config.treeType.equals(SearchConfiguration.TreeType.REITER)) {
+
+        }
+
+
     }
+
+
+
+
+
+
 
     Map<Class,List<OWLControllerListener>> listeners = new HashMap<Class,List<OWLControllerListener>>();
 

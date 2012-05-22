@@ -25,6 +25,9 @@ public class ConfigFileManager {
         Properties properties = new Properties();
         SearchConfiguration c = new SearchConfiguration();
 
+        if (!confFile.exists())
+            return null;
+
         try {
             properties.load(new FileInputStream(confFile));
         } catch (IOException e) {
