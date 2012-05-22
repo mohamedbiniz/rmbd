@@ -1,6 +1,5 @@
 package at.ainf.protegeview.basis;
 
-import at.ainf.owlcontroller.OwlControllerMngr;
 import org.apache.log4j.Logger;
 import org.protege.editor.core.editorkit.EditorKit;
 import org.protege.editor.owl.OWLEditorKit;
@@ -8,7 +7,6 @@ import org.protege.editor.owl.model.OWLEditorKitHook;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
-import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 /**
@@ -29,14 +27,8 @@ public class Ehook extends OWLEditorKitHook implements OWLModelManagerListener {
     }
 
     public void handleChange(OWLModelManagerChangeEvent event) {
-        logger.info(event.getType());
-        if (event.getType().equals(EventType.ACTIVE_ONTOLOGY_CHANGED)) {
-            OWLReasonerFactory factory = owlEditorKit.getOWLModelManager().getOWLReasonerManager().getCurrentReasonerFactory().getReasonerFactory();
-            OWLOntology ontology = owlEditorKit.getModelManager().getActiveOntology();
-            OwlControllerMngr.getOWLController().updateActiveOntology (ontology,factory);
-
-        }
-
+        if (event.getType().equals(EventType.ACTIVE_ONTOLOGY_CHANGED))
+            ControllerManager.createControllerForActiveOntology(owlEditorKit);
     }
 
     public void setup(EditorKit editorKit) {
@@ -45,6 +37,7 @@ public class Ehook extends OWLEditorKitHook implements OWLModelManagerListener {
 	}
 
     public void dispose() throws Exception {
+        ControllerManager.removeControllers(owlEditorKit);
         owlEditorKit.getModelManager().removeListener(this);
     }
 

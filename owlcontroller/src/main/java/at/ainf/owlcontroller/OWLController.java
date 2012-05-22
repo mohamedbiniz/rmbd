@@ -13,14 +13,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
  */
 public interface OWLController {
 
-    public void activateSimpleDebugger();
-
-    public void activateProbDebugger();
-
-    public void updateActiveOntology(OWLOntology ontology, OWLReasonerFactory factory);
-
-    public void doCalcHS();
-
     public void addControllerListener(OWLControllerListener listener, Class cls);
 
     public void removeControllerListener(OWLControllerListener listener, Class cls);
