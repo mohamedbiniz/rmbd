@@ -1238,8 +1238,8 @@ public class UnsolvableTests extends BasePerformanceTests {
         Timer timer = new Timer();
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {false}) {
-            for (boolean background : new boolean[]{true}) {
+        for (boolean dual : new boolean[] {true}) {
+            for (boolean background : new boolean[]{false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String m : mapOntos.keySet()) {
                         for (String o : mapOntos.get(m)) {
