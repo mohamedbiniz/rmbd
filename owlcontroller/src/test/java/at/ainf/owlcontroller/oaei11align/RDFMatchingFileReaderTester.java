@@ -138,7 +138,7 @@ public class RDFMatchingFileReaderTester {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Future<String> future = executor.submit(new SearchThread(f[i]));
             try {
-                future.get(10, TimeUnit.SECONDS);
+                future.get(50, TimeUnit.SECONDS);
             } catch (TimeoutException e) {
                 logger.info("timeout: " + f[i].getName());
             } catch (InterruptedException e) {
