@@ -1,5 +1,6 @@
 package at.ainf.owlcontroller;
 
+import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.debugger.ProbabilityQueryDebugger;
 import at.ainf.diagnosis.debugger.QueryDebugger;
 import at.ainf.diagnosis.debugger.QueryDebuggerListener;
@@ -54,16 +55,33 @@ public class OWLControllerImpl implements OWLController {
         return config;
     }
 
-    private Storage<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createStorage() {
-        if (config.treeType == REITER)
-            return new SimpleStorage<OWLLogicalAxiom>();
-        else if (config.treeType == DUAL)
-            return new DualStorage<OWLLogicalAxiom>();
-        else
-            return null;
+    private SimpleStorage<OWLLogicalAxiom> createStorage() {
+        switch (config.treeType) {
+            case REITER:
+                return new SimpleStorage<OWLLogicalAxiom>();
+            case DUAL:
+                return new DualStorage<OWLLogicalAxiom>();
+            default:
+                return null;
+        }
     }
 
-    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createSearch(Storage<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> storage, OWLTheory theory) {
+    private Searcher<OWLLogicalAxiom> createSearcher() {
+        switch (config.treeType) {
+            case REITER:
+                return new NewQuickXplain<OWLLogicalAxiom>();
+            case DUAL:
+                return new FastDiagnosis<OWLLogicalAxiom>();
+            default:
+                return null;
+        }
+    }
+
+    private OWLTheory createTheory (OWLOntology ontology) {
+        return null;
+    }
+
+    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createSearch(Storage<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> storage, Searcher<OWLLogicalAxiom> searcher, OWLTheory theory) {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = null;
 
         if (config.searchType == BREATHFIRST)
@@ -73,10 +91,9 @@ public class OWLControllerImpl implements OWLController {
             ((UniformCostSearch<OWLLogicalAxiom>)search).setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         }
 
-        if (config.treeType == REITER)
-            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        else if (config.treeType == DUAL) {
-            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        search.setSearcher(searcher);
+
+        if (config.treeType == DUAL) {
             search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
         }
 
