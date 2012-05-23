@@ -118,7 +118,17 @@ public class RDFMatchingFileReaderTester {
             time = System.currentTimeMillis() - time;
             int numDiags = searchDual.getStorage().getDiagnoses().size();
 
-            logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime + "," + numDiags);
+            Set<Integer> sizes = new LinkedHashSet<Integer>();
+            for (AxiomSet<OWLLogicalAxiom> diagnosis : searchDual.getStorage().getDiagnoses())
+                sizes.add(diagnosis.size());
+            int minCardSize = Collections.min(sizes);
+            int numOfMinCardDiags = 0;
+            for (Integer size : sizes)
+                if (minCardSize == size)
+                    numOfMinCardDiags++;
+
+            logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime
+                    + "," + numDiags + ","+ numOfMinCardDiags + "," + minCardSize );
 
             return "";
         }
@@ -138,7 +148,7 @@ public class RDFMatchingFileReaderTester {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Future<String> future = executor.submit(new SearchThread(f[i]));
             try {
-                future.get(50, TimeUnit.SECONDS);
+                future.get(16, TimeUnit.MINUTES);
             } catch (TimeoutException e) {
                 logger.info("timeout: " + f[i].getName());
             } catch (InterruptedException e) {
