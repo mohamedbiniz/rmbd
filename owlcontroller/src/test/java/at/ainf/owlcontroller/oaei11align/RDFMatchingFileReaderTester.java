@@ -141,23 +141,19 @@ public class RDFMatchingFileReaderTester {
 
         excluded.add("ldoa-conference-iasted-rdf");
 
+        ExecutorService executor = Executors.newCachedThreadPool();
+
         for (int i = 0; i < f.length; i++) {
             if (f[i].isDirectory() || excluded.contains(f[i].getName()))
                 continue;
 
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Future<String> future = executor.submit(new SearchThread(f[i]));
-            try {
-                future.get(16, TimeUnit.MINUTES);
-            } catch (TimeoutException e) {
-                logger.info("timeout: " + f[i].getName());
-            } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (ExecutionException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            executor.shutdownNow();
+            executor.submit(new SearchThread(f[i]));
+        }
 
+        try {
+            executor.awaitTermination(16, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
