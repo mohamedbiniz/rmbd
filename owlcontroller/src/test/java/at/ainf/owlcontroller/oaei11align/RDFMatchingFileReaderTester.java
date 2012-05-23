@@ -3,6 +3,8 @@ package at.ainf.owlcontroller.oaei11align;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
+import at.ainf.diagnosis.tree.DualTreeLogic;
+import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
@@ -11,6 +13,7 @@ import at.ainf.owlcontroller.CreationUtils;
 import at.ainf.owlcontroller.RDFUtils;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
@@ -18,14 +21,13 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -42,6 +44,71 @@ public class RDFMatchingFileReaderTester {
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlcontroller-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
+    }
+
+    @Test
+    public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getFile()).listFiles();
+        Set<String> excluded = new LinkedHashSet<String>();
+
+        excluded.add("ldoa-conference-iasted-rdf");
+
+        for (int i = 2-2; i < f.length; i++) {
+            if (f[i].isDirectory() || excluded.contains(f[i].getName()))
+                continue;
+            String fileName = f[i].getName();
+            StringTokenizer t = new StringTokenizer(fileName,"-");
+            String matcher = t.nextToken();
+            String o1 = t.nextToken();
+            String o2 = t.nextToken();
+            o2 = o2.substring(0,o2.length()-4);
+
+            String n = f[i].getName().substring(0,f[i].getName().length()-4);
+            OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology", o1, o2,
+                    "oaei11conference/matchings/incoherent", n + ".rdf");
+
+            long extractionTime = System.currentTimeMillis();
+            OWLOntology extracted = new OWLIncoherencyExtractor(
+                    new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
+            extractionTime = System.currentTimeMillis() - extractionTime;
+
+            Set<OWLLogicalAxiom> ontoBackground = new LinkedHashSet<OWLLogicalAxiom>();
+
+            String refmatchPath = "oaei11conference/matchings/references";
+            String refMatch = o1 + "-" + o2 + ".rdf";
+            Set<OWLLogicalAxiom> correctMappingAxioms = RDFUtils.readRdfMapping(refmatchPath,refMatch).keySet();
+            ontoBackground.addAll(CreationUtils.getIntersection(extracted.getLogicalAxioms(),correctMappingAxioms));
+
+            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1+".owl");
+            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2+".owl");
+            ontoBackground.addAll(CreationUtils.getIntersection(extracted.getLogicalAxioms(),ontology1.getLogicalAxioms()));
+            ontoBackground.addAll(CreationUtils.getIntersection(extracted.getLogicalAxioms(),ontology2.getLogicalAxioms()));
+
+            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+            searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+
+            Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
+            for (OWLIndividual ind : extracted.getIndividualsInSignature()) {
+                bax.addAll(extracted.getClassAssertionAxioms(ind));
+                bax.addAll(extracted.getObjectPropertyAssertionAxioms(ind));
+                bax.addAll(ontoBackground);
+                bax.addAll(correctMappingAxioms);
+            }
+            OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
+            OWLTheory theory =  new DualTreeOWLTheory(reasonerFactory, extracted, bax);
+
+            searchDual.setTheory(theory);
+            searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
+
+            long time = System.currentTimeMillis();
+            searchDual.run();
+            time = System.currentTimeMillis() - time;
+            int numDiags = searchDual.getStorage().getDiagnoses().size();
+
+            logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime + "," + numDiags);
+
+
+        }
     }
 
     @Test
