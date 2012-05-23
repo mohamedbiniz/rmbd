@@ -101,7 +101,7 @@ public class RDFMatchingFileReaderTester {
             searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
 
             long time = System.currentTimeMillis();
-            searchDual.run();
+            searchDual.run(9);
             time = System.currentTimeMillis() - time;
             int numDiags = searchDual.getStorage().getDiagnoses().size();
 
