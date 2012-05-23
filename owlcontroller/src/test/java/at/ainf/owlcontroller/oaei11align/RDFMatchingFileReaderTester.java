@@ -28,6 +28,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,24 +47,22 @@ public class RDFMatchingFileReaderTester {
         PropertyConfigurator.configure(conf);
     }
 
-    @Test
-    public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
-        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getFile()).listFiles();
-        Set<String> excluded = new LinkedHashSet<String>();
+    private class SearchThread implements Callable<String> {
+        private File file;
 
-        excluded.add("ldoa-conference-iasted-rdf");
+        public SearchThread(File file) {
+            this.file =  file;
+        }
 
-        for (int i = 2-2; i < f.length; i++) {
-            if (f[i].isDirectory() || excluded.contains(f[i].getName()))
-                continue;
-            String fileName = f[i].getName();
+        public String call() {
+            String fileName = file.getName();
             StringTokenizer t = new StringTokenizer(fileName,"-");
             String matcher = t.nextToken();
             String o1 = t.nextToken();
             String o2 = t.nextToken();
             o2 = o2.substring(0,o2.length()-4);
 
-            String n = f[i].getName().substring(0,f[i].getName().length()-4);
+            String n = file.getName().substring(0,file.getName().length()-4);
             OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology", o1, o2,
                     "oaei11conference/matchings/incoherent", n + ".rdf");
 
@@ -92,21 +91,62 @@ public class RDFMatchingFileReaderTester {
                 bax.addAll(extracted.getClassAssertionAxioms(ind));
                 bax.addAll(extracted.getObjectPropertyAssertionAxioms(ind));
                 bax.addAll(ontoBackground);
-                bax.addAll(correctMappingAxioms);
             }
             OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
-            OWLTheory theory =  new DualTreeOWLTheory(reasonerFactory, extracted, bax);
+            OWLTheory theory = null;
+            try {
+                theory = new DualTreeOWLTheory(reasonerFactory, extracted, bax);
+            } catch (InconsistentTheoryException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (SolverException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
 
             searchDual.setTheory(theory);
             searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
 
             long time = System.currentTimeMillis();
-            searchDual.run(9);
+            try {
+                searchDual.run();
+            } catch (SolverException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (NoConflictException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (InconsistentTheoryException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
             time = System.currentTimeMillis() - time;
             int numDiags = searchDual.getStorage().getDiagnoses().size();
 
             logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime + "," + numDiags);
 
+            return "";
+        }
+    }
+
+    @Test
+    public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getFile()).listFiles();
+        Set<String> excluded = new LinkedHashSet<String>();
+
+        excluded.add("ldoa-conference-iasted-rdf");
+
+        for (int i = 0; i < f.length; i++) {
+            if (f[i].isDirectory() || excluded.contains(f[i].getName()))
+                continue;
+
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Future<String> future = executor.submit(new SearchThread(f[i]));
+            try {
+                future.get(10, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+                logger.info("timeout: " + f[i].getName());
+            } catch (InterruptedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (ExecutionException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            executor.shutdownNow();
 
         }
     }
