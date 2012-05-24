@@ -151,10 +151,13 @@ public class RDFMatchingFileReaderTester {
 
         public void run() {
             try {
-                Thread.sleep(3*60*60);
-                logger.info("canceled: "  +  search.getFile().getName());
+                future.get(10,TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+
+            } catch (ExecutionException e) {
+
+            } catch (TimeoutException e) {
+                logger.info("canceled: " + search.getFile().getName());
             }
             if (!future.isDone())
                 future.cancel(true);
