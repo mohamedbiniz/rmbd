@@ -16,6 +16,7 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.SimpleStorage;
+import com.sun.jmx.snmp.tasks.Task;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
@@ -52,6 +53,10 @@ public class RDFMatchingFileReaderTester {
 
         public SearchThread(File file) {
             this.file =  file;
+        }
+
+        public File getFile() {
+            return file;
         }
 
         public String call() {
@@ -134,6 +139,28 @@ public class RDFMatchingFileReaderTester {
         }
     }
 
+    protected class TerminationThread extends Thread {
+
+        private Future future;
+        private SearchThread search;
+
+        public TerminationThread(SearchThread search, Future f) {
+            this.future = f;
+            this.search = search;
+        }
+
+        public void run() {
+            try {
+                Thread.sleep(3*60*60);
+                logger.info("canceled: "  +  search.getFile().getName());
+            } catch (InterruptedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            if (!future.isDone())
+                future.cancel(true);
+        }
+    }
+
     @Test
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getFile()).listFiles();
@@ -142,18 +169,20 @@ public class RDFMatchingFileReaderTester {
         excluded.add("ldoa-conference-iasted-rdf");
 
         ExecutorService executor = Executors.newCachedThreadPool();
-        Set<Future> futures = new LinkedHashSet<Future>();
 
         for (int i = 0; i < f.length; i++) {
             if (f[i].isDirectory() || excluded.contains(f[i].getName()))
                 continue;
 
-            futures.add(executor.submit(new SearchThread(f[i])));
+            SearchThread search = new SearchThread(f[i]);
+            Future future = executor.submit(new SearchThread(f[i]));
+
+            new TerminationThread(search,future).start();
 
         }
 
         try {
-            executor.awaitTermination(9*60, TimeUnit.MINUTES);
+            executor.awaitTermination(7,TimeUnit.DAYS);
 
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
