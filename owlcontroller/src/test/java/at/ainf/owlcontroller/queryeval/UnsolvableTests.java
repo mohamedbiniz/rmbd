@@ -874,6 +874,87 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     @Test
+    public void doTestAroma()
+
+            throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
+        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        //boolean background_add = false;
+        showElRates = false;
+
+        String[] files =
+                new String[]{"Aroma"};
+        //String[] files = new String[]{"Aroma"};
+
+        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
+                {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
+                        BasePerformanceTests.QSSType.DYNAMICRISK};
+        for (boolean dual : new boolean[] {true}) {
+            for (boolean background : new boolean[]{true}) {
+                for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
+                    for (String file : files) {
+
+                        String out ="STAT, " + file;
+                        for (BasePerformanceTests.QSSType type : qssTypes) {
+
+                            //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
+                            //String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
+                            //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+
+                            OWLOntology ontology = createOntologyFromTxtOAEI(file);
+
+                            Set<OWLLogicalAxiom> targetDg;
+                            long preprocessModulExtract = System.currentTimeMillis();
+                            ontology = new OWLIncoherencyExtractor(
+                                    new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                            preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
+                            OWLTheory theory = createTheoryOAEI(ontology, dual);
+                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+
+                            LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
+                            bx.addAll(getLogicalAxiomsOfOntologiesOAEI());
+                            bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
+                            theory.addBackgroundFormulas(bx);
+
+                            //ProbabilityTableModel mo = new ProbabilityTableModel();
+                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+
+                            String path = ClassLoader.getSystemResource("oaei11/" +file+ ".txt").getPath();
+
+                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+
+
+                            targetDg = null;
+
+                            search.setCostsEstimator(es);
+
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            search.clearSearch();
+
+
+
+                            if (targetSource == TargetSource.FROM_FILE)
+                                targetDg = getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
+                                        file);
+
+                            TableList e = new TableList();
+                            out += "," + type + ",";
+                            String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
+                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+
+                        }
+                        logger.info(out);
+
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     public void doTestsOAEIAnatomyTrack()
 
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
