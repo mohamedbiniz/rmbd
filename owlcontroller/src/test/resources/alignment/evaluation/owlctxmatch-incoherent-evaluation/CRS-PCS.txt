@@ -11,7 +11,7 @@ targetNamespace = http://PCS.owl
 + program < Programme | 1.0
 + document > DOCUMENT | 1.0
 + document < DOCUMENT | 1.0
-+ conference > Conference | 1.0
+- conference > Conference | 1.0
 + conference < Conference | 1.0
 + review > Review | 1.0
 + review < Review | 1.0
