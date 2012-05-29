@@ -70,7 +70,7 @@ public class RDFMatchingFileReaderTester {
 
             String n = file.getName().substring(0,file.getName().length()-4);
             OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology", o1, o2,
-                    "oaei11conference/matchings/inconsistent", n + ".rdf");
+                    "oaei11conference/matchings/incoherent", n + ".rdf");
 
             long extractionTime = System.currentTimeMillis();
             OWLOntology extracted = new OWLIncoherencyExtractor(
@@ -167,7 +167,7 @@ public class RDFMatchingFileReaderTester {
 
     @Test
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
-        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/inconsistent").getFile()).listFiles();
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getFile()).listFiles();
         Set<String> excluded = new LinkedHashSet<String>();
 
         excluded.add("ldoa-conference-iasted-rdf");
