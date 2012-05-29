@@ -903,7 +903,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/inconsistent").getFile()).listFiles();
         Set<String> excluded = new LinkedHashSet<String>();
-        excluded.add("ldoa-conference-iasted-rdf");
+        excluded.add("ldoa-conference-iasted.rdf");
 
         showElRates = false;
 
