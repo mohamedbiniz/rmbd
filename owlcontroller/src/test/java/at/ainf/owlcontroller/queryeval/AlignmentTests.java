@@ -305,7 +305,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
                             out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
-                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, null, null);
+                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, null, null);
                         }
                         logger.info(out);
                     }

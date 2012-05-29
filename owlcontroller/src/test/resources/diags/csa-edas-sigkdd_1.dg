@@ -1,0 +1,304 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://edas#AcademicEvent -->
+
+    <Class rdf:about="http://edas#AcademicEvent"/>
+    
+
+
+    <!-- http://edas#ActivePaper -->
+
+    <Class rdf:about="http://edas#ActivePaper">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Author_of_paper_student"/>
+    </Class>
+    
+
+
+    <!-- http://edas#BreakEvent -->
+
+    <Class rdf:about="http://edas#BreakEvent"/>
+    
+
+
+    <!-- http://edas#ComputerNetworksTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksTopic">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Sponzor"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ConferenceEvent -->
+
+    <Class rdf:about="http://edas#ConferenceEvent"/>
+    
+
+
+    <!-- http://edas#GovernmentOrganization -->
+
+    <Class rdf:about="http://edas#GovernmentOrganization">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Organizing_Committee_member"/>
+    </Class>
+    
+
+
+    <!-- http://edas#IndustryOrganization -->
+
+    <Class rdf:about="http://edas#IndustryOrganization">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Webmaster"/>
+    </Class>
+    
+
+
+    <!-- http://edas#MealMenu -->
+
+    <Class rdf:about="http://edas#MealMenu">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Exhibitor"/>
+    </Class>
+    
+
+
+    <!-- http://edas#NGO -->
+
+    <Class rdf:about="http://edas#NGO">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Program_Committee_member"/>
+    </Class>
+    
+
+
+    <!-- http://edas#Organization -->
+
+    <Class rdf:about="http://edas#Organization">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Organizator"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PendingPaper -->
+
+    <Class rdf:about="http://edas#PendingPaper">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Platinum_Supporter"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PersonalHistory -->
+
+    <Class rdf:about="http://edas#PersonalHistory">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Speaker"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PersonalReviewHistory -->
+
+    <Class rdf:about="http://edas#PersonalReviewHistory">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Invited_Speaker"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PublishedPaper -->
+
+    <Class rdf:about="http://edas#PublishedPaper">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Bronze_Supporter"/>
+    </Class>
+    
+
+
+    <!-- http://edas#RejectedPaper -->
+
+    <Class rdf:about="http://edas#RejectedPaper">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Best_Student_Paper_Supporter"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ReviewRating -->
+
+    <Class rdf:about="http://edas#ReviewRating"/>
+    
+
+
+    <!-- http://edas#SlideSet -->
+
+    <Class rdf:about="http://edas#SlideSet">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Gold_Supporter"/>
+    </Class>
+    
+
+
+    <!-- http://edas#WithdrawnPaper -->
+
+    <Class rdf:about="http://edas#WithdrawnPaper">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Silver_Supporter"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Author_of_paper_student -->
+
+    <Class rdf:about="http://sigkdd#Author_of_paper_student">
+        <rdfs:subClassOf rdf:resource="http://edas#ActivePaper"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Award -->
+
+    <Class rdf:about="http://sigkdd#Award">
+        <rdfs:subClassOf rdf:resource="http://edas#BreakEvent"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Best_Student_Paper_Supporter -->
+
+    <Class rdf:about="http://sigkdd#Best_Student_Paper_Supporter">
+        <rdfs:subClassOf rdf:resource="http://edas#RejectedPaper"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Bronze_Supporter -->
+
+    <Class rdf:about="http://sigkdd#Bronze_Supporter">
+        <rdfs:subClassOf rdf:resource="http://edas#PublishedPaper"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Committee -->
+
+    <Class rdf:about="http://sigkdd#Committee">
+        <rdfs:subClassOf rdf:resource="http://edas#AcademicEvent"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Exhibitor -->
+
+    <Class rdf:about="http://sigkdd#Exhibitor">
+        <rdfs:subClassOf rdf:resource="http://edas#MealMenu"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Fee -->
+
+    <Class rdf:about="http://sigkdd#Fee">
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceEvent"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Gold_Supporter -->
+
+    <Class rdf:about="http://sigkdd#Gold_Supporter">
+        <rdfs:subClassOf rdf:resource="http://edas#SlideSet"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Invited_Speaker -->
+
+    <Class rdf:about="http://sigkdd#Invited_Speaker">
+        <rdfs:subClassOf rdf:resource="http://edas#PersonalReviewHistory"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Organizator -->
+
+    <Class rdf:about="http://sigkdd#Organizator">
+        <rdfs:subClassOf rdf:resource="http://edas#Organization"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Organizing_Committee_member -->
+
+    <Class rdf:about="http://sigkdd#Organizing_Committee_member">
+        <rdfs:subClassOf rdf:resource="http://edas#GovernmentOrganization"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Platinum_Supporter -->
+
+    <Class rdf:about="http://sigkdd#Platinum_Supporter">
+        <rdfs:subClassOf rdf:resource="http://edas#PendingPaper"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Program_Committee_member -->
+
+    <Class rdf:about="http://sigkdd#Program_Committee_member">
+        <rdfs:subClassOf rdf:resource="http://edas#NGO"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Registration_fee -->
+
+    <Class rdf:about="http://sigkdd#Registration_fee">
+        <rdfs:subClassOf rdf:resource="http://edas#ReviewRating"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Silver_Supporter -->
+
+    <Class rdf:about="http://sigkdd#Silver_Supporter">
+        <rdfs:subClassOf rdf:resource="http://edas#WithdrawnPaper"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Speaker -->
+
+    <Class rdf:about="http://sigkdd#Speaker">
+        <rdfs:subClassOf rdf:resource="http://edas#PersonalHistory"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Sponzor -->
+
+    <Class rdf:about="http://sigkdd#Sponzor">
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksTopic"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Webmaster -->
+
+    <Class rdf:about="http://sigkdd#Webmaster">
+        <rdfs:subClassOf rdf:resource="http://edas#IndustryOrganization"/>
+    </Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version [Not Released]) http://owlapi.sourceforge.net -->
+

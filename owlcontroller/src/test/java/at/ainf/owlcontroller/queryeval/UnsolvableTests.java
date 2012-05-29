@@ -11,6 +11,7 @@ import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.CreationUtils;
+import at.ainf.owlcontroller.RDFUtils;
 import at.ainf.owlcontroller.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
@@ -874,6 +875,127 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     @Test
+    public void doTestsOAEIConference()
+
+            throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
+        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/inconsistent").getFile()).listFiles();
+        Set<String> excluded = new LinkedHashSet<String>();
+        excluded.add("ldoa-conference-iasted-rdf");
+
+        showElRates = false;
+
+        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
+                {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
+                        BasePerformanceTests.QSSType.DYNAMICRISK};
+        for (boolean dual : new boolean[] {false}) {
+            for (boolean background : new boolean[]{true}) {
+                for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
+                    for (File file : f) {
+
+                        if (file.isDirectory() || excluded.contains(file.getName()))
+                            continue;
+
+                        String out ="STAT, " + file;
+                        for (BasePerformanceTests.QSSType type : qssTypes) {
+
+                            //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
+                            //String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
+                            //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+
+                            String fileName = file.getName();
+                            StringTokenizer t = new StringTokenizer(fileName,"-");
+                            String matcher = t.nextToken();
+                            String o1 = t.nextToken();
+                            String o2 = t.nextToken();
+                            o2 = o2.substring(0,o2.length()-4);
+
+                            String n = file.getName().substring(0,file.getName().length()-4);
+                            OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology", o1, o2,
+                                    "oaei11conference/matchings/inconsistent", n + ".rdf");
+
+                            Set<OWLLogicalAxiom> targetDg;
+                            long preprocessModulExtract = System.currentTimeMillis();
+                            OWLOntology ontology = new OWLIncoherencyExtractor(
+                                    new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
+                            preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
+                            OWLTheory theory = createTheoryOAEI(ontology, dual);
+                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+
+                            LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
+                            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1+".owl");
+                            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2+".owl");
+                            bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(),ontology1.getLogicalAxioms()));
+                            bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(),ontology2.getLogicalAxioms()));
+                            theory.addBackgroundFormulas(bx);
+
+                            //ProbabilityTableModel mo = new ProbabilityTableModel();
+                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+
+                            String mapd = "oaei11conference/matchings/inconsistent";
+                            Map<OWLLogicalAxiom,Double> map1 = RDFUtils.readRdfMapping(mapd,n + ".rdf");
+                            /*String path = ClassLoader.getSystemResource("oaei11/" +file+ ".txt").getPath(); */
+
+                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
+
+
+                            targetDg = null;
+
+                            search.setCostsEstimator(es);
+
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            search.clearSearch();
+
+
+                            String fname = file.getName().substring(0,file.getName().length()-4);
+                            if (targetSource == TargetSource.FROM_FILE)
+                                targetDg = CreationUtils.readDiagnosisFromFile(fname+"_1" );
+                            if (targetSource == TargetSource.FROM_30_DIAGS) {
+                                try {
+                                    search.run(5);
+                                } catch (NoConflictException e) {
+                                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                }
+                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
+                                int rnd = new Random(12312).nextInt(diagnoses.size());
+                                targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>)diagnoses.toArray()[rnd]);
+                                search.clearSearch();
+                            }
+
+                            TableList e = new TableList();
+                            out += "," + type + ",";
+                            String message = "act," + file.getName() + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
+
+
+                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                            /*try {
+                                search.run();
+                            } catch (NoConflictException e1) {
+                                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
+                            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
+                            boolean found = false;
+                            for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
+                                if (diagnosis.size() == targetDg.size() && diagnosis.containsAll(targetDg) &&
+                                        targetDg.containsAll(diagnosis))
+                                    found = true;
+                            }
+                            logger.info(file.getName() + " " + found);*/
+
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+
+                        }
+                        logger.info(out);
+
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     public void doTestAroma()
 
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
@@ -941,7 +1063,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
-                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
                             out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
@@ -1022,7 +1144,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 TableList e = new TableList();
                                 out += "," + type + ",";
                                 String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
-                                //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+                                //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
                                 out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
@@ -1074,7 +1196,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             search.clearSearch();
 
-                            //targetDg = getDualTreeTranspErrDiag();
+                            //diags = getDualTreeTranspErrDiag();
                             targetDg = chooseTargetDiagnosis(diagProbab,diagnoses);
 
 
@@ -1083,7 +1205,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             String message = "act," + "," + o.trim() + "," + targetSource + "," +
                                     ","+type + ","+preprocessModulExtract+","+diagProbab+","+i;
                             logger.info("target diagnosis:" + targetDg.size() + " " + Utils.renderAxioms(targetDg));
-                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
                             out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
@@ -1140,7 +1262,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                         out += "," + type + ",";
                         String message = "act," + "," + o.trim() + "," + targetSource + "," + dual
                                 + "," + type + ","+preprocessModulExtract+","+diagProbab+","+i;
-                        //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+                        //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
                         out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
@@ -1407,7 +1529,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 TableList e = new TableList();
                                 out += "," + type + ",";
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
-                                //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+                                //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
                                 TimeoutTask task = new TimeoutTask (4*3600*1000,m.trim(),o.trim() );
                                 task.setSearch(search);
@@ -1522,7 +1644,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
                             out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
