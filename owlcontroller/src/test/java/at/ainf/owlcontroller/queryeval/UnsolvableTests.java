@@ -137,6 +137,25 @@ public class UnsolvableTests extends BasePerformanceTests {
         return result;
     }
 
+    protected BreadthFirstSearch<OWLLogicalAxiom> createBreathFirstSearch(OWLTheory th, boolean dual) {
+
+        SimpleStorage<OWLLogicalAxiom> storage;
+        if (dual)
+            storage = new DualStorage<OWLLogicalAxiom>();
+        else
+            storage = new SimpleStorage<OWLLogicalAxiom>();
+        BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        if (dual) {
+            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
+        }
+        else
+            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setTheory(th);
+
+        return search;
+    }
+
     protected UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
 
         SimpleStorage<OWLLogicalAxiom> storage;
@@ -796,7 +815,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         return targetDiagnosis;
     }
 
-    protected OWLTheory createTheoryOAEI(OWLOntology ontology, boolean dual) {
+    protected OWLTheory createTheoryOAEI(OWLOntology ontology, boolean dual, boolean reduceIncoherency) {
         OWLTheory result = null;
 
         //ontology = new OWLIncoherencyExtractor(
@@ -829,7 +848,8 @@ public class UnsolvableTests extends BasePerformanceTests {
                 result = new DualTreeOWLTheory(reasonerFactory, ontology, bax);
             else
                 result = new OWLTheory(reasonerFactory, ontology, bax);
-            result.activateReduceToUns();
+            if (reduceIncoherency)
+                result.activateReduceToUns();
 
             result.setIncludeTrivialEntailments(false);
             // QueryDebuggerPreference.getInstance().setTestIncoherencyToInconsistency(true);
@@ -889,12 +909,12 @@ public class UnsolvableTests extends BasePerformanceTests {
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
                 {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
                         BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {false}) {
+        for (boolean dual : new boolean[] {true}) {
             for (boolean background : new boolean[]{true}) {
-                for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
+                for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (File file : f) {
 
-                        if (file.isDirectory() || excluded.contains(file.getName()))
+                        if (file.isDirectory() || excluded.contains(file.getName()) || !file.getName().equals("mapevo-edas-sigkdd.rdf"))
                             continue;
 
                         String out ="STAT, " + file;
@@ -921,8 +941,10 @@ public class UnsolvableTests extends BasePerformanceTests {
                             OWLOntology ontology = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
-                            OWLTheory theory = createTheoryOAEI(ontology, dual);
+                            //OWLTheory theory = new DualTreeOWLTheory(new Reasoner.ReasonerFactory(), ontology, Collections.<OWLLogicalAxiom>emptySet());
+                            OWLTheory theory = createTheoryOAEI(ontology, dual, true);
                             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            //BreadthFirstSearch<OWLLogicalAxiom> search = createBreathFirstSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1+".owl");
@@ -970,7 +992,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
 
                             //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
-                            /*try {
+                            /* try {
                                 search.run();
                             } catch (NoConflictException e1) {
                                 e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -1031,7 +1053,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             ontology = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
-                            OWLTheory theory = createTheoryOAEI(ontology, dual);
+                            OWLTheory theory = createTheoryOAEI(ontology, dual, true);
                             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
@@ -1112,7 +1134,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 ontology = new OWLIncoherencyExtractor(
                                         new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
                                 preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
-                                OWLTheory theory = createTheoryOAEI(ontology, dual);
+                                OWLTheory theory = createTheoryOAEI(ontology, dual, true);
                                 UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
                                 LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
