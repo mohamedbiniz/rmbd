@@ -1,0 +1,277 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://conference#contributes -->
+
+    <ObjectProperty rdf:about="http://conference#contributes"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://confOf#Administrative_event -->
+
+    <Class rdf:about="http://confOf#Administrative_event">
+        <rdfs:subClassOf rdf:resource="http://confOf#Event"/>
+        <rdfs:subClassOf rdf:resource="http://conference#Abstract"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Administrator -->
+
+    <Class rdf:about="http://confOf#Administrator">
+        <rdfs:subClassOf rdf:resource="http://confOf#Person"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Company -->
+
+    <Class rdf:about="http://confOf#Company">
+        <rdfs:subClassOf rdf:resource="http://confOf#Organization"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Contribution -->
+
+    <Class rdf:about="http://confOf#Contribution">
+        <rdfs:subClassOf rdf:resource="http://conference#Contribution_co-author"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Event -->
+
+    <Class rdf:about="http://confOf#Event">
+        <rdfs:subClassOf rdf:resource="http://conference#Extended_abstract"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Organization -->
+
+    <Class rdf:about="http://confOf#Organization"/>
+    
+
+
+    <!-- http://confOf#Paper -->
+
+    <Class rdf:about="http://confOf#Paper">
+        <rdfs:subClassOf rdf:resource="http://confOf#Contribution"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Participant -->
+
+    <Class rdf:about="http://confOf#Participant">
+        <rdfs:subClassOf rdf:resource="http://confOf#Person"/>
+        <rdfs:subClassOf rdf:resource="http://conference#Paid_applicant"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Person -->
+
+    <Class rdf:about="http://confOf#Person"/>
+    
+
+
+    <!-- http://confOf#Reception -->
+
+    <Class rdf:about="http://confOf#Reception">
+        <rdfs:subClassOf rdf:resource="http://confOf#Social_event"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Regular -->
+
+    <Class rdf:about="http://confOf#Regular">
+        <rdfs:subClassOf rdf:resource="http://conference#Organizer"/>
+        <rdfs:subClassOf rdf:resource="http://conference#Registeered_applicant"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Reviewing_results_event -->
+
+    <Class rdf:about="http://confOf#Reviewing_results_event">
+        <rdfs:subClassOf rdf:resource="http://conference#Reviewed_contribution"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Short_paper -->
+
+    <Class rdf:about="http://confOf#Short_paper">
+        <rdfs:subClassOf rdf:resource="http://confOf#Contribution"/>
+    </Class>
+    
+
+
+    <!-- http://confOf#Social_event -->
+
+    <Class rdf:about="http://confOf#Social_event"/>
+    
+
+
+    <!-- http://confOf#Submission_event -->
+
+    <Class rdf:about="http://confOf#Submission_event">
+        <rdfs:subClassOf rdf:resource="http://confOf#Administrative_event"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Abstract -->
+
+    <Class rdf:about="http://conference#Abstract">
+        <rdfs:subClassOf rdf:resource="http://confOf#Administrative_event"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Accepted_contribution -->
+
+    <Class rdf:about="http://conference#Accepted_contribution">
+        <rdfs:subClassOf rdf:resource="http://conference#Reviewed_contribution"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_contribution -->
+
+    <Class rdf:about="http://conference#Conference_contribution"/>
+    
+
+
+    <!-- http://conference#Conference_contributor -->
+
+    <Class rdf:about="http://conference#Conference_contributor">
+        <rdfs:subClassOf rdf:resource="http://conference#Person"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Contribution_1th-author -->
+
+    <Class rdf:about="http://conference#Contribution_1th-author"/>
+    
+
+
+    <!-- http://conference#Contribution_co-author -->
+
+    <Class rdf:about="http://conference#Contribution_co-author">
+        <rdfs:subClassOf rdf:resource="http://confOf#Contribution"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Extended_abstract -->
+
+    <Class rdf:about="http://conference#Extended_abstract"/>
+    
+
+
+    <!-- http://conference#Organizer -->
+
+    <Class rdf:about="http://conference#Organizer"/>
+    
+
+
+    <!-- http://conference#Paid_applicant -->
+
+    <Class rdf:about="http://conference#Paid_applicant"/>
+    
+
+
+    <!-- http://conference#Person -->
+
+    <Class rdf:about="http://conference#Person"/>
+    
+
+
+    <!-- http://conference#Registeered_applicant -->
+
+    <Class rdf:about="http://conference#Registeered_applicant"/>
+    
+
+
+    <!-- http://conference#Regular_author -->
+
+    <Class rdf:about="http://conference#Regular_author">
+        <equivalentClass>
+            <Class>
+                <intersectionOf rdf:parseType="Collection">
+                    <Class>
+                        <unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://conference#Contribution_1th-author"/>
+                            <rdf:Description rdf:about="http://conference#Contribution_co-author"/>
+                        </unionOf>
+                    </Class>
+                    <Restriction>
+                        <onProperty rdf:resource="http://conference#contributes"/>
+                        <someValuesFrom rdf:resource="http://conference#Conference_contribution"/>
+                    </Restriction>
+                </intersectionOf>
+            </Class>
+        </equivalentClass>
+    </Class>
+    
+
+
+    <!-- http://conference#Rejected_contribution -->
+
+    <Class rdf:about="http://conference#Rejected_contribution"/>
+    
+
+
+    <!-- http://conference#Reviewed_contribution -->
+
+    <Class rdf:about="http://conference#Reviewed_contribution">
+        <equivalentClass>
+            <Class>
+                <unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://conference#Accepted_contribution"/>
+                    <rdf:Description rdf:about="http://conference#Rejected_contribution"/>
+                </unionOf>
+            </Class>
+        </equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://confOf#Reviewing_results_event"/>
+    </Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version [Not Released]) http://owlapi.sourceforge.net -->
+

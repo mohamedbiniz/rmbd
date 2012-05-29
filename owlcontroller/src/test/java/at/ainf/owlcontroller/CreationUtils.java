@@ -1,19 +1,11 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.owlcontroller.oaei11align.RdfMatchingFileParser;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -71,13 +63,14 @@ public class CreationUtils {
         return intersection;
     }
 
-    public static void writeDiagnosisToFile(String filename, Set<OWLAxiom> diagnosis) {
+    public static void writeDiagnosisToFile(String filename, Set<OWLLogicalAxiom> diagnosis) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-        String directory = ClassLoader.getSystemResource("targetDg").getPath();
-        File file = new File(directory + "/" + filename + "_" + System.currentTimeMillis() + ".dg");
+        String directory = ClassLoader.getSystemResource("diags").getPath();
+        File file = new File(directory + "/" + filename + ".dg");
         OWLOntology ontology = null;
         try {
-            ontology = man.createOntology(diagnosis);
+            ontology = man.createOntology();
+            man.addAxioms(ontology, diagnosis);
             man.saveOntology(ontology, IRI.create(file.toURI()));
         } catch (OWLOntologyCreationException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -88,8 +81,8 @@ public class CreationUtils {
 
     public static Set<OWLLogicalAxiom> readDiagnosisFromFile (String filename) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-        String directory = ClassLoader.getSystemResource("targetDg").getPath();
-        File file = new File(directory + "/" + filename);
+        String directory = ClassLoader.getSystemResource("diags").getPath();
+        File file = new File(directory + "/" + filename + ".dg");
         OWLOntology ontology = null;
         try {
             ontology = man.loadOntologyFromOntologyDocument(file);

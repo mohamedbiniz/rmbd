@@ -269,7 +269,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
         addAxiomPaperTest(ontology, "R SubClassOf Thing", 0.1, probMap);
         addAxiomPaperTest(ontology, "A SubClassOf B", 0.1, probMap);
 
-        //Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
+        //Set<OWLLogicalAxiom> diags = getDiagnosis(targetAxioms, ontology);
         //OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
         //OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
         OWLTheory theory = createOWLTheory(ontology, false);
@@ -333,7 +333,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
 //                boolean target = false;
 //                for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
-//                    if (targetDg.containsAll(d)) target = true;
+//                    if (diags.containsAll(d)) target = true;
 //                if (!target) logger.info("target notf "+m+o);
 
 
@@ -412,7 +412,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
             //addAxiomPaperTest(ontology, "ResearchStuff_2 SubClassOf hasStudent only PHD_2", 0.1, probMap);
 
 
-            //Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
+            //Set<OWLLogicalAxiom> diags = getDiagnosis(targetAxioms, ontology);
             //OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
             //OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
             OWLTheory theory = createOWLTheory(ontology, false);
@@ -476,7 +476,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
             //                boolean target = false;
             //                for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
-            //                    if (targetDg.containsAll(d)) target = true;
+            //                    if (diags.containsAll(d)) target = true;
             //                if (!target) logger.info("target notf "+m+o);
 
 

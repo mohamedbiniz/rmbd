@@ -1,0 +1,666 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://edas#AcademicEvent -->
+
+    <Class rdf:about="http://edas#AcademicEvent">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Academic_Institution"/>
+    </Class>
+    
+
+
+    <!-- http://edas#AcceptRating -->
+
+    <Class rdf:about="http://edas#AcceptRating">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Abstract"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#OC_Chair"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#PC_Chair"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ActivePaper -->
+
+    <Class rdf:about="http://edas#ActivePaper"/>
+    
+
+
+    <!-- http://edas#Call -->
+
+    <Class rdf:about="http://edas#Call">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Camera_Ready_Paper"/>
+    </Class>
+    
+
+
+    <!-- http://edas#CommunicationsTopic -->
+
+    <Class rdf:about="http://edas#CommunicationsTopic">
+        <rdfs:subClassOf rdf:resource="http://ekaw#ContainerMembershipProperty"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ComputerNetworksSecurityTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksSecurityTopic">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Participant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ComputerNetworksTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksTopic">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Trip"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ConferenceChair -->
+
+    <Class rdf:about="http://edas#ConferenceChair">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Paper"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ConferenceDinner -->
+
+    <Class rdf:about="http://edas#ConferenceDinner">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Proceedings"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ConferenceEvent -->
+
+    <Class rdf:about="http://edas#ConferenceEvent">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Banquet"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ConferenceSession -->
+
+    <Class rdf:about="http://edas#ConferenceSession">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Proceedings"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Session"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ConferenceVenuePlace -->
+
+    <Class rdf:about="http://edas#ConferenceVenuePlace">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Participant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#DiningPlace -->
+
+    <Class rdf:about="http://edas#DiningPlace">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Demo_Paper"/>
+    </Class>
+    
+
+
+    <!-- http://edas#IndustryOrganization -->
+
+    <Class rdf:about="http://edas#IndustryOrganization">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Industrial_Paper"/>
+    </Class>
+    
+
+
+    <!-- http://edas#MealBreak -->
+
+    <Class rdf:about="http://edas#MealBreak">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Abstract"/>
+    </Class>
+    
+
+
+    <!-- http://edas#MealMenu -->
+
+    <Class rdf:about="http://edas#MealMenu">
+        <rdfs:subClassOf rdf:resource="http://ekaw#OC_Member"/>
+    </Class>
+    
+
+
+    <!-- http://edas#MultimediaTopic -->
+
+    <Class rdf:about="http://edas#MultimediaTopic">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Multi-author_Volume"/>
+    </Class>
+    
+
+
+    <!-- http://edas#NGO -->
+
+    <Class rdf:about="http://edas#NGO">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Negative_Review"/>
+    </Class>
+    
+
+
+    <!-- http://edas#NonAcademicEvent -->
+
+    <Class rdf:about="http://edas#NonAcademicEvent"/>
+    
+
+
+    <!-- http://edas#NumericalReviewQuestion -->
+
+    <Class rdf:about="http://edas#NumericalReviewQuestion">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Neutral_Review"/>
+    </Class>
+    
+
+
+    <!-- http://edas#OrganizationalMeeting -->
+
+    <Class rdf:about="http://edas#OrganizationalMeeting">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Organising_Agency"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PaperPresentation -->
+
+    <Class rdf:about="http://edas#PaperPresentation">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Paper_Author"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PersonalHistory -->
+
+    <Class rdf:about="http://edas#PersonalHistory">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Possible_Reviewer"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PersonalPublicationHistory -->
+
+    <Class rdf:about="http://edas#PersonalPublicationHistory">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Proceedings_Publisher"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PersonalReviewHistory -->
+
+    <Class rdf:about="http://edas#PersonalReviewHistory">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Neutral_Review"/>
+    </Class>
+    
+
+
+    <!-- http://edas#Place -->
+
+    <Class rdf:about="http://edas#Place">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Proceedings"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PowerlineTransmissionTopic -->
+
+    <Class rdf:about="http://edas#PowerlineTransmissionTopic">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Positive_Review"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Poster_Session"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PublishedPaper -->
+
+    <Class rdf:about="http://edas#PublishedPaper"/>
+    
+
+
+    <!-- http://edas#RatedPapers -->
+
+    <Class rdf:about="http://edas#RatedPapers"/>
+    
+
+
+    <!-- http://edas#Reception -->
+
+    <Class rdf:about="http://edas#Reception">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Proceedings"/>
+    </Class>
+    
+
+
+    <!-- http://edas#RejectRating -->
+
+    <Class rdf:about="http://edas#RejectRating">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Research_Institute"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ReviewQuestion -->
+
+    <Class rdf:about="http://edas#ReviewQuestion">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Regular_Session"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ReviewRating -->
+
+    <Class rdf:about="http://edas#ReviewRating">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Proceedings"/>
+    </Class>
+    
+
+
+    <!-- http://edas#SatelliteAndSpaceCommunicationsTopic -->
+
+    <Class rdf:about="http://edas#SatelliteAndSpaceCommunicationsTopic">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Late-Registered_Participant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#SignalProcessingTopic -->
+
+    <Class rdf:about="http://edas#SignalProcessingTopic">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Industrial_Session"/>
+    </Class>
+    
+
+
+    <!-- http://edas#SlideSet -->
+
+    <Class rdf:about="http://edas#SlideSet">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Student"/>
+    </Class>
+    
+
+
+    <!-- http://edas#TalkEvent -->
+
+    <Class rdf:about="http://edas#TalkEvent">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Student"/>
+    </Class>
+    
+
+
+    <!-- http://edas#Topic -->
+
+    <Class rdf:about="http://edas#Topic">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Tutorial_Chair"/>
+    </Class>
+    
+
+
+    <!-- http://edas#TravelGrant -->
+
+    <Class rdf:about="http://edas#TravelGrant">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Tutorial_Abstract"/>
+    </Class>
+    
+
+
+    <!-- http://edas#WeekRejectRating -->
+
+    <Class rdf:about="http://edas#WeekRejectRating">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Early-Registered_Participant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#WelcomeTalk -->
+
+    <Class rdf:about="http://edas#WelcomeTalk">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Web_Site"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Abstract -->
+
+    <Class rdf:about="http://ekaw#Abstract">
+        <rdfs:subClassOf rdf:resource="http://edas#AcceptRating"/>
+        <rdfs:subClassOf rdf:resource="http://edas#MealBreak"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Academic_Institution -->
+
+    <Class rdf:about="http://ekaw#Academic_Institution">
+        <rdfs:subClassOf rdf:resource="http://edas#AcademicEvent"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Assigned_Paper -->
+
+    <Class rdf:about="http://ekaw#Assigned_Paper">
+        <rdfs:subClassOf rdf:resource="http://edas#ActivePaper"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Camera_Ready_Paper -->
+
+    <Class rdf:about="http://ekaw#Camera_Ready_Paper">
+        <rdfs:subClassOf rdf:resource="http://edas#Call"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Conference_Banquet -->
+
+    <Class rdf:about="http://ekaw#Conference_Banquet"/>
+    
+
+
+    <!-- http://ekaw#Conference_Paper -->
+
+    <Class rdf:about="http://ekaw#Conference_Paper">
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceChair"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Conference_Participant -->
+
+    <Class rdf:about="http://ekaw#Conference_Participant">
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksSecurityTopic"/>
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceVenuePlace"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Conference_Proceedings -->
+
+    <Class rdf:about="http://ekaw#Conference_Proceedings">
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceDinner"/>
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceSession"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Conference_Session -->
+
+    <Class rdf:about="http://ekaw#Conference_Session">
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceSession"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Conference_Trip -->
+
+    <Class rdf:about="http://ekaw#Conference_Trip">
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksTopic"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#ContainerMembershipProperty -->
+
+    <Class rdf:about="http://ekaw#ContainerMembershipProperty">
+        <rdfs:subClassOf rdf:resource="http://edas#CommunicationsTopic"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Demo_Paper -->
+
+    <Class rdf:about="http://ekaw#Demo_Paper">
+        <rdfs:subClassOf rdf:resource="http://edas#DiningPlace"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Early-Registered_Participant -->
+
+    <Class rdf:about="http://ekaw#Early-Registered_Participant">
+        <rdfs:subClassOf rdf:resource="http://edas#WeekRejectRating"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Event -->
+
+    <Class rdf:about="http://ekaw#Event">
+        <rdfs:subClassOf rdf:resource="http://edas#RejectRating"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Individual_Presentation -->
+
+    <Class rdf:about="http://ekaw#Individual_Presentation">
+        <rdfs:subClassOf rdf:resource="http://edas#IndustryOrganization"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Industrial_Paper -->
+
+    <Class rdf:about="http://ekaw#Industrial_Paper">
+        <rdfs:subClassOf rdf:resource="http://edas#IndustryOrganization"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Industrial_Session -->
+
+    <Class rdf:about="http://ekaw#Industrial_Session">
+        <rdfs:subClassOf rdf:resource="http://edas#SignalProcessingTopic"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Late-Registered_Participant -->
+
+    <Class rdf:about="http://ekaw#Late-Registered_Participant">
+        <rdfs:subClassOf rdf:resource="http://edas#SatelliteAndSpaceCommunicationsTopic"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Multi-author_Volume -->
+
+    <Class rdf:about="http://ekaw#Multi-author_Volume">
+        <rdfs:subClassOf rdf:resource="http://edas#MultimediaTopic"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Negative_Review -->
+
+    <Class rdf:about="http://ekaw#Negative_Review">
+        <rdfs:subClassOf rdf:resource="http://edas#NGO"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Neutral_Review -->
+
+    <Class rdf:about="http://ekaw#Neutral_Review">
+        <rdfs:subClassOf rdf:resource="http://edas#NumericalReviewQuestion"/>
+        <rdfs:subClassOf rdf:resource="http://edas#PersonalReviewHistory"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#OC_Chair -->
+
+    <Class rdf:about="http://ekaw#OC_Chair">
+        <rdfs:subClassOf rdf:resource="http://edas#AcceptRating"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#OC_Member -->
+
+    <Class rdf:about="http://ekaw#OC_Member">
+        <rdfs:subClassOf rdf:resource="http://edas#MealMenu"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Organising_Agency -->
+
+    <Class rdf:about="http://ekaw#Organising_Agency">
+        <rdfs:subClassOf rdf:resource="http://edas#OrganizationalMeeting"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#PC_Chair -->
+
+    <Class rdf:about="http://ekaw#PC_Chair">
+        <rdfs:subClassOf rdf:resource="http://edas#AcceptRating"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Paper_Author -->
+
+    <Class rdf:about="http://ekaw#Paper_Author">
+        <rdfs:subClassOf rdf:resource="http://edas#PaperPresentation"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Positive_Review -->
+
+    <Class rdf:about="http://ekaw#Positive_Review">
+        <rdfs:subClassOf rdf:resource="http://edas#PowerlineTransmissionTopic"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Possible_Reviewer -->
+
+    <Class rdf:about="http://ekaw#Possible_Reviewer">
+        <rdfs:subClassOf rdf:resource="http://edas#PersonalHistory"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Poster_Session -->
+
+    <Class rdf:about="http://ekaw#Poster_Session">
+        <rdfs:subClassOf rdf:resource="http://edas#PowerlineTransmissionTopic"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Proceedings -->
+
+    <Class rdf:about="http://ekaw#Proceedings">
+        <rdfs:subClassOf rdf:resource="http://edas#Place"/>
+        <rdfs:subClassOf rdf:resource="http://edas#Reception"/>
+        <rdfs:subClassOf rdf:resource="http://edas#ReviewRating"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Proceedings_Publisher -->
+
+    <Class rdf:about="http://ekaw#Proceedings_Publisher">
+        <rdfs:subClassOf rdf:resource="http://edas#PersonalPublicationHistory"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Regular_Session -->
+
+    <Class rdf:about="http://ekaw#Regular_Session">
+        <rdfs:subClassOf rdf:resource="http://edas#ReviewQuestion"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Research_Institute -->
+
+    <Class rdf:about="http://ekaw#Research_Institute">
+        <rdfs:subClassOf rdf:resource="http://edas#RejectRating"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Scientific_Event -->
+
+    <Class rdf:about="http://ekaw#Scientific_Event">
+        <rdfs:subClassOf rdf:resource="http://edas#NonAcademicEvent"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Student -->
+
+    <Class rdf:about="http://ekaw#Student">
+        <rdfs:subClassOf rdf:resource="http://edas#SlideSet"/>
+        <rdfs:subClassOf rdf:resource="http://edas#TalkEvent"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Submitted_Paper -->
+
+    <Class rdf:about="http://ekaw#Submitted_Paper">
+        <rdfs:subClassOf rdf:resource="http://edas#PublishedPaper"/>
+        <rdfs:subClassOf rdf:resource="http://edas#RatedPapers"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Tutorial_Abstract -->
+
+    <Class rdf:about="http://ekaw#Tutorial_Abstract">
+        <rdfs:subClassOf rdf:resource="http://edas#TravelGrant"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Tutorial_Chair -->
+
+    <Class rdf:about="http://ekaw#Tutorial_Chair">
+        <rdfs:subClassOf rdf:resource="http://edas#Topic"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Web_Site -->
+
+    <Class rdf:about="http://ekaw#Web_Site">
+        <rdfs:subClassOf rdf:resource="http://edas#WelcomeTalk"/>
+    </Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version [Not Released]) http://owlapi.sourceforge.net -->
+

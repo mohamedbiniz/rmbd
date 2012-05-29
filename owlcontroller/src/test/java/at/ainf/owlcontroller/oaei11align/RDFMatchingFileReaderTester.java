@@ -69,7 +69,7 @@ public class RDFMatchingFileReaderTester {
 
             String n = file.getName().substring(0,file.getName().length()-4);
             OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology", o1, o2,
-                    "oaei11conference/matchings/incoherent", n + ".rdf");
+                    "oaei11conference/matchings/inconsistent", n + ".rdf");
 
             long extractionTime = System.currentTimeMillis();
             OWLOntology extracted = new OWLIncoherencyExtractor(
@@ -132,41 +132,38 @@ public class RDFMatchingFileReaderTester {
                 if (minCardSize == size)
                     numOfMinCardDiags++;
 
+            /*int cnt = 1;
+            String f = file.getName().substring(0,file.getName().length()-4);
+            for (Set<OWLLogicalAxiom> diag : searchDual.getStorage().getDiagnoses()) {
+                CreationUtils.writeDiagnosisToFile(f + "_"+cnt,diag);
+
+                Set<OWLLogicalAxiom> read = CreationUtils.readDiagnosisFromFile(f+"_"+cnt);
+                if (diag.size()==read.size() && read.containsAll(diag) && diag.containsAll(read))
+                    logger.info("diag written file: " + file.getName());
+                cnt++;
+            }*/
+            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = searchDual.getStorage().getDiagnoses();
+            boolean found = false;
+             Set<OWLLogicalAxiom> targetDg =  CreationUtils.readDiagnosisFromFile(file.getName().substring(0,file.getName().length()-4) + "_1");
+            for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
+                if (diagnosis.size() == targetDg.size() && diagnosis.containsAll(targetDg) &&
+                        targetDg.containsAll(diagnosis))
+                    found = true;
+            }
+            logger.info(file.getName() + " found " + found);
+
+
             logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime
-                    + "," + numDiags + ","+ numOfMinCardDiags + "," + minCardSize );
+                    + "," + numDiags + ","+ numOfMinCardDiags + "," + minCardSize + "," + Thread.currentThread().isInterrupted());
 
             return "";
-        }
-    }
 
-    protected class TerminationThread extends Thread {
-
-        private Future future;
-        private SearchThread search;
-
-        public TerminationThread(SearchThread search, Future f) {
-            this.future = f;
-            this.search = search;
-        }
-
-        public void run() {
-            try {
-                future.get(10,TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-
-            } catch (ExecutionException e) {
-
-            } catch (TimeoutException e) {
-                logger.info("canceled: " + search.getFile().getName());
-            }
-            if (!future.isDone())
-                future.cancel(true);
         }
     }
 
     @Test
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
-        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getFile()).listFiles();
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/inconsistent").getFile()).listFiles();
         Set<String> excluded = new LinkedHashSet<String>();
 
         excluded.add("ldoa-conference-iasted-rdf");
@@ -178,10 +175,8 @@ public class RDFMatchingFileReaderTester {
                 continue;
 
             SearchThread search = new SearchThread(f[i]);
-            Future future = executor.submit(new SearchThread(f[i]));
 
-            new TerminationThread(search,future).start();
-
+            Future future = executor.submit(search);
         }
 
         try {
