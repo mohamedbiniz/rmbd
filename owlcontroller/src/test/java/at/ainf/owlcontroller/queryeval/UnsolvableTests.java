@@ -914,11 +914,11 @@ public class UnsolvableTests extends BasePerformanceTests {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (File file : f) {
 
-                        if (file.isDirectory() || excluded.contains(file.getName()) || !file.getName().equals("mapevo-edas-sigkdd.rdf"))
+                        if (file.isDirectory() || excluded.contains(file.getName()))
                             continue;
 
                         String out ="STAT, " + file;
-                        for (BasePerformanceTests.QSSType type : qssTypes) {
+                        for (BasePerformanceTests.QSSType type : new QSSType[]{BasePerformanceTests.QSSType.MINSCORE}) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
@@ -992,7 +992,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
 
                             //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
-                            /* try {
+                             try {
                                 search.run();
                             } catch (NoConflictException e1) {
                                 e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -1004,12 +1004,12 @@ public class UnsolvableTests extends BasePerformanceTests {
                                         targetDg.containsAll(diagnosis))
                                     found = true;
                             }
-                            logger.info(file.getName() + " " + found);*/
+                            logger.info("found " + file.getName() + "," + found);
 
-                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
                         }
-                        logger.info(out);
+                        //logger.info(out);
 
                     }
                 }
