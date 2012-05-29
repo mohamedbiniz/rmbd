@@ -50,10 +50,12 @@ public class RDFMatchingFileReaderTester {
     }
 
     private class SearchThread implements Callable<String> {
+        private boolean dual;
         private File file;
 
-        public SearchThread(File file) {
+        public SearchThread(File file, boolean dual) {
             this.file =  file;
+            this.dual = dual;
         }
 
         public File getFile() {
@@ -89,8 +91,15 @@ public class RDFMatchingFileReaderTester {
             ontoBackground.addAll(CreationUtils.getIntersection(extracted.getLogicalAxioms(),ontology1.getLogicalAxioms()));
             ontoBackground.addAll(CreationUtils.getIntersection(extracted.getLogicalAxioms(),ontology2.getLogicalAxioms()));
 
-            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
-            searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual;
+            if (dual) {
+                searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+                searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            }
+            else {
+                searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+                searchDual.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+            }
 
 
             Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
@@ -102,7 +111,10 @@ public class RDFMatchingFileReaderTester {
             OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
             OWLTheory theory = null;
             try {
-                theory = new DualTreeOWLTheory(reasonerFactory, extracted, bax);
+                if (dual)
+                    theory = new DualTreeOWLTheory(reasonerFactory, extracted, bax);
+                else
+                    theory = new OWLTheory(reasonerFactory, extracted, bax);
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (SolverException e) {
@@ -110,7 +122,8 @@ public class RDFMatchingFileReaderTester {
             }
 
             searchDual.setTheory(theory);
-            searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
+            if (dual)
+                searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
 
             long time = System.currentTimeMillis();
             try {
@@ -178,7 +191,7 @@ public class RDFMatchingFileReaderTester {
             if (f[i].isDirectory() || excluded.contains(f[i].getName()))
                 continue;
 
-            SearchThread search = new SearchThread(f[i]);
+            SearchThread search = new SearchThread(f[i],false);
 
             Future future = executor.submit(search);
         }
