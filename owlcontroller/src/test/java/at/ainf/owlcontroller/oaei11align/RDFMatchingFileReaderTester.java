@@ -114,7 +114,7 @@ public class RDFMatchingFileReaderTester {
 
             long time = System.currentTimeMillis();
             try {
-                searchDual.run();
+                searchDual.run(10);
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
