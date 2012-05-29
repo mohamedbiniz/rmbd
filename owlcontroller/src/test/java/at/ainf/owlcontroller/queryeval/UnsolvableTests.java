@@ -917,6 +917,8 @@ public class UnsolvableTests extends BasePerformanceTests {
                         if (file.isDirectory() || excluded.contains(file.getName()))
                             continue;
 
+                        logger.info("processing " + file.getName());
+
                         String out ="STAT, " + file;
                         for (BasePerformanceTests.QSSType type : qssTypes) {
 
