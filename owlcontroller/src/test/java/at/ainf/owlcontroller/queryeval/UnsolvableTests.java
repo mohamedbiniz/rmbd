@@ -32,6 +32,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
+import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.*;
 
 import java.io.*;
 import java.util.*;
@@ -907,8 +908,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         showElRates = false;
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
-                        BasePerformanceTests.QSSType.DYNAMICRISK};
+                {MINSCORE, SPLITINHALF, DYNAMICRISK};
         for (boolean dual : new boolean[] {true}) {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
@@ -924,6 +924,9 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             //String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
                             //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+
+                            if(type==SPLITINHALF || type==DYNAMICRISK)
+                                continue;
 
                             String fileName = file.getName();
                             StringTokenizer t = new StringTokenizer(fileName,"-");
@@ -992,8 +995,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
 
                             //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
-                            /* try {
-                                search.run();
+                             try {
+                                search.run(1);
                             } catch (NoConflictException e1) {
                                 e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
@@ -1004,12 +1007,12 @@ public class UnsolvableTests extends BasePerformanceTests {
                                         targetDg.containsAll(diagnosis))
                                     found = true;
                             }
-                            logger.info("found " + file.getName() + "," + found);*/
+                            logger.info("found " + file.getName() + "," + found);
 
-                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            //out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
                         }
-                        logger.info(out);
+                        // logger.info(out);
 
                     }
                 }
