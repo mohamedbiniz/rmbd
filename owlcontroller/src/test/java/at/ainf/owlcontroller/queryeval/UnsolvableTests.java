@@ -914,7 +914,8 @@ public class UnsolvableTests extends BasePerformanceTests {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (File file : f) {
 
-                        if (file.isDirectory() || excluded.contains(file.getName()))
+                        if (file.isDirectory() || excluded.contains(file.getName())
+                                || file.getName().endsWith(".ignore"))
                             continue;
 
                         logger.info("processing " + file.getName());
