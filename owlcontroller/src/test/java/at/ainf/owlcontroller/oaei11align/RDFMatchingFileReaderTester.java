@@ -134,17 +134,18 @@ public class RDFMatchingFileReaderTester {
                 if (minCardSize == size)
                     numOfMinCardDiags++;
 
-            /*int cnt = 1;
+            int cnt = 1;
             String f = file.getName().substring(0,file.getName().length()-4);
             for (Set<OWLLogicalAxiom> diag : searchDual.getStorage().getDiagnoses()) {
                 CreationUtils.writeDiagnosisToFile(f + "_"+cnt,diag);
 
                 Set<OWLLogicalAxiom> read = CreationUtils.readDiagnosisFromFile(f+"_"+cnt);
                 if (diag.size()==read.size() && read.containsAll(diag) && diag.containsAll(read))
-                    logger.info("diag written file: " + file.getName());
+                    ;//logger.info("diag written file: " + file.getName());
+                else logger.info("error " + file.getName());
                 cnt++;
-            }*/
-            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = searchDual.getStorage().getDiagnoses();
+            }
+            /*Set<AxiomSet<OWLLogicalAxiom>> diagnoses = searchDual.getStorage().getDiagnoses();
             boolean found = false;
              Set<OWLLogicalAxiom> targetDg =  CreationUtils.readDiagnosisFromFile(file.getName().substring(0,file.getName().length()-4) + "_1");
             for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
@@ -152,11 +153,11 @@ public class RDFMatchingFileReaderTester {
                         targetDg.containsAll(diagnosis))
                     found = true;
             }
-            logger.info(file.getName() + ",found," + found);
+            logger.info(file.getName() + ",found," + found);*/
 
 
-            /*logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime
-                    + "," + numDiags + ","+ numOfMinCardDiags + "," + minCardSize ); */
+            logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime
+                    + "," + numDiags + ","+ numOfMinCardDiags + "," + minCardSize );
 
             return "";
 
