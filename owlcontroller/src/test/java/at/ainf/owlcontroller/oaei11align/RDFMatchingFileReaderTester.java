@@ -114,7 +114,7 @@ public class RDFMatchingFileReaderTester {
 
             long time = System.currentTimeMillis();
             try {
-                searchDual.run(10);
+                searchDual.run(20);
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
@@ -124,6 +124,7 @@ public class RDFMatchingFileReaderTester {
             }
             time = System.currentTimeMillis() - time;
             int numDiags = searchDual.getStorage().getDiagnoses().size();
+            int numC = searchDual.getStorage().getConflicts().size();
 
             Set<Integer> sizes = new LinkedHashSet<Integer>();
             for (AxiomSet<OWLLogicalAxiom> diagnosis : searchDual.getStorage().getDiagnoses())
@@ -157,7 +158,7 @@ public class RDFMatchingFileReaderTester {
 
 
             logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime
-                    + "," + numDiags + ","+ numOfMinCardDiags + "," + minCardSize );
+                    + "," + numDiags + "," + numC + ","+ numOfMinCardDiags + "," + minCardSize );
 
             return "";
 
