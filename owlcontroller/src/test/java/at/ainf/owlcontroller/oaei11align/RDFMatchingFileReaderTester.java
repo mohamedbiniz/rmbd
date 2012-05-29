@@ -5,12 +5,14 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.DualTreeLogic;
 import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.CreationUtils;
 import at.ainf.owlcontroller.RDFUtils;
+import at.ainf.owlcontroller.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
@@ -90,6 +92,7 @@ public class RDFMatchingFileReaderTester {
             TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
             searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
 
+
             Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
             for (OWLIndividual ind : extracted.getIndividualsInSignature()) {
                 bax.addAll(extracted.getClassAssertionAxioms(ind));
@@ -149,11 +152,11 @@ public class RDFMatchingFileReaderTester {
                         targetDg.containsAll(diagnosis))
                     found = true;
             }
-            logger.info(file.getName() + " found " + found);
+            logger.info(file.getName() + ",found," + found);
 
 
-            logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime
-                    + "," + numDiags + ","+ numOfMinCardDiags + "," + minCardSize + "," + Thread.currentThread().isInterrupted());
+            /*logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime
+                    + "," + numDiags + ","+ numOfMinCardDiags + "," + minCardSize ); */
 
             return "";
 
