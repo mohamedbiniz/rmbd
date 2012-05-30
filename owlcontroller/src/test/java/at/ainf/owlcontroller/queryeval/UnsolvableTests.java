@@ -990,7 +990,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 } catch (NoConflictException e) {
                                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 }
-                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
+                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getStorage().getDiagnoses();
                                 int rnd = new Random(12312).nextInt(diagnoses.size());
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>)diagnoses.toArray()[rnd]);
                                 search30.clearSearch();
