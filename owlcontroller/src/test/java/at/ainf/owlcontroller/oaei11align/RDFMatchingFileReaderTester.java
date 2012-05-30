@@ -252,7 +252,7 @@ public class RDFMatchingFileReaderTester {
             if (file.isDirectory())
                 continue;
 
-            SearchThread search = new SearchThread(file,false,d);
+            SearchThread search = new SearchThread(file,true,d);
 
             Future future = executor.submit(search);
         }
