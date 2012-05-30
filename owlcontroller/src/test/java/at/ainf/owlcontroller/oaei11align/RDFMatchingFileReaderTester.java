@@ -127,7 +127,7 @@ public class RDFMatchingFileReaderTester {
             if (dual)
                 searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
 
-            long time1 = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
             try {
                 searchDual.run(1);
             } catch (SolverException e) {
@@ -137,7 +137,7 @@ public class RDFMatchingFileReaderTester {
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            time1 = System.currentTimeMillis() - time1;
+            long time1 = System.currentTimeMillis() - start;
             int conflicts1 = searchDual.getStorage().getConflicts().size();
             try {
                 searchDual.run(9);
@@ -148,7 +148,7 @@ public class RDFMatchingFileReaderTester {
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            long time9 = System.currentTimeMillis() - time1;
+            long time9 = System.currentTimeMillis() - start;
             int conflicts9 = searchDual.getStorage().getConflicts().size();
             try {
                 searchDual.run(30);
@@ -159,7 +159,7 @@ public class RDFMatchingFileReaderTester {
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            long time30 = System.currentTimeMillis() - time1;
+            long time30 = System.currentTimeMillis() - start;
             int conflicts30 = searchDual.getStorage().getConflicts().size();
 
             int numDiags = searchDual.getStorage().getDiagnoses().size();
