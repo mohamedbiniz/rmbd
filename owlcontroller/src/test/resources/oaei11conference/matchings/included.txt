@@ -2,21 +2,7 @@ agrmaker-edas-iasted.rdf
 aroma-cmt-iasted.rdf
 aroma-confof-iasted.rdf
 aroma-ekaw-iasted.rdf
-#csa-conference-edas.rdf
 csa-ekaw-iasted.rdf
-#csa-edas-iasted.rdf
-#ldoa-cmt-edas.rdf
-ldoa-cmt-iasted.rdf
-# geht nicht ldoa-conference-iasted.rdf
-ldoa-confof-iasted.rdf
-ldoa-edas-sigkdd.rdf
-#ldoa-ekaw-iasted.rdf
-lily-confof-iasted.rdf
-lily-edas-iasted.rdf
-# %# mapevo-edas-sigkdd.rdf
-mappso-cmt-iasted.rdf
-mappso-confof-iasted.rdf
-#mappso-edas-iasted.rdf
 mappso-ekaw-iasted.rdf
 mapsss-edas-iasted.rdf
 mapsss-ekaw-iasted.rdf
@@ -24,3 +10,19 @@ optima-conference-iasted.rdf
 optima-confof-iasted.rdf
 optima-ekaw-iasted.rdf
 yam-edas-iasted.rdf
+ldoa-cmt-iasted.rdf
+ldoa-confof-iasted.rdf
+ldoa-edas-sigkdd.rdf
+lily-confof-iasted.rdf
+lily-edas-iasted.rdf
+mappso-cmt-iasted.rdf
+mappso-confof-iasted.rdf
+
+#csa-conference-edas.rdf
+#csa-edas-iasted.rdf
+#ldoa-cmt-edas.rdf
+# geht nicht ldoa-conference-iasted.rdf
+#ldoa-ekaw-iasted.rdf
+# %# mapevo-edas-sigkdd.rdf
+#mappso-edas-iasted.rdf
+
