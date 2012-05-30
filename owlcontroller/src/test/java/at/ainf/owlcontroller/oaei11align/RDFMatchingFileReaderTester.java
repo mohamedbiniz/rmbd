@@ -133,7 +133,7 @@ public class RDFMatchingFileReaderTester {
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
-                logger.info("no conflicts: " + file.getName());
+                logger.info("no conflicts 1: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -145,7 +145,7 @@ public class RDFMatchingFileReaderTester {
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
-                logger.info("no conflicts: " + file.getName());
+                logger.info("no conflicts 9: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -157,7 +157,7 @@ public class RDFMatchingFileReaderTester {
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
-                logger.info("no conflicts: " + file.getName());
+                logger.info("no conflicts 30: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -199,7 +199,7 @@ public class RDFMatchingFileReaderTester {
             logger.info(file.getName() + ",found," + found);*/
 
 
-            logger.info(","+matcher + "," + o1 + "," + o2 + ","
+            logger.info("," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ","
                     + time1 + "," + time9 + "," + time30 + ","
                     + conflicts1 + "," + conflicts9 + "," + conflicts30 + "," + extractionTime
                     + "," + numDiags + "," + numC + ","+ numOfMinCardDiags + "," + minCardSize );
