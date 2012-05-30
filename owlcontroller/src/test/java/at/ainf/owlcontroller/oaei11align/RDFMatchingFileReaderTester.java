@@ -181,14 +181,22 @@ public class RDFMatchingFileReaderTester {
     @Test
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/inconsistent").getFile()).listFiles();
+
+        Set<String> included = new LinkedHashSet<String>();
+        included.add("csa-ekaw-iasted.rdf");
+        included.add("csa-edas-iasted.rdf");
+        included.add("ldoa-cmt-iasted.rdf");
+        included.add("ldoa-ekaw-iasted.rdf");
+        included.add("mappso-edas-iasted.rdf");
+
         Set<String> excluded = new LinkedHashSet<String>();
 
-        excluded.add("ldoa-conference-iasted-rdf");
+        excluded.add("ldoa-conference-iasted.rdf");
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
         for (int i = 0; i < f.length; i++) {
-            if (f[i].isDirectory() || excluded.contains(f[i].getName()))
+            if (f[i].isDirectory() || excluded.contains(f[i].getName()) || !included.contains(f[i].getName()))
                 continue;
 
             SearchThread search = new SearchThread(f[i],false);
