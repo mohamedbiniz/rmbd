@@ -1120,8 +1120,8 @@ public class UnsolvableTests extends BasePerformanceTests {
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
                 {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
                         BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {true, false}) {
-            for (boolean background : new boolean[]{true}) {
+        for (boolean dual : new boolean[] {false}) {
+            for (boolean background : new boolean[]{false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
@@ -1146,7 +1146,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                                 bx.addAll(getLogicalAxiomsOfOntologiesOAEI());
                                 bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
-                                theory.addBackgroundFormulas(bx);
+                                if (background) theory.addBackgroundFormulas(bx);
 
                                 //ProbabilityTableModel mo = new ProbabilityTableModel();
                                 HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
