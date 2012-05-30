@@ -183,9 +183,9 @@ public class RDFMatchingFileReaderTester {
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/inconsistent").getFile()).listFiles();
 
         Set<String> included = new LinkedHashSet<String>();
-        included.add("csa-ekaw-iasted.rdf");
+        included.add("csa-conference-edas.rdf");
         included.add("csa-edas-iasted.rdf");
-        included.add("ldoa-cmt-iasted.rdf");
+        included.add("ldoa-cmt-edas.rdf");
         included.add("ldoa-ekaw-iasted.rdf");
         included.add("mappso-edas-iasted.rdf");
 
