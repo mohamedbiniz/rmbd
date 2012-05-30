@@ -139,7 +139,6 @@ public class RDFMatchingFileReaderTester {
             }
             time1 = System.currentTimeMillis() - time1;
             int conflicts1 = searchDual.getStorage().getConflicts().size();
-            long time9 = System.currentTimeMillis();
             try {
                 searchDual.run(9);
             } catch (SolverException e) {
@@ -149,9 +148,8 @@ public class RDFMatchingFileReaderTester {
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            time9 = System.currentTimeMillis() - time9;
+            long time9 = System.currentTimeMillis() - time1;
             int conflicts9 = searchDual.getStorage().getConflicts().size();
-            long time30 = System.currentTimeMillis();
             try {
                 searchDual.run(30);
             } catch (SolverException e) {
@@ -161,7 +159,7 @@ public class RDFMatchingFileReaderTester {
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            time30 = System.currentTimeMillis() - time30;
+            long time30 = System.currentTimeMillis() - time1;
             int conflicts30 = searchDual.getStorage().getConflicts().size();
 
             int numDiags = searchDual.getStorage().getDiagnoses().size();
