@@ -177,7 +177,7 @@ public class RDFMatchingFileReaderTester {
                 if (minCardSize == size)
                     numOfMinCardDiags++;
 
-            int cnt = 1;
+            /*int cnt = 1;
             String f = file.getName().substring(0,file.getName().length()-4);
             for (Set<OWLLogicalAxiom> diag : searchDual.getStorage().getDiagnoses()) {
                 CreationUtils.writeDiagnosisToFile(f + "_"+cnt,diag);
@@ -187,7 +187,8 @@ public class RDFMatchingFileReaderTester {
                     ;//logger.info("diag written file: " + file.getName());
                 else logger.info("error " + file.getName());
                 cnt++;
-            }
+            }*/
+
             /*Set<AxiomSet<OWLLogicalAxiom>> diagnoses = searchDual.getStorage().getDiagnoses();
             boolean found = false;
              Set<OWLLogicalAxiom> targetDg =  CreationUtils.readDiagnosisFromFile(file.getName().substring(0,file.getName().length()-4) + "_1");
