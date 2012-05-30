@@ -13,7 +13,7 @@ aroma-confof-iasted.rdf
 #ldoa-ekaw-iasted.rdf
 lily-confof-iasted.rdf
 # % lily-edas-iasted.rdf
-mapevo-edas-sigkdd.rdf
+# %# mapevo-edas-sigkdd.rdf
 # % mappso-cmt-iasted.rdf
 mappso-confof-iasted.rdf
 #mappso-edas-iasted.rdf
