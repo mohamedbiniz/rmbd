@@ -133,6 +133,7 @@ public class RDFMatchingFileReaderTester {
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
+                logger.info("no conflicts: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -144,6 +145,7 @@ public class RDFMatchingFileReaderTester {
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
+                logger.info("no conflicts: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -155,6 +157,7 @@ public class RDFMatchingFileReaderTester {
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
+                logger.info("no conflicts: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
