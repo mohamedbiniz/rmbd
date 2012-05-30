@@ -140,6 +140,8 @@ public class RDFMatchingFileReaderTester {
             }
             long time1 = System.currentTimeMillis() - start;
             int conflicts1 = searchDual.getStorage().getConflicts().size();
+            logger.info("," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 1 found " + time1+ ","
+                    + conflicts1 + "," + extractionTime);
             try {
                 searchDual.run(9);
             } catch (SolverException e) {
@@ -152,6 +154,8 @@ public class RDFMatchingFileReaderTester {
             }
             long time9 = System.currentTimeMillis() - start;
             int conflicts9 = searchDual.getStorage().getConflicts().size();
+            logger.info("," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 9 found " + time9+ ","
+                    + conflicts9 + "," + extractionTime);
             try {
                 searchDual.run(30);
             } catch (SolverException e) {
@@ -164,6 +168,8 @@ public class RDFMatchingFileReaderTester {
             }
             long time30 = System.currentTimeMillis() - start;
             int conflicts30 = searchDual.getStorage().getConflicts().size();
+            logger.info("," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 30 found "
+                    + time30+ "," + conflicts30 + "," + extractionTime);
 
             int numDiags = searchDual.getStorage().getDiagnoses().size();
             int numC = searchDual.getStorage().getConflicts().size();
@@ -200,7 +206,7 @@ public class RDFMatchingFileReaderTester {
             logger.info(file.getName() + ",found," + found);*/
 
 
-            logger.info("," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ","
+            logger.info(", act," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ","
                     + time1 + "," + time9 + "," + time30 + ","
                     + conflicts1 + "," + conflicts9 + "," + conflicts30 + "," + extractionTime
                     + "," + numDiags + "," + numC + ","+ numOfMinCardDiags + "," + minCardSize );
@@ -237,8 +243,8 @@ public class RDFMatchingFileReaderTester {
 
     @Test
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
-        String d = "inconsistent";
-        File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/included.txt").getFile());
+        String d = "incoherent";
+        File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/includedIncoher.txt").getFile());
         MyFilenameFilter filter = new MyFilenameFilter(incl);
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
                 .getFile()).listFiles(filter);
@@ -252,7 +258,7 @@ public class RDFMatchingFileReaderTester {
             if (file.isDirectory())
                 continue;
 
-            SearchThread search = new SearchThread(file,false,d);
+            SearchThread search = new SearchThread(file,true,d);
 
             Future future = executor.submit(search);
         }
