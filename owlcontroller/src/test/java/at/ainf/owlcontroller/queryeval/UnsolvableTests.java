@@ -922,6 +922,8 @@ public class UnsolvableTests extends BasePerformanceTests {
                         logger.info("processing " + file.getName());
 
                         String out ="STAT, " + file;
+
+
                         for (BasePerformanceTests.QSSType type : qssTypes) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
@@ -940,7 +942,6 @@ public class UnsolvableTests extends BasePerformanceTests {
                             OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",
                                     o1, o2, mapd, n + ".rdf");
 
-                            Set<OWLLogicalAxiom> targetDg;
                             long preprocessModulExtract = System.currentTimeMillis();
                             OWLOntology ontology = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
@@ -966,13 +967,14 @@ public class UnsolvableTests extends BasePerformanceTests {
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
 
-                            targetDg = null;
 
                             search.setCostsEstimator(es);
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
                             search.clearSearch();
 
+
+                            Set<OWLLogicalAxiom> targetDg=null;
 
                             String fname = file.getName().substring(0,file.getName().length()-4);
                             if (targetSource == TargetSource.FROM_FILE)
@@ -995,6 +997,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>)diagnoses.toArray()[rnd]);
                                 search30.clearSearch();
                             }
+
 
                             TableList e = new TableList();
                             out += "," + type + ",";

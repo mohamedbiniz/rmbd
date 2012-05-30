@@ -28,7 +28,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -52,10 +52,12 @@ public class RDFMatchingFileReaderTester {
     private class SearchThread implements Callable<String> {
         private boolean dual;
         private File file;
+        private String d;
 
-        public SearchThread(File file, boolean dual) {
+        public SearchThread(File file, boolean dual, String dir) {
             this.file =  file;
             this.dual = dual;
+            this.d =  dir;
         }
 
         public File getFile() {
@@ -72,7 +74,7 @@ public class RDFMatchingFileReaderTester {
 
             String n = file.getName().substring(0,file.getName().length()-4);
             OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology", o1, o2,
-                    "oaei11conference/matchings/inconsistent", n + ".rdf");
+                    "oaei11conference/matchings/"+d, n + ".rdf");
 
             long extractionTime = System.currentTimeMillis();
             OWLOntology extracted = new OWLIncoherencyExtractor(
@@ -125,7 +127,31 @@ public class RDFMatchingFileReaderTester {
             if (dual)
                 searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
 
-            long time = System.currentTimeMillis();
+            long time1 = System.currentTimeMillis();
+            try {
+                searchDual.run(1);
+            } catch (SolverException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (NoConflictException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (InconsistentTheoryException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            time1 = System.currentTimeMillis() - time1;
+            int conflicts1 = searchDual.getStorage().getConflicts().size();
+            long time9 = System.currentTimeMillis();
+            try {
+                searchDual.run(9);
+            } catch (SolverException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (NoConflictException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (InconsistentTheoryException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            time9 = System.currentTimeMillis() - time9;
+            int conflicts9 = searchDual.getStorage().getConflicts().size();
+            long time30 = System.currentTimeMillis();
             try {
                 searchDual.run(30);
             } catch (SolverException e) {
@@ -135,7 +161,9 @@ public class RDFMatchingFileReaderTester {
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            time = System.currentTimeMillis() - time;
+            time30 = System.currentTimeMillis() - time30;
+            int conflicts30 = searchDual.getStorage().getConflicts().size();
+
             int numDiags = searchDual.getStorage().getDiagnoses().size();
             int numC = searchDual.getStorage().getConflicts().size();
 
@@ -170,7 +198,9 @@ public class RDFMatchingFileReaderTester {
             logger.info(file.getName() + ",found," + found);*/
 
 
-            logger.info(","+matcher + "," + o1 + "," + o2 + "," + time + "," + extractionTime
+            logger.info(","+matcher + "," + o1 + "," + o2 + ","
+                    + time1 + "," + time9 + "," + time30 + ","
+                    + conflicts1 + "," + conflicts9 + "," + conflicts30 + "," + extractionTime
                     + "," + numDiags + "," + numC + ","+ numOfMinCardDiags + "," + minCardSize );
 
             return "";
@@ -178,28 +208,49 @@ public class RDFMatchingFileReaderTester {
         }
     }
 
+    private class MyFilenameFilter implements FilenameFilter {
+        private Set<String> acceptedNames;
+
+        public MyFilenameFilter(File includedNames) {
+            acceptedNames = new LinkedHashSet<String>();
+            try{
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(includedNames)));
+                String strLine;
+                while ((strLine = br.readLine()) != null)   {
+                    if (!strLine.startsWith("#") || !strLine.endsWith(".rdf"))
+                        acceptedNames.add(strLine);
+                }
+                br.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        public boolean accept(File dir, String name) {
+            return acceptedNames.contains(name);
+        }
+    }
+
     @Test
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
-        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/inconsistent").getFile()).listFiles();
+        String d = "inconsistent";
+        File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/included.txt").getFile());
+        MyFilenameFilter filter = new MyFilenameFilter(incl);
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
+                .getFile()).listFiles(filter);
 
-        Set<String> included = new LinkedHashSet<String>();
-        included.add("csa-conference-edas.rdf");
-        included.add("csa-edas-iasted.rdf");
-        included.add("ldoa-cmt-edas.rdf");
-        included.add("ldoa-ekaw-iasted.rdf");
-        included.add("mappso-edas-iasted.rdf");
-
-        Set<String> excluded = new LinkedHashSet<String>();
-
-        excluded.add("ldoa-conference-iasted.rdf");
+        //Set<String> excluded = new LinkedHashSet<String>();
+        //excluded.add("ldoa-conference-iasted.rdf");
 
         ExecutorService executor = Executors.newCachedThreadPool();
 
-        for (int i = 0; i < f.length; i++) {
-            if (f[i].isDirectory() || excluded.contains(f[i].getName()) || !included.contains(f[i].getName()))
+        for (File file : f) {
+            if (file.isDirectory())
                 continue;
 
-            SearchThread search = new SearchThread(f[i],false);
+            SearchThread search = new SearchThread(file,true,d);
 
             Future future = executor.submit(search);
         }
