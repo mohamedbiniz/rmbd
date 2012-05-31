@@ -264,7 +264,8 @@ public class RDFMatchingFileReaderTester {
         }
 
         try {
-            executor.awaitTermination(7,TimeUnit.DAYS);
+            executor.awaitTermination(2,TimeUnit.HOURS);
+            logger.info("timeout");
 
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
