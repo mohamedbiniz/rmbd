@@ -909,8 +909,8 @@ public class UnsolvableTests extends BasePerformanceTests {
         showElRates = false;
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {MINSCORE, SPLITINHALF, DYNAMICRISK};
-        for (boolean dual : new boolean[] {true,false}) {
+                {MINSCORE, SPLITINHALF};
+        for (boolean dual : new boolean[] {true}) {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
                     for (File file : f) {
@@ -1579,6 +1579,18 @@ public class UnsolvableTests extends BasePerformanceTests {
                 }
             }
         }
+    }
+
+    @Test
+    public void doShowMappingAxiomsSizes() throws SolverException, InconsistentTheoryException, IOException {
+        Properties properties = AlignmentUtils.readProps("alignment.allFiles.properties");
+        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+
+            for (String m : mapOntos.keySet()) {
+                for (String o : mapOntos.get(m)) {
+                    AlignmentUtils.getDiagnosis(m,o);
+                }
+            }
     }
 
     @Test
