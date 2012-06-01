@@ -112,13 +112,13 @@
 #yam-confof-edas.rdf
 #yam-edas-ekaw.rdf
 
-csa-conference-ekaw.rdf
-ldoa-cmt-ekaw.rdf
-ldoa-conference-confof.rdf
-ldoa-conference-ekaw.rdf
-mappso-conference-ekaw.rdf
-mappso-confof-ekaw.rdf
-optima-conference-ekaw.rdf
-optima-confof-ekaw.rdf
+#csa-conference-ekaw.rdf
+#ldoa-cmt-ekaw.rdf
+#ldoa-conference-confof.rdf
+#ldoa-conference-ekaw.rdf
+#mappso-conference-ekaw.rdf
+#mappso-confof-ekaw.rdf
+#optima-conference-ekaw.rdf
+#optima-confof-ekaw.rdf
 
-# dont work ldoa-edas-iasted.rdf
+ldoa-edas-iasted.rdf
