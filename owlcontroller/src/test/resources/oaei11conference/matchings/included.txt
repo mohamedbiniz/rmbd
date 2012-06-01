@@ -19,11 +19,12 @@
 #mappso-confof-iasted.rdf
 # mapevo-edas-sigkdd.rdf
 
-csa-conference-edas.rdf
-csa-edas-iasted.rdf
-ldoa-cmt-edas.rdf
-ldoa-ekaw-iasted.rdf
-mappso-edas-iasted.rdf
-# geht nicht ldoa-conference-iasted.rdf
+ldoa-conference-iasted.rdf
+
+##csa-conference-edas.rdf
+#csa-edas-iasted.rdf
+#ldoa-cmt-edas.rdf
+#ldoa-ekaw-iasted.rdf
+#mappso-edas-iasted.rdf
 
 
