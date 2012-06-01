@@ -1,5 +1,7 @@
 package at.ainf.owlcontroller.queryeval;
 
+import org.apache.log4j.Logger;
+
 import java.io.*;
 import java.util.*;
 
@@ -72,11 +74,15 @@ public class AlignmentUtils {
         return true;
     }
 
+    private static Logger logger = Logger.getLogger(AlignmentUtils.class.getName());
+
     public static String[] getDiagnosis(String matcher, String ontology) throws IOException {
         String filename = ClassLoader.getSystemResource("alignment/evaluation/" + matcher.trim() + "-incoherent-evaluation/" + ontology.trim() + ".txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
         readData(filename, axioms, targetDiag);
+
+        logger.info("number of mappingaxioms:," + matcher + "," + ontology + "," + axioms.keySet().size());
 
         String[] result = new String[targetDiag.size()];
         int i = 0;

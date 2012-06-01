@@ -243,8 +243,8 @@ public class RDFMatchingFileReaderTester {
 
     @Test
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
-        String d = "incoherent";
-        File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/includedIncoher.txt").getFile());
+        String d = "inconsistent";
+        File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/included.txt").getFile());
         MyFilenameFilter filter = new MyFilenameFilter(incl);
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
                 .getFile()).listFiles(filter);
