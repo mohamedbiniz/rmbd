@@ -986,7 +986,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         String matchingsDir = "oaei11conference/matchings/";
         String directory = "incoherent";
-        String mapd = matchingsDir + directory;
+        //String mapd = matchingsDir + directory;
         File incl = new File(ClassLoader.getSystemResource(matchingsDir+"includedIncoher.txt").getFile());
         MyFilenameFilter filter = new MyFilenameFilter(incl);
         File[] f = new File(ClassLoader.getSystemResource(matchingsDir+directory)
@@ -1035,7 +1035,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             String n = file.getName().substring(0,file.getName().length()-4);
                             OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",
-                                    o1, o2, mapd, n + ".rdf");
+                                    o1, o2, matchingsDir+map.get(file), n + ".rdf");
 
                             long preprocessModulExtract = System.currentTimeMillis();
                             OWLOntology ontology = new OWLIncoherencyExtractor(
@@ -1051,7 +1051,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(),ontology2.getLogicalAxioms()));
                             theory.addBackgroundFormulas(bx);
 
-                            Map<OWLLogicalAxiom,Double> map1 = RDFUtils.readRdfMapping(mapd,n + ".rdf");
+                            Map<OWLLogicalAxiom,Double> map1 = RDFUtils.readRdfMapping(matchingsDir+map.get(file),n + ".rdf");
 
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
