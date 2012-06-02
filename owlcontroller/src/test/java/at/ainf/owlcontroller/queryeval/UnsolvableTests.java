@@ -895,6 +895,31 @@ public class UnsolvableTests extends BasePerformanceTests {
         // "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
     }
 
+    private class MyFilenameFilter implements FilenameFilter {
+        private Set<String> acceptedNames;
+
+        public MyFilenameFilter(File includedNames) {
+            acceptedNames = new LinkedHashSet<String>();
+            try{
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(includedNames)));
+                String strLine;
+                while ((strLine = br.readLine()) != null)   {
+                    if (!strLine.startsWith("#") || !strLine.endsWith(".rdf"))
+                        acceptedNames.add(strLine);
+                }
+                br.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+
+        public boolean accept(File dir, String name) {
+            return acceptedNames.contains(name);
+        }
+    }
+
     @Test
     public void doTestsOAEIConference()
 
@@ -902,9 +927,15 @@ public class UnsolvableTests extends BasePerformanceTests {
         Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
         String mapd = "oaei11conference/matchings/incoherent";
-        File[] f = new File(ClassLoader.getSystemResource(mapd).getFile()).listFiles();
+        /*File[] f = new File(ClassLoader.getSystemResource(mapd).getFile()).listFiles();
         Set<String> excluded = new LinkedHashSet<String>();
-        excluded.add("ldoa-conference-iasted.rdf");
+        excluded.add("ldoa-conference-iasted.rdf");*/
+
+        String d = "incoherent";
+        File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/includedIncoher.txt").getFile());
+        MyFilenameFilter filter = new MyFilenameFilter(incl);
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
+                .getFile()).listFiles(filter);
 
         showElRates = false;
 
@@ -914,11 +945,6 @@ public class UnsolvableTests extends BasePerformanceTests {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
                     for (File file : f) {
-
-                        if (file.isDirectory() || excluded.contains(file.getName())
-                                || file.getName().endsWith(".ignore"))
-                            continue;
-
                         logger.info("processing " + file.getName());
 
                         String out ="STAT, " + file;
