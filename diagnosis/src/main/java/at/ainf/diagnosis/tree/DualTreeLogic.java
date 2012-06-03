@@ -4,7 +4,6 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.AxiomSetFactory;
 
 import java.util.*;
 
@@ -15,21 +14,18 @@ import java.util.*;
  * Time: 16:07
  * To change this template use File | Settings | File Templates.
  */
-public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T,Id> {
+public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id> {
 
     private TreeSearch<T, Id> tree;
-    
-    public void proveValidnessConflict(T conflictSet) throws SolverException {
-        
-            boolean valid = true;
-            if (tree.getTheory().hasTests()) {
-//                getTheory().addBackgroundFormulas(pathLabels);
-                valid = tree.getTheory().testDiagnosis(conflictSet);
-                //              getTheory().removeBackgroundFormulas(pathLabels);
-            }
-            conflictSet.setValid(valid);
 
-        
+    public void proveValidnessConflict(T conflictSet) throws SolverException {
+        boolean valid = true;
+        if (tree.getTheory().hasTests()) {
+//                getTheory().addBackgroundFormulas(pathLabels);
+            valid = tree.getTheory().testDiagnosis(conflictSet);
+            //              getTheory().removeBackgroundFormulas(pathLabels);
+        }
+        conflictSet.setValid(valid);
     }
 
     public boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
@@ -37,18 +33,34 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T,Id
     }
 
     public void pruneConflictSets(Node<Id> idNode, T conflictSet) throws SolverException, InconsistentTheoryException {
-         
+
     }
 
     public void updateTree(List<T> invalidAxiomSets) throws SolverException, InconsistentTheoryException, NoConflictException {
-        
-            for (T next : invalidAxiomSets) {
-                tree.updateTree(next);
-                tree.getStorage().removeConflictSet(next);
-            }
-            tree.getTheory().registerTestCases();
-            
-        
+        if (invalidAxiomSets.isEmpty()) {
+            return;
+        }
+        for (T ax : invalidAxiomSets) {
+            tree.getStorage().removeConflictSet(ax);
+        }
+        Set<T> cs = tree.getStorage().getConflictSets();
+        tree.getOpenNodes().clear();
+        Node<Id> root = tree.getRoot();
+        for (Node<Id> idNode : root.getChildren()) {
+            idNode.removeParent();
+        }
+        root.removeChildren();
+        if (!cs.isEmpty()) {
+            root.setAxiomSet(Collections.max(cs, new Comparator<T>() {
+                public int compare(T o1, T o2) {
+                    return o1.compareTo(o2);
+                }
+            }));
+            tree.addNodes(root.expandNode());
+        }
+        else
+            root.setAxiomSet(null);
+
     }
 
     protected boolean containsOneOf(Set<Id> pathLabels, Set<Id> temp) {
@@ -68,7 +80,7 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T,Id
             return false;
         return hasParent(node, parent.getParent());
     }
-    
+
     public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
         if (node == null || node.getAxiomSet() == null)
             return Collections.emptySet();
@@ -118,7 +130,7 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T,Id
                 }
                 node.removeAxioms();
             } else
-                node.setConflict(axSet);
+                node.setAxiomSet(axSet);
         }
         return node.getChildren();
     }
@@ -126,6 +138,6 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T,Id
     public void setTreeSearch(TreeSearch<T, Id> tree) {
         this.tree = tree;
     }
-    
-    
+
+
 }

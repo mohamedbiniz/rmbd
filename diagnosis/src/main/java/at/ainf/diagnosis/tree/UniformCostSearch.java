@@ -92,11 +92,10 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         return popOpenNodes();
     }
 
-    @Override
-    public void addNodes(ArrayList<Node<Id>> nodeList) {
+    public void addNodes(List<Node<Id>> nodeList) {
 
         for (Node<Id> node : nodeList) {
-            pushOpenNodes(node);
+            pushOpenNode(node);
         }
         //Collections.sort(getOpenNodes(), new NodeComparator());
     }
@@ -114,7 +113,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
     }
 
     @Override
-    public void pushOpenNodes(Node<Id> idNode) {
+    public void pushOpenNode(Node<Id> idNode) {
         for (OpenNodesListener l : oNodesLsteners)
             l.updateOpenNodesAdded();
         this.opensNodes.add(idNode);

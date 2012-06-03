@@ -11,8 +11,7 @@ package at.ainf.diagnosis.tree;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,10 +35,10 @@ public class DepthFirstSearch<Id> extends UninformedSearch<Id> {
         return popOpenNodes();
     }
 
-    public void addNodes(ArrayList<Node<Id>> nodeList) {
+    public void addNodes(List<Node<Id>> nodeList) {
         // adds the new open nodes in reverse order at the beginning of the List
         for (int i = nodeList.size() - 1; i >= 0; i--) {
-            pushOpenNodes(nodeList.get(i));
+            pushOpenNode(nodeList.get(i));
         }
     }
 }

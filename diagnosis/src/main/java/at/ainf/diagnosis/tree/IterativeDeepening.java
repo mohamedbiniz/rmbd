@@ -48,7 +48,7 @@ public class IterativeDeepening<Id> extends DepthLimitedSearch<Id> {
             super.run();
             // resets List of openNodes
             clearOpenNodes();
-            pushOpenNodes(getRoot());
+            pushOpenNode(getRoot());
             iterationDepth += step;
 
         } while (iterationDepth < LIMIT && isExpandable());

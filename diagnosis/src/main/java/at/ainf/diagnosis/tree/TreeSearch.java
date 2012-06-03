@@ -9,15 +9,16 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomRenderer;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,7 +42,7 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
     public Searcher<Id> getSearcher();
 
-    public void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException ;  
+    //public void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException ;
 
     public void setTheory(ITheory<Id> theory);
 
@@ -65,4 +66,7 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
     public void setAxiomRenderer(AxiomRenderer<Id> renderer);
 
+    public Node<Id> getRoot();
+
+    public void addNodes(List<Node<Id>> nodeList);
 }
