@@ -979,6 +979,7 @@ public class UnsolvableTests extends BasePerformanceTests {
             }
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getStorage().getDiagnoses();
             int rnd = new Random(12312).nextInt(diagnoses.size());
+            logger.info("diagnosis selected as target: " + rnd);
             targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>)diagnoses.toArray()[rnd]);
             search30.clearSearch();
         return targetDg;
