@@ -466,25 +466,14 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         return false;
     }
 
-
     public boolean pruneHittingSet(Node<Id> node) {
         if (node.isRoot()) return false;
-        Collection<T> diagnoses = null;
         Collection<Id> pathLabels = node.getPathLabels();
         for (T diagnosis : getStorage().getHittingSets()) {
-            Collection<Id> larger = (diagnosis.size() > pathLabels.size()) ? diagnosis : pathLabels;
-            Collection<Id> smaller = (diagnosis.size() <= pathLabels.size()) ? diagnosis : pathLabels;
-            if (larger.containsAll(smaller)) {
-                if (diagnosis.size() > pathLabels.size()) {
-                    if (diagnoses == null) diagnoses = new LinkedList<T>();
-                    diagnoses.add(diagnosis);
-                } else if (diagnoses == null) return true;
+            if (pathLabels.containsAll(diagnosis)) {
+                return true;
             }
         }
-        if (diagnoses != null)
-            for (T hs : diagnoses) {
-                getStorage().removeHittingSet(hs);
-            }
         return false;
     }
 
