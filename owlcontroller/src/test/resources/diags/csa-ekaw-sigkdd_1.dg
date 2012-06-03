@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ekaw#hasReview -->
+
+    <ObjectProperty rdf:about="http://ekaw#hasReview"/>
+    
+
+
+    <!-- http://ekaw#hasReviewer -->
+
+    <ObjectProperty rdf:about="http://ekaw#hasReviewer"/>
+    
+
+
+    <!-- http://sigkdd#pay -->
+
+    <ObjectProperty rdf:about="http://sigkdd#pay"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://ekaw#Accepted_Paper -->
+
+    <Class rdf:about="http://ekaw#Accepted_Paper">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Evaluated_Paper"/>
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Author_of_paper_student"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ekaw#hasReview"/>
+                <someValuesFrom rdf:resource="http://ekaw#Positive_Review"/>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Assigned_Paper -->
+
+    <Class rdf:about="http://ekaw#Assigned_Paper">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Submitted_Paper"/>
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ekaw#hasReviewer"/>
+                <minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">3</minCardinality>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Conference -->
+
+    <Class rdf:about="http://ekaw#Conference">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Conference_hall"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Conference_Participant -->
+
+    <Class rdf:about="http://ekaw#Conference_Participant">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Person"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Evaluated_Paper -->
+
+    <Class rdf:about="http://ekaw#Evaluated_Paper">
+        <rdfs:subClassOf>
+            <Restriction>
+                <onProperty rdf:resource="http://ekaw#hasReview"/>
+                <minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">3</minCardinality>
+            </Restriction>
+        </rdfs:subClassOf>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Event -->
+
+    <Class rdf:about="http://ekaw#Event"/>
+    
+
+
+    <!-- http://ekaw#Negative_Review -->
+
+    <Class rdf:about="http://ekaw#Negative_Review">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Review"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Organisation -->
+
+    <Class rdf:about="http://ekaw#Organisation">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Organizator"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#PC_Member -->
+
+    <Class rdf:about="http://ekaw#PC_Member">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Possible_Reviewer"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Person -->
+
+    <Class rdf:about="http://ekaw#Person"/>
+    
+
+
+    <!-- http://ekaw#Positive_Review -->
+
+    <Class rdf:about="http://ekaw#Positive_Review"/>
+    
+
+
+    <!-- http://ekaw#Possible_Reviewer -->
+
+    <Class rdf:about="http://ekaw#Possible_Reviewer"/>
+    
+
+
+    <!-- http://ekaw#Review -->
+
+    <Class rdf:about="http://ekaw#Review"/>
+    
+
+
+    <!-- http://ekaw#Scientific_Event -->
+
+    <Class rdf:about="http://ekaw#Scientific_Event">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Event"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Student -->
+
+    <Class rdf:about="http://ekaw#Student">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Person"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Submitted_Paper -->
+
+    <Class rdf:about="http://ekaw#Submitted_Paper"/>
+    
+
+
+    <!-- http://ekaw#Tutorial -->
+
+    <Class rdf:about="http://ekaw#Tutorial">
+        <rdfs:subClassOf rdf:resource="http://sigkdd#Hotel"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Author_of_paper_student -->
+
+    <Class rdf:about="http://sigkdd#Author_of_paper_student"/>
+    
+
+
+    <!-- http://sigkdd#Conference_hall -->
+
+    <Class rdf:about="http://sigkdd#Conference_hall">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Hotel -->
+
+    <Class rdf:about="http://sigkdd#Hotel">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Tutorial"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Organizator -->
+
+    <Class rdf:about="http://sigkdd#Organizator">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Organisation"/>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Sponzor -->
+
+    <Class rdf:about="http://sigkdd#Sponzor">
+        <equivalentClass>
+            <Restriction>
+                <onProperty rdf:resource="http://sigkdd#pay"/>
+                <someValuesFrom rdf:resource="http://sigkdd#Sponzor_fee"/>
+            </Restriction>
+        </equivalentClass>
+    </Class>
+    
+
+
+    <!-- http://sigkdd#Sponzor_fee -->
+
+    <Class rdf:about="http://sigkdd#Sponzor_fee"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version [Not Released]) http://owlapi.sourceforge.net -->
+

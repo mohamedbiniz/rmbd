@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>rmbd</artifactId>
+        <groupId>at.ainf</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>protegeview</artifactId>
+    <name>Protege View</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.5</version>
+                <extensions>true</extensions>
+
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>at.ainf.protegeview;singleton:=true</Bundle-SymbolicName>
+                        <Bundle-Name>Query Debugger Plug-in</Bundle-Name>
+                        <Bundle-Version>1.0_alpha</Bundle-Version>
+                        <Bundle-Activator>at.ainf.protegeview.Activator</Bundle-Activator>
+                        <!--<Bundle-Activator>at.ainf.pluginprotege.BundleActivator</Bundle-Activator>-->
+                        <!--<Update-Url>http://wwwu.edu.uni-klu.ac.at/pfleiss/update.properties</Update-Url>-->
+                        <Import-Package>!at.ainf.diagnosis.*,
+                            !at.ainf.theory.*,
+                            !at.ainf.owlapi3.*,
+                            !at.ainf.controller.*,
+                            !at.ainf.owlcontroller.*,
+                            !org.picocontainer.*,
+                            *</Import-Package>
+                        <!--<Embed-Directory>lib</Embed-Directory>-->
+                        <Bundle-ClassPath>.;at.ainf.diagnosis.jar;
+                            at.ainf.theory.jar;
+                            at.ainf.owlapi3.jar;
+                            at.ainf.owlcontroller.jar;
+                            at.ainf.controller.jar;
+                            org.picocontainer.picocontainer.jar</Bundle-ClassPath>
+                        <!--<Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
+                            org.protege.editor.core.application;bundle-version="4.1",org.protege.editor.owl;bundle-version="4.1",
+                            org.semanticweb.owl.owlapi;bundle-version="3.0"
+                        </Require-Bundle>-->
+                        <Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
+                            org.protege.editor.core.application,org.protege.editor.owl,
+                            org.semanticweb.owl.owlapi
+                        </Require-Bundle>
+                        <Private-Package>at.ainf.protegeview.*</Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.3</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                  <artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>theory</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.theory.jar</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>diagnosis</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.diagnosis.jar</destFileName>
+                </artifactItem>
+                  <artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>controller</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.controller.jar</destFileName>
+                </artifactItem>
+                  <artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>owlapi-3</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.owlapi3.jar</destFileName>
+                </artifactItem><artifactItem>
+                  <groupId>at.ainf</groupId>
+                  <artifactId>owlcontroller</artifactId>
+                  <version>1.0</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>at.ainf.owlcontroller.jar</destFileName>
+                </artifactItem> <artifactItem>
+                  <groupId>org.picocontainer</groupId>
+                  <artifactId>picocontainer</artifactId>
+                  <version>2.14.1</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>org.picocontainer.picocontainer.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/wars</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${env.PROTEGE_HOME}/plugins</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>target/</directory>
+                                    <includes>
+                                        <include>at.ainf.querydebugger.jar</include>
+                                    </includes>
+                                </resource>
+                                <!--
+                                <resource>
+                                    <directory>${project.basedir}/../owlapi-3/target/</directory>
+                                    <includes>
+                                        <include>at.ainf.owlapi3.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}/../diagnosis/target/</directory>
+                                    <includes>
+                                        <include>at.ainf.diagnosis.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}/../querygen/target/</directory>
+                                    <includes>
+                                        <include>at.ainf.querygen.jar</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}/../theory/target/</directory>
+                                    <includes>
+                                        <include>at.ainf.theory.jar</include>
+                                    </includes>
+                                </resource>-->
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.2</version>
+                <configuration>
+                    <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <finalName>at.ainf.querydebugger</finalName>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.picocontainer</groupId>
+            <artifactId>picocontainer</artifactId>
+            <version>2.14.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>theory</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>owlapi-3</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>diagnosis</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>controller</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>owlcontroller</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+
+
+        <!-- dependencies out of bundles directory from protege 4.2.0 alpha build 274 -->
+
+        <dependency>
+            <groupId>org.protege.editor.core</groupId>
+            <artifactId>application</artifactId>
+            <version>4.2.0.b_274</version>
+        </dependency>
+
+        <!-- next dependency out of plugin directory from protege 4.2.0 alpha build 274  -->
+
+        <dependency>
+            <groupId>org.protege.editor</groupId>
+            <artifactId>owl</artifactId>
+            <version>4.2.0.b_274</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi_R4_core</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+    </dependencies>
+
+
+</project>

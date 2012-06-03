@@ -1,0 +1,206 @@
+<!--
+  ~ Copyright (c) 2009 Kostyantyn Shchekotykhin
+  ~
+  ~ All rights reserved. This program and the accompanying materials
+  ~ are made available under the terms of the GNU Public License v3.0
+  ~ http://www.gnu.org/licenses/gpl.txt
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>at.ainf</groupId>
+    <artifactId>rmbd</artifactId>
+    <name>Model-based diagnosis</name>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <description>Implementation of the Reiter's model-based diagnosis</description>
+
+
+    <modules>
+        <module>diagnosis</module>
+        <module>owlapi-3</module>
+        <module>sat4j</module>
+        <module>choco2</module>
+        <module>logger</module>
+        <module>theory</module>
+        <module>protegeview</module>
+        <module>controller</module>
+        <module>owlcontroller</module>
+        <module>jsolver</module>
+    </modules>
+    <!--
+    More Project Information
+      <url>...</url> -->
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE Version 3</name>
+            <url>http://www.gnu.org/licenses/gpl.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>kostya</id>
+            <name>Kostyantyn Shchekotykhin</name>
+        </developer>
+        <developer>
+            <id>raoul</id>
+            <name>Raoul Friedrich</name>
+        </developer>
+        <developer>
+            <id>pfleiss</id>
+            <name>Philipp Fleiss</name>
+        </developer>
+         <developer>
+            <id>pr8</id>
+            <name>Patrick Rodler</name>
+        </developer>
+    </developers>
+
+    <properties>
+        <java.source.version>1.5</java.source.version>
+        <java.target.version>1.5</java.target.version>
+        <junit.version>4.8.2</junit.version>
+        <distributionRepositoryId>releases</distributionRepositoryId>
+        <distributionRepositoryUrl>
+            dav:http://scs-iwas.uni-klu.ac.at/nexus/content/repositories/releases
+        </distributionRepositoryUrl>
+    </properties>
+
+    <issueManagement>
+        <system>Google Code</system>
+        <url>http://code.google.com/p/rmbd/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>${distributionRepositoryId}</id>
+            <name>${distributionRepositoryId}</name>
+            <url>${distributionRepositoryUrl}</url>
+        </repository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:svn:http://rmbd.googlecode.com/svn/trunk</connection>
+        <developerConnection>scm:svn:https://rmbd.googlecode.com/svn/trunk</developerConnection>
+        <url>http://code.google.com/p/rmbd/source/browse/trunk</url>
+    </scm>
+
+    <organization>
+        <name>AINF</name>
+        <url>http://www.uni-klu.ac.at/tewi/inf/ainf/</url>
+    </organization>
+
+    <build>
+        <plugins>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${java.source.version}</source>
+                        <target>${java.target.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <configuration>
+                        <inputEncoding>UTF-8</inputEncoding>
+                        <outputEncoding>UTF-8</outputEncoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.riedelcastro</groupId>
+                    <artifactId>gcupload-maven-plugin</artifactId>
+                    <version>0.9</version>
+                    <configuration>
+                        <projectName>rmbd</projectName>
+                        <uploads>
+                            <upload>
+                                <extensions>jar</extensions>
+                            </upload>
+                            <upload>
+                                <postfix>sources</postfix>
+                                <extensions>jar</extensions>
+                                <labels>Type-Source,Featured</labels>
+                            </upload>
+                        </uploads>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>upload</id>
+                            <goals>
+                                <goal>gcupload</goal>
+                            </goals>
+                            <phase>deploy</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>vknow-public</id>
+            <name>VKnow (custom + maven2)</name>
+            <url>http://scs-iwas.uni-klu.ac.at/nexus/content/groups/public/</url>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>vknow-public</id>
+            <name>VKnow (custom + maven2)</name>
+            <url>http://scs-iwas.uni-klu.ac.at/nexus/content/groups/public/</url>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>Codehaus Snapshots</id>
+            <url>http://snapshots.repository.codehaus.org/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+       <pluginRepository>
+            <id>repository.riedelcastro.org</id>
+            <url>http://repository.riedelcastro.org</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.13</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

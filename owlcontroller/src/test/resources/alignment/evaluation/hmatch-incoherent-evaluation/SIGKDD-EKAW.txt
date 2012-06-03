@@ -1,0 +1,16 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/SIGKDD.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/EKAW.owl
+sourceNamespace = http://SIGKDD.owl
+targetNamespace = http://EKAW.owl
+
++ Abstract = Abstract | 0.9285714285714286
++ Conference = Conference | 1.0
++ Document = Document | 0.9310344827586207
++ Invited_Speaker = Invited_Speaker | 0.625
+< Main_office = Location | 0.64
++ Paper = Paper | 0.9705882352941176
++ Person = Person | 0.7352941176470589
++ Place = Location | 0.8
+> Review = Negative_Review | 0.7333333333333334
+> Review = Neutral_Review | 0.7333333333333334
+> Review = Positive_Review | 0.7333333333333334
