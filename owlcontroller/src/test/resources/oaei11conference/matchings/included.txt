@@ -25,6 +25,6 @@ csa-conference-edas.rdf
 csa-edas-iasted.rdf
 ldoa-cmt-edas.rdf
 ldoa-ekaw-iasted.rdf
-mappso-edas-iasted.rdf
+#mappso-edas-iasted.rdf
 
 
