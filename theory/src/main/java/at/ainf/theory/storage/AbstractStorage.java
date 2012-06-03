@@ -104,6 +104,17 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
         if (logger.isInfoEnabled()) {
             logger.info("Adding a hitting set: " + hittingSet);
         }
+
+        Set<T> del = new HashSet<T>();
+        for (T set : hittingSets) {
+            if (set.containsAll(hittingSet))
+                del.add(set);
+        }
+        if (!del.isEmpty())
+            for (T ids : del) {
+                removeHittingSet(ids);
+            }
+
         boolean val = hittingSets.add(hittingSet);
 
         if (hittingSet.isValid()) {
