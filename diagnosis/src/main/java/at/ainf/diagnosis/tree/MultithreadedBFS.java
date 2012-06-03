@@ -3,8 +3,7 @@ package at.ainf.diagnosis.tree;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,7 +27,7 @@ public class MultithreadedBFS<Id> extends UninformedSearch<Id> {
         return popOpenNodes();
     }
 
-    public void addNodes(ArrayList<Node<Id>> nodeList) {
+    public void addNodes(List<Node<Id>> nodeList) {
         // adds the new open nodes at the end of the List
         for (Node<Id> node : nodeList) addLastOpenNodes(node);
     }

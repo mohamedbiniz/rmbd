@@ -18,10 +18,7 @@ import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -75,6 +72,18 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Id> {
     }
 
     public void setAxiomRenderer(AxiomRenderer<Id> idAxiomRenderer) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Node<Id> getRoot() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void addNodes(List<Node<Id>> nodes) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void pushOpenNodes(Node<Id> idNode) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

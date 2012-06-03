@@ -5,16 +5,19 @@ import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.*;
+import at.ainf.diagnosis.tree.BreadthFirstSearch;
+import at.ainf.diagnosis.tree.CostsEstimator;
+import at.ainf.diagnosis.tree.DualTreeLogic;
+import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.CreationUtils;
 import at.ainf.owlcontroller.RDFUtils;
+import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
 import at.ainf.theory.model.ITheory;
@@ -32,11 +35,12 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
-import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.*;
 
 import java.io.*;
 import java.util.*;
 
+import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.MINSCORE;
+import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.SPLITINHALF;
 import static junit.framework.Assert.assertTrue;
 
 /**

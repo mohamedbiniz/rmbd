@@ -51,7 +51,7 @@ public class PerformanceTests extends BasePerformanceTests {
     //private final String[] ontologies = {"CHEM-A.owl", "src/test/resources/koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl",
     //        "Economy-SDA.owl", "Transportation-SDA.owl"};
     // "koala.owl",
-    protected String[] ontologies = {"Univ.owl"};
+    protected String[] ontologies = {"ecai.owl"};
     //private String[] ontologies = {"opengalen-no-propchainsmod.owl"};
 
     protected final String queryontologies = "queryontologies";

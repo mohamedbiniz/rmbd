@@ -54,6 +54,10 @@ public class Node<Id> {
         return this.children.remove(node);
     }
 
+    public void removeChildren() {
+        this.children.clear();
+    }
+
     public Set<Node<Id>> getChildren() {
         return Collections.unmodifiableSet(children);
     }
@@ -113,6 +117,10 @@ public class Node<Id> {
         return this.parent == null;
     }
 
+    public void removeParent(){
+        this.parent = null;
+    }
+
     public Node<Id> getParent() {
         return parent;
     }
@@ -125,7 +133,7 @@ public class Node<Id> {
         return conflict;
     }
 
-    public void setConflict(Set<Id> conflict) {
+    public void setAxiomSet(Set<Id> conflict) {
         /*
         for (Node<Id> child : children) {
             child.setClosed();

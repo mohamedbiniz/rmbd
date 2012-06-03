@@ -48,7 +48,7 @@ public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id>
 
                 tree.getStorage().removeConflictSet(invalidConflict);
             }
-            tree.updateTree(conflictSet);
+            updateTree(conflictSet);
         }
 
     }
@@ -59,9 +59,23 @@ public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id>
             Set<Id> axioms = tree.getSearcher().search(tree.getTheory(), ax, null);
             if (!axioms.equals(ax)) {
                 AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());
-                tree.updateTree(conflict);
+                updateTree(conflict);
                 ax.updateAxioms(conflict);
             }
+        }
+    }
+
+    private void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
+        Node<Id> root = tree.getRoot();
+        if (tree.getRoot() == null) {
+            return;
+        }
+        LinkedList<Node<Id>> children = new LinkedList<Node<Id>>();
+        children.add(root);
+        while (!children.isEmpty()) {
+            Node<Id> node = children.removeFirst();
+            Set<Node<Id>> nodeChildren = updateNode(conflictSet, node);
+            children.addAll(nodeChildren);
         }
     }
 
@@ -78,7 +92,7 @@ public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id>
                 node.removeChild(invalidChild);
             }
 
-            node.setConflict(axSet);
+            node.setAxiomSet(axSet);
         }
         return node.getChildren();
     }

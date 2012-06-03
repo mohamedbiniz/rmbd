@@ -64,7 +64,7 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
         return this.openNodes.pop();
     }
 
-    public void pushOpenNodes(Node<Id> node) {
+    public void pushOpenNode(Node<Id> node) {
         for (OpenNodesListener l : oNodesLsteners)
             l.updateOpenNodesAdded();
         this.openNodes.push(node);
