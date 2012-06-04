@@ -18,6 +18,7 @@ import at.ainf.owlcontroller.RDFUtils;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
 import at.ainf.theory.model.ITheory;
@@ -1094,6 +1095,37 @@ public class UnsolvableTests extends BasePerformanceTests {
             }
         }
     }
+
+
+    @Test
+    public void doSimpleQuerySession()
+        throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
+
+        QSSType type = MINSCORE;
+        boolean dual = true;
+        String name = "koala.owl";
+
+        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",name);
+
+        Set<OWLLogicalAxiom> targetDg = new LinkedHashSet<OWLLogicalAxiom>();
+        targetDg.add(new MyOWLRendererParser(ontology).parse("Marsupials DisjointWith Person"));
+
+        long preprocessModulExtract = System.currentTimeMillis();
+        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+        preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
+
+        OWLTheory theory = createTheoryOAEI(ontology, dual, true);
+        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+        search.setCostsEstimator(es);
+
+        TableList e = new TableList();
+        String message = "act," + type + "," + dual + "," + name + "," + preprocessModulExtract;
+        simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+
+    }
+
 
     @Test
     public void doTestAroma()
