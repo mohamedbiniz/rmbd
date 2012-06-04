@@ -1,0 +1,426 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://conference#Active_conference_participant -->
+
+    <Class rdf:about="http://conference#Active_conference_participant">
+        <rdfs:subClassOf rdf:resource="http://edas#ActivePaper"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Camera_ready_contribution -->
+
+    <Class rdf:about="http://conference#Camera_ready_contribution">
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksAapplicationsTopic"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Committee -->
+
+    <Class rdf:about="http://conference#Committee">
+        <rdfs:subClassOf rdf:resource="http://edas#CommunicationTheoryTopic"/>
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksEnterpriseTopic"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Committee_member -->
+
+    <Class rdf:about="http://conference#Committee_member">
+        <rdfs:subClassOf rdf:resource="http://edas#CommunicationsTopic"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference -->
+
+    <Class rdf:about="http://conference#Conference">
+        <rdfs:subClassOf rdf:resource="http://edas#Conference"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_announcement -->
+
+    <Class rdf:about="http://conference#Conference_announcement">
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksMeasurementsTopic"/>
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceDinner"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_applicant -->
+
+    <Class rdf:about="http://conference#Conference_applicant">
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksManagementTopic"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_contributor -->
+
+    <Class rdf:about="http://conference#Conference_contributor">
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksTopic"/>
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceSession"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_document -->
+
+    <Class rdf:about="http://conference#Conference_document">
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceEvent"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_part -->
+
+    <Class rdf:about="http://conference#Conference_part">
+        <rdfs:subClassOf rdf:resource="http://edas#ConferenceChair"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Contribution_1th-author -->
+
+    <Class rdf:about="http://conference#Contribution_1th-author">
+        <rdfs:subClassOf rdf:resource="http://edas#ContactInformation"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Extended_abstract -->
+
+    <Class rdf:about="http://conference#Extended_abstract">
+        <rdfs:subClassOf rdf:resource="http://edas#AntennasTopic"/>
+    </Class>
+    
+
+
+    <!-- http://conference#InverseFunctionalProperty -->
+
+    <Class rdf:about="http://conference#InverseFunctionalProperty">
+        <rdfs:subClassOf rdf:resource="http://edas#ComputerNetworksSecurityTopic"/>
+        <rdfs:subClassOf rdf:resource="http://edas#PersonalPublicationHistory"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Invited_speaker -->
+
+    <Class rdf:about="http://conference#Invited_speaker">
+        <rdfs:subClassOf rdf:resource="http://edas#PendingPaper"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Organization -->
+
+    <Class rdf:about="http://conference#Organization">
+        <rdfs:subClassOf rdf:resource="http://edas#OrganizationalMeeting"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Paid_applicant -->
+
+    <Class rdf:about="http://conference#Paid_applicant">
+        <rdfs:subClassOf rdf:resource="http://edas#PaperPresentation"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Passive_conference_participant -->
+
+    <Class rdf:about="http://conference#Passive_conference_participant">
+        <rdfs:subClassOf rdf:resource="http://edas#ParallelAndDistributedComputingTopic"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Poster -->
+
+    <Class rdf:about="http://conference#Poster">
+        <rdfs:subClassOf rdf:resource="http://edas#Place"/>
+        <rdfs:subClassOf rdf:resource="http://edas#PowerlineTransmissionTopic"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Presentation -->
+
+    <Class rdf:about="http://conference#Presentation">
+        <rdfs:subClassOf rdf:resource="http://edas#Presenter"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Registeered_applicant -->
+
+    <Class rdf:about="http://conference#Registeered_applicant">
+        <rdfs:subClassOf rdf:resource="http://edas#FreeTimeBreak"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Regular_contribution -->
+
+    <Class rdf:about="http://conference#Regular_contribution">
+        <rdfs:subClassOf rdf:resource="http://edas#RejectRating"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Review_expertise -->
+
+    <Class rdf:about="http://conference#Review_expertise">
+        <rdfs:subClassOf rdf:resource="http://edas#ReviewQuestion"/>
+        <rdfs:subClassOf rdf:resource="http://edas#ReviewRating"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Submitted_contribution -->
+
+    <Class rdf:about="http://conference#Submitted_contribution">
+        <rdfs:subClassOf rdf:resource="http://edas#SatelliteAndSpaceCommunicationsTopic"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Written_contribution -->
+
+    <Class rdf:about="http://conference#Written_contribution">
+        <rdfs:subClassOf rdf:resource="http://edas#WirelessCommunicationsTopic"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ActivePaper -->
+
+    <Class rdf:about="http://edas#ActivePaper">
+        <rdfs:subClassOf rdf:resource="http://conference#Active_conference_participant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#AntennasTopic -->
+
+    <Class rdf:about="http://edas#AntennasTopic"/>
+    
+
+
+    <!-- http://edas#CommunicationTheoryTopic -->
+
+    <Class rdf:about="http://edas#CommunicationTheoryTopic"/>
+    
+
+
+    <!-- http://edas#CommunicationsTopic -->
+
+    <Class rdf:about="http://edas#CommunicationsTopic">
+        <rdfs:subClassOf rdf:resource="http://conference#Committee_member"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ComputerNetworksAapplicationsTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksAapplicationsTopic">
+        <rdfs:subClassOf rdf:resource="http://conference#Camera_ready_contribution"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ComputerNetworksEnterpriseTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksEnterpriseTopic"/>
+    
+
+
+    <!-- http://edas#ComputerNetworksManagementTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksManagementTopic">
+        <rdfs:subClassOf rdf:resource="http://conference#Conference_applicant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ComputerNetworksMeasurementsTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksMeasurementsTopic"/>
+    
+
+
+    <!-- http://edas#ComputerNetworksSecurityTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksSecurityTopic"/>
+    
+
+
+    <!-- http://edas#ComputerNetworksTopic -->
+
+    <Class rdf:about="http://edas#ComputerNetworksTopic">
+        <rdfs:subClassOf rdf:resource="http://conference#Conference_contributor"/>
+    </Class>
+    
+
+
+    <!-- http://edas#Conference -->
+
+    <Class rdf:about="http://edas#Conference"/>
+    
+
+
+    <!-- http://edas#ConferenceChair -->
+
+    <Class rdf:about="http://edas#ConferenceChair"/>
+    
+
+
+    <!-- http://edas#ConferenceDinner -->
+
+    <Class rdf:about="http://edas#ConferenceDinner"/>
+    
+
+
+    <!-- http://edas#ConferenceEvent -->
+
+    <Class rdf:about="http://edas#ConferenceEvent"/>
+    
+
+
+    <!-- http://edas#ConferenceSession -->
+
+    <Class rdf:about="http://edas#ConferenceSession">
+        <rdfs:subClassOf rdf:resource="http://conference#Conference_contributor"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ContactInformation -->
+
+    <Class rdf:about="http://edas#ContactInformation">
+        <rdfs:subClassOf rdf:resource="http://conference#Contribution_1th-author"/>
+    </Class>
+    
+
+
+    <!-- http://edas#FreeTimeBreak -->
+
+    <Class rdf:about="http://edas#FreeTimeBreak">
+        <rdfs:subClassOf rdf:resource="http://conference#Registeered_applicant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#OrganizationalMeeting -->
+
+    <Class rdf:about="http://edas#OrganizationalMeeting">
+        <rdfs:subClassOf rdf:resource="http://conference#Organization"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PaperPresentation -->
+
+    <Class rdf:about="http://edas#PaperPresentation">
+        <rdfs:subClassOf rdf:resource="http://conference#Paid_applicant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#ParallelAndDistributedComputingTopic -->
+
+    <Class rdf:about="http://edas#ParallelAndDistributedComputingTopic">
+        <rdfs:subClassOf rdf:resource="http://conference#Passive_conference_participant"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PendingPaper -->
+
+    <Class rdf:about="http://edas#PendingPaper">
+        <rdfs:subClassOf rdf:resource="http://conference#Invited_speaker"/>
+    </Class>
+    
+
+
+    <!-- http://edas#PersonalPublicationHistory -->
+
+    <Class rdf:about="http://edas#PersonalPublicationHistory"/>
+    
+
+
+    <!-- http://edas#Place -->
+
+    <Class rdf:about="http://edas#Place"/>
+    
+
+
+    <!-- http://edas#PowerlineTransmissionTopic -->
+
+    <Class rdf:about="http://edas#PowerlineTransmissionTopic"/>
+    
+
+
+    <!-- http://edas#Presenter -->
+
+    <Class rdf:about="http://edas#Presenter"/>
+    
+
+
+    <!-- http://edas#RejectRating -->
+
+    <Class rdf:about="http://edas#RejectRating"/>
+    
+
+
+    <!-- http://edas#ReviewQuestion -->
+
+    <Class rdf:about="http://edas#ReviewQuestion"/>
+    
+
+
+    <!-- http://edas#ReviewRating -->
+
+    <Class rdf:about="http://edas#ReviewRating"/>
+    
+
+
+    <!-- http://edas#SatelliteAndSpaceCommunicationsTopic -->
+
+    <Class rdf:about="http://edas#SatelliteAndSpaceCommunicationsTopic"/>
+    
+
+
+    <!-- http://edas#WirelessCommunicationsTopic -->
+
+    <Class rdf:about="http://edas#WirelessCommunicationsTopic"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version [Not Released]) http://owlapi.sourceforge.net -->
+

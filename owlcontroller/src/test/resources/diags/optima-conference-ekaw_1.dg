@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.w3.org/2002/07/owl"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://conference#contributes -->
+
+    <ObjectProperty rdf:about="http://conference#contributes"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://conference#Abstract -->
+
+    <Class rdf:about="http://conference#Abstract">
+        <rdfs:subClassOf rdf:resource="http://conference#Extended_abstract"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Chair -->
+
+    <Class rdf:about="http://conference#Chair">
+        <rdfs:subClassOf rdf:resource="http://ekaw#PC_Chair"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Tutorial_Chair"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_contribution -->
+
+    <Class rdf:about="http://conference#Conference_contribution">
+        <rdfs:subClassOf rdf:resource="http://conference#Conference_document"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_contributor -->
+
+    <Class rdf:about="http://conference#Conference_contributor">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_document -->
+
+    <Class rdf:about="http://conference#Conference_document"/>
+    
+
+
+    <!-- http://conference#Conference_part -->
+
+    <Class rdf:about="http://conference#Conference_part">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Conference_participant -->
+
+    <Class rdf:about="http://conference#Conference_participant">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Conference_Participant"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Extended_abstract -->
+
+    <Class rdf:about="http://conference#Extended_abstract"/>
+    
+
+
+    <!-- http://conference#Invited_speaker -->
+
+    <Class rdf:about="http://conference#Invited_speaker">
+        <equivalentClass>
+            <Restriction>
+                <onProperty rdf:resource="http://conference#contributes"/>
+                <someValuesFrom rdf:resource="http://conference#Invited_talk"/>
+            </Restriction>
+        </equivalentClass>
+    </Class>
+    
+
+
+    <!-- http://conference#Invited_talk -->
+
+    <Class rdf:about="http://conference#Invited_talk"/>
+    
+
+
+    <!-- http://conference#Paper -->
+
+    <Class rdf:about="http://conference#Paper">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Demo_Paper"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Evaluated_Paper"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Paper"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Paper_Author"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Regular_Paper"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Workshop_Paper"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Person -->
+
+    <Class rdf:about="http://conference#Person">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Person"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Presentation -->
+
+    <Class rdf:about="http://conference#Presentation">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Individual_Presentation"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Presenter"/>
+    </Class>
+    
+
+
+    <!-- http://conference#Review -->
+
+    <Class rdf:about="http://conference#Review">
+        <rdfs:subClassOf rdf:resource="http://ekaw#Negative_Review"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Neutral_Review"/>
+        <rdfs:subClassOf rdf:resource="http://ekaw#Positive_Review"/>
+    </Class>
+    
+
+
+    <!-- http://ekaw#Conference -->
+
+    <Class rdf:about="http://ekaw#Conference"/>
+    
+
+
+    <!-- http://ekaw#Conference_Participant -->
+
+    <Class rdf:about="http://ekaw#Conference_Participant"/>
+    
+
+
+    <!-- http://ekaw#Demo_Paper -->
+
+    <Class rdf:about="http://ekaw#Demo_Paper"/>
+    
+
+
+    <!-- http://ekaw#Evaluated_Paper -->
+
+    <Class rdf:about="http://ekaw#Evaluated_Paper"/>
+    
+
+
+    <!-- http://ekaw#Individual_Presentation -->
+
+    <Class rdf:about="http://ekaw#Individual_Presentation"/>
+    
+
+
+    <!-- http://ekaw#Negative_Review -->
+
+    <Class rdf:about="http://ekaw#Negative_Review"/>
+    
+
+
+    <!-- http://ekaw#Neutral_Review -->
+
+    <Class rdf:about="http://ekaw#Neutral_Review"/>
+    
+
+
+    <!-- http://ekaw#PC_Chair -->
+
+    <Class rdf:about="http://ekaw#PC_Chair"/>
+    
+
+
+    <!-- http://ekaw#Paper -->
+
+    <Class rdf:about="http://ekaw#Paper"/>
+    
+
+
+    <!-- http://ekaw#Paper_Author -->
+
+    <Class rdf:about="http://ekaw#Paper_Author"/>
+    
+
+
+    <!-- http://ekaw#Person -->
+
+    <Class rdf:about="http://ekaw#Person"/>
+    
+
+
+    <!-- http://ekaw#Positive_Review -->
+
+    <Class rdf:about="http://ekaw#Positive_Review"/>
+    
+
+
+    <!-- http://ekaw#Presenter -->
+
+    <Class rdf:about="http://ekaw#Presenter"/>
+    
+
+
+    <!-- http://ekaw#Regular_Paper -->
+
+    <Class rdf:about="http://ekaw#Regular_Paper"/>
+    
+
+
+    <!-- http://ekaw#Tutorial_Chair -->
+
+    <Class rdf:about="http://ekaw#Tutorial_Chair"/>
+    
+
+
+    <!-- http://ekaw#Workshop_Paper -->
+
+    <Class rdf:about="http://ekaw#Workshop_Paper"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version [Not Released]) http://owlapi.sourceforge.net -->
+
