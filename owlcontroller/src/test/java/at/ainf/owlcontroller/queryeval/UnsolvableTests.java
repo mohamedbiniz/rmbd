@@ -59,6 +59,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     private boolean showElRates = true;
 
+    private boolean traceDiagnosesAndQueries = false;
+
     @BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlcontroller-log4j.properties").getFile();
@@ -354,6 +356,13 @@ public class UnsolvableTests extends BasePerformanceTests {
                     break;
                 }
 
+                if (traceDiagnosesAndQueries) {
+                    String diag1 = "";
+                    for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
+                        diag1 += Utils.renderAxioms(diagnosis) + " ; ";
+                    logger.info("diagnoses before query " + num_of_queries + ":" + diag1);
+                }
+
                 String infoCa = "";
                 for (Set<OWLLogicalAxiom> diagnose : diagnoses)
                         infoCa += diagnose.size() + "/";
@@ -436,6 +445,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 if (qss != null) qss.updateParameters(answer);
 
+                if (traceDiagnosesAndQueries)
+                    logger.info("query asked: " + Utils.renderAxioms(actPa.partition));
 
                 // fine all dz diagnoses
                 // TODO do we need this fine?
@@ -1100,7 +1111,9 @@ public class UnsolvableTests extends BasePerformanceTests {
     @Test
     public void doSimpleQuerySession()
         throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
+        traceDiagnosesAndQueries = true;
 
+        NUMBER_OF_HITTING_SETS = 2;
         QSSType type = MINSCORE;
         boolean dual = true;
         String name = "koala.owl";
