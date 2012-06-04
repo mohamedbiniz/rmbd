@@ -423,6 +423,18 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
     private int consistencyCount = 0;
 
+    private long consistencyTime = 0;
+
+    private void addConsistencyTime(long time) {
+        consistencyTime += time;
+    }
+
+    public long getConsistencyTime() {
+        long res = consistencyTime;
+        consistencyTime = 0;
+        return res;
+    }
+
     public boolean verifyConsistency() {
         start("Overall consistency check including management");
         updateAxioms(getOntology(), getFormulaStack(), getBackgroundFormulas());
@@ -444,7 +456,9 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         stop();
         start("Consistency test");
         incrementConsistencyChecks();
+        long timeCons = System.currentTimeMillis();
         consistent = reasoner.isConsistent();
+        addConsistencyTime(System.currentTimeMillis() - timeCons);
         stop();
         start("Coherency test");
         if (!isReduceToUnsat() && consistent) {
