@@ -527,6 +527,9 @@ public class UnsolvableTests extends BasePerformanceTests {
         if (num_of_queries != 0) consistencyCount = theory.getConsistencyCount() / num_of_queries;
         if (num_of_queries != 0) reactionTime = reactionTime / num_of_queries;
 
+        long consistencyTime = 0;
+        if (consistencyCount != 0) consistencyTime = theory.getConsistencyTime() / consistencyCount;
+
 //        message += " , Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
 //                + targetDiagnosisIsMostProbable + ", is in window " + targetDiagnosisIsInWind + ", size of window  " + diagWinSize
 //                + ", reaction " + reactionTime + ", user " + userBreak +
@@ -536,7 +539,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 + targetDiagnosisIsMostProbable + "," + targetDiagnosisIsInWind + "," + diagWinSize
                 + "," + reactionTime + "," + userBreak + "," + possibleError +
                 "," + systemBreak + "," + hasQueryWithNoDecisionPossible +
-                "," + consistencyCount;
+                "," + consistencyCount + "," + consistencyTime;
         logger.info(message);
         if (possibleError) {
             logger.info("Possible an error occured: ");
@@ -978,12 +981,19 @@ public class UnsolvableTests extends BasePerformanceTests {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getStorage().getDiagnoses();
-            int rnd = new Random(12312).nextInt(diagnoses.size());
-            logger.info("diagnosis selected as target: " + rnd);
+            int rnd = random.nextInt(diagnoses.size());
+            randomDiagNr = rnd ;
+            logger.info(file.getName() + " diagnosis selected as target: " + rnd);
             targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>)diagnoses.toArray()[rnd]);
+            logger.info(file.getName()+" target diagnosis axioms: " + Utils.renderAxioms(targetDg));
+
             search30.clearSearch();
         return targetDg;
     }
+
+    int randomDiagNr = -1;
+
+    Random random = new Random(12311) ;
 
     @Test
     public void doTestsOAEIConference()
@@ -1072,10 +1082,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             TableList e = new TableList();
                             out += "," + type + ",";
-                            String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource + "," + type + "," + preprocessModulExtract;
-
-
-
+                            String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
+                                    + "," + type + "," + preprocessModulExtract + "," + randomDiagNr;
                             out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
                         }
