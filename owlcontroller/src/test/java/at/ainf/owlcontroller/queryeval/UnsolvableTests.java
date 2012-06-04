@@ -41,6 +41,7 @@ import java.util.*;
 
 import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.MINSCORE;
 import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.SPLITINHALF;
+import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.DYNAMICRISK;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -983,9 +984,9 @@ public class UnsolvableTests extends BasePerformanceTests {
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getStorage().getDiagnoses();
             int rnd = random.nextInt(diagnoses.size());
             randomDiagNr = rnd ;
-            logger.info(file.getName() + " diagnosis selected as target: " + rnd);
+            logger.info(file.getName() + ",diagnosis selected as target," + rnd);
             targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>)diagnoses.toArray()[rnd]);
-            logger.info(file.getName()+" target diagnosis axioms: " + Utils.renderAxioms(targetDg));
+            logger.info(file.getName()+",target diagnosis axioms," + Utils.renderAxioms(targetDg));
 
             search30.clearSearch();
         return targetDg;
@@ -1188,9 +1189,10 @@ public class UnsolvableTests extends BasePerformanceTests {
         //          new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
         String[] files = new String[]{"Aroma"};
 
-        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
-                        BasePerformanceTests.QSSType.DYNAMICRISK};
+        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{DYNAMICRISK};
+        //BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
+        //        {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
+        //                BasePerformanceTests.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {

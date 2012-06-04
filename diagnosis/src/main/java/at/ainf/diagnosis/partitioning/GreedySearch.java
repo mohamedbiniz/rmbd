@@ -71,6 +71,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
 
     public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
+        numOfHittingSets = hittingSets.size();
         if (getScoringFunction() == null)
             throw new IllegalStateException("Scoring function is not set!");
         // save the original hitting sets

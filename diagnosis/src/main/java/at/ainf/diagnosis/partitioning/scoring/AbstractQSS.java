@@ -36,8 +36,8 @@ public abstract class AbstractQSS<T> implements QSS<T> {
         return Math.min(partition.dx.size(), partition.dnx.size());
     }
 
-    public void updateNumOfLeadingDiags(Partition<T> partition) {
-        numOfLeadingDiags = getNumOfLeadingDiags(partition);
+    public void updateNumOfLeadingDiags(int numOfLeadingDiags) {
+        this.numOfLeadingDiags = numOfLeadingDiags;
     }
 
     public void updateAnswerToLastQuery(boolean answer) {
@@ -54,8 +54,8 @@ public abstract class AbstractQSS<T> implements QSS<T> {
         updateNumOfEliminatedLeadingDiags(answer);
     }
 
-    protected void preprocessBeforeRun(List<Partition<T>> partitions) {
-        updateNumOfLeadingDiags(partitions.get(0));
+    protected void preprocessBeforeRun(int numOfLeadingDiags) {
+        updateNumOfLeadingDiags(numOfLeadingDiags);
     }
 
     protected int getNumOfLeadingDiags(Partition<T> partition){
