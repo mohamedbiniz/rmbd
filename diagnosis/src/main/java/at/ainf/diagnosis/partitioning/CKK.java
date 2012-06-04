@@ -103,6 +103,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
     public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
 
+        numOfHittingSets = hittingSets.size();
         reset();
         Set<E> hs = preprocess(hittingSets);
 

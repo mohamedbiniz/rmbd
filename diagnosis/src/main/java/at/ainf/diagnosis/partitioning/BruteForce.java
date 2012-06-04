@@ -57,9 +57,16 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return res.toString();
     }
 
+    protected int numOfHittingSets;
+
+    public int getNumOfHittingSets() {
+        return numOfHittingSets;
+    }
+
     public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
 
+        numOfHittingSets = hittingSets.size();
         reset();
        Set<E> hs = preprocess(hittingSets);
 

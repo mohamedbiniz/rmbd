@@ -62,23 +62,26 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
         return leastCautiousNonHighRiskQueries;
     }
 
-    protected void preprocessBeforeRun(List<Partition<T>> partitions) {
+    protected void preprocessBeforeRun(int numOfLeadingDiags) {
         // order of method calls IMPORTANT
-        updateNumOfLeadingDiags(partitions.get(0));
+        updateNumOfLeadingDiags(numOfLeadingDiags);
         preprocessC();
     }
 
     public Partition<T> runPostprocessor(List<Partition<T>> partitions, Partition<T> currentBest) throws SolverException, InconsistentTheoryException {
         int count = 0;
+
+        int numOfHittingSets = getPartitionSearcher().getNumOfHittingSets();
+        preprocessBeforeRun(numOfHittingSets);
+        int numOfDiagsToElim = convertCToNumOfDiags(c);
         for (Partition<T> partition : partitions) {
-            if (count++ > partitions.size()*0.3)
+            if (count++ > partitions.size()*0.1)
                 break;
-            if (!partition.isVerified)
+            if (!partition.isVerified && partition.dx.size() <= numOfHittingSets - numOfDiagsToElim)
                 getPartitionSearcher().verifyPartition(partition);
         }
 
-        preprocessBeforeRun(partitions);
-        int numOfDiagsToElim = convertCToNumOfDiags(c);
+
         Partition<T> minScorePartition;
 
         if (getMinNumOfElimDiags((minScorePartition = selectMinScorePartition(partitions, currentBest))) >= numOfDiagsToElim) {

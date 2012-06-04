@@ -24,5 +24,7 @@ public interface Partitioning<T> {
 
     public void setThreshold(double threshold);
 
+    public int getNumOfHittingSets();
+
     boolean verifyPartition(Partition<T> partition) throws SolverException, InconsistentTheoryException;
 }

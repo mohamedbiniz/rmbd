@@ -71,7 +71,7 @@ public class PenaltyQSS<T> extends MinScoreQSS<T> {
 
 
     public Partition<T> runPostprocessor(List<Partition<T>> partitions, Partition<T> currentBest) {
-        preprocessBeforeRun(partitions);
+        preprocessBeforeRun(getPartitionSearcher().getNumOfHittingSets());
 
         List<Partition<T>> candidates = new LinkedList<Partition<T>>();
         List<Partition<T>> nonCandidates = new LinkedList<Partition<T>>();
