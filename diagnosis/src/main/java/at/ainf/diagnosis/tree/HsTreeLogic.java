@@ -67,12 +67,17 @@ public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id>
             Node<Id> node = (Node<Id>) invalidHittingSet.getNode();
             if (node.isRoot())
                 throw new IllegalStateException("Impossible source of a hitting set");
-            if (node.getParent() != null){
+            if (isConnectedToRoot(node)) {
                 node.setOpen();
                 tree.pushOpenNode(node);
                 tree.getStorage().removeHittingSet(invalidHittingSet);
             }
         }
+    }
+
+    private boolean isConnectedToRoot(Node<Id> node) {
+        if (node == null) return false;
+        return node.isRoot() || isConnectedToRoot(node.getParent());
     }
 
     private void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
@@ -118,8 +123,7 @@ public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id>
     }
 
     private void removeChildren(Node<Id> idNode) {
-        if (!tree.getOpenNodes().remove(idNode))
-        {
+        if (!tree.getOpenNodes().remove(idNode)) {
             for (Node<Id> node : idNode.getChildren()) {
                 removeChildren(node);
             }
