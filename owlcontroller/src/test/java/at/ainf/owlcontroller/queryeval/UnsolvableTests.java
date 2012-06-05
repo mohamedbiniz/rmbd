@@ -1234,7 +1234,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         //String[] files =
                   //new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
         //String[] files = new String[]{"Aroma"};
-        String[] files = new String[]{"MapSSS"};
+        String[] files = new String[]{"Lily"};
 
         //BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{DYNAMICRISK};
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
