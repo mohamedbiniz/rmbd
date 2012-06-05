@@ -83,6 +83,10 @@ public class MixedTreeSearch<Id> implements TreeSearch<AxiomSet<Id>, Id> {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    public void pushOpenNode(Node<Id> idNode) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public void pushOpenNodes(Node<Id> idNode) {
         //To change body of implemented methods use File | Settings | File Templates.
     }

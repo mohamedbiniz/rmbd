@@ -14,14 +14,12 @@
  */
 package at.ainf.diagnosis.quickxplain;
 
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.theory.Searchable;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static _dev.TimeLog.start;
 

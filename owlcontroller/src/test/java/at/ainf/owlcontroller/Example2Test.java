@@ -71,7 +71,11 @@ public class Example2Test extends AbstractExample {
         D2(new Axiom[]{Axiom.AX3}),
         D3(new Axiom[]{Axiom.AX4, Axiom.AX5}),
         D4(new Axiom[]{Axiom.AX4, Axiom.AX2}),
-        D5(new Axiom[]{Axiom.AX4, Axiom.AX3});
+        D5(new Axiom[]{Axiom.AX4, Axiom.AX3}),
+        // these diagnoses are minimal because of test cases
+        // making D2 invalid diagnosis
+        D6(new Axiom[]{Axiom.AX3, Axiom.AX2}),
+        D7(new Axiom[]{Axiom.AX3, Axiom.AX5});
 
         private TreeSet<Axiom> set = new TreeSet<Axiom>();
 
