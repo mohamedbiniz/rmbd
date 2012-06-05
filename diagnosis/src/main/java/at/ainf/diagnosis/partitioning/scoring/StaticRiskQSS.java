@@ -75,7 +75,7 @@ public class StaticRiskQSS<T> extends MinScoreQSS<T> {
         preprocessBeforeRun(numOfHittingSets);
         int numOfDiagsToElim = convertCToNumOfDiags(c);
         for (Partition<T> partition : partitions) {
-            if (count++ > partitions.size()*0.02)
+            if (count++ > partitions.size()*0.05)
                 break;
             if (!partition.isVerified && partition.dx.size() <= numOfHittingSets - numOfDiagsToElim)
                 getPartitionSearcher().verifyPartition(partition);
