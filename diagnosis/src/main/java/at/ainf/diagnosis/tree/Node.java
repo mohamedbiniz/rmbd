@@ -39,9 +39,21 @@ public class Node<Id> {
     // CONFLICT: if the node is not calculated or closed conflict = null
     private Set<Id> conflict = null;
 
+    private final boolean root;
+
+    // constructor for root
+    public Node(Set<Id> conflict) {
+        this.parent = null;
+        // arcLabel = -1
+        this.arcLabel = null;
+        this.conflict = conflict;
+        this.root = true;
+    }
+
     public Node(Node<Id> parent, Id arcLabel) {
         parent.addChild(this);
         this.arcLabel = arcLabel;
+        this.root = false;
         //this.conflict = NOT_CALCULATED;
     }
 
@@ -51,23 +63,19 @@ public class Node<Id> {
     }
 
     public boolean removeChild(Node<Id> node) {
+        node.removeParent();
         return this.children.remove(node);
     }
 
     public void removeChildren() {
+        for (Node<Id> child : children) {
+            child.removeParent();
+        }
         this.children.clear();
     }
 
     public Set<Node<Id>> getChildren() {
         return Collections.unmodifiableSet(children);
-    }
-
-    // constructor for root
-    public Node(Set<Id> conflict) {
-        this.parent = null;
-        // arcLabel = -1
-        this.arcLabel = null;
-        this.conflict = conflict;
     }
 
     public ArrayList<Node<Id>> expandNode() {
@@ -114,7 +122,7 @@ public class Node<Id> {
     }
 
     public boolean isRoot() {
-        return this.parent == null;
+        return this.root;
     }
 
     public void removeParent(){
@@ -159,5 +167,9 @@ public class Node<Id> {
 
     public void removeAxioms() {
         this.conflict = null;
+    }
+
+    public void setOpen() {
+        this.closed = false;
     }
 }

@@ -1115,13 +1115,14 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         NUMBER_OF_HITTING_SETS = 2;
         QSSType type = MINSCORE;
-        boolean dual = true;
-        String name = "koala.owl";
+        boolean dual = false;
+        String name = "dualISWC2012.owl";
 
         OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",name);
 
         Set<OWLLogicalAxiom> targetDg = new LinkedHashSet<OWLLogicalAxiom>();
-        targetDg.add(new MyOWLRendererParser(ontology).parse("Marsupials DisjointWith Person"));
+        targetDg.add(new MyOWLRendererParser(ontology).parse("B SubClassOf D and (not (s some C))"));
+        targetDg.add(new MyOWLRendererParser(ontology).parse("C SubClassOf not (D or E)"));
 
         long preprocessModulExtract = System.currentTimeMillis();
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();

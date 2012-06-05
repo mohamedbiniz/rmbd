@@ -1,9 +1,7 @@
 package at.ainf.theory.storage;
 
-import at.ainf.theory.model.SolverException;
 import at.ainf.theory.watchedset.WatchedElement;
 
-import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -16,6 +14,8 @@ import java.util.Set;
 public interface AxiomSet<Id> extends Set<Id>, Comparable<AxiomSet<Id>>, WatchedElement<Double> {
 
     void updateAxioms(Set<Id> axioms);
+
+    Object getNode();
 
     public enum TypeOfSet { HITTING_SET, CONFLICT_SET, OTHER };
 

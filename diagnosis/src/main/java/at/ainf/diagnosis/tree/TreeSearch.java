@@ -69,4 +69,6 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> {
     public Node<Id> getRoot();
 
     public void addNodes(List<Node<Id>> nodeList);
+
+    void pushOpenNode(Node<Id> node);
 }

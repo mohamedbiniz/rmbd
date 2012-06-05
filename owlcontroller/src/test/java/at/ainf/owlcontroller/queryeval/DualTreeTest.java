@@ -56,16 +56,20 @@ public class DualTreeTest extends BasePerformanceTests {
 
     @Test
     public void testDualTreePruning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
-        String ont = "queryontologies/dualpaper.owl";
-        List<String> testCases = new LinkedList<String>();
-        runComparison(ont, -1, testCases);
-        testCases.add("C SubClassOf not (D or E)");
+        String ont = "queryontologies/onediag.owl";
+        List<String> ptestCases = new LinkedList<String>();
+        List<String> ntestCases = new LinkedList<String>();
+        runComparison(ont, -1, ptestCases, ntestCases);
+
+        ntestCases.add("v Type D");
+        runComparison(ont, 2, ptestCases, ntestCases);
+        /*testCases.add("w Type not D");
         runComparison(ont, 2, testCases);
-        testCases.add("A SubClassOf B");
-        runComparison(ont, 2, testCases);
+        */
     }
 
-    private void runComparison(String ont, int runs, List<String> testCases) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+    private void runComparison(String ont, int runs, List<String> ptestCases, List<String> ntestCases)
+            throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
 
         logger.info("----- Computing dual case -----");
         Searcher<OWLLogicalAxiom> dualSearcher = new FastDiagnosis<OWLLogicalAxiom>();
@@ -75,7 +79,7 @@ public class DualTreeTest extends BasePerformanceTests {
                 new BreadthFirstSearch<OWLLogicalAxiom>(dualStorage);
         searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>());
 
-        computeQueryExample(ont, runs, true, dualSearcher, searchDual, testCases);
+        computeQueryExample(ont, runs, true, dualSearcher, searchDual, ptestCases, ntestCases);
 
         logger.info("----- Computing normal case -----");
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
@@ -84,7 +88,7 @@ public class DualTreeTest extends BasePerformanceTests {
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal =
                 new BreadthFirstSearch<OWLLogicalAxiom>(storage);
 
-        computeQueryExample(ont, runs, false, searcher, searchNormal, testCases);
+        computeQueryExample(ont, runs, false, searcher, searchNormal, ptestCases, ntestCases);
 
         //prinths(storage.getDiagnoses());
         //prinths(dualStorage.getDiagnoses());
@@ -113,7 +117,10 @@ public class DualTreeTest extends BasePerformanceTests {
     }
 
 
-    private void computeQueryExample(String ont, int runs, boolean dual, Searcher<OWLLogicalAxiom> searcher, TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal, List<String> testCases) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+    private void computeQueryExample(String ont, int runs, boolean dual, Searcher<OWLLogicalAxiom> searcher,
+                                     TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal,
+                                     List<String> ptestCases,  List<String> ntestCases)
+            throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
 
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         searchNormal.setSearcher(searcher);
@@ -130,12 +137,16 @@ public class DualTreeTest extends BasePerformanceTests {
         if (runs < 1) return;
 
         HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
+        HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
         MyOWLRendererParser parser = new MyOWLRendererParser(theoryNormal.getOriginalOntology());
-        for (String testcase : testCases)
+        for (String testcase : ptestCases)
             positiveTestcase.add(parser.parse(testcase));
+        for (String testcase : ntestCases)
+            negativeTestcase.add(parser.parse(testcase));
 
         logger.info("All diagnoses and conflicts with test cases");
         theoryNormal.addEntailedTest(positiveTestcase);
+        theoryNormal.addNonEntailedTest(negativeTestcase);
         searchNormal.continueSearch();
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getStorage().getDiagnoses())
             logger.info("HS " + Utils.renderAxioms(hs));
