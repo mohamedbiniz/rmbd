@@ -431,7 +431,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
     protected boolean hasClosedParent(Node<Id> node) {
         if (node.isRoot())
             return node.isClosed();
-        return node.isClosed() || hasClosedParent(node.getParent());
+        return node.getParent()==null || node.isClosed() || hasClosedParent(node.getParent());
     }
 
   /*
