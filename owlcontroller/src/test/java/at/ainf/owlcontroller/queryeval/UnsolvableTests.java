@@ -1231,15 +1231,15 @@ public class UnsolvableTests extends BasePerformanceTests {
         //boolean background_add = false;
         showElRates = false;
 
-        //String[] files =
-                  //new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
-        String[] files = new String[]{"Aroma"};
+        String[] files =
+                  new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
+        //String[] files = new String[]{"Aroma"};
 
         //BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{DYNAMICRISK};
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {BasePerformanceTests.QSSType.MINSCORE, SPLITINHALF, DYNAMICRISK};
-        for (boolean dual : new boolean[] {false}) {
-            for (boolean background : new boolean[]{false}) {
+                {BasePerformanceTests.QSSType.MINSCORE,  SPLITINHALF };
+        for (boolean dual : new boolean[] {true, false}) {
+            for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
