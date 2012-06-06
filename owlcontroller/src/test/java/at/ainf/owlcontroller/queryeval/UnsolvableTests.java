@@ -1711,7 +1711,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         int MAX_RUNS = 15;
         rnd = new Random(121);
 
-        for (String name : new String[]{"Transportation-SDA.owl"}) {
+        for (String name : new String[]{"Economy-SDA.owl"}) {
             for (boolean dual : new boolean[] {false,true}) {
 
                 UniformCostSearch<OWLLogicalAxiom> search = getSearch(CreationUtils.createOwlOntology("queryontologies",name),false);
