@@ -1250,14 +1250,14 @@ public class UnsolvableTests extends BasePerformanceTests {
         showElRates = false;
 
         String[] files =
-                  new String[]{"AgrMaker", "Aroma", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
+                  new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
         //String[] files = new String[]{"Aroma"};
 
         //BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{DYNAMICRISK};
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {BasePerformanceTests.QSSType.MINSCORE,  SPLITINHALF };
-        for (boolean dual : new boolean[] {true, false}) {
-            for (boolean background : new boolean[]{true}) {
+                {BasePerformanceTests.QSSType.MINSCORE,  SPLITINHALF, DYNAMICRISK};
+        for (boolean dual : new boolean[] {false}) {
+            for (boolean background : new boolean[]{false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
@@ -1289,7 +1289,15 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                                 String path = ClassLoader.getSystemResource("oaei11/" +file+ ".txt").getPath();
 
-                                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+                                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path){
+                                    public double getAxiomCosts(OWLLogicalAxiom label) {
+                                        if (axiomProb.get(label) != null)
+                                            return 0.001;
+                                        else
+                                            return 0.01;
+
+                                    }
+                                };
 
 
                                 targetDg = null;

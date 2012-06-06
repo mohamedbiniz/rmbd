@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
 
-    Map<OWLLogicalAxiom,Double> axiomProb;
+    protected Map<OWLLogicalAxiom,Double> axiomProb;
     
     protected double STATIC_COSTS = 0.001;
     
