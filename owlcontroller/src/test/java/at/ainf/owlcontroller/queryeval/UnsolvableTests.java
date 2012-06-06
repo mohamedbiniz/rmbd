@@ -18,6 +18,9 @@ import at.ainf.owlcontroller.RDFUtils;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlcontroller.distributiongenerators.DistributionGeneratorI;
+import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
+import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
@@ -940,6 +943,21 @@ public class UnsolvableTests extends BasePerformanceTests {
         }
     }
 
+    private UniformCostSearch<OWLLogicalAxiom> getSearch(OWLOntology ontology, boolean dual) throws SolverException, InconsistentTheoryException {
+
+        OWLOntology extracted = new OWLIncoherencyExtractor(
+                new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+        OWLTheory theory = createTheoryOAEI(ontology, dual, true);
+        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+
+        search.setCostsEstimator(es);
+        search.clearSearch();
+
+        return search;
+    }
+
     private Set<OWLLogicalAxiom> getRandomDiag(File file, String directory) throws SolverException, InconsistentTheoryException {
         String matchingsDir = "oaei11conference/matchings/";
         String mapd = matchingsDir + directory;
@@ -1488,23 +1506,6 @@ public class UnsolvableTests extends BasePerformanceTests {
         return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
     }
 
-    private Set<OWLLogicalAxiom> getDualTreeTranspErrDiag() {
-        Set<OWLLogicalAxiom> result = new LinkedHashSet<OWLLogicalAxiom>();
-        Set<String> target = new LinkedHashSet<String>();
-        target.add("ContainerAndRoRoCargoShip SubClassOf PartialContainerShip");
-        target.add("InternationalAirport SubClassOf CommercialAirport");
-        target.add("LightTruck SubClassOf Automobile");
-        target.add("ShipCabin SubClassOf HumanHabitationArtifact");
-        target.add("AirTransitway DisjointWith TransitRoute");
-        target.add("CargoShip DisjointWith PassengerShip");
-        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies","Transportation-SDA.owl");
-        for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
-            if (target.contains(new ManchesterOWLSyntaxOWLObjectRendererImpl().render(axiom)))
-                result.add(axiom);
-        }
-        return result;
-    }
-
     private AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
             (DiagProbab
                      diagProbab, TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
@@ -1577,6 +1578,8 @@ public class UnsolvableTests extends BasePerformanceTests {
         return next;
     }
 
+
+
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = AlignmentUtils.readProps("alignment.allFiles.properties");
@@ -1588,7 +1591,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[] {false}) {
-            for (boolean background : new boolean[]{true,false}) {
+            for (boolean background : new boolean[]{false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE,TargetSource.FROM_30_DIAGS}) {
                     for (String m : mapOntos.keySet()) {
                         for (String o : mapOntos.get(m)) {
@@ -1677,12 +1680,13 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
                                 //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
-                                TimeoutTask task = new TimeoutTask (4*3600*1000,m.trim(),o.trim() );
-                                task.setSearch(search);
-                                timer.scheduleAtFixedRate(task, 0, TimeoutTask.CYCLE_TIME);
+                                //TimeoutTask task = new TimeoutTask (4*3600*1000,m.trim(),o.trim() );
+                                //task.setSearch(search);
+                                //timer.scheduleAtFixedRate(task, 0, TimeoutTask.CYCLE_TIME);
                                 out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
-                                task.cancel();
-                                task.setSearch(null);
+                                //task.cancel();
+                                //task.setSearch(null);
+
                             }
                             logger.info(out);
                         }
@@ -1690,6 +1694,153 @@ public class UnsolvableTests extends BasePerformanceTests {
                 }
             }
         }
+    }
+
+    @Test
+    public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
+
+        showElRates = false;
+        int MAX_RUNS = 1;
+        rnd = new Random(121);
+
+        for (String name : new String[]{"Univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"}) {
+            for (boolean dual : new boolean[] {false,true}) {
+
+                UniformCostSearch<OWLLogicalAxiom> search = getSearch(CreationUtils.createOwlOntology("queryontologies",name),dual);
+                try {
+                    search.run();
+                } catch (NoConflictException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                Set<AxiomSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                ModerateDistribution moderateDistribution = new ModerateDistribution();
+                ExtremeDistribution extremeDistribution = new ExtremeDistribution();
+                search.clearSearch();
+
+                String out = "";
+
+                for (UsersProbab usersProbab : UsersProbab.values()) {
+                    for (DiagProbab diagProbab : DiagProbab.values()) {
+                        for (int run = 0; run < MAX_RUNS; run++) {
+
+                            UniformCostSearch<OWLLogicalAxiom> search2 = getSearch(CreationUtils.createOwlOntology("queryontologies",name),dual);
+                            diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
+                            AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
+
+
+
+
+
+                                TableList e = new TableList();
+                                String message = "act," + name + "," + dual + "," + usersProbab + ","
+                                        + diagProbab + "," + run  ;
+
+                                out += simulateBruteForceOnl(search2, (OWLTheory)search2.getTheory(), targetDiag, e, MINSCORE, message, null, null, null);
+
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+    }
+
+    private Set<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
+        TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        for (AxiomSet<OWLLogicalAxiom> hs : axiomSets)
+            phs.add(hs);
+        return Collections.unmodifiableSet(phs);
+    }
+
+    private void shuffleKeyword(ArrayList<ManchesterOWLSyntax> keywordList) {
+        ArrayList<ManchesterOWLSyntax> cp = new ArrayList<ManchesterOWLSyntax>(keywordList.size());
+        cp.addAll(keywordList);
+        keywordList.clear();
+        for (int i = 0; cp.size() > 0; i++) {
+            int j = rnd.nextInt(cp.size());
+            keywordList.add(i, cp.remove(j));
+        }
+        keywordList.addAll(cp);
+    }
+
+    private Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
+            (UsersProbab
+                     usersProbab, UniformCostSearch<OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, ExtremeDistribution extremeDistribution, ModerateDistribution moderateDistribution) {
+        Map<ManchesterOWLSyntax, Double> keywordProbs = new HashMap<ManchesterOWLSyntax, Double>();
+        //ProbabilityTableModel m = new ProbabilityTableModel();
+        ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(Utils.getProbabMap().keySet()));
+        ManchesterOWLSyntax[] selectedKeywords = new ManchesterOWLSyntax[]{ManchesterOWLSyntax.SOME, ManchesterOWLSyntax.ONLY,
+                ManchesterOWLSyntax.DISJOINT_CLASSES, ManchesterOWLSyntax.DISJOINT_WITH, ManchesterOWLSyntax.SUBCLASS_OF,
+                ManchesterOWLSyntax.EQUIVALENT_CLASSES, ManchesterOWLSyntax.NOT, ManchesterOWLSyntax.AND};
+
+        /*
+        keywordList = new ArrayList<ManchesterOWLSyntax>(Arrays.asList(selectedKeywords));
+        shuffleKeyword(keywordList);
+        */
+        //Set<Integer> highKeywordPos = new HashSet<Integer>();
+
+        List<ManchesterOWLSyntax> c = new ArrayList<ManchesterOWLSyntax>(Arrays.asList(selectedKeywords));
+        for (int i = 0; i < c.size() / 2; i++) {
+            int j = rnd.nextInt(c.size());
+            keywordList.remove(c.get(j));
+        }
+        c.removeAll(keywordList);
+        shuffleKeyword(keywordList);
+        for (int i = 0; c.size() > 0; i++) {
+            int j = rnd.nextInt(c.size());
+            keywordList.add(i, c.remove(j));
+        }
+        //keywordList.addAll(c);
+
+        int n = keywordList.size();
+        int k = n / 4;
+        double[] probabilities;
+
+        switch (usersProbab) {
+            case EXTREME:
+                probabilities = extremeDistribution.getProbabilities(n);
+                for (ManchesterOWLSyntax keyword : keywordList) {
+                    keywordProbs.put(keyword, probabilities[keywordList.indexOf(keyword)]);
+                }
+                /*highKeywordPos.add(rnd.nextInt(n));
+                for(ManchesterOWLSyntax keyword : keywordList) {
+                    if (highKeywordPos.contains(keywordList.indexOf(keyword)))
+                        keywordProbs.put(keyword,getProbabBetween(LOWER_BOUND_EXTREME_HIGH,HIGHER_BOUND_EXTREME_HIGH));
+                    else
+                        keywordProbs.put(keyword, getProbabBetween(LOWER_BOUND_EXTREME_LOW,HIGHER_BOUND_EXTREME_LOW));
+                }*/
+                break;
+            case MODERATE:
+                probabilities = moderateDistribution.getProbabilities(n);
+                for (ManchesterOWLSyntax keyword : keywordList) {
+                    keywordProbs.put(keyword, probabilities[keywordList.indexOf(keyword)]);
+                }
+                /*for (int i = 0; i < k; i++) {
+                    int num = rnd.nextInt(n);
+                    while (!highKeywordPos.add(num))
+                        num = rnd.nextInt();
+                }
+                for(ManchesterOWLSyntax keyword : keywordList) {
+                    if (highKeywordPos.contains(keywordList.indexOf(keyword)))
+                        keywordProbs.put(keyword,getProbabBetween(LOWER_BOUND_MODERATE_HIGH,HIGHER_BOUND_MODERATE_HIGH));
+                    else
+                        keywordProbs.put(keyword, getProbabBetween(LOWER_BOUND_MODERATE_LOW,HIGHER_BOUND_MODERATE_LOW));
+                }*/
+                break;
+            case UNIFORM:
+                for (ManchesterOWLSyntax keyword : keywordList) {
+                    keywordProbs.put(keyword, (1.0 / n));
+                }
+                break;
+        }
+        ((OWLAxiomKeywordCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
+        return sortDiagnoses(diagnoses);
+
+
     }
 
     @Test
@@ -1813,5 +1964,7 @@ public class UnsolvableTests extends BasePerformanceTests {
             }
         }
     }
+
+
 
 }
