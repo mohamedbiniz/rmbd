@@ -1700,13 +1700,13 @@ public class UnsolvableTests extends BasePerformanceTests {
     public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
 
         showElRates = false;
-        int MAX_RUNS = 1;
+        int MAX_RUNS = 15;
         rnd = new Random(121);
 
         for (String name : new String[]{"Univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"}) {
             for (boolean dual : new boolean[] {false,true}) {
 
-                UniformCostSearch<OWLLogicalAxiom> search = getSearch(CreationUtils.createOwlOntology("queryontologies",name),dual);
+                UniformCostSearch<OWLLogicalAxiom> search = getSearch(CreationUtils.createOwlOntology("queryontologies",name),false);
                 try {
                     search.run();
                 } catch (NoConflictException e) {
