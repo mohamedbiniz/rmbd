@@ -58,7 +58,7 @@ public class QueryQuestListItem extends ResultsListSectionItem {
     public void handleEntailed() {
         entailedMarked = !entailedMarked;
         nonEntailedMarked = false;
-        if (entailedMarked) askUserLN();
+        //if (entailedMarked) askUserLN();
 
     }
 
@@ -107,7 +107,7 @@ public class QueryQuestListItem extends ResultsListSectionItem {
     public void handleNotEntailed() {
         entailedMarked = false;
         nonEntailedMarked = !nonEntailedMarked;
-        if (nonEntailedMarked) askUserLN();
+        //if (nonEntailedMarked) askUserLN();
 
     }
 
