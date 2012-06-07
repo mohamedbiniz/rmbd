@@ -1289,15 +1289,15 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                                 String path = ClassLoader.getSystemResource("oaei11/" +file+ ".txt").getPath();
 
-                                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path); //{
-                                    /*public double getAxiomCosts(OWLLogicalAxiom label) {
+                                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path) {
+                                    public double getAxiomCosts(OWLLogicalAxiom label) {
                                         if (axiomProb.get(label) != null)
                                             return 0.001;
                                         else
                                             return 0.01;
 
-                                    }*/
-                                //};
+                                    }
+                                };
 
 
                                 targetDg = null;
