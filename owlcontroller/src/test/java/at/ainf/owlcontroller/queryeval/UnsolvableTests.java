@@ -1710,10 +1710,10 @@ public class UnsolvableTests extends BasePerformanceTests {
     public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
 
         showElRates = false;
-        int MAX_RUNS = 4+1;
+        int MAX_RUNS = 9+1;
         rnd = new Random(121);
 
-        for (String name : new String[]{"Univ.owl"}) {
+        for (String name : new String[]{"Transportation-SDA.owl"}) {
             for (boolean dual : new boolean[] {true}) {
 
                 UniformCostSearch<OWLLogicalAxiom> search = getSearch(CreationUtils.createOwlOntology("queryontologies",name),false);
@@ -1729,9 +1729,9 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 String out = "";
 
-                for (UsersProbab usersProbab : new UsersProbab[]{EXTREME}) {
-                    for (DiagProbab diagProbab : new DiagProbab[]{GOOD}) {
-                        for (int run = 4; run < MAX_RUNS; run++) {
+                for (UsersProbab usersProbab : new UsersProbab[]{MODERATE}) {
+                    for (DiagProbab diagProbab : new DiagProbab[]{BAD}) {
+                        for (int run = 9; run < MAX_RUNS; run++) {
 
                             UniformCostSearch<OWLLogicalAxiom> search2 = getSearch(CreationUtils.createOwlOntology("queryontologies",name),dual);
                             diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
