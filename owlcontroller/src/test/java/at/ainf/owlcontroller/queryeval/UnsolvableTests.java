@@ -1257,7 +1257,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         //BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{DYNAMICRISK};
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {BasePerformanceTests.QSSType.MINSCORE,  SPLITINHALF, DYNAMICRISK};
+                {DYNAMICRISK, MINSCORE, SPLITINHALF, };
         for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
