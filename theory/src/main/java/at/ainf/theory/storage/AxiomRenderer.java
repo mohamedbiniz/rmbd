@@ -1,5 +1,6 @@
 package at.ainf.theory.storage;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -13,6 +14,6 @@ public interface AxiomRenderer<Id> {
 
     String renderAxiom(Id axiom);
 
-    String renderAxioms(Set<Id> axioms);
+    String renderAxioms(Collection<Id> axioms);
 
 }

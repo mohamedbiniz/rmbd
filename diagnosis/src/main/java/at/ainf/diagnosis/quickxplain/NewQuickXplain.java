@@ -18,6 +18,8 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.theory.Searchable;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomRenderer;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -30,6 +32,10 @@ import static _dev.TimeLog.start;
 public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     private int iterations = 0;
+
+    private static Logger logger = Logger.getLogger(NewQuickXplain.class.getName());
+
+    private AxiomRenderer<Id> axiomRenderer;
 
     public NewQuickXplain() {
     }
@@ -80,6 +86,8 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException {
+        if (axiomRenderer!=null)
+            logger.info("B = {" + axiomRenderer.renderAxioms(b.getBackgroundFormulas()) + "}, D = {" + axiomRenderer.renderAxioms(d) + "}, OD = {" + axiomRenderer.renderAxioms(c) + "}");
         iterations++;
         if (d != null && d.size() != 0 && ! b.verifyRequirements())
             return null;
@@ -94,9 +102,13 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
 
         boolean res = b.push(c1);
         Set<Id> d2 = qqXPlain(b, c1, c2);
+        if (axiomRenderer!=null)
+            logger.info("D2 = {" + axiomRenderer.renderAxioms(d2) + "}");
         if (res) b.pop();
         res = b.push(d2);
         Set<Id> d1 = qqXPlain(b, d2, c1);
+        if (axiomRenderer!=null)
+            logger.info("D1 = {" + axiomRenderer.renderAxioms(d1) + "}");
         if (res) b.pop();
 
         if (d2 != null)
@@ -105,6 +117,10 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
             else
                 d1.addAll(d2);
         return d1;
+    }
+
+    public void setAxiomRenderer(AxiomRenderer<Id> axiomRenderer) {
+        this.axiomRenderer = axiomRenderer;
     }
 
     public int getIterations() {

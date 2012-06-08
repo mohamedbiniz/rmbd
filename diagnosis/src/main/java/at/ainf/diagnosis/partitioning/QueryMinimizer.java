@@ -59,4 +59,8 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
     public void removeBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
         theory.removeBackgroundFormulas(formulas);
     }
+
+    public Set<Id> getBackgroundFormulas() {
+        return theory.getBackgroundFormulas();
+    }
 }

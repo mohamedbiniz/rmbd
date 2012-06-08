@@ -6,6 +6,7 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -41,13 +42,25 @@ public class MyOWLRendererParser implements AxiomRenderer<OWLLogicalAxiom> {
 
     }
 
-    public String renderAxioms(Set<OWLLogicalAxiom> axioms) {
-        if(axioms==null) return "";
+    public String renderAxioms(Collection<OWLLogicalAxiom> axioms) {
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        String result = "";
+
+        if (axioms == null)
+            return "null";
+
+        for (OWLLogicalAxiom axiom : axioms) {
+            result += renderer.render(axiom) + ", ";
+        }
+        if (result.length()>2)
+            result = (String) result.subSequence(0,result.length()-2);
+        return result;
+        /*if(axioms==null) return "";
         String r = "[";
         for(OWLLogicalAxiom a : axioms)
             r += renderer.render (a) + ", ";
         r = r.substring(0,r.length()-2)+ " ]";
-        return r;
+        return r;*/
 
     }
 
