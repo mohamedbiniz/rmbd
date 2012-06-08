@@ -46,6 +46,8 @@ import java.util.*;
 import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.MINSCORE;
 import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.SPLITINHALF;
 import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.DYNAMICRISK;
+import static at.ainf.owlcontroller.queryeval.DiagProbab.*;
+import static at.ainf.owlcontroller.queryeval.UsersProbab.*;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -1708,11 +1710,11 @@ public class UnsolvableTests extends BasePerformanceTests {
     public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
 
         showElRates = false;
-        int MAX_RUNS = 15;
+        int MAX_RUNS = 4+1;
         rnd = new Random(121);
 
-        for (String name : new String[]{"Economy-SDA.owl"}) {
-            for (boolean dual : new boolean[] {false,true}) {
+        for (String name : new String[]{"Univ.owl"}) {
+            for (boolean dual : new boolean[] {true}) {
 
                 UniformCostSearch<OWLLogicalAxiom> search = getSearch(CreationUtils.createOwlOntology("queryontologies",name),false);
                 try {
@@ -1727,9 +1729,9 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 String out = "";
 
-                for (UsersProbab usersProbab : UsersProbab.values()) {
-                    for (DiagProbab diagProbab : DiagProbab.values()) {
-                        for (int run = 0; run < MAX_RUNS; run++) {
+                for (UsersProbab usersProbab : new UsersProbab[]{EXTREME}) {
+                    for (DiagProbab diagProbab : new DiagProbab[]{GOOD}) {
+                        for (int run = 4; run < MAX_RUNS; run++) {
 
                             UniformCostSearch<OWLLogicalAxiom> search2 = getSearch(CreationUtils.createOwlOntology("queryontologies",name),dual);
                             diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
