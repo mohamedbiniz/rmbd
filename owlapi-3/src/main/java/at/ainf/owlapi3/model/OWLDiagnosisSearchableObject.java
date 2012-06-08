@@ -51,4 +51,8 @@ public class OWLDiagnosisSearchableObject extends AbstractSearchableObject<OWLLo
     public void removeBackgroundFormulas(Set<OWLLogicalAxiom> formulas) throws InconsistentTheoryException, SolverException {
         theory.removeBackgroundFormulas(formulas);
     }
+
+    public Set<OWLLogicalAxiom> getBackgroundFormulas() {
+        return theory.getBackgroundFormulas();
+    }
 }

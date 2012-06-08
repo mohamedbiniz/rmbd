@@ -32,4 +32,7 @@ public interface Searchable<E> {
     public void addBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
 
     public void removeBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
+
+    public Set<E> getBackgroundFormulas();
+
 }

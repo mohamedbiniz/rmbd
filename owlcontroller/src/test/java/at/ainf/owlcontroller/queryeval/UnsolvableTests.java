@@ -1150,6 +1150,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         OWLTheory theory = createTheoryOAEI(ontology, dual, true);
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+        ((NewQuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         search.setCostsEstimator(es);
@@ -1253,11 +1254,11 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         //String[] files =
                   //new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
-        String[] files = new String[]{"Aroma"};
+        String[] files = new String[]{"AgrMaker"};
 
         //BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{DYNAMICRISK};
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {DYNAMICRISK, MINSCORE, SPLITINHALF, };
+                { MINSCORE, SPLITINHALF, DYNAMICRISK };
         for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {

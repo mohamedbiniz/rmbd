@@ -192,7 +192,7 @@ public class Utils {
         return result;
     }
 
-    public static String renderAxioms(Set<OWLLogicalAxiom> axioms) {
+    public static String renderAxioms(Collection<OWLLogicalAxiom> axioms) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         String result = "";
 
