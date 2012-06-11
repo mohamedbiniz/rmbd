@@ -42,10 +42,10 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         setRoot(node);
     }*/
 
-    protected Node<Id> createRootNode(Set<Id> conflict) {
+    protected Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         CostNode<Id> node = new CostNode<Id>(conflict);
-        node.setCostsEstimator(getCostsEstimator());
-        node.setNodePathCosts(node.getRootNodeCosts(getTheory().getActiveFormulas()));
+        node.setCostsEstimator(costsEstimator);
+        node.setNodePathCosts(node.getRootNodeCosts(act));
         return node;
     }
 
@@ -86,9 +86,9 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
     }
 
     @Override
-    protected void finalizeSearch() {
-        getTheory().doBayesUpdate(getStorage().getDiagnoses());
-        getStorage().normalizeValidHittingSets();
+    protected void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
+        search.getTheory().doBayesUpdate(search.getStorage().getDiagnoses());
+        search.getStorage().normalizeValidHittingSets();
     }
 
     @Override
