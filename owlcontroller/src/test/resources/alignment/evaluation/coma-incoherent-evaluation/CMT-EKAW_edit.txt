@@ -1,0 +1,1 @@
+http://CMT.owl#ProgramCommittee EquivalentTo http://EKAW.owl#Programme_Brochure, http://CMT.owl#Person EquivalentTo http://EKAW.owl#Organisation, http://CMT.owl#Co-author EquivalentTo http://EKAW.owl#PC_Member,http://CMT.owl#AssociatedChair EquivalentTo http://EKAW.owl#Demo_Chair, http://CMT.owl#Decision EquivalentTo http://EKAW.owl#Location

@@ -1,0 +1,16 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/EKAW.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/PCS.owl
+sourceNamespace = http://EKAW.owl
+targetNamespace = http://PCS.owl
+
++ Conference = Conference | 0.35
+- Conference_Paper = ConferenceMember | 0.3005787
++ Web_Site = Web_site | 0.41674685
++ Review = Review | 0.41111127
++ Person = PERSON | 0.35
++ Document = DOCUMENT | 0.49161962
++ Accepted_Paper = Accepted_paper | 0.46472222
+- Research_Topic = Report | 0.23540741
++ Paper = Paper | 0.41071114
+- Programme_Brochure = Programme | 0.24444444
++ Rejected_Paper = Rejected_paper | 0.35163742

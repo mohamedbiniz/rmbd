@@ -1,0 +1,17 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/PCS.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://PCS.owl
+
++ Administrator = Administrator | 0.6875
++ Author = Author | 0.7857142857142857
+< AuthorNotReviewer = Author | 0.6276923076923078
+- Bid = Invitation | 0.8
++ ConferenceMember = ConferenceMember | 0.75
++ Document = DOCUMENT | 0.8333333333333333
+- Paper = Report | 1.0
++ Person = PERSON | 0.8400000000000001
+< ProgramCommitteeMember = CommitteeMember | 0.6000000000000001
++ Review = Review | 0.8333333333333333
+> Reviewer = Secondary_Reviewer | 0.6727272727272727
+< User = PERSON | 0.7333333333333334

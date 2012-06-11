@@ -1,0 +1,13 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/PCS.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/SIGKDD.owl
+sourceNamespace = http://PCS.owl
+targetNamespace = http://SIGKDD.owl
+
+- Email = Deadline | 0.24033979
++ Author = Author | 0.434743
++ Review = Review | 0.458329
+- Electronic_proceeding = Fee | 0.42858928
++ DOCUMENT = Document | 0.5085317
++ Paper = Paper | 0.4423569
++ PERSON = Person | 0.55322516
++ Conference = Conference | 0.59479034

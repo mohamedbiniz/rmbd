@@ -1,0 +1,10 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/SIGKDD.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://SIGKDD.owl
+
++ Conference = Conference | 0.9962411252920726
++ Person = Person | 0.9899433590968655
++ Author = Author | 0.9799591007149716
++ Paper = Paper | 0.9726089582130703
+- Reviewing_event = Review | 0.7640991552914511
