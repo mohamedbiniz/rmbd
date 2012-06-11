@@ -3,7 +3,7 @@ package at.ainf.owlcontroller.queryeval;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
-import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.UniformCostSearch;
@@ -131,7 +131,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
             storage = new SimpleStorage<OWLLogicalAxiom>();
         UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
         if (dual)
-            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         else
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);

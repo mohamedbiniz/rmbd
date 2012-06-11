@@ -63,6 +63,7 @@ public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id>
                 ax.updateAxioms(conflict);
             }
         }
+
         for (T invalidHittingSet : invalidHittingSets) {
             Node<Id> node = (Node<Id>) invalidHittingSet.getNode();
             if (node.isRoot())

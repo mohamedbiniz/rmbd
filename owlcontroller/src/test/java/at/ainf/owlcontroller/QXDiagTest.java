@@ -1,6 +1,6 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -51,7 +51,7 @@ public class QXDiagTest {
     public void testFasterDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         DualStorage<OWLLogicalAxiom> storage = new DualStorage<OWLLogicalAxiom>();
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
-        search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "queryontologies/koala.owl", true);
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
@@ -76,7 +76,7 @@ public class QXDiagTest {
 
         manager = OWLManager.createOWLOntologyManager();
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
-        searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
         searchDual.setTheory(theoryDual);
         searchDual.run();
@@ -98,7 +98,7 @@ public class QXDiagTest {
         set.add(parser.parse("Quokka SubClassOf Marsupials"));
         ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getActiveFormulas());
         Collections.sort(l);
-        Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th, l, set);
+        Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th, l, set);
 
         logger.info(Utils.renderAxioms(res));
 
@@ -112,7 +112,7 @@ public class QXDiagTest {
         set.add(parser.parse("Marsupials DisjointWith Person"));
         ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getActiveFormulas());
         Collections.sort(l);
-        Set<OWLLogicalAxiom> res = new FastDiagnosis<OWLLogicalAxiom>().search(th,l,set);
+        Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
         logger.info(Utils.renderManyAxioms(l) + "\n\n"+Utils.renderAxioms(res));
 
@@ -169,7 +169,7 @@ public class QXDiagTest {
 
         SimpleStorage<OWLLogicalAxiom> storage = new DualStorage<OWLLogicalAxiom>();
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
-        search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();

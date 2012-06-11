@@ -14,9 +14,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
-import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
-import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.*;
 
@@ -516,7 +513,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         }
 
         for (Set<OWLLogicalAxiom> test : getNonentailedTests()) {
-            if (solver.isEntailed(test)) {
+            if (test != null && solver.isEntailed(test)) {
                 return true;
             }
         }
@@ -545,7 +542,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
 
         for (Set<OWLLogicalAxiom> axiomset : axioms) {
             for (OWLLogicalAxiom axiom : axiomset) {
-                if (!ontology.containsAxiom(axiom))
+                if (axiom != null && !ontology.containsAxiom(axiom))
                     add.add(axiom);
             }
         }

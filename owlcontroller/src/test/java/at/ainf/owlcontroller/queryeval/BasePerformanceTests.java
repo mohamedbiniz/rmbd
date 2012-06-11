@@ -2,10 +2,8 @@ package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
-import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
-import at.ainf.diagnosis.partitioning.scoring.SplitInHalfQSS;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -23,9 +21,6 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
@@ -33,7 +28,7 @@ import static junit.framework.Assert.assertTrue;
 public abstract class BasePerformanceTests {
 
     public static int NUMBER_OF_HITTING_SETS = 9;
-    protected static double SIGMA = 85;
+    protected static double SIGMA = 100;
     protected static boolean userBrk = true;
 
     private static Logger logger = Logger.getLogger(BasePerformanceTests.class.getName());

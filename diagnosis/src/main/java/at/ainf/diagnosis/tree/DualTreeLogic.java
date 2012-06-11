@@ -41,7 +41,10 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, I
             return;
         }
         for (T ax : invalidAxiomSets) {
-            tree.getStorage().removeConflictSet(ax);
+            //ArrayList<Id> formulas = new ArrayList<Id>(tree.getTheory().getActiveFormulas());
+            //Set<Id> axioms = tree.getSearcher().search(tree.getTheory(), formulas, ax, null);
+            //if (axioms.equals(ax))
+                tree.getStorage().removeConflictSet(ax);
         }
         Set<T> cs = tree.getStorage().getConflictSets();
         tree.getOpenNodes().clear();

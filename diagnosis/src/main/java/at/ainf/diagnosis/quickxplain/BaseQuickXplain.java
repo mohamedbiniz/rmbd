@@ -14,14 +14,15 @@
  */
 package at.ainf.diagnosis.quickxplain;
 
-import at.ainf.theory.Searchable;
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.theory.Searchable;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Set;
 
 import static _dev.TimeLog.start;
 import static _dev.TimeLog.stop;
@@ -44,7 +45,8 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     private long calls = 0;
     */
-    protected abstract Set<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u) throws NoConflictException, SolverException, InconsistentTheoryException;
+    protected abstract Set<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
+            throws NoConflictException, SolverException, InconsistentTheoryException;
 
     protected abstract int getIterations();
 
@@ -66,18 +68,15 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     protected abstract Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException;
 
-    protected abstract void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes) throws InconsistentTheoryException, SolverException;
+    protected abstract void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
+            throws InconsistentTheoryException, SolverException;
 
     public Set<Id> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException {
-
-
         Set<Id> conflictFormulas = null;
 
         if (changes != null)
             formulas = applyChanges(searchable, formulas, changes);
-
-
 
         long time = 0;
         try {
@@ -100,16 +99,13 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             */
             //}
 
-
-            if (isDual())  {
+            if (isDual()) {
                 searchable.pop();
                 searchable.push(conflictFormulas);
                 searchable.verifyRequirements();
             }
             rollbackChanges(searchable, formulas, changes);
         }
-
-
         return conflictFormulas;
     }
 

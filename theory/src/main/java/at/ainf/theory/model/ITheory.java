@@ -32,8 +32,6 @@ public interface ITheory<Id> extends Searchable<Id> {
      */
     public Collection<Id> getActiveFormulas();
 
-    public boolean push() throws SolverException;
-
     public int getTheoryCount();
 
     public boolean hasTests();

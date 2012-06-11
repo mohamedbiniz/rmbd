@@ -23,7 +23,7 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
     public boolean push(T formula) {
         if (formula == null)
             return false;
-        push();
+        stackCount.add(formulaStack.size());
         resetResult();
         this.formulaStack.add(formula);
         return true;
@@ -32,18 +32,10 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
     public boolean push(Collection<T> formulas) {
         if (formulas == null)
             return false;
-        push();
+        stackCount.add(formulaStack.size());
         resetResult();
         this.formulaStack.addAll(formulas);
         return true;
-    }
-
-    /**
-     * This method
-     * and {@link #push(Object)} to add new statements.
-     */
-    public boolean push() {
-        return stackCount.add(formulaStack.size());
     }
 
     /**

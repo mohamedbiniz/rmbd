@@ -21,7 +21,9 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomRenderer;
 import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static _dev.TimeLog.start;
 
@@ -87,7 +89,7 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException {
         if (axiomRenderer!=null)
-            logger.info("B = {" + axiomRenderer.renderAxioms(b.getBackgroundFormulas()) + "}, D = {" + axiomRenderer.renderAxioms(d) + "}, OD = {" + axiomRenderer.renderAxioms(c) + "}");
+            logger.info("B = {" + axiomRenderer.renderAxioms(b.getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(b.getFormulaStack())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
         iterations++;
         if (d != null && d.size() != 0 && ! b.verifyRequirements())
             return null;
@@ -116,6 +118,8 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
                 return d2;
             else
                 d1.addAll(d2);
+        if (axiomRenderer!=null)
+            logger.info("return D = {" + axiomRenderer.renderAxioms(d1) + "}");
         return d1;
     }
 

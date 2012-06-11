@@ -39,6 +39,9 @@
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2012/1/Ontology1329136376685.owl#D"/>
     </owl:Class>
 
+    <owl:Class rdf:about="http://www.semanticweb.org/ontologies/2012/1/Ontology1329136376685.owl#B">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/ontologies/2012/1/Ontology1329136376685.owl#F"/>
+    </owl:Class>
 
 
     <!-- 

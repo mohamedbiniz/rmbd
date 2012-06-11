@@ -11,10 +11,10 @@ import java.util.Set;
  */
 public class SimpleCostsEstimator<Id> implements CostsEstimator<Id> {
     public double getAxiomSetCosts(Set<Id> labelSet) {
-        return 0;
+        return 0.1;
     }
 
     public double getAxiomCosts(Id label) {
-        return 0;
+        return 0.1;
     }
 }

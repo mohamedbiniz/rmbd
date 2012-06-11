@@ -1,6 +1,6 @@
 package at.ainf.owlcontroller.queryeval;
 
-import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -88,7 +88,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
 
         manager = OWLManager.createOWLOntologyManager();
         UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
-        searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+        searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
         searchDual.setTheory(theoryDual);
         map = Utils.getProbabMap();

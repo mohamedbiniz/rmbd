@@ -2,13 +2,11 @@ package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
+import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
-import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.BreadthFirstSearch;
-import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.DualTreeLogic;
-import at.ainf.diagnosis.tree.UniformCostSearch;
+import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
@@ -18,9 +16,6 @@ import at.ainf.owlcontroller.RDFUtils;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.owlcontroller.distributiongenerators.DistributionGeneratorI;
-import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
-import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
@@ -43,12 +38,8 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 import java.io.*;
 import java.util.*;
 
-import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.MINSCORE;
-import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.SPLITINHALF;
-import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.DYNAMICRISK;
-import static at.ainf.owlcontroller.queryeval.DiagProbab.*;
-import static at.ainf.owlcontroller.queryeval.UsersProbab.*;
-import static junit.framework.Assert.assertTrue;
+import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -65,6 +56,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     private boolean showElRates = true;
 
     private boolean traceDiagnosesAndQueries = false;
+    private boolean minimizeQuery = false;
 
     @BeforeClass
     public static void setUp() {
@@ -160,10 +152,9 @@ public class UnsolvableTests extends BasePerformanceTests {
             storage = new SimpleStorage<OWLLogicalAxiom>();
         BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
         if (dual) {
-            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
-        }
-        else
+        } else
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);
 
@@ -179,10 +170,9 @@ public class UnsolvableTests extends BasePerformanceTests {
             storage = new SimpleStorage<OWLLogicalAxiom>();
         UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
         if (dual) {
-            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
-        }
-        else
+        } else
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);
 
@@ -277,9 +267,9 @@ public class UnsolvableTests extends BasePerformanceTests {
             throws SolverException {
         int deleted = 0;
         for (AxiomSet<OWLLogicalAxiom> diagnosis : d) {
-            if (a && !((OWLTheory)theory).diagnosisConsistentWithoutEntailedTc(diagnosis, partition.partition))
+            if (a && !((OWLTheory) theory).diagnosisConsistentWithoutEntailedTc(diagnosis, partition.partition))
                 deleted++;
-            else if (!a && ((OWLTheory)theory).diagnosisEntailsWithoutEntailedTC(diagnosis, partition.partition))
+            else if (!a && ((OWLTheory) theory).diagnosisEntailsWithoutEntailedTC(diagnosis, partition.partition))
                 deleted++;
         }
         return deleted;
@@ -355,7 +345,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 if (diagnoses.isEmpty())
                     logger.error("No diagnoses found!");
 
-                if (diagnoses.size()==0) {
+                if (diagnoses.size() == 0) {
 
                     possibleError = true;
                     break;
@@ -370,7 +360,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 String infoCa = "";
                 for (Set<OWLLogicalAxiom> diagnose : diagnoses)
-                        infoCa += diagnose.size() + "/";
+                    infoCa += diagnose.size() + "/";
                 logger.info("cardinality of diagnoses " + infoCa);
                 logger.info("num of hitting sets " + search.getStorage().getHittingSets().size());
 
@@ -419,6 +409,20 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 actPa = queryGenerator.generatePartition(diagnoses);
 
+                if (minimizeQuery) {
+                    QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(actPa, theory);
+                    NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
+                    try {
+                        actPa.partition = q.search(mnz, actPa.partition, null);
+                    } catch (NoConflictException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    } catch (SolverException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    } catch (InconsistentTheoryException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                }
+
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
                     // system brake
                     querySessionEnd = true;
@@ -458,7 +462,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
                     ph.setMeasure(0.5d * ph.getMeasure());
                 }
-                if(allDiagnoses!=null) {
+                if (allDiagnoses != null) {
 
                     try {
                         secondsearch.run();
@@ -466,17 +470,17 @@ public class UnsolvableTests extends BasePerformanceTests {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                     remainingAllDiags = secondsearch.getStorage().getDiagnoses();
-                    int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
-                    int eliminatedInRemaining = getEliminationRate(secondsearch.getTheory(),remainingAllDiags,answer,actPa);
+                    int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
+                    int eliminatedInRemaining = getEliminationRate(secondsearch.getTheory(), remainingAllDiags, answer, actPa);
                     int eliminatedInRemainingSize = remainingAllDiags.size();
-                    int eliminatedInfull = getEliminationRate(t3,allDiagnoses,answer,actPa);
+                    int eliminatedInfull = getEliminationRate(t3, allDiagnoses, answer, actPa);
                     // deleteDiag(search.getTheory(),remainingAllDiags,answer,actPa.partition);
 
                     AxiomSet<OWLLogicalAxiom> foundTarget;
-                    foundTarget=null;
+                    foundTarget = null;
                     for (AxiomSet<OWLLogicalAxiom> axiom : allDiagnoses)
                         if (targetDiag.containsAll(axiom)) {
-                            if(foundTarget!=null)
+                            if (foundTarget != null)
                                 logger.info("");
                             foundTarget = axiom;
                         }
@@ -486,12 +490,12 @@ public class UnsolvableTests extends BasePerformanceTests {
                         secondsearch.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                     logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiagnoses.size() +
                             "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
-                            "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size()+" "+foundTarget);
+                            "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size() + " " + foundTarget);
                 }
 
-                int eliminatedInLeading = getEliminationRate(search.getTheory(),diagnoses,answer,actPa);
-                if(showElRates)
-                    logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size() );
+                int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
+                if (showElRates)
+                    logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size());
 
                 if (answer) {
                     try {
@@ -533,7 +537,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 targetDiagnosisIsInWind = true;
             }
         }
-        if(!targetDiagnosisIsInWind)              {
+        if (!targetDiagnosisIsInWind) {
             possibleError = true;
             logger.error("target diagnosis is not in window!");
         }
@@ -564,8 +568,7 @@ public class UnsolvableTests extends BasePerformanceTests {
             logger.info("target diagnosis: " + Utils.renderAxioms(targetDiag));
             if (diagnoses == null) {
                 logger.info("diagnoses is null!");
-            }
-            else {
+            } else {
                 logger.info("diagnoses in window: " + diagnoses.size());
                 for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
                     logger.info("diagnosis: " + Utils.renderAxioms(diagnosis));
@@ -580,6 +583,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
         return msg;
     }
+
     protected OWLOntology createOwlOntology(String name) {
         String path = ClassLoader.getSystemResource("alignment").getPath();
         File ontF = new File(path + "/" + name + ".owl");
@@ -599,90 +603,89 @@ public class UnsolvableTests extends BasePerformanceTests {
         Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
 
-        for (boolean dual : new boolean[] {true, false}) {
-            
-                for (String m : mapOntos.keySet()) {
-                    for (String o : mapOntos.get(m)) {
-                        for (int nd : new int[]{1,5,9}) {
-                            String out ="STAT, " + m +  ", " + o;
-                        
-                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                            OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
-                            Set<OWLLogicalAxiom> targetDg;
-                            OWLTheory theory = createOWLTheory(ontology, dual);
-                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
-                            //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        for (boolean dual : new boolean[]{true, false}) {
 
-                            OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
-                            OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
+            for (String m : mapOntos.keySet()) {
+                for (String o : mapOntos.get(m)) {
+                    for (int nd : new int[]{1, 5, 9}) {
+                        String out = "STAT, " + m + ", " + o;
 
-                            String path = ClassLoader.getSystemResource("alignment/evaluation/"
-                                    + m.trim()
-                                    + "-incoherent-evaluation/"
-                                    + o.trim()
-                                    + ".txt").getPath();
+                        String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                        OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                        Set<OWLLogicalAxiom> targetDg;
+                        OWLTheory theory = createOWLTheory(ontology, dual);
+                        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                        //ProbabilityTableModel mo = new ProbabilityTableModel();
+                        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
-                            OWLTheory theory2 = createOWLTheory(ontology, dual);
-                            OWLTheory t3 = createOWLTheory(ontology, dual);
-                            UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
-                            search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2,path));
+                        OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
+                        OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
 
-                            //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                            //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                        String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                + m.trim()
+                                + "-incoherent-evaluation/"
+                                + o.trim()
+                                + ".txt").getPath();
 
-                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
-                        
-                            //es.updateKeywordProb(map);
-                            targetDg = null;
+                        OWLTheory theory2 = createOWLTheory(ontology, dual);
+                        OWLTheory t3 = createOWLTheory(ontology, dual);
+                        UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
+                        search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
-                            search.setCostsEstimator(es);
-                            //
-                            long time = System.nanoTime();
-                            try {
-                                search.run(nd);
-                            } catch (SolverException e) {
-                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            } catch (NoConflictException e) {
-                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            } catch (InconsistentTheoryException e) {
-                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            }
-                            time = System.nanoTime() - time; 
+                        //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                        //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
 
-                            int minDiagnosisC = minCard(search.getStorage().getDiagnoses());
-                            double meanDiagnosisC = meanCard(search.getStorage().getDiagnoses());
-                            int maxDiagnosisC = maxCard(search.getStorage().getDiagnoses());
-                            int minConfC = minCard(search.getStorage().getConflicts());
-                            double meanConfC = meanCard(search.getStorage().getConflicts());
-                            int maxConfC = maxCard(search.getStorage().getConflicts());
+                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
 
-                            int c = search.getStorage().getConflicts().size();
-                            String s = nd + ", " + minDiagnosisC + ", " + meanDiagnosisC + ", " + maxDiagnosisC + ", " +
-                                       c + ", " + minConfC + ", " + meanConfC + ", " + maxConfC;
+                        //es.updateKeywordProb(map);
+                        targetDg = null;
+
+                        search.setCostsEstimator(es);
+                        //
+                        long time = System.nanoTime();
+                        try {
+                            search.run(nd);
+                        } catch (SolverException e) {
+                            logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        } catch (NoConflictException e) {
+                            logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        } catch (InconsistentTheoryException e) {
+                            logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                        time = System.nanoTime() - time;
+
+                        int minDiagnosisC = minCard(search.getStorage().getDiagnoses());
+                        double meanDiagnosisC = meanCard(search.getStorage().getDiagnoses());
+                        int maxDiagnosisC = maxCard(search.getStorage().getDiagnoses());
+                        int minConfC = minCard(search.getStorage().getConflicts());
+                        double meanConfC = meanCard(search.getStorage().getConflicts());
+                        int maxConfC = maxCard(search.getStorage().getConflicts());
+
+                        int c = search.getStorage().getConflicts().size();
+                        String s = nd + ", " + minDiagnosisC + ", " + meanDiagnosisC + ", " + maxDiagnosisC + ", " +
+                                c + ", " + minConfC + ", " + meanConfC + ", " + maxConfC;
 
                         logger.info("Stat, " + m.trim() + ", " + o.trim() + ", "
-                               + s + ", "
-                               + theory.getConsistencyCount() + ", " + dual + ", " + Utils.getStringTime(time/1000000));
-                        }
+                                + s + ", "
+                                + theory.getConsistencyCount() + ", " + dual + ", " + Utils.getStringTime(time / 1000000));
                     }
                 }
-            
+            }
+
         }
     }
 
     public int minCard(Set<AxiomSet<OWLLogicalAxiom>> s) {
         int r = -1;
-        
+
         try {
             for (AxiomSet<OWLLogicalAxiom> set : s)
                 if (r == -1 || set.size() < r)
                     r = set.size();
-        }
-        catch (NoSuchElementException e ) {
+        } catch (NoSuchElementException e) {
 
         }
-        
+
         return r;
     }
 
@@ -693,24 +696,23 @@ public class UnsolvableTests extends BasePerformanceTests {
             for (AxiomSet<OWLLogicalAxiom> set : s)
                 if (set.size() > r)
                     r = set.size();
-        }
-        catch (NoSuchElementException e ) {
+        } catch (NoSuchElementException e) {
 
         }
 
         return r;
     }
-    
+
     public static double meanCard(Set<AxiomSet<OWLLogicalAxiom>> s) {
         double sum = 0;
         int cnt = 0;
-        
+
         for (AxiomSet<OWLLogicalAxiom> set : s) {
-            sum+=set.size();
+            sum += set.size();
             cnt++;
         }
 
-        if (cnt==0) return -1;
+        if (cnt == 0) return -1;
         return sum / cnt;
     }
 
@@ -720,18 +722,18 @@ public class UnsolvableTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
 
         for (String m : mapOntos.keySet()) {
-          for (String o : mapOntos.get(m)) {
-            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-            String[] targetAxioms2 = AlignmentUtils.getDiagnosis(m,o);
-            boolean eq = AlignmentUtils.compareDiagnoses(targetAxioms,targetAxioms2);
-            if(!eq) {
-                OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
-                Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
-                System.out.println(targetAxioms.toString());
-                System.out.println(targetAxioms2.toString());
+            for (String o : mapOntos.get(m)) {
+                String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                String[] targetAxioms2 = AlignmentUtils.getDiagnosis(m, o);
+                boolean eq = AlignmentUtils.compareDiagnoses(targetAxioms, targetAxioms2);
+                if (!eq) {
+                    OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                    Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
+                    System.out.println(targetAxioms.toString());
+                    System.out.println(targetAxioms2.toString());
+                }
+                assertTrue(m + " " + o, eq);
             }
-            assertTrue(m + " " + o,eq);
-          }
         }
     }
 
@@ -749,7 +751,7 @@ public class UnsolvableTests extends BasePerformanceTests {
             OWLOntology merged = merger.createMergedOntology(man, IRI.create("matched" + file + ".txt"));
             Set<OWLLogicalAxiom> mappAx = getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/", file);
             for (OWLLogicalAxiom axiom : mappAx)
-                man.applyChange(new AddAxiom(merged,axiom));
+                man.applyChange(new AddAxiom(merged, axiom));
 
             return merged;
         } catch (OWLOntologyCreationException e) {
@@ -760,7 +762,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     public Set<OWLLogicalAxiom> getAxiomsInMappingOAEI(String path, String source) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
-        Map<OWLLogicalAxiom,Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
+        Map<OWLLogicalAxiom, Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
         Set<OWLLogicalAxiom> targetDiagnosis = new LinkedHashSet<OWLLogicalAxiom>();
         try {
             readDataOAEI(path + source + ".txt", axioms, targetDiagnosis, man);
@@ -808,13 +810,12 @@ public class UnsolvableTests extends BasePerformanceTests {
                 }
                 if (status.equals("-")) {
                     if (sub.contains("=")) {
-                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
-                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
-                    }
-                    else if(sub.contains(">"))
-                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target,man));
-                    else if(sub.contains("<"))
-                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source,man));
+                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
+                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source, man));
+                    } else if (sub.contains(">"))
+                        targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
+                    else if (sub.contains("<"))
+                        targetDiag.add(createAxiomOAEI(targetNamespace, target, sourceNamespace, source, man));
                 }
                 if (status.equals(">")) {
                     targetDiag.add(createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man));
@@ -830,7 +831,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     public Set<OWLLogicalAxiom> getTargetDOAEI(String path, String source) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
-        Map<OWLLogicalAxiom,Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
+        Map<OWLLogicalAxiom, Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
         Set<OWLLogicalAxiom> targetDiagnosis = new LinkedHashSet<OWLLogicalAxiom>();
         try {
             readDataOAEI(path + source + ".txt", axioms, targetDiagnosis, man);
@@ -925,10 +926,10 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         public MyFilenameFilter(File includedNames) {
             acceptedNames = new LinkedHashSet<String>();
-            try{
+            try {
                 BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(includedNames)));
                 String strLine;
-                while ((strLine = br.readLine()) != null)   {
+                while ((strLine = br.readLine()) != null) {
                     if (!strLine.startsWith("#") || !strLine.endsWith(".rdf"))
                         acceptedNames.add(strLine);
                 }
@@ -965,14 +966,14 @@ public class UnsolvableTests extends BasePerformanceTests {
         String mapd = matchingsDir + directory;
 
         String fileName = file.getName();
-        StringTokenizer t = new StringTokenizer(fileName,"-");
+        StringTokenizer t = new StringTokenizer(fileName, "-");
         String matcher = t.nextToken();
 
         String o1 = t.nextToken();
         String o2 = t.nextToken();
-        o2 = o2.substring(0,o2.length()-4);
+        o2 = o2.substring(0, o2.length() - 4);
 
-        String n = file.getName().substring(0,file.getName().length()-4);
+        String n = file.getName().substring(0, file.getName().length() - 4);
         OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",
                 o1, o2, mapd, n + ".rdf");
 
@@ -982,16 +983,15 @@ public class UnsolvableTests extends BasePerformanceTests {
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
 
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-        OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1+".owl");
-        OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2+".owl");
-        bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(),ontology1.getLogicalAxioms()));
-        bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(),ontology2.getLogicalAxioms()));
+        OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology", o1 + ".owl");
+        OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology", o2 + ".owl");
+        bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+        bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
         theory.addBackgroundFormulas(bx);
 
-        Map<OWLLogicalAxiom,Double> map1 = RDFUtils.readRdfMapping(mapd,n + ".rdf");
+        Map<OWLLogicalAxiom, Double> map1 = RDFUtils.readRdfMapping(mapd, n + ".rdf");
 
         OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
-
 
 
         search.setCostsEstimator(es);
@@ -999,34 +999,34 @@ public class UnsolvableTests extends BasePerformanceTests {
         search.clearSearch();
 
 
-        Set<OWLLogicalAxiom> targetDg=null;
+        Set<OWLLogicalAxiom> targetDg = null;
 
 
-            OWLTheory th30 = createTheoryOAEI(ontology, true, true);
-            UniformCostSearch<OWLLogicalAxiom> search30 = createUniformCostSearch(th30, true);
-            th30.addBackgroundFormulas(bx);
-            OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, RDFUtils.readRdfMapping(mapd,n + ".rdf"));
-            search30.setCostsEstimator(es30);
+        OWLTheory th30 = createTheoryOAEI(ontology, true, true);
+        UniformCostSearch<OWLLogicalAxiom> search30 = createUniformCostSearch(th30, true);
+        th30.addBackgroundFormulas(bx);
+        OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, RDFUtils.readRdfMapping(mapd, n + ".rdf"));
+        search30.setCostsEstimator(es30);
 
-            try {
-                search30.run(30);
-            } catch (NoConflictException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getStorage().getDiagnoses();
-            int rnd = random.nextInt(diagnoses.size());
-            randomDiagNr = rnd ;
-            logger.info(file.getName() + ",diagnosis selected as target," + rnd);
-            targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>)diagnoses.toArray()[rnd]);
-            logger.info(file.getName()+",target diagnosis axioms," + Utils.renderAxioms(targetDg));
+        try {
+            search30.run(30);
+        } catch (NoConflictException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getStorage().getDiagnoses();
+        int rnd = random.nextInt(diagnoses.size());
+        randomDiagNr = rnd;
+        logger.info(file.getName() + ",diagnosis selected as target," + rnd);
+        targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>) diagnoses.toArray()[rnd]);
+        logger.info(file.getName() + ",target diagnosis axioms," + Utils.renderAxioms(targetDg));
 
-            search30.clearSearch();
+        search30.clearSearch();
         return targetDg;
     }
 
     int randomDiagNr = -1;
 
-    Random random = new Random(12311) ;
+    Random random = new Random(12311);
 
     @Test
     public void doTestsOAEIConference()
@@ -1035,24 +1035,24 @@ public class UnsolvableTests extends BasePerformanceTests {
         String matchingsDir = "oaei11conference/matchings/";
         String directory = "incoherent";
         //String mapd = matchingsDir + directory;
-        File incl = new File(ClassLoader.getSystemResource(matchingsDir+"includedIncoher.txt").getFile());
+        File incl = new File(ClassLoader.getSystemResource(matchingsDir + "includedIncoher.txt").getFile());
         MyFilenameFilter filter = new MyFilenameFilter(incl);
-        File[] f = new File(ClassLoader.getSystemResource(matchingsDir+directory)
+        File[] f = new File(ClassLoader.getSystemResource(matchingsDir + directory)
                 .getFile()).listFiles(filter);
         String directory2 = "inconsistent";
-        File incl2 = new File(ClassLoader.getSystemResource(matchingsDir+"included.txt").getFile());
+        File incl2 = new File(ClassLoader.getSystemResource(matchingsDir + "included.txt").getFile());
         MyFilenameFilter filter2 = new MyFilenameFilter(incl2);
-        File[] f2 = new File(ClassLoader.getSystemResource(matchingsDir+directory2)
+        File[] f2 = new File(ClassLoader.getSystemResource(matchingsDir + directory2)
                 .getFile()).listFiles(filter2);
         Set<File> files = new LinkedHashSet<File>();
-        Map<File,String> map = new HashMap<File, String>();
-        for(File file : f) {
+        Map<File, String> map = new HashMap<File, String>();
+        for (File file : f) {
             files.add(file);
-            map.put(file,"incoherent");
+            map.put(file, "incoherent");
         }
-        for(File file : f2) {
+        for (File file : f2) {
             files.add(file);
-            map.put(file,"inconsistent");
+            map.put(file, "inconsistent");
         }
 
         showElRates = false;
@@ -1060,30 +1060,30 @@ public class UnsolvableTests extends BasePerformanceTests {
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
                 {MINSCORE, SPLITINHALF};
 
-                for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
+        for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
 
-                    for (File file : files) {
-                        logger.info("processing " + file.getName());
+            for (File file : files) {
+                logger.info("processing " + file.getName());
 
-                        String out ="STAT, " + file;
-
-
-                        Set<OWLLogicalAxiom> targetDg=getRandomDiag(file,map.get(file));
-
-                        for (BasePerformanceTests.QSSType type : qssTypes) {
+                String out = "STAT, " + file;
 
 
-                            String fileName = file.getName();
-                            StringTokenizer t = new StringTokenizer(fileName,"-");
-                            String matcher = t.nextToken();
+                Set<OWLLogicalAxiom> targetDg = getRandomDiag(file, map.get(file));
 
-                            String o1 = t.nextToken();
-                            String o2 = t.nextToken();
-                            o2 = o2.substring(0,o2.length()-4);
+                for (BasePerformanceTests.QSSType type : qssTypes) {
 
-                            String n = file.getName().substring(0,file.getName().length()-4);
-                            OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",
-                                    o1, o2, matchingsDir+map.get(file), n + ".rdf");
+
+                    String fileName = file.getName();
+                    StringTokenizer t = new StringTokenizer(fileName, "-");
+                    String matcher = t.nextToken();
+
+                    String o1 = t.nextToken();
+                    String o2 = t.nextToken();
+                    o2 = o2.substring(0, o2.length() - 4);
+
+                    String n = file.getName().substring(0, file.getName().length() - 4);
+                    OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",
+                            o1, o2, matchingsDir + map.get(file), n + ".rdf");
 
                             long preprocessModulExtract = System.currentTimeMillis();
                             OWLOntology ontology = new OWLIncoherencyExtractor(
@@ -1092,35 +1092,31 @@ public class UnsolvableTests extends BasePerformanceTests {
                              OWLTheory theory = createTheoryOAEI(ontology, true, true);
                             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
 
-                            LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-                            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1+".owl");
-                            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2+".owl");
-                            bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(),ontology1.getLogicalAxioms()));
-                            bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(),ontology2.getLogicalAxioms()));
-                            theory.addBackgroundFormulas(bx);
+                    LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
+                    OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology", o1 + ".owl");
+                    OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology", o2 + ".owl");
+                    bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+                    bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+                    theory.addBackgroundFormulas(bx);
 
-                            Map<OWLLogicalAxiom,Double> map1 = RDFUtils.readRdfMapping(matchingsDir+map.get(file),n + ".rdf");
+                    Map<OWLLogicalAxiom, Double> map1 = RDFUtils.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
 
-                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
-
-
-
-                            search.setCostsEstimator(es);
-
-                            search.clearSearch();
+                    OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
 
+                    search.setCostsEstimator(es);
+
+                    search.clearSearch();
 
 
+                    TableList e = new TableList();
+                    out += "," + type + ",";
+                    String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
+                            + "," + type + "," + preprocessModulExtract + "," + randomDiagNr;
+                    out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
-                            TableList e = new TableList();
-                            out += "," + type + ",";
-                            String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
-                                    + "," + type + "," + preprocessModulExtract + "," + randomDiagNr;
-                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
-
-                        }
-                          logger.info(out);
+                }
+                logger.info(out);
 
 
             }
@@ -1130,29 +1126,38 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void doSimpleQuerySession()
-        throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
+            throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
         traceDiagnosesAndQueries = true;
+        minimizeQuery = true;
 
         NUMBER_OF_HITTING_SETS = 2;
         QSSType type = MINSCORE;
-        boolean dual = false;
+        boolean dual = true;
         String name = "dualISWC2012.owl";
+        //String name = "dualpaper.owl";
 
-        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",name);
+        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", name);
 
         Set<OWLLogicalAxiom> targetDg = new LinkedHashSet<OWLLogicalAxiom>();
         targetDg.add(new MyOWLRendererParser(ontology).parse("B SubClassOf D and (not (s some C))"));
         targetDg.add(new MyOWLRendererParser(ontology).parse("C SubClassOf not (D or E)"));
+
+        //targetDg.add(new MyOWLRendererParser(ontology).parse("B SubClassOf C"));
+        //targetDg.add(new MyOWLRendererParser(ontology).parse("B SubClassOf D"));
 
         long preprocessModulExtract = System.currentTimeMillis();
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
 
         OWLTheory theory = createTheoryOAEI(ontology, dual, true);
+        theory.addEntailedTest(new MyOWLRendererParser(ontology).parse("w Type B"));
+        theory.setIncludeClassAssertionAxioms(true);
+        theory.setIncludeTrivialEntailments(false);
+        theory.setIncludeSubClassOfAxioms(false);
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
         ((NewQuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
-        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+        CostsEstimator es = new SimpleCostsEstimator();
         search.setCostsEstimator(es);
 
         TableList e = new TableList();
@@ -1178,12 +1183,12 @@ public class UnsolvableTests extends BasePerformanceTests {
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
                 {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
                         BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {true}) {
+        for (boolean dual : new boolean[]{true}) {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
-                        String out ="STAT, " + file;
+                        String out = "STAT, " + file;
                         for (BasePerformanceTests.QSSType type : qssTypes) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
@@ -1209,7 +1214,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
-                            String path = ClassLoader.getSystemResource("oaei11/" +file+ ".txt").getPath();
+                            String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
 
@@ -1220,7 +1225,6 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
                             search.clearSearch();
-
 
 
                             if (targetSource == TargetSource.FROM_FILE)
@@ -1264,15 +1268,15 @@ public class UnsolvableTests extends BasePerformanceTests {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
-                            String out ="STAT, " + file;
-                            for (BasePerformanceTests.QSSType type : qssTypes) {
+                        String out = "STAT, " + file;
+                        for (BasePerformanceTests.QSSType type : qssTypes) {
 
-                                //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                            //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
-                                //String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
-                                //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                            //String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
+                            //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
 
-                                OWLOntology ontology = createOntologyFromTxtOAEI(file);
+                            OWLOntology ontology = createOntologyFromTxtOAEI(file);
 
                                 Set<OWLLogicalAxiom> targetDg;
                                 long preprocessModulExtract = System.currentTimeMillis();
@@ -1282,49 +1286,40 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 OWLTheory theory = createTheoryOAEI(ontology, dual, true);
                                 UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
-                                LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-                                bx.addAll(getLogicalAxiomsOfOntologiesOAEI());
-                                bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
-                                if (background) theory.addBackgroundFormulas(bx);
+                            LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
+                            bx.addAll(getLogicalAxiomsOfOntologiesOAEI());
+                            bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
+                            if (background) theory.addBackgroundFormulas(bx);
 
-                                //ProbabilityTableModel mo = new ProbabilityTableModel();
-                                HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            //ProbabilityTableModel mo = new ProbabilityTableModel();
+                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
-                                String path = ClassLoader.getSystemResource("oaei11/" +file+ ".txt").getPath();
+                            String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
-                                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path); /*{
-                                    public double getAxiomCosts(OWLLogicalAxiom label) {
-                                        if (axiomProb.get(label) != null)
-                                            return 0.001;
-                                        else
-                                            return 0.01;
-
-                                    }
-                                };*/
+                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
 
 
-                                targetDg = null;
+                            targetDg = null;
 
-                                search.setCostsEstimator(es);
+                            search.setCostsEstimator(es);
 
-                                Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
-                                search.clearSearch();
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            search.clearSearch();
 
 
+                            if (targetSource == TargetSource.FROM_FILE)
+                                targetDg = getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
+                                        file);
 
-                                if (targetSource == TargetSource.FROM_FILE)
-                                    targetDg = getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
-                                            file);
+                            TableList e = new TableList();
+                            out += "," + type + ",";
+                            String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
+                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
-                                TableList e = new TableList();
-                                out += "," + type + ",";
-                                String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
-                                //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
-                                out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
-
-                            }
-                            logger.info(out);
+                        }
+                        logger.info(out);
 
                     }
                 }
@@ -1337,20 +1332,20 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         showElRates = false;
         BasePerformanceTests.QSSType[] qssTypes =
-                new BasePerformanceTests.QSSType[]{ BasePerformanceTests.QSSType.MINSCORE};
+                new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE};
         String[] norm = new String[]{"Transportation-SDA"};
 
 
         for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
-                String out ="STAT, " + o;
+                String out = "STAT, " + o;
                 TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = getAllD(o);
                 for (BasePerformanceTests.QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.GOOD}) {
                         for (int i = 0; i < 1500; i++) {
 
 
-                            OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o+".owl");
+                            OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o + ".owl");
                             //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             long preprocessModulExtract = System.currentTimeMillis();
                             ontology = new OWLIncoherencyExtractor(
@@ -1372,13 +1367,13 @@ public class UnsolvableTests extends BasePerformanceTests {
                             search.clearSearch();
 
                             //diags = getDualTreeTranspErrDiag();
-                            targetDg = chooseTargetDiagnosis(diagProbab,diagnoses);
+                            targetDg = chooseTargetDiagnosis(diagProbab, diagnoses);
 
 
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act," + "," + o.trim() + "," + targetSource + "," +
-                                    ","+type + ","+preprocessModulExtract+","+diagProbab+","+i;
+                                    "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
                             logger.info("target diagnosis:" + targetDg.size() + " " + Utils.renderAxioms(targetDg));
                             //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
@@ -1401,12 +1396,12 @@ public class UnsolvableTests extends BasePerformanceTests {
 
 
         for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
-                for (String o : norm) {
-                    String out ="STAT, " + o;
-                    TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = getAllD(o);
-                    for (BasePerformanceTests.QSSType type : qssTypes) {
-                        for (DiagProbab diagProbab : DiagProbab.values()) {
-                            for (int i = 0; i < 20; i++) {
+            for (String o : norm) {
+                String out = "STAT, " + o;
+                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = getAllD(o);
+                for (BasePerformanceTests.QSSType type : qssTypes) {
+                    for (DiagProbab diagProbab : DiagProbab.values()) {
+                        for (int i = 0; i < 20; i++) {
 
 
                         OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies",o+".owl");
@@ -1419,33 +1414,33 @@ public class UnsolvableTests extends BasePerformanceTests {
                         OWLTheory theory = createOWLTheory(ontology, dual);
                         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
-                        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
-                        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
-                        es.updateKeywordProb(map);
-                        search.setCostsEstimator(es);
+                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+                            es.updateKeywordProb(map);
+                            search.setCostsEstimator(es);
 
-                        targetDg = null;
+                            targetDg = null;
 
-                        search.setCostsEstimator(es);
+                            search.setCostsEstimator(es);
 
-                        search.clearSearch();
+                            search.clearSearch();
 
-                        targetDg = chooseTargetDiagnosis(diagProbab,diagnoses);
+                            targetDg = chooseTargetDiagnosis(diagProbab, diagnoses);
 
 
-                        TableList e = new TableList();
-                        out += "," + type + ",";
-                        String message = "act," + "," + o.trim() + "," + targetSource + "," + dual
-                                + "," + type + ","+preprocessModulExtract+","+diagProbab+","+i;
-                        //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                            TableList e = new TableList();
+                            out += "," + type + ",";
+                            String message = "act," + "," + o.trim() + "," + targetSource + "," + dual
+                                    + "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
+                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
-                        out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
 
-                    //logger.info(out);
-                            }
+                            //logger.info(out);
                         }
                     }
                 }
+            }
         }
     }
 
@@ -1471,11 +1466,11 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         new Thread() {
             public void run() {
-                while(true) {
+                while (true) {
                     try {
-                        while (System.in.available()>0) {
+                        while (System.in.available() > 0) {
                             char pressedKey = (char) System.in.read();
-                            switch(pressedKey) {
+                            switch (pressedKey) {
                                 case 'c':
                                     System.out.println("statistics");
                                     System.exit(0);
@@ -1493,11 +1488,11 @@ public class UnsolvableTests extends BasePerformanceTests {
             }
         }.start();
 
-        while(true);
+        while (true) ;
     }
 
     private TreeSet<AxiomSet<OWLLogicalAxiom>> getAllD(String o) {
-        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o+".owl");
+        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o + ".owl");
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         OWLTheory theory = createOWLTheory(ontology, false);
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
@@ -1515,6 +1510,23 @@ public class UnsolvableTests extends BasePerformanceTests {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+    }
+
+    private Set<OWLLogicalAxiom> getDualTreeTranspErrDiag() {
+        Set<OWLLogicalAxiom> result = new LinkedHashSet<OWLLogicalAxiom>();
+        Set<String> target = new LinkedHashSet<String>();
+        target.add("ContainerAndRoRoCargoShip SubClassOf PartialContainerShip");
+        target.add("InternationalAirport SubClassOf CommercialAirport");
+        target.add("LightTruck SubClassOf Automobile");
+        target.add("ShipCabin SubClassOf HumanHabitationArtifact");
+        target.add("AirTransitway DisjointWith TransitRoute");
+        target.add("CargoShip DisjointWith PassengerShip");
+        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", "Transportation-SDA.owl");
+        for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
+            if (target.contains(new ManchesterOWLSyntaxOWLObjectRendererImpl().render(axiom)))
+                result.add(axiom);
+        }
+        return result;
     }
 
     private AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
@@ -1589,8 +1601,6 @@ public class UnsolvableTests extends BasePerformanceTests {
         return next;
     }
 
-
-
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = AlignmentUtils.readProps("alignment.allFiles.properties");
@@ -1601,17 +1611,17 @@ public class UnsolvableTests extends BasePerformanceTests {
         Timer timer = new Timer();
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {false}) {
-            for (boolean background : new boolean[]{false}) {
-                for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE,TargetSource.FROM_30_DIAGS}) {
+        for (boolean dual : new boolean[]{false}) {
+            for (boolean background : new boolean[]{true, false}) {
+                for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE, TargetSource.FROM_30_DIAGS}) {
                     for (String m : mapOntos.keySet()) {
                         for (String o : mapOntos.get(m)) {
-                            String out ="STAT, " + m +  ", " + o;
+                            String out = "STAT, " + m + ", " + o;
                             for (BasePerformanceTests.QSSType type : qssTypes) {
 
                                 //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
-                                String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
+                                String[] targetAxioms = AlignmentUtils.getDiagnosis(m, o);
                                 OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                                 ontology = new OWLIncoherencyExtractor(
                                       new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
@@ -1650,15 +1660,15 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                                 search.setCostsEstimator(es);
                                 //
-    //                            try {
-    //                                search.run();
-    //                            } catch (SolverException e) {
-    //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-    //                            } catch (NoConflictException e) {
-    //                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-    //                            } catch (InconsistentTheoryException e) {
-    //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-    //                            }
+                                //                            try {
+                                //                                search.run();
+                                //                            } catch (SolverException e) {
+                                //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                //                            } catch (NoConflictException e) {
+                                //                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                //                            } catch (InconsistentTheoryException e) {
+                                //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                //                            }
 
                                 Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
                                 search.clearSearch();
@@ -1691,13 +1701,12 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
                                 //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
-                                //TimeoutTask task = new TimeoutTask (4*3600*1000,m.trim(),o.trim() );
-                                //task.setSearch(search);
-                                //timer.scheduleAtFixedRate(task, 0, TimeoutTask.CYCLE_TIME);
+                                TimeoutTask task = new TimeoutTask(4 * 3600 * 1000, m.trim(), o.trim());
+                                task.setSearch(search);
+                                timer.scheduleAtFixedRate(task, 0, TimeoutTask.CYCLE_TIME);
                                 out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
-                                //task.cancel();
-                                //task.setSearch(null);
-
+                                task.cancel();
+                                task.setSearch(null);
                             }
                             logger.info(out);
                         }
@@ -1708,162 +1717,15 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     @Test
-    public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
-
-        showElRates = false;
-        int MAX_RUNS = 7+1;
-        rnd = new Random(121);
-
-        for (String name : new String[]{"Economy-SDA.owl"}) {
-            for (boolean dual : new boolean[] {true}) {
-
-                UniformCostSearch<OWLLogicalAxiom> search = getSearch(CreationUtils.createOwlOntology("queryontologies",name),false);
-                try {
-                    search.run();
-                } catch (NoConflictException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-                Set<AxiomSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getStorage().getDiagnoses());
-                ModerateDistribution moderateDistribution = new ModerateDistribution();
-                ExtremeDistribution extremeDistribution = new ExtremeDistribution();
-                search.clearSearch();
-
-                String out = "";
-
-                for (UsersProbab usersProbab : new UsersProbab[]{MODERATE}) {
-                    for (DiagProbab diagProbab : new DiagProbab[]{BAD}) {
-                        for (int run = 7; run < MAX_RUNS; run++) {
-
-                            UniformCostSearch<OWLLogicalAxiom> search2 = getSearch(CreationUtils.createOwlOntology("queryontologies",name),dual);
-                            diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
-                            AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
-
-
-
-
-
-                                TableList e = new TableList();
-                                String message = "act," + name + "," + dual + "," + usersProbab + ","
-                                        + diagProbab + "," + run  ;
-
-                                out += simulateBruteForceOnl(search2, (OWLTheory)search2.getTheory(), targetDiag, e, MINSCORE, message, null, null, null);
-
-                        }
-                    }
-                }
-            }
-        }
-
-
-
-
-
-    }
-
-    private Set<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
-        TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        for (AxiomSet<OWLLogicalAxiom> hs : axiomSets)
-            phs.add(hs);
-        return Collections.unmodifiableSet(phs);
-    }
-
-    private void shuffleKeyword(ArrayList<ManchesterOWLSyntax> keywordList) {
-        ArrayList<ManchesterOWLSyntax> cp = new ArrayList<ManchesterOWLSyntax>(keywordList.size());
-        cp.addAll(keywordList);
-        keywordList.clear();
-        for (int i = 0; cp.size() > 0; i++) {
-            int j = rnd.nextInt(cp.size());
-            keywordList.add(i, cp.remove(j));
-        }
-        keywordList.addAll(cp);
-    }
-
-    private Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
-            (UsersProbab
-                     usersProbab, UniformCostSearch<OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, ExtremeDistribution extremeDistribution, ModerateDistribution moderateDistribution) {
-        Map<ManchesterOWLSyntax, Double> keywordProbs = new HashMap<ManchesterOWLSyntax, Double>();
-        //ProbabilityTableModel m = new ProbabilityTableModel();
-        ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(Utils.getProbabMap().keySet()));
-        ManchesterOWLSyntax[] selectedKeywords = new ManchesterOWLSyntax[]{ManchesterOWLSyntax.SOME, ManchesterOWLSyntax.ONLY,
-                ManchesterOWLSyntax.DISJOINT_CLASSES, ManchesterOWLSyntax.DISJOINT_WITH, ManchesterOWLSyntax.SUBCLASS_OF,
-                ManchesterOWLSyntax.EQUIVALENT_CLASSES, ManchesterOWLSyntax.NOT, ManchesterOWLSyntax.AND};
-
-        /*
-        keywordList = new ArrayList<ManchesterOWLSyntax>(Arrays.asList(selectedKeywords));
-        shuffleKeyword(keywordList);
-        */
-        //Set<Integer> highKeywordPos = new HashSet<Integer>();
-
-        List<ManchesterOWLSyntax> c = new ArrayList<ManchesterOWLSyntax>(Arrays.asList(selectedKeywords));
-        for (int i = 0; i < c.size() / 2; i++) {
-            int j = rnd.nextInt(c.size());
-            keywordList.remove(c.get(j));
-        }
-        c.removeAll(keywordList);
-        shuffleKeyword(keywordList);
-        for (int i = 0; c.size() > 0; i++) {
-            int j = rnd.nextInt(c.size());
-            keywordList.add(i, c.remove(j));
-        }
-        //keywordList.addAll(c);
-
-        int n = keywordList.size();
-        int k = n / 4;
-        double[] probabilities;
-
-        switch (usersProbab) {
-            case EXTREME:
-                probabilities = extremeDistribution.getProbabilities(n);
-                for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, probabilities[keywordList.indexOf(keyword)]);
-                }
-                /*highKeywordPos.add(rnd.nextInt(n));
-                for(ManchesterOWLSyntax keyword : keywordList) {
-                    if (highKeywordPos.contains(keywordList.indexOf(keyword)))
-                        keywordProbs.put(keyword,getProbabBetween(LOWER_BOUND_EXTREME_HIGH,HIGHER_BOUND_EXTREME_HIGH));
-                    else
-                        keywordProbs.put(keyword, getProbabBetween(LOWER_BOUND_EXTREME_LOW,HIGHER_BOUND_EXTREME_LOW));
-                }*/
-                break;
-            case MODERATE:
-                probabilities = moderateDistribution.getProbabilities(n);
-                for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, probabilities[keywordList.indexOf(keyword)]);
-                }
-                /*for (int i = 0; i < k; i++) {
-                    int num = rnd.nextInt(n);
-                    while (!highKeywordPos.add(num))
-                        num = rnd.nextInt();
-                }
-                for(ManchesterOWLSyntax keyword : keywordList) {
-                    if (highKeywordPos.contains(keywordList.indexOf(keyword)))
-                        keywordProbs.put(keyword,getProbabBetween(LOWER_BOUND_MODERATE_HIGH,HIGHER_BOUND_MODERATE_HIGH));
-                    else
-                        keywordProbs.put(keyword, getProbabBetween(LOWER_BOUND_MODERATE_LOW,HIGHER_BOUND_MODERATE_LOW));
-                }*/
-                break;
-            case UNIFORM:
-                for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, (1.0 / n));
-                }
-                break;
-        }
-        ((OWLAxiomKeywordCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
-        return sortDiagnoses(diagnoses);
-
-
-    }
-
-    @Test
     public void doShowMappingAxiomsSizes() throws SolverException, InconsistentTheoryException, IOException {
         Properties properties = AlignmentUtils.readProps("alignment.allFiles.properties");
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
 
-            for (String m : mapOntos.keySet()) {
-                for (String o : mapOntos.get(m)) {
-                    AlignmentUtils.getDiagnosis(m,o);
-                }
+        for (String m : mapOntos.keySet()) {
+            for (String o : mapOntos.get(m)) {
+                AlignmentUtils.getDiagnosis(m, o);
             }
+        }
     }
 
     @Test
@@ -1872,16 +1734,16 @@ public class UnsolvableTests extends BasePerformanceTests {
         Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
         boolean background_add = false;
 
-        showElRates=true;
+        showElRates = true;
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
-        for (boolean dual : new boolean[] {false}) {
+        for (boolean dual : new boolean[]{false}) {
             for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                 for (String m : mapOntos.keySet()) {
                     for (String o : mapOntos.get(m)) {
-                        String out ="STAT, " + m +  ", " + o;
+                        String out = "STAT, " + m + ", " + o;
                         for (BasePerformanceTests.QSSType type : qssTypes) {
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                            String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
+                            String[] targetAxioms = AlignmentUtils.getDiagnosis(m, o);
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);
@@ -1904,7 +1766,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             OWLTheory theory2 = createOWLTheory(ontology, dual);
                             OWLTheory t3 = createOWLTheory(ontology, dual);
                             UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
-                            search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2,path));
+                            search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
@@ -1975,7 +1837,5 @@ public class UnsolvableTests extends BasePerformanceTests {
             }
         }
     }
-
-
 
 }

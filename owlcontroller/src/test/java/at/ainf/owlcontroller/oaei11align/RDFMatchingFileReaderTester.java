@@ -1,18 +1,16 @@
 package at.ainf.owlcontroller.oaei11align;
 
-import at.ainf.diagnosis.quickxplain.FastDiagnosis;
+import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.DualTreeLogic;
 import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.CreationUtils;
 import at.ainf.owlcontroller.RDFUtils;
-import at.ainf.owlcontroller.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
@@ -23,7 +21,6 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
-import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -96,7 +93,7 @@ public class RDFMatchingFileReaderTester {
             TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual;
             if (dual) {
                 searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
-                searchDual.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+                searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             }
             else {
                 searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
@@ -399,7 +396,7 @@ public class RDFMatchingFileReaderTester {
             theory.addBackgroundFormulas(ontology1CutExtracted);
             theory.addBackgroundFormulas(ontology2CutExtracted);
 
-            search.setSearcher(new FastDiagnosis<OWLLogicalAxiom>());
+            search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             search.setTheory(theory);
 
             try {
