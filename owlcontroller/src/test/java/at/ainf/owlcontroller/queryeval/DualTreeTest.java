@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -54,6 +55,7 @@ public class DualTreeTest extends BasePerformanceTests {
         PropertyConfigurator.configure(conf);
     }
 
+    @Ignore
     @Test
     public void testDualTreePruning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         //String ont = "queryontologies/onediag.owl";

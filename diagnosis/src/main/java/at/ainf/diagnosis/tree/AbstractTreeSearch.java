@@ -13,9 +13,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomRenderer;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Storage;
+import at.ainf.theory.storage.*;
 import org.apache.log4j.Logger;
 
 import java.util.*;
@@ -45,6 +43,16 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
     // ICONFLICTSEARCHER: is the search algorithm for conflicts (e.g. QuickXplain)
     private Searcher<Id> searcher;
     private int prunedHS;
+
+    private SearchStrategy<Id> searchStrategy;
+
+    public SearchStrategy<Id> getSearchStrategy() {
+        return searchStrategy;
+    }
+
+    public void setSearchStrategy(SearchStrategy<Id> searchStrategy) {
+        this.searchStrategy = searchStrategy;
+    }
 
     private AxiomRenderer<Id> axiomRenderer;
 
@@ -81,11 +89,36 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public abstract void expand(Node<Id> node);
 
-    protected abstract T createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException;
+    //protected abstract T createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException;
 
-    protected abstract T createHittingSet(Node<Id> labels, boolean valid) throws SolverException;
+    //protected abstract T createHittingSet(Node<Id> labels, boolean valid) throws SolverException;
+
+    protected T createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException {
+        Set<Id> entailments = Collections.emptySet();
+        if (getTheory().supportEntailments() && getSearcher().isDual()) entailments = getTheory().getEntailments(quickConflict);
+        if (entailments==null) entailments = Collections.emptySet();
+        double measure =  getConflictMeasure(quickConflict);
+        T hs = (T) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments);
+        hs.setNode(node);
+        return hs;
+    }
+
+    protected T createHittingSet(Node<Id> node, boolean valid) throws SolverException {
+        Set<Id> labels = node.getPathLabels();
+        Set<Id> entailments = Collections.emptySet();
+        if (getTheory().supportEntailments() && valid && !getSearcher().isDual())
+            entailments = getTheory().getEntailments(labels);
+        double measure = getDiagnosisMeasure(node);
+        T hs = (T) AxiomSetFactory.createHittingSet(measure, labels, entailments);
+        hs.setNode(node);
+        return hs;
+    }
 
     protected List<OpenNodesListener> oNodesLsteners = new LinkedList<OpenNodesListener>();
+
+    protected abstract double getConflictMeasure(Set<Id> conflict);
+
+    protected abstract double getDiagnosisMeasure(Node<Id> node);
 
     public void addOpenNodesListener(OpenNodesListener l) {
         oNodesLsteners.add(l);
@@ -324,9 +357,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         setRoot(node);
     }
 
-    protected Node<Id> createRootNode(Set<Id> conflict) {
-        return new Node<Id>(conflict);
-    }
+    protected abstract Node<Id> createRootNode(Set<Id> conflict);
 
     /*
     protected void proveValidnessConflict(T conflictSet) throws SolverException {

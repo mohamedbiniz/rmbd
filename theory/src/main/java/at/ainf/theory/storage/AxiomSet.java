@@ -39,5 +39,7 @@ public interface AxiomSet<Id> extends Set<Id>, Comparable<AxiomSet<Id>>, Watched
 
     void restoreEntailments();
 
+    public void setNode(Object node);
+
 
 }

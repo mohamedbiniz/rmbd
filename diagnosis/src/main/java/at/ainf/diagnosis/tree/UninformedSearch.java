@@ -18,7 +18,7 @@ import java.util.*;
 public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id>
         implements TreeSearch<AxiomSet<Id>, Id> {
 
-    private int hscount = 0;
+    //private int hscount = 0;
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
@@ -28,31 +28,40 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
         setCostsEstimator(new SimpleCostsEstimator<Id>());
     }
 
-    @Override
+    /*@Override
     protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException {
         Set<Id> entailments = Collections.emptySet();
-        if (getTheory().supportEntailments() && getSearcher().isDual())
-            entailments = getTheory().getEntailments(quickConflict);
+        if (getTheory().supportEntailments() && getSearcher().isDual()) entailments = getTheory().getEntailments(quickConflict);
         if (entailments==null) entailments = Collections.emptySet();
-        double measure = 1d / quickConflict.size();
+        double measure = getConflictMeasure(quickConflict);
         AbstrAxiomSet<Id> hs = (AbstrAxiomSet<Id>) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments);
         hs.setNode(node);
         return hs;
+    }*/
+
+    protected Node<Id> createRootNode(Set<Id> conflict) {
+        return new Node<Id>(conflict);
     }
 
-    @Override
+    protected double getConflictMeasure(Set<Id> conflict) {
+        return 1d / conflict.size();
+    }
+
+    /*@Override
     protected AxiomSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
         Set<Id> labels = node.getPathLabels();
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && valid && !getSearcher().isDual())
             entailments = getTheory().getEntailments(labels);
-        double measure = 1d / labels.size();
+        double measure = getDiagnosisMeasure(node);
         AbstrAxiomSet<Id> hs = (AbstrAxiomSet<Id>) AxiomSetFactory.createHittingSet(measure, labels, entailments);
         hs.setNode(node);
-        this.hscount++;
         return hs;
-    }
+    }*/
 
+    protected double getDiagnosisMeasure(Node<Id> node) {
+        return 1d / node.getPathLabels().size();
+    }
 
     public Collection<Node<Id>> getOpenNodes() {
         return openNodes;

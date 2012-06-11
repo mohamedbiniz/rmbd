@@ -1,9 +1,7 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.storage.*;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.*;
 
@@ -16,7 +14,7 @@ import java.util.*;
  */
 public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> {
 
-    private int count = 0;
+    //private int count = 0;
 
     private PriorityQueue<Node<Id>> opensNodes = new PriorityQueue<Node<Id>>();
 
@@ -56,35 +54,35 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         addNodes(node.expandNode());
     }
 
-    @Override
+    /*@Override
     protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException {
-        double probability =  getCostsEstimator().getAxiomSetCosts(quickConflict);
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && getSearcher().isDual()) entailments = getTheory().getEntailments(quickConflict);
-        if (entailments==null)
-            entailments = Collections.emptySet();
-        AbstrAxiomSet<Id> result = (AbstrAxiomSet<Id>) AxiomSetFactory.createConflictSet(probability, quickConflict, entailments );
-        result.setNode(node);
-        return result;
-        // return result;
+        if (entailments==null) entailments = Collections.emptySet();
+        double measure =  getConflictMeasure(quickConflict);
+        AbstrAxiomSet<Id> hs = (AbstrAxiomSet<Id>) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments );
+        hs.setNode(node);
+        return hs;
+    }*/
+
+    protected double getConflictMeasure(Set<Id> conflict) {
+        return getCostsEstimator().getAxiomSetCosts(conflict);
     }
 
-    @Override
-    public void clearSearch() {
-        count = 0;
-        super.clearSearch();
-    }
-
-    @Override
+    /*@Override
     protected AxiomSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
         Set<Id> labels = node.getPathLabels();
-        double probability = ((CostNode<Id>) node).getNodePathCosts();
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && valid && !getSearcher().isDual())
             entailments = getTheory().getEntailments(labels);
-        AbstrAxiomSet<Id> result = (AbstrAxiomSet<Id>) AxiomSetFactory.createHittingSet(probability, labels, entailments);
-        result.setNode(node);
-        return result;
+        double measure = getDiagnosisMeasure(node);
+        AbstrAxiomSet<Id> hs = (AbstrAxiomSet<Id>) AxiomSetFactory.createHittingSet(measure, labels, entailments);
+        hs.setNode(node);
+        return hs;
+    }*/
+
+    protected double getDiagnosisMeasure(Node<Id> node) {
+        return ((CostNode<Id>) node).getNodePathCosts();
     }
 
     @Override
