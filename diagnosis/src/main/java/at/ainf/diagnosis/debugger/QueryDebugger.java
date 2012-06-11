@@ -28,18 +28,10 @@ public interface QueryDebugger<Id> {
 
     public void init();
 
-    Partition<Id> getQuery(Scoring<Id> f, boolean minimizeQuery, double acceptanceThreshold);
-
     void updateMaxHittingSets(int number);
 
     public boolean debug();
 
     void reset();
-
-    public void addQueryDebuggerListener(QueryDebuggerListener<Id> listener);
-
-    public void removeQueryDebuggerListener(QueryDebuggerListener<Id> listener);
-
-    public boolean resume();
 
 }
