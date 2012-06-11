@@ -1,10 +1,6 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.debugger.ProbabilityQueryDebugger;
-import at.ainf.diagnosis.debugger.QueryDebugger;
-import at.ainf.diagnosis.debugger.QueryDebuggerListener;
-import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.quickxplain.FastDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
@@ -13,22 +9,16 @@ import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.owlcontroller.listeners.OWLControllerConflictSetListener;
-import at.ainf.owlcontroller.listeners.OWLControllerHittingSetListener;
 import at.ainf.owlcontroller.listeners.OWLControllerListener;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.theory.storage.Storage;
-import org.picocontainer.DefaultPicoContainer;
-import org.picocontainer.behaviors.Caching;
-import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import static at.ainf.owlcontroller.SearchConfiguration.TreeType.*;
-import static at.ainf.owlcontroller.SearchConfiguration.QSS.*;
 import static at.ainf.owlcontroller.SearchConfiguration.SearchType.*;
 
 import java.util.*;
