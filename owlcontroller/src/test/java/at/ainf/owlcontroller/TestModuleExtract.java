@@ -62,12 +62,12 @@ public class TestModuleExtract {
             if (file.getName().endsWith(".owl") && !file.getName().endsWith("cton.owl")) {
                 OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(file);
                 long timeOne = System.currentTimeMillis();
-                OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology);
-                OWLOntology extracted = ex.getIncoherentPartAsOntology();
+                OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+                OWLOntology extracted = ex.getIncoherentPartAsOntology(ontology);
                 timeOne = System.currentTimeMillis() - timeOne;
                 long timeMu = System.currentTimeMillis();
-                OWLIncoherencyExtractor ex2 = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology);
-                Set<OWLOntology> m = ex2.getIncoherentPartAsOntologies();
+                OWLIncoherencyExtractor ex2 = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+                Set<OWLOntology> m = null;//ex2.getIncoherentPartAsOntologies();
                 double meanLog = 0.0;
                 double meanAll = 0.0;
                 double meanSig = 0.0;
@@ -142,7 +142,7 @@ public class TestModuleExtract {
                 searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
                 OWLOntology ontology = loadOntology (  ont);
                 long pre = System.currentTimeMillis();
-        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
             p[i] = System.currentTimeMillis() - pre;
                 OWLTheory theoryNormal = createTheory(manager, ontology, false);
                 searchNormal.setTheory(theoryNormal);

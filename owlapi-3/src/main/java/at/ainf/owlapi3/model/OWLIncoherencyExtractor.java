@@ -8,6 +8,7 @@ import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -22,15 +23,19 @@ public class OWLIncoherencyExtractor {
 
     private OWLReasonerFactory reasonerFactory;
 
-    private OWLOntology ontology;
-
-    public OWLIncoherencyExtractor(OWLReasonerFactory reasonerFactory, OWLOntology ontology) {
+    public OWLIncoherencyExtractor(OWLReasonerFactory reasonerFactory) {
         this.reasonerFactory = reasonerFactory;
-        this.ontology = ontology;
-
     }
 
-    public OWLOntology getIncoherentPartAsOntology() {
+    public OWLOntology getIncoherentPartAsOntology(OWLOntology ontology) {
+        return extract(ontology,false).iterator().next();
+    }
+
+    public Set<OWLOntology> getIncoherentPartAsMultipleOntologies(OWLOntology ontology) {
+        return extract(ontology, true);
+    }
+
+    private Set<OWLOntology> extract(OWLOntology ontology, boolean multiple) {
         Set<OWLEntity> incoherentEntities = new LinkedHashSet<OWLEntity>();
         OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
         Set<OWLAxiom> aBoxAxioms = null;
@@ -48,16 +53,25 @@ public class OWLIncoherencyExtractor {
         incoherentEntities.remove(OWLManager.getOWLDataFactory().getOWLNothing());
 
 
-        OWLOntology result;
+        Set<OWLOntology> result;
 
         SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
-        IRI moduleIRI = IRI.create("http://ainf.at/IncoherencyModule");
+        String iriString = "http://ainf.at/IncoherencyModule";
         try {
             if (!incoherentEntities.isEmpty()) {
-                result = sme.extractAsOntology(incoherentEntities, moduleIRI);
+                if (multiple) {
+                    result = new LinkedHashSet<OWLOntology>();
+                    int cnt = 0;
+                    for (OWLEntity i : incoherentEntities) {
+                        result.add(sme.extractAsOntology(Collections.singleton(i), IRI.create(iriString + "_" + cnt)));
+                        cnt++;
+                    }
+                }
+                else
+                    result = Collections.singleton(sme.extractAsOntology(incoherentEntities, IRI.create(iriString)));
 
             } else
-                result = OWLManager.createOWLOntologyManager().createOntology(moduleIRI);
+                result = Collections.singleton(OWLManager.createOWLOntologyManager().createOntology(IRI.create(iriString)));
         } catch (OWLOntologyCreationException e) {
             result = null;
         }
@@ -69,33 +83,6 @@ public class OWLIncoherencyExtractor {
 
     }
 
-    public Set<OWLOntology> getIncoherentPartAsOntologies() {
 
-        if (!reasonerFactory.createReasoner(ontology).isConsistent())
-            return Collections.emptySet();
-
-        Set<OWLOntology> result = new LinkedHashSet<OWLOntology>();
-        Set<OWLClass> entities = reasonerFactory.createReasoner(ontology).getUnsatisfiableClasses().getEntities();
-        Set<OWLEntity> setOfEntities = new LinkedHashSet<OWLEntity>();
-        for (OWLClass entity : entities)
-            setOfEntities.add((OWLEntity) entity);
-
-        setOfEntities.remove(OWLManager.getOWLDataFactory().getOWLNothing());
-        if (!entities.isEmpty()) {
-            SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
-            IRI moduleIRI = IRI.create("http://ainf.at/IncoherencyModule");
-            try {
-                for (OWLEntity entitiy : entities) {
-                    Set<OWLEntity> e = new LinkedHashSet<OWLEntity>();
-                    e.add(entitiy);
-                    result.add(sme.extractAsOntology(e, IRI.create("http://ainf.at/IncoherencyModule"
-                            + entitiy.toString())));
-                }
-            } catch (OWLOntologyCreationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-        return result;
-    }
 
 }

@@ -78,7 +78,7 @@ public class RDFMatchingFileReaderTester {
 
             long extractionTime = System.currentTimeMillis();
             OWLOntology extracted = new OWLIncoherencyExtractor(
-                    new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
+                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
             extractionTime = System.currentTimeMillis() - extractionTime;
 
             Set<OWLLogicalAxiom> ontoBackground = new LinkedHashSet<OWLLogicalAxiom>();
@@ -133,42 +133,42 @@ public class RDFMatchingFileReaderTester {
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
-                logger.info("no conflicts 1: " + file.getName());
+                logger.info(",dual: " + dual + ",no conflicts 1: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             long time1 = System.currentTimeMillis() - start;
             int conflicts1 = searchDual.getStorage().getConflicts().size();
-            logger.info("," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 1 found " + time1+ ","
+            logger.info(",dual: " + dual + "," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 1 found " + time1+ ","
                     + conflicts1 + "," + extractionTime);
             try {
                 searchDual.run(9);
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
-                logger.info("no conflicts 9: " + file.getName());
+                logger.info(",dual: " + dual + ",no conflicts 9: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             long time9 = System.currentTimeMillis() - start;
             int conflicts9 = searchDual.getStorage().getConflicts().size();
-            logger.info("," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 9 found " + time9+ ","
+            logger.info(",dual: " + dual + "," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 9 found " + time9+ ","
                     + conflicts9 + "," + extractionTime);
             try {
                 searchDual.run(30);
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
-                logger.info("no conflicts 30: " + file.getName());
+                logger.info(",dual: " + dual + ",no conflicts 30: " + file.getName());
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (InconsistentTheoryException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             long time30 = System.currentTimeMillis() - start;
             int conflicts30 = searchDual.getStorage().getConflicts().size();
-            logger.info("," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 30 found "
+            logger.info(",dual: " + dual + "," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 30 found "
                     + time30+ "," + conflicts30 + "," + extractionTime);
 
             int numDiags = searchDual.getStorage().getDiagnoses().size();
@@ -206,7 +206,7 @@ public class RDFMatchingFileReaderTester {
             logger.info(file.getName() + ",found," + found);*/
 
 
-            logger.info(", act," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ","
+            logger.info(", act," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + "," + dual +","
                     + time1 + "," + time9 + "," + time30 + ","
                     + conflicts1 + "," + conflicts9 + "," + conflicts30 + "," + extractionTime
                     + "," + numDiags + "," + numC + ","+ numOfMinCardDiags + "," + minCardSize );
@@ -261,6 +261,56 @@ public class RDFMatchingFileReaderTester {
             SearchThread search = new SearchThread(file,true,d);
 
             Future future = executor.submit(search);
+        }
+
+        try {
+            executor.awaitTermination(2,TimeUnit.HOURS);
+            logger.info("timeout");
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void testSearchDiagnosisTimes() throws SolverException, InconsistentTheoryException, NoConflictException {
+        String d = "incoherent";
+        File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/includedIncoher.txt").getFile());
+        MyFilenameFilter filter = new MyFilenameFilter(incl);
+        File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
+                .getFile()).listFiles(filter);
+
+        //Set<String> excluded = new LinkedHashSet<String>();
+        //excluded.add("ldoa-conference-iasted.rdf");
+
+        ExecutorService executor = Executors.newCachedThreadPool();
+
+        for (boolean dual : new boolean[]{true, false}) {
+            for (File file : f) {
+                if (file.isDirectory())
+                    continue;
+
+                SearchThread search = new SearchThread(file, dual, d);
+
+                Future future = executor.submit(search);
+            }
+        }
+
+        d = "inconsistent";
+        incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/included.txt").getFile());
+        filter = new MyFilenameFilter(incl);
+        f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
+                .getFile()).listFiles(filter);
+
+        for (boolean dual : new boolean[]{true, false}) {
+            for (File file : f) {
+                if (file.isDirectory())
+                    continue;
+
+                SearchThread search = new SearchThread(file, dual, d);
+
+                Future future = executor.submit(search);
+            }
         }
 
         try {
@@ -332,7 +382,7 @@ public class RDFMatchingFileReaderTester {
             for (OWLLogicalAxiom axiom : mapping)
                 merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
 
-            OWLOntology extracted = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
+            OWLOntology extracted = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
 
             BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
             DualTreeOWLTheory theory = null;
