@@ -232,7 +232,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
                     partition.difference = partition.difference.add(new BigDecimal(hs.getMeasure()));
                 } else {
                     partition.dz.add(hs);
-                    //partition.difference = partition.difference.add(new BigDecimal(hs.getMeasure()/2d));
+                    //partition.difference = partition.difference.add(new BigDecimal(hs.getConflictMeasure()/2d));
                 }
             }
         }

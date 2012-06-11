@@ -58,7 +58,7 @@ public class TreeEvaluation {
         search.add(new DepthFirstSearch<IVecIntComparable>(storage));
         search.add(new DepthLimitedSearch<IVecIntComparable>(storage));
         search.add(new IterativeDeepening<IVecIntComparable>(storage));
-        search.add(new MixedTreeSearch<IVecIntComparable>(storage));
+        //search.add(new MixedTreeSearch<IVecIntComparable>(storage));
 
         for (TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable> sr : search)
             run(sr);
