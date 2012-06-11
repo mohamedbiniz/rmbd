@@ -31,10 +31,6 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     protected TreeSearch<? extends AxiomSet<Id>, Id> search;
 
-    protected StorageConflictSetsListener conflictSetsListener;
-
-    protected StorageHittingSetsListener hittingSetsListener;
-
     private int maxDiags = 9;
 
     protected SimpleQueryDebugger(ITheory<Id> theory, boolean init) {
@@ -53,10 +49,6 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         search = new BreadthFirstSearch<Id>(storage,new NewQuickXplain<Id>(),getTheory());
         //search.setSearcher(new NewQuickXplain<Id>());
         //search.setTheory(getTheory());
-        conflictSetsListener = new StorageConflictSetsListenerImpl();
-        hittingSetsListener = new StorageHittingSetsListenerImpl();
-        search.getStorage().addStorageConflictSetsListener(conflictSetsListener);
-        search.getStorage().addStorageHittingSetsListener(hittingSetsListener);
 
     }
 
@@ -163,30 +155,9 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     }
 
-    protected class StorageConflictSetsListenerImpl implements StorageConflictSetsListener {
-        public void conflictSetAdded(StorageItemAddedEvent e) {
-            for (QueryDebuggerListener<Id> listener : listeners)
-                listener.conflictSetAdded(search.getStorage().getConflictSets());
-        }
-    }
 
-    protected class StorageHittingSetsListenerImpl implements StorageHittingSetsListener {
-        public void hittingSetAdded(StorageItemAddedEvent e) {
-            for (QueryDebuggerListener<Id> listener : listeners)
-                listener.hittingSetAdded(search.getStorage().getDiagnoses());
-        }
 
-    }
 
-    private List<QueryDebuggerListener<Id>> listeners = new LinkedList<QueryDebuggerListener<Id>>();
-
-    public void addQueryDebuggerListener(QueryDebuggerListener<Id> listener) {
-        listeners.add(listener);
-    }
-
-    public void removeQueryDebuggerListener(QueryDebuggerListener<Id> listener) {
-        listeners.remove(listener);
-    }
 
     public boolean resume() {
         try {
@@ -205,8 +176,6 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     //
     public void reset() {
         maxDiags = 9;
-        search.getStorage().removeStorageConflictSetsListener(conflictSetsListener);
-        search.getStorage().removeStorageHittingSetsListener(hittingSetsListener);
         init();
 
 

@@ -1,11 +1,9 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.diagnosis.debugger.ProbabilityQueryDebugger;
 import at.ainf.diagnosis.debugger.QueryDebugger;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -59,7 +57,7 @@ public class Example2005 {
         //search.setTheory(theory);
 
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
-        QueryDebugger<OWLLogicalAxiom> debugger = new ProbabilityQueryDebugger<OWLLogicalAxiom>(t,new OWLAxiomKeywordCostsEstimator(t));
+        SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
         debugger.updateMaxHittingSets(0);
 
         debugger.debug();
