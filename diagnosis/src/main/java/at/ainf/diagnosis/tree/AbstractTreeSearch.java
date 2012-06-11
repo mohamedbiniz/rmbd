@@ -219,7 +219,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
         } finally {
             theory.unregisterTestCases();
-            finalizeSearch();
+            finalizeSearch(this);
             stop("diagnosis");
             stop();
         }
@@ -239,7 +239,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }
     }
     */
-    protected abstract void finalizeSearch();
+    protected abstract void finalizeSearch(TreeSearch<T, Id> search);
 
     private void processOpenNodes() throws SolverException, NoConflictException, InconsistentTheoryException {
         if (getRoot() == null)
@@ -353,11 +353,11 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         // if there is already a root
         if (getRoot() != null) return;
         Set<Id> conflict = calculateConflict(null);
-        Node<Id> node = createRootNode(conflict);
+        Node<Id> node = createRootNode(conflict,getCostsEstimator(),getTheory().getActiveFormulas());
         setRoot(node);
     }
 
-    protected abstract Node<Id> createRootNode(Set<Id> conflict);
+    protected abstract Node<Id> createRootNode(Set<Id> conflict,CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
     /*
     protected void proveValidnessConflict(T conflictSet) throws SolverException {

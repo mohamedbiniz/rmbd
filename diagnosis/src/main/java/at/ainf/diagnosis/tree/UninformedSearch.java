@@ -39,7 +39,7 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
         return hs;
     }*/
 
-    protected Node<Id> createRootNode(Set<Id> conflict) {
+    protected Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         return new Node<Id>(conflict);
     }
 
@@ -80,7 +80,8 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
     }
 
     @Override
-    protected void finalizeSearch() {
+    protected void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
         // nothing to do here
     }
+
 }
