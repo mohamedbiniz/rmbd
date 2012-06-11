@@ -948,7 +948,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     private UniformCostSearch<OWLLogicalAxiom> getSearch(OWLOntology ontology, boolean dual) throws SolverException, InconsistentTheoryException {
 
         OWLOntology extracted = new OWLIncoherencyExtractor(
-                new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         OWLTheory theory = createTheoryOAEI(ontology, dual, true);
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
@@ -977,7 +977,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 o1, o2, mapd, n + ".rdf");
 
         OWLOntology ontology = new OWLIncoherencyExtractor(
-                new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
+                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
         OWLTheory theory = createTheoryOAEI(ontology, true, true);
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
 
@@ -1087,7 +1087,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             long preprocessModulExtract = System.currentTimeMillis();
                             OWLOntology ontology = new OWLIncoherencyExtractor(
-                                    new Reasoner.ReasonerFactory(),merged).getIncoherentPartAsOntology();
+                                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                              OWLTheory theory = createTheoryOAEI(ontology, true, true);
                             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
@@ -1145,7 +1145,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         targetDg.add(new MyOWLRendererParser(ontology).parse("C SubClassOf not (D or E)"));
 
         long preprocessModulExtract = System.currentTimeMillis();
-        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
 
         OWLTheory theory = createTheoryOAEI(ontology, dual, true);
@@ -1196,7 +1196,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             Set<OWLLogicalAxiom> targetDg;
                             long preprocessModulExtract = System.currentTimeMillis();
                             ontology = new OWLIncoherencyExtractor(
-                                    new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             OWLTheory theory = createTheoryOAEI(ontology, dual, true);
                             UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
@@ -1277,7 +1277,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 Set<OWLLogicalAxiom> targetDg;
                                 long preprocessModulExtract = System.currentTimeMillis();
                                 ontology = new OWLIncoherencyExtractor(
-                                        new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                                        new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                                 preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                                 OWLTheory theory = createTheoryOAEI(ontology, dual, true);
                                 UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
@@ -1354,7 +1354,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             long preprocessModulExtract = System.currentTimeMillis();
                             ontology = new OWLIncoherencyExtractor(
-                                    new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, true);
@@ -1413,7 +1413,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                         //OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                         long preprocessModulExtract = System.currentTimeMillis();
                         ontology = new OWLIncoherencyExtractor(
-                                new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                         Set<OWLLogicalAxiom> targetDg;
                         OWLTheory theory = createOWLTheory(ontology, dual);
@@ -1498,7 +1498,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     private TreeSet<AxiomSet<OWLLogicalAxiom>> getAllD(String o) {
         OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o+".owl");
-        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         OWLTheory theory = createOWLTheory(ontology, false);
         UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
@@ -1614,7 +1614,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 String[] targetAxioms = AlignmentUtils.getDiagnosis(m,o);
                                 OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                                 ontology = new OWLIncoherencyExtractor(
-                                      new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                                      new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                                 Set<OWLLogicalAxiom> targetDg;
                                 OWLTheory theory = createOWLTheory(ontology, dual);
                                 UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);

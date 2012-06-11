@@ -147,7 +147,7 @@ public class OAEI2011 {
 
     public OWLTheory createTheoryOAEI(OWLOntology ontology, boolean dual) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         ontology = new OWLIncoherencyExtractor(
-                new Reasoner.ReasonerFactory(),ontology).getIncoherentPartAsOntology();
+                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));
