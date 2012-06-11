@@ -25,7 +25,7 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
     }
 
-    public void createRoot() throws NoConflictException,
+    /*public void createRoot() throws NoConflictException,
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
@@ -42,6 +42,13 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
 
         node.setNodePathCosts(node.getRootNodeCosts(getTheory().getActiveFormulas()));
         setRoot(node);
+    }*/
+
+    protected Node<Id> createRootNode(Set<Id> conflict) {
+        CostNode<Id> node = new CostNode<Id>(conflict);
+        node.setCostsEstimator(getCostsEstimator());
+        node.setNodePathCosts(node.getRootNodeCosts(getTheory().getActiveFormulas()));
+        return node;
     }
 
     @Override
