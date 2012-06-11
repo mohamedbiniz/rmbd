@@ -320,8 +320,12 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         // if there is already a root
         if (getRoot() != null) return;
         Set<Id> conflict = calculateConflict(null);
-        Node<Id> node = new Node<Id>(conflict);
+        Node<Id> node = createRootNode(conflict);
         setRoot(node);
+    }
+
+    protected Node<Id> createRootNode(Set<Id> conflict) {
+        return new Node<Id>(conflict);
     }
 
     /*
