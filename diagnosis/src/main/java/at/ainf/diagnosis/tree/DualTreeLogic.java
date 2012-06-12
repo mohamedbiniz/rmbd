@@ -47,7 +47,7 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, I
                 tree.getStorage().removeConflictSet(ax);
         }
         Set<T> cs = tree.getStorage().getConflictSets();
-        tree.getOpenNodes().clear();
+        tree.getSearchStrategy().getOpenNodes().clear();
         Node<Id> root = tree.getRoot();
         for (Node<Id> idNode : root.getChildren()) {
             idNode.removeParent();
@@ -59,7 +59,7 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, I
                     return o1.compareTo(o2);
                 }
             }));
-            tree.addNodes(root.expandNode());
+            tree.getSearchStrategy().addNodes(root.expandNode());
         }
         else
             root.setAxiomSet(null);
@@ -91,7 +91,7 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, I
             Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet());
             //if (!getSearcher().isDual())
             invalidAxioms.removeAll(axSet);
-            for (Iterator<Node<Id>> onodeit = tree.getOpenNodes().iterator(); onodeit.hasNext(); ) {
+            for (Iterator<Node<Id>> onodeit = tree.getSearchStrategy().getOpenNodes().iterator(); onodeit.hasNext(); ) {
                 Node<Id> openNode = onodeit.next();
                 if (!openNode.isRoot() && hasParent(node, openNode.getParent())
                         && containsOneOf(openNode.getPathLabels(), invalidAxioms))
@@ -108,8 +108,8 @@ public class DualTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, I
                 return Collections.emptySet();*/
                 Set<Node<Id>> children = new LinkedHashSet<Node<Id>>(node.getChildren());
                 for (Node<Id> cnode : children) {
-                    if (tree.getOpenNodes().contains(cnode)) {
-                        tree.getOpenNodes().remove(cnode);
+                    if (tree.getSearchStrategy().getOpenNodes().contains(cnode)) {
+                        tree.getSearchStrategy().getOpenNodes().remove(cnode);
                         node.removeChild(cnode);
                     } else {
                         // update conflicts

@@ -1,5 +1,6 @@
 package at.ainf.diagnosis.tree;
 
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.*;
 
@@ -16,11 +17,12 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
 
     //private int count = 0;
 
-    private PriorityQueue<Node<Id>> opensNodes = new PriorityQueue<Node<Id>>();
+    //private PriorityQueue<Node<Id>> opensNodes = new PriorityQueue<Node<Id>>();
 
     public UniformCostSearch(SimpleStorage<Id> storage) {
         super(storage);
         setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
+        setSearchStrategy(new UniformCostSearchStrategy<Id>());
     }
 
     /*public void createRoot() throws NoConflictException,
@@ -42,17 +44,19 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         setRoot(node);
     }*/
 
-    protected Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+    // moved
+    /*protected Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         CostNode<Id> node = new CostNode<Id>(conflict);
         node.setCostsEstimator(costsEstimator);
         node.setNodePathCosts(node.getRootNodeCosts(act));
         return node;
-    }
+    }*/
 
-    @Override
+    // moved
+    /*@Override
     public void expand(Node<Id> node) {
         addNodes(node.expandNode());
-    }
+    }*/
 
     /*@Override
     protected AxiomSet<Id> createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException {
@@ -65,9 +69,10 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         return hs;
     }*/
 
-    protected double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
+    // moved
+    /*protected double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return costsEstimator.getAxiomSetCosts(conflict);
-    }
+    }*/
 
     /*@Override
     protected AxiomSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
@@ -81,48 +86,57 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         return hs;
     }*/
 
-    protected double getDiagnosisMeasure(Node<Id> node) {
+    //moved
+    /*protected double getDiagnosisMeasure(Node<Id> node) {
         return ((CostNode<Id>) node).getNodePathCosts();
-    }
+    }*/
 
-    @Override
+    // moved
+    /*@Override
     protected void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
         search.getTheory().doBayesUpdate(search.getStorage().getDiagnoses());
         search.getStorage().normalizeValidHittingSets();
-    }
+    }*/
 
-    @Override
+    // moved
+    /*@Override
     public Node<Id> getNode() {
         // gets the first open node of the List
         return popOpenNodes();
-    }
+    }*/
 
-    public void addNodes(List<Node<Id>> nodeList) {
+    // moved
+    /*public void addNodes(List<Node<Id>> nodeList) {
 
         for (Node<Id> node : nodeList) {
             pushOpenNode(node);
         }
         //Collections.sort(getOpenNodes(), new NodeComparator());
-    }
+    }*/
 
-    @Override
+    //moved
+    /*@Override
     public Collection<Node<Id>> getOpenNodes() {
         return this.opensNodes;
-    }
+    }*/
 
+    //moved
+    /*
     @Override
     public Node<Id> popOpenNodes() {
         for (OpenNodesListener l : oNodesLsteners)
             l.updateOpenNodesRemoved();
         return this.opensNodes.poll();
-    }
+    }*/
 
+    //moved
+    /*
     @Override
     public void pushOpenNode(Node<Id> idNode) {
         for (OpenNodesListener l : oNodesLsteners)
             l.updateOpenNodesAdded();
         this.opensNodes.add(idNode);
-    }
+    }*/
 
 
 }

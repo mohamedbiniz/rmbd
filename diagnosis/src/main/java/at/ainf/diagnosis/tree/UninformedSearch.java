@@ -20,7 +20,7 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
 
     //private int hscount = 0;
 
-    private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
+    //private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
 
     public UninformedSearch(Storage<AxiomSet<Id>, Id> storage) {
@@ -39,13 +39,15 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
         return hs;
     }*/
 
-    protected Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+    //moved
+    /*protected Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         return new Node<Id>(conflict);
-    }
+    }*/
 
-    protected double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
+    //moved
+    /*protected double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return 1d / conflict.size();
-    }
+    }*/
 
     /*@Override
     protected AxiomSet<Id> createHittingSet(Node<Id> node, boolean valid) throws SolverException {
@@ -59,29 +61,32 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
         return hs;
     }*/
 
-    protected double getDiagnosisMeasure(Node<Id> node) {
+    //moved
+    /*protected double getDiagnosisMeasure(Node<Id> node) {
         return 1d / node.getPathLabels().size();
-    }
+    } */
 
-    public Collection<Node<Id>> getOpenNodes() {
+    /*public Collection<Node<Id>> getOpenNodes() { moved
         return openNodes;
-    }
+    }*/
 
-    public Node<Id> popOpenNodes() {
+    //moved
+    /*public Node<Id> popOpenNodes() {
         for (OpenNodesListener l : oNodesLsteners)
             l.updateOpenNodesRemoved();
         return this.openNodes.pop();
-    }
+    }*/
 
-    public void pushOpenNode(Node<Id> node) {
+    /*public void pushOpenNode(Node<Id> node) { moved
         for (OpenNodesListener l : oNodesLsteners)
             l.updateOpenNodesAdded();
         this.openNodes.push(node);
-    }
+    }*/
 
-    @Override
-    protected void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
+
+    //moved
+    /*protected void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
         // nothing to do here
-    }
+    }*/
 
 }

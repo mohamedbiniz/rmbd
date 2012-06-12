@@ -9,6 +9,7 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
@@ -27,6 +28,7 @@ public class BreadthFirstSearch<Id> extends UninformedSearch<Id> {
     public BreadthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
         setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
+        setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
     }
 
     public BreadthFirstSearch(Storage<AxiomSet<Id>,Id> storage, Searcher<Id> idNewQuickXplain, ITheory<Id> theory) {
@@ -34,20 +36,21 @@ public class BreadthFirstSearch<Id> extends UninformedSearch<Id> {
         setSearcher(idNewQuickXplain);
         setTheory(theory);
         setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
+        setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
     }
 
-    public void expand(Node<Id> node) {
-        addNodes(node.expandNode());
-    }
+    /* moved public void expand(Node<Id> node) {
+        getSearchStrategy().addNodes(node.expandNode());
+    } */
 
-    public Node<Id> getNode() {
+    /* moved public Node<Id> getNode() {
         // gets the first open node of the List
-        return popOpenNodes();
-    }
+        return getSearchStrategy().popOpenNodes();
+    } */
 
-    public void addNodes(List<Node<Id>> nodeList) {
+    /* moved public void addNodes(List<Node<Id>> nodeList) {
         // adds the new open nodes at the end of the List
         for (Node<Id> node : nodeList) addLastOpenNodes(node);
-    }
+    }*/
 
 }
