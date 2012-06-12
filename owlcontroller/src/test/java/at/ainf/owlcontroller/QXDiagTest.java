@@ -2,9 +2,9 @@ package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.BreadthFirstSearch;
-import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
@@ -50,7 +50,9 @@ public class QXDiagTest {
     @Test
     public void testFasterDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         DualStorage<OWLLogicalAxiom> storage = new DualStorage<OWLLogicalAxiom>();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "queryontologies/koala.owl", true);
         search.setTheory(th);
@@ -67,7 +69,9 @@ public class QXDiagTest {
 
         String ont = "koala.owl";
 
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
         searchNormal.setTheory(theoryNormal);
@@ -75,7 +79,9 @@ public class QXDiagTest {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
         searchDual.setTheory(theoryDual);
@@ -136,7 +142,9 @@ public class QXDiagTest {
         target.add(parser.parse("hasAdvisor InverseOf advisorOf"));
 
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+        search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
@@ -168,7 +176,10 @@ public class QXDiagTest {
         target.add(parser.parse("hasAdvisor InverseOf advisorOf"));
 
         SimpleStorage<OWLLogicalAxiom> storage = new DualStorage<OWLLogicalAxiom>();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+
+        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+        search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
@@ -205,7 +216,9 @@ public class QXDiagTest {
     @Test
     public void testConflictDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+        search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "queryontologies/koala.owl", false);
         search.setTheory(th);

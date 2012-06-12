@@ -3,10 +3,9 @@ package at.ainf.owlcontroller;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.BreadthFirstSearch;
-import at.ainf.diagnosis.tree.DualTreeLogic;
-import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.tree.UniformCostSearch;
+import at.ainf.diagnosis.tree.*;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.listeners.OWLControllerListener;
@@ -74,18 +73,25 @@ public class OWLControllerImpl implements OWLController {
     private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createSearch(Storage<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> storage, Searcher<OWLLogicalAxiom> searcher, OWLTheory theory) {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = null;
 
-        if (config.searchType == BREATHFIRST)
-            search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        if (config.treeType == REITER ) {
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+        }
+        else {
+            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+        }
+
+        if (config.searchType == BREATHFIRST) {
+            search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+            search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        }
         else if (config.searchType == UNIFORM_COST) {
-            search = new UniformCostSearch<OWLLogicalAxiom>((SimpleStorage<OWLLogicalAxiom>)storage);
-            ((UniformCostSearch<OWLLogicalAxiom>)search).setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+            search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         }
 
         search.setSearcher(searcher);
 
-        if (config.treeType == DUAL) {
-            search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
-        }
+
 
         search.setTheory(theory);
 

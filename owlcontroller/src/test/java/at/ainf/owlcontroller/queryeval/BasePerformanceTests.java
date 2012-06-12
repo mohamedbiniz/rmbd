@@ -4,6 +4,7 @@ import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
+import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -81,7 +82,7 @@ public abstract class BasePerformanceTests {
     }
 
     protected boolean generateQueryAnswer
-            (UniformCostSearch<OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
+            (TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
 
@@ -100,7 +101,7 @@ public abstract class BasePerformanceTests {
     }
 
     protected void simulateBruteForceOnl
-            (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
+            (TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, OWLTheory
                     theory, AxiomSet<OWLLogicalAxiom> targetDiag, TableList
                     entry, QSSType scoringFunc) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
@@ -325,7 +326,7 @@ public abstract class BasePerformanceTests {
         }
     }
 
-    protected long computeDual(UniformCostSearch<OWLLogicalAxiom> searchDual, OWLTheory theoryDual,
+    protected long computeDual(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual, OWLTheory theoryDual,
                                AxiomSet<OWLLogicalAxiom> diagnosis, List<Double> queries, QSSType type) {
         TableList entry2 = new TableList();
         long timeDual = System.currentTimeMillis();
@@ -360,7 +361,7 @@ public abstract class BasePerformanceTests {
         return ts.last();
     }
 
-    protected long computeHS(UniformCostSearch<OWLLogicalAxiom> searchNormal,
+    protected long computeHS(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal,
                              OWLTheory theoryNormal, AxiomSet<OWLLogicalAxiom> diagnoses,
                              List<Double> queries, PerformanceTests.QSSType type) {
         TableList entry = new TableList();

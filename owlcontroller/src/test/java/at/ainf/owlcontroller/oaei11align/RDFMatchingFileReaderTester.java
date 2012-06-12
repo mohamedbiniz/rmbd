@@ -2,10 +2,9 @@ package at.ainf.owlcontroller.oaei11align;
 
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.BreadthFirstSearch;
-import at.ainf.diagnosis.tree.DualTreeLogic;
-import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -92,11 +91,15 @@ public class RDFMatchingFileReaderTester {
 
             TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual;
             if (dual) {
-                searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+                searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+                searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+                searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
                 searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             }
             else {
-                searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+                searchDual = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+                searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+                searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
                 searchDual.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             }
 
@@ -121,8 +124,7 @@ public class RDFMatchingFileReaderTester {
             }
 
             searchDual.setTheory(theory);
-            if (dual)
-                searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
+            //if (dual) searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
 
             long start = System.currentTimeMillis();
             try {
@@ -381,7 +383,9 @@ public class RDFMatchingFileReaderTester {
 
             OWLOntology extracted = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
 
-            BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+            TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+            search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+            search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
             DualTreeOWLTheory theory = null;
             try {
                 theory = new DualTreeOWLTheory(new Reasoner.ReasonerFactory(),extracted, Collections.<OWLLogicalAxiom>emptySet());

@@ -5,8 +5,11 @@ import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
+import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -46,7 +49,9 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     public void init() {
         SimpleStorage<Id> storage = new SimpleStorage<Id>();
         if (theory != null) getTheory().reset();
-        search = new BreadthFirstSearch<Id>(storage);
+        search = new HsTreeSearch<AxiomSet<Id>,Id>(storage);
+        search.setCostsEstimator(new SimpleCostsEstimator<Id>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
         search.setSearcher(new NewQuickXplain<Id>());
         search.setTheory(getTheory());
         //search.setSearcher(new NewQuickXplain<Id>());

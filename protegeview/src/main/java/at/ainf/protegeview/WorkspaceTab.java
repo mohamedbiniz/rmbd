@@ -1,5 +1,8 @@
 package at.ainf.protegeview;
 
+import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.SolverException;
@@ -493,13 +496,14 @@ public class
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
         if (QueryDebuggerPreference.getInstance().getSearchCommand().equals("BestFirst")) {
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
 
-
-            search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         } else if (QueryDebuggerPreference.getInstance().getSearchCommand().equals("BreadthFirst")) {
             //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
 
-            search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         }
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 

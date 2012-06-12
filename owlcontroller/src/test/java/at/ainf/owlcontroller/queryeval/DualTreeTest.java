@@ -3,11 +3,10 @@ package at.ainf.owlcontroller.queryeval;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.BreadthFirstSearch;
-import at.ainf.diagnosis.tree.DualTreeLogic;
-import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.tree.UniformCostSearch;
+import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -83,9 +82,10 @@ public class DualTreeTest extends BasePerformanceTests {
         Searcher<OWLLogicalAxiom> dualSearcher = new DirectDiagnosis<OWLLogicalAxiom>();
         SimpleStorage<OWLLogicalAxiom> dualStorage = new DualStorage<OWLLogicalAxiom>();
 
-        BreadthFirstSearch<OWLLogicalAxiom> searchDual =
-                new BreadthFirstSearch<OWLLogicalAxiom>(dualStorage);
-        searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>());
+        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+        searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
+        //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>());
 
         ((NewQuickXplain<OWLLogicalAxiom>)dualSearcher).setAxiomRenderer(new MyOWLRendererParser(null));
 
@@ -95,8 +95,9 @@ public class DualTreeTest extends BasePerformanceTests {
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal =
-                new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
         computeQueryExample(ont, runs, false, searcher, searchNormal, ptestCases, ntestCases);
 
@@ -175,7 +176,9 @@ public class DualTreeTest extends BasePerformanceTests {
 
         long normal = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new BreadthFirstSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
         searchNormal.setTheory(theoryNormal);
@@ -185,7 +188,9 @@ public class DualTreeTest extends BasePerformanceTests {
 
         long dual = System.currentTimeMillis();
         manager = OWLManager.createOWLOntologyManager();
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new BreadthFirstSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
         searchDual.setTheory(theoryDual);
@@ -243,7 +248,8 @@ public class DualTreeTest extends BasePerformanceTests {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         userBrk = true;
         SIGMA = 85;
-        UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
@@ -256,12 +262,13 @@ public class DualTreeTest extends BasePerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
-        searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
+        //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
         map = Utils.getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);

@@ -28,8 +28,8 @@ public class BreadthFirstSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id>
 
     public BreadthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
-        setCostsEstimator(new SimpleCostsEstimator<Id>());
         setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
+        setCostsEstimator(new SimpleCostsEstimator<Id>());
         setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
     }
 

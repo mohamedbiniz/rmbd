@@ -73,6 +73,12 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
     //void pushOpenNode(Node<Id> node);
 
+    public void setCostsEstimator(CostsEstimator<Id> costsEstimator);
+
+    public void setSearchStrategy(SearchStrategy<Id> searchStrategy);
+
+    public CostsEstimator<Id> getCostsEstimator();
+
     public SearchStrategy<Id> getSearchStrategy();
 
 }

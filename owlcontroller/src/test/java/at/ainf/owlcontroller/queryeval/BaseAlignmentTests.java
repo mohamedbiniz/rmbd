@@ -5,9 +5,9 @@ import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.UniformCostSearch;
+import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
@@ -122,14 +122,20 @@ public class BaseAlignmentTests extends BasePerformanceTests {
         return result;
     }
 
-    protected UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
+    protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
 
         SimpleStorage<OWLLogicalAxiom> storage;
         if (dual)
             storage = new DualStorage<OWLLogicalAxiom>();
         else
             storage = new SimpleStorage<OWLLogicalAxiom>();
-        UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
+        if (dual)
+            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+        else
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         if (dual)
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         else
@@ -190,9 +196,9 @@ public class BaseAlignmentTests extends BasePerformanceTests {
     }
 
 
-    protected String simulateBruteForceOnl(UniformCostSearch<OWLLogicalAxiom> search,
+    protected String simulateBruteForceOnl(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
                                            OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
-                                           TableList entry, QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, UniformCostSearch<OWLLogicalAxiom> secondsearch, OWLTheory t3) {
+                                           TableList entry, QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> secondsearch, OWLTheory t3) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
@@ -500,7 +506,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
     }
 
     protected boolean generateQueryAnswer
-            (UniformCostSearch<OWLLogicalAxiom> search,
+            (TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
              Partition<OWLLogicalAxiom> actualQuery, Set<OWLLogicalAxiom> t) throws NoDecisionPossibleException {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();

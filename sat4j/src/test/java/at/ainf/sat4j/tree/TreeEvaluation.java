@@ -9,6 +9,7 @@
 package at.ainf.sat4j.tree;
 
 import at.ainf.diagnosis.tree.*;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.sat4j.model.IVecIntComparable;
 import at.ainf.sat4j.model.PropositionalTheory;
 import at.ainf.sat4j.model.VecIntComparable;
@@ -54,10 +55,10 @@ public class TreeEvaluation {
             logger.info("Starting the tree creation test.");
         SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
         List<TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable>> search = new ArrayList<TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable>>();
-        search.add(new BreadthFirstSearch<IVecIntComparable>(storage));
-        search.add(new DepthFirstSearch<IVecIntComparable>(storage));
-        search.add(new DepthLimitedSearch<IVecIntComparable>(storage));
-        search.add(new IterativeDeepening<IVecIntComparable>(storage));
+        //search.add(new BreadthFirstSearch<IVecIntComparable>(storage));
+        //search.add(new DepthFirstSearch<IVecIntComparable>(storage));
+        //search.add(new DepthLimitedSearch<IVecIntComparable>(storage));
+        //search.add(new IterativeDeepening<IVecIntComparable>(storage));
         //search.add(new MixedTreeSearch<IVecIntComparable>(storage));
 
         for (TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable> sr : search)
@@ -140,7 +141,6 @@ public class TreeEvaluation {
 
     }
 
-
     private boolean searchDub(Collection<? extends Set<IVecIntComparable>> conflicts) {
         short k = 0;
         for (Collection<IVecIntComparable> conflict1 : conflicts) {
@@ -158,7 +158,9 @@ public class TreeEvaluation {
     @Test
     public void testTests() throws SolverException, NoConflictException, InconsistentTheoryException {
         SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
-        BreadthFirstSearch<IVecIntComparable> search = new BreadthFirstSearch<IVecIntComparable>(storage);
+        HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>(storage);
+        search.setCostsEstimator(new SimpleCostsEstimator<IVecIntComparable>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<IVecIntComparable>());
         search.setSearcher(new NewQuickXplain<IVecIntComparable>());
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
         VecIntComparable vecInt = new VecIntComparable(new int[]{-6});
@@ -227,7 +229,9 @@ public class TreeEvaluation {
     @Test
     public void testStopAndGo() throws SolverException, NoConflictException, InconsistentTheoryException {
         SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
-        BreadthFirstSearch<IVecIntComparable> search = new BreadthFirstSearch<IVecIntComparable>(storage);
+        HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>(storage);
+        search.setCostsEstimator(new SimpleCostsEstimator<IVecIntComparable>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<IVecIntComparable>());
         search.setSearcher(new NewQuickXplain<IVecIntComparable>());
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
 
