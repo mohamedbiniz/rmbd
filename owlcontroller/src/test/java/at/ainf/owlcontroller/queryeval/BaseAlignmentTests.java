@@ -442,7 +442,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
         return msg;
     }
 
-    private void testTragetDiag(Set<OWLLogicalAxiom> targetDiag, OWLTheory theory, UniformCostSearch<OWLLogicalAxiom> search)  {
+    private void testTragetDiag(Set<OWLLogicalAxiom> targetDiag, OWLTheory theory, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search)  {
         Set<Set<OWLLogicalAxiom>> entTests = new LinkedHashSet<Set<OWLLogicalAxiom>>(theory.getEntailedTests());
         for (Set<OWLLogicalAxiom> entTest : entTests) {
             theory.removeEntailedTest(entTest);

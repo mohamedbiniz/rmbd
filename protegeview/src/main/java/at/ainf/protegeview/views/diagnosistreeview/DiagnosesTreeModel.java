@@ -1,11 +1,11 @@
 package at.ainf.protegeview.views.diagnosistreeview;
 
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.AbstrAxiomSet;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.UniformCostSearch;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.OWLWorkspace;
@@ -84,8 +84,8 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
         WorkspaceTab workspace = (WorkspaceTab) owlworkspace.getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
 
         CostsEstimator<OWLLogicalAxiom> es = null;
-        if (workspace.getSearch() instanceof UniformCostSearch) {
-            es = ((UniformCostSearch<OWLLogicalAxiom>) workspace.getSearch()).getCostsEstimator();
+        if (workspace.getSearch().getSearchStrategy() instanceof UniformCostSearchStrategy) {
+            es = workspace.getSearch().getCostsEstimator();
         }
 
         if (conflictSets == null) {

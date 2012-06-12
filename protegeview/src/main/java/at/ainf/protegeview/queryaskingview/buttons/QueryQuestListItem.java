@@ -1,6 +1,5 @@
 package at.ainf.protegeview.queryaskingview.buttons;
 
-import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.protegeview.views.ResultsListSectionItem;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -25,7 +24,7 @@ public class QueryQuestListItem extends ResultsListSectionItem {
     private boolean unknowMarked = false;
 
     public QueryQuestListItem(OWLLogicalAxiom axiom, WorkspaceTab workspaceTab) {
-        super(axiom, axiom, ((UniformCostSearch<OWLLogicalAxiom>) workspaceTab.getSearch()).getCostsEstimator());
+        super(axiom, axiom, workspaceTab.getSearch().getCostsEstimator());
         workspace=workspaceTab;
 
 

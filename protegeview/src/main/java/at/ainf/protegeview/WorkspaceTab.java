@@ -10,9 +10,7 @@ import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
-import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.backgroundsearch.BackgroundSearcher;
 import at.ainf.protegeview.configwizard.DebuggerWizard;
@@ -596,7 +594,7 @@ public class
             search.setTheory(theory);
             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
             es.updateKeywordProb(map);
-            ((UniformCostSearch<OWLLogicalAxiom>)search).setCostsEstimator(es);
+            search.setCostsEstimator(es);
             for (Set<OWLLogicalAxiom> axiom : posTests) {
                 theory.addPositiveTest(axiom);
             }

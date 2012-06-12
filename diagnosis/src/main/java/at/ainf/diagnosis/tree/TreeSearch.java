@@ -47,7 +47,7 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
     public void setTheory(ITheory<Id> theory);
 
-    public void setLogic(TreeLogic<T,Id> treeLog);
+    //public void setLogic(TreeLogic<T,Id> treeLog);
 
     public ITheory<Id> getTheory();
 

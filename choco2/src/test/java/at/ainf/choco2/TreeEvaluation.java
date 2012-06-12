@@ -20,7 +20,6 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
-import at.ainf.diagnosis.tree.BreadthFirstSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;

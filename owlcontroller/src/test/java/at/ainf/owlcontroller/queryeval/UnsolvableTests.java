@@ -283,7 +283,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     protected String simulateBruteForceOnl(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
                                            OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
-                                           TableList entry, BasePerformanceTests.QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, UniformCostSearch<OWLLogicalAxiom> secondsearch, OWLTheory t3) {
+                                           TableList entry, BasePerformanceTests.QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> secondsearch, OWLTheory t3) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
