@@ -65,8 +65,8 @@ public class UniformCostSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id> 
         return hs;
     }*/
 
-    protected double getConflictMeasure(Set<Id> conflict) {
-        return getCostsEstimator().getAxiomSetCosts(conflict);
+    protected double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
+        return costsEstimator.getAxiomSetCosts(conflict);
     }
 
     /*@Override

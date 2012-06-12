@@ -43,7 +43,7 @@ public abstract class UninformedSearch<Id> extends AbstractTreeSearch<AxiomSet<I
         return new Node<Id>(conflict);
     }
 
-    protected double getConflictMeasure(Set<Id> conflict) {
+    protected double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return 1d / conflict.size();
     }
 
