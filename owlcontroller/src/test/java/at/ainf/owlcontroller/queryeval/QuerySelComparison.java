@@ -4,9 +4,11 @@ import at.ainf.diagnosis.partitioning.*;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.Utils;
@@ -183,10 +185,11 @@ public class QuerySelComparison {
         return result;
     }
 
-    private UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th) {
+    private TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch(OWLTheory th) {
 
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);
 
@@ -204,7 +207,7 @@ public class QuerySelComparison {
         OWLOntology ont = createOwlOntology(ontologyFileString);
 
         OWLTheory theory = createOWLTheory(ont);
-        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory);
         //ProbabilityTableModel mo = new ProbabilityTableModel();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -266,7 +269,7 @@ public class QuerySelComparison {
             OWLOntology ont = createOwlOntology(ontologyFileString);
 
             OWLTheory theory = createOWLTheory(ont);
-            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
+            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -346,7 +349,7 @@ public class QuerySelComparison {
             OWLOntology ont = createOwlOntology(ontologyFileString);
 
             OWLTheory theory = createOWLTheory(ont);
-            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory);
+            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -640,8 +643,7 @@ public class QuerySelComparison {
         return null;
     }
 
-    protected void simulateBruteForceOnl
-            (UniformCostSearch<OWLLogicalAxiom> search, OWLTheory
+    protected void simulateBruteForceOnl(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, OWLTheory
                     theory, AxiomSet<OWLLogicalAxiom> targetDiag, TableList
                     entry) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
@@ -915,8 +917,8 @@ private void simulateQuerySession
 
   }
     */
-    private boolean generateQueryAnswer
-    (UniformCostSearch<OWLLogicalAxiom> search, Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
+    private boolean generateQueryAnswer (TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
+     Partition<OWLLogicalAxiom> actualQuery, AxiomSet<OWLLogicalAxiom> targetDiag) {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
 
@@ -1058,7 +1060,7 @@ private void simulateQuerySession
 
     private Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
             (UsersProbab
-                     usersProbab, UniformCostSearch<OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+                     usersProbab, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         Map<ManchesterOWLSyntax, Double> keywordProbs = new HashMap<ManchesterOWLSyntax, Double>();
         //ProbabilityTableModel m = new ProbabilityTableModel();
         ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(Utils.getProbabMap().keySet()));

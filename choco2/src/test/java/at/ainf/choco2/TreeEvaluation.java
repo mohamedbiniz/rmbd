@@ -12,6 +12,9 @@ import at.ainf.choco2.model.ConstraintTheory;
 import at.ainf.choco2.parser.ConstraintReader;
 import at.ainf.choco2.parser.ConstraintReaderException;
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.SimpleCostsEstimator;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
@@ -112,7 +115,9 @@ public class TreeEvaluation {
 
         SimpleStorage<Constraint> storage =
                 new SimpleStorage<Constraint>();
-        BreadthFirstSearch<Constraint> strategy = new BreadthFirstSearch<Constraint>(storage);
+        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>(storage);
+        strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
+        strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
         Searcher<Constraint> searcher = new NewQuickXplain<Constraint>();
         strategy.setSearcher(searcher);
 
@@ -159,7 +164,9 @@ public class TreeEvaluation {
 
 
         SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
-        BreadthFirstSearch strategy = new BreadthFirstSearch<Constraint>(storage);
+        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>(storage);
+        strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
+        strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
         strategy.setSearcher(new NewQuickXplain<Constraint>());
 
         strategy.setTheory(cth);
@@ -172,7 +179,7 @@ public class TreeEvaluation {
         }
 
         Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getDiagnoses();
-        Collection<Set<Constraint>> conflicts = strategy.getStorage().getConflicts();
+        Collection<AxiomSet<Constraint>> conflicts = strategy.getStorage().getConflicts();
 
         logger.info("Diagnoses: " + diagnoses);
         logger.info("Conflicts: " + conflicts);
@@ -242,7 +249,9 @@ public class TreeEvaluation {
         //cth.push(list.subList(2, 5));
 
         SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
-        BreadthFirstSearch<Constraint> strategy = new BreadthFirstSearch<Constraint>(storage);
+        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>(storage);
+        strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
+        strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
         strategy.setSearcher(new NewQuickXplain<Constraint>());
 
         strategy.setTheory(cth);

@@ -1,10 +1,9 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.tree.BreadthFirstSearch;
-import at.ainf.diagnosis.tree.HsTreeSearch;
-import at.ainf.diagnosis.tree.UniformCostSearch;
+import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -73,7 +72,9 @@ public class UniformCostSearchTest {
     @Test
     public void testEcai2010Simple() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+        search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
 
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -96,7 +97,9 @@ public class UniformCostSearchTest {
     @Test
     public void testEcai2010BreadthFirst() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+        search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
 
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 

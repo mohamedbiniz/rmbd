@@ -1,5 +1,6 @@
 package at.ainf.owlcontroller.queryeval;
 
+import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -54,7 +55,7 @@ public class AlignmentTests extends BaseAlignmentTests {
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = createOWLTheory(ontology, false);
         Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
-        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                 + m.trim()
                 + "-incoherent-evaluation/"
@@ -133,7 +134,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);
-                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
@@ -145,7 +146,7 @@ public class AlignmentTests extends BaseAlignmentTests {
 
                             OWLTheory theory2 = createOWLTheory(ontology, dual);
                             OWLTheory t3 = createOWLTheory(ontology, dual);
-                            UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -231,7 +232,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);
-                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
@@ -243,7 +244,7 @@ public class AlignmentTests extends BaseAlignmentTests {
 
                             OWLTheory theory2 = createOWLTheory(ontology, dual);
                             OWLTheory t3 = createOWLTheory(ontology, dual);
-                            UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 

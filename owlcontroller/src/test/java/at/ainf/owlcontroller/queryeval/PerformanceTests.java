@@ -2,8 +2,12 @@ package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.InvHsTreeSearch;
+import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -165,14 +169,22 @@ public class PerformanceTests extends BasePerformanceTests {
         return result;
     }
 
-    protected UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
+    protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
 
         SimpleStorage<OWLLogicalAxiom> storage;
         if (dual)
             storage = new DualStorage<OWLLogicalAxiom>();
         else
             storage = new SimpleStorage<OWLLogicalAxiom>();
-        UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
+        if (dual) {
+            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+        }
+        else {
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+        }
         if (dual)
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         else
@@ -208,7 +220,7 @@ public class PerformanceTests extends BasePerformanceTests {
 
 
             OWLTheory theory = createOWLTheory(ont, false);
-            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
+            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -228,7 +240,7 @@ public class PerformanceTests extends BasePerformanceTests {
             }
 
             OWLTheory dualtheory = createOWLTheory(ont, true);
-            UniformCostSearch<OWLLogicalAxiom> dualsearch = createUniformCostSearch(dualtheory, true);
+            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> dualsearch = createUniformCostSearch(dualtheory, true);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
             //HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
             OWLAxiomKeywordCostsEstimator des = new OWLAxiomKeywordCostsEstimator(dualtheory);
@@ -262,7 +274,7 @@ public class PerformanceTests extends BasePerformanceTests {
                         for (int j = 0; j < 2; j++) {
                             //scoringFunc = ScoringFunc[j];
                             try {
-                                UniformCostSearch<OWLLogicalAxiom> localsearch;
+                                TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> localsearch;
                                 OWLTheory localtheory;
                                 if (j == 0) {
                                     localtheory = theory;
@@ -439,7 +451,8 @@ public class PerformanceTests extends BasePerformanceTests {
         long t = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-        UniformCostSearch<OWLLogicalAxiom> searchNormal = new UniformCostSearch<OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
@@ -452,7 +465,8 @@ public class PerformanceTests extends BasePerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        UniformCostSearch<OWLLogicalAxiom> searchDual = new UniformCostSearch<OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);
         theoryDual.useCache(false, 0);
@@ -817,7 +831,7 @@ private void simulateQuerySession
 
     protected Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
             (UsersProbab
-                     usersProbab, UniformCostSearch<OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+                     usersProbab, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
         Map<ManchesterOWLSyntax, Double> keywordProbs = new HashMap<ManchesterOWLSyntax, Double>();
         //ProbabilityTableModel m = new ProbabilityTableModel();
         ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(Utils.getProbabMap().keySet()));

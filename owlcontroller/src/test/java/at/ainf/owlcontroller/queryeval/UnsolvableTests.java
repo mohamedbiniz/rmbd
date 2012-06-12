@@ -8,6 +8,7 @@ import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -143,7 +144,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         return result;
     }
 
-    protected BreadthFirstSearch<OWLLogicalAxiom> createBreathFirstSearch(OWLTheory th, boolean dual) {
+    /*protected BreadthFirstSearch<OWLLogicalAxiom> createBreathFirstSearch(OWLTheory th, boolean dual) {
 
         SimpleStorage<OWLLogicalAxiom> storage;
         if (dual)
@@ -159,21 +160,25 @@ public class UnsolvableTests extends BasePerformanceTests {
         search.setTheory(th);
 
         return search;
-    }
+    } */
 
-    protected UniformCostSearch<OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
+    protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
 
         SimpleStorage<OWLLogicalAxiom> storage;
         if (dual)
             storage = new DualStorage<OWLLogicalAxiom>();
         else
             storage = new SimpleStorage<OWLLogicalAxiom>();
-        UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
         if (dual) {
+            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-            search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
-        } else
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+        } else {
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+        }
         search.setTheory(th);
 
         return search;
@@ -217,7 +222,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     }
 
     public boolean generateQueryAnswer
-            (UniformCostSearch<OWLLogicalAxiom> search,
+            (TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
              Partition<OWLLogicalAxiom> actualQuery, Set<OWLLogicalAxiom> t) throws NoDecisionPossibleException {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
@@ -276,7 +281,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     }
 
-    protected String simulateBruteForceOnl(UniformCostSearch<OWLLogicalAxiom> search,
+    protected String simulateBruteForceOnl(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
                                            OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
                                            TableList entry, BasePerformanceTests.QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, UniformCostSearch<OWLLogicalAxiom> secondsearch, OWLTheory t3) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
@@ -614,7 +619,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                         OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                         Set<OWLLogicalAxiom> targetDg;
                         OWLTheory theory = createOWLTheory(ontology, dual);
-                        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                         //ProbabilityTableModel mo = new ProbabilityTableModel();
                         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
@@ -629,7 +634,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                         OWLTheory theory2 = createOWLTheory(ontology, dual);
                         OWLTheory t3 = createOWLTheory(ontology, dual);
-                        UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
                         search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
                         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
@@ -946,21 +951,6 @@ public class UnsolvableTests extends BasePerformanceTests {
         }
     }
 
-    private UniformCostSearch<OWLLogicalAxiom> getSearch(OWLOntology ontology, boolean dual) throws SolverException, InconsistentTheoryException {
-
-        OWLOntology extracted = new OWLIncoherencyExtractor(
-                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
-        OWLTheory theory = createTheoryOAEI(ontology, dual, true);
-        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
-
-        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
-
-        search.setCostsEstimator(es);
-        search.clearSearch();
-
-        return search;
-    }
-
     private Set<OWLLogicalAxiom> getRandomDiag(File file, String directory) throws SolverException, InconsistentTheoryException {
         String matchingsDir = "oaei11conference/matchings/";
         String mapd = matchingsDir + directory;
@@ -980,7 +970,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         OWLOntology ontology = new OWLIncoherencyExtractor(
                 new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
         OWLTheory theory = createTheoryOAEI(ontology, true, true);
-        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
 
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
         OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology", o1 + ".owl");
@@ -1003,7 +993,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
 
         OWLTheory th30 = createTheoryOAEI(ontology, true, true);
-        UniformCostSearch<OWLLogicalAxiom> search30 = createUniformCostSearch(th30, true);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = createUniformCostSearch(th30, true);
         th30.addBackgroundFormulas(bx);
         OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, RDFUtils.readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
@@ -1090,7 +1080,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                              OWLTheory theory = createTheoryOAEI(ontology, true, true);
-                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
+                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
 
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                     OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology", o1 + ".owl");
@@ -1154,7 +1144,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         theory.setIncludeClassAssertionAxioms(true);
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
-        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
         ((NewQuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
         CostsEstimator es = new SimpleCostsEstimator();
@@ -1204,7 +1194,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             OWLTheory theory = createTheoryOAEI(ontology, dual, true);
-                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             bx.addAll(getLogicalAxiomsOfOntologiesOAEI());
@@ -1284,7 +1274,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                         new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                                 preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                                 OWLTheory theory = createTheoryOAEI(ontology, dual, true);
-                                UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             bx.addAll(getLogicalAxiomsOfOntologiesOAEI());
@@ -1353,7 +1343,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, true);
-                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
 
                             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -1412,7 +1402,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                         Set<OWLLogicalAxiom> targetDg;
                         OWLTheory theory = createOWLTheory(ontology, dual);
-                        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
                             HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -1495,7 +1485,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o + ".owl");
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         OWLTheory theory = createOWLTheory(ontology, false);
-        UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         es.updateKeywordProb(map);
@@ -1627,7 +1617,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                       new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                                 Set<OWLLogicalAxiom> targetDg;
                                 OWLTheory theory = createOWLTheory(ontology, dual);
-                                UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                                TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                                 if (background) {
                                     OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
                                     OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
@@ -1747,7 +1737,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);
-                            UniformCostSearch<OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             if (background_add) {
                                 OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
@@ -1765,7 +1755,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             OWLTheory theory2 = createOWLTheory(ontology, dual);
                             OWLTheory t3 = createOWLTheory(ontology, dual);
-                            UniformCostSearch<OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = createUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
