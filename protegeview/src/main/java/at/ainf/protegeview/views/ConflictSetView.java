@@ -1,7 +1,7 @@
 package at.ainf.protegeview.views;
 
 import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.UniformCostSearch;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.debugmanager.*;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.theory.storage.AxiomSet;
@@ -45,8 +45,8 @@ public class ConflictSetView extends AbstractProtegeResultView implements Confli
         }
         //workspace.addAxiomToResultsList( (DefaultListModel)list.getModel(), "Conflict Set ", confl);
         CostsEstimator<OWLLogicalAxiom> es = null;
-        if (workspace.getSearch() instanceof UniformCostSearch) {
-            es = ((UniformCostSearch<OWLLogicalAxiom>) workspace.getSearch()).getCostsEstimator();
+        if (workspace.getSearch().getSearchStrategy() instanceof UniformCostSearchStrategy) {
+            es = workspace.getSearch().getCostsEstimator();
         }
         list.addAxiomToResultsList(null,"Conflict Set ", confl,null);
         list.setConflictSetLst(true);

@@ -1,8 +1,8 @@
 package at.ainf.protegeview.views;
 
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.protegeview.debugmanager.HittingSetsChangedEvent;
@@ -74,8 +74,8 @@ public class HittingSetView extends AbstractProtegeResultView implements Hitting
         Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
         //workspace.addAxiomToResultsList( (DefaultListModel)list.getModel(), "Diagnosis", hsReverse);
         CostsEstimator<OWLLogicalAxiom> es = null;
-        if (workspace.getSearch() instanceof UniformCostSearch) {
-            es = ((UniformCostSearch<OWLLogicalAxiom>) workspace.getSearch()).getCostsEstimator();
+        if (workspace.getSearch().getSearchStrategy() instanceof UniformCostSearchStrategy) {
+            es = workspace.getSearch().getCostsEstimator();
         }
         list.addAxiomToResultsList(es,"Diagnosis", hsReverse,null);
 
