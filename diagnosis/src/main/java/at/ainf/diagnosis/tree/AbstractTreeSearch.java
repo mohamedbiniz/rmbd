@@ -10,6 +10,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.theory.model.ITheory;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
@@ -97,7 +98,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && getSearcher().isDual()) entailments = getTheory().getEntailments(quickConflict);
         if (entailments==null) entailments = Collections.emptySet();
-        double measure =  getConflictMeasure(quickConflict);
+        double measure =  getConflictMeasure(quickConflict,getCostsEstimator());
         T hs = (T) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments);
         hs.setNode(node);
         return hs;
@@ -116,7 +117,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     protected List<OpenNodesListener> oNodesLsteners = new LinkedList<OpenNodesListener>();
 
-    protected abstract double getConflictMeasure(Set<Id> conflict);
+    protected abstract double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costEst);
 
     protected abstract double getDiagnosisMeasure(Node<Id> node);
 
@@ -126,6 +127,10 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public void removeOpenNodesListener(OpenNodesListener l) {
         oNodesLsteners.remove(l);
+    }
+
+    public List<OpenNodesListener> getOpenNodesListeners() {
+        return oNodesLsteners;
     }
 
     public Storage<T, Id> getStorage() {

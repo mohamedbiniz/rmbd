@@ -1,4 +1,9 @@
-package at.ainf.diagnosis.tree;
+package at.ainf.diagnosis.tree.searchstrategy;
+
+import at.ainf.diagnosis.tree.CostsEstimator;
+import at.ainf.diagnosis.tree.Node;
+import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.theory.storage.AxiomSet;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,9 +26,9 @@ public interface SearchStrategy<Id> {
 
     public void addNodes(List<Node<Id>> nodeList);
 
-    public Node<Id> createRootNode(Set<Id> conflict);
+    public Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
-    public double getConflictMeasure(Set<Id> conflict);
+    public double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator);
 
     public double getDiagnosisMeasure(Node<Id> node);
 
@@ -33,6 +38,6 @@ public interface SearchStrategy<Id> {
 
     public void pushOpenNode(Node<Id> node);
 
-    public void finalizeSearch();
+    public void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search);
 
 }
