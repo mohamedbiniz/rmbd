@@ -1,8 +1,10 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -76,7 +78,9 @@ public class OrderProbabTest {
             map.put(ManchesterOWLSyntax.EQUIVALENT_TO, r.nextDouble() / 2);
             map.put(ManchesterOWLSyntax.SUBCLASS_OF, r.nextDouble() / 2);
 
-            UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             //search.setNormalize_keywords(false);
             //search.setNormalize_axioms (false);

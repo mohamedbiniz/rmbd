@@ -2,6 +2,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.theory.storage.AxiomSet;
+import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.theory.storage.Storage;
 
 /**
@@ -15,12 +16,6 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
 
     public HsTreeSearch(Storage<T, Id> tIdStorage) {
         super(tIdStorage);
-        setLogic(new HsTreeLogic<T, Id>());
-    }
-
-    public HsTreeSearch(Storage<T, Id> tIdStorage, SearchStrategy<Id> strategy) {
-        super(tIdStorage);
-        setSearchStrategy(strategy);
         setLogic(new HsTreeLogic<T, Id>());
     }
 
