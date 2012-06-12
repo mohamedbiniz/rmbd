@@ -1,8 +1,10 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -229,7 +231,8 @@ public class Example2Test extends AbstractExample {
         HashMap<Query, Boolean> result =
                 new HashMap<Query, Boolean>();
 
-        UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
@@ -270,7 +273,8 @@ public class Example2Test extends AbstractExample {
                 new HashMap<Query, Boolean>();
         for (Query query : Query.values()) {
 
-            UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
@@ -314,7 +318,8 @@ public class Example2Test extends AbstractExample {
                 new HashMap<Query, Boolean>();
         for (Query query : new Query[]{Query.X5, Query.X4, Query.X2, Query.X7}) {
 
-            UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
@@ -346,7 +351,8 @@ public class Example2Test extends AbstractExample {
     @Test
     public void testQuery5NotEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());

@@ -1,13 +1,16 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
+import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
@@ -223,7 +226,8 @@ public class Example1Test extends AbstractExample {
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
         for (Query query : new Query[]{Query.X2}) {
 
-            UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
@@ -259,7 +263,8 @@ public class Example1Test extends AbstractExample {
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
         for (Query query : Query.values()) {
 
-            UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());

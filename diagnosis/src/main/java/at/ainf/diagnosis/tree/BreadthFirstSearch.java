@@ -33,14 +33,14 @@ public class BreadthFirstSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id>
         setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
     }
 
-    public BreadthFirstSearch(Storage<AxiomSet<Id>,Id> storage, Searcher<Id> idNewQuickXplain, ITheory<Id> theory) {
+    /*public BreadthFirstSearch(Storage<AxiomSet<Id>,Id> storage, Searcher<Id> idNewQuickXplain, ITheory<Id> theory) {
         super(storage);
         setCostsEstimator(new SimpleCostsEstimator<Id>());
-        setSearcher(idNewQuickXplain);
-        setTheory(theory);
         setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
         setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
-    }
+        setSearcher(idNewQuickXplain);
+        setTheory(theory);
+    }*/
 
     /* moved public void expand(Node<Id> node) {
         getSearchStrategy().addNodes(node.expandNode());

@@ -2,8 +2,10 @@ package at.ainf.owlcontroller;
 
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.BreadthFirstSearch;
+import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.UniformCostSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.theory.model.InconsistentTheoryException;
@@ -40,7 +42,9 @@ public class UniformCostSearchTest {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
-        UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();

@@ -46,7 +46,9 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     public void init() {
         SimpleStorage<Id> storage = new SimpleStorage<Id>();
         if (theory != null) getTheory().reset();
-        search = new BreadthFirstSearch<Id>(storage,new NewQuickXplain<Id>(),getTheory());
+        search = new BreadthFirstSearch<Id>(storage);
+        search.setSearcher(new NewQuickXplain<Id>());
+        search.setTheory(getTheory());
         //search.setSearcher(new NewQuickXplain<Id>());
         //search.setTheory(getTheory());
 
