@@ -8,6 +8,7 @@
 
 package at.ainf.diagnosis.tree;
 
+import at.ainf.diagnosis.tree.searchstrategy.DepthFirstSearchStrategy;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Storage;
 
@@ -24,21 +25,22 @@ public class DepthFirstSearch<Id> extends UninformedSearch<Id> {
 
     public DepthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
+        setSearchStrategy(new DepthFirstSearchStrategy<Id>());
     }
 
-    public void expand(Node<Id> node) {
-        addNodes(node.expandNode());
-    }
+    /* moved public void expand(Node<Id> node) {
+        getSearchStrategy().addNodes(node.expandNode());
+    }*/
 
-    public Node<Id> getNode() {
+    /* moved public Node<Id> getNode() {
         // gets the first open node of the List
-        return popOpenNodes();
-    }
+        return getSearchStrategy().popOpenNodes();
+    }*/
 
-    public void addNodes(List<Node<Id>> nodeList) {
+    /* moved public void addNodes(List<Node<Id>> nodeList) {
         // adds the new open nodes in reverse order at the beginning of the List
         for (int i = nodeList.size() - 1; i >= 0; i--) {
-            pushOpenNode(nodeList.get(i));
+            getSearchStrategy().pushOpenNode(nodeList.get(i));
         }
-    }
+    }*/
 }

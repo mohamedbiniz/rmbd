@@ -78,17 +78,17 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         this.costsEstimator = costsEstimator;
     }
 
-    abstract public Node<Id> getNode();
+    //abstract public Node<Id> getNode();
 
-    public abstract Collection<Node<Id>> getOpenNodes();
+    // public abstract Collection<Node<Id>> getOpenNodes();
 
-    public abstract Node<Id> popOpenNodes();
+    // public abstract Node<Id> popOpenNodes();
 
-    public abstract void pushOpenNode(Node<Id> node);
+    // public abstract void pushOpenNode(Node<Id> node);
 
     //abstract public void addNodes(ArrayList<Node<Id>> nodeList);
 
-    public abstract void expand(Node<Id> node);
+    // public abstract void expand(Node<Id> node);
 
     //protected abstract T createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException;
 
@@ -98,7 +98,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && getSearcher().isDual()) entailments = getTheory().getEntailments(quickConflict);
         if (entailments==null) entailments = Collections.emptySet();
-        double measure =  getConflictMeasure(quickConflict,getCostsEstimator());
+        double measure =  getSearchStrategy().getConflictMeasure(quickConflict,getCostsEstimator());
         T hs = (T) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments);
         hs.setNode(node);
         return hs;
@@ -109,7 +109,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && valid && !getSearcher().isDual())
             entailments = getTheory().getEntailments(labels);
-        double measure = getDiagnosisMeasure(node);
+        double measure = getSearchStrategy().getDiagnosisMeasure(node);
         T hs = (T) AxiomSetFactory.createHittingSet(measure, labels, entailments);
         hs.setNode(node);
         return hs;
@@ -117,9 +117,9 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     protected List<OpenNodesListener> oNodesLsteners = new LinkedList<OpenNodesListener>();
 
-    protected abstract double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costEst);
+    // protected abstract double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costEst);
 
-    protected abstract double getDiagnosisMeasure(Node<Id> node);
+    // protected abstract double getDiagnosisMeasure(Node<Id> node);
 
     public void addOpenNodesListener(OpenNodesListener l) {
         oNodesLsteners.add(l);
@@ -172,7 +172,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public void clearSearch() {
         getStorage().resetStorage();
-        getOpenNodes().clear();
+        getSearchStrategy().getOpenNodes().clear();
         this.root = null;
     }
 
@@ -224,7 +224,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
         } finally {
             theory.unregisterTestCases();
-            finalizeSearch(this);
+            getSearchStrategy().finalizeSearch((TreeSearch<AxiomSet<Id>,Id>)this);
             stop("diagnosis");
             stop();
         }
@@ -242,9 +242,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         for (Node<Id> idNode : node.getChildren()) {
             expandLeafNodes(idNode);
         }
-    }
-    */
-    protected abstract void finalizeSearch(TreeSearch<T, Id> search);
+    }*/
+    //protected abstract void finalizeSearch(TreeSearch<T, Id> search);
 
     private void processOpenNodes() throws SolverException, NoConflictException, InconsistentTheoryException {
         if (getRoot() == null)
@@ -254,7 +253,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         // while List of openNodes is not empty
 
         while (!openNodesIsEmpty() && (maxHittingSets <= 0 || (getStorage().getDiagsCount() < getMaxHittingSets()))) {
-            Node<Id> node = getNode();
+            Node<Id> node = getSearchStrategy().getNode();
             if (axiomRenderer != null)
                 logMessage(getDepth(node), " now processing node with uplink : ", node.getArcLabel());
             processNode(node);
@@ -306,7 +305,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 if (!canReuseConflict(node))
                     calculateConflict(node);
                 if (!node.isClosed() && node.getAxiomSet() != null)
-                    expand(node);
+                    getSearchStrategy().expand(node);
             } catch (NoConflictException e) {
                 // if(!getSearcher().isDual()) {
                 node.setClosed();
@@ -358,11 +357,11 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         // if there is already a root
         if (getRoot() != null) return;
         Set<Id> conflict = calculateConflict(null);
-        Node<Id> node = createRootNode(conflict,getCostsEstimator(),getTheory().getActiveFormulas());
+        Node<Id> node = getSearchStrategy().createRootNode(conflict,getCostsEstimator(),getTheory().getActiveFormulas());
         setRoot(node);
     }
 
-    protected abstract Node<Id> createRootNode(Set<Id> conflict,CostsEstimator<Id> costsEstimator, Collection<Id> act);
+    //protected abstract Node<Id> createRootNode(Set<Id> conflict,CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
     /*
     protected void proveValidnessConflict(T conflictSet) throws SolverException {
@@ -530,7 +529,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
     public void setRoot(Node<Id> rootNode) {
         root = rootNode;
         clearOpenNodes();
-        pushOpenNode(root);
+        getSearchStrategy().pushOpenNode(root);
     }
 
     public Node<Id> getRoot() {
@@ -538,20 +537,20 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
     }
 
     public boolean openNodesIsEmpty() {
-        return getOpenNodes().isEmpty();
+        return getSearchStrategy().getOpenNodes().isEmpty();
     }
 
 
     public void addLastOpenNodes(Node<Id> node) {
-        getOpenNodes().add(node);
+        getSearchStrategy().getOpenNodes().add(node);
     }
 
     public int getSizeOpenNodes() {
-        return getOpenNodes().size();
+        return getSearchStrategy().getOpenNodes().size();
     }
 
     public void clearOpenNodes() {
-        getOpenNodes().clear();
+        getSearchStrategy().getOpenNodes().clear();
     }
 
     public void setAxiomRenderer(AxiomRenderer<Id> idAxiomRenderer) {

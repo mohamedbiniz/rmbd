@@ -8,6 +8,7 @@
 
 package at.ainf.diagnosis.tree;
 
+import at.ainf.diagnosis.tree.searchstrategy.IterativeDeepeningSearchStrategy;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
@@ -33,11 +34,14 @@ public class IterativeDeepening<Id> extends DepthLimitedSearch<Id> {
         super(storage);
         this.startDepth = 1;
         this.step = 1;
+        setSearchStrategy(new IterativeDeepeningSearchStrategy<Id>());
     }
 
     public IterativeDeepening(Storage<AxiomSet<Id>, Id> storage, int startDepth, int step) {
         super(storage);
         this.startDepth = startDepth;
+        setSearchStrategy(new IterativeDeepeningSearchStrategy<Id>());
+
         this.step = step;
     }
 
@@ -48,7 +52,7 @@ public class IterativeDeepening<Id> extends DepthLimitedSearch<Id> {
             super.run();
             // resets List of openNodes
             clearOpenNodes();
-            pushOpenNode(getRoot());
+            getSearchStrategy().pushOpenNode(getRoot());
             iterationDepth += step;
 
         } while (iterationDepth < LIMIT && isExpandable());

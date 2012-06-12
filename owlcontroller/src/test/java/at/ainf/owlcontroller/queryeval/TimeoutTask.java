@@ -90,7 +90,7 @@ public class TimeoutTask extends TimerTask {
             int minCcard = getMin(conflictsCard);
             double meanCcard = getMean(conflictsCard);
             int maxCcard = getMax(conflictsCard);
-            int openNodes = s.getOpenNodes().size();
+            int openNodes = s.getSearchStrategy().getOpenNodes().size();
 
             logger.info("Statistics: " + matcher + "," + o + ","
                     + numD + "," + minDcard + "," + meanDcard + "," + maxDcard + ","

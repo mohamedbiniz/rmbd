@@ -70,7 +70,7 @@ public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id>
                 throw new IllegalStateException("Impossible source of a hitting set");
             if (isConnectedToRoot(node)) {
                 node.setOpen();
-                tree.pushOpenNode(node);
+                tree.getSearchStrategy().pushOpenNode(node);
                 tree.getStorage().removeHittingSet(invalidHittingSet);
             }
         }
@@ -124,7 +124,7 @@ public class HsTreeLogic<T extends AxiomSet<Id>, Id> implements TreeLogic<T, Id>
     }
 
     private void removeChildren(Node<Id> idNode) {
-        if (!tree.getOpenNodes().remove(idNode)) {
+        if (!tree.getSearchStrategy().getOpenNodes().remove(idNode)) {
             for (Node<Id> node : idNode.getChildren()) {
                 removeChildren(node);
             }
