@@ -21,10 +21,12 @@ import java.util.List;
  * Time: 08:49:39
  * To change this template use File | Settings | File Templates.
  */
-public class DepthFirstSearch<Id> extends UninformedSearch<Id> {
+public class DepthFirstSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id>
+        implements TreeSearch<AxiomSet<Id>, Id> {
 
     public DepthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
+        setCostsEstimator(new SimpleCostsEstimator<Id>());
         setSearchStrategy(new DepthFirstSearchStrategy<Id>());
     }
 
