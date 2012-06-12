@@ -11,7 +11,7 @@ import java.util.List;
  * Time: 16:00
  * To change this template use File | Settings | File Templates.
  */
-public class DepthFirstSearchStrategy<Id> extends UninformedSearchStrategy<Id> {
+public class DepthFirstSearchStrategy<Id> extends AbstractUninformedSearchStrategy<Id> {
 
     public void expand(Node<Id> node) {
         addNodes(node.expandNode());

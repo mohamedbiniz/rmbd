@@ -16,7 +16,7 @@ import java.util.Set;
  * Time: 15:52
  * To change this template use File | Settings | File Templates.
  */
-public abstract class UninformedSearchStrategy<Id> implements SearchStrategy<Id> {
+public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStrategy<Id> {
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 

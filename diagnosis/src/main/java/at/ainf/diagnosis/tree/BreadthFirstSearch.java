@@ -23,16 +23,19 @@ import java.util.List;
  * Time: 14:21:53
  * To change this template use File | Settings | File Templates.
  */
-public class BreadthFirstSearch<Id> extends UninformedSearch<Id> {
+public class BreadthFirstSearch<Id> extends AbstractTreeSearch<AxiomSet<Id>, Id>
+        implements TreeSearch<AxiomSet<Id>, Id> {
 
     public BreadthFirstSearch(Storage<AxiomSet<Id>, Id> storage) {
         super(storage);
+        setCostsEstimator(new SimpleCostsEstimator<Id>());
         setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
         setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
     }
 
     public BreadthFirstSearch(Storage<AxiomSet<Id>,Id> storage, Searcher<Id> idNewQuickXplain, ITheory<Id> theory) {
         super(storage);
+        setCostsEstimator(new SimpleCostsEstimator<Id>());
         setSearcher(idNewQuickXplain);
         setTheory(theory);
         setLogic(new HsTreeLogic<AxiomSet<Id>, Id>());
