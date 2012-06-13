@@ -181,7 +181,7 @@ public class TreeEvaluation {
         search.run();
 
         assertEquals(6, search.getDiagnoses().size());
-        search.getStorage().resetStorage();
+        // search.getStorage().resetStorage();
 
 
         th.addPositiveTest(new VecIntComparable(new int[]{2}));
