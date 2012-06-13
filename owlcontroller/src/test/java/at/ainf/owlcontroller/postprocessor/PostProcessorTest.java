@@ -115,7 +115,7 @@ public class PostProcessorTest {
     @Test
     public void simplePostprocessorTest() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "queryontologies/Univ.owl", false);

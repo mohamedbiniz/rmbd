@@ -158,7 +158,7 @@ public class TreeEvaluation {
     @Test
     public void testTests() throws SolverException, NoConflictException, InconsistentTheoryException {
         SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
-        HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>(storage);
+        HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>();
         search.setCostsEstimator(new SimpleCostsEstimator<IVecIntComparable>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<IVecIntComparable>());
         search.setSearcher(new NewQuickXplain<IVecIntComparable>());
@@ -229,7 +229,7 @@ public class TreeEvaluation {
     @Test
     public void testStopAndGo() throws SolverException, NoConflictException, InconsistentTheoryException {
         SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
-        HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>(storage);
+        HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>();
         search.setCostsEstimator(new SimpleCostsEstimator<IVecIntComparable>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<IVecIntComparable>());
         search.setSearcher(new NewQuickXplain<IVecIntComparable>());

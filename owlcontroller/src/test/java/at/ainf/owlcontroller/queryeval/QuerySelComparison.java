@@ -187,7 +187,7 @@ public class QuerySelComparison {
     private TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch(OWLTheory th) {
 
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         search.setTheory(th);

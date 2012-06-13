@@ -14,7 +14,6 @@ import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -75,7 +74,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
         String ont = "koala.owl";
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
@@ -88,7 +87,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);

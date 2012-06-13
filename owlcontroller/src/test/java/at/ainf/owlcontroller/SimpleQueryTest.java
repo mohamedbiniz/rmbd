@@ -49,7 +49,7 @@ public class SimpleQueryTest {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
@@ -104,7 +104,7 @@ public class SimpleQueryTest {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
@@ -149,7 +149,7 @@ public class SimpleQueryTest {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 

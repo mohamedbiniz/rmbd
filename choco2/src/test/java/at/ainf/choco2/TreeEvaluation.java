@@ -114,7 +114,7 @@ public class TreeEvaluation {
 
         SimpleStorage<Constraint> storage =
                 new SimpleStorage<Constraint>();
-        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>(storage);
+        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
         Searcher<Constraint> searcher = new NewQuickXplain<Constraint>();
@@ -163,7 +163,7 @@ public class TreeEvaluation {
 
 
         SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
-        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>(storage);
+        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
         strategy.setSearcher(new NewQuickXplain<Constraint>());
@@ -248,7 +248,7 @@ public class TreeEvaluation {
         //cth.push(list.subList(2, 5));
 
         SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
-        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>(storage);
+        HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
         strategy.setSearcher(new NewQuickXplain<Constraint>());

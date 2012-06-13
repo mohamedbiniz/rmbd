@@ -77,7 +77,7 @@ public class OrderProbabTest {
             map.put(ManchesterOWLSyntax.EQUIVALENT_TO, r.nextDouble() / 2);
             map.put(ManchesterOWLSyntax.SUBCLASS_OF, r.nextDouble() / 2);
 
-            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());

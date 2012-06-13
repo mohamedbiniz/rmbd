@@ -11,7 +11,6 @@ import at.ainf.owlcontroller.Utils;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileManager;
@@ -205,7 +204,7 @@ public class OAEI2011 {
     @Test
     public void searchDiags() throws
             OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
-        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
+        TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());

@@ -225,7 +225,7 @@ public class Example1Test extends AbstractExample {
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
         for (Query query : new Query[]{Query.X2}) {
 
-            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
@@ -262,7 +262,7 @@ public class Example1Test extends AbstractExample {
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
         for (Query query : Query.values()) {
 
-            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(storage);
+            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());

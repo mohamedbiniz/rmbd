@@ -69,14 +69,14 @@ public class OWLControllerImpl implements OWLController {
         return null;
     }
 
-    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createSearch(Storage<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> storage, Searcher<OWLLogicalAxiom> searcher, OWLTheory theory) {
+    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createSearch(Searcher<OWLLogicalAxiom> searcher, OWLTheory theory) {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = null;
 
         if (config.treeType == REITER ) {
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         }
         else {
-            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         }
 
         if (config.searchType == BREATHFIRST) {

@@ -171,11 +171,11 @@ public class UnsolvableTests extends BasePerformanceTests {
             storage = new SimpleStorage<OWLLogicalAxiom>();
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
         if (dual) {
-            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         } else {
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         }
