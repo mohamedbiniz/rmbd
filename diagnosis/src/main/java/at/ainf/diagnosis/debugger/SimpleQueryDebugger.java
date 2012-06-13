@@ -57,15 +57,15 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     }
 
     public Set<? extends AxiomSet<Id>> getConflictSets() {
-        return search.getStorage().getConflictSets();
+        return search.getConflicts();
     }
 
     public Set<? extends AxiomSet<Id>> getHittingSets() {
-        return search.getStorage().getHittingSets();
+        return search.getDiagnoses();
     }
 
     public Set<? extends AxiomSet<Id>> getValidHittingSets() {
-        return search.getStorage().getDiagnoses();
+        return search.getDiagnoses();
     }
 
     public void set_Theory(ITheory<Id> theory) {

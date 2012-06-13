@@ -129,8 +129,8 @@ public class TreeEvaluation {
             fail();
         }
 
-        Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getDiagnoses();
-        Collection<AxiomSet<Constraint>> conflicts = strategy.getStorage().getConflicts();
+        Collection<AxiomSet<Constraint>> diagnoses = strategy.getDiagnoses();
+        Collection<AxiomSet<Constraint>> conflicts = strategy.getConflicts();
 
         logger.info(diagnoses);
         
@@ -177,8 +177,8 @@ public class TreeEvaluation {
             fail();
         }
 
-        Collection<AxiomSet<Constraint>> diagnoses = strategy.getStorage().getDiagnoses();
-        Collection<AxiomSet<Constraint>> conflicts = strategy.getStorage().getConflicts();
+        Collection<AxiomSet<Constraint>> diagnoses = strategy.getDiagnoses();
+        Collection<AxiomSet<Constraint>> conflicts = strategy.getConflicts();
 
         logger.info("Diagnoses: " + diagnoses);
         logger.info("Conflicts: " + conflicts);
@@ -269,8 +269,8 @@ public class TreeEvaluation {
 
         if (logger.isDebugEnabled()) {
             logger.debug("Test finished in " + totalTime / 60000 + "Min " + totalTime % 60000 / 1000 + "Sec");
-            logger.debug("Found " + strategy.getStorage().getHittingSetsCount() + " diagnoses and "
-                    + strategy.getStorage().getHittingSetsCount() + " conflicts.");
+            logger.debug("Found " + strategy.getDiagnoses().size() + " diagnoses and "
+                    + strategy.getConflicts().size() + " conflicts.");
         }
     }
 }

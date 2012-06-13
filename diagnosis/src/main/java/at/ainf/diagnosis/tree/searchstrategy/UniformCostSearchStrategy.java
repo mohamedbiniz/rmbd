@@ -47,7 +47,7 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
     }
 
     public void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
-        search.getTheory().doBayesUpdate(search.getStorage().getDiagnoses());
+        search.getTheory().doBayesUpdate(search.getDiagnoses());
         search.getStorage().normalizeValidHittingSets();
     }
 

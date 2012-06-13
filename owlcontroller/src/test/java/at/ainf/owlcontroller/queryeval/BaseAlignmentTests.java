@@ -242,17 +242,17 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                     long diag = System.currentTimeMillis();
                     search.run(NUMBER_OF_HITTING_SETS);
 
-                    daStr += search.getStorage().getDiagnoses().size() + "/";
-                    diagnosesCalc += search.getStorage().getDiagnoses().size();
-                    conflictsCalc += search.getStorage().getConflicts().size();
+                    daStr += search.getDiagnoses().size() + "/";
+                    diagnosesCalc += search.getDiagnoses().size();
+                    conflictsCalc += search.getConflicts().size();
 
-                    diagnoses = search.getStorage().getDiagnoses();
+                    diagnoses = search.getDiagnoses();
                     diagTime.setTime(System.currentTimeMillis() - diag);
                 } catch (SolverException e) {
                     diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
                 } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
                 }
 
@@ -349,7 +349,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                     } catch (NoConflictException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
-                    remainingAllDiags = secondsearch.getStorage().getDiagnoses();
+                    remainingAllDiags = secondsearch.getDiagnoses();
                     int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
                     int eliminatedInRemaining = getEliminationRate(secondsearch.getTheory(), remainingAllDiags, answer, actPa);
                     int eliminatedInRemainingSize = remainingAllDiags.size();
@@ -453,7 +453,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                 try {
                     theory.addEntailedTest(owlLogicalAxiom);
                     search.run(-1);
-                    Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
+                    Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
                     if (!diagnoses.contains(targetDiag)) {
                         String message = "Target diag is eliminated by: " + owlLogicalAxiom;
                         logger.error(message);

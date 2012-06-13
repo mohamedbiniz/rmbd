@@ -12,6 +12,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -63,8 +64,7 @@ public class AxiomExplainView extends AbstractOWLViewComponent implements AxiomC
     }
 
     public void processAxiom (OWLLogicalAxiom axiom) {
-        Set<? extends AxiomSet<OWLLogicalAxiom>> conflSetAxxx
-          = getWS().getSearch().getStorage().getConflictSets(axiom);
+        Set<? extends AxiomSet<OWLLogicalAxiom>> conflSetAxxx = getConflictSets(axiom);
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         if (axiom != null) {
             setHeaderText (renderer.render(axiom));
@@ -78,6 +78,20 @@ public class AxiomExplainView extends AbstractOWLViewComponent implements AxiomC
             es = (getWS().getSearch()).getCostsEstimator();
         }
         list.addAxiomToResultsList(null,"Conflict Set ", conflSetAxxx, null);
+    }
+
+    public Set<AxiomSet<OWLLogicalAxiom>> getConflictSets(OWLLogicalAxiom axiom) {
+        Set<AxiomSet<OWLLogicalAxiom>> conflicts = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
+
+        for (AxiomSet<OWLLogicalAxiom> conflict : getWS().getSearch().getConflicts()) {
+            for (OWLLogicalAxiom ax : conflict) {
+                if (ax.equals(axiom)) {
+                    conflicts.add(conflict);
+                    break;
+                }
+            }
+        }
+        return conflicts;
     }
 
     public void processResetReq(ResetReqEvent e) {

@@ -36,7 +36,7 @@ public class DiagnosisTreeView extends AbstractOWLClassViewComponent implements 
         if (workspace.getSearch() == null)
             ((DiagnosesTreeModel)tr.getModel()).setConflictSets (null, getOWLWorkspace());
         else
-            ((DiagnosesTreeModel)tr.getModel()).setConflictSets(workspace.getSearch().getStorage().getConflictSets(), getOWLWorkspace());
+            ((DiagnosesTreeModel)tr.getModel()).setConflictSets(workspace.getSearch().getConflicts(), getOWLWorkspace());
         tr.hittingSets(DebugManager.getInstance().getValidHittingSets());
         AbstrAxiomSet<OWLLogicalAxiom> hs = (AbstrAxiomSet<OWLLogicalAxiom>)DebugManager.getInstance().getTreeNode();
         if (hs == null)
@@ -59,7 +59,7 @@ public class DiagnosisTreeView extends AbstractOWLClassViewComponent implements 
 
     public void hittingSetsChanged(HittingSetsChangedEvent e) {
         WorkspaceTab workspace = (WorkspaceTab) getOWLWorkspace().getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
-        ((DiagnosesTreeModel)tr.getModel()).setConflictSets(workspace.getSearch().getStorage().getConflictSets(), getOWLWorkspace());
+        ((DiagnosesTreeModel)tr.getModel()).setConflictSets(workspace.getSearch().getConflicts(), getOWLWorkspace());
         tr.hittingSets(e.getValidHS());
     }
 

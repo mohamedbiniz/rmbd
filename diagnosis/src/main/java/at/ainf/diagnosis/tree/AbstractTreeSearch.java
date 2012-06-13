@@ -197,7 +197,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             if (getRoot() != null) {
                 // verify hitting sets and remove invalid
                 List<T> invalidHittingSets = new LinkedList<T>();
-                for (T hs : getStorage().getDiagnoses()) {
+                for (T hs : getDiagnoses()) {
                     if (!theory.testDiagnosis(hs)) {
                         invalidHittingSets.add(hs);
                     }
@@ -214,8 +214,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             }
 
 
-            if (numberOfHittingSets == getStorage().getDiagnoses().size()) {
-                return getStorage().getDiagnoses();
+            if (numberOfHittingSets == getDiagnoses().size()) {
+                return getDiagnoses();
             }
 
             setMaxHittingSets(numberOfHittingSets);
@@ -228,7 +228,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             stop();
         }
 
-        return getStorage().getDiagnoses();
+        return getDiagnoses();
     }
 
     protected abstract void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException;
@@ -254,7 +254,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             throw new NoConflictException("There are no open nodes!");
         // while List of openNodes is not empty
 
-        while (!openNodesIsEmpty() && (maxHittingSets <= 0 || (getStorage().getDiagsCount() < getMaxHittingSets()))) {
+        while (!openNodesIsEmpty() && (maxHittingSets <= 0 || (getDiagnoses().size() < getMaxHittingSets()))) {
             Node<Id> node = getSearchStrategy().getNode();
             if (axiomRenderer != null)
                 logMessage(getDepth(node), " now processing node with uplink : ", node.getArcLabel());
@@ -325,7 +325,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 getStorage().addHittingSet(hs);
                 start("Diagnosis", "diagnosis");
                 if (logger.isInfoEnabled()) {
-                    logger.info("Found conflicts: " + getStorage().getConflictsCount() + " and diagnoses " + getStorage().getHittingSetsCount());
+                    logger.info("Found conflicts: " + getConflicts().size() + " and diagnoses " + getDiagnoses().size());
                     logger.info("Pruned " + this.prunedHS + " diagnoses");
                     this.prunedHS = 0;
                 }
@@ -448,6 +448,14 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }*/
     }
 
+    public Set<T> getConflicts() {
+        return getStorage().getConflicts();
+    }
+
+    public Set<T> getDiagnoses() {
+        return getStorage().getDiagnoses();
+    }
+
     protected abstract void pruneConflictSets(Node<Id> node, T conflictSet) throws SolverException, InconsistentTheoryException;
 
     protected abstract void proveValidnessConflict(T conflictSet) throws SolverException;
@@ -487,7 +495,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         // check if this is a root
         if (node.isRoot() || node.getAxiomSet() != null) return false;
         Collection<Id> pathLabels = node.getPathLabels();
-        for (AxiomSet<Id> localConflict : getStorage().getConflictSets()) {
+        for (AxiomSet<Id> localConflict : getConflicts()) {
             if (localConflict.isValid() && !intersectsWith(pathLabels, localConflict)) {
                 node.setAxiomSet(localConflict);
                 if (logger.isDebugEnabled())

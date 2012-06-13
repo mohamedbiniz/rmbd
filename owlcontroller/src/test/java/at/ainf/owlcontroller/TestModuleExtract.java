@@ -120,7 +120,7 @@ public class TestModuleExtract {
         searchNormal.setTheory(theoryNormal);
         searchNormal.run();
 
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
 
     }
@@ -154,7 +154,7 @@ public class TestModuleExtract {
                 long stop1 = System.currentTimeMillis();
                 searchNormal.run();
                 stop1A[i] = System.currentTimeMillis() - stop1;
-                Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+                Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
                 manager = OWLManager.createOWLOntologyManager();
             TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
@@ -167,12 +167,12 @@ public class TestModuleExtract {
                 long stop2 = System.currentTimeMillis();
                 searchDual.run();
                 stop2a[i] = System.currentTimeMillis() - stop2 ;
-                Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getStorage().getDiagnoses();
+                Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
 
-                logger.info(ont + ",hs," + searchNormal.getStorage().getDiagnoses().size()
-                    + ",cs," + searchNormal.getStorage().getConflicts().size());
-                logger.info(ont + ",hs," + searchDual.getStorage().getDiagnoses().size()
-                            + ",cs," + searchDual.getStorage().getConflicts().size());
+                logger.info(ont + ",hs," + searchNormal.getDiagnoses().size()
+                    + ",cs," + searchNormal.getConflicts().size());
+                logger.info(ont + ",hs," + searchDual.getDiagnoses().size()
+                            + ",cs," + searchDual.getConflicts().size());
             assertTrue(resultNormal.equals(resultDual));
         }
 

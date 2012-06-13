@@ -42,7 +42,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
 
         // DAG: verify if there is a conflict that is a subset of the new conflict
         Set<T> invalidConflicts = new LinkedHashSet<T>();
-        for (T e : getStorage().getConflictSets()) {
+        for (T e : getConflicts()) {
             if (e.containsAll(conflictSet) && e.size() > conflictSet.size())
                 invalidConflicts.add(e);
         }
@@ -59,7 +59,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
 
     public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
 
-        for (T ax : getStorage().getConflictSets()) {
+        for (T ax : getConflicts()) {
             Set<Id> axioms = getSearcher().search(getTheory(), ax, null);
             if (!axioms.equals(ax)) {
                 AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());

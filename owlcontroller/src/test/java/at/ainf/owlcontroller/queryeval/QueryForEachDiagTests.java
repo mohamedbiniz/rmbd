@@ -86,7 +86,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
         searchNormal.run();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
         InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());

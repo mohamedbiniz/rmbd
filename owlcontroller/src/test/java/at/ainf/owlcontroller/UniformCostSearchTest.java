@@ -109,7 +109,7 @@ public class UniformCostSearchTest {
         search.setMaxHittingSets(0);
 
         search.run();
-        printDiagnoses(search.getStorage().getHittingSets());
+        printDiagnoses(search.getDiagnoses() );
 
     }
 

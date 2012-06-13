@@ -13,7 +13,7 @@ public interface Storage<E extends AxiomSet<Id>, Id> {
 
     boolean addConflict(E conflict);
 
-    void setConflictSets(Set<E> conflicts);
+
 
     Set<E> getConflicts();
 
@@ -23,7 +23,7 @@ public interface Storage<E extends AxiomSet<Id>, Id> {
 
     boolean removeConflictSet(E cs);
 
-    int getConflictsCount();
+
 
     boolean addHittingSet(E hittingSet);
 
@@ -31,11 +31,11 @@ public interface Storage<E extends AxiomSet<Id>, Id> {
 
     Set<E> getHittingSets();
 
-    int getHittingSetsCount();
+    //int getHittingSetsCount();
 
-    int getDiagsCount();
+    //int getDiagsCount();
 
-    void setHittingSets(Set<E> hittingSets);
+
 
     boolean removeHittingSet(E hittingSet);
 
@@ -43,20 +43,15 @@ public interface Storage<E extends AxiomSet<Id>, Id> {
 
     void resetStorage();
 
-    Set<E> getConflictSets(Id axiom);
+    //Set<E> getConflictSets(Id axiom);
 
     void normalizeValidHittingSets();
 
-    void addStorageItemListener(StorageItemListener l);
+    //void addStorageItemListener(StorageItemListener l);
 
-    void removeStorageItemListener(StorageItemListener l);
+    //void removeStorageItemListener(StorageItemListener l);
 
-    public void addStorageConflictSetsListener(StorageConflictSetsListener l);
 
-    public void removeStorageConflictSetsListener(StorageConflictSetsListener l);
 
-    public void addStorageHittingSetsListener(StorageHittingSetsListener l);
-
-    public void removeStorageHittingSetsListener(StorageHittingSetsListener l);
 
 }

@@ -60,7 +60,7 @@ public class QXDiagTest {
 
         search.run();
 
-        for (Set<OWLLogicalAxiom> hs : search.getStorage().getDiagnoses())
+        for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
             logger.info(Utils.renderAxioms(hs));
     }
 
@@ -76,7 +76,7 @@ public class QXDiagTest {
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
         searchNormal.setTheory(theoryNormal);
         searchNormal.run();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
         InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
@@ -86,7 +86,7 @@ public class QXDiagTest {
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
         searchDual.setTheory(theoryDual);
         searchDual.run();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getStorage().getDiagnoses();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
 
       ////
 
@@ -151,7 +151,7 @@ public class QXDiagTest {
         search.run();
 
         boolean targetIsThere = false;
-        for (AxiomSet<OWLLogicalAxiom> d : search.getStorage().getDiagnoses()) {
+        for (AxiomSet<OWLLogicalAxiom> d : search.getDiagnoses()) {
             if (target.equals(d)) targetIsThere = true;
         }
         assertTrue(targetIsThere);
@@ -186,7 +186,7 @@ public class QXDiagTest {
         search.run();
 
         boolean targetIsThere = false;
-        for (AxiomSet<OWLLogicalAxiom> d : search.getStorage().getDiagnoses()) {
+        for (AxiomSet<OWLLogicalAxiom> d : search.getDiagnoses()) {
             if (target.equals(d)) targetIsThere = true;
         }
         assertTrue(targetIsThere);
@@ -225,11 +225,11 @@ public class QXDiagTest {
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();
 
-        OWLLogicalAxiom axiom = search.getStorage().getDiagnoses().iterator().next().iterator().next();
+        OWLLogicalAxiom axiom = search.getDiagnoses().iterator().next().iterator().next();
         logger.info(axiom);
 
 
-        for (Set<OWLLogicalAxiom> hs : search.getStorage().getDiagnoses())
+        for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
             logger.info(Utils.renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();

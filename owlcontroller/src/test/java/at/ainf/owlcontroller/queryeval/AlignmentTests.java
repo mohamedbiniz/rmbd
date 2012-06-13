@@ -68,7 +68,7 @@ public class AlignmentTests extends BaseAlignmentTests {
 
         search.run();
 
-        allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+        allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
         search.clearSearch();
 
         search.run(9);
@@ -87,7 +87,7 @@ public class AlignmentTests extends BaseAlignmentTests {
         //deleteDiag(theory,allDiags,false,testcase);
 
         search.run(9);
-        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getStorage().getDiagnoses();
+        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
         /*for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
             if(!theory.testDiagnosis(diagnosis))
                 logger.info("prob");
@@ -176,7 +176,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                                 logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.clearSearch();
 
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
@@ -191,7 +191,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                                 }
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                                        Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                                        Collections.unmodifiableSet(search.getDiagnoses());
                                 search.clearSearch();
                                 AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
@@ -289,7 +289,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                                 }
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                                        Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                                        Collections.unmodifiableSet(search.getDiagnoses());
                                 search.clearSearch();
                                 AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();

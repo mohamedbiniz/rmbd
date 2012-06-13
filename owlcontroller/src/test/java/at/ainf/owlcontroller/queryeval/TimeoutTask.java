@@ -77,8 +77,8 @@ public class TimeoutTask extends TimerTask {
         if(s==null)
             logger.info("Statistics: " + matcher + "," + o + " search is null");
         else {
-            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = s.getStorage().getDiagnoses();
-            Set<AxiomSet<OWLLogicalAxiom>> conflicts = s.getStorage().getConflicts();
+            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = s.getDiagnoses();
+            Set<AxiomSet<OWLLogicalAxiom>> conflicts = s.getConflicts();
             Set<Integer> conflictsCard = getCardinalities(conflicts);
             Set<Integer>  diagnosesCard = getCardinalities(diagnoses);
 

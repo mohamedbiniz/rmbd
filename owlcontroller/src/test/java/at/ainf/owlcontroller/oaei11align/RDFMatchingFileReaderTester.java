@@ -138,7 +138,7 @@ public class RDFMatchingFileReaderTester {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             long time1 = System.currentTimeMillis() - start;
-            int conflicts1 = searchDual.getStorage().getConflicts().size();
+            int conflicts1 = searchDual.getConflicts().size();
             logger.info(",dual: " + dual + "," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 1 found " + time1+ ","
                     + conflicts1 + "," + extractionTime);
             try {
@@ -152,7 +152,7 @@ public class RDFMatchingFileReaderTester {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             long time9 = System.currentTimeMillis() - start;
-            int conflicts9 = searchDual.getStorage().getConflicts().size();
+            int conflicts9 = searchDual.getConflicts().size();
             logger.info(",dual: " + dual + "," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 9 found " + time9+ ","
                     + conflicts9 + "," + extractionTime);
             try {
@@ -166,15 +166,15 @@ public class RDFMatchingFileReaderTester {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             long time30 = System.currentTimeMillis() - start;
-            int conflicts30 = searchDual.getStorage().getConflicts().size();
+            int conflicts30 = searchDual.getConflicts().size();
             logger.info(",dual: " + dual + "," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 30 found "
                     + time30+ "," + conflicts30 + "," + extractionTime);
 
-            int numDiags = searchDual.getStorage().getDiagnoses().size();
-            int numC = searchDual.getStorage().getConflicts().size();
+            int numDiags = searchDual.getDiagnoses().size();
+            int numC = searchDual.getConflicts().size();
 
             Set<Integer> sizes = new LinkedHashSet<Integer>();
-            for (AxiomSet<OWLLogicalAxiom> diagnosis : searchDual.getStorage().getDiagnoses())
+            for (AxiomSet<OWLLogicalAxiom> diagnosis : searchDual.getDiagnoses())
                 sizes.add(diagnosis.size());
             int minCardSize = Collections.min(sizes);
             int numOfMinCardDiags = 0;
@@ -405,7 +405,7 @@ public class RDFMatchingFileReaderTester {
 
             try {
                 search.run(9);
-                logger.info(file.getName() + " " + search.getStorage().getDiagnoses().size());
+                logger.info(file.getName() + " " + search.getDiagnoses().size());
             } catch (NoConflictException e) {
                 logger.info(file.getName() + " cons");
                 //e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
