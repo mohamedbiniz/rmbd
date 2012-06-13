@@ -22,13 +22,13 @@ import java.util.*;
 
 public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
     private static Logger logger = Logger.getLogger(SimpleStorage.class.getName());
+
+    protected Set<AxiomSet<Id>> nodeLabels = new LinkedHashSet<AxiomSet<Id>>();
     protected Set<AxiomSet<Id>> hittingSets = new LinkedHashSet<AxiomSet<Id>>();
-    protected Set<AxiomSet<Id>> validHittingSets = new LinkedHashSet<AxiomSet<Id>>();
-    protected Set<AxiomSet<Id>> conflicts = new LinkedHashSet<AxiomSet<Id>>();
 
     private StorageListener<AxiomSet<Id>, Id> hittingSetListener = new StorageListener<AxiomSet<Id>, Id>() {
         public boolean remove(AxiomSet<Id> oldObject) {
-            boolean remValid = validHittingSets.remove(oldObject);
+            boolean remValid = oldObject.isValid();
             if (!hittingSets.remove(oldObject)) {
                 // perhaps treeset order is not correct
                 hittingSets = copy(hittingSets);
@@ -42,8 +42,6 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         }
 
         public void add(AxiomSet<Id> newObject, boolean addValid) {
-            if (addValid)
-                validHittingSets.add(newObject);
             hittingSets.add(newObject);
         }
     };
@@ -52,21 +50,20 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         for (AxiomSet<Id> hs : this.getHittingSets())
             hs.setListener(null);
         hittingSets.clear();
-        conflicts.clear();
-        validHittingSets.clear();
+        nodeLabels.clear();
     }
 
 
     public boolean addNodeLabel(AxiomSet<Id> nodeLabel) {
-        return conflicts.add(nodeLabel);
+        return nodeLabels.add(nodeLabel);
     }
 
     public boolean removeNodeLabel(AxiomSet<Id> nodeLabel) {
-        return this.conflicts.remove(nodeLabel);
+        return this.nodeLabels.remove(nodeLabel);
     }
 
     public Set<AxiomSet<Id>> getConflicts() {
-        return Collections.unmodifiableSet(copy(conflicts));
+        return Collections.unmodifiableSet(copy(nodeLabels));
     }
 
 
@@ -86,21 +83,14 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
                 removeHittingSet(ids);
             }
 
-        boolean val = hittingSets.add(hittingSet);
 
-        if (hittingSet.isValid()) {
-            validHittingSets.add(hittingSet);
-        }
 
-        return val;
+
+        return hittingSets.add(hittingSet);
     }
 
     public boolean removeHittingSet(final AxiomSet<Id> diagnosis) {
-        boolean val = hittingSets.remove(diagnosis);
-        if (diagnosis.isValid())
-            validHittingSets.remove(diagnosis);
-
-        return val;
+        return hittingSets.remove(diagnosis);
     }
 
     public Set<AxiomSet<Id>> getHittingSets() {
@@ -108,14 +98,22 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
     }
 
     public Set<AxiomSet<Id>> getDiagnoses() {
-        return Collections.unmodifiableSet(copy(validHittingSets));
+        return getValidAxiomSets(copy(hittingSets));
     }
 
 
-    public void invalidateHittingSet(AxiomSet<Id> hs) {
+    public Set<AxiomSet<Id>> getValidAxiomSets(Set<AxiomSet<Id>> set) {
+        Set<AxiomSet<Id>> valid = new LinkedHashSet<AxiomSet<Id>>();
 
-        this.validHittingSets.remove(hs);
+        for (AxiomSet<Id> s : set) {
+            if (s.isValid())
+                valid.add(s);
+        }
+        return Collections.unmodifiableSet(valid);
+
     }
+
+
 
     protected Set<AxiomSet<Id>> copy(Set<AxiomSet<Id>> set) {
         Set<AxiomSet<Id>> hs = new LinkedHashSet<AxiomSet<Id>>();

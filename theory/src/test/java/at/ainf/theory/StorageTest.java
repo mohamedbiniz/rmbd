@@ -67,13 +67,13 @@ public class StorageTest {
             hittingSet.setValid(random.nextBoolean());
             st.addHittingSet(hittingSet);
         }
-        int valid = st.getDiagnoses().size();
+        int valid = st.getHittingSets().size();
         validateSet(st);
         for (int i = 0; i < HS_COUNT; i++) {
             logger.debug("Computing test " + i);
             Set<AxiomSet<Integer>> axiomSets = new TreeSet<AxiomSet<Integer>>(st.getHittingSets());
             assertEquals(HS_COUNT, axiomSets.size());
-            assertEquals(valid, st.getDiagnoses().size());
+            assertEquals(valid, st.getHittingSets().size());
             for (AxiomSet<Integer> hs : axiomSets) {
                 hs.setMeasure(random.nextDouble());
             }
