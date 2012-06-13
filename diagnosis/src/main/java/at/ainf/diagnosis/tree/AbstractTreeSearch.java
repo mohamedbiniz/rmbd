@@ -333,7 +333,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 /*}
                 else {
                     E conflictSet = createConflictSet(node.getPathLabels());
-                    getStorage().addConflict(conflictSet);
+                    getStorage().addNodeLabel(conflictSet);
                     // verify if there is a conflict that is a subset of the new conflict
                     Set<E> invalidConflicts = new LinkedHashSet<E>();
                     for (E cs : getStorage().getConflictSets()) {
@@ -344,7 +344,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                     if (!invalidConflicts.isEmpty()) {
                         for (E invalidConflict : invalidConflicts) {
                             loggerDual.info("now conflict invalid: " + invalidConflict);
-                            getStorage().removeConflictSet(invalidConflict);
+                            getStorage().removeNodeLabel(invalidConflict);
                         }
                         updateTree(conflictSet);
                     }
@@ -425,7 +425,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
             pruneConflictSets(node, conflictSet);
 
-        getStorage().addConflict(conflictSet);
+        getStorage().addNodeLabel(conflictSet);
 
         // current node should ge a conflict only if a path from
         // this node to root does not include closed nodes
@@ -474,7 +474,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         if (!invalidConflicts.isEmpty()) {
             for (T invalidConflict : invalidConflicts) {
                 if (axiomRenderer != null) logMessage(getDepth(node), "now conflict invalid: ", invalidConflict);
-                getStorage().removeConflictSet(invalidConflict);
+                getStorage().removeNodeLabel(invalidConflict);
             }
             updateTree(conflictSet);
         }

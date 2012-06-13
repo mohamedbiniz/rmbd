@@ -57,16 +57,12 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
     }
 
 
-    public boolean addConflict(AxiomSet<Id> conflict) {
-        return conflicts.add(conflict);
+    public boolean addNodeLabel(AxiomSet<Id> nodeLabel) {
+        return conflicts.add(nodeLabel);
     }
 
-    public boolean removeConflictSet(AxiomSet<Id> cs) {
-        return this.conflicts.remove(cs);
-    }
-
-    public Set<AxiomSet<Id>> getConflictSets() {
-        return Collections.unmodifiableSet(copy(conflicts));
+    public boolean removeNodeLabel(AxiomSet<Id> nodeLabel) {
+        return this.conflicts.remove(nodeLabel);
     }
 
     public Set<AxiomSet<Id>> getConflicts() {
@@ -105,10 +101,6 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
             validHittingSets.remove(diagnosis);
 
         return val;
-    }
-
-    public Set<AxiomSet<Id>> getValidHittingSets() {
-        return copy(validHittingSets);
     }
 
     public Set<AxiomSet<Id>> getHittingSets() {
