@@ -18,12 +18,12 @@ public class AxiomSetFactory {
 
     public static <Id> AxiomSet<Id> createHittingSet(double measure, Set<Id> hittingSet, Set<Id> entailments) {
         String name = AxiomSet.TypeOfSet.HITTING_SET.toString() + hsCnt++;
-        return new HittingSet<Id>(name, measure, hittingSet, entailments);
+        return new AxiomSetImpl<Id>(AxiomSet.TypeOfSet.HITTING_SET, name, measure, hittingSet, entailments);
     }
 
     public static <Id> AxiomSet<Id> createConflictSet(double measure, Set<Id> hittingSet, Set<Id> entailments) {
         String name = AxiomSet.TypeOfSet.CONFLICT_SET.toString() + csCnt++ ;
-        return new ConflictSet<Id>(name, measure, hittingSet, entailments);
+        return new AxiomSetImpl<Id>(AxiomSet.TypeOfSet.CONFLICT_SET, name, measure, hittingSet, entailments);
     }
 
 }

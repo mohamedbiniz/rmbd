@@ -11,7 +11,7 @@ import java.util.*;
  * Time: 11:39
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
+public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
     protected Set<Id> axioms;
     boolean valid = true;
     private double measure = 0;
@@ -56,7 +56,7 @@ public abstract class AbstrAxiomSet<Id> implements AxiomSet<Id>, Comparable<Axio
 
     private TypeOfSet typeOfSet;
 
-    protected AbstrAxiomSet(TypeOfSet type, String name, double measure, Set<Id> axioms, Set<Id> entailments) {
+    protected AxiomSetImpl(TypeOfSet type, String name, double measure, Set<Id> axioms, Set<Id> entailments) {
         this.typeOfSet = type;
         this.name = name;
         setMeasure(measure);
