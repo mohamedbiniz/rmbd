@@ -11,9 +11,9 @@ import java.util.Set;
  */
 public interface Storage<T extends AxiomSet<Id>, Id> {
 
-    boolean addConflict(T conflict);
+    boolean addNodeLabel(T nodeLabel);
 
-    boolean removeConflictSet(T cs);
+    boolean removeNodeLabel(T nodeLabel);
 
 
     boolean addHittingSet(T hittingSet);

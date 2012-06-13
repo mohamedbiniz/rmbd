@@ -1,12 +1,10 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.AxiomSetFactory;
-import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.theory.storage.Storage;
 
 import java.util.*;
@@ -50,7 +48,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
         if (!invalidConflicts.isEmpty()) {
             for (T invalidConflict : invalidConflicts) {
 
-                getStorage().removeConflictSet(invalidConflict);
+                getStorage().removeNodeLabel(invalidConflict);
             }
             updateTree(conflictSet);
         }
