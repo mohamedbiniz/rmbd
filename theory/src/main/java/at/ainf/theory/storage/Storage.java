@@ -15,6 +15,8 @@ public interface Storage<T extends AxiomSet<Id>, Id> {
 
     boolean removeNodeLabel(T nodeLabel);
 
+    public Set<T> getNodeLabels();
+
 
     boolean addHittingSet(T hittingSet);
 

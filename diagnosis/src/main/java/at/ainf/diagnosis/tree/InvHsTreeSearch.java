@@ -88,6 +88,14 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
         return hasParent(node, parent.getParent());
     }
 
+    public Set<T> getDiagnoses() {
+        return getValidAxiomSets(copy(getStorage().getNodeLabels()));
+    }
+
+    public Set<T> getConflicts() {
+        return getValidAxiomSets(copy(getStorage().getHittingSets()));
+    }
+
     public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
         if (node == null || node.getAxiomSet() == null)
             return Collections.emptySet();
