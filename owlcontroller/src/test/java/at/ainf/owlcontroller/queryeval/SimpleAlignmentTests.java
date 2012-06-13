@@ -151,7 +151,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
             logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         
-        return Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+        return Collections.unmodifiableSet(search.getDiagnoses());
     }
 
     @Ignore
@@ -200,7 +200,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                                 run(search, 30);
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                                        Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                                        Collections.unmodifiableSet(search.getDiagnoses());
                                 search.clearSearch();
                                 AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
@@ -324,7 +324,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 //                }
 
         Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                Collections.unmodifiableSet(search.getDiagnoses());
         search.clearSearch();
 
         TableList e = new TableList();
@@ -467,7 +467,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
             //                }
 
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                    Collections.unmodifiableSet(search.getDiagnoses());
             search.clearSearch();
 
             TableList e = new TableList();
@@ -527,7 +527,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                     String t = Utils.getStringTime(time / 1000000);
 
                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                            Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                            Collections.unmodifiableSet(search.getDiagnoses());
                     //logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size());
 
                     int n = 0;
@@ -535,7 +535,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                     for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
                         if (targetDg.containsAll(d)) set.add(d);
                     n = set.size();
-                    int cs = search.getStorage().getConflicts().size();
+                    int cs = search.getConflicts().size();
                     search.clearSearch();
                     logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size()
                             + " conflicts: " + cs + " time " + t + " target " + n);
@@ -590,17 +590,17 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                     long diag = System.currentTimeMillis();
                     search.run(NUMBER_OF_HITTING_SETS);
 
-                    daStr += search.getStorage().getDiagnoses().size() + "/";
-                    diagnosesCalc += search.getStorage().getDiagnoses().size();
-                    conflictsCalc += search.getStorage().getConflicts().size();
+                    daStr += search.getDiagnoses().size() + "/";
+                    diagnosesCalc += search.getDiagnoses().size();
+                    conflictsCalc += search.getConflicts().size();
 
-                    diagnoses = search.getStorage().getDiagnoses();
+                    diagnoses = search.getDiagnoses();
                     diagTime.setTime(System.currentTimeMillis() - diag);
                 } catch (SolverException e) {
                     diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
                 } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
                 }
 

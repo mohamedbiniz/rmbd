@@ -247,7 +247,7 @@ public class PerformanceTests extends BasePerformanceTests {
             dualsearch.setCostsEstimator(des);
 
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                    Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                    Collections.unmodifiableSet(search.getDiagnoses());
 
             theory.clearTestCases();
             search.clearSearch();
@@ -461,7 +461,7 @@ public class PerformanceTests extends BasePerformanceTests {
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
         searchNormal.run();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());

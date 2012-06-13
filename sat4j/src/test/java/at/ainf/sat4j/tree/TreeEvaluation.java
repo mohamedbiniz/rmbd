@@ -115,7 +115,7 @@ public class TreeEvaluation {
         // succeeds to create a root since th is unsat
         search.run();
 
-        Collection<AxiomSet<IVecIntComparable>> diagnoses = search.getStorage().getDiagnoses();
+        Collection<AxiomSet<IVecIntComparable>> diagnoses = search.getDiagnoses();
         logger.debug("Diagnoses: " + diagnoses.toString());
         assertTrue(searchDub(diagnoses));
         assertTrue(diagnoses.size() == 4);
@@ -124,7 +124,7 @@ public class TreeEvaluation {
         assertTrue(contains(diagnoses,diagnosis3));
         assertTrue(contains(diagnoses,diagnosis4));
 
-        Collection<AxiomSet<IVecIntComparable>> conflicts = search.getStorage().getConflictSets();
+        Collection<AxiomSet<IVecIntComparable>> conflicts = search.getConflicts();
         logger.debug("Conflict: " + conflicts.toString());
         assertTrue(searchDub(conflicts));
         assertTrue(conflicts.size() == 2);
@@ -180,7 +180,7 @@ public class TreeEvaluation {
         search.setTheory(th);
         search.run();
 
-        assertEquals(6, search.getStorage().getHittingSetsCount());
+        assertEquals(6, search.getDiagnoses().size());
         search.getStorage().resetStorage();
 
 
@@ -217,9 +217,9 @@ public class TreeEvaluation {
         search.setTheory(th);
         search.run();
 
-        assertEquals(search.getStorage().getHittingSetsCount(), 1);
+        assertEquals(search.getDiagnoses().size(), 1);
 
-        for (Collection<IVecIntComparable> hs : search.getStorage().getDiagnoses()) {
+        for (Collection<IVecIntComparable> hs : search.getDiagnoses()) {
             logger.info(hs);
             assertTrue(hs.toString().equals("[-1,5]"));
         }
@@ -250,20 +250,20 @@ public class TreeEvaluation {
         search.setTheory(th);
         search.setMaxHittingSets(2);
         search.run();
-        assertEquals(2, search.getStorage().getHittingSetsCount());
+        assertEquals(2, search.getDiagnoses().size());
 
         // find next 3 diagnoses
         search.setMaxHittingSets(5);
         search.run();
-        assertEquals(5, search.getStorage().getHittingSetsCount());
+        assertEquals(5, search.getDiagnoses().size());
         // find next one diagnosis
         search.setMaxHittingSets(0);
         search.run();
-        assertEquals(6, search.getStorage().getHittingSetsCount());
+        assertEquals(6, search.getDiagnoses().size());
 
         // reset strategies and find all 6 at once
         search.run();
-        assertEquals(6, search.getStorage().getHittingSetsCount());
+        assertEquals(6, search.getDiagnoses().size());
     }
 
 }

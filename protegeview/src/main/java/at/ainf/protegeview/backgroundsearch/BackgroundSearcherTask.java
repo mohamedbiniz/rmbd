@@ -45,8 +45,8 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
     int removedOnodes = 0;
 
     public void updateOpenNodesAdded() {
-        int numOfHittingSets = search.getStorage().getDiagnoses().size();
-        int numOfConflictSets = search.getStorage().getConflicts().size();
+        int numOfHittingSets = search.getDiagnoses().size();
+        int numOfConflictSets = search.getConflicts().size();
         int maxDiags = search.getMaxHittingSets();
         addedOnodes++;
 
@@ -55,8 +55,8 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
     }
 
     public void updateOpenNodesRemoved() {
-        int numOfHittingSets = search.getStorage().getDiagnoses().size();
-        int numOfConflictSets = search.getStorage().getConflicts().size();
+        int numOfHittingSets = search.getDiagnoses().size();
+        int numOfConflictSets = search.getConflicts().size();
         int maxDiags = search.getMaxHittingSets();
         removedOnodes++;
 
@@ -107,8 +107,8 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
     int maxOpeNodes = 1;
 
     public void elementAdded(StorageItemAddedEvent e) {
-        int numOfHittingSets = search.getStorage().getDiagnoses().size();
-        int numOfConflictSets = search.getStorage().getConflicts().size();
+        int numOfHittingSets = search.getDiagnoses().size();
+        int numOfConflictSets = search.getConflicts().size();
         int maxDiags = search.getMaxHittingSets();
 
         publish(new BackgroundTaskDataExchange(numOfHittingSets, numOfConflictSets,

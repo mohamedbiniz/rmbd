@@ -77,6 +77,10 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
     public void setSearchStrategy(SearchStrategy<Id> searchStrategy);
 
+    public Set<T> getConflicts();
+
+    public Set<T> getDiagnoses();
+
     public CostsEstimator<Id> getCostsEstimator();
 
     public SearchStrategy<Id> getSearchStrategy();

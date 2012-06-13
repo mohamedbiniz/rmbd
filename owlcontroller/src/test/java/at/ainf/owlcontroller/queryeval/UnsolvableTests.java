@@ -333,17 +333,17 @@ public class UnsolvableTests extends BasePerformanceTests {
                     //search.clearSearch();
                     search.run(NUMBER_OF_HITTING_SETS);
 
-                    daStr += search.getStorage().getDiagnoses().size() + "/";
-                    diagnosesCalc += search.getStorage().getDiagnoses().size();
-                    conflictsCalc += search.getStorage().getConflicts().size();
+                    daStr += search.getDiagnoses().size() + "/";
+                    diagnosesCalc += search.getDiagnoses().size();
+                    conflictsCalc += search.getConflicts().size();
 
-                    diagnoses = search.getStorage().getDiagnoses();
+                    diagnoses = search.getDiagnoses();
                     diagTime.setTime(System.currentTimeMillis() - diag);
                 } catch (SolverException e) {
                     diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
                 } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
                 }
 
@@ -367,7 +367,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 for (Set<OWLLogicalAxiom> diagnose : diagnoses)
                     infoCa += diagnose.size() + "/";
                 logger.info("cardinality of diagnoses " + infoCa);
-                logger.info("num of hitting sets " + search.getStorage().getHittingSets().size());
+                logger.info("num of hitting sets " + search.getDiagnoses().size());
 
                 // cast should be corrected
                 Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
@@ -474,7 +474,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                     } catch (NoConflictException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
-                    remainingAllDiags = secondsearch.getStorage().getDiagnoses();
+                    remainingAllDiags = secondsearch.getDiagnoses();
                     int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
                     int eliminatedInRemaining = getEliminationRate(secondsearch.getTheory(), remainingAllDiags, answer, actPa);
                     int eliminatedInRemainingSize = remainingAllDiags.size();
@@ -659,14 +659,14 @@ public class UnsolvableTests extends BasePerformanceTests {
                         }
                         time = System.nanoTime() - time;
 
-                        int minDiagnosisC = minCard(search.getStorage().getDiagnoses());
-                        double meanDiagnosisC = meanCard(search.getStorage().getDiagnoses());
-                        int maxDiagnosisC = maxCard(search.getStorage().getDiagnoses());
-                        int minConfC = minCard(search.getStorage().getConflicts());
-                        double meanConfC = meanCard(search.getStorage().getConflicts());
-                        int maxConfC = maxCard(search.getStorage().getConflicts());
+                        int minDiagnosisC = minCard(search.getDiagnoses());
+                        double meanDiagnosisC = meanCard(search.getDiagnoses());
+                        int maxDiagnosisC = maxCard(search.getDiagnoses());
+                        int minConfC = minCard(search.getConflicts());
+                        double meanConfC = meanCard(search.getConflicts());
+                        int maxConfC = maxCard(search.getConflicts());
 
-                        int c = search.getStorage().getConflicts().size();
+                        int c = search.getConflicts().size();
                         String s = nd + ", " + minDiagnosisC + ", " + meanDiagnosisC + ", " + maxDiagnosisC + ", " +
                                 c + ", " + minConfC + ", " + meanConfC + ", " + maxConfC;
 
@@ -1003,7 +1003,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getStorage().getDiagnoses();
+        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getDiagnoses();
         int rnd = random.nextInt(diagnoses.size());
         randomDiagNr = rnd;
         logger.info(file.getName() + ",diagnosis selected as target," + rnd);
@@ -1213,7 +1213,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             search.setCostsEstimator(es);
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.clearSearch();
 
 
@@ -1293,7 +1293,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             search.setCostsEstimator(es);
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.clearSearch();
 
 
@@ -1499,7 +1499,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+        return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
     }
 
     private Set<OWLLogicalAxiom> getDualTreeTranspErrDiag() {
@@ -1660,7 +1660,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 //                            }
 
-                                Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                                Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
                                 search.clearSearch();
 
                                 if (targetSource == TargetSource.FROM_30_DIAGS) {
@@ -1675,7 +1675,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                     }
 
                                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                                            Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                                            Collections.unmodifiableSet(search.getDiagnoses());
                                     search.clearSearch();
                                     AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                     targetDg = new LinkedHashSet<OWLLogicalAxiom>();
@@ -1787,7 +1787,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //                            }
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.clearSearch();
 
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
@@ -1802,7 +1802,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 }
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                                        Collections.unmodifiableSet(search.getStorage().getDiagnoses());
+                                        Collections.unmodifiableSet(search.getDiagnoses());
                                 search.clearSearch();
                                 AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();

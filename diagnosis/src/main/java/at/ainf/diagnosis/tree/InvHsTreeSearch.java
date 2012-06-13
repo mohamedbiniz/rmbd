@@ -50,7 +50,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
             //if (axioms.equals(ax))
             getStorage().removeConflictSet(ax);
         }
-        Set<T> cs = getStorage().getConflictSets();
+        Set<T> cs = getConflicts();
         getSearchStrategy().getOpenNodes().clear();
         Node<Id> root = getRoot();
         for (Node<Id> idNode : root.getChildren()) {

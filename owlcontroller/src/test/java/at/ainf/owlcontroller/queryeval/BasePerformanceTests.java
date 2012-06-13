@@ -144,17 +144,17 @@ public abstract class BasePerformanceTests {
                     long diag = System.currentTimeMillis();
                     search.run(NUMBER_OF_HITTING_SETS);
 
-                    daStr += search.getStorage().getDiagnoses().size() + "/";
-                    diagnosesCalc += search.getStorage().getDiagnoses().size();
-                    conflictsCalc += search.getStorage().getConflicts().size();
+                    daStr += search.getDiagnoses().size() + "/";
+                    diagnosesCalc += search.getDiagnoses().size();
+                    conflictsCalc += search.getConflicts().size();
 
-                    diagnoses = search.getStorage().getDiagnoses();
+                    diagnoses = search.getDiagnoses();
                     diagTime.setTime(System.currentTimeMillis() - diag);
                 } catch (SolverException e) {
                     diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
                 } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
+                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
                 }
 
@@ -336,7 +336,7 @@ public abstract class BasePerformanceTests {
         //if (type != null) qss = createQSSWithDefaultParam(type);
         simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, type);
         timeDual = System.currentTimeMillis() - timeDual;
-        AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getStorage().getDiagnoses());
+        AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
         boolean hasNegativeTestcases = searchDual.getTheory().getNonentailedTests().size() > 0;
 
@@ -372,7 +372,7 @@ public abstract class BasePerformanceTests {
         //if (type != null) qss = createQSSWithDefaultParam(type);
         simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, type);
         timeNormal = System.currentTimeMillis() - timeNormal;
-        AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getStorage().getDiagnoses());
+        AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
         boolean hasNegativeTestcases = searchNormal.getTheory().getNonentailedTests().size() > 0;
         theoryNormal.clearTestCases();

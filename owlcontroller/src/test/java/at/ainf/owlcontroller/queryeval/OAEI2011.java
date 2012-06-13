@@ -242,7 +242,7 @@ public class OAEI2011 {
             });
 
         searchNormal.run ();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getStorage().getDiagnoses();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
         for (Set<OWLLogicalAxiom> diagnosis : resultNormal)
             System.out.println(Utils.renderAxioms(diagnosis));
 

@@ -37,7 +37,7 @@ public class BackgroundSearcher {
 
         BackgroundSearcherTask task = new BackgroundSearcherTask(trSearch,
                 dialog.getTextArea(),dialog.getProgressBar());
-        trSearch.getStorage().addStorageItemListener(task);
+        //trSearch.getStorage().addStorageItemListener(task);
         trSearch.addOpenNodesListener(task);
         //BackgroundSearchManager.getInstance().addElementAddedToStorageListener(task);
         dialog.setWorker(task);
@@ -56,20 +56,20 @@ public class BackgroundSearcher {
         try {
             BackgroundSearcherTask.Result res = task.get();
             trSearch.removeOpenNodesListener(task);
-            trSearch.getStorage().removeStorageItemListener(task);
+            //trSearch.getStorage().removeStorageItemListener(task);
             //BackgroundSearchManager.getInstance().removeElementAddedToStorageListener(task);
-            DebugManager.getInstance().setValidHittingSets(trSearch.getStorage().getDiagnoses());
+            DebugManager.getInstance().setValidHittingSets(trSearch.getDiagnoses());
             DebugManager.getInstance().notifyHittingSetsChanged();
-            DebugManager.getInstance().setConflictSets(trSearch.getStorage().getConflicts());
+            DebugManager.getInstance().setConflictSets(trSearch.getConflicts());
             DebugManager.getInstance().notifyConflictSetsChanged();
             return res;
         } catch (InterruptedException e) {
 
             return null;
         } catch(CancellationException e) {
-            DebugManager.getInstance().setValidHittingSets(trSearch.getStorage().getDiagnoses());
+            DebugManager.getInstance().setValidHittingSets(trSearch.getDiagnoses());
             DebugManager.getInstance().notifyHittingSetsChanged();
-            DebugManager.getInstance().setConflictSets(trSearch.getStorage().getConflicts());
+            DebugManager.getInstance().setConflictSets(trSearch.getConflicts());
             DebugManager.getInstance().notifyConflictSetsChanged();
             return  BackgroundSearcherTask.Result.CANCELED;
         } catch (ExecutionException e) {
