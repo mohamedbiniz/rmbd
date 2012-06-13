@@ -37,8 +37,6 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     private static Logger loggerDual = Logger.getLogger("dualtreelogger");
 
-    private final Storage<T, Id> storage;
-
     private Node<Id> root = null;
 
     // ICONFLICTSEARCHER: is the search algorithm for conflicts (e.g. QuickXplain)
@@ -57,11 +55,6 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     private AxiomRenderer<Id> axiomRenderer;
 
-    //private TreeLogic<T,Id> treeLogic;
-
-    public AbstractTreeSearch(Storage<T, Id> storage) {
-        this.storage = storage;
-    }
 
     /*public void setLogic(TreeLogic<T,Id> treeLog) {
         this.treeLogic = treeLog;
@@ -130,10 +123,6 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public List<OpenNodesListener> getOpenNodesListeners() {
         return oNodesLsteners;
-    }
-
-    public Storage<T, Id> getStorage() {
-        return this.storage;
     }
 
     public void setSearcher(Searcher<Id> searcher) {

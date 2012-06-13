@@ -17,10 +17,7 @@ import java.util.*;
  */
 public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id>{
 
-    public InvHsTreeSearch(Storage<T, Id> tIdStorage) {
-        super(tIdStorage);
-        //setLogic(new DualTreeLogic<T, Id>());
-    }
+
 
     public void proveValidnessConflict(T conflictSet) throws SolverException {
         boolean valid = true;

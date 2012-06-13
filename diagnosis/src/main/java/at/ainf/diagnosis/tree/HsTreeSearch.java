@@ -18,10 +18,6 @@ import java.util.*;
  */
 public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id>{
 
-    public HsTreeSearch(Storage<T, Id> tIdStorage) {
-        super(tIdStorage);
-        //setLogic(new HsTreeLogic<T, Id>());
-    }
 
     public void proveValidnessConflict(T conflictSet) throws SolverException {
 

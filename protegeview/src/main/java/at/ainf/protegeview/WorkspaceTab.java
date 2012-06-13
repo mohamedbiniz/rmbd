@@ -494,12 +494,12 @@ public class
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
         if (QueryDebuggerPreference.getInstance().getSearchCommand().equals("BestFirst")) {
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
 
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         } else if (QueryDebuggerPreference.getInstance().getSearchCommand().equals("BreadthFirst")) {
             //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
 
             search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         }

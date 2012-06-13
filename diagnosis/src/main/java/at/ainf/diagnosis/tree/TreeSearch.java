@@ -51,8 +51,6 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> {
 
     public ITheory<Id> getTheory();
 
-    public Storage<T, Id> getStorage();
-
     public void setMaxHittingSets(int maxHittingSets);
 
     public int getMaxHittingSets();

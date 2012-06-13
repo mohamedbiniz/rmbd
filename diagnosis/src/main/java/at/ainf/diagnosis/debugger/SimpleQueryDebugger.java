@@ -46,7 +46,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     public void init() {
         SimpleStorage<Id> storage = new SimpleStorage<Id>();
         if (theory != null) getTheory().reset();
-        search = new HsTreeSearch<AxiomSet<Id>,Id>(storage);
+        search = new HsTreeSearch<AxiomSet<Id>,Id>();
         search.setCostsEstimator(new SimpleCostsEstimator<Id>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
         search.setSearcher(new NewQuickXplain<Id>());

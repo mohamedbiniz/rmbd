@@ -131,9 +131,9 @@ public class BaseAlignmentTests extends BasePerformanceTests {
             storage = new SimpleStorage<OWLLogicalAxiom>();
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
         if (dual)
-            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         else
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(storage);
+            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
 
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         if (dual)
