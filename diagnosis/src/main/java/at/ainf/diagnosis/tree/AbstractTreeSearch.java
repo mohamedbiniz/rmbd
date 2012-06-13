@@ -170,7 +170,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
     }
 
     public void clearSearch() {
-        getStorage().resetStorage();
+        resetStorage();
         getSearchStrategy().getOpenNodes().clear();
         this.root = null;
     }
@@ -323,7 +323,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 T hs = createHittingSet(node, valid);
 
                 hs.setValid(valid);
-                getStorage().addHittingSet(hs);
+                addHittingSet(hs);
                 start("Diagnosis", "diagnosis");
                 if (logger.isInfoEnabled()) {
                     logger.info("Found conflicts: " + getConflicts().size() + " and diagnoses " + getDiagnoses().size());
@@ -425,7 +425,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
             pruneConflictSets(node, conflictSet);
 
-        getStorage().addNodeLabel(conflictSet);
+        addNodeLabel(conflictSet);
 
         // current node should ge a conflict only if a path from
         // this node to root does not include closed nodes
@@ -541,7 +541,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
     public boolean pruneHittingSet(Node<Id> node) {
         if (node.isRoot()) return false;
         Collection<Id> pathLabels = node.getPathLabels();
-        for (T diagnosis : getStorage().getHittingSets()) {
+        for (T diagnosis : getHittingSets()) {
             if (pathLabels.containsAll(diagnosis)) {
                 return true;
             }
@@ -590,4 +590,80 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         this.axiomRenderer = idAxiomRenderer;
 
     }
+
+    //
+
+    protected Set<T> nodeLabels = new LinkedHashSet<T>();
+    protected Set<T> hittingSets = new LinkedHashSet<T>();
+
+    private StorageListener<T, Id> hittingSetListener = new StorageListener<T, Id>() {
+        public boolean remove(T oldObject) {
+            boolean remValid = oldObject.isValid();
+            if (!hittingSets.remove(oldObject)) {
+                // perhaps treeset order is not correct
+                hittingSets = copy(hittingSets);
+                if (hittingSets.remove(oldObject))
+                    logger.error("treeset ordering is not correct - updates of probabilities? ");
+                else
+                    throw new IllegalStateException("Existing hitting set was not removed!");
+            }
+
+            return remValid;
+        }
+
+        public void add(T newObject, boolean addValid) {
+            hittingSets.add(newObject);
+        }
+    };
+
+    public void resetStorage() {
+        for (T hs : this.getHittingSets())
+            hs.setListener(null);
+        hittingSets.clear();
+        nodeLabels.clear();
+    }
+
+
+    public boolean addNodeLabel(T nodeLabel) {
+        return nodeLabels.add(nodeLabel);
+    }
+
+    public boolean removeNodeLabel(T nodeLabel) {
+        return this.nodeLabels.remove(nodeLabel);
+    }
+
+    public Set<T> getNodeLabels() {
+        return Collections.unmodifiableSet(nodeLabels);
+    }
+
+
+
+
+    public boolean addHittingSet(final T hittingSet) {
+        hittingSet.setListener(this.hittingSetListener);
+
+        Set<T> del = new HashSet<T>();
+        for (T set : hittingSets) {
+            if (set.containsAll(hittingSet))
+                del.add(set);
+        }
+        if (!del.isEmpty())
+            for (T ids : del) {
+                removeHittingSet(ids);
+            }
+
+
+
+
+        return hittingSets.add(hittingSet);
+    }
+
+    public boolean removeHittingSet(final T diagnosis) {
+        return hittingSets.remove(diagnosis);
+    }
+
+    public Set<T> getHittingSets() {
+        return Collections.unmodifiableSet(hittingSets);
+    }
+
 }

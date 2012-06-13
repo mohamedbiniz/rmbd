@@ -48,7 +48,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
             //ArrayList<Id> formulas = new ArrayList<Id>(tree.getTheory().getActiveFormulas());
             //Set<Id> axioms = tree.getSearcher().search(tree.getTheory(), formulas, ax, null);
             //if (axioms.equals(ax))
-            getStorage().removeNodeLabel(ax);
+            removeNodeLabel(ax);
         }
         Set<T> cs = getConflicts();
         getSearchStrategy().getOpenNodes().clear();
@@ -89,11 +89,11 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
     }
 
     public Set<T> getDiagnoses() {
-        return getValidAxiomSets(copy(getStorage().getNodeLabels()));
+        return getValidAxiomSets(copy(getNodeLabels()));
     }
 
     public Set<T> getConflicts() {
-        return getValidAxiomSets(copy(getStorage().getHittingSets()));
+        return getValidAxiomSets(copy(getHittingSets()));
     }
 
     public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {

@@ -11,21 +11,6 @@ import java.util.Set;
  */
 public interface Storage<T extends AxiomSet<Id>, Id> {
 
-    boolean addNodeLabel(T nodeLabel);
-
-    boolean removeNodeLabel(T nodeLabel);
-
-    public Set<T> getNodeLabels();
-
-
-    boolean addHittingSet(T hittingSet);
-
-    boolean removeHittingSet(T hittingSet);
-
-    Set<T> getHittingSets();
-
-
-    void resetStorage();
 
 
 
