@@ -10,7 +10,6 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.listeners.OWLControllerListener;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.theory.storage.Storage;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -49,7 +48,7 @@ public class OWLControllerImpl implements OWLController {
             case REITER:
                 return new SimpleStorage<OWLLogicalAxiom>();
             case DUAL:
-                return new DualStorage<OWLLogicalAxiom>();
+                return new SimpleStorage<OWLLogicalAxiom>();
             default:
                 return null;
         }

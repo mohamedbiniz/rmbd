@@ -19,7 +19,6 @@ import at.ainf.owlcontroller.queryeval.result.UserProbAndQualityTable;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.DualStorage;
 import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -172,7 +171,7 @@ public class PerformanceTests extends BasePerformanceTests {
 
         SimpleStorage<OWLLogicalAxiom> storage;
         if (dual)
-            storage = new DualStorage<OWLLogicalAxiom>();
+            storage = new SimpleStorage<OWLLogicalAxiom>();
         else
             storage = new SimpleStorage<OWLLogicalAxiom>();
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
@@ -464,7 +463,7 @@ public class PerformanceTests extends BasePerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new DualStorage<OWLLogicalAxiom>());
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>(new SimpleStorage<OWLLogicalAxiom>());
         searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);

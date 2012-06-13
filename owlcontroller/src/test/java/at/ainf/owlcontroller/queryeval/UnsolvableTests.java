@@ -166,7 +166,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         SimpleStorage<OWLLogicalAxiom> storage;
         if (dual)
-            storage = new DualStorage<OWLLogicalAxiom>();
+            storage = new SimpleStorage<OWLLogicalAxiom>();
         else
             storage = new SimpleStorage<OWLLogicalAxiom>();
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
