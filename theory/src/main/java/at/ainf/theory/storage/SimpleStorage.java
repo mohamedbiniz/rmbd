@@ -62,8 +62,12 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         return this.nodeLabels.remove(nodeLabel);
     }
 
+    public Set<AxiomSet<Id>> getNodeLabels() {
+        return Collections.unmodifiableSet(nodeLabels);
+    }
+
     public Set<AxiomSet<Id>> getConflicts() {
-        return Collections.unmodifiableSet(copy(nodeLabels));
+        return getValidAxiomSets(copy(nodeLabels));
     }
 
 

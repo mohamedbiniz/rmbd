@@ -36,6 +36,14 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
 
     }
 
+    public Set<T> getDiagnoses() {
+        return getValidAxiomSets(copy(getStorage().getHittingSets()));
+    }
+
+    public Set<T> getConflicts() {
+        return getValidAxiomSets(copy(getStorage().getNodeLabels()));
+    }
+
     public void pruneConflictSets(Node<Id> idNode, T conflictSet) throws SolverException, InconsistentTheoryException {
 
         // DAG: verify if there is a conflict that is a subset of the new conflict

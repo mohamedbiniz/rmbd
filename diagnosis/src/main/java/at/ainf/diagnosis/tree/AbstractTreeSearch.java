@@ -449,12 +449,30 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }*/
     }
 
-    public Set<T> getConflicts() {
+    /*public Set<T> getConflicts() {
         return getStorage().getConflicts();
     }
 
     public Set<T> getDiagnoses() {
         return getStorage().getDiagnoses();
+    } */
+
+    protected Set<T> getValidAxiomSets(Set<T> set) {
+        Set<T> valid = new LinkedHashSet<T>();
+
+        for (T s : set) {
+            if (s.isValid())
+                valid.add(s);
+        }
+        return Collections.unmodifiableSet(valid);
+
+    }
+
+    protected Set<T> copy(Set<T> set) {
+        Set<T> hs = new LinkedHashSet<T>();
+        for (T hset : set)
+            hs.add(hset);
+        return hs;
     }
 
     protected abstract void pruneConflictSets(Node<Id> node, T conflictSet) throws SolverException, InconsistentTheoryException;
