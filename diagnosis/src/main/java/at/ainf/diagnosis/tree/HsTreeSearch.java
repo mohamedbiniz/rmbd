@@ -37,11 +37,11 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
     }
 
     public Set<T> getDiagnoses() {
-        return getValidAxiomSets(copy(getStorage().getHittingSets()));
+        return getValidAxiomSets(copy(getHittingSets()));
     }
 
     public Set<T> getConflicts() {
-        return getValidAxiomSets(copy(getStorage().getNodeLabels()));
+        return getValidAxiomSets(copy(getNodeLabels()));
     }
 
     public void pruneConflictSets(Node<Id> idNode, T conflictSet) throws SolverException, InconsistentTheoryException {
@@ -56,7 +56,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
         if (!invalidConflicts.isEmpty()) {
             for (T invalidConflict : invalidConflicts) {
 
-                getStorage().removeNodeLabel(invalidConflict);
+                removeNodeLabel(invalidConflict);
             }
             updateTree(conflictSet);
         }
@@ -81,7 +81,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
             if (isConnectedToRoot(node)) {
                 node.setOpen();
                 getSearchStrategy().pushOpenNode(node);
-                getStorage().removeHittingSet(invalidHittingSet);
+                removeHittingSet(invalidHittingSet);
             }
         }
     }
