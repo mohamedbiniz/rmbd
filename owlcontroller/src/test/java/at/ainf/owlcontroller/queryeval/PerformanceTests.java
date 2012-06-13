@@ -19,7 +19,6 @@ import at.ainf.owlcontroller.queryeval.result.UserProbAndQualityTable;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -169,11 +168,11 @@ public class PerformanceTests extends BasePerformanceTests {
 
     protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
 
-        SimpleStorage<OWLLogicalAxiom> storage;
+        /*SimpleStorage<OWLLogicalAxiom> storage;
         if (dual)
             storage = new SimpleStorage<OWLLogicalAxiom>();
         else
-            storage = new SimpleStorage<OWLLogicalAxiom>();
+            storage = new SimpleStorage<OWLLogicalAxiom>();*/
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
         if (dual) {
             search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();

@@ -10,7 +10,6 @@ import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,7 +82,7 @@ public class TestDiagnosisValidation {
     public void testDiagnosisValidation()
             throws InconsistentTheoryException, SolverException, NoConflictException, OWLOntologyCreationException {
         createOntology();
-        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 

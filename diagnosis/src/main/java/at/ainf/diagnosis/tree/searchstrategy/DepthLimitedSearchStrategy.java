@@ -1,13 +1,6 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
 import at.ainf.diagnosis.tree.Node;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Storage;
-
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.

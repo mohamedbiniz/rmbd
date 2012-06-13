@@ -10,8 +10,6 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlcontroller.listeners.OWLControllerListener;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
-import at.ainf.theory.storage.Storage;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -43,7 +41,7 @@ public class OWLControllerImpl implements OWLController {
         return config;
     }
 
-    private SimpleStorage<OWLLogicalAxiom> createStorage() {
+    /*private SimpleStorage<OWLLogicalAxiom> createStorage() {
         switch (config.treeType) {
             case REITER:
                 return new SimpleStorage<OWLLogicalAxiom>();
@@ -52,7 +50,7 @@ public class OWLControllerImpl implements OWLController {
             default:
                 return null;
         }
-    }
+    } */
 
     private Searcher<OWLLogicalAxiom> createSearcher() {
         switch (config.treeType) {
