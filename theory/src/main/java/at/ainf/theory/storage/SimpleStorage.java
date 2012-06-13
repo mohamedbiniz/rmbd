@@ -66,9 +66,7 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         return Collections.unmodifiableSet(nodeLabels);
     }
 
-    public Set<AxiomSet<Id>> getConflicts() {
-        return getValidAxiomSets(copy(nodeLabels));
-    }
+
 
 
     public boolean addHittingSet(final AxiomSet<Id> hittingSet) {
@@ -101,22 +99,6 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         return Collections.unmodifiableSet(hittingSets);
     }
 
-    public Set<AxiomSet<Id>> getDiagnoses() {
-        return getValidAxiomSets(copy(hittingSets));
-    }
-
-
-    public Set<AxiomSet<Id>> getValidAxiomSets(Set<AxiomSet<Id>> set) {
-        Set<AxiomSet<Id>> valid = new LinkedHashSet<AxiomSet<Id>>();
-
-        for (AxiomSet<Id> s : set) {
-            if (s.isValid())
-                valid.add(s);
-        }
-        return Collections.unmodifiableSet(valid);
-
-    }
-
 
 
     protected Set<AxiomSet<Id>> copy(Set<AxiomSet<Id>> set) {
@@ -125,10 +107,6 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
             hs.add(hset);
         return hs;
     }
-
-
-
-
 
 
 

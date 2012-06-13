@@ -28,15 +28,6 @@ public interface Storage<T extends AxiomSet<Id>, Id> {
     void resetStorage();
 
 
-    Set<T> getConflicts();
-
-    Set<T> getDiagnoses();
-
-
-
-
-
-
 
 
 
