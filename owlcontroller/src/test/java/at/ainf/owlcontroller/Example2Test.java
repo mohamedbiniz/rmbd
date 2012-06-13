@@ -9,7 +9,6 @@ import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -226,7 +225,7 @@ public class Example2Test extends AbstractExample {
 
     @Test
     public void testResume() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
-        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<Query, Boolean> result =
                 new HashMap<Query, Boolean>();
 
@@ -267,7 +266,7 @@ public class Example2Test extends AbstractExample {
 
     @Test
     public void testAllQueryEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
-        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<Query, Boolean> result =
                 new HashMap<Query, Boolean>();
         for (Query query : Query.values()) {
@@ -312,7 +311,7 @@ public class Example2Test extends AbstractExample {
 
     @Test
     public void testSomeQueryNotEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
-        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HashMap<Query, Boolean> result =
                 new HashMap<Query, Boolean>();
         for (Query query : new Query[]{Query.X5, Query.X4, Query.X2, Query.X7}) {
@@ -349,7 +348,7 @@ public class Example2Test extends AbstractExample {
 
     @Test
     public void testQuery5NotEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
-        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 

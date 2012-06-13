@@ -124,11 +124,11 @@ public class BaseAlignmentTests extends BasePerformanceTests {
 
     protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
 
-        SimpleStorage<OWLLogicalAxiom> storage;
+        /*SimpleStorage<OWLLogicalAxiom> storage;
         if (dual)
             storage = new SimpleStorage<OWLLogicalAxiom>();
         else
-            storage = new SimpleStorage<OWLLogicalAxiom>();
+            storage = new SimpleStorage<OWLLogicalAxiom>();*/
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
         if (dual)
             search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();

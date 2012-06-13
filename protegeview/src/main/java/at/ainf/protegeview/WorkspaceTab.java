@@ -9,7 +9,6 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.backgroundsearch.BackgroundSearcher;
@@ -491,7 +490,7 @@ public class
 
     public void createOWLTheory() {
 
-        SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
         if (QueryDebuggerPreference.getInstance().getSearchCommand().equals("BestFirst")) {
             search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();

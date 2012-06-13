@@ -4,7 +4,6 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Storage;
 
 import java.util.*;
 

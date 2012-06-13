@@ -16,10 +16,7 @@ import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomRenderer;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Storage;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**

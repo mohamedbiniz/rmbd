@@ -19,7 +19,6 @@ import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.SimpleStorage;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
@@ -112,8 +111,7 @@ public class TreeEvaluation {
         // reasoning
         //cth.push(list.subList(2, 5));
 
-        SimpleStorage<Constraint> storage =
-                new SimpleStorage<Constraint>();
+        // SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
         HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
@@ -162,7 +160,7 @@ public class TreeEvaluation {
         logger.info(cth);
 
 
-        SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
+        //SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
         HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
@@ -247,7 +245,7 @@ public class TreeEvaluation {
         // reasoning
         //cth.push(list.subList(2, 5));
 
-        SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
+        //SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
         HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
