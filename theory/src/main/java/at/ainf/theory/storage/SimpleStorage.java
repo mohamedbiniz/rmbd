@@ -71,9 +71,6 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
 
     public boolean addHittingSet(final AxiomSet<Id> hittingSet) {
         hittingSet.setListener(this.hittingSetListener);
-        if (logger.isInfoEnabled()) {
-            logger.info("Adding a hitting set: " + hittingSet);
-        }
 
         Set<AxiomSet<Id>> del = new HashSet<AxiomSet<Id>>();
         for (AxiomSet<Id> set : hittingSets) {
