@@ -57,7 +57,7 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
 
     protected void conflictAdded() {
         notifyStorageItemAdded();
-        notifyConflictSetAdded();
+
     }
 
     public void setConflictSets(Set<T> conflicts) {
@@ -88,7 +88,7 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
 
     protected void validHittingSetAdded() {
         notifyStorageItemAdded();
-        notifyHittingSetAdded();
+
 
 
     }
@@ -214,39 +214,5 @@ public abstract class AbstractStorage<T extends AxiomSet<Id>, Id> implements Sto
 
    }
 
-    private List<StorageConflictSetsListener> conflictSetsListeners = new LinkedList<StorageConflictSetsListener>();
 
-    public void addStorageConflictSetsListener(StorageConflictSetsListener l) {
-        conflictSetsListeners.add(l);
-    }
-
-    public void removeStorageConflictSetsListener(StorageConflictSetsListener l) {
-        conflictSetsListeners.remove(l);
-    }
-
-    private void notifyConflictSetAdded() {
-       StorageItemAddedEvent event =new StorageItemAddedEvent(this);
-
-       for (StorageConflictSetsListener listener : conflictSetsListeners)
-           listener.conflictSetAdded(event);
-
-   }
-
-    private List<StorageHittingSetsListener> hittingSetsListeners = new LinkedList<StorageHittingSetsListener>();
-
-    public void addStorageHittingSetsListener(StorageHittingSetsListener l) {
-        hittingSetsListeners.add(l);
-    }
-
-    public void removeStorageHittingSetsListener(StorageHittingSetsListener l) {
-        hittingSetsListeners.remove(l);
-    }
-
-    private void notifyHittingSetAdded() {
-       StorageItemAddedEvent event =new StorageItemAddedEvent(this);
-
-       for (StorageHittingSetsListener listener : hittingSetsListeners)
-           listener.hittingSetAdded(event);
-
-   }
 }

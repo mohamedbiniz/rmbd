@@ -43,7 +43,7 @@ public class TestWatchedTreeSet {
         Set<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
         set.add(axiom);
 
-        //return new AbstrAxiomSet<OWLLogicalAxiom>(AxiomSet.TypeOfSet.HITTING_SET,name, measure,set, Collections.<OWLLogicalAxiom>emptySet());
+        //return new AxiomSetImpl<OWLLogicalAxiom>(AxiomSet.TypeOfSet.HITTING_SET,name, measure,set, Collections.<OWLLogicalAxiom>emptySet());
         return AxiomSetFactory.createHittingSet(measure, set, Collections.<OWLLogicalAxiom>emptySet() );
     }
 

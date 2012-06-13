@@ -212,7 +212,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         map.get(lt).remove(rt);
         double together = lt.measure + rt.measure;
 
-        Measurable t = new Measurable(new AbstrAxiomSet<Id>("NULL:" + this.count++, 0,Collections.<Id>emptySet(), Collections.<Id>emptySet()), together);
+        Measurable t = new Measurable(new AxiomSetImpl<Id>("NULL:" + this.count++, 0,Collections.<Id>emptySet(), Collections.<Id>emptySet()), together);
         put(map, t, lt);
         put(map, t, rt);} */
 
