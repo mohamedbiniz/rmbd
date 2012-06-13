@@ -25,6 +25,7 @@ public class DualStorage<Id> extends SimpleStorage<Id> {
 
     }
 
+    @Override
     public void invalidateHittingSet(AxiomSet<Id> hs) {
         hs.setValid(false);
     }

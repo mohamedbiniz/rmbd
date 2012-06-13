@@ -59,20 +59,7 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
     public boolean addConflict(AxiomSet<Id> conflict) {
         if (logger.isInfoEnabled())
             logger.info("Adding a conflict: " + conflict);
-        boolean r = conflicts.add(conflict);
-        if (r) conflictAdded();
-        return r;
-    }
-
-    protected void conflictAdded() {
-        notifyStorageItemAdded();
-
-    }
-
-    public void setConflictSets(Set<AxiomSet<Id>> conflicts) {
-        this.conflicts.clear();
-        for (AxiomSet<Id> conf : conflicts)
-            addConflict(conf);
+        return conflicts.add(conflict);
     }
 
     public Set<AxiomSet<Id>> getConflictSets() {
@@ -83,29 +70,12 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         return this.conflicts.remove(cs);
     }
 
-    public int getConflictsCount() {
-        return this.conflicts.size();
-    }
-
     public Set<AxiomSet<Id>> getConflicts() {
         return getConflictSets();
     }
 
     public Set<AxiomSet<Id>> getDiagnoses() {
         return Collections.unmodifiableSet(getValidHittingSets());
-    }
-
-    protected void validHittingSetAdded() {
-        notifyStorageItemAdded();
-
-
-
-    }
-
-    public void setHittingSets(Set<AxiomSet<Id>> hittingSets) {
-        this.hittingSets.clear();
-        for (AxiomSet<Id> hs : hittingSets)
-            addHittingSet(hs);
     }
 
     public boolean addHittingSet(final AxiomSet<Id> hittingSet) {
@@ -128,7 +98,6 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
 
         if (hittingSet.isValid()) {
             validHittingSets.add(hittingSet);
-            validHittingSetAdded();
         }
 
         return val;
@@ -149,11 +118,6 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
 
     public Set<AxiomSet<Id>> getValidHittingSets() {
         return copy(validHittingSets);
-        /*Set<AxiomSet<Id>> hs = new AxiomSet<Id>reeSet<AxiomSet<Id>>();
-        for (AxiomSet<Id> hset : hittingSets)
-            if (hset.isValid())
-                hs.add(hset);
-        return hs;*/
     }
 
     private Set<AxiomSet<Id>> copy(Set<AxiomSet<Id>> set) {
@@ -165,14 +129,6 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
 
     public Set<AxiomSet<Id>> getHittingSets() {
         return Collections.unmodifiableSet(hittingSets);
-    }
-
-    public int getHittingSetsCount() {
-        return validHittingSets.size();
-    }
-
-    public int getDiagsCount() {
-        return getDiagnoses().size();
     }
 
     public Set<AxiomSet<Id>> getConflictSets(Id axiom) {
@@ -189,38 +145,7 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         return conflicts;
     }
 
-    public void normalizeValidHittingSets() {
-        Set<AxiomSet<Id>> hittingSets = getDiagnoses();
-        double sum = 0;
 
-        for (AxiomSet<Id> hittingSet : hittingSets) {
-            sum += hittingSet.getMeasure();
-        }
 
-        if (sum == 0 && hittingSets.size() != 0)
-            throw new IllegalStateException("Sum of probabilities of all diagnoses is 0!");
-
-        for (AxiomSet<Id> hittingSet : hittingSets) {
-            hittingSet.setMeasure(hittingSet.getMeasure() / sum);
-        }
-    }
-
-    private List<StorageItemListener> listeners = new LinkedList<StorageItemListener>();
-
-    public void addStorageItemListener(StorageItemListener l) {
-        listeners.add(l);
-    }
-
-    public void removeStorageItemListener(StorageItemListener l) {
-        listeners.remove(l);
-    }
-
-    private void notifyStorageItemAdded() {
-        StorageItemAddedEvent event =new StorageItemAddedEvent(this);
-
-        for (StorageItemListener listener : listeners)
-            listener.elementAdded(event);
-
-    }
 
 }

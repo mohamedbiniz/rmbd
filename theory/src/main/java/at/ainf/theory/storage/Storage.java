@@ -13,26 +13,28 @@ public interface Storage<T extends AxiomSet<Id>, Id> {
 
     boolean addConflict(T conflict);
 
+    boolean removeConflictSet(T cs);
+
+
+    boolean addHittingSet(T hittingSet);
+
+    boolean removeHittingSet(T hittingSet);
+
+
+    void invalidateHittingSet(T hittingSet);
+
+    void resetStorage();
+
 
     Set<T> getConflicts();
 
     Set<T> getDiagnoses();
 
-    Set<T> getConflictSets();
-
-    boolean removeConflictSet(T cs);
-
-    boolean addHittingSet(T hittingSet);
-
-    Set<T> getValidHittingSets();
-
     Set<T> getHittingSets();
 
-    boolean removeHittingSet(T hittingSet);
 
-    void invalidateHittingSet(T hittingSet);
 
-    void resetStorage();
+
 
 
 
