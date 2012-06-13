@@ -14,10 +14,15 @@ import java.util.Set;
 public class DualStorage<Id> extends SimpleStorage<Id> {
 
     @Override
+    public Set<AxiomSet<Id>> getConflicts() {
+        return Collections.unmodifiableSet(copy(validHittingSets));
+    }
+
+    @Override
     public Set<AxiomSet<Id>> getDiagnoses() {
         Set<AxiomSet<Id>> diags = new LinkedHashSet<AxiomSet<Id>>();
 
-        for (AxiomSet<Id> d : getConflictSets()) {
+        for (AxiomSet<Id> d : copy(conflicts)) {
             if (d.isValid())
               diags.add(d);
         }
@@ -27,11 +32,8 @@ public class DualStorage<Id> extends SimpleStorage<Id> {
 
     @Override
     public void invalidateHittingSet(AxiomSet<Id> hs) {
-        hs.setValid(false);
+
     }
 
-    @Override
-    public Set<AxiomSet<Id>> getConflicts() {
-        return Collections.unmodifiableSet(getValidHittingSets());
-    }
+
 }

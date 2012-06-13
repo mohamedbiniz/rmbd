@@ -204,6 +204,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 }
                 numOfInvalidatedHS = invalidHittingSets.size();
                 for (T invHS : invalidHittingSets) {
+                    invHS.setValid(false);
                     getStorage().invalidateHittingSet(invHS);
                 }
                 updateTree(invalidHittingSets);

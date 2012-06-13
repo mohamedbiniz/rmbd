@@ -56,27 +56,23 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         validHittingSets.clear();
     }
 
-    public boolean addConflict(AxiomSet<Id> conflict) {
-        if (logger.isInfoEnabled())
-            logger.info("Adding a conflict: " + conflict);
-        return conflicts.add(conflict);
-    }
 
-    public Set<AxiomSet<Id>> getConflictSets() {
-        return Collections.unmodifiableSet(copy(conflicts));
+    public boolean addConflict(AxiomSet<Id> conflict) {
+        return conflicts.add(conflict);
     }
 
     public boolean removeConflictSet(AxiomSet<Id> cs) {
         return this.conflicts.remove(cs);
     }
 
-    public Set<AxiomSet<Id>> getConflicts() {
-        return getConflictSets();
+    public Set<AxiomSet<Id>> getConflictSets() {
+        return Collections.unmodifiableSet(copy(conflicts));
     }
 
-    public Set<AxiomSet<Id>> getDiagnoses() {
-        return Collections.unmodifiableSet(getValidHittingSets());
+    public Set<AxiomSet<Id>> getConflicts() {
+        return Collections.unmodifiableSet(copy(conflicts));
     }
+
 
     public boolean addHittingSet(final AxiomSet<Id> hittingSet) {
         hittingSet.setListener(this.hittingSetListener);
@@ -111,39 +107,33 @@ public class SimpleStorage<Id> implements Storage<AxiomSet<Id>,Id> {
         return val;
     }
 
-    public void invalidateHittingSet(AxiomSet<Id> hs) {
-        hs.setValid(false);
-        this.validHittingSets.remove(hs);
-    }
-
     public Set<AxiomSet<Id>> getValidHittingSets() {
         return copy(validHittingSets);
-    }
-
-    private Set<AxiomSet<Id>> copy(Set<AxiomSet<Id>> set) {
-        Set<AxiomSet<Id>> hs = new LinkedHashSet<AxiomSet<Id>>();
-        for (AxiomSet<Id> hset : set)
-            hs.add(hset);
-        return hs;
     }
 
     public Set<AxiomSet<Id>> getHittingSets() {
         return Collections.unmodifiableSet(hittingSets);
     }
 
-    public Set<AxiomSet<Id>> getConflictSets(Id axiom) {
-        Set<AxiomSet<Id>> conflicts = new LinkedHashSet<AxiomSet<Id>>();
-
-        for (AxiomSet<Id> conflict : getConflictSets()) {
-            for (Id ax : conflict) {
-                if (ax.equals(axiom)) {
-                    conflicts.add(conflict);
-                    break;
-                }
-            }
-        }
-        return conflicts;
+    public Set<AxiomSet<Id>> getDiagnoses() {
+        return Collections.unmodifiableSet(copy(validHittingSets));
     }
+
+
+    public void invalidateHittingSet(AxiomSet<Id> hs) {
+
+        this.validHittingSets.remove(hs);
+    }
+
+    protected Set<AxiomSet<Id>> copy(Set<AxiomSet<Id>> set) {
+        Set<AxiomSet<Id>> hs = new LinkedHashSet<AxiomSet<Id>>();
+        for (AxiomSet<Id> hset : set)
+            hs.add(hset);
+        return hs;
+    }
+
+
+
 
 
 
