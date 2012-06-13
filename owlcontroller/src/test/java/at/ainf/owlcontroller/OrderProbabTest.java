@@ -68,7 +68,7 @@ public class OrderProbabTest {
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
 
         for (int i = 0; i < 100 / 4; i++) {
-            storage.resetStorage();
+            //storage.resetStorage();
             map.put(ManchesterOWLSyntax.SOME, r.nextDouble() / 2);
             map.put(ManchesterOWLSyntax.ONLY, r.nextDouble() / 2);
             map.put(ManchesterOWLSyntax.NOT, r.nextDouble() / 2);

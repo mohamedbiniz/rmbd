@@ -9,47 +9,30 @@ import java.util.Set;
  * Time: 15:57
  * To change this template use File | Settings | File Templates.
  */
-public interface Storage<E extends AxiomSet<Id>, Id> {
+public interface Storage<T extends AxiomSet<Id>, Id> {
 
-    boolean addConflict(E conflict);
-
-
-
-    Set<E> getConflicts();
-
-    Set<E> getDiagnoses();
-
-    Set<E> getConflictSets();
-
-    boolean removeConflictSet(E cs);
+    boolean addConflict(T conflict);
 
 
+    Set<T> getConflicts();
 
-    boolean addHittingSet(E hittingSet);
+    Set<T> getDiagnoses();
 
-    Set<E> getValidHittingSets();
+    Set<T> getConflictSets();
 
-    Set<E> getHittingSets();
+    boolean removeConflictSet(T cs);
 
-    //int getHittingSetsCount();
+    boolean addHittingSet(T hittingSet);
 
-    //int getDiagsCount();
+    Set<T> getValidHittingSets();
 
+    Set<T> getHittingSets();
 
+    boolean removeHittingSet(T hittingSet);
 
-    boolean removeHittingSet(E hittingSet);
-
-    void invalidateHittingSet(E hittingSet);
+    void invalidateHittingSet(T hittingSet);
 
     void resetStorage();
-
-    //Set<E> getConflictSets(Id axiom);
-
-    void normalizeValidHittingSets();
-
-    //void addStorageItemListener(StorageItemListener l);
-
-    //void removeStorageItemListener(StorageItemListener l);
 
 
 

@@ -48,7 +48,23 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
     public void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
         search.getTheory().doBayesUpdate(search.getDiagnoses());
-        search.getStorage().normalizeValidHittingSets();
+        normalizeValidHittingSets(search);
+    }
+
+    protected void normalizeValidHittingSets(TreeSearch<AxiomSet<Id>, Id> search) {
+        Set<AxiomSet<Id>> hittingSets = search.getDiagnoses();
+        double sum = 0;
+
+        for (AxiomSet<Id> hittingSet : hittingSets) {
+            sum += hittingSet.getMeasure();
+        }
+
+        if (sum == 0 && hittingSets.size() != 0)
+            throw new IllegalStateException("Sum of probabilities of all diagnoses is 0!");
+
+        for (AxiomSet<Id> hittingSet : hittingSets) {
+            hittingSet.setMeasure(hittingSet.getMeasure() / sum);
+        }
     }
 
     public Node<Id> getNode() {
