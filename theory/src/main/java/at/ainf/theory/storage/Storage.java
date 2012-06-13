@@ -20,8 +20,8 @@ public interface Storage<T extends AxiomSet<Id>, Id> {
 
     boolean removeHittingSet(T hittingSet);
 
+    Set<T> getHittingSets();
 
-    void invalidateHittingSet(T hittingSet);
 
     void resetStorage();
 
@@ -30,7 +30,7 @@ public interface Storage<T extends AxiomSet<Id>, Id> {
 
     Set<T> getDiagnoses();
 
-    Set<T> getHittingSets();
+
 
 
 
