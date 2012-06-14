@@ -330,7 +330,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 try {
                     long diag = System.currentTimeMillis();
-                    //search.clearSearch();
+                    //search.reset();
                     search.run(NUMBER_OF_HITTING_SETS);
 
                     daStr += search.getDiagnoses().size() + "/";
@@ -986,7 +986,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         search.setCostsEstimator(es);
 
-        search.clearSearch();
+        search.reset();
 
 
         Set<OWLLogicalAxiom> targetDg = null;
@@ -1010,7 +1010,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>) diagnoses.toArray()[rnd]);
         logger.info(file.getName() + ",target diagnosis axioms," + Utils.renderAxioms(targetDg));
 
-        search30.clearSearch();
+        search30.reset();
         return targetDg;
     }
 
@@ -1096,7 +1096,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                     search.setCostsEstimator(es);
 
-                    search.clearSearch();
+                    search.reset();
 
 
                     TableList e = new TableList();
@@ -1214,7 +1214,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             search.setCostsEstimator(es);
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
-                            search.clearSearch();
+                            search.reset();
 
 
                             if (targetSource == TargetSource.FROM_FILE)
@@ -1294,7 +1294,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             search.setCostsEstimator(es);
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
-                            search.clearSearch();
+                            search.reset();
 
 
                             if (targetSource == TargetSource.FROM_FILE)
@@ -1354,7 +1354,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             search.setCostsEstimator(es);
 
-                            search.clearSearch();
+                            search.reset();
 
                             //diags = getDualTreeTranspErrDiag();
                             targetDg = chooseTargetDiagnosis(diagProbab, diagnoses);
@@ -1413,7 +1413,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                             search.setCostsEstimator(es);
 
-                            search.clearSearch();
+                            search.reset();
 
                             targetDg = chooseTargetDiagnosis(diagProbab, diagnoses);
 
@@ -1661,7 +1661,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 //                            }
 
                                 Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
-                                search.clearSearch();
+                                search.reset();
 
                                 if (targetSource == TargetSource.FROM_30_DIAGS) {
                                     try {
@@ -1676,7 +1676,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                             Collections.unmodifiableSet(search.getDiagnoses());
-                                    search.clearSearch();
+                                    search.reset();
                                     AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                     targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                     for (OWLLogicalAxiom axiom : targD)
@@ -1788,7 +1788,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 //                            }
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
-                            search.clearSearch();
+                            search.reset();
 
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
                                 try {
@@ -1803,7 +1803,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
-                                search.clearSearch();
+                                search.reset();
                                 AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)

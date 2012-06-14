@@ -120,7 +120,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
         search.setCostsEstimator(es);
         if (targetSource == TargetSource.FROM_30_DIAGS) {
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses = run(search, 30);
-            search.clearSearch();
+            search.reset();
             AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
             targetDg = new LinkedHashSet<OWLLogicalAxiom>();
             for (OWLLogicalAxiom axiom : targD)
@@ -131,7 +131,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
             targetDg = getDiagnosis(targetAxioms, ontology);
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses = run(search, -1);
             assertTrue(diagnoses.contains(targetDg));
-            search.clearSearch();
+            search.reset();
         }
 
         TableList e = new TableList();
@@ -201,7 +201,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
-                                search.clearSearch();
+                                search.reset();
                                 AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
@@ -325,7 +325,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
         Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                 Collections.unmodifiableSet(search.getDiagnoses());
-        search.clearSearch();
+        search.reset();
 
         TableList e = new TableList();
         //logger.info(m + " - " + o);
@@ -468,7 +468,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                     Collections.unmodifiableSet(search.getDiagnoses());
-            search.clearSearch();
+            search.reset();
 
             TableList e = new TableList();
             //logger.info(m + " - " + o);
@@ -536,7 +536,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                         if (targetDg.containsAll(d)) set.add(d);
                     n = set.size();
                     int cs = search.getConflicts().size();
-                    search.clearSearch();
+                    search.reset();
                     logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size()
                             + " conflicts: " + cs + " time " + t + " target " + n);
 

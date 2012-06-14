@@ -273,7 +273,7 @@ public class DualTreeTest extends BasePerformanceTests {
         searchDual.setCostsEstimator(es);
 
         theoryNormal.clearTestCases();
-        searchNormal.clearSearch();
+        searchNormal.reset();
 
         long timeNormalOverall = 0;
         long timeDualOverall = 0;

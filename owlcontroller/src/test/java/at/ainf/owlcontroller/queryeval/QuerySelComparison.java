@@ -217,7 +217,7 @@ public class QuerySelComparison {
                 search.getDiagnoses();
 
         theory.clearTestCases();
-        search.clearSearch();
+        search.reset();
 
         chooseUserProbab(UsersProbab.EXTREME, search, alldiags);
 
@@ -305,7 +305,7 @@ public class QuerySelComparison {
                             logResult(diagnoses, "Hitting set cardinalities: ");
                             logResult(conflictSets, "Conflict set cardinalities: ");
                             theory.clearTestCases();
-                            search.clearSearch();
+                            search.reset();
                             printStatsAndClear("");
                         }
 
@@ -369,7 +369,7 @@ public class QuerySelComparison {
                     Collections.unmodifiableSet(search.getDiagnoses());
 
             theory.clearTestCases();
-            search.clearSearch();
+            search.reset();
 
             logger.info("found all diagnoses for " + ontologyFileString);
             for (UsersProbab usersProbab : UsersProbab.values()) {
@@ -390,7 +390,7 @@ public class QuerySelComparison {
                             scoringFunc = ScoringFunc.values()[j];
                             try {
                                 theory.clearTestCases();
-                                search.clearSearch();
+                                search.reset();
 
 
                                 if (entry == null && scoringFunc.equals(ScoringFunc.ENTROPY))
@@ -417,7 +417,7 @@ public class QuerySelComparison {
                             /*QuerySelStrat[] s =  {QuerySelStrat.ENTROPY, QuerySelStrat.SPLIT};
                             for (QuerySelStrat strat : s) {
                                     theory.clearTestCases();
-                                    search.clearSearch();
+                                    search.reset();
                                     TableList entry = null;
                                     if (strat == QuerySelStrat.ENTROPY)
                                         entry = entropy_result.getEntry(usersProbab,diagProbab);
@@ -837,7 +837,7 @@ private void simulateQuerySession
                 strat, TableList
                 entry) {
     /*theory.clearTestCases();
-    search.clearSearch();*/
+    search.reset();*/
     /*
       IQueryProvider queryProvider = createQueryProvider(strat, search);
 

@@ -146,7 +146,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public Set<T> run() throws
             SolverException, NoConflictException, InconsistentTheoryException {
-        clearSearch();
+        reset();
         if (getMaxHittingSets() <= 0)
             return run(-1);
         else
@@ -158,7 +158,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         return run(-1);
     }
 
-    public void clearSearch() {
+    public void reset() {
         resetStorage();
         getSearchStrategy().getOpenNodes().clear();
         this.root = null;
@@ -170,7 +170,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     protected int numOfInvalidatedHS;
 
-    public Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, InconsistentTheoryException {
+    public Set<T> run(int numberOfDiags) throws SolverException, NoConflictException, InconsistentTheoryException {
 
         start("Overall runPostprocessor");
         start("Diagnosis", "diagnosis");
@@ -204,11 +204,11 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             }
 
 
-            if (numberOfHittingSets == getDiagnoses().size()) {
+            if (numberOfDiags == getDiagnoses().size()) {
                 return getDiagnoses();
             }
 
-            setMaxHittingSets(numberOfHittingSets);
+            setMaxHittingSets(numberOfDiags);
             processOpenNodes();
 
         } finally {
