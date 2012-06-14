@@ -17,6 +17,7 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.*;
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static _dev.TimeLog.start;
@@ -90,7 +91,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && getSearcher().isDual()) entailments = getTheory().getEntailments(quickConflict);
         if (entailments==null) entailments = Collections.emptySet();
-        double measure =  getSearchStrategy().getConflictMeasure(quickConflict, getCostsEstimator());
+        BigDecimal measure =  getSearchStrategy().getConflictMeasure(quickConflict, getCostsEstimator());
         T hs = (T) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments);
         hs.setNode(node);
         return hs;
@@ -101,7 +102,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         Set<Id> entailments = Collections.emptySet();
         if (getTheory().supportEntailments() && valid && !getSearcher().isDual())
             entailments = getTheory().getEntailments(labels);
-        double measure = getSearchStrategy().getDiagnosisMeasure(node);
+        BigDecimal measure = getSearchStrategy().getDiagnosisMeasure(node);
         T hs = (T) AxiomSetFactory.createHittingSet(measure, labels, entailments);
         hs.setNode(node);
         return hs;
@@ -376,8 +377,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         List<Id> list = new ArrayList<Id>(getTheory().getActiveFormulas());
         Collections.sort(list, new Comparator<Id>() {
             public int compare(Id o1, Id o2) {
-                double nodeCosts = getCostsEstimator().getAxiomCosts(o1);
-                int value = -1 * Double.valueOf(nodeCosts).compareTo(getCostsEstimator().getAxiomCosts(o2));
+                BigDecimal nodeCosts = getCostsEstimator().getAxiomCosts(o1);
+                int value = -1 * nodeCosts.compareTo(getCostsEstimator().getAxiomCosts(o2));
                 if (value == 0)
                     return ((Comparable)o1).compareTo(o2);
                 return value;

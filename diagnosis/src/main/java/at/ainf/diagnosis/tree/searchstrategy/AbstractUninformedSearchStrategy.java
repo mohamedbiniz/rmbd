@@ -5,6 +5,7 @@ import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.theory.storage.AxiomSet;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
@@ -24,12 +25,12 @@ public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStra
         return new Node<Id>(conflict);
     }
 
-    public double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
-        return 1d / conflict.size();
+    public BigDecimal getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
+        return BigDecimal.valueOf(1d / conflict.size());
     }
 
-    public double getDiagnosisMeasure(Node<Id> node) {
-        return 1d / node.getPathLabels().size();
+    public BigDecimal getDiagnosisMeasure(Node<Id> node) {
+        return BigDecimal.valueOf(1d / node.getPathLabels().size());
     }
 
     public Collection<Node<Id>> getOpenNodes() {

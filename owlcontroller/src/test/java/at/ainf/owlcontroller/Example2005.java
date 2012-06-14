@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.assertTrue;
@@ -49,7 +50,7 @@ public class Example2005 {
 
         //search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
-        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
         createOntology();
         //theory = new OWLTheory(reasonerFactory, ontology, bax);
         //search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));

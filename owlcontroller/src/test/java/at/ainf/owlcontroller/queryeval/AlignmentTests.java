@@ -20,6 +20,7 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
@@ -135,7 +136,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             OWLTheory theory = createOWLTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -233,7 +234,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             OWLTheory theory = createOWLTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()

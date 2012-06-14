@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
+import java.math.BigDecimal;
 import java.util.PriorityQueue;
 
 /**
@@ -21,7 +22,7 @@ public class CostNodesTest {
 
     private static Logger logger = Logger.getLogger(CostNodesTest.class.getName());
 
-    public CostNode<OWLLogicalAxiom> createCostNode(double costs, final int l) {
+    public CostNode<OWLLogicalAxiom> createCostNode(BigDecimal costs, final int l) {
         CostNode<OWLLogicalAxiom> node = new CostNode<OWLLogicalAxiom>(null) {
             public int getPathLabelSize() {
                 return l;
@@ -43,7 +44,7 @@ public class CostNodesTest {
 
         PriorityQueue<CostNode<OWLLogicalAxiom>> nodes = new PriorityQueue<CostNode<OWLLogicalAxiom>>();
         for (int i = 0; i < 10; i++)
-            nodes.add(createCostNode(0.5,i));
+            nodes.add(createCostNode( BigDecimal.valueOf(0.5) ,i));
 
         while(nodes.peek() != null) {
             CostNode<OWLLogicalAxiom> node = nodes.poll();

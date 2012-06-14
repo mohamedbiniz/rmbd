@@ -15,6 +15,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static _dev.TimeLog.start;
@@ -113,7 +114,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
                     if (getTypeOfTest(olderTC))
                         positive.addAll(olderTC);
                 }
-                double value = (hs.getMeasure() / 2) > 0 ? (hs.getMeasure() / 2) : Double.MIN_VALUE;
+                BigDecimal value = hs.getMeasure().divide(BigDecimal.valueOf(2));
 
                 if (getTypeOfTest(testcase)) {
                     if (!diagnosisEntails(hs, testcase, positive)) {

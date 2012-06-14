@@ -26,10 +26,11 @@ public abstract class AbstractQSS<T> implements QSS<T> {
     private Partitioning<T> partitionSearcher;
 
 
-    protected double log(double value, int base) {
-        if (value == 0)
-            return 0;
-        return Math.log(value) / Math.log(base);
+    protected BigDecimal log(BigDecimal value, BigDecimal base) {
+        if (value.compareTo(BigDecimal.ZERO) == 0)
+            return BigDecimal.ZERO;
+
+        return BigFunctions.ln(value,value.scale()).divide(BigFunctions.ln(base, base.scale()));
     }
 
     protected int getMinNumOfElimDiags(Partition<T> partition) {
@@ -88,21 +89,24 @@ public abstract class AbstractQSS<T> implements QSS<T> {
 
 
 
-    protected double getPartitionScore(Partition<T> partition) {
-        double sumDx = getSumProb(partition.dx);
-        double sumDnx = getSumProb(partition.dnx);
-        double sumD0 = getSumProb(partition.dz);
+    protected BigDecimal getPartitionScore(Partition<T> partition) {
+        BigDecimal sumDx = getSumProb(partition.dx);
+        BigDecimal sumDnx = getSumProb(partition.dnx);
+        BigDecimal sumD0 = getSumProb(partition.dz);
 
 
-        return sumDx * log(sumDx, 2)
-                + sumDnx * log(sumDnx, 2)
-                + sumD0 + 1d;
+        BigDecimal temp = sumDx.multiply(log(sumDx, new BigDecimal("2")));
+        temp = temp.add(sumDnx.multiply(log(sumDnx, new BigDecimal("2"))));
+
+
+        return temp.add(sumD0).add(BigDecimal.ONE);
+
     }
 
-    protected double getSumProb(Set<AxiomSet<T>> set) {
-        double pr = 0;
+    protected BigDecimal getSumProb(Set<AxiomSet<T>> set) {
+        BigDecimal pr = new BigDecimal("0");
         for (AxiomSet<T> diagnosis : set)
-            pr += diagnosis.getMeasure();
+            pr = pr.add(diagnosis.getMeasure());
 
         return pr;
     }
@@ -117,9 +121,9 @@ public abstract class AbstractQSS<T> implements QSS<T> {
 
     public class ScoreComparator implements Comparator<Partition<T>> {
         public int compare(Partition<T> o1, Partition<T> o2) {
-            if (getPartitionScore(o1) < getPartitionScore(o2))
+            if (getPartitionScore(o1).compareTo(getPartitionScore(o2)) < 0)
                 return -1;
-            else if (getPartitionScore(o1) > getPartitionScore(o2))
+            else if (getPartitionScore(o1).compareTo(getPartitionScore(o2)) > 0)
                 return 1;
             else
                 return -1*((Integer)o1.dx.size()).compareTo(o2.dx.size());

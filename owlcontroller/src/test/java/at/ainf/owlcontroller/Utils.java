@@ -12,6 +12,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -50,18 +51,18 @@ public class Utils {
                 ManchesterOWLSyntax.SYMMETRIC
         };
 
-    public static HashMap<ManchesterOWLSyntax, Double> getProbabMap() {
-        HashMap<ManchesterOWLSyntax, Double> map = new HashMap<ManchesterOWLSyntax, Double>();
+    public static HashMap<ManchesterOWLSyntax, BigDecimal> getProbabMap() {
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = new HashMap<ManchesterOWLSyntax, BigDecimal>();
 
         for (ManchesterOWLSyntax keyword : keywords) {
-            map.put(keyword, 0.01);
+            map.put(keyword, BigDecimal.valueOf(0.01));
         }
 
-        map.put(ManchesterOWLSyntax.SOME, 0.05);
-        map.put(ManchesterOWLSyntax.ONLY, 0.05);
-        map.put(ManchesterOWLSyntax.AND, 0.001);
-        map.put(ManchesterOWLSyntax.OR, 0.001);
-        map.put(ManchesterOWLSyntax.NOT, 0.01);
+        map.put(ManchesterOWLSyntax.SOME, BigDecimal.valueOf(0.05));
+        map.put(ManchesterOWLSyntax.ONLY, BigDecimal.valueOf(0.05));
+        map.put(ManchesterOWLSyntax.AND, BigDecimal.valueOf(0.001));
+        map.put(ManchesterOWLSyntax.OR, BigDecimal.valueOf(0.001));
+        map.put(ManchesterOWLSyntax.NOT, BigDecimal.valueOf(0.01));
 
         return map;
     }

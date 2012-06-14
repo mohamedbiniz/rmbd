@@ -37,6 +37,7 @@ import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static at.ainf.owlcontroller.queryeval.BasePerformanceTests.QSSType.*;
@@ -190,7 +191,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 int numOfOntologyAxiomsO1 = 0;
                 int numOfMatchingAxiomO1 = 0;
                 for (OWLLogicalAxiom axiom : o1) {
-                    if (e.getAxiomCosts(axiom) != 0.001)
+                    if (e.getAxiomCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
                         numOfMatchingAxiomO1++;
                     else
                         numOfOntologyAxiomsO1++;
@@ -200,7 +201,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 int numOfOntologyAxiomsO2 = 0;
                 int numOfMatchingAxiomO2 = 0;
                 for (OWLLogicalAxiom axiom : o2) {
-                    if (e.getAxiomCosts(axiom) != 0.001)
+                    if (e.getAxiomCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
                         numOfMatchingAxiomO2++;
                     else
                         numOfOntologyAxiomsO2++;
@@ -227,7 +228,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
 
-        AxiomSet<OWLLogicalAxiom> target = AxiomSetFactory.createHittingSet(0.5, t, new LinkedHashSet<OWLLogicalAxiom>());
+        AxiomSet<OWLLogicalAxiom> target = AxiomSetFactory.createHittingSet(BigDecimal.valueOf(0.5), t, new LinkedHashSet<OWLLogicalAxiom>());
         if (theory.diagnosisEntails(target, actualQuery.partition)) {
             answer = true;
             assertTrue(!actualQuery.dnx.contains(target));
@@ -375,12 +376,12 @@ public class UnsolvableTests extends BasePerformanceTests {
                 AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
 
                 boolean isTargetDiagFirst = d.equals(targetDiag);
-                double dp = d.getMeasure();
+                BigDecimal dp = d.getMeasure();
                 if (logger.isInfoEnabled()) {
                     AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
-                    double diagProbabilities = 0;
+                    BigDecimal diagProbabilities = new BigDecimal("0");
                     for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
-                        diagProbabilities += tempd.getMeasure();
+                        diagProbabilities = diagProbabilities.add(tempd.getMeasure());
                     logger.trace("diagnoses: " + diagnoses.size() +
                             " (" + diagProbabilities + ") first diagnosis: " + d +
                             " is target: " + isTargetDiagFirst + " is in window: " +
@@ -388,10 +389,12 @@ public class UnsolvableTests extends BasePerformanceTests {
                 }
 
                 if (d1 != null) {// && scoringFunc != QSSType.SPLITINHALF) {
-                    double d1p = d1.getMeasure();
-                    double diff = 100 - (d1p * 100) / dp;
-                    logger.trace("difference : " + (dp - d1p) + " - " + diff + " %");
-                    if (userBrk && diff > SIGMA && isTargetDiagFirst && num_of_queries > 0) {
+                    BigDecimal d1p = d1.getMeasure();
+                    BigDecimal temp = d1p.multiply(new BigDecimal("100"));
+                    temp = temp.divide(dp);
+                    BigDecimal diff = new BigDecimal("100").subtract(temp);
+                    logger.trace("difference : " + (dp.subtract(d1p)) + " - " + diff + " %");
+                    if (userBrk && diff.compareTo(SIGMA) > 0 && isTargetDiagFirst && num_of_queries > 0) {
                         // user brake
                         querySessionEnd = true;
                         userBreak = true;
@@ -465,7 +468,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                 // fine all dz diagnoses
                 // TODO do we need this fine?
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
-                    ph.setMeasure(0.5d * ph.getMeasure());
+                    ph.setMeasure(new BigDecimal("0.5").multiply(ph.getMeasure()));
                 }
                 if (allDiagnoses != null) {
 
@@ -621,7 +624,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                         OWLTheory theory = createOWLTheory(ontology, dual);
                         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
                         //ProbabilityTableModel mo = new ProbabilityTableModel();
-                        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
                         OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
                         OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
@@ -979,7 +982,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
         theory.addBackgroundFormulas(bx);
 
-        Map<OWLLogicalAxiom, Double> map1 = RDFUtils.readRdfMapping(mapd, n + ".rdf");
+        Map<OWLLogicalAxiom, BigDecimal> map1 = RDFUtils.readRdfMapping(mapd, n + ".rdf");
 
         OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
@@ -1089,7 +1092,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                     bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
                     theory.addBackgroundFormulas(bx);
 
-                    Map<OWLLogicalAxiom, Double> map1 = RDFUtils.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
+                    Map<OWLLogicalAxiom, BigDecimal> map1 = RDFUtils.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
 
                     OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
@@ -1202,7 +1205,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             theory.addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
@@ -1282,7 +1285,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             if (background) theory.addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
@@ -1345,7 +1348,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             OWLTheory theory = createOWLTheory(ontology, true);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, true);
 
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                             es.updateKeywordProb(map);
                             search.setCostsEstimator(es);
@@ -1404,7 +1407,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                         OWLTheory theory = createOWLTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
 
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                             es.updateKeywordProb(map);
                             search.setCostsEstimator(es);
@@ -1486,7 +1489,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         OWLTheory theory = createOWLTheory(ontology, false);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
-        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
@@ -1524,21 +1527,21 @@ public class UnsolvableTests extends BasePerformanceTests {
                      diagProbab, TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
 
 
-        double sum = 0;
+        BigDecimal sum = new BigDecimal("0");
         TreeSet<AxiomSet<OWLLogicalAxiom>> res;
         TreeSet<AxiomSet<OWLLogicalAxiom>> good = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
         TreeSet<AxiomSet<OWLLogicalAxiom>> avg = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
         TreeSet<AxiomSet<OWLLogicalAxiom>> bad = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
         for (AxiomSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
-            if (sum <= 0.33) {
+            if (sum.compareTo(BigDecimal.valueOf(0.33)) <= 0) {
                 good.add(hs);
-            } else if (sum >= 0.33 && sum <= 0.66) {
+            } else if (sum.compareTo(BigDecimal.valueOf(0.33)) >= 0 && sum.compareTo(BigDecimal.valueOf(0.66)) <= 0) {
                 avg.add(hs);
-            } else if (sum >= 0.66) {
+            } else if (sum.compareTo(BigDecimal.valueOf(0.66)) >= 0) {
                 bad.add(hs);
             }
-            sum += hs.getMeasure();
+            sum = sum.add(hs.getMeasure());
         }
         switch (diagProbab) {
             case GOOD:
@@ -1625,7 +1628,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                     theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                                 }
                                 //ProbabilityTableModel mo = new ProbabilityTableModel();
-                                HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                                HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
                                 String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                         + m.trim()
@@ -1745,7 +1748,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()

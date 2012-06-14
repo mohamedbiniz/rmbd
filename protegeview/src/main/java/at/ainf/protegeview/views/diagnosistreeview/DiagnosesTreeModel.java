@@ -97,7 +97,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
         for (Set<OWLLogicalAxiom> conflictSet : conflictSets) {
             conflictSetMap.put(conflictSet,new Entry(number));
             if (es != null)
-                conflictSetMap.get(conflictSet).probability = es.getAxiomSetCosts(conflictSet);
+                conflictSetMap.get(conflictSet).probability = es.getAxiomSetCosts(conflictSet).doubleValue();
             number++;
         }
 

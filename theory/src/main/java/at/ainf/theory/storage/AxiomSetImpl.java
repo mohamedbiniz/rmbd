@@ -2,6 +2,7 @@ package at.ainf.theory.storage;
 
 import at.ainf.theory.watchedset.MeasureUpdatedListener;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -14,7 +15,7 @@ import java.util.*;
 public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> {
     protected Set<Id> axioms;
     boolean valid = true;
-    private double measure = 0;
+    private BigDecimal measure = new BigDecimal("0");
     private final Set<Id> entailments;
     private Set<Id> tempEntailments = null;
     private Object node;
@@ -56,7 +57,7 @@ public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> 
 
     private TypeOfSet typeOfSet;
 
-    protected AxiomSetImpl(TypeOfSet type, String name, double measure, Set<Id> axioms, Set<Id> entailments) {
+    protected AxiomSetImpl(TypeOfSet type, String name, BigDecimal measure, Set<Id> axioms, Set<Id> entailments) {
         this.typeOfSet = type;
         this.name = name;
         setMeasure(measure);
@@ -76,19 +77,19 @@ public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> 
 
 
     @SuppressWarnings("unchecked")
-    public void setMeasure(double value) {
-        if (value == 0) {
+    public void setMeasure(BigDecimal value) {
+        if (value.compareTo(BigDecimal.valueOf(0)) == 0) {
             throw new IllegalArgumentException("Probability of a hitting set is 0!");
         }
-        if (((Double) value).isNaN())
-            throw new IllegalArgumentException("Trying to set measure to NaN!");
-        if (this.measure == value || this.listener == null) {
+        // if (value.compareTo(BigDecimal.valueOf(Double.NaN)) == 0)
+        //    throw new IllegalArgumentException("Trying to set measure to NaN!");
+        if (measure.compareTo(value) == 0 || this.listener == null) {
             this.measure = value;
-            for (MeasureUpdatedListener<Double> listener : measureUpdatedListenerList)
+            for (MeasureUpdatedListener<BigDecimal> listener : measureUpdatedListenerList)
                 listener.notifiyMeasureUpdated(this, value);
         } else {
             boolean addValid = this.listener.remove(this);
-            for (MeasureUpdatedListener<Double> lsn : measureUpdatedListenerList)
+            for (MeasureUpdatedListener<BigDecimal> lsn : measureUpdatedListenerList)
                 lsn.notifiyMeasureUpdated(this, value);
             this.measure = value;
             this.listener.add(this, addValid);
@@ -97,7 +98,7 @@ public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> 
     }
 
 
-    public double getMeasure() {
+    public BigDecimal getMeasure() {
         return this.measure;
     }
 
@@ -184,24 +185,24 @@ public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> 
         return str;
     }
 
-    List<MeasureUpdatedListener<Double>> measureUpdatedListenerList = new LinkedList<MeasureUpdatedListener<Double>>();
+    List<MeasureUpdatedListener<BigDecimal>> measureUpdatedListenerList = new LinkedList<MeasureUpdatedListener<BigDecimal>>();
 
-    public void addMeasureUpdatedListener(MeasureUpdatedListener<Double> eDoubleMeasureUpdatedListener) {
+    public void addMeasureUpdatedListener(MeasureUpdatedListener<BigDecimal> eDoubleMeasureUpdatedListener) {
         measureUpdatedListenerList.add(eDoubleMeasureUpdatedListener);
     }
 
-    public void removeMeasureUpdatedListener(MeasureUpdatedListener<Double> eDoubleMeasureUpdatedListener) {
+    public void removeMeasureUpdatedListener(MeasureUpdatedListener<BigDecimal> eDoubleMeasureUpdatedListener) {
         measureUpdatedListenerList.remove(eDoubleMeasureUpdatedListener);
     }
 
-    public void setWatchedElementMeasure(Double value) {
+    public void setWatchedElementMeasure(BigDecimal value) {
         measure = value;
     }
 
     public int compareTo(AxiomSet<Id> that) {
         if (this.equals(that))
             return 0;
-        int res = Double.valueOf(getMeasure()).compareTo(that.getMeasure());
+        int res = getMeasure().compareTo(that.getMeasure());
         if (res == 0)
             if (-1 * getName().compareTo(that.getName()) >= 0)
                 return 1;

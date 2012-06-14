@@ -22,7 +22,7 @@ public interface Scoring<T> {
 
     void setPartitionSearcher(Partitioning<T> partitioning);
 
-    double getScore(Partition<?> part);
+    BigDecimal getScore(Partition<?> part);
 
     void normalize(Set<? extends AxiomSet<T>> hittingSets);
 }

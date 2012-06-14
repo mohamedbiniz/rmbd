@@ -1,5 +1,6 @@
 package at.ainf.owlcontroller.queryeval;
 
+import static at.ainf.diagnosis.tree.Rounding.*;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
@@ -21,6 +22,7 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
@@ -28,7 +30,7 @@ import static junit.framework.Assert.assertTrue;
 public abstract class BasePerformanceTests {
 
     public static int NUMBER_OF_HITTING_SETS = 9;
-    protected static double SIGMA = 100;
+    protected static BigDecimal SIGMA = new BigDecimal("100");
     protected static boolean userBrk = true;
 
     private static Logger logger = Logger.getLogger(BasePerformanceTests.class.getName());
@@ -167,12 +169,12 @@ public abstract class BasePerformanceTests {
                 AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
 
                 boolean isTargetDiagFirst = d.equals(targetDiag);
-                double dp = d.getMeasure();
+                BigDecimal dp = d.getMeasure();
                 if (logger.isInfoEnabled()) {
                     AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
-                    double diagProbabilities = 0;
+                    BigDecimal diagProbabilities = BigDecimal.ZERO;
                     for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
-                        diagProbabilities += tempd.getMeasure();
+                        diagProbabilities = diagProbabilities.add(tempd.getMeasure());
                     logger.trace("diagnoses: " + diagnoses.size() +
                             " (" + diagProbabilities + ") first diagnosis: " + d +
                             " is target: " + isTargetDiagFirst + " is in window: " +
@@ -180,10 +182,12 @@ public abstract class BasePerformanceTests {
                 }
 
                 if (d1 != null && scoringFunc != QSSType.SPLITINHALF) {
-                    double d1p = d1.getMeasure();
-                    double diff = 100 - (d1p * 100) / dp;
-                    logger.trace("difference : " + (dp - d1p) + " - " + diff + " %");
-                    if (userBrk && diff > SIGMA && isTargetDiagFirst && num_of_queries > 0) {
+                    BigDecimal d1p = d1.getMeasure();
+                    BigDecimal temp = d1p.multiply(new BigDecimal("100"));
+                    temp = temp.divide(dp,PRECISION,ROUNDING_MODE);
+                    BigDecimal diff = new BigDecimal("100").subtract(temp);
+                    logger.trace("difference : " + (dp.subtract(d1p)) + " - " + diff + " %");
+                    if (userBrk && diff.compareTo(SIGMA) > 0 && isTargetDiagFirst && num_of_queries > 0) {
                         // user brake
                         querySessionEnd = true;
                         userBreak = true;
@@ -228,7 +232,7 @@ public abstract class BasePerformanceTests {
                 // fine all dz diagnoses
                 // TODO do we need this fine?
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
-                    ph.setMeasure(0.5d * ph.getMeasure());
+                    ph.setMeasure(new BigDecimal("0.5").multiply(ph.getMeasure()));
                 }
                 if (answer) {
                     try {

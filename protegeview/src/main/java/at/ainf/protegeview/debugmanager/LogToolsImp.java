@@ -66,7 +66,7 @@ public class LogToolsImp {
         double sum = 0.0;
         for (AxiomSet hs : query.dx) {
             result += getHsRendering(hs) + " ";
-            sum += hs.getMeasure();
+            sum += hs.getMeasure().doubleValue();
         }
         result += "sum(p)=;" + sum + ";";
 
@@ -74,7 +74,7 @@ public class LogToolsImp {
         sum = 0.0;
         for (AxiomSet hs : query.dnx) {
             result += getHsRendering(hs) + " ";
-            sum += hs.getMeasure();
+            sum += hs.getMeasure().doubleValue();
         }
         result += "sum(p)=;" + sum + ";";
 
@@ -82,7 +82,7 @@ public class LogToolsImp {
         sum = 0.0;
         for (AxiomSet hs : query.dz) {
             result += getHsRendering(hs) + " ";
-            sum += hs.getMeasure();
+            sum += hs.getMeasure().doubleValue();
         }
         result += "sum(p)=;" + sum + " ";
 

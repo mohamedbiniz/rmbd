@@ -1,6 +1,7 @@
 package at.ainf.diagnosis.tree;
 
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -12,9 +13,9 @@ import java.util.Set;
  */
 public interface CostsEstimator<Id> {
 
-    double getAxiomSetCosts(Set<Id> labelSet);
+    BigDecimal getAxiomSetCosts(Set<Id> labelSet);
 
-    double getAxiomCosts(Id label);
+    BigDecimal getAxiomCosts(Id label);
 
 
 }

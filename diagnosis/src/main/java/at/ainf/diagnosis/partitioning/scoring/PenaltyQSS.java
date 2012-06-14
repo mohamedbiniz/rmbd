@@ -56,7 +56,7 @@ public class PenaltyQSS<T> extends MinScoreQSS<T> {
         Partition<T> bestNonCandidate = Collections.max(nonCandidatesFiltered, new MinNumOfElimDiagsComparator());
 
         for(Partition<T> partition : nonCandidatesFiltered){
-            if(getMinNumOfElimDiags(partition) == getMinNumOfElimDiags(bestNonCandidate) && partition.score < bestNonCandidate.score)
+            if(getMinNumOfElimDiags(partition) == getMinNumOfElimDiags(bestNonCandidate) && partition.score.compareTo(bestNonCandidate.score) < 0)
                 bestNonCandidate = partition;
         }
 

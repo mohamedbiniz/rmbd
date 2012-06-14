@@ -1,11 +1,13 @@
 package at.ainf.diagnosis.partitioning.scoring;
 
+import static at.ainf.diagnosis.tree.Rounding.*;
 import at.ainf.theory.model.InconsistentTheoryException;
 import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -20,30 +22,33 @@ public class MinScoreQSS<T> extends AbstractQSS<T> {
 
     private static Logger logger = Logger.getLogger(MinScoreQSS.class.getName());
 
-    public double getScore(Partition<?> partition) {
+    public BigDecimal getScore(Partition<?> partition) {
         if (partition == null || partition.dx.isEmpty())
-            return Double.MAX_VALUE;
-        if (partition.score < Double.MAX_VALUE)
+            return BigDecimal.valueOf(Double.MAX_VALUE);
+        if (partition.score.compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) < 0)
             return partition.score;
-        double pX = sum(partition.dx) + sum(partition.dz) / 2;
-        double pNX = sum(partition.dnx) + sum(partition.dz) / 2;
+        BigDecimal pX = sum(partition.dx).add(sum(partition.dz).divide(BigDecimal.valueOf(2)));
+        BigDecimal pNX = sum(partition.dnx).add(sum(partition.dz).divide(BigDecimal.valueOf(2)));
 
-        double sc = pX * log(pX, 2) + pNX * log(pNX, 2) + sum(partition.dz) + 1;
+        BigDecimal t1 = pX.multiply(log(pX, BigDecimal.valueOf(2)));
+        BigDecimal t2 = pNX.multiply(log(pNX, BigDecimal.valueOf(2)));
 
+        BigDecimal sc = t1.add(t2.add(sum(partition.dz).add(BigDecimal.ONE)));
 
-        if (sc < 0) {
+        if (sc.compareTo(BigDecimal.ZERO) < 0) {
             logger.error("Score is less that 0! sc=" + sc);
-            sc = 0;
+            sc = BigDecimal.ZERO;
+
         }
 
         partition.score = sc;
         return sc;
     }
 
-    private double sum(Set<? extends AxiomSet> dx) {
-        double sum = 0;
+    private BigDecimal sum(Set<? extends AxiomSet> dx) {
+        BigDecimal sum = new BigDecimal("0");
         for (AxiomSet hs : dx)
-            sum += hs.getMeasure();
+            sum = sum.add(hs.getMeasure());
         return sum;
     }
 
@@ -52,9 +57,9 @@ public class MinScoreQSS<T> extends AbstractQSS<T> {
     }
 
     public void normalize(Set<? extends AxiomSet<T>> hittingSets) {
-        double sum = sum(hittingSets);
+        BigDecimal sum = sum(hittingSets);
         for (AxiomSet<T> hs : hittingSets) {
-            double value = hs.getMeasure() / sum;
+            BigDecimal value = hs.getMeasure().divide(sum,PRECISION,ROUNDING_MODE);
             hs.setMeasure(value);
         }
 

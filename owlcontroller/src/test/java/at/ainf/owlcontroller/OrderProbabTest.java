@@ -19,6 +19,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.assertTrue;
@@ -54,7 +55,7 @@ public class OrderProbabTest {
         Random r = new Random();
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 
@@ -68,13 +69,13 @@ public class OrderProbabTest {
 
         for (int i = 0; i < 100 / 4; i++) {
             //storage.resetStorage();
-            map.put(ManchesterOWLSyntax.SOME, r.nextDouble() / 2);
-            map.put(ManchesterOWLSyntax.ONLY, r.nextDouble() / 2);
-            map.put(ManchesterOWLSyntax.NOT, r.nextDouble() / 2);
-            map.put(ManchesterOWLSyntax.AND, r.nextDouble() / 2);
-            map.put(ManchesterOWLSyntax.OR, r.nextDouble() / 2);
-            map.put(ManchesterOWLSyntax.EQUIVALENT_TO, r.nextDouble() / 2);
-            map.put(ManchesterOWLSyntax.SUBCLASS_OF, r.nextDouble() / 2);
+            map.put(ManchesterOWLSyntax.SOME, BigDecimal.valueOf(r.nextDouble() / 2));
+            map.put(ManchesterOWLSyntax.ONLY, BigDecimal.valueOf(r.nextDouble() / 2));
+            map.put(ManchesterOWLSyntax.NOT, BigDecimal.valueOf(r.nextDouble() / 2));
+            map.put(ManchesterOWLSyntax.AND, BigDecimal.valueOf(r.nextDouble() / 2));
+            map.put(ManchesterOWLSyntax.OR, BigDecimal.valueOf(r.nextDouble() / 2));
+            map.put(ManchesterOWLSyntax.EQUIVALENT_TO, BigDecimal.valueOf(r.nextDouble() / 2));
+            map.put(ManchesterOWLSyntax.SUBCLASS_OF, BigDecimal.valueOf(r.nextDouble() / 2));
 
             HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
@@ -91,22 +92,22 @@ public class OrderProbabTest {
 
             Collection<? extends AxiomSet<OWLLogicalAxiom>> res = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.run(9));
             TreeSet<AxiomSet<OWLLogicalAxiom>> result = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-            double measure = 0.0;
+            BigDecimal measure = new BigDecimal("0.0");
             for (AxiomSet<OWLLogicalAxiom> hs : res) {
-                assertTrue(measure < ((AxiomSet<OWLLogicalAxiom>) hs).getMeasure());
+                assertTrue(measure.compareTo(hs.getMeasure()) < 0);
                 measure = ((AxiomSet<OWLLogicalAxiom>) hs).getMeasure();
                 result.add((AxiomSet<OWLLogicalAxiom>) hs);
             }
 
             TreeSet<AxiomSet<OWLLogicalAxiom>> copyResult = new TreeSet<AxiomSet<OWLLogicalAxiom>>(result);
 
-            map.put(ManchesterOWLSyntax.SOME, map.get(ManchesterOWLSyntax.SOME) + 0.01);
-            map.put(ManchesterOWLSyntax.ONLY, map.get(ManchesterOWLSyntax.ONLY) + 0.01);
-            map.put(ManchesterOWLSyntax.NOT, map.get(ManchesterOWLSyntax.NOT) + 0.01);
-            map.put(ManchesterOWLSyntax.AND, map.get(ManchesterOWLSyntax.AND) + 0.01);
-            map.put(ManchesterOWLSyntax.OR, map.get(ManchesterOWLSyntax.OR) + 0.01);
-            map.put(ManchesterOWLSyntax.EQUIVALENT_TO, map.get(ManchesterOWLSyntax.EQUIVALENT_TO) + 0.01);
-            map.put(ManchesterOWLSyntax.SUBCLASS_OF, map.get(ManchesterOWLSyntax.SUBCLASS_OF) + 0.01);
+            map.put(ManchesterOWLSyntax.SOME, map.get(ManchesterOWLSyntax.SOME).add(new BigDecimal("0.01")));
+            map.put(ManchesterOWLSyntax.ONLY, map.get(ManchesterOWLSyntax.ONLY).add(new BigDecimal("0.01")));
+            map.put(ManchesterOWLSyntax.NOT, map.get(ManchesterOWLSyntax.NOT).add(new BigDecimal("0.01")));
+            map.put(ManchesterOWLSyntax.AND, map.get(ManchesterOWLSyntax.AND).add(new BigDecimal("0.01")));
+            map.put(ManchesterOWLSyntax.OR, map.get(ManchesterOWLSyntax.OR).add(new BigDecimal("0.01")));
+            map.put(ManchesterOWLSyntax.EQUIVALENT_TO, map.get(ManchesterOWLSyntax.EQUIVALENT_TO).add(new BigDecimal("0.01")));
+            map.put(ManchesterOWLSyntax.SUBCLASS_OF, map.get(ManchesterOWLSyntax.SUBCLASS_OF).add(new BigDecimal("0.01")));
             ((OWLAxiomKeywordCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(map, result);
             result = sortDiagnoses(result);
             copyResult = sortDiagnoses(copyResult);
@@ -118,8 +119,8 @@ public class OrderProbabTest {
                 AxiomSet<OWLLogicalAxiom> hsResultCopy = iterCopy.next();
 
                 assertTrue(hsResult.equals(hsResultCopy));
-                double d = Math.abs(hsResult.getMeasure() - hsResultCopy.getMeasure());
-                assertTrue(d < 0.00001);
+                BigDecimal d = hsResult.getMeasure().subtract(hsResultCopy.getMeasure()).abs();
+                assertTrue(d.compareTo(BigDecimal.valueOf(0.00001)) < 0);
 
             }
 

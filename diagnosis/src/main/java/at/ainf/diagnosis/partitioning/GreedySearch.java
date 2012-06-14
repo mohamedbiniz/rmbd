@@ -102,7 +102,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         }
         );
         for (E hset : hs) {
-            Measurable m = new Measurable(hset, hset.getMeasure());
+            Measurable m = new Measurable(hset, hset.getMeasure().doubleValue());
             shs.add(m);
         }
         this.sum = sum(shs);
@@ -127,7 +127,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
                 incPartitionsCount();
                 Partition<Id> partLeft = createPartition(map.keySet());
                 Partition<Id> partRight = createPartition(convert(map.values()));
-                if (getScoringFunction().getScore(partLeft) < getScoringFunction().getScore(partRight)) {
+                if (getScoringFunction().getScore(partLeft).doubleValue() < getScoringFunction().getScore(partRight).doubleValue()) {
                     return partLeft;
                 }
                 return partRight;
@@ -202,7 +202,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         }
 
          */
-        if (getScoringFunction().getScore(leftPart) < getScoringFunction().getScore(rightPart)) {
+        if (getScoringFunction().getScore(leftPart).doubleValue() < getScoringFunction().getScore(rightPart).doubleValue()) {
             return leftPart;
         }
         return rightPart;
