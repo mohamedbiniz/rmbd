@@ -69,7 +69,7 @@ public class AlignmentTests extends BaseAlignmentTests {
         search.run();
 
         allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
-        search.clearSearch();
+        search.reset();
 
         search.run(9);
         TreeSet<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>();
@@ -177,7 +177,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             }
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
-                            search.clearSearch();
+                            search.reset();
 
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
                                 try {
@@ -192,7 +192,7 @@ public class AlignmentTests extends BaseAlignmentTests {
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
-                                search.clearSearch();
+                                search.reset();
                                 AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
@@ -275,7 +275,7 @@ public class AlignmentTests extends BaseAlignmentTests {
                             }
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
-                            search.clearSearch();
+                            search.reset();
                             */
                             if (targetSource == TargetSource.FROM_30_DIAGS) {
                                 try {
@@ -290,7 +290,7 @@ public class AlignmentTests extends BaseAlignmentTests {
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
-                                search.clearSearch();
+                                search.reset();
                                 AxiomSet<OWLLogicalAxiom> targD = getTargetDiag(diagnoses, es, m);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)

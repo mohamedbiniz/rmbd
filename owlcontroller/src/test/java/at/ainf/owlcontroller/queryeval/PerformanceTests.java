@@ -248,7 +248,7 @@ public class PerformanceTests extends BasePerformanceTests {
                     Collections.unmodifiableSet(search.getDiagnoses());
 
             theory.clearTestCases();
-            search.clearSearch();
+            search.reset();
 
             logger.trace("found all diagnoses for " + ontologyFileString);
             for (UsersProbab usersProbab : UsersProbab.values()) {
@@ -282,7 +282,7 @@ public class PerformanceTests extends BasePerformanceTests {
                                 }
 
                                 localtheory.clearTestCases();
-                                localsearch.clearSearch();
+                                localsearch.reset();
 
 
                                 if (entry == null && j == 0) //scoringFunc.equals(QSSType.MINSCORE))
@@ -474,7 +474,7 @@ public class PerformanceTests extends BasePerformanceTests {
         searchDual.setCostsEstimator(es);
 
         theoryNormal.clearTestCases();
-        searchNormal.clearSearch();
+        searchNormal.reset();
 
         Map<QSSType, DurationStat> ntimes = new HashMap<QSSType, DurationStat>();
         Map<QSSType, DurationStat> dtimes = new HashMap<QSSType, DurationStat>();
@@ -624,7 +624,7 @@ private void simulateQuerySession
                 strat, TableList
                 entry) {
     /*theory.clearTestCases();
-    search.clearSearch();*/
+    search.reset();*/
     /*
       IQueryProvider queryProvider = createQueryProvider(strat, search);
 

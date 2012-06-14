@@ -98,13 +98,13 @@ public class QueryForEachDiagTests extends PerformanceTests {
         searchDual.setCostsEstimator(es);
 
         theoryNormal.clearTestCases();
-        searchNormal.clearSearch();
+        searchNormal.reset();
 
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
             simulateBruteForceOnl(searchNormal,theoryNormal,diagnoses,entry, null);
             theoryNormal.clearTestCases();
-            searchNormal.clearSearch();
+            searchNormal.reset();
             assert(entry.getMeanWin() == 1);
         }
 
@@ -112,7 +112,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
             TableList entry = new TableList();
             simulateBruteForceOnl(searchDual,theoryDual,diagnoses,entry, null);
             theoryDual.clearTestCases();
-            searchDual.clearSearch();
+            searchDual.reset();
             assert (entry.getMeanWin() == 1);
         }
 

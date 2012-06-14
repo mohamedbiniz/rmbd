@@ -8,6 +8,7 @@
 
 package at.ainf.diagnosis.tree;
 
+import at.ainf.diagnosis.DiagSearch;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
@@ -26,58 +27,34 @@ import java.util.Set;
  * Time: 14:15:23
  * To change this template use File | Settings | File Templates.
  */
-public interface TreeSearch<T extends AxiomSet<Id>, Id> {
+public interface TreeSearch<T extends AxiomSet<Id>, Id> extends DiagSearch<T,Id> {
 
-    public int getNumOfInvalidatedHS();
-    
-    public void clearSearch();
-
-    public Set<T> continueSearch() throws SolverException, NoConflictException, InconsistentTheoryException;
-
-    public Set<T> run() throws SolverException, NoConflictException, InconsistentTheoryException;
-
-    public void setSearcher(Searcher<Id> searcher);
 
     public Searcher<Id> getSearcher();
 
-    //public void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException ;
-
-    public void setTheory(ITheory<Id> theory);
-
-    //public void setLogic(TreeLogic<T,Id> treeLog);
+    public void setSearcher(Searcher<Id> searcher);
 
     public ITheory<Id> getTheory();
 
-    public void setMaxHittingSets(int maxHittingSets);
+    public void setTheory(ITheory<Id> theory);
 
     public int getMaxHittingSets();
 
-    Set<T> run(int numberOfHittingSets) throws SolverException, NoConflictException, InconsistentTheoryException;
+    public void setMaxHittingSets(int maxHittingSets);
+
+    public CostsEstimator<Id> getCostsEstimator();
+
+    public void setCostsEstimator(CostsEstimator<Id> costsEstimator);
+
+    public SearchStrategy<Id> getSearchStrategy();
+
+    public void setSearchStrategy(SearchStrategy<Id> searchStrategy);
+
+    public void setAxiomRenderer(AxiomRenderer<Id> renderer);
 
     public void addOpenNodesListener (OpenNodesListener l);
 
     public void removeOpenNodesListener (OpenNodesListener l);
 
-    //public Collection<Node<Id>> getOpenNodes();
-
-    public void setAxiomRenderer(AxiomRenderer<Id> renderer);
-
-    public Node<Id> getRoot();
-
-    //public void addNodes(List<Node<Id>> nodeList);
-
-    //void pushOpenNode(Node<Id> node);
-
-    public void setCostsEstimator(CostsEstimator<Id> costsEstimator);
-
-    public void setSearchStrategy(SearchStrategy<Id> searchStrategy);
-
-    public Set<T> getConflicts();
-
-    public Set<T> getDiagnoses();
-
-    public CostsEstimator<Id> getCostsEstimator();
-
-    public SearchStrategy<Id> getSearchStrategy();
 
 }

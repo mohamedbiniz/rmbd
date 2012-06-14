@@ -349,7 +349,7 @@ public abstract class BasePerformanceTests {
         );
         Assert.assertTrue(foundCorrectD2);
         theoryDual.clearTestCases();
-        searchDual.clearSearch();
+        searchDual.reset();
         queries.add(entry2.getMeanQuery());
         return timeDual;
     }
@@ -376,7 +376,7 @@ public abstract class BasePerformanceTests {
         boolean foundCorrectD = diag.equals(diagnoses);
         boolean hasNegativeTestcases = searchNormal.getTheory().getNonentailedTests().size() > 0;
         theoryNormal.clearTestCases();
-        searchNormal.clearSearch();
+        searchNormal.reset();
         logger.info("hstree iteration finished: window size "
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
                 Utils.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +

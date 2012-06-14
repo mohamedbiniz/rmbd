@@ -466,7 +466,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                 } catch (InconsistentTheoryException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
-                search.clearSearch();
+                search.reset();
                 theory.removeEntailedTest(owlLogicalAxiom);
             }
         }
