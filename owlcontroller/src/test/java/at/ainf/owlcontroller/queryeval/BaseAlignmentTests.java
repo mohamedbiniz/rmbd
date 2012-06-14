@@ -24,6 +24,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
@@ -152,7 +153,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                 int numOfOntologyAxiomsO1 = 0;
                 int numOfMatchingAxiomO1 = 0;
                 for (OWLLogicalAxiom axiom : o1) {
-                    if (e.getAxiomCosts(axiom) != 0.001)
+                    if (e.getAxiomCosts(axiom).compareTo(BigDecimal.valueOf(0.001)) !=  0)
                         numOfMatchingAxiomO1++;
                     else
                         numOfOntologyAxiomsO1++;
@@ -162,7 +163,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                 int numOfOntologyAxiomsO2 = 0;
                 int numOfMatchingAxiomO2 = 0;
                 for (OWLLogicalAxiom axiom : o2) {
-                    if (e.getAxiomCosts(axiom) != 0.001)
+                    if (e.getAxiomCosts(axiom).compareTo(BigDecimal.valueOf(0.001)) !=  0)
                         numOfMatchingAxiomO2++;
                     else
                         numOfOntologyAxiomsO2++;
@@ -265,12 +266,12 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                 AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
 
                 boolean isTargetDiagFirst = d.equals(targetDiag);
-                double dp = d.getMeasure();
+                BigDecimal dp = d.getMeasure();
                 if (logger.isInfoEnabled()) {
                     AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
-                    double diagProbabilities = 0;
+                    BigDecimal diagProbabilities = BigDecimal.ZERO;
                     for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
-                        diagProbabilities += tempd.getMeasure();
+                        diagProbabilities = diagProbabilities.add(tempd.getMeasure());
                     logger.trace("diagnoses: " + diagnoses.size() +
                             " (" + diagProbabilities + ") first diagnosis: " + d +
                             " is target: " + isTargetDiagFirst + " is in window: " +
@@ -278,10 +279,12 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                 }
 
                 if (d1 != null) {// && scoringFunc != QSSType.SPLITINHALF) {
-                    double d1p = d1.getMeasure();
-                    double diff = 100 - (d1p * 100) / dp;
-                    logger.trace("difference : " + (dp - d1p) + " - " + diff + " %");
-                    if (userBrk && diff > SIGMA && isTargetDiagFirst && num_of_queries > 0) {
+                    BigDecimal d1p = d1.getMeasure();
+                    BigDecimal t = d1p.multiply(BigDecimal.valueOf(100));
+                    t = t.divide(dp);
+                    BigDecimal diff = new BigDecimal("100").subtract(t);
+                    logger.trace("difference : " + (dp.subtract(d1p)) + " - " + diff + " %");
+                    if (userBrk && diff.compareTo(SIGMA) > 0 && isTargetDiagFirst && num_of_queries > 0) {
                         // user brake
                         querySessionEnd = true;
                         userBreak = true;
@@ -340,7 +343,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
                 // fine all dz diagnoses
                 // TODO do we need this fine?
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
-                    ph.setMeasure(0.5d * ph.getMeasure());
+                    ph.setMeasure(new BigDecimal("0.5").multiply(ph.getMeasure()));
                 }
                 if (allDiagnoses != null) {
 
@@ -511,7 +514,7 @@ public class BaseAlignmentTests extends BasePerformanceTests {
         boolean answer;
         ITheory<OWLLogicalAxiom> theory = search.getTheory();
 
-        AxiomSet<OWLLogicalAxiom> target = AxiomSetFactory.createHittingSet(0.5, t, new LinkedHashSet<OWLLogicalAxiom>());
+        AxiomSet<OWLLogicalAxiom> target = AxiomSetFactory.createHittingSet(BigDecimal.valueOf(0.5), t, new LinkedHashSet<OWLLogicalAxiom>());
         if (theory.diagnosisEntails(target, actualQuery.partition)) {
             answer = true;
             assertTrue(!actualQuery.dnx.contains(target));

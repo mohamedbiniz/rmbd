@@ -29,6 +29,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -120,7 +121,7 @@ public class PostProcessorTest {
         OWLTheory th = createTheory(manager, "queryontologies/Univ.owl", false);
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
-        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(th);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);

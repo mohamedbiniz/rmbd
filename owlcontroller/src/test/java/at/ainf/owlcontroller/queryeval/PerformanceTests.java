@@ -30,6 +30,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -219,7 +220,7 @@ public class PerformanceTests extends BasePerformanceTests {
             OWLTheory theory = createOWLTheory(ont, false);
             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
-            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
             es.updateKeywordProb(map);
             search.setCostsEstimator(es);
@@ -367,9 +368,9 @@ public class PerformanceTests extends BasePerformanceTests {
     }
 
     protected void testOrder(Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
-        double prob = 0;
+        BigDecimal prob = new BigDecimal("0");
         for (AxiomSet<OWLLogicalAxiom> diag : diagnoses) {
-            if (diag.getMeasure() < prob)
+            if (diag.getMeasure().compareTo(prob) < 0)
                 throw new IllegalStateException("Set of the diagnoses is not ordered!");
             prob = diag.getMeasure();
         }
@@ -399,18 +400,18 @@ public class PerformanceTests extends BasePerformanceTests {
         return Collections.unmodifiableSet(phs);
     }
 
-    private double sum(Set<? extends AxiomSet> dx) {
-        double sum = 0;
+    private BigDecimal sum(Set<? extends AxiomSet> dx) {
+        BigDecimal sum = new BigDecimal("0");
         for (AxiomSet hs : dx)
-            sum += hs.getMeasure();
+            sum = sum.add(hs.getMeasure());
         return sum;
     }
 
     public <E extends AxiomSet<OWLLogicalAxiom>> TreeSet<E> normalize(Set<E> hittingSets) {
         TreeSet<E> set = new TreeSet<E>();
-        double sum = sum(hittingSets);
+        BigDecimal sum = sum(hittingSets);
         for (E hs : hittingSets) {
-            double value = hs.getMeasure() / sum;
+            BigDecimal value = hs.getMeasure().divide(sum);
             hs.setMeasure(value);
             set.add(hs);
         }
@@ -454,7 +455,7 @@ public class PerformanceTests extends BasePerformanceTests {
         OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(false, 0);
-        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
@@ -724,21 +725,21 @@ private void simulateQuerySession
                      diagProbab, TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
 
 
-        double sum = 0;
+        BigDecimal sum = new BigDecimal("0");
         TreeSet<AxiomSet<OWLLogicalAxiom>> res;
         TreeSet<AxiomSet<OWLLogicalAxiom>> good = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
         TreeSet<AxiomSet<OWLLogicalAxiom>> avg = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
         TreeSet<AxiomSet<OWLLogicalAxiom>> bad = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
 
         for (AxiomSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
-            if (sum <= 0.33) {
+            if (sum.compareTo(BigDecimal.valueOf(0.33)) <= 0) {
                 good.add(hs);
-            } else if (sum >= 0.33 && sum <= 0.66) {
+            } else if (sum.compareTo(BigDecimal.valueOf(0.33)) >= 0 && sum.compareTo(BigDecimal.valueOf(0.66)) <= 0) {
                 avg.add(hs);
-            } else if (sum >= 0.66) {
+            } else if (sum.compareTo(BigDecimal.valueOf(0.66)) >= 0) {
                 bad.add(hs);
             }
-            sum += hs.getMeasure();
+            sum = sum.add(hs.getMeasure());
         }
         switch (diagProbab) {
             case GOOD:
@@ -829,7 +830,7 @@ private void simulateQuerySession
     protected Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
             (UsersProbab
                      usersProbab, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
-        Map<ManchesterOWLSyntax, Double> keywordProbs = new HashMap<ManchesterOWLSyntax, Double>();
+        Map<ManchesterOWLSyntax, BigDecimal> keywordProbs = new HashMap<ManchesterOWLSyntax, BigDecimal>();
         //ProbabilityTableModel m = new ProbabilityTableModel();
         ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(Utils.getProbabMap().keySet()));
         ManchesterOWLSyntax[] selectedKeywords = new ManchesterOWLSyntax[]{ManchesterOWLSyntax.SOME, ManchesterOWLSyntax.ONLY,
@@ -863,7 +864,7 @@ private void simulateQuerySession
             case EXTREME:
                 probabilities = extremeDistribution.getProbabilities(n);
                 for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, probabilities[keywordList.indexOf(keyword)]);
+                    keywordProbs.put(keyword, BigDecimal.valueOf(probabilities[keywordList.indexOf(keyword)]));
                 }
                 /*highKeywordPos.add(rnd.nextInt(n));
                 for(ManchesterOWLSyntax keyword : keywordList) {
@@ -876,7 +877,7 @@ private void simulateQuerySession
             case MODERATE:
                 probabilities = moderateDistribution.getProbabilities(n);
                 for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, probabilities[keywordList.indexOf(keyword)]);
+                    keywordProbs.put(keyword, BigDecimal.valueOf(probabilities[keywordList.indexOf(keyword)]));
                 }
                 /*for (int i = 0; i < k; i++) {
                     int num = rnd.nextInt(n);
@@ -892,7 +893,7 @@ private void simulateQuerySession
                 break;
             case UNIFORM:
                 for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, (1.0 / n));
+                    keywordProbs.put(keyword, BigDecimal.valueOf(1.0 / n));
                 }
                 break;
         }

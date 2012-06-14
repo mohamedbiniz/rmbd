@@ -119,7 +119,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
                 //NumberFormat nf = NumberFormat.getNumberInstance();
                 double p = -1;
                 if (es != null)
-                    p = ((AxiomSet<OWLLogicalAxiom>)axiomsConf).getMeasure(); // p = es.getAxiomSetCosts(axiomsConf);
+                    p = ((AxiomSet<OWLLogicalAxiom>)axiomsConf).getMeasure().doubleValue(); // p = es.getAxiomSetCosts(axiomsConf);
                 num++;
                 if (es != null) {
                     model.addElement(new ResultsListSection(name,num,p,axiomsConf));
@@ -131,7 +131,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
             else if (name.equals("Conflict Set ")) {
                 double p = -1;
                 if (es != null)
-                    p = es.getAxiomSetCosts(axiomsConf);
+                    p = es.getAxiomSetCosts(axiomsConf).doubleValue();
                 num++;
                 if (es != null) {
                     model.addElement(new ResultsListSection(name,num,p,axiomsConf));
@@ -143,7 +143,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
             else if (name.equals("Entailments of Diagnosis")) {
                 double p = -1;
                 if (es != null)
-                    p = es.getAxiomSetCosts(axiomsConf);
+                    p = es.getAxiomSetCosts(axiomsConf).doubleValue();
 
                 num++;
                 if (es != null) {

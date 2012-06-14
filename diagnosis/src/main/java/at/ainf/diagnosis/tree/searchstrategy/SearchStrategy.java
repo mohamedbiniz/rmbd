@@ -5,6 +5,7 @@ import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.theory.storage.AxiomSet;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -28,9 +29,9 @@ public interface SearchStrategy<Id> {
 
     public Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
-    public double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator);
+    public BigDecimal getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator);
 
-    public double getDiagnosisMeasure(Node<Id> node);
+    public BigDecimal getDiagnosisMeasure(Node<Id> node);
 
     public Collection<Node<Id>> getOpenNodes();
 

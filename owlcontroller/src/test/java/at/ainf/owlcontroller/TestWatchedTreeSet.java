@@ -15,6 +15,7 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ public class TestWatchedTreeSet {
         set.add(axiom);
 
         //return new AxiomSetImpl<OWLLogicalAxiom>(AxiomSet.TypeOfSet.HITTING_SET,name, measure,set, Collections.<OWLLogicalAxiom>emptySet());
-        return AxiomSetFactory.createHittingSet(measure, set, Collections.<OWLLogicalAxiom>emptySet() );
+        return AxiomSetFactory.createHittingSet(BigDecimal.valueOf(measure), set, Collections.<OWLLogicalAxiom>emptySet() );
     }
 
     @Test
@@ -53,7 +54,7 @@ public class TestWatchedTreeSet {
         OWLTheory theory = Utils.loadTheory(manager, "queryontologies/koala.owl");
         ArrayList<OWLLogicalAxiom> list = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
         Collections.sort(list);
-        WatchedTreeSet<AxiomSet<OWLLogicalAxiom>,Double> set = new WatchedTreeSet<AxiomSet<OWLLogicalAxiom>, Double>();
+        WatchedTreeSet<AxiomSet<OWLLogicalAxiom>,BigDecimal> set = new WatchedTreeSet<AxiomSet<OWLLogicalAxiom>, BigDecimal>();
 
         AxiomSet<OWLLogicalAxiom> modAxiomSet = null;
         for (int i = 1; i < 10; i++) {
@@ -64,7 +65,7 @@ public class TestWatchedTreeSet {
 
         }
 
-        modAxiomSet.setMeasure(0.35);
+        modAxiomSet.setMeasure(new BigDecimal("0.35"));
         boolean removed = set.remove(modAxiomSet);
 
         assert (removed);

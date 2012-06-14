@@ -33,6 +33,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
@@ -105,7 +106,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
         //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
         //ProbabilityTableModel mo = new ProbabilityTableModel();
-        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                 + m.trim()
@@ -177,7 +178,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                             OWLTheory theory = createOWLTheory(ontology, false);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -251,7 +252,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 //                ontology.getOWLOntologyManager().addAxiom(ontology, axiom2);
 
         MyOWLRendererParser parser = new MyOWLRendererParser(ontology);
-        Map<OWLLogicalAxiom, Double> probMap = new LinkedHashMap<OWLLogicalAxiom, Double>();
+        Map<OWLLogicalAxiom, BigDecimal> probMap = new LinkedHashMap<OWLLogicalAxiom, BigDecimal>();
 
         for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms())
             ontology.getOWLOntologyManager().removeAxiom(ontology, axiom);
@@ -275,7 +276,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
         OWLTheory theory = createOWLTheory(ontology, false);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
         //ProbabilityTableModel mo = new ProbabilityTableModel();
-        HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
         /*String path = ClassLoader.getSystemResource("alignment/evaluation/"
        + m.trim()
@@ -344,11 +345,12 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
     }
 
 
-    private void addAxiomPaperTest(OWLOntology ontology, String axiom, Double probab, Map<OWLLogicalAxiom, Double> m) {
+    private void addAxiomPaperTest(OWLOntology ontology, String axiom, Double probab, Map<OWLLogicalAxiom, BigDecimal> m) {
         MyOWLRendererParser parser = new MyOWLRendererParser(ontology);
         OWLLogicalAxiom ax1 = parser.parse(axiom);
         ontology.getOWLOntologyManager().addAxiom(ontology, ax1);
-        m.put(ax1, probab);
+        m.put(ax1, BigDecimal.valueOf(probab));
+
     }
 
 
@@ -381,15 +383,15 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
 
             logger.info("--    " + type + "   --");
             MyOWLRendererParser parser = new MyOWLRendererParser(ontology);
-            Map<OWLLogicalAxiom, Double> probMap = new LinkedHashMap<OWLLogicalAxiom, Double>();
+            Map<OWLLogicalAxiom, BigDecimal> probMap = new LinkedHashMap<OWLLogicalAxiom, BigDecimal>();
 
             for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
                 if (new ManchesterOWLSyntaxOWLObjectRendererImpl().render(axiom).equals("PHD_2 SubClassOf PHD_1")) {
-                    probMap.put(axiom, 1 - 0.1);
+                    probMap.put(axiom, new BigDecimal("1").subtract(new BigDecimal("0.1")));
                 } else if (new ManchesterOWLSyntaxOWLObjectRendererImpl().render(axiom).equals("DeptMember_1 SubClassOf DeptMember_2")) {
-                    probMap.put(axiom, 1 - 0.45);
+                    probMap.put(axiom, new BigDecimal("1").subtract(new BigDecimal("0.45")));
                 } else {
-                    probMap.put(axiom, 1 - 0.001);
+                    probMap.put(axiom, new BigDecimal("1").subtract(new BigDecimal("0.001")));
                 }
             }
 
@@ -418,7 +420,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
             OWLTheory theory = createOWLTheory(ontology, false);
             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
             //ProbabilityTableModel mo = new ProbabilityTableModel();
-            HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
 
             /*String path = ClassLoader.getSystemResource("alignment/evaluation/"
            + m.trim()
@@ -503,7 +505,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                     OWLTheory theory = createOWLTheory(ontology, false);
                     TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
                     //ProbabilityTableModel mo = new ProbabilityTableModel();
-                    HashMap<ManchesterOWLSyntax, Double> map = Utils.getProbabMap();
+                    HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
                     OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                     es.updateKeywordProb(map);
                     if (background == BackgroundO.O1 || background == BackgroundO.O1_O2)
@@ -617,12 +619,12 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                 AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
 
                 boolean isTargetDiagFirst = d.equals(targetDiag);
-                double dp = d.getMeasure();
+                BigDecimal dp = d.getMeasure();
                 if (logger.isInfoEnabled()) {
                     AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
-                    double diagProbabilities = 0;
+                    BigDecimal diagProbabilities = new BigDecimal("0");
                     for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
-                        diagProbabilities += tempd.getMeasure();
+                        diagProbabilities = diagProbabilities.add(tempd.getMeasure());
                     logger.trace("diagnoses: " + diagnoses.size() +
                             " (" + diagProbabilities + ") first diagnosis: " + d +
                             " is target: " + isTargetDiagFirst + " is in window: " +
@@ -630,10 +632,12 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                 }
 
                 if (d1 != null) {// && scoringFunc != QSSType.SPLITINHALF) {
-                    double d1p = d1.getMeasure();
-                    double diff = 100 - (d1p * 100) / dp;
-                    logger.trace("difference : " + (dp - d1p) + " - " + diff + " %");
-                    if (userBrk && diff > SIGMA && isTargetDiagFirst && num_of_queries > 0) {
+                    BigDecimal d1p = d1.getMeasure();
+                    BigDecimal temp = d1p.multiply(new BigDecimal("100"));
+                    temp = temp.divide(dp);
+                    BigDecimal diff = new BigDecimal("100").subtract(temp);
+                    logger.trace("difference : " + (dp.subtract(d1p)) + " - " + diff + " %");
+                    if (userBrk && diff.compareTo(SIGMA) > 0 && isTargetDiagFirst && num_of_queries > 0) {
                         // user brake
                         querySessionEnd = true;
                         userBreak = true;
@@ -720,7 +724,7 @@ public class SimpleAlignmentTests extends BaseAlignmentTests {
                 // fine all dz diagnoses
                 // TODO do we need this fine?
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
-                    ph.setMeasure(0.5d * ph.getMeasure());
+                    ph.setMeasure(new BigDecimal("0.5").multiply(ph.getMeasure()));
                 }
                 if (answer) {
                     try {

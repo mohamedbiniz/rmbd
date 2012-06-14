@@ -6,6 +6,7 @@ import at.ainf.theory.model.SolverException;
 import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**

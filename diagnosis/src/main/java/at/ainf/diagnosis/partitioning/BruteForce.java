@@ -8,6 +8,7 @@ import at.ainf.theory.storage.AxiomSet;
 import at.ainf.theory.storage.Partition;
 import org.apache.log4j.Logger;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -222,10 +223,10 @@ public class BruteForce<Id> implements Partitioning<Id> {
         head.remove(hs);
 
         Partition<Id> best = partHead;
-        if (getScoringFunction().getScore(part) < getScoringFunction().getScore(partHead)) {
+        if (getScoringFunction().getScore(part).compareTo(getScoringFunction().getScore(partHead)) < 0) {
             best = part;
         }
-        if (this.bestPartition == null || (best != null && this.bestPartition.score > best.score))
+        if (this.bestPartition == null || (best != null && this.bestPartition.score.compareTo(best.score) > 0))
             this.bestPartition = best;
         return best;
     }

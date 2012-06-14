@@ -32,6 +32,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import javax.swing.*;
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.List;
 
@@ -592,7 +593,10 @@ public class
 
             search.setTheory(theory);
             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
-            es.updateKeywordProb(map);
+            HashMap<ManchesterOWLSyntax,BigDecimal> bigMap = new HashMap<ManchesterOWLSyntax, BigDecimal>();
+            for (ManchesterOWLSyntax keyword : map.keySet())
+                bigMap.put(keyword,new BigDecimal(map.get(keyword).toString()));
+            es.updateKeywordProb(bigMap);
             search.setCostsEstimator(es);
             for (Set<OWLLogicalAxiom> axiom : posTests) {
                 theory.addPositiveTest(axiom);

@@ -12,6 +12,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -40,14 +42,14 @@ public class AbstractExample {
     public static File file;
 
 
-    HashMap<ManchesterOWLSyntax, Double> map = new HashMap<ManchesterOWLSyntax, Double>();
+    HashMap<ManchesterOWLSyntax, BigDecimal> map = new HashMap<ManchesterOWLSyntax, BigDecimal>();
 
     public AbstractExample() {
-        map.put(ManchesterOWLSyntax.SOME, 0.05);
-        map.put(ManchesterOWLSyntax.ONLY, 0.05);
-        map.put(ManchesterOWLSyntax.AND, 0.001);
-        map.put(ManchesterOWLSyntax.OR, 0.001);
-        map.put(ManchesterOWLSyntax.NOT, 0.01);
+        map.put(ManchesterOWLSyntax.SOME, new BigDecimal("0.05"));
+        map.put(ManchesterOWLSyntax.ONLY, new BigDecimal("0.05"));
+        map.put(ManchesterOWLSyntax.AND, new BigDecimal("0.001"));
+        map.put(ManchesterOWLSyntax.OR, new BigDecimal("0.001"));
+        map.put(ManchesterOWLSyntax.NOT, new BigDecimal("0.01"));
 
         ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.MIN,
                 ManchesterOWLSyntax.MAX,
@@ -70,7 +72,7 @@ public class AbstractExample {
 
 
         for (ManchesterOWLSyntax keyword : keywords) {
-            map.put(keyword, 0.0001);
+            map.put(keyword, BigDecimal.valueOf(0.0001));
         }
     }
 

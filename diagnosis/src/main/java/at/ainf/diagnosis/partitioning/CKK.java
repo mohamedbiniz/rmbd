@@ -49,10 +49,10 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
             if (res.sumLeft.compareTo(res.sumRight) < 1) {
                 res.left.add(element);
-                res.sumLeft = res.sumLeft.add(new BigDecimal(element.getMeasure()));
+                res.sumLeft = res.sumLeft.add(element.getMeasure());
             } else {
                 res.right.add(element);
-                res.sumRight = res.sumRight.add(new BigDecimal(element.getMeasure()));
+                res.sumRight = res.sumRight.add(element.getMeasure());
             }
 
             res.difference = res.sumLeft.subtract(res.sumRight).abs();
@@ -65,10 +65,10 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
             if (res.sumLeft.compareTo(res.sumRight) == 1) {
                 res.left.add(element);
-                res.sumLeft = res.sumLeft.add(new BigDecimal(element.getMeasure()));
+                res.sumLeft = res.sumLeft.add(element.getMeasure());
             } else {
                 res.right.add(element);
-                res.sumRight = res.sumRight.add(new BigDecimal(element.getMeasure()));
+                res.sumRight = res.sumRight.add(element.getMeasure());
             }
 
             res.difference = res.sumLeft.subtract(res.sumRight).abs();
@@ -168,9 +168,9 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
                 if (part.dnx.isEmpty())
                     empty.add(part);
                 else {
-                    double score = getScoringFunction().getScore(part);
-                    double best = getScoringFunction().getScore(partition);
-                    if ((score < best) || (score == best && diff(part) < diff(partition))) {
+                    BigDecimal score = getScoringFunction().getScore(part);
+                    BigDecimal best = getScoringFunction().getScore(partition);
+                    if ((score.compareTo(best) < 0) || (score.compareTo(best) == 0 && diff(part) < diff(partition))) {
                         partition = part;
                         updateDifference(partition);
                         if (partition.difference.compareTo(bestdiff) < 0)
@@ -179,7 +179,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
                 }
                 count++;
             }
-            if (partition != null && partition.score < getThreshold())
+            if (partition != null && partition.score.compareTo(BigDecimal.valueOf(getThreshold())) < 0)
                 break;
         }
         getPartitions().removeAll(empty);
@@ -196,7 +196,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
     private BigDecimal sumProbabilities(Set<AxiomSet<Id>> partition) {
         BigDecimal sum = new BigDecimal(0);
         for (AxiomSet<Id> ids : partition) {
-            sum = sum.add(new BigDecimal(ids.getMeasure()));
+            sum = sum.add(ids.getMeasure());
         }
         return sum;
     }
@@ -224,12 +224,12 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
             if (!partition.dx.contains(hs)) {
                 if (hs.getEntailments().containsAll(ent)) {
                     partition.dx.add(hs);
-                    partition.difference = partition.difference.add(new BigDecimal(hs.getMeasure()));
+                    partition.difference = partition.difference.add(hs.getMeasure());
                 } else if (!getTheory().diagnosisConsistent(hs, ent))
                     partition.dnx.add(hs);
                 else if (getTheory().diagnosisEntails(hs, ent)) {
                     partition.dx.add(hs);
-                    partition.difference = partition.difference.add(new BigDecimal(hs.getMeasure()));
+                    partition.difference = partition.difference.add(hs.getMeasure());
                 } else {
                     partition.dz.add(hs);
                     //partition.difference = partition.difference.add(new BigDecimal(hs.getConflictMeasure()/2d));

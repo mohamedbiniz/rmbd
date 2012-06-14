@@ -2,6 +2,7 @@ package at.ainf.diagnosis.partitioning.scoring;
 
 import at.ainf.theory.storage.AxiomSet;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -18,10 +19,10 @@ public class SplitInHalfQSS<T> extends MinScoreQSS<T> {
     }
 
     public void normalize(Set<? extends AxiomSet<T>> hittingSets) {
-        double size = hittingSets.size();
-        if (size > 1)
+        BigDecimal size = new BigDecimal(Integer.toString(hittingSets.size()));
+        if (size.compareTo(BigDecimal.ONE)>0)
             for (AxiomSet<T> hs : hittingSets) {
-                hs.setMeasure(1 / size);
+                hs.setMeasure(BigDecimal.ONE.divide(size));
             }
     }
 }

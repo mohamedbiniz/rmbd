@@ -18,6 +18,8 @@ import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
+import java.math.BigDecimal;
+
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -88,7 +90,7 @@ public class PartitioningTest {
 
         int i = 8;
         for (AxiomSet<OWLLogicalAxiom> hs : debugger.getValidHittingSets()) {
-            hs.setMeasure((i--) / 100d);
+            hs.setMeasure(new BigDecimal(Integer.toString(i--)).divide(new BigDecimal("100")));
         }
 
         Partitioning<OWLLogicalAxiom> greedy = new GreedySearch<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());

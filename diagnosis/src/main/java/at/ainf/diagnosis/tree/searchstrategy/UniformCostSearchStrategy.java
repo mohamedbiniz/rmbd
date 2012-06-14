@@ -1,11 +1,11 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
-import at.ainf.diagnosis.tree.CostNode;
-import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.Node;
-import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.diagnosis.tree.*;
 import at.ainf.theory.storage.AxiomSet;
 
+import static at.ainf.diagnosis.tree.Rounding.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -38,11 +38,11 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
 
-    public double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
+    public BigDecimal getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return costsEstimator.getAxiomSetCosts(conflict);
     }
 
-    public double getDiagnosisMeasure(Node<Id> node) {
+    public BigDecimal getDiagnosisMeasure(Node<Id> node) {
         return ((CostNode<Id>) node).getNodePathCosts();
     }
 
@@ -53,17 +53,18 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
     protected void normalizeValidHittingSets(TreeSearch<AxiomSet<Id>, Id> search) {
         Set<AxiomSet<Id>> hittingSets = search.getDiagnoses();
-        double sum = 0;
+        BigDecimal sum = new BigDecimal("0");
 
         for (AxiomSet<Id> hittingSet : hittingSets) {
-            sum += hittingSet.getMeasure();
+            sum = sum.add(hittingSet.getMeasure());
         }
 
-        if (sum == 0 && hittingSets.size() != 0)
+        if (sum.compareTo(BigDecimal.ZERO)==0 && hittingSets.size() != 0)
             throw new IllegalStateException("Sum of probabilities of all diagnoses is 0!");
 
         for (AxiomSet<Id> hittingSet : hittingSets) {
-            hittingSet.setMeasure(hittingSet.getMeasure() / sum);
+                // the decimal expansion is inf we need round
+                hittingSet.setMeasure(hittingSet.getMeasure().divide(sum,PRECISION, ROUNDING_MODE));
         }
     }
 

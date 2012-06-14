@@ -1,5 +1,6 @@
 package at.ainf.owlcontroller.costestimation;
 
+import at.ainf.diagnosis.partitioning.BigFunctions;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.theory.model.ITheory;
@@ -9,6 +10,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -20,14 +22,14 @@ import java.util.*;
  */
 public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
 
-    protected Map<OWLLogicalAxiom,Double> axiomProb;
+    protected Map<OWLLogicalAxiom,BigDecimal> axiomProb;
     
-    protected double STATIC_COSTS = 0.001;
+    protected BigDecimal STATIC_COSTS = new BigDecimal("0.001");
     
     protected OWLTheory theory;
     
     public OWLAxiomCostsEstimator(OWLTheory t, String file) throws IOException {
-        Map<String, Double> axioms = new LinkedHashMap<String, Double>();
+        Map<String, BigDecimal> axioms = new LinkedHashMap<String, BigDecimal>();
         Set<String> targetDiag = new LinkedHashSet<String>();
         if (file!=null)
             readData(file, axioms, targetDiag);
@@ -35,13 +37,13 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
         theory = t;
     }
 
-    public OWLAxiomCostsEstimator(OWLTheory theory, Map<OWLLogicalAxiom, Double> probMap) {
+    public OWLAxiomCostsEstimator(OWLTheory theory, Map<OWLLogicalAxiom, BigDecimal> probMap) {
         this.theory = theory;
         axiomProb = probMap;
     }
 
-    protected Map<OWLLogicalAxiom,Double> getAx(Set<OWLLogicalAxiom> logicalAxioms, Map<String,Double> axioms) {
-        Map<OWLLogicalAxiom,Double> res=new LinkedHashMap<OWLLogicalAxiom, Double>();
+    protected Map<OWLLogicalAxiom,BigDecimal> getAx(Set<OWLLogicalAxiom> logicalAxioms, Map<String,BigDecimal> axioms) {
+        Map<OWLLogicalAxiom,BigDecimal> res=new LinkedHashMap<OWLLogicalAxiom, BigDecimal>();
         for (String targetAxiom : axioms.keySet()) {
             for (OWLLogicalAxiom axiom : logicalAxioms) {
                 if (axiom.toString().contains(targetAxiom.trim()))
@@ -51,7 +53,7 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
         return res;
     }
 
-    public void readData(String filename, Map<String, Double> axioms, Set<String> targetDiag) throws IOException {
+    public void readData(String filename, Map<String, BigDecimal> axioms, Set<String> targetDiag) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));
         String line;
         String sourceNamespace = "";
@@ -70,21 +72,21 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
                     source = sub.substring(0, sub.indexOf("=")).trim();
                     target = sub.substring(sub.indexOf("=") + 1, sub.indexOf("|")).trim();
                     axioms.put(createAxiom(sourceNamespace, source, targetNamespace, target),
-                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                            BigDecimal.valueOf(Double.parseDouble(sub.substring(sub.indexOf("|") + 1))));
                     axioms.put(createAxiom(targetNamespace, target, sourceNamespace, source),
-                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                            BigDecimal.valueOf(Double.parseDouble(sub.substring(sub.indexOf("|") + 1))));
                 }
                 if (sub.contains(">")) {
                     source = sub.substring(0, sub.indexOf(">")).trim();
                     target = sub.substring(sub.indexOf(">") + 1, sub.indexOf("|")).trim();
                     axioms.put(createAxiom(sourceNamespace, source, targetNamespace, target),
-                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                            BigDecimal.valueOf(Double.parseDouble(sub.substring(sub.indexOf("|") + 1))));
                 }
                 if (sub.contains("<")) {
                     source = sub.substring(0, sub.indexOf("<")).trim();
                     target = sub.substring(sub.indexOf("<") + 1, sub.indexOf("|")).trim();
                     axioms.put(createAxiom(targetNamespace, target, sourceNamespace, source),
-                            Double.parseDouble(sub.substring(sub.indexOf("|") + 1)));
+                            BigDecimal.valueOf(Double.parseDouble(sub.substring(sub.indexOf("|") + 1))));
                 }
                 if (status.equals("-")) {
                     targetDiag.add(createAxiom(sourceNamespace, source, targetNamespace, target));
@@ -106,28 +108,30 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
         return "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
     }
     
-    public double getAxiomSetCosts(Set<OWLLogicalAxiom> labelSet) {
-        double probability = 1.0;
+    public BigDecimal getAxiomSetCosts(Set<OWLLogicalAxiom> labelSet) {
+
+        BigDecimal probability = BigDecimal.ONE;
         for (OWLLogicalAxiom axiom : labelSet) {
-            probability *= getAxiomCosts(axiom);
+            probability = probability.multiply(getAxiomCosts(axiom));
         }
         Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
         activeFormulas.removeAll(labelSet);
         for (OWLLogicalAxiom axiom : activeFormulas) {
-            if (probability * (1 - getAxiomCosts(axiom)) == 0)
-                probability = Double.MIN_VALUE;
-            else
-                probability *= (1 - getAxiomCosts(axiom));
+                probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
         }
         return probability;
     }
 
     
-    public double getAxiomCosts(OWLLogicalAxiom label) {
+    public BigDecimal getAxiomCosts(OWLLogicalAxiom label) {
         if (axiomProb.get(label) != null) {
-            double p = (1 - axiomProb.get(label)) / 10;
-            if (p==0)
-                return Math.pow(10,-100);//Double.MIN_VALUE;
+            BigDecimal t = BigDecimal.ONE.subtract(axiomProb.get(label));
+            BigDecimal p = t.divide(BigDecimal.valueOf(10));
+            if (p.compareTo(BigDecimal.ZERO)==0) {
+                BigDecimal r = new BigDecimal("10");
+
+                return BigFunctions.intPower(r,-100,r.scale());
+            }
             else
                 return p;
             }

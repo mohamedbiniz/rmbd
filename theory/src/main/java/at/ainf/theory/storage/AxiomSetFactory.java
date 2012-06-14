@@ -1,5 +1,6 @@
 package at.ainf.theory.storage;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -16,12 +17,12 @@ public class AxiomSetFactory {
     private static int csCnt = 0;
 
 
-    public static <Id> AxiomSet<Id> createHittingSet(double measure, Set<Id> hittingSet, Set<Id> entailments) {
+    public static <Id> AxiomSet<Id> createHittingSet(BigDecimal measure, Set<Id> hittingSet, Set<Id> entailments) {
         String name = AxiomSet.TypeOfSet.HITTING_SET.toString() + hsCnt++;
         return new AxiomSetImpl<Id>(AxiomSet.TypeOfSet.HITTING_SET, name, measure, hittingSet, entailments);
     }
 
-    public static <Id> AxiomSet<Id> createConflictSet(double measure, Set<Id> hittingSet, Set<Id> entailments) {
+    public static <Id> AxiomSet<Id> createConflictSet(BigDecimal measure, Set<Id> hittingSet, Set<Id> entailments) {
         String name = AxiomSet.TypeOfSet.CONFLICT_SET.toString() + csCnt++ ;
         return new AxiomSetImpl<Id>(AxiomSet.TypeOfSet.CONFLICT_SET, name, measure, hittingSet, entailments);
     }

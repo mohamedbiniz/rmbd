@@ -10,6 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class RDFUtils {
-    public static Map<OWLLogicalAxiom,Double> readRdfMapping(String path, String name) {
+    public static Map<OWLLogicalAxiom,BigDecimal> readRdfMapping(String path, String name) {
         RdfMatchingFileParser handler = new RdfMatchingFileParser();
         SAXParserFactory factory = SAXParserFactory.newInstance();
 
