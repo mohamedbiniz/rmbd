@@ -17,6 +17,8 @@ import at.ainf.owlcontroller.RDFUtils;
 import at.ainf.owlcontroller.Utils;
 import at.ainf.owlcontroller.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlcontroller.distributiongenerators.ExtremeDistribution;
+import at.ainf.owlcontroller.distributiongenerators.ModerateDistribution;
 import at.ainf.owlcontroller.parser.MyOWLRendererParser;
 import at.ainf.owlcontroller.queryeval.result.TableList;
 import at.ainf.owlcontroller.queryeval.result.Time;
@@ -1707,6 +1709,171 @@ public class UnsolvableTests extends BasePerformanceTests {
                 }
             }
         }
+    }
+
+    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch(OWLOntology ontology, boolean dual) throws SolverException, InconsistentTheoryException {
+
+        OWLOntology extracted = new OWLIncoherencyExtractor(
+                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
+        OWLTheory theory = createTheoryOAEI(extracted, dual, true);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
+
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+
+        search.setCostsEstimator(es);
+        search.reset();
+
+        return search;
+    }
+
+    @Test
+    public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
+
+        showElRates = false;
+        int MAX_RUNS = 7+1;
+        rnd = new Random(121);
+
+        for (String name : new String[]{"Economy-SDA.owl"}) {
+            for (boolean dual : new boolean[] {true}) {
+
+                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = getSearch(CreationUtils.createOwlOntology("queryontologies",name),false);
+
+
+
+                try {
+                    search.run();
+                } catch (NoConflictException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                Set<AxiomSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
+                ModerateDistribution moderateDistribution = new ModerateDistribution();
+                ExtremeDistribution extremeDistribution = new ExtremeDistribution();
+                search.reset();
+
+                String out = "";
+
+                for (UsersProbab usersProbab : new UsersProbab[]{UsersProbab.MODERATE}) {
+                    for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD}) {
+                        for (int run = 7; run < MAX_RUNS; run++) {
+
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2 = getSearch(CreationUtils.createOwlOntology("queryontologies",name),dual);
+                            diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
+                            AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
+
+
+
+
+
+                            TableList e = new TableList();
+                            String message = "act," + name + "," + dual + "," + usersProbab + ","
+                                    + diagProbab + "," + run  ;
+
+                            out += simulateBruteForceOnl(search2, (OWLTheory)search2.getTheory(), targetDiag, e, MINSCORE, message, null, null, null);
+
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+    }
+
+    private Set<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
+        TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        for (AxiomSet<OWLLogicalAxiom> hs : axiomSets)
+            phs.add(hs);
+        return Collections.unmodifiableSet(phs);
+    }
+
+    private void shuffleKeyword(ArrayList<ManchesterOWLSyntax> keywordList) {
+        ArrayList<ManchesterOWLSyntax> cp = new ArrayList<ManchesterOWLSyntax>(keywordList.size());
+        cp.addAll(keywordList);
+        keywordList.clear();
+        for (int i = 0; cp.size() > 0; i++) {
+            int j = rnd.nextInt(cp.size());
+            keywordList.add(i, cp.remove(j));
+        }
+        keywordList.addAll(cp);
+    }
+
+    private Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
+            (UsersProbab
+                     usersProbab, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, ExtremeDistribution extremeDistribution, ModerateDistribution moderateDistribution) {
+        Map<ManchesterOWLSyntax, BigDecimal> keywordProbs = new HashMap<ManchesterOWLSyntax, BigDecimal>();
+        //ProbabilityTableModel m = new ProbabilityTableModel();
+        ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(Utils.getProbabMap().keySet()));
+        ManchesterOWLSyntax[] selectedKeywords = new ManchesterOWLSyntax[]{ManchesterOWLSyntax.SOME, ManchesterOWLSyntax.ONLY,
+                ManchesterOWLSyntax.DISJOINT_CLASSES, ManchesterOWLSyntax.DISJOINT_WITH, ManchesterOWLSyntax.SUBCLASS_OF,
+                ManchesterOWLSyntax.EQUIVALENT_CLASSES, ManchesterOWLSyntax.NOT, ManchesterOWLSyntax.AND};
+
+        /*
+        keywordList = new ArrayList<ManchesterOWLSyntax>(Arrays.asList(selectedKeywords));
+        shuffleKeyword(keywordList);
+        */
+        //Set<Integer> highKeywordPos = new HashSet<Integer>();
+
+        List<ManchesterOWLSyntax> c = new ArrayList<ManchesterOWLSyntax>(Arrays.asList(selectedKeywords));
+        for (int i = 0; i < c.size() / 2; i++) {
+            int j = rnd.nextInt(c.size());
+            keywordList.remove(c.get(j));
+        }
+        c.removeAll(keywordList);
+        shuffleKeyword(keywordList);
+        for (int i = 0; c.size() > 0; i++) {
+            int j = rnd.nextInt(c.size());
+            keywordList.add(i, c.remove(j));
+        }
+        //keywordList.addAll(c);
+
+        int n = keywordList.size();
+        int k = n / 4;
+        double[] probabilities;
+
+        switch (usersProbab) {
+            case EXTREME:
+                probabilities = extremeDistribution.getProbabilities(n);
+                for (ManchesterOWLSyntax keyword : keywordList) {
+                    keywordProbs.put(keyword, BigDecimal.valueOf(probabilities[keywordList.indexOf(keyword)]));
+                }
+                /*highKeywordPos.add(rnd.nextInt(n));
+                for(ManchesterOWLSyntax keyword : keywordList) {
+                    if (highKeywordPos.contains(keywordList.indexOf(keyword)))
+                        keywordProbs.put(keyword,getProbabBetween(LOWER_BOUND_EXTREME_HIGH,HIGHER_BOUND_EXTREME_HIGH));
+                    else
+                        keywordProbs.put(keyword, getProbabBetween(LOWER_BOUND_EXTREME_LOW,HIGHER_BOUND_EXTREME_LOW));
+                }*/
+                break;
+            case MODERATE:
+                probabilities = moderateDistribution.getProbabilities(n);
+                for (ManchesterOWLSyntax keyword : keywordList) {
+                    keywordProbs.put(keyword, BigDecimal.valueOf(probabilities[keywordList.indexOf(keyword)]));
+                }
+                /*for (int i = 0; i < k; i++) {
+                    int num = rnd.nextInt(n);
+                    while (!highKeywordPos.add(num))
+                        num = rnd.nextInt();
+                }
+                for(ManchesterOWLSyntax keyword : keywordList) {
+                    if (highKeywordPos.contains(keywordList.indexOf(keyword)))
+                        keywordProbs.put(keyword,getProbabBetween(LOWER_BOUND_MODERATE_HIGH,HIGHER_BOUND_MODERATE_HIGH));
+                    else
+                        keywordProbs.put(keyword, getProbabBetween(LOWER_BOUND_MODERATE_LOW,HIGHER_BOUND_MODERATE_LOW));
+                }*/
+                break;
+            case UNIFORM:
+                for (ManchesterOWLSyntax keyword : keywordList) {
+                    keywordProbs.put(keyword, BigDecimal.valueOf(1.0 / n));
+                }
+                break;
+        }
+        ((OWLAxiomKeywordCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
+        return sortDiagnoses(diagnoses);
+
+
     }
 
     @Test
