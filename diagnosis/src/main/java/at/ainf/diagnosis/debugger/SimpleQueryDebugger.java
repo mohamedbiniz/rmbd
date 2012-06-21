@@ -9,10 +9,10 @@ import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.*;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.*;
 
 import java.util.Set;
 import java.util.TreeSet;

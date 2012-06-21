@@ -1,12 +1,12 @@
 package at.ainf.diagnosis.partitioning;
 
-import at.ainf.theory.Searchable;
-import at.ainf.theory.model.AbstractSearchableObject;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Partition;
+import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.model.AbstractSearchableObject;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.Partition;
 
 import java.util.Set;
 

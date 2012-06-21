@@ -9,8 +9,8 @@
 package at.ainf.choco2;
 
 import at.ainf.choco2.model.ConstraintTheory;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;

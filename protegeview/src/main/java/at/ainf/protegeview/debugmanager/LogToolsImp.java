@@ -1,7 +1,7 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.Partition;
+import at.ainf.diagnosis.storage.AxiomSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;

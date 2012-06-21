@@ -1,9 +1,8 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.HermiT.Reasoner;

@@ -1,8 +1,8 @@
 package at.ainf.diagnosis.quickxplain;
 
-import at.ainf.theory.Searchable;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
+import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 
 import java.util.Collection;
 import java.util.Set;

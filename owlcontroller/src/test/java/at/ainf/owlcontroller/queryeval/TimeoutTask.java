@@ -1,7 +1,7 @@
 package at.ainf.owlcontroller.queryeval;
 
 import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 

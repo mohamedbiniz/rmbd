@@ -1,6 +1,6 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.util.EventObject;

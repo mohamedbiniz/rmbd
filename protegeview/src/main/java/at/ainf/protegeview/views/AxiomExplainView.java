@@ -4,7 +4,7 @@ import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.debugmanager.*;
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;

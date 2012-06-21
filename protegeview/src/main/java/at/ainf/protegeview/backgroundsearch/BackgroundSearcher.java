@@ -1,6 +1,6 @@
 package at.ainf.protegeview.backgroundsearch;
 
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -9,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 

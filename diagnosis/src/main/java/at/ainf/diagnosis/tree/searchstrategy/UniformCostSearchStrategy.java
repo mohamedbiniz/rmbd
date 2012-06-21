@@ -1,11 +1,10 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
 import at.ainf.diagnosis.tree.*;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 import static at.ainf.diagnosis.tree.Rounding.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;

@@ -3,9 +3,7 @@ package at.ainf.owlcontroller.costestimation;
 import at.ainf.diagnosis.partitioning.BigFunctions;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.theory.model.ITheory;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

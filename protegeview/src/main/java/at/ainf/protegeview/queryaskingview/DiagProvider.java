@@ -1,7 +1,7 @@
 package at.ainf.protegeview.queryaskingview;
 
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Partition;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.backgroundsearch.BackgroundSearcher;
 import at.ainf.protegeview.backgroundsearch.EntailmentSearch;

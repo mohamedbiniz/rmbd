@@ -1,7 +1,6 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
 import at.ainf.diagnosis.tree.Node;
-import at.ainf.theory.storage.AxiomSet;
 
 import java.util.List;
 

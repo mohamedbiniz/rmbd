@@ -2,8 +2,8 @@ package at.ainf.protegeview.backgroundsearch;
 
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
-import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.Partition;
+import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;

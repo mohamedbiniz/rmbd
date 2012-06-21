@@ -6,9 +6,9 @@
  * http://www.gnu.org/licenses/gpl.txt
  */
 
-package at.ainf.theory.model;
+package at.ainf.diagnosis.model;
 
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.util.*;
 

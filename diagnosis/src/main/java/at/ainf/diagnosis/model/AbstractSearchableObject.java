@@ -1,6 +1,6 @@
-package at.ainf.theory.model;
+package at.ainf.diagnosis.model;
 
-import at.ainf.theory.Searchable;
+import at.ainf.diagnosis.Searchable;
 
 import java.util.*;
 

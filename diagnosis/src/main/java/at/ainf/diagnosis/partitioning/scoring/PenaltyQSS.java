@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.partitioning.scoring;
 
-import at.ainf.theory.storage.Partition;
+import at.ainf.diagnosis.storage.Partition;
 
 import java.util.Collections;
 import java.util.LinkedList;

@@ -2,7 +2,7 @@ package at.ainf.protegeview.views;
 
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.protegeview.debugmanager.HittingSetsChangedEvent;

@@ -1,8 +1,8 @@
 package at.ainf.protegeview.views;
 
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.SolverException;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.protegeview.debugmanager.*;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;

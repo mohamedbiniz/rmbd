@@ -1,6 +1,6 @@
-package at.ainf.theory.storage;
+package at.ainf.diagnosis.storage;
 
-import at.ainf.theory.watchedset.WatchedElement;
+import at.ainf.diagnosis.watchedset.WatchedElement;
 
 import java.math.BigDecimal;
 import java.util.Set;

@@ -14,9 +14,8 @@
  */
 package at.ainf.diagnosis;
 
-import at.ainf.theory.Searchable;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.Collection;

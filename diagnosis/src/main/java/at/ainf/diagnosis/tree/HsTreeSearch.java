@@ -1,10 +1,10 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.AxiomSetFactory;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSetFactory;
 
 import java.util.*;
 

@@ -1,8 +1,8 @@
 package at.ainf.protegeview.testcasesentailmentsview;
 
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.protegeview.testcasesentailmentsview.axiomeditor.OWLAxiomEditor;
 import org.protege.editor.core.ProtegeApplication;

@@ -1,4 +1,4 @@
-package at.ainf.theory.model;
+package at.ainf.diagnosis.model;
 
 /**
  * Created by IntelliJ IDEA.

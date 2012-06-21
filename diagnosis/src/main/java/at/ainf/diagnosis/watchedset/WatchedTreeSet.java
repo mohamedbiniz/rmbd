@@ -1,4 +1,4 @@
-package at.ainf.theory.watchedset;
+package at.ainf.diagnosis.watchedset;
 
 import java.util.Collection;
 import java.util.TreeSet;

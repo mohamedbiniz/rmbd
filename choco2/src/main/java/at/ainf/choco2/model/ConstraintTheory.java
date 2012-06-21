@@ -9,9 +9,9 @@
 package at.ainf.choco2.model;
 
 
-import at.ainf.theory.model.AbstractTheory;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.SolverException;
+import at.ainf.diagnosis.model.AbstractTheory;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.SolverException;
 import choco.Choco;
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;

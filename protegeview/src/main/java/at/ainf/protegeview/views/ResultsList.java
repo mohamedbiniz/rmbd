@@ -1,7 +1,7 @@
 package at.ainf.protegeview.views;
 
 import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;

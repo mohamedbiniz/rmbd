@@ -1,6 +1,6 @@
 package at.ainf.protegeview.views.diagnosistreeview;
 
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import org.protege.editor.owl.OWLEditorKit;

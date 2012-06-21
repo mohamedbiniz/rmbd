@@ -1,7 +1,6 @@
-package at.ainf.theory.storage;
+package at.ainf.diagnosis.storage;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.

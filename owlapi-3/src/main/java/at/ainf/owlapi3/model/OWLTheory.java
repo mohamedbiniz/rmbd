@@ -1,11 +1,11 @@
 package at.ainf.owlapi3.model;
 
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
-import at.ainf.theory.model.AbstractTheory;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.model.AbstractTheory;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;

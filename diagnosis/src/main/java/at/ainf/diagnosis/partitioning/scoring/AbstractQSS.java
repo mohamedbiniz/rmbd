@@ -2,12 +2,11 @@ package at.ainf.diagnosis.partitioning.scoring;
 
 import at.ainf.diagnosis.partitioning.BigFunctions;
 import at.ainf.diagnosis.partitioning.Partitioning;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Partition;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.Partition;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 
 /**
