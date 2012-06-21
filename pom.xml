@@ -27,7 +27,7 @@
         <module>protegeview</module>
         <module>controller</module>
         <module>owlcontroller</module>
-        <module>jsolver</module>
+        <module>logging</module>
     </modules>
     <!--
     More Project Information
