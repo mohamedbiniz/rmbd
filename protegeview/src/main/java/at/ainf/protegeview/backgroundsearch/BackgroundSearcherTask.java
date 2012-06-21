@@ -1,18 +1,17 @@
 package at.ainf.protegeview.backgroundsearch;
 
 import at.ainf.diagnosis.tree.OpenNodesListener;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.StorageItemAddedEvent;
-import at.ainf.theory.storage.StorageItemListener;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.StorageItemAddedEvent;
+import at.ainf.diagnosis.storage.StorageItemListener;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import javax.swing.*;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.

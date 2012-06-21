@@ -6,9 +6,9 @@
  * http://www.gnu.org/licenses/gpl.txt
  */
 
-package at.ainf.theory.model;
+package at.ainf.diagnosis.model;
 
-import at.ainf.theory.GeneralDiagnosisException;
+import at.ainf.diagnosis.GeneralDiagnosisException;
 
 public class SolverException extends GeneralDiagnosisException {
 

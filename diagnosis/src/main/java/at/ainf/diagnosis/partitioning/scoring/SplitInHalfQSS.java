@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.partitioning.scoring;
 
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.math.BigDecimal;
 import java.util.Set;

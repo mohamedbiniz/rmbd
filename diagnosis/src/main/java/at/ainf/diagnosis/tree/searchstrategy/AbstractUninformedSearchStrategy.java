@@ -3,7 +3,7 @@ package at.ainf.diagnosis.tree.searchstrategy;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.math.BigDecimal;
 import java.util.Collection;

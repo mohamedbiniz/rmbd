@@ -1,4 +1,4 @@
-package at.ainf.theory.storage;
+package at.ainf.diagnosis.storage;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashSet;

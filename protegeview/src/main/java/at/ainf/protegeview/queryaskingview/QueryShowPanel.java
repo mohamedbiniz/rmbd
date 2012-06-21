@@ -1,10 +1,10 @@
 package at.ainf.protegeview.queryaskingview;
 
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Partition;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.Partition;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import at.ainf.protegeview.debugmanager.ResetReqEvent;

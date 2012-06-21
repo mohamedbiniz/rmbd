@@ -1,4 +1,4 @@
-package at.ainf.theory.watchedset;
+package at.ainf.diagnosis.watchedset;
 
 /**
  * Created by IntelliJ IDEA.

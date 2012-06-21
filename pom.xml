@@ -23,7 +23,6 @@
         <module>sat4j</module>
         <module>choco2</module>
         <module>logger</module>
-        <module>theory</module>
         <module>protegeview</module>
         <module>controller</module>
         <module>owlcontroller</module>

@@ -1,7 +1,7 @@
 package at.ainf.protegeview.views.diagnosistreeview;
 
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.storage.AxiomSetImpl;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.protegeview.debugmanager.*;
 import org.protege.editor.owl.ui.view.cls.AbstractOWLClassViewComponent;

@@ -1,4 +1,4 @@
-package at.ainf.theory.storage;
+package at.ainf.diagnosis.storage;
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,10 +1,10 @@
 package at.ainf.diagnosis.partitioning.scoring;
 
 import static at.ainf.diagnosis.tree.Rounding.*;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.Partition;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.Partition;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;

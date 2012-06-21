@@ -23,11 +23,6 @@
             <artifactId>diagnosis</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
-            <groupId>at.ainf</groupId>
-            <artifactId>theory</artifactId>
-            <version>1.0</version>
-        </dependency>
     </dependencies>
 
 </project>

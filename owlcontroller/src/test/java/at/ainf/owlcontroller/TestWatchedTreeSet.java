@@ -1,11 +1,11 @@
 package at.ainf.owlcontroller;
 
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.AxiomSetFactory;
-import at.ainf.theory.watchedset.WatchedTreeSet;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.watchedset.WatchedTreeSet;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;

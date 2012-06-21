@@ -10,15 +10,10 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.DiagSearch;
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.AxiomRenderer;
-import at.ainf.theory.storage.AxiomSet;
-
-import java.util.Set;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.storage.AxiomRenderer;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 /**
  * Created by IntelliJ IDEA.

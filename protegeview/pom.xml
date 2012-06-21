@@ -39,7 +39,7 @@
                         <!--<Bundle-Activator>at.ainf.pluginprotege.BundleActivator</Bundle-Activator>-->
                         <!--<Update-Url>http://wwwu.edu.uni-klu.ac.at/pfleiss/update.properties</Update-Url>-->
                         <Import-Package>!at.ainf.diagnosis.*,
-                            !at.ainf.theory.*,
+                            <!--!at.ainf.theory.*,-->
                             !at.ainf.owlapi3.*,
                             !at.ainf.controller.*,
                             !at.ainf.owlcontroller.*,
@@ -47,7 +47,7 @@
                             *</Import-Package>
                         <!--<Embed-Directory>lib</Embed-Directory>-->
                         <Bundle-ClassPath>.;at.ainf.diagnosis.jar;
-                            at.ainf.theory.jar;
+                            <!--at.ainf.theory.jar;-->
                             at.ainf.owlapi3.jar;
                             at.ainf.owlcontroller.jar;
                             at.ainf.controller.jar;
@@ -77,7 +77,7 @@
             </goals>
             <configuration>
               <artifactItems>
-                  <artifactItem>
+                  <!--<artifactItem>
                   <groupId>at.ainf</groupId>
                   <artifactId>theory</artifactId>
                   <version>1.0</version>
@@ -85,7 +85,7 @@
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>at.ainf.theory.jar</destFileName>
-                </artifactItem>
+                </artifactItem>-->
                 <artifactItem>
                   <groupId>at.ainf</groupId>
                   <artifactId>diagnosis</artifactId>
@@ -215,11 +215,6 @@
             <version>2.14.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>at.ainf</groupId>
-            <artifactId>theory</artifactId>
-            <version>1.0</version>
-        </dependency>
         <dependency>
             <groupId>at.ainf</groupId>
             <artifactId>owlapi-3</artifactId>

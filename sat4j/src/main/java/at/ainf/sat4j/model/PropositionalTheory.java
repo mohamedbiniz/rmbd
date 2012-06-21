@@ -8,11 +8,10 @@
 
 package at.ainf.sat4j.model;
 
-import at.ainf.theory.model.AbstractTheory;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.InconsistentTheoryException;
-import org.sat4j.core.VecInt;
+import at.ainf.diagnosis.model.AbstractTheory;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
 

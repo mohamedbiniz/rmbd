@@ -11,8 +11,8 @@ package at.ainf.sat4j.model;
 
 import static org.junit.Assert.*;
 
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
 import org.junit.Test;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;

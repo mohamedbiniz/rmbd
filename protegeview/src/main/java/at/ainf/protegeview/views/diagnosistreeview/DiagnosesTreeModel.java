@@ -2,8 +2,8 @@ package at.ainf.protegeview.views.diagnosistreeview;
 
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.theory.storage.AxiomSet;
-import at.ainf.theory.storage.AxiomSetImpl;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import org.protege.editor.owl.OWLEditorKit;

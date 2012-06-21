@@ -11,10 +11,10 @@ package at.ainf.diagnosis.tree;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
-import at.ainf.theory.model.ITheory;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
-import at.ainf.theory.storage.*;
+import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.*;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;

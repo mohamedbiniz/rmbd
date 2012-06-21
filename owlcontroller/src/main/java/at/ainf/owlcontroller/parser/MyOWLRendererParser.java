@@ -1,13 +1,12 @@
 package at.ainf.owlcontroller.parser;
 
-import at.ainf.theory.storage.AxiomRenderer;
+import at.ainf.diagnosis.storage.AxiomRenderer;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.

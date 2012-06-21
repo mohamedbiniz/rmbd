@@ -1,9 +1,9 @@
 package at.ainf.owlapi3.model;
 
-import at.ainf.theory.Searchable;
-import at.ainf.theory.model.AbstractSearchableObject;
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
+import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.model.AbstractSearchableObject;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;

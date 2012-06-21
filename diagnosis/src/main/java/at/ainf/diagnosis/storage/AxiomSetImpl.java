@@ -1,6 +1,6 @@
-package at.ainf.theory.storage;
+package at.ainf.diagnosis.storage;
 
-import at.ainf.theory.watchedset.MeasureUpdatedListener;
+import at.ainf.diagnosis.watchedset.MeasureUpdatedListener;
 
 import java.math.BigDecimal;
 import java.util.*;

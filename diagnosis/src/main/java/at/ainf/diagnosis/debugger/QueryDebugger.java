@@ -1,10 +1,8 @@
 package at.ainf.diagnosis.debugger;
 
-import at.ainf.diagnosis.partitioning.scoring.Scoring;
-import at.ainf.theory.model.ITheory;
+import at.ainf.diagnosis.model.ITheory;
 
-import at.ainf.theory.storage.Partition;
-import at.ainf.theory.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 
 import java.util.Set;

@@ -1,7 +1,7 @@
-package at.ainf.theory;
+package at.ainf.diagnosis;
 
-import at.ainf.theory.model.InconsistentTheoryException;
-import at.ainf.theory.model.SolverException;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 
 import java.util.Collection;
 import java.util.Set;
