@@ -1,14 +1,13 @@
 package at.ainf.protegeview.basis;
 
-import at.ainf.owlcontroller.OWLController;
-import at.ainf.owlcontroller.OWLControllerImpl;
+import at.ainf.protegeview.controller.OWLController;
+import at.ainf.protegeview.controller.OWLControllerImpl;
 import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.

@@ -1,6 +1,6 @@
 package at.ainf.protegeview.testcasesentailmentsview.axiomeditor;
 
-import at.ainf.owlcontroller.parser.ManchesterOWLSyntaxEditorParser;
+import at.ainf.owlapi3.parser.ManchesterOWLSyntaxEditorParser;
 import org.protege.editor.owl.model.OWLModelManager;
 import org.protege.editor.owl.model.classexpression.OWLExpressionParserException;
 import org.protege.editor.owl.model.parser.ParserUtil;
@@ -12,7 +12,6 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.TreeSet;
 
 /**
  * Created by IntelliJ IDEA.

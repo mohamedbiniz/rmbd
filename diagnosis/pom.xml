@@ -69,7 +69,13 @@
         </plugins>
     </build>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>logging</artifactId>
+            <version>1.0</version>
+        </dependency>
+    </dependencies>
 
 
 </project>
