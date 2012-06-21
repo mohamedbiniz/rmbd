@@ -41,16 +41,16 @@
                         <Import-Package>!at.ainf.diagnosis.*,
                             <!--!at.ainf.theory.*,-->
                             !at.ainf.owlapi3.*,
-                            !at.ainf.controller.*,
-                            !at.ainf.owlcontroller.*,
+                            <!--!at.ainf.controller.*, -->
+                            <!--!at.ainf.owlcontroller.*,-->
                             !org.picocontainer.*,
                             *</Import-Package>
                         <!--<Embed-Directory>lib</Embed-Directory>-->
                         <Bundle-ClassPath>.;at.ainf.diagnosis.jar;
                             <!--at.ainf.theory.jar;-->
                             at.ainf.owlapi3.jar;
-                            at.ainf.owlcontroller.jar;
-                            at.ainf.controller.jar;
+                            <!--at.ainf.owlcontroller.jar;-->
+                            <!--at.ainf.controller.jar; -->
                             org.picocontainer.picocontainer.jar</Bundle-ClassPath>
                         <!--<Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
                             org.protege.editor.core.application;bundle-version="4.1",org.protege.editor.owl;bundle-version="4.1",
@@ -95,7 +95,7 @@
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>at.ainf.diagnosis.jar</destFileName>
                 </artifactItem>
-                  <artifactItem>
+                  <!--<artifactItem>
                   <groupId>at.ainf</groupId>
                   <artifactId>controller</artifactId>
                   <version>1.0</version>
@@ -103,7 +103,7 @@
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>at.ainf.controller.jar</destFileName>
-                </artifactItem>
+                </artifactItem> -->
                   <artifactItem>
                   <groupId>at.ainf</groupId>
                   <artifactId>owlapi-3</artifactId>
@@ -112,7 +112,7 @@
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>at.ainf.owlapi3.jar</destFileName>
-                </artifactItem><artifactItem>
+                </artifactItem><!--<artifactItem>
                   <groupId>at.ainf</groupId>
                   <artifactId>owlcontroller</artifactId>
                   <version>1.0</version>
@@ -120,7 +120,7 @@
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>at.ainf.owlcontroller.jar</destFileName>
-                </artifactItem> <artifactItem>
+                </artifactItem>--> <artifactItem>
                   <groupId>org.picocontainer</groupId>
                   <artifactId>picocontainer</artifactId>
                   <version>2.14.1</version>
@@ -227,16 +227,6 @@
             <version>1.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>at.ainf</groupId>
-            <artifactId>controller</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>at.ainf</groupId>
-            <artifactId>owlcontroller</artifactId>
-            <version>1.0</version>
-        </dependency>
 
 
 

@@ -3,7 +3,7 @@ package at.ainf.protegeview;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlcontroller.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;

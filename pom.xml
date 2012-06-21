@@ -22,10 +22,9 @@
         <module>owlapi-3</module>
         <module>sat4j</module>
         <module>choco2</module>
-        <module>logger</module>
+        <module>usrstudlogger</module>
         <module>protegeview</module>
-        <module>controller</module>
-        <module>owlcontroller</module>
+        <module>performance</module>
         <module>logging</module>
     </modules>
     <!--
