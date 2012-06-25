@@ -11,9 +11,6 @@ import at.ainf.owlcontroller.Utils;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.util.FileManager;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,28 +40,6 @@ public class OAEI2011 {
         PropertyConfigurator.configure(conf);
     }
 
-    @Test
-    public void readData() throws ParserConfigurationException, IOException, SAXException {
-        // create an empty model
-        Model model = ModelFactory.createDefaultModel();
-
-        // use the FileManager to find the input file
-        String n = "c:/daten/work/tasks/oaei2011/1core8gb/run1/AgrMaker/anatomy-track1.rdf";
-        InputStream in = FileManager.get().open(n);
-        if (in == null) {
-            throw new IllegalArgumentException(
-                    "File: " + n + " not found");
-        }
-
-        // read the RDF/XML file
-        model.read(in, null);
-
-        // write it to standard out
-        model.write(System.out);
-
-        //StmtIterator iter =   model.listStatements(new SimpleSelector(model.getResource("AlignmentCell"), null, null));
-
-    }
 
     public void readDataOAEI(String filename, Map<OWLLogicalAxiom, Double> axioms, Set<OWLLogicalAxiom> targetDiag, OWLOntologyManager man) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));

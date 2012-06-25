@@ -1,6 +1,5 @@
 package at.ainf.owlcontroller.oaei11align;
 
-import org.apache.xerces.parsers.SAXParser;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.xml.sax.Attributes;
