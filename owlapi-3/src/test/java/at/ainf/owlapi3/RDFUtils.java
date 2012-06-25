@@ -1,5 +1,6 @@
 package at.ainf.owlapi3;
 
+import at.ainf.owlapi3.performance.RdfMatchingFileParser;
 import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;

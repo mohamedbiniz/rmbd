@@ -13,6 +13,9 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
+import at.ainf.owlapi3.performance.PerformanceTests;
+import at.ainf.owlapi3.performance.TableList;
+import at.ainf.owlapi3.performance.Time;
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -36,7 +39,7 @@ public abstract class BasePerformanceTests {
     protected int conflictsCalc = 0;
     protected String daStr = "";
 
-    enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
+    public enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
 
     protected Random rnd = new Random();
 
