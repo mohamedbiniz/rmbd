@@ -18,14 +18,13 @@
 
 
     <modules>
+        <module>logging</module>
         <module>diagnosis</module>
         <module>owlapi-3</module>
         <module>sat4j</module>
         <module>choco2</module>
-        <module>usrstudlogger</module>
         <module>protegeview</module>
-        <module>performance</module>
-        <module>logging</module>
+        <module>usrstudlogger</module>
     </modules>
     <!--
     More Project Information
