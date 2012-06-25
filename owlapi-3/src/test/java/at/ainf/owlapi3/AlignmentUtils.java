@@ -14,12 +14,12 @@ import java.util.*;
  */
 public class AlignmentUtils {
 
-    protected static Properties readProps() {
+    public static Properties readProps() {
         return readProps("alignment.unsolvable.properties");
 
     }
 
-    protected static Properties readProps(String str) {
+    public static Properties readProps(String str) {
         Properties properties = new Properties();
         String config = ClassLoader.getSystemResource("alignment/"+str  ).getFile();
         BufferedInputStream stream = null;
@@ -39,7 +39,7 @@ public class AlignmentUtils {
 
     }
 
-    protected static Map<String, List<String>> readOntologiesFromFile(Properties properties) {
+    public static Map<String, List<String>> readOntologiesFromFile(Properties properties) {
 
         String[] testsuites = properties.getProperty("alignment.testsuites").split(",");
 
