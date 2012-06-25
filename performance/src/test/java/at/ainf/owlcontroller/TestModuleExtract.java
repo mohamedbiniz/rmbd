@@ -127,7 +127,7 @@ public class TestModuleExtract {
     @Test
     public void testResultsEqual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-        String ontos[] = {"queryontologies/uni_3.owl"};
+        String ontos[] = {"ontologies/uni_3.owl"};
 
         //String ontos[] = {"queryontologies/Economy-SDA.owl", "queryontologies/Transportation-SDA.owl"};
         for (String ont : ontos) {

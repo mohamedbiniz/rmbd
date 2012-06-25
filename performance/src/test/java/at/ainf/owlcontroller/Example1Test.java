@@ -154,7 +154,7 @@ public class Example1Test extends AbstractExample {
     @BeforeClass
     public static void setUp() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException {
 
-        file = new File(ClassLoader.getSystemResource("example1.owl").getFile());
+        file = new File(ClassLoader.getSystemResource("ontologies/example1.owl").getFile());
         createOntology();
         namAxioms();
         setupQueries();

@@ -54,7 +54,7 @@ public class SimpleQueryTest {
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
         OWLOntology ontology =
-                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("queryontologies/Univ.owl"));
+                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/Univ.owl"));
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 
@@ -109,7 +109,7 @@ public class SimpleQueryTest {
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
         OWLOntology ontology =
-          manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("queryontologies/Univ.owl"));
+          manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/Univ.owl"));
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 
@@ -154,7 +154,7 @@ public class SimpleQueryTest {
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
         OWLOntology ontology =
-                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("koala.owl"));
+                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/koala.owl"));
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 

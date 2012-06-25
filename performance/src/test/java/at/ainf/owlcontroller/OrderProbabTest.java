@@ -50,7 +50,7 @@ public class OrderProbabTest {
     @Test
     public void probabTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
         OWLOntology ontology =
-                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ecai2010.owl"));
+                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/ecai2010.owl"));
 
         Random r = new Random();
 

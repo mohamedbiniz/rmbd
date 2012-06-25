@@ -43,7 +43,7 @@ public class DualTreeTest extends BasePerformanceTests {
 
     private static Logger logger = Logger.getLogger(DualTreeTest.class.getName());
 
-    String[] ontologies = {"Univ.owl"}; //, "Univ.owl"};
+    String[] ontologies = {"Univ.owl"}; //, "Univ2.owl"};
 
     private static final boolean TEST_CACHING = false;
 
@@ -57,7 +57,7 @@ public class DualTreeTest extends BasePerformanceTests {
     @Test
     public void testDualTreePruning() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         //String ont = "queryontologies/onediag.owl";
-        String ont = "queryontologies/empty.owl";
+        String ont = "ontologies/empty.owl";
         List<String> ptestCases = new LinkedList<String>();
         List<String> ntestCases = new LinkedList<String>();
         ntestCases.add("w Type (not C)");
@@ -179,7 +179,7 @@ public class DualTreeTest extends BasePerformanceTests {
         searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
+        OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
         searchNormal.setTheory(theoryNormal);
         searchNormal.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
@@ -191,7 +191,7 @@ public class DualTreeTest extends BasePerformanceTests {
         searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
+        OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, true);
         searchDual.setTheory(theoryDual);
         searchDual.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
@@ -250,7 +250,7 @@ public class DualTreeTest extends BasePerformanceTests {
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ontology, false);
+        OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);
         HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
@@ -264,7 +264,7 @@ public class DualTreeTest extends BasePerformanceTests {
         InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ontology, true);
+        OWLTheory theoryDual = createTheory(manager, "ontologies/" + ontology, true);
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
         //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());

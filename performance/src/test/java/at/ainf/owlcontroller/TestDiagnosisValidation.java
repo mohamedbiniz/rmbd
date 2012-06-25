@@ -36,7 +36,7 @@ public class TestDiagnosisValidation {
 
     private static OWLOntology ontology;
     private static File file = new File(
-            ClassLoader.getSystemResource("koala.owl").getFile());
+            ClassLoader.getSystemResource("ontologies/koala.owl").getFile());
     private static MyOWLRendererParser parser;
     private static Reasoner.ReasonerFactory reasonerFactory;
     private HashMap<ManchesterOWLSyntax, Double> map;

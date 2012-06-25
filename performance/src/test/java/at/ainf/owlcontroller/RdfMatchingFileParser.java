@@ -1,4 +1,4 @@
-package at.ainf.owlcontroller.oaei11align;
+package at.ainf.owlcontroller;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;

@@ -51,7 +51,7 @@ public class TestWatchedTreeSet {
     @Test
     public void testSet() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        OWLTheory theory = Utils.loadTheory(manager, "queryontologies/koala.owl");
+        OWLTheory theory = Utils.loadTheory(manager, "ontologies/koala.owl");
         ArrayList<OWLLogicalAxiom> list = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
         Collections.sort(list);
         WatchedTreeSet<AxiomSet<OWLLogicalAxiom>,BigDecimal> set = new WatchedTreeSet<AxiomSet<OWLLogicalAxiom>, BigDecimal>();

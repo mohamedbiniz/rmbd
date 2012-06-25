@@ -52,7 +52,7 @@ public class QXDiagTest {
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory th = createTheory(manager, "queryontologies/koala.owl", true);
+        OWLTheory th = createTheory(manager, "ontologies/koala.owl", true);
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
 
@@ -71,7 +71,7 @@ public class QXDiagTest {
         searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = createTheory(manager, "queryontologies/" + ont, false);
+        OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
         searchNormal.setTheory(theoryNormal);
         searchNormal.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
@@ -81,7 +81,7 @@ public class QXDiagTest {
         searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = createTheory(manager, "queryontologies/" + ont, true);
+        OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, true);
         searchDual.setTheory(theoryDual);
         searchDual.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
@@ -94,7 +94,7 @@ public class QXDiagTest {
     @Test
     public void testQx() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         HashSet<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
-        OWLTheory th = createTheory(manager, "queryontologies/koala.owl", true);
+        OWLTheory th = createTheory(manager, "ontologies/koala.owl", true);
         MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
         set.add(parser.parse("Marsupials DisjointWith Person"));
         set.add(parser.parse("isHardWorking Domain Person"));
@@ -111,7 +111,7 @@ public class QXDiagTest {
     @Test
     public void testFasterDiagnosisSearchQuick() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         HashSet<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
-        OWLTheory th = createTheory(manager, "queryontologies/koala.owl", true);
+        OWLTheory th = createTheory(manager, "ontologies/koala.owl", true);
         MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
         set.add(parser.parse("Marsupials DisjointWith Person"));
         ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getActiveFormulas());
@@ -126,7 +126,7 @@ public class QXDiagTest {
     public void testUnivNormal() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
         HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
-        OWLTheory th = createTheory(manager, "queryontologies/Univ.owl", false);
+        OWLTheory th = createTheory(manager, "ontologies/Univ.owl", false);
         MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
         positiveTestcase.add(parser.parse("ProfessorInHCIorAI SubClassOf advisorOf only AIStudent"));
         positiveTestcase.add(parser.parse("AIStudent DisjointWith HCIStudent"));
@@ -160,7 +160,7 @@ public class QXDiagTest {
     public void testUnivDual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();
         HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
-        OWLTheory th = createTheory(manager, "queryontologies/Univ.owl", true);
+        OWLTheory th = createTheory(manager, "ontologies/Univ.owl", true);
         MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
         positiveTestcase.add(parser.parse("ProfessorInHCIorAI SubClassOf advisorOf only AIStudent"));
         positiveTestcase.add(parser.parse("AIStudent DisjointWith HCIStudent"));
@@ -218,7 +218,7 @@ public class QXDiagTest {
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory th = createTheory(manager, "queryontologies/koala.owl", false);
+        OWLTheory th = createTheory(manager, "ontologies/koala.owl", false);
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();

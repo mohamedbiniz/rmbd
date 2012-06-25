@@ -57,10 +57,10 @@ public class QuerySelComparison {
     public static final int NUMBER_OF_HITTING_SETS = 9;
 
 
-    //private final String[] ontologies = {"CHEM-A.owl", "src/test/resources/koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl",
+    //private final String[] ontologies = {"CHEM-A.owl", "src/test/resources/koala2.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ2.owl",
     //        "Economy-SDA.owl", "Transportation-SDA.owl"};
-    // "koala.owl",
-    private String[] ontologies = {"Univ.owl"};
+    // "koala2.owl",
+    private String[] ontologies = {"Univ2.owl"};
     //private String[] ontologies = {"opengalen-no-propchainsmod.owl"};
 
     private final String queryontologies = "queryontologies";
@@ -200,7 +200,7 @@ public class QuerySelComparison {
     public void testKoala() throws NoConflictException, SolverException, InconsistentTheoryException {
 
         extremeDistribution = new ExtremeDistribution();
-        String ontologyFileString = "src/test/resources/koala.owl";
+        String ontologyFileString = "src/test/resources/koala2.owl";
         rnd.setSeed(1000);
 
         OWLOntology ont = createOwlOntology(ontologyFileString);
