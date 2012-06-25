@@ -44,10 +44,10 @@ public class DiagnosisTests {
 
         // used in the paper
         //exclude.add("CHEM-A.owl");
-        //exclude.add("koala.owl");
+        //exclude.add("koala2.owl");
         //exclude.add("buggy-sweet-jpl.owl");
         //exclude.add("miniTambis.owl");
-        //exclude.add("Univ.owl");
+        //exclude.add("Univ2.owl");
         //exclude.add("Economy-SDA.owl");
         //exclude.add("Transportation-SDA.owl");
 

@@ -72,7 +72,7 @@ public class QueryForEachDiagTests extends PerformanceTests {
     @Test
     public void queryToDiags()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        String ont = "koala.owl";
+        String ont = "ontologies/koala.owl";
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();

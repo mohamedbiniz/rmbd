@@ -46,7 +46,7 @@ public class MultithrValidTest {
     @Test
     public void testBruteForce2() throws OWLException, InconsistentTheoryException, SolverException {
 
-        InputStream st = ClassLoader.getSystemResourceAsStream("queryontologies/Univ.owl");
+        InputStream st = ClassLoader.getSystemResourceAsStream("ontologies/Univ.owl");
         OWLOntology ontology = manager.loadOntologyFromOntologyDocument(st);
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {

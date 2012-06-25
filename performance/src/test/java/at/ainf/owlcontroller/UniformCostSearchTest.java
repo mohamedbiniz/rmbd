@@ -48,7 +48,7 @@ public class UniformCostSearchTest {
 
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntology ontology =
-                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ecai2010.owl"));
+                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/ecai2010.owl"));
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 
@@ -79,7 +79,7 @@ public class UniformCostSearchTest {
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntology ontology =
-                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ecai2010.owl"));
+                manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/ecai2010.owl"));
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 
@@ -164,7 +164,7 @@ public class UniformCostSearchTest {
     public void createTh() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-        File file = new File(ClassLoader.getSystemResource("ecai2010.owl").getFile());
+        File file = new File(ClassLoader.getSystemResource("ontologies/ecai2010.owl").getFile());
         OWLOntology ontology = manager.loadOntologyFromOntologyDocument(file);
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();

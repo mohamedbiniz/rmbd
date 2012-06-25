@@ -171,7 +171,7 @@ public class Example2Test extends AbstractExample {
     @BeforeClass
     public static void setUp() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException {
 
-        file = new File(ClassLoader.getSystemResource("ecai2010.owl").getFile());
+        file = new File(ClassLoader.getSystemResource("ontologies/ecai2010.owl").getFile());
         createOntology();
         namAxioms();
         setupQueries();

@@ -50,9 +50,9 @@ public class PerformanceTests extends BasePerformanceTests {
     private static Logger logger = Logger.getLogger(PerformanceTests.class.getName());
 
 
-    //private final String[] ontologies = {"CHEM-A.owl", "src/test/resources/koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl",
+    //private final String[] ontologies = {"CHEM-A.owl", "src/test/resources/koala2.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ2.owl",
     //        "Economy-SDA.owl", "Transportation-SDA.owl"};
-    // "koala.owl",
+    // "koala2.owl",
     protected String[] ontologies = {"ecai.owl"};
     //private String[] ontologies = {"opengalen-no-propchainsmod.owl"};
 
@@ -534,7 +534,7 @@ public class PerformanceTests extends BasePerformanceTests {
 
     @Test
     public void testCompareDiagnosisMethods() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
-        compareDualWithHS("koala.owl");
+        compareDualWithHS("ontologies/koala.owl");
     }
 
 

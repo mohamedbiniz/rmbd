@@ -1,6 +1,5 @@
 package at.ainf.owlcontroller;
 
-import at.ainf.owlcontroller.oaei11align.RdfMatchingFileParser;
 import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;

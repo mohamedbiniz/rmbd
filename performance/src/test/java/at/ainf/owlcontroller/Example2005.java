@@ -39,7 +39,7 @@ public class Example2005 {
 
     static Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 
-    public static File file = new File(ClassLoader.getSystemResource("iswc2005.owl").getFile());
+    public static File file = new File(ClassLoader.getSystemResource("ontologies/iswc2005.owl").getFile());
 
     MyOWLRendererParser parser;
 
