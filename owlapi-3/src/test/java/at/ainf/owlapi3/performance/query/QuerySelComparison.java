@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance;
+package at.ainf.owlapi3.performance.query;
 
 import at.ainf.diagnosis.partitioning.*;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
@@ -8,7 +8,7 @@ import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.Utils;
+import at.ainf.owlapi3.utils.Utils;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.ITheory;
@@ -16,8 +16,11 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
-import at.ainf.owlapi3.performance.distribution.ExtremeDistribution;
-import at.ainf.owlapi3.performance.distribution.ModerateDistribution;
+import at.ainf.owlapi3.utils.distribution.ExtremeDistribution;
+import at.ainf.owlapi3.utils.distribution.ModerateDistribution;
+import at.ainf.owlapi3.performance.query.table.TableList;
+import at.ainf.owlapi3.performance.query.table.Time;
+import at.ainf.owlapi3.performance.query.table.UserProbAndQualityTable;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -30,12 +33,14 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
+import static at.ainf.owlapi3.utils.Constants.DiagProbab;
+import static at.ainf.owlapi3.utils.Constants.UsersProbab;
+
 import java.io.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
-import static _dev.TimeLog.printOverallStats;
 import static _dev.TimeLog.printStatsAndClear;
 import static junit.framework.Assert.assertTrue;
 
@@ -192,134 +197,8 @@ public class QuerySelComparison {
         return search;
     }
 
-    @Ignore
-    @Test
-    public void testKoala() throws NoConflictException, SolverException, InconsistentTheoryException {
-
-        extremeDistribution = new ExtremeDistribution();
-        String ontologyFileString = "src/test/resources/koala2.owl";
-        rnd.setSeed(1000);
-
-        OWLOntology ont = createOwlOntology(ontologyFileString);
-
-        OWLTheory theory = createOWLTheory(ont);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory);
-        //ProbabilityTableModel mo = new ProbabilityTableModel();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
-        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
-        es.updateKeywordProb(map);
-        search.setCostsEstimator(es);
-
-        search.run();
-        TreeSet<AxiomSet<OWLLogicalAxiom>> alldiags = (TreeSet<AxiomSet<OWLLogicalAxiom>>)
-                search.getDiagnoses();
-
-        theory.clearTestCases();
-        search.reset();
-
-        chooseUserProbab(UsersProbab.EXTREME, search, alldiags);
-
-        AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(DiagProbab.GOOD, alldiags);
-
-        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.run(9);
-
-        Partition<OWLLogicalAxiom> actPa = getBestQuery(search, diagnoses);
-
-        boolean answer = generateQueryAnswer(search, actPa, targetDiag);
-
-        if (answer) {
-            search.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-        } else {
-            search.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-        }
-
-        diagnoses = search.run(9);
-        Iterator iter = diagnoses.iterator();
-        boolean found = false;
-        while (iter.hasNext()) {
-            if (iter.next().equals(targetDiag))
-                found = true;
-        }
-        assertTrue(found);
-    }
-
-    @Ignore
-    @Test
-    public void testLeadingDiagnoses() {
-
-        HashMap<String, UserProbAndQualityTable> map_entropy = new HashMap<String, UserProbAndQualityTable>();
-        HashMap<String, UserProbAndQualityTable> map_split = new HashMap<String, UserProbAndQualityTable>();
-        moderateDistribution = new ModerateDistribution();
-        extremeDistribution = new ExtremeDistribution();
 
 
-        for (String ontologyFileString : ontologies) {
-
-            UserProbAndQualityTable split_result = new UserProbAndQualityTable();
-            UserProbAndQualityTable entropy_result = new UserProbAndQualityTable();
-
-            rnd.setSeed(1641998975);
-
-            logger.info("creating objects for " + ontologyFileString);
-
-            OWLOntology ont = createOwlOntology(ontologyFileString);
-
-            OWLTheory theory = createOWLTheory(ont);
-            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory);
-            //ProbabilityTableModel mo = new ProbabilityTableModel();
-            HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
-            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
-            es.updateKeywordProb(map);
-            search.setCostsEstimator(es);
-
-            logger.info("found all diagnoses for " + ontologyFileString);
-            for (UsersProbab usersProbab : UsersProbab.values()) {
-                for (DiagProbab diagProbab : DiagProbab.values()) {
-                    if (diagProbab == DiagProbab.GOOD && usersProbab == UsersProbab.EXTREME)
-
-                        for (int i = 0; i < 1; i++) {
-
-                            logger.info(ontologyFileString + " " + usersProbab + " " + diagProbab + " " + i
-                                    + " choosing target diagnoses and user probabilities  ");
-
-                            chooseUserProbab(usersProbab, search, Collections.<AxiomSet<OWLLogicalAxiom>>emptySet());
-                            logger.info("searching diagnoses for " + ontologyFileString);
-                            try {
-                                search.run();
-                            } catch (SolverException e) {
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            } catch (NoConflictException e) {
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            } catch (InconsistentTheoryException e) {
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            }
-
-                            Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
-                                    Collections.unmodifiableSet(search.getDiagnoses());
-                            Set<AxiomSet<OWLLogicalAxiom>> conflictSets = search.getConflicts();
-
-                            logger.info(ontologyFileString + " - with " + conflictSets.size() + " minimal conflict(s) and " + diagnoses.size() + " hitting set(s)");
-
-                            logResult(diagnoses, "Hitting set cardinalities: ");
-                            logResult(conflictSets, "Conflict set cardinalities: ");
-                            theory.clearTestCases();
-                            search.reset();
-                            printStatsAndClear("");
-                        }
-
-                }
-
-            }
-            printOverallStats(ontologyFileString);
-
-        }
-    }
-
-    private void logResult(Collection<? extends Set<OWLLogicalAxiom>> sets, String message) {
-        for (Collection<OWLLogicalAxiom> hs : sets)
-            message += hs.size() + "; ";
-        logger.info(message);
-    }
 
     boolean NOOUTPUT = false;
 

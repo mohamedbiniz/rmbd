@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance;
+package at.ainf.owlapi3.utils;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;

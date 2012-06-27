@@ -1,6 +1,9 @@
-package at.ainf.owlapi3.performance;
+package at.ainf.owlapi3.performance.query.table;
 
 import java.util.HashMap;
+
+import static at.ainf.owlapi3.utils.Constants.DiagProbab;
+import static at.ainf.owlapi3.utils.Constants.UsersProbab;
 
 /**
  * Created by IntelliJ IDEA.
