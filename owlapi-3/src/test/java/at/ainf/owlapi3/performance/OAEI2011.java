@@ -4,7 +4,7 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
-import at.ainf.owlapi3.Utils;
+import at.ainf.owlapi3.utils.Utils;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -107,7 +107,7 @@ public class OAEI2011 {
 
     }
 
-    static OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
+    public static OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
         OWLDataFactory factory = man.getOWLDataFactory();
         OWLClass clsA = factory.getOWLClass(IRI.create(sourceNamespace + "#" +  source));
         OWLClass clsB = factory.getOWLClass(IRI.create(targetNamespace + "#" +  target));

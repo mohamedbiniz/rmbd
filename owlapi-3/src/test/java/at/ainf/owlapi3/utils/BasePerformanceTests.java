@@ -1,4 +1,4 @@
-package at.ainf.owlapi3;
+package at.ainf.owlapi3.utils;
 
 import static at.ainf.diagnosis.tree.Rounding.*;
 import at.ainf.diagnosis.partitioning.CKK;
@@ -13,9 +13,9 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
-import at.ainf.owlapi3.performance.PerformanceTests;
-import at.ainf.owlapi3.performance.TableList;
-import at.ainf.owlapi3.performance.Time;
+import at.ainf.owlapi3.performance.query.PerformanceTests;
+import at.ainf.owlapi3.performance.query.table.TableList;
+import at.ainf.owlapi3.performance.query.table.Time;
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;

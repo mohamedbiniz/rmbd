@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance;
+package at.ainf.owlapi3.performance.query;
 
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
@@ -9,7 +9,6 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.*;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -20,8 +19,12 @@ import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
-import at.ainf.owlapi3.performance.distribution.ExtremeDistribution;
-import at.ainf.owlapi3.performance.distribution.ModerateDistribution;
+import at.ainf.owlapi3.performance.OAEI2011;
+import at.ainf.owlapi3.utils.distribution.ExtremeDistribution;
+import at.ainf.owlapi3.utils.distribution.ModerateDistribution;
+import at.ainf.owlapi3.performance.query.table.TableList;
+import at.ainf.owlapi3.performance.query.table.Time;
+import at.ainf.owlapi3.utils.*;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -38,7 +41,9 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static at.ainf.owlapi3.BasePerformanceTests.QSSType.*;
+import static at.ainf.owlapi3.utils.Constants.DiagProbab;
+import static at.ainf.owlapi3.utils.Constants.UsersProbab;
+import static at.ainf.owlapi3.utils.BasePerformanceTests.QSSType.*;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -606,8 +611,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void calcOneDiagAndMore() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        Properties properties = Utils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = Utils.readOntologiesFromFile(properties);
 
         for (boolean dual : new boolean[]{true, false}) {
 
@@ -724,14 +729,14 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void testDaReadMethods() throws IOException, SolverException, InconsistentTheoryException {
-        Properties properties = AlignmentUtils.readProps("alignment.properties");
-        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        Properties properties = Utils.readProps("alignment.properties");
+        Map<String, List<String>> mapOntos = Utils.readOntologiesFromFile(properties);
 
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {
                 String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                String[] targetAxioms2 = AlignmentUtils.getDiagnosis(m, o);
-                boolean eq = AlignmentUtils.compareDiagnoses(targetAxioms, targetAxioms2);
+                String[] targetAxioms2 = Utils.getDiagnosis(m, o);
+                boolean eq = Utils.compareDiagnoses(targetAxioms, targetAxioms2);
                 if (!eq) {
                     OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                     Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
@@ -965,7 +970,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         o2 = o2.substring(0, o2.length() - 4);
 
         String n = file.getName().substring(0, file.getName().length() - 4);
-        OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",
+        OWLOntology merged = Utils.createOntologyWithRdfMappings("oaei11conference/ontology",
                 o1, o2, mapd, n + ".rdf");
 
         OWLOntology ontology = new OWLIncoherencyExtractor(
@@ -976,11 +981,11 @@ public class UnsolvableTests extends BasePerformanceTests {
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
         OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology", o1 + ".owl");
         OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology", o2 + ".owl");
-        bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-        bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+        bx.addAll(Utils.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+        bx.addAll(Utils.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
         theory.addBackgroundFormulas(bx);
 
-        Map<OWLLogicalAxiom, BigDecimal> map1 = RDFUtils.readRdfMapping(mapd, n + ".rdf");
+        Map<OWLLogicalAxiom, BigDecimal> map1 = Utils.readRdfMapping(mapd, n + ".rdf");
 
         OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
@@ -996,7 +1001,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         OWLTheory th30 = createTheoryOAEI(ontology, true, true);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = createUniformCostSearch(th30, true);
         th30.addBackgroundFormulas(bx);
-        OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, RDFUtils.readRdfMapping(mapd, n + ".rdf"));
+        OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, Utils.readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
 
         try {
@@ -1073,7 +1078,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                     o2 = o2.substring(0, o2.length() - 4);
 
                     String n = file.getName().substring(0, file.getName().length() - 4);
-                    OWLOntology merged = RDFUtils.createOntologyWithMappings("oaei11conference/ontology",
+                    OWLOntology merged = Utils.createOntologyWithRdfMappings("oaei11conference/ontology",
                             o1, o2, matchingsDir + map.get(file), n + ".rdf");
 
                             long preprocessModulExtract = System.currentTimeMillis();
@@ -1086,11 +1091,11 @@ public class UnsolvableTests extends BasePerformanceTests {
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                     OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology", o1 + ".owl");
                     OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology", o2 + ".owl");
-                    bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-                    bx.addAll(CreationUtils.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+                    bx.addAll(Utils.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+                    bx.addAll(Utils.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
                     theory.addBackgroundFormulas(bx);
 
-                    Map<OWLLogicalAxiom, BigDecimal> map1 = RDFUtils.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
+                    Map<OWLLogicalAxiom, BigDecimal> map1 = Utils.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
 
                     OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
@@ -1162,8 +1167,8 @@ public class UnsolvableTests extends BasePerformanceTests {
     public void doTestAroma()
 
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
-        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        Properties properties = Utils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = Utils.readOntologiesFromFile(properties);
         //boolean background_add = false;
         showElRates = false;
 
@@ -1242,8 +1247,8 @@ public class UnsolvableTests extends BasePerformanceTests {
     public void doTestsOAEIAnatomyTrack()
 
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
-        Properties properties = AlignmentUtils.readProps("alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        Properties properties = Utils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = Utils.readOntologiesFromFile(properties);
         //boolean background_add = false;
         showElRates = false;
 
@@ -1594,12 +1599,10 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = AlignmentUtils.readProps("alignment.allFiles.properties");
-        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        Properties properties = Utils.readProps("alignment.allFiles.properties");
+        Map<String, List<String>> mapOntos = Utils.readOntologiesFromFile(properties);
         //boolean background_add = false;
         showElRates = false;
-
-        Timer timer = new Timer();
 
         BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{false}) {
@@ -1612,7 +1615,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                                 //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
-                                String[] targetAxioms = AlignmentUtils.getDiagnosis(m, o);
+                                String[] targetAxioms = Utils.getDiagnosis(m, o);
                                 OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                                 ontology = new OWLIncoherencyExtractor(
                                       new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
@@ -1692,12 +1695,8 @@ public class UnsolvableTests extends BasePerformanceTests {
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
                                 //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
 
-                                TimeoutTask task = new TimeoutTask(4 * 3600 * 1000, m.trim(), o.trim());
-                                task.setSearch(search);
-                                timer.scheduleAtFixedRate(task, 0, TimeoutTask.CYCLE_TIME);
                                 out += simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
-                                task.cancel();
-                                task.setSearch(null);
+
                             }
                             logger.info(out);
                         }
@@ -1874,20 +1873,20 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     @Test
     public void doShowMappingAxiomsSizes() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = AlignmentUtils.readProps("alignment.allFiles.properties");
-        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        Properties properties = Utils.readProps("alignment.allFiles.properties");
+        Map<String, List<String>> mapOntos = Utils.readOntologiesFromFile(properties);
 
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {
-                AlignmentUtils.getDiagnosis(m, o);
+                Utils.getDiagnosis(m, o);
             }
         }
     }
 
     @Test
     public void doUnsolvableTest() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = AlignmentUtils.readProps();
-        Map<String, List<String>> mapOntos = AlignmentUtils.readOntologiesFromFile(properties);
+        Properties properties = Utils.readProps();
+        Map<String, List<String>> mapOntos = Utils.readOntologiesFromFile(properties);
         boolean background_add = false;
 
         showElRates = true;
@@ -1899,7 +1898,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                         String out = "STAT, " + m + ", " + o;
                         for (BasePerformanceTests.QSSType type : qssTypes) {
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                            String[] targetAxioms = AlignmentUtils.getDiagnosis(m, o);
+                            String[] targetAxioms = Utils.getDiagnosis(m, o);
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);

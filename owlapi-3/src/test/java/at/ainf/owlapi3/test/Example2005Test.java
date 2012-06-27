@@ -3,7 +3,7 @@ package at.ainf.owlapi3.test;
 import at.ainf.diagnosis.debugger.QueryDebugger;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.Utils;
+import at.ainf.owlapi3.utils.Utils;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;

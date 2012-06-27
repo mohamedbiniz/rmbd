@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance.distribution;
+package at.ainf.owlapi3.utils.distribution;
 
 import java.util.Random;
 
@@ -6,21 +6,21 @@ import java.util.Random;
  * Created by IntelliJ IDEA.
  * User: pr8
  * Date: 24.05.11
- * Time: 15:26
+ * Time: 17:24
  * To change this template use File | Settings | File Templates.
  */
-public class ExtremeDistribution implements DistributionGeneratorI {
+public class ModerateDistribution implements DistributionGeneratorI {
 
-    ExtremeDistributionMode mode;
+    ModerateDistributionMode mode;
     private Random randomGenerator;
-    private double param = 1.75d;
+    private double param = (double)2;
 
-    public ExtremeDistribution(){
-        this.mode = ExtremeDistributionMode.ONE_DIV_PARAM_POWER_X;
+    public ModerateDistribution(){
+        this.mode = ModerateDistributionMode.NO_WEIGHTS;
         randomGenerator = new Random(1);
     }
 
-    public ExtremeDistribution(long seed, ExtremeDistributionMode mode, double param){
+    public ModerateDistribution(long seed, ModerateDistributionMode mode, double param){
         this.mode = mode;
         randomGenerator = new Random(seed);
         this.param = param;
@@ -41,17 +41,17 @@ public class ExtremeDistribution implements DistributionGeneratorI {
     }
 
 
-    private double getWeight(ExtremeDistributionMode mode, int i){
+    private double getWeight(ModerateDistributionMode mode, int i){
         double weight;
         switch(mode){
-            case ONE_DIV_PARAM_POWER_X:
-                weight = 1d/Math.pow(param,(double)i);
+            case NO_WEIGHTS:
+                weight = 1d;
                 break;
-            case ONE_DIV_X_POWER_PARAM:
-                weight = 1d/Math.pow((double)i+1d,param);        // (+1d) damit nicht division durch 0
+            case ONE_DIV_PARAM_TH_ROOT_OF_X:
+                weight = 1d/Math.pow((double)i,1d/param);
                 break;
             default:
-                throw new IllegalArgumentException("Illegal ExtremeDistribution Mode selected!");
+                throw new IllegalArgumentException("Illegal ModerateDistribution Mode selected!");
         }
         return weight;
     }

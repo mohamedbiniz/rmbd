@@ -64,7 +64,7 @@ public class Example2Test extends AbstractExample {
         }
     }
 
-    private static Logger logger = Logger.getLogger(CostNodesTest.class.getName());
+    private static Logger logger = Logger.getLogger(Example2Test.class.getName());
 
     enum Diag {
         D1(new Axiom[]{Axiom.AX1}),

@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.owlapi3.Utils;
+import at.ainf.owlapi3.utils.Utils;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;

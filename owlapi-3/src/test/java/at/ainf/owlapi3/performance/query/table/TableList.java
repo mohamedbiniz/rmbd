@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance;
+package at.ainf.owlapi3.performance.query.table;
 
 import java.util.Collections;
 import java.util.Comparator;

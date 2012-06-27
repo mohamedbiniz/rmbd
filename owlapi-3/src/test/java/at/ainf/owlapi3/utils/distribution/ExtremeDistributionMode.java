@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance.distribution;
+package at.ainf.owlapi3.utils.distribution;
 
 /**
  * Created by IntelliJ IDEA.

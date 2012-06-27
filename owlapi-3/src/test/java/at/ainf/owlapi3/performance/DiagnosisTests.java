@@ -1,11 +1,11 @@
 package at.ainf.owlapi3.performance;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
-import at.ainf.owlapi3.CreationUtils;
-import at.ainf.owlapi3.RDFUtils;
+import at.ainf.owlapi3.utils.CreationUtils;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.owlapi3.utils.Utils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
@@ -171,7 +171,7 @@ public class DiagnosisTests {
             o2 = o2.substring(0,o2.length()-4);
             String pathMapping = "oaei11conference/matchings/" + file.getParentFile().getName();
             String mappingName = file.getName();
-            ontology = RDFUtils.createOntologyWithMappings(pathOntologies, o1, o2, pathMapping, mappingName);
+            ontology = Utils.createOntologyWithRdfMappings(pathOntologies, o1, o2, pathMapping, mappingName);
         }
         else {
             ontology = CreationUtils.createOwlOntology(file);

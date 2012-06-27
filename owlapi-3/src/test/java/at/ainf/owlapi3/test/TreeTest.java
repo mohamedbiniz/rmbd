@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.Utils;
+import at.ainf.owlapi3.utils.Utils;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import at.ainf.owlapi3.model.OWLDiagnosisSearchableObject;
 import at.ainf.owlapi3.model.OWLTheory;
