@@ -5,6 +5,7 @@ import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
+import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
@@ -13,7 +14,6 @@ import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
-import at.ainf.owlapi3.utils.BasePerformanceTests;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.ITheory;
@@ -47,7 +47,64 @@ import static junit.framework.Assert.assertTrue;
  * Time: 10:56
  * To change this template use File | Settings | File Templates.
  */
-public class BaseAlignmentTests extends BasePerformanceTests {
+public class BaseAlignmentTests {
+
+    public static int NUMBER_OF_HITTING_SETS = 9;
+    protected static BigDecimal SIGMA = new BigDecimal("100");
+    protected static boolean userBrk = true;
+
+
+
+    protected int diagnosesCalc = 0;
+    protected int conflictsCalc = 0;
+    protected String daStr = "";
+
+    public enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
+
+
+
+
+
+    protected <E extends OWLObject> void printc
+            (Collection<? extends Collection<E>> c) {
+        for (Collection<E> hs : c) {
+            System.out.println("Test case:");
+            print(hs);
+        }
+    }
+
+    public <E extends OWLObject> void print
+            (Collection<E> c) {
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        for (E el : c) {
+            System.out.print(renderer.render(el) + ",");
+        }
+    }
+
+    protected <E extends OWLObject> void prinths
+            (Collection<AxiomSet<E>> c) {
+        for (AxiomSet<E> hs : c) {
+            logger.info(hs);
+            print(hs);
+        }
+    }
+
+    protected QSS<OWLLogicalAxiom> createQSSWithDefaultParam(QSSType type) {
+        switch (type) {
+            case MINSCORE:
+                return QSSFactory.createMinScoreQSS();
+            case SPLITINHALF:
+                return QSSFactory.createSplitInHalfQSS();
+            case STATICRISK:
+                return QSSFactory.createStaticRiskQSS(0.3);
+            case DYNAMICRISK:
+                return QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
+            case PENALTY:
+                return QSSFactory.createPenaltyQSS(10);
+            default:
+                return QSSFactory.createMinScoreQSS();
+        }
+    }
 
     private static Logger logger = Logger.getLogger(BaseAlignmentTests.class.getName());
 

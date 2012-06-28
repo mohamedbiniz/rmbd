@@ -4,6 +4,7 @@ import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
+import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
@@ -43,7 +44,6 @@ import java.util.*;
 
 import static at.ainf.owlapi3.utils.Constants.DiagProbab;
 import static at.ainf.owlapi3.utils.Constants.UsersProbab;
-import static at.ainf.owlapi3.utils.BasePerformanceTests.QSSType.*;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -53,12 +53,68 @@ import static org.junit.Assert.assertTrue;
  * Time: 08:26
  * To change this template use File | Settings | File Templates.
  */
-public class UnsolvableTests extends BasePerformanceTests {
+public class UnsolvableTests {
 
     private static Logger logger = Logger.getLogger(UnsolvableTests.class.getName());
 
-
     private boolean showElRates = true;
+
+
+    public static int NUMBER_OF_HITTING_SETS = 9;
+    protected static BigDecimal SIGMA = new BigDecimal("100");
+    protected static boolean userBrk = true;
+
+    protected int diagnosesCalc = 0;
+    protected int conflictsCalc = 0;
+    protected String daStr = "";
+
+    public enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
+
+    protected Random rnd = new Random();
+
+
+
+    protected <E extends OWLObject> void printc
+            (Collection<? extends Collection<E>> c) {
+        for (Collection<E> hs : c) {
+            System.out.println("Test case:");
+            print(hs);
+        }
+    }
+
+    public <E extends OWLObject> void print
+            (Collection<E> c) {
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        for (E el : c) {
+            System.out.print(renderer.render(el) + ",");
+        }
+    }
+
+    protected <E extends OWLObject> void prinths
+            (Collection<AxiomSet<E>> c) {
+        for (AxiomSet<E> hs : c) {
+            logger.info(hs);
+            print(hs);
+        }
+    }
+
+    protected QSS<OWLLogicalAxiom> createQSSWithDefaultParam(QSSType type) {
+        switch (type) {
+            case MINSCORE:
+                return QSSFactory.createMinScoreQSS();
+            case SPLITINHALF:
+                return QSSFactory.createSplitInHalfQSS();
+            case STATICRISK:
+                return QSSFactory.createStaticRiskQSS(0.3);
+            case DYNAMICRISK:
+                return QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
+            case PENALTY:
+                return QSSFactory.createPenaltyQSS(10);
+            default:
+                return QSSFactory.createMinScoreQSS();
+        }
+    }
+
 
     private boolean traceDiagnosesAndQueries = false;
     private boolean minimizeQuery = false;
@@ -287,7 +343,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
     protected String simulateBruteForceOnl(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
                                            OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
-                                           TableList entry, BasePerformanceTests.QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> secondsearch, OWLTheory t3) {
+                                           TableList entry, QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> secondsearch, OWLTheory t3) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
@@ -1053,8 +1109,8 @@ public class UnsolvableTests extends BasePerformanceTests {
 
         showElRates = false;
 
-        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {MINSCORE, SPLITINHALF};
+        QSSType[] qssTypes = new QSSType[]
+                {QSSType.MINSCORE, QSSType.SPLITINHALF};
 
         for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
 
@@ -1066,7 +1122,7 @@ public class UnsolvableTests extends BasePerformanceTests {
 
                 Set<OWLLogicalAxiom> targetDg = getRandomDiag(file, map.get(file));
 
-                for (BasePerformanceTests.QSSType type : qssTypes) {
+                for (QSSType type : qssTypes) {
 
 
                     String fileName = file.getName();
@@ -1127,7 +1183,7 @@ public class UnsolvableTests extends BasePerformanceTests {
         minimizeQuery = true;
 
         NUMBER_OF_HITTING_SETS = 2;
-        QSSType type = MINSCORE;
+        QSSType type = QSSType.MINSCORE;
         boolean dual = true;
         String name = "dualISWC2012.owl";
         //String name = "dualpaper.owl";
@@ -1176,16 +1232,16 @@ public class UnsolvableTests extends BasePerformanceTests {
                 new String[]{"Aroma"};
         //String[] files = new String[]{"Aroma"};
 
-        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                {BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF,
-                        BasePerformanceTests.QSSType.DYNAMICRISK};
+        QSSType[] qssTypes = new QSSType[]
+                {QSSType.MINSCORE, QSSType.SPLITINHALF,
+                        QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{true}) {
             for (boolean background : new boolean[]{true}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
                         String out = "STAT, " + file;
-                        for (BasePerformanceTests.QSSType type : qssTypes) {
+                        for (QSSType type : qssTypes) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
@@ -1256,16 +1312,16 @@ public class UnsolvableTests extends BasePerformanceTests {
                   //new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
         String[] files = new String[]{"AgrMaker"};
 
-        //BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{DYNAMICRISK};
-        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]
-                { MINSCORE, SPLITINHALF, DYNAMICRISK };
+        //QSSType[] qssTypes = new QSSType[]{DYNAMICRISK};
+        QSSType[] qssTypes = new QSSType[]
+                { QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK };
         for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
                         String out = "STAT, " + file;
-                        for (BasePerformanceTests.QSSType type : qssTypes) {
+                        for (QSSType type : qssTypes) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
@@ -1327,8 +1383,8 @@ public class UnsolvableTests extends BasePerformanceTests {
     public void doSearchNoDiagFound() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
 
         showElRates = false;
-        BasePerformanceTests.QSSType[] qssTypes =
-                new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE};
+        QSSType[] qssTypes =
+                new QSSType[]{QSSType.MINSCORE};
         String[] norm = new String[]{"Transportation-SDA"};
 
 
@@ -1336,7 +1392,7 @@ public class UnsolvableTests extends BasePerformanceTests {
             for (String o : norm) {
                 String out = "STAT, " + o;
                 TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = getAllD(o);
-                for (BasePerformanceTests.QSSType type : qssTypes) {
+                for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.GOOD}) {
                         for (int i = 0; i < 1500; i++) {
 
@@ -1386,7 +1442,7 @@ public class UnsolvableTests extends BasePerformanceTests {
     protected void doOverallTreeTestEconomy(boolean dual) throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
 
         showElRates = false;
-        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+        QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
         //String[] norm = new String[]{"Transportation-SDA"};
         String[] norm = new String[]{"Transportation-SDA", "Economy-SDA"};
 
@@ -1395,7 +1451,7 @@ public class UnsolvableTests extends BasePerformanceTests {
             for (String o : norm) {
                 String out = "STAT, " + o;
                 TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = getAllD(o);
-                for (BasePerformanceTests.QSSType type : qssTypes) {
+                for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : DiagProbab.values()) {
                         for (int i = 0; i < 20; i++) {
 
@@ -1604,14 +1660,14 @@ public class UnsolvableTests extends BasePerformanceTests {
         //boolean background_add = false;
         showElRates = false;
 
-        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+        QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{false}) {
             for (boolean background : new boolean[]{true, false}) {
                 for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE, TargetSource.FROM_30_DIAGS}) {
                     for (String m : mapOntos.keySet()) {
                         for (String o : mapOntos.get(m)) {
                             String out = "STAT, " + m + ", " + o;
-                            for (BasePerformanceTests.QSSType type : qssTypes) {
+                            for (QSSType type : qssTypes) {
 
                                 //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
@@ -1763,7 +1819,7 @@ public class UnsolvableTests extends BasePerformanceTests {
                             String message = "act," + name + "," + dual + "," + usersProbab + ","
                                     + diagProbab + "," + run  ;
 
-                            out += simulateBruteForceOnl(search2, (OWLTheory)search2.getTheory(), targetDiag, e, MINSCORE, message, null, null, null);
+                            out += simulateBruteForceOnl(search2, (OWLTheory)search2.getTheory(), targetDiag, e, QSSType.MINSCORE, message, null, null, null);
 
                         }
                     }
@@ -1890,13 +1946,13 @@ public class UnsolvableTests extends BasePerformanceTests {
         boolean background_add = false;
 
         showElRates = true;
-        BasePerformanceTests.QSSType[] qssTypes = new BasePerformanceTests.QSSType[]{BasePerformanceTests.QSSType.MINSCORE, BasePerformanceTests.QSSType.SPLITINHALF, BasePerformanceTests.QSSType.DYNAMICRISK};
+        QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{false}) {
             for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_FILE}) {
                 for (String m : mapOntos.keySet()) {
                     for (String o : mapOntos.get(m)) {
                         String out = "STAT, " + m + ", " + o;
-                        for (BasePerformanceTests.QSSType type : qssTypes) {
+                        for (QSSType type : qssTypes) {
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
                             String[] targetAxioms = Utils.getDiagnosis(m, o);
                             OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
