@@ -24,7 +24,6 @@ import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.owlapi3.utils.BasePerformanceTests;
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
