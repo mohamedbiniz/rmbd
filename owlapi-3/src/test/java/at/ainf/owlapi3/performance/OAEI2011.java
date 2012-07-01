@@ -4,6 +4,7 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
+import at.ainf.owlapi3.utils.CreationUtils;
 import at.ainf.owlapi3.utils.Utils;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
@@ -11,8 +12,10 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -157,6 +160,31 @@ public class OAEI2011 {
         } catch (OWLOntologyCreationException e) {
             return null;
         }
+    }
+
+    private static Logger logger = Logger.getLogger(OAEI2011.class.getName());
+
+    @Test
+    public void showMetrics() {
+
+        String o = "koala.owl";
+        OWLOntology ont = CreationUtils.createOwlOntology("ontologies",o);
+        logger.info(o);
+
+        Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
+        for (OWLNamedIndividual individual : ont.getIndividualsInSignature()) {
+            axioms.addAll(ont.getClassAssertionAxioms(individual));
+            axioms.addAll(ont.getObjectPropertyAssertionAxioms(individual));
+            axioms.addAll(ont.getDataPropertyAssertionAxioms(individual));
+            axioms.addAll(ont.getNegativeObjectPropertyAssertionAxioms(individual));
+            axioms.addAll(ont.getNegativeDataPropertyAssertionAxioms(individual));
+            axioms.addAll(ont.getSameIndividualAxioms(individual));
+            axioms.addAll(ont.getDifferentIndividualAxioms(individual));
+        }
+        logger.info("Logical Axioms: " + ont.getLogicalAxiomCount());
+        logger.info("Class Assertion Axioms: " + axioms.size() + "\n");
+
+
     }
 
     public Set<OWLLogicalAxiom> getLogicalAxiomsOfOntologiesOAEI() throws OWLOntologyCreationException {
