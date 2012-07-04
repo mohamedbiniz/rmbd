@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance.query.table;
+package at.ainf.owlapi3.performance.table;
 
 import java.util.HashMap;
 
