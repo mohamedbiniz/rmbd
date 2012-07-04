@@ -1,21 +1,13 @@
 package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.model.ITheory;
-import at.ainf.diagnosis.partitioning.CKK;
-import at.ainf.diagnosis.partitioning.Partitioning;
-import at.ainf.diagnosis.partitioning.scoring.QSS;
-import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.performance.query.PerformanceTests;
-import at.ainf.owlapi3.performance.query.table.TableList;
-import at.ainf.owlapi3.performance.query.table.Time;
+import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.SimulatedSession;
 import at.ainf.owlapi3.utils.Utils;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
@@ -277,7 +269,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
-        session.simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, type,"",null,null,null);
+        session.simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, type, "", null, null, null);
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -314,7 +306,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
-        session.simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, type,"",null,null,null);
+        session.simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, type, "", null, null, null);
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
@@ -400,18 +392,18 @@ public class DualTreeTest {//extends BasePerformanceTests {
         logger.info("needed normal " + Utils.getStringTime(timeNormalOverall) +
                 " max " + Utils.getStringTime(timeNormalMax) +
                 " min " + Utils.getStringTime(timeNormalMin) +
-                " avg " + Utils.getStringTime(timeNormalOverall / count) +
+                " avg2 " + Utils.getStringTime(timeNormalOverall / count) +
                 " Queries max " + Collections.max(nqueries) +
                 " min " + Collections.min(nqueries) +
-                " avg " + avg(nqueries)
+                " avg2 " + avg(nqueries)
         );
         logger.info("needed dual " + Utils.getStringTime(timeDualOverall) +
                 " max " + Utils.getStringTime(timeDualMax) +
                 " min " + Utils.getStringTime(timeDualMin) +
-                " avg " + Utils.getStringTime(timeDualOverall / count) +
+                " avg2 " + Utils.getStringTime(timeDualOverall / count) +
                 " Queries max " + Collections.max(dqueries) +
                 " min " + Collections.min(dqueries) +
-                " avg " + avg(dqueries));
+                " avg2 " + avg(dqueries));
     }
 
 }

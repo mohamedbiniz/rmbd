@@ -146,9 +146,9 @@ public class OAEI2011 {
             OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
             InputStream st = ClassLoader.getSystemResourceAsStream("oaei11/mouse.owl");
-            OWLOntology mouse = man.loadOntologyFromOntologyDocument(st);
+            man.loadOntologyFromOntologyDocument(st);
             st = ClassLoader.getSystemResourceAsStream("oaei11/human.owl");
-            OWLOntology human = man.loadOntologyFromOntologyDocument(st);
+            man.loadOntologyFromOntologyDocument(st);
 
             OWLOntologyMerger merger = new OWLOntologyMerger(man);
             OWLOntology merged = merger.createMergedOntology(man, IRI.create("matched" + file + ".txt"));

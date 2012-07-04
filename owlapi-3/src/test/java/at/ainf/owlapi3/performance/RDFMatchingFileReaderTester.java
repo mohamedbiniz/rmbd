@@ -336,8 +336,8 @@ public class RDFMatchingFileReaderTester {
             OWLOntology merged = Utils.createOntologyWithRdfMappings("oaei11conference/ontology", o1, o2,
                     "oaei11conference/matchings/incoherent", n + ".rdf");
 
-            /*OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1);
-            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2);
+            /*OWLOntology ontology1 = CreationUtils.createOwlOntology2("oaei11conference/ontology",o1);
+            OWLOntology ontology2 = CreationUtils.createOwlOntology2("oaei11conference/ontology",o2);
             OWLOntology merged = CreationUtils.mergeOntologies(ontology1, ontology2);
             String n = f[i].getName().substring(0,f[i].getName().length()-4);
         Set<OWLLogicalAxiom> mapping = RDFUtils.readRdfMapping("oaei11conference/matchings/incoherent",n).keySet();

@@ -80,7 +80,7 @@ public class
 
     public void doCalculateHittingSet() {
 
-        //if (getWS().getOwlTheory() == null)  getWS().createOWLTheory();
+        //if (getWS().getOwlTheory() == null)  getWS().createOWLTheory2();
 
         //try {
 
@@ -743,7 +743,7 @@ public class
         //hittingSetListModel = new DefaultListModel();
 
         OptionsDialog.createOptionsDialog(this);
-        //createOWLTheory();
+        //createOWLTheory2();
     }
 
 

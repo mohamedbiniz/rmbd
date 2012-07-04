@@ -1,10 +1,18 @@
 package at.ainf.owlapi3.utils;
 
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.owlapi3.model.DualTreeOWLTheory;
+import at.ainf.owlapi3.model.OWLTheory;
+import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 
 import java.io.File;
+import java.io.InputStream;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -31,6 +39,47 @@ public class CreationUtils {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return ontology;
+    }
+
+    public static Set<OWLLogicalAxiom> createBackgroundAxioms(OWLOntology ontology) {
+        Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
+        for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
+            bax.addAll(ontology.getClassAssertionAxioms(ind));
+            bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
+        }
+        return bax;
+    }
+
+    public static Set<OWLLogicalAxiom> createExtendedBackgroundAxioms(OWLOntology ontology) {
+        Set<OWLLogicalAxiom> bax = createBackgroundAxioms(ontology);
+        for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
+            bax.addAll(ontology.getDataPropertyAssertionAxioms(ind));
+        }
+        return bax;
+    }
+
+    public static OWLTheory createTheory(OWLOntology ontology, boolean dual, Set<OWLLogicalAxiom> bax) {
+        OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
+        OWLTheory theory = null;
+        try {
+            if (dual)
+                theory = new DualTreeOWLTheory(reasonerFactory, ontology, bax);
+            else
+                theory = new OWLTheory(reasonerFactory, ontology, bax);
+        }
+        catch (InconsistentTheoryException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (SolverException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return theory;
+    }
+
+    public static OWLTheory createTheory(OWLOntology ontology, boolean dual) {
+        Set<OWLLogicalAxiom> bax = createBackgroundAxioms(ontology);
+        return createTheory(ontology,dual,bax);
+
     }
 
 
