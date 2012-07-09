@@ -269,7 +269,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
-        session.simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, type, "", null, null, null);
+        session.simulateQuerySession(searchDual, theoryDual, diagnosis, entry2, type, "", null, null, null);
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -306,7 +306,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
-        session.simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, type, "", null, null, null);
+        session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, entry, type, "", null, null, null);
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);

@@ -42,12 +42,12 @@ public class SimulatedSession {
     public boolean showElRates = true;
 
     public int NUMBER_OF_HITTING_SETS = 9;
-    public BigDecimal SIGMA = new BigDecimal("100");
-    public boolean userBrk = true;
+    protected BigDecimal SIGMA = new BigDecimal("100");
+    protected boolean userBrk = true;
 
-    public int diagnosesCalc = 0;
-    public int conflictsCalc = 0;
-    public String daStr = "";
+    protected int diagnosesCalc = 0;
+    protected int conflictsCalc = 0;
+    protected String daStr = "";
 
     public enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
 
@@ -155,9 +155,9 @@ public class SimulatedSession {
 
     }
 
-    public String simulateBruteForceOnl(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
-                                           OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
-                                           TableList entry, QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> secondsearch, OWLTheory t3) {
+    public String simulateQuerySession(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
+                                       OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
+                                       TableList entry, QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3) {
         //DiagProvider diagProvider = new DiagProvider(search, false, 9);
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);

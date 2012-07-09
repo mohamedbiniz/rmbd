@@ -92,20 +92,6 @@ public class UnsolvableTests {
         }
     }
 
-    protected OWLOntology createOwlOntology(String matcher, String name) {
-        String path = ClassLoader.getSystemResource("alignment/" + matcher + "_incoherent_matched_ontologies").getPath();
-        File ontF = new File(path + "/" + name + ".owl");
-        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-
-        OWLOntology ontology = null;
-        try {
-            ontology = manager.loadOntologyFromOntologyDocument(ontF);
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        return ontology;
-    }
-
     protected OWLTheory createOWLTheory(OWLOntology ontology, boolean dual) {
         OWLTheory result = null;
 
@@ -181,16 +167,7 @@ public class UnsolvableTests {
 
     protected OWLOntology createOwlOntology(String name) {
         String path = ClassLoader.getSystemResource("alignment").getPath();
-        File ontF = new File(path + "/" + name + ".owl");
-        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-
-        OWLOntology ontology = null;
-        try {
-            ontology = manager.loadOntologyFromOntologyDocument(ontF);
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        return ontology;
+        return CreationUtils.createOwlOntology(path,name+".owl");
     }
 
     protected OWLTheory createTheoryOAEI(OWLOntology ontology, boolean dual, boolean reduceIncoherency) {
@@ -356,7 +333,7 @@ public class UnsolvableTests {
                         String out = "STAT, " + m + ", " + o;
 
                         String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                        OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                        OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                         Set<OWLLogicalAxiom> targetDg;
                         OWLTheory theory = createOWLTheory(ontology, dual);
                         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
@@ -472,7 +449,7 @@ public class UnsolvableTests {
                 String[] targetAxioms2 = Utils.getDiagnosis(m, o);
                 boolean eq = Utils.compareDiagnoses(targetAxioms, targetAxioms2);
                 if (!eq) {
-                    OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                    OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                     Set<OWLLogicalAxiom> targetDg = getDiagnosis(targetAxioms, ontology);
                     System.out.println(targetAxioms.toString());
                     System.out.println(targetAxioms2.toString());
@@ -585,8 +562,17 @@ public class UnsolvableTests {
         return r;
     }
 
+    public static OWLLogicalAxiom createAxiomOAEI2(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
+        OWLDataFactory factory = man.getOWLDataFactory();
+        OWLClass clsA = factory.getOWLClass(IRI.create(sourceNamespace + "#" +  source));
+        OWLClass clsB = factory.getOWLClass(IRI.create(targetNamespace + "#" +  target));
+        OWLLogicalAxiom axiom = factory.getOWLSubClassOfAxiom(clsA, clsB);
+
+        return axiom;
+        // "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
+    }
     private OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
-        OWLLogicalAxiom axiom = OAEI2011.createAxiomOAEI(sourceNamespace, source, targetNamespace, target, man);
+        OWLLogicalAxiom axiom = createAxiomOAEI2(sourceNamespace, source, targetNamespace, target, man);
 
         return axiom;
         // "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
@@ -771,7 +757,7 @@ public class UnsolvableTests {
                     out += "," + type + ",";
                     String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
                             + "," + type + "," + preprocessModulExtract + "," + randomDiagNr;
-                    out += session.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                    out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
                 }
                 logger.info(out);
@@ -823,7 +809,7 @@ public class UnsolvableTests {
 
         TableList e = new TableList();
         String message = "act," + type + "," + dual + "," + name + "," + preprocessModulExtract;
-        session.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+        session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
     }
 
@@ -898,9 +884,9 @@ public class UnsolvableTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
-                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
                         }
                         logger.info(out);
@@ -981,9 +967,9 @@ public class UnsolvableTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
-                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
                         }
                         logger.info(out);
@@ -1044,9 +1030,9 @@ public class UnsolvableTests {
                             String message = "act," + "," + o.trim() + "," + targetSource + "," +
                                     "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
                             logger.info("target diagnosis:" + targetDg.size() + " " + Utils.renderAxioms(targetDg));
-                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
                             //logger.info(out);
                         }
@@ -1103,9 +1089,9 @@ public class UnsolvableTests {
                             out += "," + type + ",";
                             String message = "act," + "," + o.trim() + "," + targetSource + "," + dual
                                     + "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
-                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
                             //logger.info(out);
                         }
@@ -1294,7 +1280,7 @@ public class UnsolvableTests {
                                 //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
                                 String[] targetAxioms = Utils.getDiagnosis(m, o);
-                                OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                                OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                                 ontology = new OWLIncoherencyExtractor(
                                       new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                                 Set<OWLLogicalAxiom> targetDg;
@@ -1371,9 +1357,9 @@ public class UnsolvableTests {
                                 TableList e = new TableList();
                                 out += "," + type + ",";
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
-                                //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                                //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                                out += session.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                                out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
                             }
                             logger.info(out);
@@ -1443,7 +1429,7 @@ public class UnsolvableTests {
                             String message = "act," + name + "," + dual + "," + usersProbab + ","
                                     + diagProbab + "," + run  ;
 
-                            out += session.simulateBruteForceOnl(search2, (OWLTheory)search2.getTheory(), targetDiag, e, QSSType.MINSCORE, message, null, null, null);
+                            out += session.simulateQuerySession(search2, (OWLTheory) search2.getTheory(), targetDiag, e, QSSType.MINSCORE, message, null, null, null);
 
                         }
                     }
@@ -1581,7 +1567,7 @@ public class UnsolvableTests {
                         for (QSSType type : qssTypes) {
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
                             String[] targetAxioms = Utils.getDiagnosis(m, o);
-                            OWLOntology ontology = createOwlOntology(m.trim(), o.trim());
+                            OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = createOWLTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
@@ -1663,9 +1649,9 @@ public class UnsolvableTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
                         }
                         logger.info(out);
@@ -1698,12 +1684,6 @@ public class UnsolvableTests {
 
         return theory;
     }
-
-    protected OWLOntology createOwlOntology2(String name) {
-        String path = ClassLoader.getSystemResource("alignment").getPath();
-        return CreationUtils.createOwlOntology(path,name+".owl");
-    }
-
 
     protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch2(OWLTheory th, boolean dual) {
 
@@ -2060,7 +2040,7 @@ public class UnsolvableTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            out += s.simulateBruteForceOnl(search, theory, targetDg, e, type, message, allD, search2, t3);
+                            out += s.simulateQuerySession(search, theory, targetDg, e, type, message, allD, search2, t3);
                         }
                         logger.info(out);
                     }
@@ -2159,9 +2139,9 @@ public class UnsolvableTests {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            out +=  a.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            out +=  a.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
 
-                            //out += simulateBruteForceOnl(search, theory, diags, e, type, message, allD, null, null);
+                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, null, null);
                         }
                         logger.info(out);
                     }
@@ -2190,8 +2170,8 @@ public class UnsolvableTests {
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = createOWLTheory2(ontology, false);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch2(theory, false);
-        OWLOntology ontology1 = createOwlOntology2(o.split("-")[0].trim());
-        OWLOntology ontology2 = createOwlOntology2(o.split("-")[1].trim());
+        OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
+        OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
         //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
         //ProbabilityTableModel mo = new ProbabilityTableModel();
@@ -2226,7 +2206,7 @@ public class UnsolvableTests {
 
         TableList e = new TableList();
         String message = "act " + m + " - " + o + " - " + targetSource + " " + type;
-        s.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+        s.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
     }
 
     private Set<AxiomSet<OWLLogicalAxiom>> run(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, int diags) {
@@ -2277,8 +2257,8 @@ public class UnsolvableTests {
                                     + ".txt").getPath();
 
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
-                            OWLOntology ontology1 = createOwlOntology2(o.split("-")[0].trim());
-                            OWLOntology ontology2 = createOwlOntology2(o.split("-")[1].trim());
+                            OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
+                            OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
                             if (background == BackgroundO.O1_O2) {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
@@ -2309,7 +2289,7 @@ public class UnsolvableTests {
                                     + ", source " + targetSource
                                     + ", qss " + type
                                     + ", background " + background;
-                            s.simulateBruteForceOnl(search, theory, targetDg, e, type, message, null, null, null);
+                            s.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
                         }
                     }
                 }
@@ -2335,8 +2315,8 @@ public class UnsolvableTests {
                     String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
                     OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                     Set<OWLLogicalAxiom> targetDg = getDiagnosis2(targetAxioms, ontology);
-                    OWLOntology ontology1 = createOwlOntology2(o.split("-")[0].trim());
-                    OWLOntology ontology2 = createOwlOntology2(o.split("-")[1].trim());
+                    OWLOntology ontology1 = createOwlOntology(o.split("-")[0].trim());
+                    OWLOntology ontology2 = createOwlOntology(o.split("-")[1].trim());
                     OWLTheory theory = createOWLTheory2(ontology, false);
                     TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch2(theory, false);
                     //ProbabilityTableModel mo = new ProbabilityTableModel();
@@ -2392,7 +2372,7 @@ public class UnsolvableTests {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
-        session.simulateBruteForceOnl(searchDual, theoryDual, diagnosis, entry2, type,"",null,null,null);
+        session.simulateQuerySession(searchDual, theoryDual, diagnosis, entry2, type, "", null, null, null);
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -2428,7 +2408,7 @@ public class UnsolvableTests {
         String daStr = "";
         int conflictsCalc = 0;
 
-        session.simulateBruteForceOnl(searchNormal, theoryNormal, diagnoses, entry, type,"",null,null,null);
+        session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, entry, type, "", null, null, null);
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
@@ -2634,7 +2614,7 @@ public class UnsolvableTests {
 
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
-            session.simulateBruteForceOnl(searchNormal,theoryNormal,diagnoses,entry, null,"",null,null,null);
+            session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, entry, null, "", null, null, null);
             theoryNormal.clearTestCases();
             searchNormal.reset();
             assert(entry.getMeanWin() == 1);
@@ -2642,7 +2622,7 @@ public class UnsolvableTests {
 
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
-            session.simulateBruteForceOnl(searchDual,theoryDual,diagnoses,entry, null,"",null,null,null);
+            session.simulateQuerySession(searchDual, theoryDual, diagnoses, entry, null, "", null, null, null);
             theoryDual.clearTestCases();
             searchDual.reset();
             assert (entry.getMeanWin() == 1);
