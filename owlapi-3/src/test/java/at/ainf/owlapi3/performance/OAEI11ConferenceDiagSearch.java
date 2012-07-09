@@ -33,9 +33,9 @@ import java.util.concurrent.*;
  * Time: 13:58
  * To change this template use File | Settings | File Templates.
  */
-public class RDFMatchingFileReaderTester {
+public class OAEI11ConferenceDiagSearch {
 
-    private static Logger logger = Logger.getLogger(RDFMatchingFileReaderTester.class.getName());
+    private static Logger logger = Logger.getLogger(OAEI11ConferenceDiagSearch.class.getName());
 
     @BeforeClass
     public static void setUp() {

@@ -28,9 +28,9 @@ import static junit.framework.Assert.assertTrue;
  * Time: 13:02:51
  * To change this template use File | Settings | File Templates.
  */
-public class DiagnosisTests {
+public class StatisticsDiagnosis {
 
-    private static Logger logger = Logger.getLogger(DiagnosisTests.class.getName());
+    private static Logger logger = Logger.getLogger(StatisticsDiagnosis.class.getName());
     private long time;
 
     @BeforeClass
@@ -240,6 +240,29 @@ public class DiagnosisTests {
 
     private void stop(String message) {
         logger.info(message + (System.currentTimeMillis() - this.time) + " ms");
+    }
+
+    @Test
+    public void showMetrics() {
+
+        String o = "koala.owl";
+        OWLOntology ont = CreationUtils.createOwlOntology("ontologies",o);
+        logger.info(o);
+
+        Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
+        for (OWLNamedIndividual individual : ont.getIndividualsInSignature()) {
+            axioms.addAll(ont.getClassAssertionAxioms(individual));
+            axioms.addAll(ont.getObjectPropertyAssertionAxioms(individual));
+            axioms.addAll(ont.getDataPropertyAssertionAxioms(individual));
+            axioms.addAll(ont.getNegativeObjectPropertyAssertionAxioms(individual));
+            axioms.addAll(ont.getNegativeDataPropertyAssertionAxioms(individual));
+            axioms.addAll(ont.getSameIndividualAxioms(individual));
+            axioms.addAll(ont.getDifferentIndividualAxioms(individual));
+        }
+        logger.info("Logical Axioms: " + ont.getLogicalAxiomCount());
+        logger.info("Class Assertion Axioms: " + axioms.size() + "\n");
+
+
     }
 
 }
