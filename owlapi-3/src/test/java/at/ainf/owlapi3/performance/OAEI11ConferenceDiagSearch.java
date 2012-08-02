@@ -5,14 +5,14 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
-import at.ainf.owlapi3.utils.CreationUtils;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.owlapi3.utils.Utils;
+import at.ainf.owlapi3.utils.creation.CreationUtils;
+import at.ainf.owlapi3.utils.creation.OAEI11ConferenceUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
@@ -67,7 +67,7 @@ public class OAEI11ConferenceDiagSearch {
             o2 = o2.substring(0,o2.length()-4);
 
             String n = file.getName().substring(0,file.getName().length()-4);
-            OWLOntology merged = Utils.createOntologyWithRdfMappings("oaei11conference/ontology", o1, o2,
+            OWLOntology merged = OAEI11ConferenceUtils.createOntologyWithRdfMappings("oaei11conference/ontology", o1, o2,
                     "oaei11conference/matchings/" + d, n + ".rdf");
 
             long extractionTime = System.currentTimeMillis();
@@ -79,13 +79,13 @@ public class OAEI11ConferenceDiagSearch {
 
             String refmatchPath = "oaei11conference/matchings/references";
             String refMatch = o1 + "-" + o2 + ".rdf";
-            Set<OWLLogicalAxiom> correctMappingAxioms = Utils.readRdfMapping(refmatchPath, refMatch).keySet();
-            ontoBackground.addAll(Utils.getIntersection(extracted.getLogicalAxioms(), correctMappingAxioms));
+            Set<OWLLogicalAxiom> correctMappingAxioms = OAEI11ConferenceUtils.readRdfMapping(refmatchPath, refMatch).keySet();
+            ontoBackground.addAll(OAEI11ConferenceUtils.getIntersection(extracted.getLogicalAxioms(), correctMappingAxioms));
 
-            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1+".owl");
+            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology", o1 + ".owl");
             OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology", o2 + ".owl");
-            ontoBackground.addAll(Utils.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-            ontoBackground.addAll(Utils.getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+            ontoBackground.addAll(OAEI11ConferenceUtils.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+            ontoBackground.addAll(OAEI11ConferenceUtils.getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms()));
 
             TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual;
             if (dual) {
@@ -222,7 +222,7 @@ public class OAEI11ConferenceDiagSearch {
                 BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(includedNames)));
                 String strLine;
                 while ((strLine = br.readLine()) != null)   {
-                    if (!strLine.startsWith("#") || !strLine.endsWith(".rdf"))
+                    if (!strLine.startsWith("#") && strLine.endsWith(".rdf"))
                         acceptedNames.add(strLine);
                 }
                 br.close();
@@ -333,7 +333,7 @@ public class OAEI11ConferenceDiagSearch {
             o2 = o2.substring(0,o2.length()-4);
 
             String n = f[i].getName().substring(0,f[i].getName().length()-4);
-            OWLOntology merged = Utils.createOntologyWithRdfMappings("oaei11conference/ontology", o1, o2,
+            OWLOntology merged = OAEI11ConferenceUtils.createOntologyWithRdfMappings("oaei11conference/ontology", o1, o2,
                     "oaei11conference/matchings/incoherent", n + ".rdf");
 
             /*OWLOntology ontology1 = CreationUtils.createOwlOntology2("oaei11conference/ontology",o1);
@@ -371,11 +371,11 @@ public class OAEI11ConferenceDiagSearch {
             String o1 = t.nextToken();
             String o2 = t.nextToken();
             o2 = o2.substring(0,o2.length()-4);
-            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology",o1+".owl");
-            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology",o2+".owl");
-            OWLOntology merged = Utils.mergeOntologies(ontology1, ontology2);
+            OWLOntology ontology1 = CreationUtils.createOwlOntology("oaei11conference/ontology", o1 + ".owl");
+            OWLOntology ontology2 = CreationUtils.createOwlOntology("oaei11conference/ontology", o2 + ".owl");
+            OWLOntology merged = OAEI11ConferenceUtils.mergeOntologies(ontology1, ontology2);
             String n = file.getName().substring(0,file.getName().length()-4);
-            Set<OWLLogicalAxiom> mapping = Utils.readRdfMapping("oaei11conference/matchings", n + ".rdf").keySet();
+            Set<OWLLogicalAxiom> mapping = OAEI11ConferenceUtils.readRdfMapping("oaei11conference/matchings", n + ".rdf").keySet();
             for (OWLLogicalAxiom axiom : mapping)
                 merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
 
@@ -393,8 +393,8 @@ public class OAEI11ConferenceDiagSearch {
                 continue;
             }
 
-            Set<OWLLogicalAxiom> ontology1CutExtracted = Utils.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
-            Set<OWLLogicalAxiom> ontology2CutExtracted = Utils.getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms());
+            Set<OWLLogicalAxiom> ontology1CutExtracted = OAEI11ConferenceUtils.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
+            Set<OWLLogicalAxiom> ontology2CutExtracted = OAEI11ConferenceUtils.getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms());
             theory.addBackgroundFormulas(ontology1CutExtracted);
             theory.addBackgroundFormulas(ontology2CutExtracted);
 

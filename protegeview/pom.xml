@@ -230,20 +230,20 @@
 
 
 
-        <!-- dependencies out of bundles directory from protege 4.2.0 alpha build 274 -->
+        <!-- dependencies out of bundles directory from protege 4.2.0 beta build 278 -->
 
         <dependency>
             <groupId>org.protege.editor.core</groupId>
             <artifactId>application</artifactId>
-            <version>4.2.0.b_274</version>
+            <version>4.2.0.b_278</version>
         </dependency>
 
-        <!-- next dependency out of plugin directory from protege 4.2.0 alpha build 274  -->
+        <!-- next dependency out of plugin directory from protege 4.2.0 beta build 278  -->
 
         <dependency>
             <groupId>org.protege.editor</groupId>
             <artifactId>owl</artifactId>
-            <version>4.2.0.b_274</version>
+            <version>4.2.0.b_278</version>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
