@@ -4,7 +4,7 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.utils.Utils;
+import at.ainf.owlapi3.utils.creation.CommonUtils;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
@@ -48,7 +48,7 @@ public class SimpleQueryTest {
     public void univNoDiagnosesTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
@@ -103,7 +103,7 @@ public class SimpleQueryTest {
     public void queryMnTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
@@ -148,7 +148,7 @@ public class SimpleQueryTest {
     public void koalaTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());

@@ -123,7 +123,12 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
     
     public BigDecimal getAxiomCosts(OWLLogicalAxiom label) {
         if (axiomProb.get(label) != null) {
-            BigDecimal t = BigDecimal.ONE.subtract(axiomProb.get(label));
+            if (BigDecimal.valueOf(0.99).subtract(axiomProb.get(label)).compareTo(BigDecimal.ZERO)<=0)
+                return BigDecimal.valueOf(0.99);
+            else
+                return axiomProb.get(label);
+
+            /*BigDecimal t = BigDecimal.ONE.subtract(axiomProb.get(label));
             BigDecimal p = t.divide(BigDecimal.valueOf(10));
             if (p.compareTo(BigDecimal.ZERO)==0) {
                 BigDecimal r = new BigDecimal("10");
@@ -131,7 +136,7 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
                 return BigFunctions.intPower(r,-100,r.scale());
             }
             else
-                return p;
+                return p; */
             }
         else
             return STATIC_COSTS;

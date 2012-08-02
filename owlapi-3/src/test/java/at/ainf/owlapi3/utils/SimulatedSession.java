@@ -18,6 +18,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.performance.table.Time;
+import at.ainf.owlapi3.utils.creation.CommonUtils;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
@@ -39,9 +40,9 @@ public class SimulatedSession {
 
     private static Logger logger = Logger.getLogger(SimulatedSession.class.getName());
 
-    public boolean showElRates = true;
+    protected boolean showElRates = true;
 
-    public int NUMBER_OF_HITTING_SETS = 9;
+    protected int NUMBER_OF_HITTING_SETS = 9;
     protected BigDecimal SIGMA = new BigDecimal("100");
     protected boolean userBrk = true;
 
@@ -51,8 +52,24 @@ public class SimulatedSession {
 
     public enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
 
-    public boolean traceDiagnosesAndQueries = false;
-    public boolean minimizeQuery = false;
+    protected boolean traceDiagnosesAndQueries = false;
+    protected boolean minimizeQuery = false;
+
+    public void setTraceDiagnosesAndQueries(boolean traceDiagnosesAndQueries) {
+        this.traceDiagnosesAndQueries = traceDiagnosesAndQueries;
+    }
+
+    public void setMinimizeQuery(boolean minimizeQuery) {
+        this.minimizeQuery = minimizeQuery;
+    }
+
+    public void setNumberOfHittingSets(int num) {
+        this.NUMBER_OF_HITTING_SETS = num;
+    }
+
+    public void setShowElRates(boolean showElRates) {
+        this.showElRates = showElRates;
+    }
 
     protected QSS<OWLLogicalAxiom> createQSSWithDefaultParam(QSSType type) {
         switch (type) {
@@ -123,7 +140,7 @@ public class SimulatedSession {
         for (E o : col) {
             if (item.containsAll(o)) {
                 if (logger.isTraceEnabled())
-                    logger.trace("Target dianosis " + o + "is in the window");
+                    logger.trace("Target diagnosis " + o + "is in the window");
                 return o;
             }
         }
@@ -233,7 +250,7 @@ public class SimulatedSession {
                 if (traceDiagnosesAndQueries) {
                     String diag1 = "";
                     for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
-                        diag1 += Utils.renderAxioms(diagnosis) + " ; ";
+                        diag1 += CommonUtils.renderAxioms(diagnosis) + " ; ";
                     logger.info("diagnoses before query " + num_of_queries + ":" + diag1);
                 }
 
@@ -336,7 +353,7 @@ public class SimulatedSession {
                 if (qss != null) qss.updateParameters(answer);
 
                 if (traceDiagnosesAndQueries)
-                    logger.info("query asked: " + Utils.renderAxioms(actPa.partition));
+                    logger.info("query asked: " + CommonUtils.renderAxioms(actPa.partition));
 
                 // fine all dz diagnoses
                 // TODO do we need this fine?
@@ -446,13 +463,13 @@ public class SimulatedSession {
         logger.info(message);
         if (possibleError) {
             logger.info("Possible an error occured: ");
-            logger.info("target diagnosis: " + Utils.renderAxioms(targetDiag));
+            logger.info("target diagnosis: " + CommonUtils.renderAxioms(targetDiag));
             if (diagnoses == null) {
                 logger.info("diagnoses is null!");
             } else {
                 logger.info("diagnoses in window: " + diagnoses.size());
                 for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
-                    logger.info("diagnosis: " + Utils.renderAxioms(diagnosis));
+                    logger.info("diagnosis: " + CommonUtils.renderAxioms(diagnosis));
             }
         }
 
@@ -465,4 +482,5 @@ public class SimulatedSession {
         return msg;
     }
 
+    public enum TargetSource {FROM_FILE, FROM_30_DIAGS}
 }

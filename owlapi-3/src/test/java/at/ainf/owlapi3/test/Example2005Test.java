@@ -3,7 +3,7 @@ package at.ainf.owlapi3.test;
 import at.ainf.diagnosis.debugger.QueryDebugger;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.utils.Utils;
+import at.ainf.owlapi3.utils.creation.CommonUtils;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -52,7 +52,7 @@ public class Example2005Test {
 
         //search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
         createOntology();
         //theory = new OWLTheory(reasonerFactory, ontology, bax);
         //search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));

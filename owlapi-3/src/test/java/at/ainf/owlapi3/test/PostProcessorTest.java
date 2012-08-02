@@ -8,7 +8,7 @@ import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.utils.Utils;
+import at.ainf.owlapi3.utils.creation.CommonUtils;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -121,7 +121,7 @@ public class PostProcessorTest {
         OWLTheory th = createTheory(manager, "ontologies/Univ.owl", false);
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = Utils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(th);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
@@ -139,7 +139,7 @@ public class PostProcessorTest {
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        logger.info("Partition " + Utils.renderAxioms(best.partition));
+        logger.info("Partition " + CommonUtils.renderAxioms(best.partition));
 
     }
 

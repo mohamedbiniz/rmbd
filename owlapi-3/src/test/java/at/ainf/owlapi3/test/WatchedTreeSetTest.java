@@ -1,12 +1,12 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.owlapi3.utils.Utils;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.watchedset.WatchedTreeSet;
+import at.ainf.owlapi3.utils.creation.CreationUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
@@ -52,7 +52,7 @@ public class WatchedTreeSetTest {
     @Test
     public void testSet() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        OWLTheory theory = Utils.loadTheory(manager, "ontologies/koala.owl");
+        OWLTheory theory = CreationUtils.loadTheory(manager, "ontologies/koala.owl");
         ArrayList<OWLLogicalAxiom> list = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
         Collections.sort(list);
         WatchedTreeSet<AxiomSet<OWLLogicalAxiom>,BigDecimal> set = new WatchedTreeSet<AxiomSet<OWLLogicalAxiom>, BigDecimal>();
