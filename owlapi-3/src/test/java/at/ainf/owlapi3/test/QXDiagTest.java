@@ -119,7 +119,7 @@ public class QXDiagTest {
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
-        logger.info(CommonUtils.renderManyAxioms(l) + "\n\n"+ CommonUtils.renderAxioms(res));
+        logger.info(CommonUtils.renderAxioms(l) + "\n\n"+ CommonUtils.renderAxioms(res));
 
     }
 

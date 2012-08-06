@@ -154,7 +154,7 @@ public class CommonUtils extends CreationUtils {
         return String.format("%d , (%d h %d m %d s %d ms)", millis, hours, minutes, seconds, milliseconds);
     }
     
-    public static String renderManyAxioms(Collection<OWLLogicalAxiom> axioms) {
+    /*public static String renderManyAxioms(Collection<OWLLogicalAxiom> axioms) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         String result = "";
 
@@ -163,8 +163,7 @@ public class CommonUtils extends CreationUtils {
         }
         result = (String) result.subSequence(0,result.length()-2);
 
-        return result;
-    }
+        return result; }*/
 
     public static String renderAxioms(Collection<OWLLogicalAxiom> axioms) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
@@ -178,31 +177,4 @@ public class CommonUtils extends CreationUtils {
         return result;
     }
 
-    public static Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
-
-        Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>();
-        for (String targetAxiom : targetAxioms) {
-            for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
-                if (axiom.toString().contains(targetAxiom.trim()))
-                    res.add(axiom);
-            }
-        }
-        return res;
-    }
-
-    public static Set<AxiomSet<OWLLogicalAxiom>> run(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, int diags) {
-        try {
-            search.run(diags);
-        } catch (SolverException e) {
-            //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (NoConflictException e) {
-            //logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InconsistentTheoryException e) {
-            //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        return Collections.unmodifiableSet(search.getDiagnoses());
-    }
-
-    public enum BackgroundO {EMPTY, O1, O2, O1_O2}
 }

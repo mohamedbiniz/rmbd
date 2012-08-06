@@ -21,7 +21,7 @@ import java.util.*;
  * Time: 13:30
  * To change this template use File | Settings | File Templates.
  */
-public class RdfMatchingFileParser extends DefaultHandler {
+public class OAEI11ConferenceRdfMatchingParser extends DefaultHandler {
 
     Stack stack = new Stack();
 

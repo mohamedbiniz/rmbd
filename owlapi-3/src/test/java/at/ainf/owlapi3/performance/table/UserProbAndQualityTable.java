@@ -2,8 +2,8 @@ package at.ainf.owlapi3.performance.table;
 
 import java.util.HashMap;
 
-import static at.ainf.owlapi3.performance.UnsolvableTests.DiagProbab;
-import static at.ainf.owlapi3.performance.UnsolvableTests.UsersProbab;
+import static at.ainf.owlapi3.performance.OntologyTests.DiagProbab;
+import static at.ainf.owlapi3.performance.OntologyTests.UsersProbab;
 
 /**
  * Created by IntelliJ IDEA.

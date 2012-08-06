@@ -6,7 +6,10 @@ import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
+import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.SimulatedSession;
 import at.ainf.owlapi3.utils.creation.CommonUtils;
@@ -19,12 +22,16 @@ import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created with IntelliJ IDEA.
@@ -56,7 +63,7 @@ public class OAEI08Tests {
                         for (SimulatedSession.QSSType type : qssTypes) {
                             SimulatedSession  a = new SimulatedSession();
                             String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                            OWLOntology ontology = CreationUtils.createOwlOntology2(m.trim(), o.trim());
+                            OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = CreationUtils.createOWLTheory2(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch2(theory, dual);
@@ -160,14 +167,14 @@ public class OAEI08Tests {
                         for (SimulatedSession.QSSType type : qssTypes) {
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
                             String[] targetAxioms = OAEI08Utils.getDiagnosis(m, o);
-                            OWLOntology ontology = CreationUtils.createOwlOntology2(m.trim(), o.trim());
+                            OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = CreationUtils.createOWLTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             if (background_add) {
-                                OWLOntology ontology1 = CreationUtils.createOwlOntology(o.split("-")[0].trim());
-                                OWLOntology ontology2 = CreationUtils.createOwlOntology(o.split("-")[1].trim());
+                                OWLOntology ontology1 = OAEI08Utils.createOwlOntology(o.split("-")[0].trim());
+                                OWLOntology ontology2 = OAEI08Utils.createOwlOntology(o.split("-")[1].trim());
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
@@ -237,7 +244,7 @@ public class OAEI08Tests {
                             }
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = CommonUtils.getDiagnosis(targetAxioms, ontology);
+                                targetDg = OAEI08Utils.getDiagnosis(targetAxioms, ontology);
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -269,13 +276,13 @@ public class OAEI08Tests {
             for (String o : mapOntos.get(m)) {
                 for (SimulatedSession.TargetSource targetSource : targetSources) {
                     for (SimulatedSession.QSSType type : qssTypes) {
-                        CommonUtils.BackgroundO[] backgr = new CommonUtils.BackgroundO[]{CommonUtils.BackgroundO.EMPTY, CommonUtils.BackgroundO.O1_O2};
-                        for (CommonUtils.BackgroundO background : backgr) {
+                        OAEI08Utils.BackgroundO[] backgr = new OAEI08Utils.BackgroundO[]{OAEI08Utils.BackgroundO.EMPTY, OAEI08Utils.BackgroundO.O1_O2};
+                        for (OAEI08Utils.BackgroundO background : backgr) {
 
                             SimulatedSession s = new SimulatedSession();
                             s.setNumberOfHittingSets(4);
                             String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                            OWLOntology ontology = CreationUtils.createOwlOntology2(m.trim(), o.trim());
+                            OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = CreationUtils.createOWLTheory2(ontology, false);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch2(theory, false);
@@ -289,9 +296,9 @@ public class OAEI08Tests {
                                     + ".txt").getPath();
 
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
-                            OWLOntology ontology1 = CreationUtils.createOwlOntology(o.split("-")[0].trim());
-                            OWLOntology ontology2 = CreationUtils.createOwlOntology(o.split("-")[1].trim());
-                            if (background == CommonUtils.BackgroundO.O1_O2) {
+                            OWLOntology ontology1 = OAEI08Utils.createOwlOntology(o.split("-")[0].trim());
+                            OWLOntology ontology2 = OAEI08Utils.createOwlOntology(o.split("-")[1].trim());
+                            if (background == OAEI08Utils.BackgroundO.O1_O2) {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
@@ -300,7 +307,7 @@ public class OAEI08Tests {
 
                             search.setCostsEstimator(es);
                             if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
-                                CommonUtils.run(search, 30);
+                                OAEI08Utils.run(search, 30);
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
@@ -341,12 +348,12 @@ public class OAEI08Tests {
         SimulatedSession.TargetSource targetSource = SimulatedSession.TargetSource.FROM_FILE;
         SimulatedSession.QSSType type = SimulatedSession.QSSType.SPLITINHALF;
         String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-        OWLOntology ontology = CreationUtils.createOwlOntology2(m.trim(), o.trim());
+        OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = CreationUtils.createOWLTheory2(ontology, false);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch2(theory, false);
-        OWLOntology ontology1 = CreationUtils.createOwlOntology(o.split("-")[0].trim());
-        OWLOntology ontology2 = CreationUtils.createOwlOntology(o.split("-")[1].trim());
+        OWLOntology ontology1 = OAEI08Utils.createOwlOntology(o.split("-")[0].trim());
+        OWLOntology ontology2 = OAEI08Utils.createOwlOntology(o.split("-")[1].trim());
         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
         //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
         //ProbabilityTableModel mo = new ProbabilityTableModel();
@@ -364,7 +371,7 @@ public class OAEI08Tests {
 
         search.setCostsEstimator(es);
         if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
-            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = CommonUtils.run(search, 30);
+            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = OAEI08Utils.run(search, 30);
             search.reset();
             AxiomSet<OWLLogicalAxiom> targD = OAEI08Utils.getTargetDiag2(diagnoses, es, m);
             targetDg = new LinkedHashSet<OWLLogicalAxiom>();
@@ -374,7 +381,7 @@ public class OAEI08Tests {
 
         if (targetSource == SimulatedSession.TargetSource.FROM_FILE) {
             targetDg = OAEI08Utils.getDiagnosis2(targetAxioms, ontology);
-            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = CommonUtils.run(search, -1);
+            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = OAEI08Utils.run(search, -1);
             Assert.assertTrue(diagnoses.contains(targetDg));
             search.reset();
         }
@@ -398,7 +405,7 @@ public class OAEI08Tests {
                         for (SimulatedSession.QSSType type : qssTypes) {
                             SimulatedSession s = new SimulatedSession();
                             String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                            OWLOntology ontology = CreationUtils.createOwlOntology2(m.trim(), o.trim());
+                            OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = CreationUtils.createOWLTheory2(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch2(theory, dual);
@@ -478,6 +485,422 @@ public class OAEI08Tests {
                         logger.info(out);
                     }
                 }
+            }
+        }
+    }
+
+    @Ignore
+    @Test
+    public void search() throws SolverException, InconsistentTheoryException {
+        Properties properties = OAEI08Utils.readProps2("alignment/alignment.properties");
+        Map<String, List<String>> mapOntos = OAEI08Utils.readOntologiesFromFile2(properties);
+        for (String m : mapOntos.keySet()) {
+            for (String o : mapOntos.get(m)) {
+                OAEI08Utils.BackgroundO[] backgrounds = new OAEI08Utils.BackgroundO[]{OAEI08Utils.BackgroundO.O1_O2};
+                for (OAEI08Utils.BackgroundO background : backgrounds) {
+                    String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                    OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
+                    Set<OWLLogicalAxiom> targetDg = OAEI08Utils.getDiagnosis2(targetAxioms, ontology);
+                    OWLOntology ontology1 = OAEI08Utils.createOwlOntology(o.split("-")[0].trim());
+                    OWLOntology ontology2 = OAEI08Utils.createOwlOntology(o.split("-")[1].trim());
+                    OWLTheory theory = CreationUtils.createOWLTheory2(ontology, false);
+                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch2(theory, false);
+                    //ProbabilityTableModel mo = new ProbabilityTableModel();
+                    HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+                    OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+                    es.updateKeywordProb(map);
+                    if (background == OAEI08Utils.BackgroundO.O1 || background == OAEI08Utils.BackgroundO.O1_O2)
+                        theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                    if (background == OAEI08Utils.BackgroundO.O2 || background == OAEI08Utils.BackgroundO.O1_O2)
+                        theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                    search.setCostsEstimator(es);
+
+
+                    long time = System.nanoTime();
+                    try {
+                        search.run();
+                    } catch (SolverException e) {
+                        logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    } catch (NoConflictException e) {
+                        logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    } catch (InconsistentTheoryException e) {
+                        logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                    time = System.nanoTime() - time;
+                    String t = CommonUtils.getStringTime(time / 1000000);
+
+                    Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                            Collections.unmodifiableSet(search.getDiagnoses());
+                    //logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size());
+
+                    int n = 0;
+                    Set<AxiomSet<OWLLogicalAxiom>> set = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
+                    for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
+                        if (targetDg.containsAll(d)) set.add(d);
+                    n = set.size();
+                    int cs = search.getConflicts().size();
+                    search.reset();
+                    logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size()
+                            + " conflicts: " + cs + " time " + t + " target " + n);
+
+                }
+            }
+        }
+    }
+
+    public int minCard(Set<AxiomSet<OWLLogicalAxiom>> s) {
+        int r = -1;
+
+        try {
+            for (AxiomSet<OWLLogicalAxiom> set : s)
+                if (r == -1 || set.size() < r)
+                    r = set.size();
+        } catch (NoSuchElementException e) {
+
+        }
+
+        return r;
+    }
+
+    public int maxCard(Set<AxiomSet<OWLLogicalAxiom>> s) {
+        int r = -1;
+
+        try {
+            for (AxiomSet<OWLLogicalAxiom> set : s)
+                if (set.size() > r)
+                    r = set.size();
+        } catch (NoSuchElementException e) {
+
+        }
+
+        return r;
+    }
+
+    public static double meanCard(Set<AxiomSet<OWLLogicalAxiom>> s) {
+        double sum = 0;
+        int cnt = 0;
+
+        for (AxiomSet<OWLLogicalAxiom> set : s) {
+            sum += set.size();
+            cnt++;
+        }
+
+        if (cnt == 0) return -1;
+        return sum / cnt;
+    }
+
+    @Test
+    public void calcOneDiagAndMore() throws SolverException, InconsistentTheoryException, IOException {
+        Properties properties = OAEI08Utils.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = OAEI08Utils.readOntologiesFromFile(properties);
+
+        for (boolean dual : new boolean[]{true, false}) {
+
+            for (String m : mapOntos.keySet()) {
+                for (String o : mapOntos.get(m)) {
+                    for (int nd : new int[]{1, 5, 9}) {
+                        String out = "STAT, " + m + ", " + o;
+
+                        String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                        OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
+                        Set<OWLLogicalAxiom> targetDg;
+                        OWLTheory theory = CreationUtils.createOWLTheory(ontology, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch(theory, dual);
+                        //ProbabilityTableModel mo = new ProbabilityTableModel();
+                        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+
+                        OWLOntology ontology1 = OAEI08Utils.createOwlOntology(o.split("-")[0].trim());
+                        OWLOntology ontology2 = OAEI08Utils.createOwlOntology(o.split("-")[1].trim());
+
+                        String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                + m.trim()
+                                + "-incoherent-evaluation/"
+                                + o.trim()
+                                + ".txt").getPath();
+
+                        OWLTheory theory2 = CreationUtils.createOWLTheory(ontology, dual);
+                        OWLTheory t3 = CreationUtils.createOWLTheory(ontology, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = CreationUtils.createUniformCostSearch(theory2, dual);
+                        search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
+
+                        //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                        //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+
+                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+
+                        //es.updateKeywordProb(map);
+                        targetDg = null;
+
+                        search.setCostsEstimator(es);
+                        //
+                        long time = System.nanoTime();
+                        try {
+                            search.run(nd);
+                        } catch (SolverException e) {
+                            logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        } catch (NoConflictException e) {
+                            logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        } catch (InconsistentTheoryException e) {
+                            logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                        time = System.nanoTime() - time;
+
+                        int minDiagnosisC = minCard(search.getDiagnoses());
+                        double meanDiagnosisC = meanCard(search.getDiagnoses());
+                        int maxDiagnosisC = maxCard(search.getDiagnoses());
+                        int minConfC = minCard(search.getConflicts());
+                        double meanConfC = meanCard(search.getConflicts());
+                        int maxConfC = maxCard(search.getConflicts());
+
+                        int c = search.getConflicts().size();
+                        String s = nd + ", " + minDiagnosisC + ", " + meanDiagnosisC + ", " + maxDiagnosisC + ", " +
+                                c + ", " + minConfC + ", " + meanConfC + ", " + maxConfC;
+
+                        logger.info("Stat, " + m.trim() + ", " + o.trim() + ", "
+                                + s + ", "
+                                + theory.getConsistencyCount() + ", " + dual + ", " + CommonUtils.getStringTime(time / 1000000));
+                    }
+                }
+            }
+
+        }
+    }
+
+    @Test
+    public void calcOnlyDiagnoses() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
+
+        String m = "coma";
+        String o = "CRS-EKAW";
+        SimulatedSession.QSSType type = SimulatedSession.QSSType.SPLITINHALF;
+        Properties properties = OAEI08Utils.readProps2("alignment/alignment.full.properties");
+        String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+        OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
+        Set<OWLLogicalAxiom> targetDg;
+        OWLTheory theory = CreationUtils.createOWLTheory2(ontology, false);
+        Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch2(theory, false);
+        String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                + m.trim()
+                + "-incoherent-evaluation/"
+                + o.trim()
+                + ".txt").getPath();
+        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+
+        targetDg = null;
+
+        search.setCostsEstimator(es);
+
+        search.run();
+
+        allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+        search.reset();
+
+        search.run(9);
+        TreeSet<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>();
+        MyOWLRendererParser parser = new MyOWLRendererParser(ontology);
+        testcase.add(parser.parse("conference DisjointWith session"));
+        testcase.add(parser.parse("Conference_Session SubClassOf conference"));
+        testcase.add(parser.parse("conference SubClassOf Conference_Session"));
+
+        theory.addNonEntailedTest(testcase);
+        Set<AxiomSet<OWLLogicalAxiom>> toRemove = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
+        for (AxiomSet<OWLLogicalAxiom> axiomSet : allD)
+            if (!theory.testDiagnosis(axiomSet))
+                toRemove.add(axiomSet);
+        allD.removeAll(toRemove);
+        //deleteDiag(theory,allDiags,false,testcase);
+
+        search.run(9);
+        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
+        /*for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
+            if(!theory.testDiagnosis(diagnosis))
+                logger.info("prob");
+        }*/
+
+        for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
+            Assert.assertTrue(allD.contains(diagnosis));
+        }
+
+    }
+
+    @Test
+    public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
+        SimulatedSession session = new SimulatedSession();
+
+        Properties properties = OAEI08Utils.readProps("alignment.allFiles.properties");
+        Map<String, List<String>> mapOntos = OAEI08Utils.readOntologiesFromFile(properties);
+        //boolean background_add = false;
+
+        session.setShowElRates(false);
+
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]{SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF, SimulatedSession.QSSType.DYNAMICRISK};
+        for (boolean dual : new boolean[]{false}) {
+            for (boolean background : new boolean[]{true, false}) {
+                for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE, SimulatedSession.TargetSource.FROM_30_DIAGS}) {
+                    for (String m : mapOntos.keySet()) {
+                        for (String o : mapOntos.get(m)) {
+                            String out = "STAT, " + m + ", " + o;
+                            for (SimulatedSession.QSSType type : qssTypes) {
+
+                                //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
+                                String[] targetAxioms = OAEI08Utils.getDiagnosis(m, o);
+                                OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
+                                ontology = new OWLIncoherencyExtractor(
+                                        new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
+                                Set<OWLLogicalAxiom> targetDg;
+                                OWLTheory theory = CreationUtils.createOWLTheory(ontology, dual);
+                                TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch(theory, dual);
+                                if (background) {
+                                    OWLOntology ontology1 = OAEI08Utils.createOwlOntology(o.split("-")[0].trim());
+                                    OWLOntology ontology2 = OAEI08Utils.createOwlOntology(o.split("-")[1].trim());
+                                    theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                                    theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                                }
+                                //ProbabilityTableModel mo = new ProbabilityTableModel();
+                                HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+
+                                String path = ClassLoader.getSystemResource("alignment/evaluation/"
+                                        + m.trim()
+                                        + "-incoherent-evaluation/"
+                                        + o.trim()
+                                        + ".txt").getPath();
+
+                                OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+
+                                //                        double[] p = new ModerateDistribution().getProbabilities(ontology.getLogicalAxioms().size());
+                                //                        Map<OWLLogicalAxiom,Double> axmap = new LinkedHashMap<OWLLogicalAxiom, Double>();
+                                //                        int i = 0;
+                                //                        for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
+                                //                            axmap.put(axiom,p[i]);
+                                //                            i++;
+                                //                        }
+                                //                        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, axmap);
+
+
+                                //es.updateKeywordProb(map);
+                                targetDg = null;
+
+                                search.setCostsEstimator(es);
+                                //
+                                //                            try {
+                                //                                search.run();
+                                //                            } catch (SolverException e) {
+                                //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                //                            } catch (NoConflictException e) {
+                                //                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                //                            } catch (InconsistentTheoryException e) {
+                                //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                //                            }
+
+                                Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+                                search.reset();
+
+                                if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
+                                    try {
+                                        search.run(30);
+                                    } catch (SolverException e) {
+                                        logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    } catch (NoConflictException e) {
+                                        logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    } catch (InconsistentTheoryException e) {
+                                        logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    }
+
+                                    Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                            Collections.unmodifiableSet(search.getDiagnoses());
+                                    search.reset();
+                                    AxiomSet<OWLLogicalAxiom> targD = OAEI08Utils.getTargetDiag(diagnoses, es, m);
+                                    targetDg = new LinkedHashSet<OWLLogicalAxiom>();
+                                    for (OWLLogicalAxiom axiom : targD)
+                                        targetDg.add(axiom);
+                                }
+
+                                if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
+                                    targetDg = OAEI08Utils.getDiagnosis(targetAxioms, ontology);
+
+                                TableList e = new TableList();
+                                out += "," + type + ",";
+                                String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
+                                //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
+
+                                out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+
+                            }
+                            logger.info(out);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void doShowMappingAxiomsSizes() throws SolverException, InconsistentTheoryException, IOException {
+        Properties properties = OAEI08Utils.readProps("alignment.allFiles.properties");
+        Map<String, List<String>> mapOntos = OAEI08Utils.readOntologiesFromFile(properties);
+
+        for (String m : mapOntos.keySet()) {
+            for (String o : mapOntos.get(m)) {
+                OAEI08Utils.getDiagnosis(m, o);
+            }
+        }
+    }
+
+    @Test
+    public void readTest() throws IOException {
+        String filename = ClassLoader.getSystemResource("alignment/evaluation/owlctxmatch-incoherent-evaluation/CMT-CONFTOOL.txt").getFile();
+        Map<String, Double> axioms = new LinkedHashMap<String, Double>();
+        Set<String> targetDiag = new LinkedHashSet<String>();
+        OAEI08Utils.readData2(filename, axioms, targetDiag);
+        logger.info("Read " + axioms.size() + " " + targetDiag.size());
+        assertEquals(axioms.size(), 36);
+        assertEquals(targetDiag.size(), 6);
+
+        filename = ClassLoader.getSystemResource("alignment/evaluation/hmatch-incoherent-evaluation/CMT-CRS.txt").getFile();
+        axioms.clear();
+        targetDiag.clear();
+        OAEI08Utils.readData2(filename, axioms, targetDiag);
+        logger.info("Read " + axioms.size() + " " + targetDiag.size());
+        assertEquals(axioms.size(), 2 * (17 - 5));
+        assertEquals(targetDiag.size(), 4);
+    }
+
+    @Test
+    public void readTest2() throws IOException {
+        String filename = ClassLoader.getSystemResource("alignment/evaluation/coma-evaluation/CMT-CONFTOOL.txt").getFile();
+        Map<String, Double> axioms = new LinkedHashMap<String, Double>();
+        Set<String> targetDiag = new LinkedHashSet<String>();
+        OAEI08Utils.readData2(filename, axioms, targetDiag);
+        logger.info("Read " + axioms.size() + " " + targetDiag.size());
+    }
+
+    @Test
+    public void readTest1() throws IOException {
+        String filename = ClassLoader.getSystemResource("alignment/evaluation/coma-evaluation/CMT-CONFTOOL.txt").getFile();
+        Map<String, Double> axioms = new LinkedHashMap<String, Double>();
+        Set<String> targetDiag = new LinkedHashSet<String>();
+        OAEI08Utils.readData2(filename, axioms, targetDiag);
+        logger.info("Read " + axioms.size() + " " + targetDiag.size());
+    }
+
+    @Test
+    public void testDaReadMethods() throws IOException, SolverException, InconsistentTheoryException {
+        Properties properties = OAEI08Utils.readProps("alignment.properties");
+        Map<String, List<String>> mapOntos = OAEI08Utils.readOntologiesFromFile(properties);
+
+        for (String m : mapOntos.keySet()) {
+            for (String o : mapOntos.get(m)) {
+                String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                String[] targetAxioms2 = OAEI08Utils.getDiagnosis(m, o);
+                boolean eq = OAEI08Utils.compareDiagnoses(targetAxioms, targetAxioms2);
+                if (!eq) {
+                    OWLOntology ontology = OAEI08Utils.createOwlOntology2(m.trim(), o.trim());
+                    Set<OWLLogicalAxiom> targetDg = OAEI08Utils.getDiagnosis(targetAxioms, ontology);
+                    System.out.println(targetAxioms.toString());
+                    System.out.println(targetAxioms2.toString());
+                }
+                assertTrue(m + " " + o, eq);
             }
         }
     }

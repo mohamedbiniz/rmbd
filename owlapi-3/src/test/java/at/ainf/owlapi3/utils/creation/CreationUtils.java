@@ -109,16 +109,6 @@ public class CreationUtils {
 
     }
 
-    public static OWLOntology createOwlOntology(String name) {
-        String path = ClassLoader.getSystemResource("alignment").getPath();
-        return createOwlOntology(path, name + ".owl");
-    }
-
-    public static OWLOntology createOwlOntology2(String matcher, String name) {
-        String path = "alignment/" + matcher + "_incoherent_matched_ontologies";
-        return createOwlOntology(path, name + ".owl");
-    }
-
     public static OWLTheory createOWLTheory2(OWLOntology ontology, boolean dual) {
         Set<OWLLogicalAxiom> bax = createExtendedBackgroundAxioms(ontology);
         OWLTheory theory = createTheory(ontology, dual, bax);
@@ -167,14 +157,7 @@ public class CreationUtils {
             bax.addAll(ontology.getDataPropertyAssertionAxioms(ind));
         }
 
-        /*String iri = "http://ainf.at/testiri#";
 
-        for (OWLClass ind : ontology.getClassesInSignature()) {
-            OWLDataFactory fac = OWLManager.getOWLDataFactory();
-            OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "{"+ind.getIRI().getFragment()+"}"));
-
-            bax.add(fac.getOWLClassAssertionAxiom (ind,test_individual));
-        }*/
 
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
         try {
