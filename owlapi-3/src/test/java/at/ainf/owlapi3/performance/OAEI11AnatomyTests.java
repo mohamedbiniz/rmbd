@@ -8,11 +8,12 @@ import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
+import at.ainf.owlapi3.utils.ProbabMapCreator;
 import at.ainf.owlapi3.utils.SimulatedSession;
-import at.ainf.owlapi3.utils.creation.CommonUtils;
 import at.ainf.owlapi3.utils.creation.CreationUtils;
 import at.ainf.owlapi3.utils.creation.OAEI08Utils;
 import at.ainf.owlapi3.utils.creation.OAEI11AnatomyUtils;
+import at.ainf.owlapi3.utils.creation.ontology.OAEI11AnatomyOntologyCreator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -76,7 +77,7 @@ public class OAEI11AnatomyTests {
                             //String[] targetAxioms = AlignmentUtils.getDiagnosis2(m,o);
                             //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
 
-                            OWLOntology ontology = OAEI11AnatomyUtils.createOntologyFromTxtOAEI(file);
+                            OWLOntology ontology = new OAEI11AnatomyOntologyCreator(file).getOntology();
 
                             Set<OWLLogicalAxiom> targetDg;
                             long preprocessModulExtract = System.currentTimeMillis();
@@ -92,7 +93,7 @@ public class OAEI11AnatomyTests {
                             theory.addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
@@ -159,7 +160,7 @@ public class OAEI11AnatomyTests {
                             //String[] targetAxioms = AlignmentUtils.getDiagnosis2(m,o);
                             //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
 
-                            OWLOntology ontology = OAEI11AnatomyUtils.createOntologyFromTxtOAEI(file);
+                            OWLOntology ontology = new OAEI11AnatomyOntologyCreator(file).getOntology();
 
                             Set<OWLLogicalAxiom> targetDg;
                             long preprocessModulExtract = System.currentTimeMillis();
@@ -175,7 +176,7 @@ public class OAEI11AnatomyTests {
                             if (background) theory.addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 

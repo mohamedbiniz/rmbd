@@ -52,22 +52,6 @@ public class CreationUtils {
         return theory;
     }
 
-    public static OWLOntology createOwlOntology(String path, String name) {
-        String directory = ClassLoader.getSystemResource(path).getPath();
-        return createOwlOntology(new File(directory + "/" + name));
-    }
-
-    public static OWLOntology createOwlOntology(File file) {
-        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        OWLOntology ontology = null;
-        try {
-            ontology = manager.loadOntologyFromOntologyDocument(file);
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        return ontology;
-    }
-
     public static Set<OWLLogicalAxiom> createBackgroundAxioms(OWLOntology ontology) {
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
@@ -126,25 +110,7 @@ public class CreationUtils {
         return theory;
     }
 
-    public static TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch2(OWLTheory th, boolean dual) {
 
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
-        Searcher<OWLLogicalAxiom> searcher;
-        if (dual) {
-            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
-            searcher = new DirectDiagnosis<OWLLogicalAxiom>();
-        }
-        else {
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
-            searcher = new NewQuickXplain<OWLLogicalAxiom>();
-        }
-
-        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        search.setSearcher(searcher);
-        search.setTheory(th);
-
-        return search;
-    }
 
     public static OWLTheory createOWLTheory(OWLOntology ontology, boolean dual) {
         OWLTheory result = null;
@@ -191,12 +157,6 @@ public class CreationUtils {
     }
 
     public static TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> createUniformCostSearch(OWLTheory th, boolean dual) {
-
-        /*SimpleStorage<OWLLogicalAxiom> storage;
-        if (dual)
-            storage = new SimpleStorage<OWLLogicalAxiom>();
-        else
-            storage = new SimpleStorage<OWLLogicalAxiom>();*/
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
         if (dual) {
             search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
@@ -268,18 +228,4 @@ public class CreationUtils {
         return result;
     }
 
-    public static TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch(OWLOntology ontology, boolean dual) throws SolverException, InconsistentTheoryException {
-
-        OWLOntology extracted = new OWLIncoherencyExtractor(
-                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
-        OWLTheory theory = createTheoryOAEI(extracted, dual, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = createUniformCostSearch(theory, dual);
-
-        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
-
-        search.setCostsEstimator(es);
-        search.reset();
-
-        return search;
-    }
 }

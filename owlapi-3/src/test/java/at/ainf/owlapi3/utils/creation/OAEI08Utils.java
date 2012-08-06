@@ -6,6 +6,7 @@ import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -20,7 +21,7 @@ import java.util.*;
  * Time: 09:05
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI08Utils extends CommonUtils {
+public class OAEI08Utils extends CreationUtils {
     public static Properties readProps() {
         return readProps("alignment.unsolvable.properties");
 
@@ -332,16 +333,6 @@ public class OAEI08Utils extends CommonUtils {
         return res;
     }
 
-    public static OWLOntology createOwlOntology2(String matcher, String name) {
-        String path = "alignment/" + matcher + "_incoherent_matched_ontologies";
-        return createOwlOntology(path, name + ".owl");
-    }
-
-    public static OWLOntology createOwlOntology(String name) {
-        String path = ClassLoader.getSystemResource("alignment").getPath();
-        return createOwlOntology(path, name + ".owl");
-    }
-
     public static Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
 
         Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>();
@@ -366,6 +357,47 @@ public class OAEI08Utils extends CommonUtils {
         }
 
         return Collections.unmodifiableSet(search.getDiagnoses());
+    }
+
+    public static int minCard(Set<AxiomSet<OWLLogicalAxiom>> s) {
+        int r = -1;
+
+        try {
+            for (AxiomSet<OWLLogicalAxiom> set : s)
+                if (r == -1 || set.size() < r)
+                    r = set.size();
+        } catch (NoSuchElementException e) {
+
+        }
+
+        return r;
+    }
+
+    public static int maxCard(Set<AxiomSet<OWLLogicalAxiom>> s) {
+        int r = -1;
+
+        try {
+            for (AxiomSet<OWLLogicalAxiom> set : s)
+                if (set.size() > r)
+                    r = set.size();
+        } catch (NoSuchElementException e) {
+
+        }
+
+        return r;
+    }
+
+    public static double meanCard(Set<AxiomSet<OWLLogicalAxiom>> s) {
+        double sum = 0;
+        int cnt = 0;
+
+        for (AxiomSet<OWLLogicalAxiom> set : s) {
+            sum += set.size();
+            cnt++;
+        }
+
+        if (cnt == 0) return -1;
+        return sum / cnt;
     }
 
     public enum BackgroundO {EMPTY, O1, O2, O1_O2}

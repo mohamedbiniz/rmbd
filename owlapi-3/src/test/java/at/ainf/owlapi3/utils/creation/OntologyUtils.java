@@ -8,6 +8,8 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlapi3.utils.ProbabMapCreator;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -25,7 +27,7 @@ import java.util.TreeSet;
  * Time: 14:05
  * To change this template use File | Settings | File Templates.
  */
-public class OntologyUtils extends CommonUtils {
+public class OntologyUtils extends CreationUtils {
     public static double avg2(List<Double> nqueries) {
         double res = 0;
         for (Double qs : nqueries) {
@@ -35,11 +37,11 @@ public class OntologyUtils extends CommonUtils {
     }
 
     public static TreeSet<AxiomSet<OWLLogicalAxiom>> getAllD(String o) {
-        OWLOntology ontology = createOwlOntology("ontologies", o + ".owl");
+        OWLOntology ontology = new SimpleOntologyCreator("ontologies", o + ".owl").getOntology();
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         OWLTheory theory = createOWLTheory(ontology, false);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createUniformCostSearch(theory, false);
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);

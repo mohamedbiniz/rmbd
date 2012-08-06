@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.utils.creation.CommonUtils;
+import at.ainf.owlapi3.utils.LogUtil;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import at.ainf.owlapi3.model.OWLDiagnosisSearchableObject;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -52,7 +52,7 @@ public class TreeTest {
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getActiveFormulas(), null);
 
-        String logd = "Hitting set: {" + CommonUtils.logCollection(diagnosis);
+        String logd = "Hitting set: {" + LogUtil.logCollection(diagnosis);
         logger.info(logd);
     }
 
@@ -74,8 +74,8 @@ public class TreeTest {
 
         assertTrue(debug.debug());
 
-        String logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        String logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        String logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        String logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {C}, {D} }", logd);
         assertEquals("Conflicts { {C,D} }", logc);
 
@@ -87,8 +87,8 @@ public class TreeTest {
         th.addNonEntailedTest(axiom);
         assertTrue(debug.debug());
 
-        logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A}, {B} }", logd);
         assertEquals("Conflicts { {A,B} }", logc);
 
@@ -104,8 +104,8 @@ public class TreeTest {
 
         assertTrue(debug.debug());
 
-        logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {C}, {A,D}, {B,D} }", logd);
         assertEquals("Conflicts { {A,B,C}, {C,D} }", logc);
 
@@ -116,8 +116,8 @@ public class TreeTest {
         th.removeNonEntailedTest(naxiom);
         assertTrue(debug.debug());
 
-        logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A}, {B}, {C}, {D} }", logd);
         assertEquals("Conflicts { {A,B,C,D} }", logc);
 
@@ -128,8 +128,8 @@ public class TreeTest {
 
         testOntology("ontologies/ecai.owl", false);
 
-        String logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        String logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        String logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        String logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A1}, {M1}, {M3,M2}, {A2,M2} }", logd);
         assertEquals("Conflicts { {M3,A1,A2,M1}, {A1,M1,M2} }", logc);
 
@@ -139,8 +139,8 @@ public class TreeTest {
         debug.reset();
         assertTrue(debug.debug());
 
-        assertEquals(logd, CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets()));
-        assertEquals(logc, CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets()));
+        assertEquals(logd, LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets()));
+        assertEquals(logc, LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets()));
 
 
         OWLDataFactory owlDataFactory = ((OWLTheory)debug.getTheory()).getOntology().getOWLOntologyManager().getOWLDataFactory();
@@ -154,8 +154,8 @@ public class TreeTest {
         debug.reset();
         assertTrue(debug.debug());
 
-        CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
 
 
     }
@@ -217,8 +217,8 @@ public class TreeTest {
     @Test
     public void testDebug1() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.1.owl", false);
-        String logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        String logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        String logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        String logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A1}, {M1}, {M2} }", logd);
         assertEquals("Conflicts { {A1,M1,M2} }", logc);
     }
@@ -227,8 +227,8 @@ public class TreeTest {
     public void testDebug2() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.2.owl", false);
 
-        String logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        String logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        String logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        String logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {M3}, {A1}, {A2}, {M1} }", logd);
         assertEquals("Conflicts { {M3,A1,A2,M1} }", logc);
     }
@@ -246,7 +246,7 @@ public class TreeTest {
             else
                 entailments.retainAll(inferredAxioms);
         }
-        String log = CommonUtils.logCollection(entailments);
+        String log = LogUtil.logCollection(entailments);
         logger.info(log);
 
     }
@@ -255,8 +255,8 @@ public class TreeTest {
     public void testDebugFull() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.owl", false);
 
-        String logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        String logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        String logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        String logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A1}, {M1}, {M3,M2}, {A2,M2} }", logd);
         assertEquals("Conflicts { {M3,A1,A2,M1}, {A1,M1,M2} }", logc);
     }
@@ -265,8 +265,8 @@ public class TreeTest {
     public void testDebug3() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.3.owl", false);
 
-        String logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        String logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        String logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        String logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         //assertEquals("Hitting sets { {M2,A2}, {M2,M3}, {M1}, {A1} }", logd);
         //assertEquals("Conflicts { {M2,M1,A1}, {M3,A2,M1,A1} }", logc);
     }
@@ -275,8 +275,8 @@ public class TreeTest {
     public void testDebugCorrect() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.corrected.owl", true);
 
-        String logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        String logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        String logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        String logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { }", logd);
         assertEquals("Conflicts { }", logc);
     }
@@ -302,8 +302,8 @@ public class TreeTest {
     public void testDebugIncoherent() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
         testOntology("ontologies/ecai.incoherent.owl", false);
 
-        String logd = CommonUtils.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
-        String logc = CommonUtils.logCollection(logger, "Conflicts", debug.getConflictSets());
+        String logd = LogUtil.logCollection(logger, "Hitting sets", debug.getValidHittingSets());
+        String logc = LogUtil.logCollection(logger, "Conflicts", debug.getConflictSets());
         assertEquals("Hitting sets { {A1}, {M2}, {D[ C A1 ]} }", logd);
         assertEquals("Conflicts { {A1,M2,D[ C A1 ]} }", logc);
     }

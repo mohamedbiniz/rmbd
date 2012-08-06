@@ -20,28 +20,7 @@ import java.util.Set;
  * Time: 09:24
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11AnatomyUtils extends CommonUtils {
-    public static OWLOntology createOntologyFromTxtOAEI(String file) {
-
-        try {
-            OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-
-            InputStream st = ClassLoader.getSystemResourceAsStream("oaei11/mouse.owl");
-            OWLOntology mouse = man.loadOntologyFromOntologyDocument(st);
-            st = ClassLoader.getSystemResourceAsStream("oaei11/human.owl");
-            OWLOntology human = man.loadOntologyFromOntologyDocument(st);
-
-            OWLOntologyMerger merger = new OWLOntologyMerger(man);
-            OWLOntology merged = merger.createMergedOntology(man, IRI.create("matched" + file + ".txt"));
-            Set<OWLLogicalAxiom> mappAx = getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/", file);
-            for (OWLLogicalAxiom axiom : mappAx)
-                man.applyChange(new AddAxiom(merged, axiom));
-
-            return merged;
-        } catch (OWLOntologyCreationException e) {
-            return null;
-        }
-    }
+public class OAEI11AnatomyUtils extends CreationUtils {
 
     public static Set<OWLLogicalAxiom> getAxiomsInMappingOAEI(String path, String source) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();

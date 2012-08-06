@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.utils.creation;
 
 import at.ainf.owlapi3.utils.OAEI11ConferenceRdfMatchingParser;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import org.xml.sax.SAXException;
@@ -21,7 +22,7 @@ import java.util.Set;
  * Time: 09:02
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11ConferenceUtils extends CommonUtils {
+public class OAEI11ConferenceUtils extends CreationUtils {
     public static Map<OWLLogicalAxiom,BigDecimal> readRdfMapping(String path, String name) {
         OAEI11ConferenceRdfMatchingParser handler = new OAEI11ConferenceRdfMatchingParser();
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -40,16 +41,6 @@ public class OAEI11ConferenceUtils extends CommonUtils {
         return handler.getMappings();
     }
 
-    public static OWLOntology createOntologyWithRdfMappings(String pathToOntologies,
-                                                            String o1, String o2, String pathToMapping, String mappingName) {
-        OWLOntology ontology1 = createOwlOntology(pathToOntologies, o1 + ".owl");
-        OWLOntology ontology2 = createOwlOntology(pathToOntologies, o2 + ".owl");
-        OWLOntology merged = mergeOntologies(ontology1, ontology2);
-        Set<OWLLogicalAxiom> mapping = readRdfMapping(pathToMapping, mappingName).keySet();
-        for (OWLLogicalAxiom axiom : mapping)
-            merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
-        return merged;
-    }
 
     public static OWLOntology mergeOntologies (OWLOntology ontology1, OWLOntology ontology2) {
         try {

@@ -13,6 +13,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
 import at.ainf.owlapi3.utils.creation.*;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import at.ainf.owlapi3.utils.distribution.ExtremeDistribution;
 import at.ainf.owlapi3.utils.distribution.ModerateDistribution;
 import at.ainf.owlapi3.performance.table.TableList;
@@ -123,7 +124,7 @@ public class OntologyTests {
         String name = "dualISWC2012.owl";
         //String name = "dualpaper.owl";
 
-        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", name);
+        OWLOntology ontology = new SimpleOntologyCreator("queryontologies", name).getOntology();
 
         Set<OWLLogicalAxiom> targetDg = new LinkedHashSet<OWLLogicalAxiom>();
         targetDg.add(new MyOWLRendererParser(ontology).parse("B SubClassOf D and (not (s some C))"));
@@ -175,7 +176,7 @@ public class OntologyTests {
                         for (int i = 0; i < 20; i++) {
 
 
-                        OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o + ".owl");
+                        OWLOntology ontology = new SimpleOntologyCreator("queryontologies", o + ".owl").getOntology();
                         //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                         long preprocessModulExtract = System.currentTimeMillis();
                         ontology = new OWLIncoherencyExtractor(
@@ -185,7 +186,7 @@ public class OntologyTests {
                         OWLTheory theory = CreationUtils.createOWLTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch(theory, dual);
 
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                             es.updateKeywordProb(map);
                             search.setCostsEstimator(es);
@@ -304,7 +305,17 @@ public class OntologyTests {
         for (String name : new String[]{"Economy-SDA.owl"}) {
             for (boolean dual : new boolean[] {true}) {
 
-                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = CreationUtils.getSearch(CreationUtils.createOwlOntology("queryontologies", name), false);
+                OWLOntology extracted1 = new OWLIncoherencyExtractor(
+                        new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(new SimpleOntologyCreator("queryontologies", name).getOntology());
+                OWLTheory theory1 = CreationUtils.createTheoryOAEI(extracted1, false, true);
+                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = CreationUtils.createUniformCostSearch(theory1, false);
+
+                OWLAxiomKeywordCostsEstimator es1 = new OWLAxiomKeywordCostsEstimator(theory1);
+
+                search3.setCostsEstimator(es1);
+                search3.reset();
+
+                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = search3;
 
 
 
@@ -324,7 +335,17 @@ public class OntologyTests {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD}) {
                         for (int run = 7; run < MAX_RUNS; run++) {
 
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2 = CreationUtils.getSearch(CreationUtils.createOwlOntology("queryontologies", name), dual);
+                            OWLOntology extracted = new OWLIncoherencyExtractor(
+                                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(new SimpleOntologyCreator("queryontologies", name).getOntology());
+                            OWLTheory theory = CreationUtils.createTheoryOAEI(extracted, dual, true);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = CreationUtils.createUniformCostSearch(theory, dual);
+
+                            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+
+                            search1.setCostsEstimator(es);
+                            search1.reset();
+
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2 = search1;
                             diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
                             AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
 
@@ -373,7 +394,7 @@ public class OntologyTests {
                      usersProbab, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, ExtremeDistribution extremeDistribution, ModerateDistribution moderateDistribution) {
         Map<ManchesterOWLSyntax, BigDecimal> keywordProbs = new HashMap<ManchesterOWLSyntax, BigDecimal>();
         //ProbabilityTableModel m = new ProbabilityTableModel();
-        ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(CommonUtils.getProbabMap().keySet()));
+        ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(ProbabMapCreator.getProbabMap().keySet()));
         ManchesterOWLSyntax[] selectedKeywords = new ManchesterOWLSyntax[]{ManchesterOWLSyntax.SOME, ManchesterOWLSyntax.ONLY,
                 ManchesterOWLSyntax.DISJOINT_CLASSES, ManchesterOWLSyntax.DISJOINT_WITH, ManchesterOWLSyntax.SUBCLASS_OF,
                 ManchesterOWLSyntax.EQUIVALENT_CLASSES, ManchesterOWLSyntax.NOT, ManchesterOWLSyntax.AND};
@@ -469,7 +490,7 @@ public class OntologyTests {
 
         logger.info("dual tree iteration finished: window size "
                 + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() +
-                " time " + CommonUtils.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
+                " time " + LogUtil.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative tests " + hasNegativeTestcases + " diagnoses in storage " + daStr +
                 " cached subsets " + theoryDual.getCache().size()
@@ -506,7 +527,7 @@ public class OntologyTests {
         searchNormal.reset();
         logger.info("hstree iteration finished: window size "
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
-                CommonUtils.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
+                LogUtil.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr +
                 " cached subsets " + theoryNormal.getCache().size()
@@ -523,10 +544,10 @@ public class OntologyTests {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = CreationUtils.createTheory(CreationUtils.createOwlOntology("ontologies", ontology), false);
+        OWLTheory theoryNormal = CreationUtils.createTheory(new SimpleOntologyCreator("ontologies", ontology).getOntology(), false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(false, 0);
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
@@ -537,10 +558,10 @@ public class OntologyTests {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = CreationUtils.createTheory(CreationUtils.createOwlOntology("ontologies", ontology), true);
+        OWLTheory theoryDual = CreationUtils.createTheory(new SimpleOntologyCreator("ontologies", ontology).getOntology(), true);
         theoryDual.useCache(false, 0);
         searchDual.setTheory(theoryDual);
-        map = CommonUtils.getProbabMap();
+        map = ProbabMapCreator.getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
@@ -582,20 +603,20 @@ public class OntologyTests {
         }
 
         long needed = System.currentTimeMillis() - t;
-        logger.info("needed overall " + CommonUtils.getStringTime(needed));
+        logger.info("needed overall " + LogUtil.getStringTime(needed));
         for (QSSType type : QSSType.values()) {
-            logger.info("needed normal " + type + " " + CommonUtils.getStringTime(ntimes.get(type).getOverall()) +
-                    " max " + CommonUtils.getStringTime(ntimes.get(type).getMax()) +
-                    " min " + CommonUtils.getStringTime(ntimes.get(type).getMin()) +
-                    " avg2 " + CommonUtils.getStringTime(ntimes.get(type).getMean()) +
+            logger.info("needed normal " + type + " " + LogUtil.getStringTime(ntimes.get(type).getOverall()) +
+                    " max " + LogUtil.getStringTime(ntimes.get(type).getMax()) +
+                    " min " + LogUtil.getStringTime(ntimes.get(type).getMin()) +
+                    " avg2 " + LogUtil.getStringTime(ntimes.get(type).getMean()) +
                     " Queries max " + Collections.max(nqueries1.get(type)) +
                     " min " + Collections.min(nqueries1.get(type)) +
                     " avg2 " + OntologyUtils.avg2(nqueries1.get(type))
             );
-            logger.info("needed dual " + type + " " + CommonUtils.getStringTime(dtimes.get(type).getOverall()) +
-                    " max " + CommonUtils.getStringTime(dtimes.get(type).getMax()) +
-                    " min " + CommonUtils.getStringTime(dtimes.get(type).getMin()) +
-                    " avg2 " + CommonUtils.getStringTime(dtimes.get(type).getMean()) +
+            logger.info("needed dual " + type + " " + LogUtil.getStringTime(dtimes.get(type).getOverall()) +
+                    " max " + LogUtil.getStringTime(dtimes.get(type).getMax()) +
+                    " min " + LogUtil.getStringTime(dtimes.get(type).getMin()) +
+                    " avg2 " + LogUtil.getStringTime(dtimes.get(type).getMean()) +
                     " Queries max " + Collections.max(dqueries1.get(type)) +
                     " min " + Collections.min(dqueries1.get(type)) +
                     " avg2 " + OntologyUtils.avg2(dqueries1.get(type)));
@@ -655,9 +676,9 @@ public class OntologyTests {
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = CreationUtils.createTheory(CreationUtils.createOwlOntology(path, ont), false);
+        OWLTheory theoryNormal = CreationUtils.createTheory(new SimpleOntologyCreator(path, ont).getOntology(), false);
         searchNormal.setTheory(theoryNormal);
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
@@ -668,9 +689,9 @@ public class OntologyTests {
         InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = CreationUtils.createTheory(CreationUtils.createOwlOntology(path, ont), true);
+        OWLTheory theoryDual = CreationUtils.createTheory(new SimpleOntologyCreator(path, ont).getOntology(), true);
         searchDual.setTheory(theoryDual);
-        map = CommonUtils.getProbabMap();
+        map = ProbabMapCreator.getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
@@ -746,7 +767,7 @@ public class OntologyTests {
                         for (int i = 0; i < 1500; i++) {
 
 
-                            OWLOntology ontology = CreationUtils.createOwlOntology("queryontologies", o + ".owl");
+                            OWLOntology ontology = new SimpleOntologyCreator("queryontologies", o + ".owl").getOntology();
                             //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                             long preprocessModulExtract = System.currentTimeMillis();
                             ontology = new OWLIncoherencyExtractor(
@@ -756,7 +777,7 @@ public class OntologyTests {
                             OWLTheory theory = CreationUtils.createOWLTheory(ontology, true);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch(theory, true);
 
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                             es.updateKeywordProb(map);
                             search.setCostsEstimator(es);
@@ -775,7 +796,7 @@ public class OntologyTests {
                             out += "," + type + ",";
                             String message = "act," + "," + o.trim() + "," + targetSource + "," +
                                     "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
-                            logger.info("target diagnosis:" + targetDg.size() + " " + CommonUtils.renderAxioms(targetDg));
+                            logger.info("target diagnosis:" + targetDg.size() + " " + LogUtil.renderAxioms(targetDg));
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
                             out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
