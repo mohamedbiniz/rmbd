@@ -1,7 +1,11 @@
 package at.ainf.owlapi3.utils.creation;
 
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.CostsEstimator;
+import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -327,4 +331,42 @@ public class OAEI08Utils extends CommonUtils {
         }
         return res;
     }
+
+    public static OWLOntology createOwlOntology2(String matcher, String name) {
+        String path = "alignment/" + matcher + "_incoherent_matched_ontologies";
+        return createOwlOntology(path, name + ".owl");
+    }
+
+    public static OWLOntology createOwlOntology(String name) {
+        String path = ClassLoader.getSystemResource("alignment").getPath();
+        return createOwlOntology(path, name + ".owl");
+    }
+
+    public static Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
+
+        Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>();
+        for (String targetAxiom : targetAxioms) {
+            for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
+                if (axiom.toString().contains(targetAxiom.trim()))
+                    res.add(axiom);
+            }
+        }
+        return res;
+    }
+
+    public static Set<AxiomSet<OWLLogicalAxiom>> run(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, int diags) {
+        try {
+            search.run(diags);
+        } catch (SolverException e) {
+            //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (NoConflictException e) {
+            //logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InconsistentTheoryException e) {
+            //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return Collections.unmodifiableSet(search.getDiagnoses());
+    }
+
+    public enum BackgroundO {EMPTY, O1, O2, O1_O2}
 }
