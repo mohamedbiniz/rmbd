@@ -8,8 +8,9 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.performance.table.TableList;
+import at.ainf.owlapi3.utils.ProbabMapCreator;
 import at.ainf.owlapi3.utils.SimulatedSession;
-import at.ainf.owlapi3.utils.creation.CommonUtils;
+import at.ainf.owlapi3.utils.LogUtil;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -145,9 +146,9 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
         logger.info("First " + runs + " Diagnoses and corresponding conflicts before test case");
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getStorage().getDiagnoses())
-            logger.info("HS " + CommonUtils.renderAxioms(hs));
+            logger.info("HS " + LogUtil.renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getStorage().getConflicts())
-            logger.info("cs " + CommonUtils.renderAxioms(confl));
+            logger.info("cs " + LogUtil.renderAxioms(confl));
 
         if (runs < 1) return;
 
@@ -166,9 +167,9 @@ public class DualTreeTest {//extends BasePerformanceTests {
         theoryNormal.addNonEntailedTest(negativeTestcase);
         searchNormal.run(runs);
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getDiagnoses())
-            logger.info("HS " + CommonUtils.renderAxioms(hs));
+            logger.info("HS " + LogUtil.renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getConflicts())
-            logger.info("cs " + CommonUtils.renderAxioms(confl));
+            logger.info("cs " + LogUtil.renderAxioms(confl));
     }
 
 
@@ -201,8 +202,8 @@ public class DualTreeTest {//extends BasePerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
         dual = System.currentTimeMillis() - dual;
 
-        logger.info("normal " + CommonUtils.getStringTime(normal) + " subsets: " + theoryNormal.getCache().size());
-        logger.info("dual " + CommonUtils.getStringTime(dual) + " subsets: " + theoryDual.getCache().size());
+        logger.info("normal " + LogUtil.getStringTime(normal) + " subsets: " + theoryNormal.getCache().size());
+        logger.info("dual " + LogUtil.getStringTime(dual) + " subsets: " + theoryDual.getCache().size());
 
         assert (resultNormal.equals(resultDual));
 
@@ -277,7 +278,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
         logger.info("dual tree iteration finished: window size "
                 + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() +
-                " time " + CommonUtils.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
+                " time " + LogUtil.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative tests " + hasNegativeTestcases + " diagnoses in storage " + daStr +
                 " cached subsets " + theoryDual.getCache().size()
@@ -315,7 +316,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchNormal.reset();
         logger.info("hstree iteration finished: window size "
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
-                CommonUtils.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
+                LogUtil.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr +
                 " cached subsets " + theoryNormal.getCache().size()
@@ -336,7 +337,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CommonUtils.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
@@ -351,7 +352,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
         //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
-        map = CommonUtils.getProbabMap();
+        map = ProbabMapCreator.getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
@@ -388,19 +389,19 @@ public class DualTreeTest {//extends BasePerformanceTests {
         }
 
         long needed = System.currentTimeMillis() - t;
-        logger.info("needed overall " + CommonUtils.getStringTime(needed));
-        logger.info("needed normal " + CommonUtils.getStringTime(timeNormalOverall) +
-                " max " + CommonUtils.getStringTime(timeNormalMax) +
-                " min " + CommonUtils.getStringTime(timeNormalMin) +
-                " avg2 " + CommonUtils.getStringTime(timeNormalOverall / count) +
+        logger.info("needed overall " + LogUtil.getStringTime(needed));
+        logger.info("needed normal " + LogUtil.getStringTime(timeNormalOverall) +
+                " max " + LogUtil.getStringTime(timeNormalMax) +
+                " min " + LogUtil.getStringTime(timeNormalMin) +
+                " avg2 " + LogUtil.getStringTime(timeNormalOverall / count) +
                 " Queries max " + Collections.max(nqueries) +
                 " min " + Collections.min(nqueries) +
                 " avg2 " + avg(nqueries)
         );
-        logger.info("needed dual " + CommonUtils.getStringTime(timeDualOverall) +
-                " max " + CommonUtils.getStringTime(timeDualMax) +
-                " min " + CommonUtils.getStringTime(timeDualMin) +
-                " avg2 " + CommonUtils.getStringTime(timeDualOverall / count) +
+        logger.info("needed dual " + LogUtil.getStringTime(timeDualOverall) +
+                " max " + LogUtil.getStringTime(timeDualMax) +
+                " min " + LogUtil.getStringTime(timeDualMin) +
+                " avg2 " + LogUtil.getStringTime(timeDualOverall / count) +
                 " Queries max " + Collections.max(dqueries) +
                 " min " + Collections.min(dqueries) +
                 " avg2 " + avg(dqueries));

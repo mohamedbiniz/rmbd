@@ -6,6 +6,8 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.owlapi3.utils.creation.CreationUtils;
 import at.ainf.owlapi3.utils.creation.OAEI11ConferenceUtils;
+import at.ainf.owlapi3.utils.creation.ontology.OAEI11ConferenceOntologyCreator;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
@@ -171,10 +173,11 @@ public class StatisticsDiagnosis {
             o2 = o2.substring(0,o2.length()-4);
             String pathMapping = "oaei11conference/matchings/" + file.getParentFile().getName();
             String mappingName = file.getName();
-            ontology = OAEI11ConferenceUtils.createOntologyWithRdfMappings(pathOntologies, o1, o2, pathMapping, mappingName);
+            ontology = new OAEI11ConferenceOntologyCreator(pathOntologies, o1, o2, pathMapping, mappingName).
+                    getOntology();
         }
         else {
-            ontology = CreationUtils.createOwlOntology(file);
+            ontology = new SimpleOntologyCreator(file).getOntology();
 
         }
         OWLTheory th = createTheory(ontology);
@@ -246,7 +249,7 @@ public class StatisticsDiagnosis {
     public void showMetrics() {
 
         String o = "koala.owl";
-        OWLOntology ont = CreationUtils.createOwlOntology("ontologies", o);
+        OWLOntology ont = new SimpleOntologyCreator("ontologies", o).getOntology();
         logger.info(o);
 
         Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
