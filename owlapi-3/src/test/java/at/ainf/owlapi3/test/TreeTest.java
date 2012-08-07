@@ -10,7 +10,8 @@ import at.ainf.owlapi3.model.OWLDiagnosisSearchableObject;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.owlapi3.utils.creation.CreationUtils;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
+import at.ainf.owlapi3.utils.creation.theory.SimpleTheoryCreator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
@@ -48,7 +49,7 @@ public class TreeTest {
 
     @Test
     public void testDiagnosisSearcher() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
-        OWLTheory th = CreationUtils.loadTheory(manager, "ontologies/ecai.simple.owl");
+        OWLTheory th = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies/ecai.simple.owl").getOntology(),false).getTheory();
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getActiveFormulas(), null);
 
@@ -59,7 +60,7 @@ public class TreeTest {
     @Test
     public void testSimpleTestCases() throws InconsistentTheoryException, SolverException, URISyntaxException, OWLException {
 
-        OWLTheory th = CreationUtils.loadTheory(manager, "ontologies/ecai.simple.owl");
+        OWLTheory th = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies/ecai.simple.owl").getOntology(),false).getTheory();
         debug.set_Theory(th);
         debug.reset();
         OWLOntologyManager manager = th.getOntology().getOWLOntologyManager();
@@ -317,7 +318,7 @@ public class TreeTest {
                                    Collection<OWLLogicalAxiom> negativeCases) throws OWLException, SolverException,
             URISyntaxException, InconsistentTheoryException {
         //debugger.reset();
-        OWLTheory th = CreationUtils.loadTheory(manager, path);
+        OWLTheory th = new SimpleTheoryCreator(new SimpleOntologyCreator(path).getOntology(),false).getTheory();
 
         if (positiveCases != null)
             for (OWLLogicalAxiom test : positiveCases)

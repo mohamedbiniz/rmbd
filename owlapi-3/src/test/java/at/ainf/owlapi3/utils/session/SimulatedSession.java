@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.utils;
+package at.ainf.owlapi3.utils.session;
 
 import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -18,6 +18,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.performance.table.Time;
+import at.ainf.owlapi3.utils.LogUtil;
 import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;

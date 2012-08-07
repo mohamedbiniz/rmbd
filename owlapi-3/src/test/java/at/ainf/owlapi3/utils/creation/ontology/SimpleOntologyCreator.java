@@ -18,9 +18,13 @@ public class SimpleOntologyCreator implements OntologyCreator {
 
     private File file;
 
+
     public SimpleOntologyCreator (String path, String name) {
-        String directory = ClassLoader.getSystemResource(path).getPath();
-        file = new File(directory + "/" + name);
+        this(path + "/" + name);
+    }
+
+    public SimpleOntologyCreator (String name) {
+        this(new File(ClassLoader.getSystemResource(name).getPath()));
     }
 
     public SimpleOntologyCreator (File filename) {
