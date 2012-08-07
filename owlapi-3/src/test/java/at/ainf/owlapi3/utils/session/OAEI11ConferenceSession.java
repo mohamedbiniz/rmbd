@@ -1,5 +1,6 @@
-package at.ainf.owlapi3.utils.creation;
+package at.ainf.owlapi3.utils.session;
 
+import at.ainf.owlapi3.utils.creation.OAEI11ConferenceRdfMatchingParser;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import org.xml.sax.SAXException;
@@ -16,11 +17,11 @@ import java.util.Set;
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
- * Date: 02.08.12
- * Time: 09:02
+ * Date: 07.08.12
+ * Time: 11:21
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11ConferenceUtils {
+public class OAEI11ConferenceSession extends SimulatedSession {
     public static Map<OWLLogicalAxiom,BigDecimal> readRdfMapping(String path, String name) {
         OAEI11ConferenceRdfMatchingParser handler = new OAEI11ConferenceRdfMatchingParser();
         SAXParserFactory factory = SAXParserFactory.newInstance();

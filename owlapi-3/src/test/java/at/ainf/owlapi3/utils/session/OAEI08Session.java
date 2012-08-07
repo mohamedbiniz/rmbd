@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.utils.creation;
+package at.ainf.owlapi3.utils.session;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
@@ -6,7 +6,6 @@ import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -17,11 +16,11 @@ import java.util.*;
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
- * Date: 02.08.12
- * Time: 09:05
+ * Date: 07.08.12
+ * Time: 11:21
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI08Utils {
+public class OAEI08Session extends SimulatedSession {
     public static Properties readProps() {
         return readProps("alignment.unsolvable.properties");
 
