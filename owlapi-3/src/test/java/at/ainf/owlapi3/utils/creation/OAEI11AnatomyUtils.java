@@ -20,7 +20,7 @@ import java.util.Set;
  * Time: 09:24
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11AnatomyUtils extends CreationUtils {
+public class OAEI11AnatomyUtils {
 
     public static Set<OWLLogicalAxiom> getAxiomsInMappingOAEI(String path, String source) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();

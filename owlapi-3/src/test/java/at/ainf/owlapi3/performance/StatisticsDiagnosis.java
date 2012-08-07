@@ -4,8 +4,6 @@ import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.owlapi3.utils.creation.CreationUtils;
-import at.ainf.owlapi3.utils.creation.OAEI11ConferenceUtils;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI11ConferenceOntologyCreator;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import org.apache.log4j.Logger;

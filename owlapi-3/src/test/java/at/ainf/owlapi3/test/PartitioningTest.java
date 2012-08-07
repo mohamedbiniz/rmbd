@@ -8,7 +8,8 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
-import at.ainf.owlapi3.utils.creation.CreationUtils;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
+import at.ainf.owlapi3.utils.creation.theory.SimpleTheoryCreator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
@@ -48,7 +49,7 @@ public class PartitioningTest {
 
     @Test
     public void testBruteForce() throws OWLException, InconsistentTheoryException, SolverException {
-        OWLTheory theory = CreationUtils.loadTheory(manager, "ontologies/partition.owl");
+        OWLTheory theory = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies/partition.owl").getOntology(),false).getTheory();
         debugger.set_Theory(theory);
         debugger.reset();
         assertEquals(true, debugger.debug());
@@ -62,7 +63,7 @@ public class PartitioningTest {
     //@Ignore
     @Test
     public void testGreedyForce() throws OWLException, InconsistentTheoryException, SolverException {
-        OWLTheory theory = CreationUtils.loadTheory(manager, "ontologies/partition.owl");
+        OWLTheory theory = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies/partition.owl").getOntology(),false).getTheory();
         debugger.set_Theory(theory);
         debugger.reset();
         assertEquals(true, debugger.debug());
@@ -83,7 +84,7 @@ public class PartitioningTest {
     @Ignore
     @Test
     public void testGreedyForce2() throws OWLException, InconsistentTheoryException, SolverException {
-        OWLTheory theory = CreationUtils.loadTheory(manager, "ontologies/ecai.simple.owl");
+        OWLTheory theory = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies/ecai.simple.owl").getOntology(),false).getTheory();
         debugger.set_Theory(theory);
         debugger.reset();
         assertEquals(true, debugger.debug());
@@ -109,7 +110,7 @@ public class PartitioningTest {
     @Test
     public void testBruteForce2() throws OWLException, InconsistentTheoryException, SolverException {
 
-        OWLTheory theory = CreationUtils.loadTheory(manager, "ontologies/Univ.owl");
+        OWLTheory theory = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies/Univ.owl").getOntology(),false).getTheory();
         debugger.set_Theory(theory);
         debugger.reset();
         debugger.updateMaxHittingSets(9);

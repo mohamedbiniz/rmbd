@@ -21,7 +21,7 @@ import java.util.*;
  * Time: 09:05
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI08Utils extends CreationUtils {
+public class OAEI08Utils {
     public static Properties readProps() {
         return readProps("alignment.unsolvable.properties");
 

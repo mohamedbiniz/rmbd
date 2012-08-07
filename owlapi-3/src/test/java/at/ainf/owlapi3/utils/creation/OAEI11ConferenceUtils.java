@@ -1,7 +1,5 @@
 package at.ainf.owlapi3.utils.creation;
 
-import at.ainf.owlapi3.utils.OAEI11ConferenceRdfMatchingParser;
-import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import org.xml.sax.SAXException;
@@ -22,7 +20,7 @@ import java.util.Set;
  * Time: 09:02
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11ConferenceUtils extends CreationUtils {
+public class OAEI11ConferenceUtils {
     public static Map<OWLLogicalAxiom,BigDecimal> readRdfMapping(String path, String name) {
         OAEI11ConferenceRdfMatchingParser handler = new OAEI11ConferenceRdfMatchingParser();
         SAXParserFactory factory = SAXParserFactory.newInstance();

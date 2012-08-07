@@ -16,12 +16,13 @@ import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.utils.SimulatedSession;
+import at.ainf.owlapi3.utils.session.SimulatedSession;
 import at.ainf.owlapi3.utils.LogUtil;
-import at.ainf.owlapi3.utils.creation.CreationUtils;
 import at.ainf.owlapi3.utils.creation.OAEI11ConferenceUtils;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI11ConferenceOntologyCreator;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
+import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
+import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
@@ -171,8 +172,8 @@ public class OAEI11ConferenceTests {
                     OWLOntology ontology = new OWLIncoherencyExtractor(
                             new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
                     preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
-                    OWLTheory theory = CreationUtils.createTheoryOAEI(ontology, true, true);
-                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch(theory, true);
+                    OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, true).getTheory();
+                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, true).getSearch();
 
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                     OWLOntology ontology1 = new SimpleOntologyCreator("oaei11conference/ontology", o1 + ".owl").getOntology();
@@ -248,8 +249,8 @@ public class OAEI11ConferenceTests {
 
         OWLOntology ontology = new OWLIncoherencyExtractor(
                 new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
-        OWLTheory theory = CreationUtils.createTheoryOAEI(ontology, true, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = CreationUtils.createUniformCostSearch(theory, true);
+        OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, true).getTheory();
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, true).getSearch();
 
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
         OWLOntology ontology1 = new SimpleOntologyCreator("oaei11conference/ontology", o1 + ".owl").getOntology();
@@ -271,8 +272,8 @@ public class OAEI11ConferenceTests {
         Set<OWLLogicalAxiom> targetDg = null;
 
 
-        OWLTheory th30 = CreationUtils.createTheoryOAEI(ontology, true, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = CreationUtils.createUniformCostSearch(th30, true);
+        OWLTheory th30 = new BackgroundExtendedTheoryCreator(ontology, true).getTheory();
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = new UniformCostSearchCreator(th30, true).getSearch();
         th30.addBackgroundFormulas(bx);
         OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, OAEI11ConferenceUtils.readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
