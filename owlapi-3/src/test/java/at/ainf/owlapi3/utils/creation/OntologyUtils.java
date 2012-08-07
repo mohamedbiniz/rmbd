@@ -30,13 +30,6 @@ import java.util.TreeSet;
  * To change this template use File | Settings | File Templates.
  */
 public class OntologyUtils {
-    public static double avg2(List<Double> nqueries) {
-        double res = 0;
-        for (Double qs : nqueries) {
-            res += qs;
-        }
-        return res / nqueries.size();
-    }
 
     public static TreeSet<AxiomSet<OWLLogicalAxiom>> getAllD(String o) {
         OWLOntology ontology = new SimpleOntologyCreator("ontologies", o + ".owl").getOntology();

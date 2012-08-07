@@ -9,9 +9,8 @@ import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.ProbabMapCreator;
-import at.ainf.owlapi3.utils.session.SimulatedSession;
-import at.ainf.owlapi3.utils.creation.OAEI08Utils;
-import at.ainf.owlapi3.utils.creation.OAEI11AnatomyUtils;
+import at.ainf.owlapi3.utils.session.OAEI08Session;
+import at.ainf.owlapi3.utils.session.OAEI11AnatomySession;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI11AnatomyOntologyCreator;
 import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
 import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
@@ -51,10 +50,10 @@ public class OAEI11AnatomyTests {
 
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
-        SimulatedSession session = new SimulatedSession();
+        OAEI11AnatomySession session = new OAEI11AnatomySession();
 
-        Properties properties = OAEI08Utils.readProps("alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = OAEI08Utils.readOntologiesFromFile(properties);
+        Properties properties = OAEI08Session.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
         //boolean background_add = false;
         session.setShowElRates(false);
 
@@ -62,16 +61,16 @@ public class OAEI11AnatomyTests {
                 new String[]{"Aroma"};
         //String[] files = new String[]{"Aroma"};
 
-        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]
-                {SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF,
-                        SimulatedSession.QSSType.DYNAMICRISK};
+        OAEI11AnatomySession.QSSType[] qssTypes = new OAEI11AnatomySession.QSSType[]
+                {OAEI11AnatomySession.QSSType.MINSCORE, OAEI11AnatomySession.QSSType.SPLITINHALF,
+                        OAEI11AnatomySession.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{true}) {
             for (boolean background : new boolean[]{true}) {
-                for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE}) {
+                for (OAEI11AnatomySession.TargetSource targetSource : new OAEI11AnatomySession.TargetSource[]{OAEI11AnatomySession.TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
                         String out = "STAT, " + file;
-                        for (SimulatedSession.QSSType type : qssTypes) {
+                        for (OAEI11AnatomySession.QSSType type : qssTypes) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
@@ -89,7 +88,7 @@ public class OAEI11AnatomyTests {
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-                            bx.addAll(OAEI11AnatomyUtils.getLogicalAxiomsOfOntologiesOAEI());
+                            bx.addAll(OAEI11AnatomySession.getLogicalAxiomsOfOntologiesOAEI());
                             bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
                             theory.addBackgroundFormulas(bx);
 
@@ -109,8 +108,8 @@ public class OAEI11AnatomyTests {
                             search.reset();
 
 
-                            if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = OAEI11AnatomyUtils.getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
+                            if (targetSource == OAEI11AnatomySession.TargetSource.FROM_FILE)
+                                targetDg = OAEI11AnatomySession.getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
                                         file);
 
                             TableList e = new TableList();
@@ -134,10 +133,10 @@ public class OAEI11AnatomyTests {
 
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
-        SimulatedSession session = new SimulatedSession();
+        OAEI11AnatomySession session = new OAEI11AnatomySession();
 
-        Properties properties = OAEI08Utils.readProps("alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = OAEI08Utils.readOntologiesFromFile(properties);
+        Properties properties = OAEI08Session.readProps("alignment.unsolvable.properties");
+        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
         //boolean background_add = false;
         session.setShowElRates(false);
 
@@ -146,15 +145,15 @@ public class OAEI11AnatomyTests {
         String[] files = new String[]{"AgrMaker"};
 
         //QSSType[] qssTypes = new QSSType[]{DYNAMICRISK};
-        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]
-                { SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF, SimulatedSession.QSSType.DYNAMICRISK };
+        OAEI11AnatomySession.QSSType[] qssTypes = new OAEI11AnatomySession.QSSType[]
+                { OAEI11AnatomySession.QSSType.MINSCORE, OAEI11AnatomySession.QSSType.SPLITINHALF, OAEI11AnatomySession.QSSType.DYNAMICRISK };
         for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{false}) {
-                for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE}) {
+                for (OAEI11AnatomySession.TargetSource targetSource : new OAEI11AnatomySession.TargetSource[]{OAEI11AnatomySession.TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
                         String out = "STAT, " + file;
-                        for (SimulatedSession.QSSType type : qssTypes) {
+                        for (OAEI11AnatomySession.QSSType type : qssTypes) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
@@ -172,7 +171,7 @@ public class OAEI11AnatomyTests {
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-                            bx.addAll(OAEI11AnatomyUtils.getLogicalAxiomsOfOntologiesOAEI());
+                            bx.addAll(OAEI11AnatomySession.getLogicalAxiomsOfOntologiesOAEI());
                             bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
                             if (background) theory.addBackgroundFormulas(bx);
 
@@ -192,8 +191,8 @@ public class OAEI11AnatomyTests {
                             search.reset();
 
 
-                            if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = OAEI11AnatomyUtils.getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
+                            if (targetSource == OAEI11AnatomySession.TargetSource.FROM_FILE)
+                                targetDg = OAEI11AnatomySession.getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
                                         file);
 
                             TableList e = new TableList();

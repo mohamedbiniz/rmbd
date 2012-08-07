@@ -1,8 +1,7 @@
-package at.ainf.owlapi3.utils.creation;
+package at.ainf.owlapi3.utils.session;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.util.OWLOntologyMerger;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,12 +15,11 @@ import java.util.Set;
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
- * Date: 02.08.12
- * Time: 09:24
+ * Date: 07.08.12
+ * Time: 11:21
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11AnatomyUtils {
-
+public class OAEI11AnatomySession extends SimulatedSession {
     public static Set<OWLLogicalAxiom> getAxiomsInMappingOAEI(String path, String source) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
@@ -100,7 +98,7 @@ public class OAEI11AnatomyUtils {
 
     public static OWLLogicalAxiom createAxiomOAEI2(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
         OWLDataFactory factory = man.getOWLDataFactory();
-        OWLClass clsA = factory.getOWLClass(IRI.create(sourceNamespace + "#" +  source));
+        OWLClass clsA = factory.getOWLClass(IRI.create(sourceNamespace + "#" + source));
         OWLClass clsB = factory.getOWLClass(IRI.create(targetNamespace + "#" +  target));
         OWLLogicalAxiom axiom = factory.getOWLSubClassOfAxiom(clsA, clsB);
 

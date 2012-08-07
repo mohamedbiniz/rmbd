@@ -609,21 +609,31 @@ public class OntologyTests {
         long needed = System.currentTimeMillis() - t;
         logger.info("needed overall " + LogUtil.getStringTime(needed));
         for (QSSType type : QSSType.values()) {
+            List<Double> nqueries2 = nqueries1.get(type);
+            double res1 = 0;
+            for (Double qs1 : nqueries2) {
+                res1 += qs1;
+            }
             logger.info("needed normal " + type + " " + LogUtil.getStringTime(ntimes.get(type).getOverall()) +
                     " max " + LogUtil.getStringTime(ntimes.get(type).getMax()) +
                     " min " + LogUtil.getStringTime(ntimes.get(type).getMin()) +
                     " avg2 " + LogUtil.getStringTime(ntimes.get(type).getMean()) +
                     " Queries max " + Collections.max(nqueries1.get(type)) +
                     " min " + Collections.min(nqueries1.get(type)) +
-                    " avg2 " + OntologyUtils.avg2(nqueries1.get(type))
+                    " avg2 " + res1 / nqueries2.size()
             );
+            List<Double> nqueries = dqueries1.get(type);
+            double res = 0;
+            for (Double qs : nqueries) {
+                res += qs;
+            }
             logger.info("needed dual " + type + " " + LogUtil.getStringTime(dtimes.get(type).getOverall()) +
                     " max " + LogUtil.getStringTime(dtimes.get(type).getMax()) +
                     " min " + LogUtil.getStringTime(dtimes.get(type).getMin()) +
                     " avg2 " + LogUtil.getStringTime(dtimes.get(type).getMean()) +
                     " Queries max " + Collections.max(dqueries1.get(type)) +
                     " min " + Collections.min(dqueries1.get(type)) +
-                    " avg2 " + OntologyUtils.avg2(dqueries1.get(type)));
+                    " avg2 " + res / nqueries.size());
         }
     }
 
