@@ -9,8 +9,9 @@ import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.ProbabMapCreator;
+import at.ainf.owlapi3.utils.creation.target.OAEI11AnatomyTargetProvider;
 import at.ainf.owlapi3.utils.session.OAEI08Session;
-import at.ainf.owlapi3.utils.session.OAEI11AnatomySession;
+import at.ainf.owlapi3.utils.session.SimulatedSession;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI11AnatomyOntologyCreator;
 import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
 import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
@@ -20,11 +21,14 @@ import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -50,9 +54,9 @@ public class OAEI11AnatomyTests {
 
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
-        OAEI11AnatomySession session = new OAEI11AnatomySession();
+        SimulatedSession session = new SimulatedSession();
 
-        Properties properties = OAEI08Session.readProps("alignment.unsolvable.properties");
+        Properties properties = OAEI08Session.readProps("alignment/" + "alignment.unsolvable.properties");
         Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
         //boolean background_add = false;
         session.setShowElRates(false);
@@ -61,16 +65,16 @@ public class OAEI11AnatomyTests {
                 new String[]{"Aroma"};
         //String[] files = new String[]{"Aroma"};
 
-        OAEI11AnatomySession.QSSType[] qssTypes = new OAEI11AnatomySession.QSSType[]
-                {OAEI11AnatomySession.QSSType.MINSCORE, OAEI11AnatomySession.QSSType.SPLITINHALF,
-                        OAEI11AnatomySession.QSSType.DYNAMICRISK};
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]
+                {SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF,
+                        SimulatedSession.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{true}) {
             for (boolean background : new boolean[]{true}) {
-                for (OAEI11AnatomySession.TargetSource targetSource : new OAEI11AnatomySession.TargetSource[]{OAEI11AnatomySession.TargetSource.FROM_FILE}) {
+                for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
                         String out = "STAT, " + file;
-                        for (OAEI11AnatomySession.QSSType type : qssTypes) {
+                        for (SimulatedSession.QSSType type : qssTypes) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
@@ -88,7 +92,18 @@ public class OAEI11AnatomyTests {
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-                            bx.addAll(OAEI11AnatomySession.getLogicalAxiomsOfOntologiesOAEI());
+                            Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
+
+                            OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+                            InputStream st = ClassLoader.getSystemResourceAsStream("oaei11/mouse.owl");
+                            OWLOntology mouse = man.loadOntologyFromOntologyDocument(st);
+                            st = ClassLoader.getSystemResourceAsStream("oaei11/human.owl");
+                            OWLOntology human = man.loadOntologyFromOntologyDocument(st);
+
+                            r.addAll(mouse.getLogicalAxioms());
+                            r.addAll(human.getLogicalAxioms());
+
+                            bx.addAll(r);
                             bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
                             theory.addBackgroundFormulas(bx);
 
@@ -108,9 +123,8 @@ public class OAEI11AnatomyTests {
                             search.reset();
 
 
-                            if (targetSource == OAEI11AnatomySession.TargetSource.FROM_FILE)
-                                targetDg = OAEI11AnatomySession.getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
-                                        file);
+                            if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
+                                targetDg = new OAEI11AnatomyTargetProvider(file).getDiagnosisTarget();
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -133,27 +147,21 @@ public class OAEI11AnatomyTests {
 
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
-        OAEI11AnatomySession session = new OAEI11AnatomySession();
-
-        Properties properties = OAEI08Session.readProps("alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
-        //boolean background_add = false;
+        SimulatedSession session = new SimulatedSession();
         session.setShowElRates(false);
 
-        //String[] files =
-        //new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
-        String[] files = new String[]{"AgrMaker"};
+        String[] files =
+        new String[]{"AgrMaker", "GOMMA-bk", "GOMMA-nobk", "Lily", "LogMap", "LogMapLt", "MapSSS"};
 
-        //QSSType[] qssTypes = new QSSType[]{DYNAMICRISK};
-        OAEI11AnatomySession.QSSType[] qssTypes = new OAEI11AnatomySession.QSSType[]
-                { OAEI11AnatomySession.QSSType.MINSCORE, OAEI11AnatomySession.QSSType.SPLITINHALF, OAEI11AnatomySession.QSSType.DYNAMICRISK };
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]
+                { SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF, SimulatedSession.QSSType.DYNAMICRISK };
         for (boolean dual : new boolean[] {false}) {
             for (boolean background : new boolean[]{false}) {
-                for (OAEI11AnatomySession.TargetSource targetSource : new OAEI11AnatomySession.TargetSource[]{OAEI11AnatomySession.TargetSource.FROM_FILE}) {
+                for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE}) {
                     for (String file : files) {
 
                         String out = "STAT, " + file;
-                        for (OAEI11AnatomySession.QSSType type : qssTypes) {
+                        for (SimulatedSession.QSSType type : qssTypes) {
 
                             //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
@@ -171,7 +179,18 @@ public class OAEI11AnatomyTests {
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-                            bx.addAll(OAEI11AnatomySession.getLogicalAxiomsOfOntologiesOAEI());
+                            Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
+
+                            OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+                            InputStream st = ClassLoader.getSystemResourceAsStream("oaei11/mouse.owl");
+                            OWLOntology mouse = man.loadOntologyFromOntologyDocument(st);
+                            st = ClassLoader.getSystemResourceAsStream("oaei11/human.owl");
+                            OWLOntology human = man.loadOntologyFromOntologyDocument(st);
+
+                            r.addAll(mouse.getLogicalAxioms());
+                            r.addAll(human.getLogicalAxioms());
+
+                            bx.addAll(r);
                             bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
                             if (background) theory.addBackgroundFormulas(bx);
 
@@ -191,9 +210,8 @@ public class OAEI11AnatomyTests {
                             search.reset();
 
 
-                            if (targetSource == OAEI11AnatomySession.TargetSource.FROM_FILE)
-                                targetDg = OAEI11AnatomySession.getTargetDOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/",
-                                        file);
+                            if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
+                                targetDg = new OAEI11AnatomyTargetProvider(file).getDiagnosisTarget();
 
                             TableList e = new TableList();
                             out += "," + type + ",";

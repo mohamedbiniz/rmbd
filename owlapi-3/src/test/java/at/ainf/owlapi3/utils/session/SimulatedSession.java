@@ -15,13 +15,22 @@ import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.Rounding;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.performance.table.Time;
 import at.ainf.owlapi3.utils.LogUtil;
+import at.ainf.owlapi3.utils.ProbabMapCreator;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
+import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
+import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
 import org.apache.log4j.Logger;
+import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
+import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
+import org.semanticweb.owlapi.model.OWLOntology;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.math.BigDecimal;
@@ -36,7 +45,7 @@ import static org.junit.Assert.assertTrue;
  * Time: 11:45
  * To change this template use File | Settings | File Templates.
  */
-public class SimulatedSession {
+public class SimulatedSession extends CalculateDiagnoses {
 
     private static Logger logger = Logger.getLogger(SimulatedSession.class.getName());
 

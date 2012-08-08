@@ -16,12 +16,13 @@ import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.utils.session.OAEI11ConferenceSession;
 import at.ainf.owlapi3.utils.LogUtil;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI11ConferenceOntologyCreator;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
 import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
+import at.ainf.owlapi3.utils.StatisticsTools;
+import at.ainf.owlapi3.utils.session.SimulatedSession;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
@@ -112,7 +113,7 @@ public class OAEI11ConferenceTests {
     public void doTestsOAEIConference()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
-        OAEI11ConferenceSession session = new OAEI11ConferenceSession();
+        SimulatedSession session = new SimulatedSession();
 
         String matchingsDir = "oaei11conference/matchings/";
         String directory = "incoherent";
@@ -139,10 +140,10 @@ public class OAEI11ConferenceTests {
 
         session.setShowElRates(false);
 
-        OAEI11ConferenceSession.QSSType[] qssTypes = new OAEI11ConferenceSession.QSSType[]
-                {OAEI11ConferenceSession.QSSType.MINSCORE, OAEI11ConferenceSession.QSSType.SPLITINHALF};
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]
+                {SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF};
 
-        for (OAEI11ConferenceSession.TargetSource targetSource : new OAEI11ConferenceSession.TargetSource[]{OAEI11ConferenceSession.TargetSource.FROM_30_DIAGS}) {
+        for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
 
             for (File file : files) {
                 logger.info("processing " + file.getName());
@@ -152,7 +153,7 @@ public class OAEI11ConferenceTests {
 
                 Set<OWLLogicalAxiom> targetDg = getRandomDiag(file, map.get(file));
 
-                for (OAEI11ConferenceSession.QSSType type : qssTypes) {
+                for (SimulatedSession.QSSType type : qssTypes) {
 
 
                     String fileName = file.getName();
@@ -177,11 +178,11 @@ public class OAEI11ConferenceTests {
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                     OWLOntology ontology1 = new SimpleOntologyCreator("oaei11conference/ontology", o1 + ".owl").getOntology();
                     OWLOntology ontology2 = new SimpleOntologyCreator("oaei11conference/ontology", o2 + ".owl").getOntology();
-                    bx.addAll(OAEI11ConferenceSession.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-                    bx.addAll(OAEI11ConferenceSession.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+                    bx.addAll(StatisticsTools.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+                    bx.addAll(StatisticsTools.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
                     theory.addBackgroundFormulas(bx);
 
-                    Map<OWLLogicalAxiom, BigDecimal> map1 = OAEI11ConferenceSession.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
+                    Map<OWLLogicalAxiom, BigDecimal> map1 = OAEI11ConferenceOntologyCreator.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
 
                     OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
@@ -254,11 +255,11 @@ public class OAEI11ConferenceTests {
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
         OWLOntology ontology1 = new SimpleOntologyCreator("oaei11conference/ontology", o1 + ".owl").getOntology();
         OWLOntology ontology2 = new SimpleOntologyCreator("oaei11conference/ontology", o2 + ".owl").getOntology();
-        bx.addAll(OAEI11ConferenceSession.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-        bx.addAll(OAEI11ConferenceSession.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+        bx.addAll(StatisticsTools.getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+        bx.addAll(StatisticsTools.getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
         theory.addBackgroundFormulas(bx);
 
-        Map<OWLLogicalAxiom, BigDecimal> map1 = OAEI11ConferenceSession.readRdfMapping(mapd, n + ".rdf");
+        Map<OWLLogicalAxiom, BigDecimal> map1 = OAEI11ConferenceOntologyCreator.readRdfMapping(mapd, n + ".rdf");
 
         OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
@@ -274,7 +275,7 @@ public class OAEI11ConferenceTests {
         OWLTheory th30 = new BackgroundExtendedTheoryCreator(ontology, true).getTheory();
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = new UniformCostSearchCreator(th30, true).getSearch();
         th30.addBackgroundFormulas(bx);
-        OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, OAEI11ConferenceSession.readRdfMapping(mapd, n + ".rdf"));
+        OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, OAEI11ConferenceOntologyCreator.readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
 
         try {
@@ -333,13 +334,13 @@ public class OAEI11ConferenceTests {
 
             String refmatchPath = "oaei11conference/matchings/references";
             String refMatch = o1 + "-" + o2 + ".rdf";
-            Set<OWLLogicalAxiom> correctMappingAxioms = OAEI11ConferenceSession.readRdfMapping(refmatchPath, refMatch).keySet();
-            ontoBackground.addAll(OAEI11ConferenceSession.getIntersection(extracted.getLogicalAxioms(), correctMappingAxioms));
+            Set<OWLLogicalAxiom> correctMappingAxioms = OAEI11ConferenceOntologyCreator.readRdfMapping(refmatchPath, refMatch).keySet();
+            ontoBackground.addAll(StatisticsTools.getIntersection(extracted.getLogicalAxioms(), correctMappingAxioms));
 
             OWLOntology ontology1 = new SimpleOntologyCreator("oaei11conference/ontology", o1 + ".owl").getOntology();
             OWLOntology ontology2 = new SimpleOntologyCreator("oaei11conference/ontology", o2 + ".owl").getOntology();
-            ontoBackground.addAll(OAEI11ConferenceSession.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-            ontoBackground.addAll(OAEI11ConferenceSession.getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+            ontoBackground.addAll(StatisticsTools.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+            ontoBackground.addAll(StatisticsTools.getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms()));
 
             TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual;
             if (dual) {
@@ -627,9 +628,9 @@ public class OAEI11ConferenceTests {
             o2 = o2.substring(0,o2.length()-4);
             OWLOntology ontology1 = new SimpleOntologyCreator("oaei11conference/ontology", o1 + ".owl").getOntology();
             OWLOntology ontology2 = new SimpleOntologyCreator("oaei11conference/ontology", o2 + ".owl").getOntology();
-            OWLOntology merged = OAEI11ConferenceSession.mergeOntologies(ontology1, ontology2);
+            OWLOntology merged = OAEI11ConferenceOntologyCreator.mergeOntologies(ontology1, ontology2);
             String n = file.getName().substring(0,file.getName().length()-4);
-            Set<OWLLogicalAxiom> mapping = OAEI11ConferenceSession.readRdfMapping("oaei11conference/matchings", n + ".rdf").keySet();
+            Set<OWLLogicalAxiom> mapping = OAEI11ConferenceOntologyCreator.readRdfMapping("oaei11conference/matchings", n + ".rdf").keySet();
             for (OWLLogicalAxiom axiom : mapping)
                 merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
 
@@ -647,8 +648,8 @@ public class OAEI11ConferenceTests {
                 continue;
             }
 
-            Set<OWLLogicalAxiom> ontology1CutExtracted = OAEI11ConferenceSession.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
-            Set<OWLLogicalAxiom> ontology2CutExtracted = OAEI11ConferenceSession.getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms());
+            Set<OWLLogicalAxiom> ontology1CutExtracted = StatisticsTools.getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
+            Set<OWLLogicalAxiom> ontology2CutExtracted = StatisticsTools.getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms());
             theory.addBackgroundFormulas(ontology1CutExtracted);
             theory.addBackgroundFormulas(ontology2CutExtracted);
 

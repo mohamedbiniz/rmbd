@@ -1,7 +1,5 @@
 package at.ainf.owlapi3.utils.creation.ontology;
 
-import org.semanticweb.owlapi.model.OWLOntology;
-
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
