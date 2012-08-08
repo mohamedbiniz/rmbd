@@ -10,7 +10,6 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.ProbabMapCreator;
 import at.ainf.owlapi3.utils.creation.target.OAEI11AnatomyTargetProvider;
-import at.ainf.owlapi3.utils.session.OAEI08Session;
 import at.ainf.owlapi3.utils.session.SimulatedSession;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI11AnatomyOntologyCreator;
 import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
@@ -56,9 +55,7 @@ public class OAEI11AnatomyTests {
 
         SimulatedSession session = new SimulatedSession();
 
-        Properties properties = OAEI08Session.readProps("alignment/" + "alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
-        //boolean background_add = false;
+
         session.setShowElRates(false);
 
         String[] files =

@@ -1,47 +1,50 @@
-package at.ainf.owlapi3.utils.session;
+package at.ainf.owlapi3.utils.creation.target;
 
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import java.io.*;
-import java.math.BigDecimal;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
- * Date: 07.08.12
- * Time: 11:21
+ * Date: 08.08.12
+ * Time: 13:01
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI08Session extends SimulatedSession {
+public class OAEI08TargetProvider implements TargetProvider {
 
+    private static Logger logger = Logger.getLogger(OAEI08TargetProvider.class.getName());
 
+    private OWLOntology onto;
 
-    public static Map<String, List<String>> readOntologiesFromFile(Properties properties) {
+    private String matcher;
 
-        String[] testsuites = properties.getProperty("alignment.testsuites").split(",");
+    private String ontologies;
 
-        Map<String, List<String>> ontologies = new HashMap<String, List<String>>();
+    public OAEI08TargetProvider(String matcher, String ontologies, OWLOntology onto) {
+        this.onto = onto;
+        this.matcher = matcher;
+        this.ontologies = ontologies;
 
-        for (String testsuite : testsuites) {
-            List<String> ontologie = Arrays.asList(properties.getProperty(testsuite.trim()).split(","));
-            ontologies.put(testsuite, ontologie);
-        }
-        return ontologies;
     }
 
-    public static String[] getDiagnosis(String matcher, String ontology) throws IOException {
+    protected static String[] getDiagnosis(String matcher, String ontology) {
         String filename = ClassLoader.getSystemResource("alignment/evaluation/" + matcher.trim() + "-incoherent-evaluation/" + ontology.trim() + ".txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
-        readData(filename, axioms, targetDiag);
+        try {
+            readData(filename, axioms, targetDiag);
+        } catch (IOException e) {
+            logger.info("can't read diagnosis from file ");
+        }
 
         //logger.info("number of mappingaxioms:," + matcher + "," + ontology + "," + axioms.keySet().size());
 
@@ -52,6 +55,18 @@ public class OAEI08Session extends SimulatedSession {
             i++;
         }
         return result;
+    }
+
+    protected static Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
+
+        Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>();
+        for (String targetAxiom : targetAxioms) {
+            for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
+                if (axiom.toString().contains(targetAxiom.trim()))
+                    res.add(axiom);
+            }
+        }
+        return res;
     }
 
     public static void readData(String filename, Map<String, Double> axioms, Set<String> targetDiag) throws IOException {
@@ -110,85 +125,13 @@ public class OAEI08Session extends SimulatedSession {
         }
     }
 
-    public static String createAxiom(String sourceNamespace, String source, String targetNamespace, String target) {
+    protected static String createAxiom(String sourceNamespace, String source, String targetNamespace, String target) {
         return "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
     }
 
-    public static AxiomSet<OWLLogicalAxiom> getTargetDiag(Set<AxiomSet<OWLLogicalAxiom>> diagnoses, final CostsEstimator<OWLLogicalAxiom> e, String m) {
-        Comparator<AxiomSet<OWLLogicalAxiom>> c = new Comparator<AxiomSet<OWLLogicalAxiom>>() {
-            public int compare(AxiomSet<OWLLogicalAxiom> o1, AxiomSet<OWLLogicalAxiom> o2) {
-                int numOfOntologyAxiomsO1 = 0;
-                int numOfMatchingAxiomO1 = 0;
-                for (OWLLogicalAxiom axiom : o1) {
-                    if (e.getAxiomCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
-                        numOfMatchingAxiomO1++;
-                    else
-                        numOfOntologyAxiomsO1++;
-                }
-                double percAxiomFromOntO1 = (double) numOfOntologyAxiomsO1;// / (numOfOntologyAxiomsO1 + numOfMatchingAxiomO1);
-
-                int numOfOntologyAxiomsO2 = 0;
-                int numOfMatchingAxiomO2 = 0;
-                for (OWLLogicalAxiom axiom : o2) {
-                    if (e.getAxiomCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
-                        numOfMatchingAxiomO2++;
-                    else
-                        numOfOntologyAxiomsO2++;
-                }
-                double percAxiomFromOntO2 = (double) numOfOntologyAxiomsO2;// / (numOfOntologyAxiomsO2 + numOfMatchingAxiomO2);
-
-
-                if (percAxiomFromOntO1 < percAxiomFromOntO2)
-                    return -1;
-                else if (percAxiomFromOntO1 == percAxiomFromOntO2)
-                    return 0;
-                else
-                    return 1;
-            }
-        };
-
-        return Collections.max(diagnoses, c);
-
+    @Override
+    public Set<OWLLogicalAxiom> getDiagnosisTarget() {
+        return getDiagnosis(getDiagnosis(matcher,ontologies),onto);
     }
 
-
-
-
-    public static Properties readProps(String str) {
-        Properties properties = new Properties();
-        String config = ClassLoader.getSystemResource(str).getFile();
-        BufferedInputStream stream = null;
-        try {
-            stream = new BufferedInputStream(new FileInputStream(config));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        try {
-            properties.load(stream);
-            stream.close();
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        return properties;
-
-    }
-
-
-
-
-
-    public static Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
-
-        Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>();
-        for (String targetAxiom : targetAxioms) {
-            for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
-                if (axiom.toString().contains(targetAxiom.trim()))
-                    res.add(axiom);
-            }
-        }
-        return res;
-    }
-
-    public enum BackgroundO {EMPTY, O1, O2, O1_O2}
 }

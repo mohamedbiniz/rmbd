@@ -12,7 +12,9 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.ProbabMapCreator;
-import at.ainf.owlapi3.utils.session.OAEI08Session;
+import at.ainf.owlapi3.utils.creation.target.OAEI08TargetChooser;
+import at.ainf.owlapi3.utils.creation.target.OAEI08TargetProvider;
+import at.ainf.owlapi3.utils.session.SimulatedSession;
 import at.ainf.owlapi3.utils.LogUtil;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI08OntologyCreator;
 import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
@@ -29,6 +31,9 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -52,22 +57,48 @@ public class OAEI08Tests {
 
     private static Logger logger = Logger.getLogger(OAEI08Tests.class.getName());
 
+    public static Map<String, List<String>> readOntologiesFromFile(String str) {
+        Properties properties = new Properties();
+        String config = ClassLoader.getSystemResource(str).getFile();
+        BufferedInputStream stream = null;
+        try {
+            stream = new BufferedInputStream(new FileInputStream(config));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            properties.load(stream);
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        String[] testsuites = properties.getProperty("alignment.testsuites").split(",");
+
+        Map<String, List<String>> ontologies = new HashMap<String, List<String>>();
+
+        for (String testsuite : testsuites) {
+            List<String> ontologie = Arrays.asList(properties.getProperty(testsuite.trim()).split(","));
+            ontologies.put(testsuite, ontologie);
+        }
+        return ontologies;
+    }
 
 
     @Test
     public void doTwoTests() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = OAEI08Session.readProps("alignment/alignment.retest.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
 
-        OAEI08Session.QSSType[] qssTypes = new OAEI08Session.QSSType[]{OAEI08Session.QSSType.MINSCORE, OAEI08Session.QSSType.SPLITINHALF, OAEI08Session.QSSType.DYNAMICRISK};
+        Map<String, List<String>> mapOntos = readOntologiesFromFile("alignment/alignment.retest.properties");
+
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]{SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF, SimulatedSession.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{false}) {
-            for (OAEI08Session.TargetSource targetSource : OAEI08Session.TargetSource.values()) {
+            for (SimulatedSession.TargetSource targetSource : SimulatedSession.TargetSource.values()) {
                 for (String m : mapOntos.keySet()) {
                     for (String o : mapOntos.get(m)) {
                         String out = "STAT, " + m + ", " + o;
-                        for (OAEI08Session.QSSType type : qssTypes) {
-                            OAEI08Session  a = new OAEI08Session();
-                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                        for (SimulatedSession.QSSType type : qssTypes) {
+                            SimulatedSession  a = new SimulatedSession();
+
                             OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
@@ -117,7 +148,7 @@ public class OAEI08Tests {
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
                             search.reset();
                             */
-                            if (targetSource == OAEI08Session.TargetSource.FROM_30_DIAGS) {
+                            if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                 try {
                                     search.run(30);
                                 } catch (SolverException e) {
@@ -131,14 +162,14 @@ public class OAEI08Tests {
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = OAEI08Session.getTargetDiag(diagnoses, es, m);
+                                AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
                             }
 
-                            if (targetSource == OAEI08Session.TargetSource.FROM_FILE)
-                                targetDg = OAEI08Session.getDiagnosis(targetAxioms, ontology);
+                            if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
+                                targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -157,21 +188,20 @@ public class OAEI08Tests {
     @Test
     public void doUnsolvableTest() throws SolverException, InconsistentTheoryException, IOException {
 
-        OAEI08Session session = new OAEI08Session();
+        SimulatedSession session = new SimulatedSession();
 
-        Properties properties = OAEI08Session.readProps("alignment/" + "alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
+
+        Map<String, List<String>> mapOntos = readOntologiesFromFile("alignment/" + "alignment.unsolvable.properties");
         boolean background_add = false;
         session.setShowElRates(false);
-        OAEI08Session.QSSType[] qssTypes = new OAEI08Session.QSSType[]{OAEI08Session.QSSType.MINSCORE, OAEI08Session.QSSType.SPLITINHALF, OAEI08Session.QSSType.DYNAMICRISK};
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]{SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF, SimulatedSession.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{false}) {
-            for (OAEI08Session.TargetSource targetSource : new OAEI08Session.TargetSource[]{OAEI08Session.TargetSource.FROM_FILE}) {
+            for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE}) {
                 for (String m : mapOntos.keySet()) {
                     for (String o : mapOntos.get(m)) {
                         String out = "STAT, " + m + ", " + o;
-                        for (OAEI08Session.QSSType type : qssTypes) {
-                            //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
-                            String[] targetAxioms = OAEI08Session.getDiagnosis(m, o);
+                        for (SimulatedSession.QSSType type : qssTypes) {
+
                             OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
@@ -228,7 +258,7 @@ public class OAEI08Tests {
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.reset();
 
-                            if (targetSource == OAEI08Session.TargetSource.FROM_30_DIAGS) {
+                            if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                 try {
                                     search.run(30);
                                 } catch (SolverException e) {
@@ -242,14 +272,14 @@ public class OAEI08Tests {
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = OAEI08Session.getTargetDiag(diagnoses, es, m);
+                                AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
                             }
 
-                            if (targetSource == OAEI08Session.TargetSource.FROM_FILE)
-                                targetDg = OAEI08Session.getDiagnosis(targetAxioms, ontology);
+                            if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
+                                targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -270,23 +300,23 @@ public class OAEI08Tests {
     @Ignore
     @Test
     public void doHardTwoTests() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = OAEI08Session.readProps("alignment/alignment.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
 
-        OAEI08Session.QSSType[] qssTypes = new OAEI08Session.QSSType[]{OAEI08Session.QSSType.MINSCORE, OAEI08Session.QSSType.SPLITINHALF, OAEI08Session.QSSType.DYNAMICRISK};
-        OAEI08Session.TargetSource[] targetSources = new OAEI08Session.TargetSource[]{OAEI08Session.TargetSource.FROM_FILE};
+        Map<String, List<String>> mapOntos = readOntologiesFromFile("alignment/alignment.properties");
+
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]{SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF, SimulatedSession.QSSType.DYNAMICRISK};
+        SimulatedSession.TargetSource[] targetSources = new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE};
 
 
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {
-                for (OAEI08Session.TargetSource targetSource : targetSources) {
-                    for (OAEI08Session.QSSType type : qssTypes) {
-                        OAEI08Session.BackgroundO[] backgr = new OAEI08Session.BackgroundO[]{OAEI08Session.BackgroundO.EMPTY, OAEI08Session.BackgroundO.O1_O2};
-                        for (OAEI08Session.BackgroundO background : backgr) {
+                for (SimulatedSession.TargetSource targetSource : targetSources) {
+                    for (SimulatedSession.QSSType type : qssTypes) {
+                        BackgroundO[] backgr = new BackgroundO[]{BackgroundO.EMPTY, BackgroundO.O1_O2};
+                        for (BackgroundO background : backgr) {
 
-                            OAEI08Session s = new OAEI08Session();
+                            SimulatedSession s = new SimulatedSession();
                             s.setNumberOfHittingSets(4);
-                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
                             OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
@@ -303,7 +333,7 @@ public class OAEI08Tests {
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
                             OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
                             OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
-                            if (background == OAEI08Session.BackgroundO.O1_O2) {
+                            if (background == BackgroundO.O1_O2) {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
@@ -311,7 +341,7 @@ public class OAEI08Tests {
                             targetDg = null;
 
                             search.setCostsEstimator(es);
-                            if (targetSource == OAEI08Session.TargetSource.FROM_30_DIAGS) {
+                            if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                 try {
                                     search.run(30);
                                 } catch (SolverException e) {
@@ -327,14 +357,14 @@ public class OAEI08Tests {
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = OAEI08Session.getTargetDiag(diagnoses, es, m);
+                                AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
                             }
 
-                            if (targetSource == OAEI08Session.TargetSource.FROM_FILE)
-                                targetDg = OAEI08Session.getDiagnosis(targetAxioms, ontology);
+                            if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
+                                targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
 
                             TableList e = new TableList();
                             String message = "running "
@@ -354,15 +384,15 @@ public class OAEI08Tests {
     @Test
     public void doOnlyOneQuerySession() throws SolverException, InconsistentTheoryException, IOException {
 
-        OAEI08Session s = new OAEI08Session();
+        SimulatedSession s = new SimulatedSession();
 
-        Properties properties = OAEI08Session.readProps("alignment/alignment.properties");
-        OAEI08Session.QSSType[] qssTypes = new OAEI08Session.QSSType[]{OAEI08Session.QSSType.MINSCORE, OAEI08Session.QSSType.SPLITINHALF, OAEI08Session.QSSType.DYNAMICRISK};
+
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]{SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF, SimulatedSession.QSSType.DYNAMICRISK};
         String m = "owlctxmatch";
         String o = "SIGKDD-EKAW";
-        OAEI08Session.TargetSource targetSource = OAEI08Session.TargetSource.FROM_FILE;
-        OAEI08Session.QSSType type = OAEI08Session.QSSType.SPLITINHALF;
-        String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+        SimulatedSession.TargetSource targetSource = SimulatedSession.TargetSource.FROM_FILE;
+        SimulatedSession.QSSType type = SimulatedSession.QSSType.SPLITINHALF;
+
         OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
@@ -385,7 +415,7 @@ public class OAEI08Tests {
         targetDg = null;
 
         search.setCostsEstimator(es);
-        if (targetSource == OAEI08Session.TargetSource.FROM_30_DIAGS) {
+        if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
             try {
                 search.run(30);
             } catch (SolverException e) {
@@ -398,14 +428,14 @@ public class OAEI08Tests {
 
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
             search.reset();
-            AxiomSet<OWLLogicalAxiom> targD = OAEI08Session.getTargetDiag(diagnoses, es, m);
+            AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
             targetDg = new LinkedHashSet<OWLLogicalAxiom>();
             for (OWLLogicalAxiom axiom : targD)
                 targetDg.add(axiom);
         }
 
-        if (targetSource == OAEI08Session.TargetSource.FROM_FILE) {
-            targetDg = OAEI08Session.getDiagnosis(targetAxioms, ontology);
+        if (targetSource == SimulatedSession.TargetSource.FROM_FILE) {
+            targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
             int diags = -1;
             try {
                 search.run(diags);
@@ -429,18 +459,16 @@ public class OAEI08Tests {
 
     @Test
     public void doQueryEliminationRateTest() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = OAEI08Session.readProps("alignment/alignment.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
 
-        OAEI08Session.QSSType[] qssTypes = new OAEI08Session.QSSType[]{OAEI08Session.QSSType.SPLITINHALF,};
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]{SimulatedSession.QSSType.SPLITINHALF,};
         for (boolean dual : new boolean[]{false}) {
-            for (OAEI08Session.TargetSource targetSource : new OAEI08Session.TargetSource[]{OAEI08Session.TargetSource.FROM_FILE}) {
+            for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE}) {
                 for (String m : new String[]{"coma"}) {
                     for (String o : new String[]{"CRS-EKAW"}) {
                         String out = "STAT, " + m + ", " + o;
-                        for (OAEI08Session.QSSType type : qssTypes) {
-                            OAEI08Session s = new OAEI08Session();
-                            String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                        for (SimulatedSession.QSSType type : qssTypes) {
+                            SimulatedSession s = new SimulatedSession();
+
                             OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
@@ -490,7 +518,7 @@ public class OAEI08Tests {
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.reset();
 
-                            if (targetSource == OAEI08Session.TargetSource.FROM_30_DIAGS) {
+                            if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                 try {
                                     search.run(30);
                                 } catch (SolverException e) {
@@ -504,14 +532,14 @@ public class OAEI08Tests {
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = OAEI08Session.getTargetDiag(diagnoses, es, m);
+                                AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
                             }
 
-                            if (targetSource == OAEI08Session.TargetSource.FROM_FILE)
-                                targetDg = OAEI08Session.getDiagnosis(targetAxioms, ontology);
+                            if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
+                                targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -528,15 +556,14 @@ public class OAEI08Tests {
     @Ignore
     @Test
     public void search() throws SolverException, InconsistentTheoryException {
-        Properties properties = OAEI08Session.readProps("alignment/alignment.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
+
+        Map<String, List<String>> mapOntos = readOntologiesFromFile("alignment/alignment.properties");
         for (String m : mapOntos.keySet()) {
             for (String o : mapOntos.get(m)) {
-                OAEI08Session.BackgroundO[] backgrounds = new OAEI08Session.BackgroundO[]{OAEI08Session.BackgroundO.O1_O2};
-                for (OAEI08Session.BackgroundO background : backgrounds) {
-                    String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+                BackgroundO[] backgrounds = new BackgroundO[]{BackgroundO.O1_O2};
+                for (BackgroundO background : backgrounds) {
                     OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
-                    Set<OWLLogicalAxiom> targetDg = OAEI08Session.getDiagnosis(targetAxioms, ontology);
+                    Set<OWLLogicalAxiom> targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
                     OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
                     OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
                     OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
@@ -545,9 +572,9 @@ public class OAEI08Tests {
                     HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
                     OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                     es.updateKeywordProb(map);
-                    if (background == OAEI08Session.BackgroundO.O1 || background == OAEI08Session.BackgroundO.O1_O2)
+                    if (background == BackgroundO.O1 || background == BackgroundO.O1_O2)
                         theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                    if (background == OAEI08Session.BackgroundO.O2 || background == OAEI08Session.BackgroundO.O1_O2)
+                    if (background == BackgroundO.O2 || background == BackgroundO.O1_O2)
                         theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                     search.setCostsEstimator(es);
 
@@ -586,8 +613,8 @@ public class OAEI08Tests {
 
     @Test
     public void calcOneDiagAndMore() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = OAEI08Session.readProps("alignment/" + "alignment.unsolvable.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
+
+        Map<String, List<String>> mapOntos = readOntologiesFromFile("alignment/" + "alignment.unsolvable.properties");
 
         for (boolean dual : new boolean[]{true, false}) {
 
@@ -596,7 +623,7 @@ public class OAEI08Tests {
                     for (int nd : new int[]{1, 5, 9}) {
                         String out = "STAT, " + m + ", " + o;
 
-                        String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
                         OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
                         Set<OWLLogicalAxiom> targetDg;
                         OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
@@ -663,12 +690,11 @@ public class OAEI08Tests {
 
     @Test
     public void calcOnlyDiagnoses() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
-
         String m = "coma";
         String o = "CRS-EKAW";
-        OAEI08Session.QSSType type = OAEI08Session.QSSType.SPLITINHALF;
-        Properties properties = OAEI08Session.readProps("alignment/alignment.full.properties");
-        String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
+
+
+
         OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
@@ -720,26 +746,26 @@ public class OAEI08Tests {
 
     @Test
     public void docomparehsdual() throws SolverException, InconsistentTheoryException, IOException {
-        OAEI08Session session = new OAEI08Session();
+        SimulatedSession session = new SimulatedSession();
 
-        Properties properties = OAEI08Session.readProps("alignment/" + "alignment.allFiles.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
+
+        Map<String, List<String>> mapOntos = readOntologiesFromFile("alignment/" + "alignment.allFiles.properties");
         //boolean background_add = false;
 
         session.setShowElRates(false);
 
-        OAEI08Session.QSSType[] qssTypes = new OAEI08Session.QSSType[]{OAEI08Session.QSSType.MINSCORE, OAEI08Session.QSSType.SPLITINHALF, OAEI08Session.QSSType.DYNAMICRISK};
+        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]{SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF, SimulatedSession.QSSType.DYNAMICRISK};
         for (boolean dual : new boolean[]{false}) {
             for (boolean background : new boolean[]{true, false}) {
-                for (OAEI08Session.TargetSource targetSource : new OAEI08Session.TargetSource[]{OAEI08Session.TargetSource.FROM_FILE, OAEI08Session.TargetSource.FROM_30_DIAGS}) {
+                for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_FILE, SimulatedSession.TargetSource.FROM_30_DIAGS}) {
                     for (String m : mapOntos.keySet()) {
                         for (String o : mapOntos.get(m)) {
                             String out = "STAT, " + m + ", " + o;
-                            for (OAEI08Session.QSSType type : qssTypes) {
+                            for (SimulatedSession.QSSType type : qssTypes) {
 
                                 //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
-                                String[] targetAxioms = OAEI08Session.getDiagnosis(m, o);
+
                                 OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
                                 ontology = new OWLIncoherencyExtractor(
                                         new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
@@ -791,7 +817,7 @@ public class OAEI08Tests {
                                 Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
                                 search.reset();
 
-                                if (targetSource == OAEI08Session.TargetSource.FROM_30_DIAGS) {
+                                if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                     try {
                                         search.run(30);
                                     } catch (SolverException e) {
@@ -805,14 +831,14 @@ public class OAEI08Tests {
                                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                             Collections.unmodifiableSet(search.getDiagnoses());
                                     search.reset();
-                                    AxiomSet<OWLLogicalAxiom> targD = OAEI08Session.getTargetDiag(diagnoses, es, m);
+                                    AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
                                     targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                     for (OWLLogicalAxiom axiom : targD)
                                         targetDg.add(axiom);
                                 }
 
-                                if (targetSource == OAEI08Session.TargetSource.FROM_FILE)
-                                    targetDg = OAEI08Session.getDiagnosis(targetAxioms, ontology);
+                                if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
+                                    targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
 
                                 TableList e = new TableList();
                                 out += "," + type + ",";
@@ -830,24 +856,31 @@ public class OAEI08Tests {
         }
     }
 
-    @Test
-    public void doShowMappingAxiomsSizes() throws SolverException, InconsistentTheoryException, IOException {
-        Properties properties = OAEI08Session.readProps("alignment/" + "alignment.allFiles.properties");
-        Map<String, List<String>> mapOntos = OAEI08Session.readOntologiesFromFile(properties);
 
-        for (String m : mapOntos.keySet()) {
-            for (String o : mapOntos.get(m)) {
-                OAEI08Session.getDiagnosis(m, o);
-            }
-        }
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     public void readTest() throws IOException {
         String filename = ClassLoader.getSystemResource("alignment/evaluation/owlctxmatch-incoherent-evaluation/CMT-CONFTOOL.txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
-        OAEI08Session.readData(filename, axioms, targetDiag);
+        OAEI08TargetProvider.readData(filename, axioms, targetDiag);
         logger.info("Read " + axioms.size() + " " + targetDiag.size());
         assertEquals(axioms.size(), 36);
         assertEquals(targetDiag.size(), 6);
@@ -855,7 +888,7 @@ public class OAEI08Tests {
         filename = ClassLoader.getSystemResource("alignment/evaluation/hmatch-incoherent-evaluation/CMT-CRS.txt").getFile();
         axioms.clear();
         targetDiag.clear();
-        OAEI08Session.readData(filename, axioms, targetDiag);
+        OAEI08TargetProvider.readData(filename, axioms, targetDiag);
         logger.info("Read " + axioms.size() + " " + targetDiag.size());
         assertEquals(axioms.size(), 2 * (17 - 5));
         assertEquals(targetDiag.size(), 4);
@@ -866,7 +899,7 @@ public class OAEI08Tests {
         String filename = ClassLoader.getSystemResource("alignment/evaluation/coma-evaluation/CMT-CONFTOOL.txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
-        OAEI08Session.readData(filename, axioms, targetDiag);
+        OAEI08TargetProvider.readData(filename, axioms, targetDiag);
         logger.info("Read " + axioms.size() + " " + targetDiag.size());
     }
 
@@ -875,10 +908,10 @@ public class OAEI08Tests {
         String filename = ClassLoader.getSystemResource("alignment/evaluation/coma-evaluation/CMT-CONFTOOL.txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
-        OAEI08Session.readData(filename, axioms, targetDiag);
+        OAEI08TargetProvider.readData(filename, axioms, targetDiag);
         logger.info("Read " + axioms.size() + " " + targetDiag.size());
     }
 
 
-
+    public enum BackgroundO {EMPTY, O1, O2, O1_O2}
 }
