@@ -12,7 +12,6 @@ import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
-import at.ainf.owlapi3.utils.creation.*;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
 import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
@@ -21,6 +20,7 @@ import at.ainf.owlapi3.utils.distribution.ExtremeDistribution;
 import at.ainf.owlapi3.utils.distribution.ModerateDistribution;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.*;
+import at.ainf.owlapi3.utils.session.CalculateDiagnoses;
 import at.ainf.owlapi3.utils.session.SimulatedSession;
 import junit.framework.Assert;
 import org.apache.log4j.Logger;
@@ -160,7 +160,7 @@ public class OntologyTests {
 
 
 
-    @Test
+
     protected void doOverallTreeTestEconomy(boolean dual) throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
 
         SimulatedSession session = new SimulatedSession();
@@ -174,7 +174,7 @@ public class OntologyTests {
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
                 String out = "STAT, " + o;
-                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = OntologyUtils.getAllD(o);
+                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses("ontologies/"+o+".owl").getDiagnoses(-1);
                 for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : DiagProbab.values()) {
                         for (int i = 0; i < 20; i++) {
@@ -640,7 +640,7 @@ public class OntologyTests {
 
     @Test
     public void testCompareDiagnosisMethods() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
-        compareDualWithHS("ontologies/koala.owl");
+        compareDualWithHS("koala.owl");
     }
 
 
@@ -775,7 +775,7 @@ public class OntologyTests {
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
                 String out = "STAT, " + o;
-                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = OntologyUtils.getAllD(o);
+                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses("ontologies/"+o+".owl").getDiagnoses(-1);
                 for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.GOOD}) {
                         for (int i = 0; i < 1500; i++) {

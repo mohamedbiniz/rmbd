@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.utils.creation;
+package at.ainf.owlapi3.utils.session;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
@@ -19,29 +19,50 @@ import org.semanticweb.owlapi.model.OWLOntology;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TreeSet;
 
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
- * Date: 02.08.12
- * Time: 14:05
+ * Date: 07.08.12
+ * Time: 13:03
  * To change this template use File | Settings | File Templates.
  */
-public class OntologyUtils {
+public class CalculateDiagnoses {
 
-    public static TreeSet<AxiomSet<OWLLogicalAxiom>> getAllD(String o) {
-        OWLOntology ontology = new SimpleOntologyCreator("ontologies", o + ".owl").getOntology();
+    private String file;
+
+    public CalculateDiagnoses() {}
+
+    public CalculateDiagnoses(String file) {
+        this.file = file;
+    }
+
+    protected boolean init = false;
+
+    protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
+
+    public void init() {
+        OWLOntology ontology = new SimpleOntologyCreator(file).getOntology();
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
+
         OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
+
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, false).getSearch();
+
         HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
+        init=true;
+        this.search = search;
+    }
+
+    public TreeSet<AxiomSet<OWLLogicalAxiom>> getDiagnoses(int number) {
+        if(!init) init();
+
         try {
-            search.run();
+            search.run(number);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (NoConflictException e) {
@@ -50,5 +71,7 @@ public class OntologyUtils {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+
     }
+
 }
