@@ -23,12 +23,16 @@ import at.ainf.owlapi3.utils.*;
 import at.ainf.owlapi3.utils.session.CalculateDiagnoses;
 import at.ainf.owlapi3.utils.session.SimulatedSession;
 import junit.framework.Assert;
+//import org.apache.log4j.Logger;
+//import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.perf4j.LoggingStopWatch;
+import org.perf4j.StopWatch;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -125,14 +129,14 @@ public class OntologyTests {
         session.setNumberOfHittingSets(2);
         QSSType type = QSSType.MINSCORE;
         boolean dual = true;
-        String name = "dualISWC2012.owl";
+        String name = "koala.owl";
         //String name = "dualpaper.owl";
 
-        OWLOntology ontology = new SimpleOntologyCreator("queryontologies", name).getOntology();
+        OWLOntology ontology = new SimpleOntologyCreator("ontologies", name).getOntology();
 
         Set<OWLLogicalAxiom> targetDg = new LinkedHashSet<OWLLogicalAxiom>();
-        targetDg.add(new MyOWLRendererParser(ontology).parse("B SubClassOf D and (not (s some C))"));
-        targetDg.add(new MyOWLRendererParser(ontology).parse("C SubClassOf not (D or E)"));
+        targetDg.add(new MyOWLRendererParser(ontology).parse("Marsupials DisjointWith Person"));
+        //targetDg.add(new MyOWLRendererParser(ontology).parse("C SubClassOf not (D or E)"));
 
         //targetDg.add(new MyOWLRendererParser(ontology).parse("B SubClassOf C"));
         //targetDg.add(new MyOWLRendererParser(ontology).parse("B SubClassOf D"));
@@ -142,19 +146,24 @@ public class OntologyTests {
         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
 
         OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-        theory.addEntailedTest(new MyOWLRendererParser(ontology).parse("w Type B"));
+        //theory.addEntailedTest(new MyOWLRendererParser(ontology).parse("w Type B"));
         theory.setIncludeClassAssertionAxioms(true);
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
-        ((NewQuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
+        //((NewQuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
         CostsEstimator es = new SimpleCostsEstimator();
         search.setCostsEstimator(es);
 
         TableList e = new TableList();
         String message = "act," + type + "," + dual + "," + name + "," + preprocessModulExtract;
+        StopWatch stopWatch = new LoggingStopWatch("codeBlock1");
+        //Logger LOG = LoggerFactory.getLogger("logback logger");
+        logger.info("start session ");
         session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+        stopWatch.stop();
+        logger.info("stop session ");
 
     }
 
