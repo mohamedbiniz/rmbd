@@ -6,7 +6,8 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -20,7 +21,7 @@ import java.util.*;
  */
 public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
-    private static Logger logger = Logger.getLogger(CKK.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(CKK.class.getName());
 
     private class Differencing<E extends AxiomSet<Id>> {
         private Set<E> left = new LinkedHashSet<E>();

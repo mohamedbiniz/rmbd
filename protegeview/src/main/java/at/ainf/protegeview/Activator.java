@@ -1,9 +1,9 @@
 package at.ainf.protegeview;
 
-import at.ainf.protegeview.debugmanager.LogToolsImp;
-import org.apache.log4j.Logger;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +14,7 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator implements BundleActivator {
 
-    private static Logger logger = Logger.getLogger(Activator.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Activator.class.getName());
 
     public void start(BundleContext bundleContext) throws Exception {
         logger.info("bundle started");

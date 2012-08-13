@@ -1,6 +1,5 @@
 package at.ainf.protegeview.basis;
 
-import org.apache.log4j.Logger;
 import org.protege.editor.core.editorkit.EditorKit;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.OWLEditorKitHook;
@@ -8,6 +7,8 @@ import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,7 +19,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
  */
 public class Ehook extends OWLEditorKitHook implements OWLModelManagerListener {
 
-    private static Logger logger = Logger.getLogger(Ehook.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Ehook.class.getName());
 
     private OWLEditorKit owlEditorKit;
 

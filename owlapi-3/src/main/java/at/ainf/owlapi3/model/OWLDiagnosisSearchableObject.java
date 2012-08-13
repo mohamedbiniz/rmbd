@@ -4,9 +4,10 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.AbstractSearchableObject;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import java.util.Set;
 public class OWLDiagnosisSearchableObject extends AbstractSearchableObject<OWLLogicalAxiom>
         implements Searchable<OWLLogicalAxiom> {
 
-    private static Logger logger = Logger.getLogger(OWLDiagnosisSearchableObject.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(OWLDiagnosisSearchableObject.class.getName());
 
     OWLTheory theory;
 

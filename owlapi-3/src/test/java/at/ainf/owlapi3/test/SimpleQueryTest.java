@@ -11,8 +11,6 @@ import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,6 +18,8 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -34,15 +34,15 @@ import static org.junit.Assert.*;
  * To change this template use File | Settings | File Templates.
  */
 public class SimpleQueryTest {
-    private static Logger logger = Logger.getLogger(SimpleQueryTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(SimpleQueryTest.class.getName());
     //private OWLDebugger debugger = new SimpleDebugger();
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
     @Test
     public void univNoDiagnosesTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
@@ -87,7 +87,7 @@ public class SimpleQueryTest {
         //s.doBackgroundSearch();
 
         Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getDiagnoses();
-        logger.info(res.size());
+        logger.info(((Integer)res.size()).toString());
         //Partition<OWLLogicalAxiom> query = diagProvider.getBestQuery(diagnoses);
         //theory.addNonEntailedTest(query.partition);
         //diagnoses = diagProvider.getDiagnoses(9);

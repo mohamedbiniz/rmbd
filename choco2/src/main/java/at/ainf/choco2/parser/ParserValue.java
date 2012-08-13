@@ -11,13 +11,14 @@ package at.ainf.choco2.parser;
 import choco.kernel.model.variables.integer.IntegerVariable;
 import choco.kernel.model.variables.real.RealVariable;
 import choco.kernel.model.variables.set.SetVariable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ParserValue implements IValue {
     /**
      * Logger for this class
      */
-    private static final Logger logger = Logger.getLogger(ParserValue.class);
+    private static final Logger logger = LoggerFactory.getLogger(ParserValue.class);
 
     private int type;
     private Object value;

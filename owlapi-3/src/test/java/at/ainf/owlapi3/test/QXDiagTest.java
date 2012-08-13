@@ -12,14 +12,14 @@ import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,14 +37,14 @@ import static org.junit.Assert.assertTrue;
  * To change this template use File | Settings | File Templates.
  */
 public class QXDiagTest {
-    private static Logger logger = Logger.getLogger(QXDiagTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(QXDiagTest.class.getName());
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
     @Test
     public void testFasterDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
@@ -225,7 +225,7 @@ public class QXDiagTest {
         search.run();
 
         OWLLogicalAxiom axiom = search.getDiagnoses().iterator().next().iterator().next();
-        logger.info(axiom);
+        logger.info(axiom.toString());
 
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())

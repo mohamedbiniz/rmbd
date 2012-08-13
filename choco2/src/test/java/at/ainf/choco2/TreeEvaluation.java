@@ -25,11 +25,11 @@ import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
 import choco.kernel.model.variables.integer.IntegerVariable;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -49,13 +49,13 @@ import static org.junit.Assert.fail;
  */
 public class TreeEvaluation {
 
-    private static Logger logger = Logger.getLogger(TreeEvaluation.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(TreeEvaluation.class.getName());
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("choco2-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
 
     @Test
@@ -130,7 +130,7 @@ public class TreeEvaluation {
         Collection<AxiomSet<Constraint>> diagnoses = strategy.getDiagnoses();
         Collection<AxiomSet<Constraint>> conflicts = strategy.getConflicts();
 
-        logger.info(diagnoses);
+        logger.info(diagnoses.toString());
         
         logger.info("Diagnoses: " + diagnoses);
         logger.info("Conflicts: " + conflicts);
@@ -157,7 +157,7 @@ public class TreeEvaluation {
             e.printStackTrace();
         }
 
-        logger.info(cth);
+        logger.info(cth.toString());
 
 
         //SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();

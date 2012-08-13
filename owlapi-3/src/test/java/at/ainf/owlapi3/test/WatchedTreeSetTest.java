@@ -8,14 +8,14 @@ import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.watchedset.WatchedTreeSet;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import at.ainf.owlapi3.utils.creation.theory.SimpleTheoryCreator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,13 +32,12 @@ import java.util.Set;
  */
 public class WatchedTreeSetTest {
 
-    private static Logger logger = Logger.getLogger(WatchedTreeSetTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(WatchedTreeSetTest.class.getName());
 
-     @BeforeClass
+     /*@BeforeClass
      public static void setUp() {
          String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
-         PropertyConfigurator.configure(conf);
-     }
+         PropertyConfigurator.configure(conf); }*/
 
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 

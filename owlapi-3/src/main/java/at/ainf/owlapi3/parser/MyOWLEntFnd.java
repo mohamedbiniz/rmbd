@@ -1,6 +1,5 @@
 package at.ainf.owlapi3.parser;
 
-import org.apache.log4j.Logger;
 //import org.protege.editor.owl.model.OWLModelManagerImpl;
 //import org.protege.editor.owl.model.cache.OWLEntityRenderingCache;
 //import org.protege.editor.owl.model.find.OWLEntityFinder;
@@ -8,6 +7,8 @@ import org.apache.log4j.Logger;
 //import org.protege.editor.owl.model.util.OWLDataTypeUtils;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Set;
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
  */
 public class MyOWLEntFnd implements OWLEntityChecker {
 
-    private static final Logger logger = Logger.getLogger(MyOWLEntFnd.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyOWLEntFnd.class);
 
     private MyOWLEntRenderCache renderingCache;
 

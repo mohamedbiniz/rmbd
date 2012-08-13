@@ -10,7 +10,6 @@ package at.ainf.logger;
  */
 
 
-import org.apache.log4j.Logger;
 import org.aspectj.lang.annotation.*;
 
 import java.awt.*;

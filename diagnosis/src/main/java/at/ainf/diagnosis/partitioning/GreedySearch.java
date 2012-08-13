@@ -6,7 +6,8 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -19,7 +20,7 @@ import java.util.*;
  */
 public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
-    private static Logger logger = Logger.getLogger(GreedySearch.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(GreedySearch.class.getName());
     private double sum;
     private int count = 0;
     private boolean swap = false;

@@ -10,8 +10,6 @@ import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import at.ainf.owlapi3.utils.creation.theory.SimpleTheoryCreator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,6 +17,8 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
@@ -34,17 +34,17 @@ import static org.junit.Assert.assertEquals;
  */
 public class PartitioningTest {
 
-    private static Logger logger = Logger.getLogger(PartitioningTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(PartitioningTest.class.getName());
     //private OWLDebugger debugger = new SimpleDebugger();
     private SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(null);
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
     private static final String TEST_IRI = "http://www.semanticweb.org/ontologies/2010/0/ecai.owl#";
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
 
     @Test
@@ -57,7 +57,7 @@ public class PartitioningTest {
 
         Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> part = brute.generatePartition(debugger.getValidHittingSets());
-        logger.debug(part);
+        logger.debug(part.toString());
     }
 
     //@Ignore
@@ -71,13 +71,13 @@ public class PartitioningTest {
 
         Partitioning<OWLLogicalAxiom> greedy = new GreedySearch<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partg = greedy.generatePartition(debugger.getValidHittingSets());
-        logger.debug(partg);
+        logger.debug(partg.toString());
         Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partb = brute.generatePartition(debugger.getValidHittingSets());
-        logger.debug(partb);
+        logger.debug(partb.toString());
         greedy = new CKK<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partg1 = greedy.generatePartition(debugger.getValidHittingSets());
-        logger.debug(partg1);
+        logger.debug(partg1.toString());
         //assertEquals(partb, partg);
     }
 
@@ -97,13 +97,13 @@ public class PartitioningTest {
 
         Partitioning<OWLLogicalAxiom> greedy = new GreedySearch<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partg = greedy.generatePartition(debugger.getValidHittingSets());
-        logger.debug(partg);
+        logger.debug(partg.toString());
         Partitioning<OWLLogicalAxiom> brute = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partb = brute.generatePartition(debugger.getValidHittingSets());
-        logger.debug(partb);
+        logger.debug(partb.toString());
         greedy = new CKK<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
         Partition<OWLLogicalAxiom> partg1 = greedy.generatePartition(debugger.getValidHittingSets());
-        logger.debug(partg1);
+        logger.debug(partg1.toString());
         assertTrue(partb.score == partg.score);
     }
 

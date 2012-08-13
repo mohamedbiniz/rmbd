@@ -12,13 +12,13 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import at.ainf.owlapi3.utils.creation.theory.SimpleTheoryCreator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URISyntaxException;
 import java.util.*;
@@ -35,17 +35,16 @@ import static org.junit.Assert.assertEquals;
  */
 public class TreeTest {
 
-    private static Logger logger = Logger.getLogger(TreeTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(TreeTest.class.getName());
     //private OWLDebugger debugger = new SimpleDebugger();
     private SimpleQueryDebugger<OWLLogicalAxiom> debug = new SimpleQueryDebugger<OWLLogicalAxiom>(null);
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
     private static final String TEST_IRI = "http://www.semanticweb.org/ontologies/2010/0/ecai.owl#";
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
-        PropertyConfigurator.configure(conf);
-    }
+        PropertyConfigurator.configure(conf); }*/
 
     @Test
     public void testDiagnosisSearcher() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {

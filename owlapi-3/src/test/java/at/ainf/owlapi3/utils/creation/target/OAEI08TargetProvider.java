@@ -1,8 +1,9 @@
 package at.ainf.owlapi3.utils.creation.target;
 
-import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -21,7 +22,7 @@ import java.util.Set;
  */
 public class OAEI08TargetProvider implements TargetProvider {
 
-    private static Logger logger = Logger.getLogger(OAEI08TargetProvider.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(OAEI08TargetProvider.class.getName());
 
     private OWLOntology onto;
 

@@ -10,8 +10,6 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,6 +17,8 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -35,17 +35,17 @@ import static org.junit.Assert.assertTrue;
 public class OrderProbabTest {
 
 
-    private static Logger logger = Logger.getLogger(SimpleQueryTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(SimpleQueryTest.class.getName());
 
 
     //private OWLDebugger debugger = new SimpleDebugger();
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    } */
 
 
     @Test

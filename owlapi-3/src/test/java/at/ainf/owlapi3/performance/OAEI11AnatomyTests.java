@@ -14,8 +14,6 @@ import at.ainf.owlapi3.utils.session.SimulatedSession;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI11AnatomyOntologyCreator;
 import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
 import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,6 +23,8 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,13 +40,13 @@ import java.util.*;
  */
 public class OAEI11AnatomyTests {
 
-    private static Logger logger = Logger.getLogger(OAEI11AnatomyTests.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(OAEI11AnatomyTests.class.getName());
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
     @Test
     public void doTestAroma()

@@ -21,8 +21,6 @@ import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
 import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
 import at.ainf.owlapi3.utils.StatisticsTools;
 import junit.framework.Assert;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -30,6 +28,8 @@ import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -48,14 +48,16 @@ import static org.junit.Assert.assertTrue;
  * Time: 14:41
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI08Tests {
-    @BeforeClass
+public class
+         OAEI08Tests {
+
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
-    private static Logger logger = Logger.getLogger(OAEI08Tests.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(OAEI08Tests.class.getName());
 
     public static Map<String, List<String>> readOntologiesFromFile(String str) {
         Properties properties = new Properties();
@@ -152,11 +154,11 @@ public class OAEI08Tests {
                                 try {
                                     search.run(30);
                                 } catch (SolverException e) {
-                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (NoConflictException e) {
-                                    logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (InconsistentTheoryException e) {
-                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 }
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
@@ -262,11 +264,11 @@ public class OAEI08Tests {
                                 try {
                                     search.run(30);
                                 } catch (SolverException e) {
-                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (NoConflictException e) {
-                                    logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (InconsistentTheoryException e) {
-                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 }
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
@@ -508,11 +510,11 @@ public class OAEI08Tests {
                             try {
                                 search.run();
                             } catch (SolverException e) {
-                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             } catch (NoConflictException e) {
-                                logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                logger.error(e.toString());//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             } catch (InconsistentTheoryException e) {
-                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
 
                             Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
@@ -522,11 +524,11 @@ public class OAEI08Tests {
                                 try {
                                     search.run(30);
                                 } catch (SolverException e) {
-                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (NoConflictException e) {
-                                    logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (InconsistentTheoryException e) {
-                                    logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                    logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 }
 
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
@@ -583,11 +585,11 @@ public class OAEI08Tests {
                     try {
                         search.run();
                     } catch (SolverException e) {
-                        logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     } catch (NoConflictException e) {
-                        logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        logger.error(e.toString());//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     } catch (InconsistentTheoryException e) {
-                        logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                     time = System.nanoTime() - time;
                     String t = LogUtil.getStringTime(time / 1000000);
@@ -659,11 +661,11 @@ public class OAEI08Tests {
                         try {
                             search.run(nd);
                         } catch (SolverException e) {
-                            logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                         } catch (NoConflictException e) {
-                            logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            logger.error(e.toString());//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                         } catch (InconsistentTheoryException e) {
-                            logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                         }
                         time = System.nanoTime() - time;
 
@@ -821,11 +823,11 @@ public class OAEI08Tests {
                                     try {
                                         search.run(30);
                                     } catch (SolverException e) {
-                                        logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                        logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                     } catch (NoConflictException e) {
-                                        logger.error(e);//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                        logger.error(e.toString());//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                     } catch (InconsistentTheoryException e) {
-                                        logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                        logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                     }
 
                                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =

@@ -9,14 +9,14 @@ import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.Partition;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.LinkedHashSet;
@@ -32,16 +32,16 @@ import static org.junit.Assert.assertEquals;
  * To change this template use File | Settings | File Templates.
  */
 public class MultithrValidTest {
-    private static Logger logger = Logger.getLogger(MultithrValidTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(MultithrValidTest.class.getName());
     //private OWLDebugger debugger  = null; //new SimpleDebugger();
     private SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(null);
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
     @Test
     public void testBruteForce2() throws OWLException, InconsistentTheoryException, SolverException {

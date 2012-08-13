@@ -1,6 +1,5 @@
 package at.ainf.owlapi3.parser;
 
-import org.apache.log4j.Logger;
 //import org.protege.editor.owl.model.OWLModelManager;
 //import org.protege.editor.owl.model.cache.OWLEntityRenderingCache;
 //import org.protege.editor.owl.model.util.OWLDataTypeUtils;
@@ -8,6 +7,8 @@ import org.apache.log4j.Logger;
 //import org.protege.editor.owl.ui.renderer.OWLModelManagerEntityRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -20,7 +21,7 @@ import java.util.*;
  */
 public class MyOWLEntRenderCache  {
 
-    private static final Logger logger = Logger.getLogger(MyOWLEntRenderCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(MyOWLEntRenderCache.class);
 
     private Map<String, OWLClass> owlClassMap = new HashMap<String, OWLClass>();
 

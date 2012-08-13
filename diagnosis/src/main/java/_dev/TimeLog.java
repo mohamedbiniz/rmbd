@@ -1,5 +1,8 @@
 package _dev;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 /**
@@ -11,7 +14,7 @@ import java.util.*;
  */
 public class TimeLog {
     private static Map<String, Event> timeMap = new HashMap<String, Event>();
-    private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TimeLog.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(TimeLog.class.getName());
     private static final boolean LOG = true;
     private static final boolean TRACE = false;
     private static List<List<String>> messages = new LinkedList<List<String>>();

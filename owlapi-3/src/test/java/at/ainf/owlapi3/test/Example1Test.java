@@ -10,11 +10,12 @@ import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.File;
@@ -64,7 +65,7 @@ public class Example1Test extends AbstractExample {
             return super.toString() + ": " + renderer.render(axiom);
         }
     }
-    private static Logger logger = Logger.getLogger(Example1Test.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Example1Test.class.getName());
     enum Diagnosis {
         D1(new Axiom[]{Axiom.AX1}),
         D2(new Axiom[]{Axiom.AX2}),

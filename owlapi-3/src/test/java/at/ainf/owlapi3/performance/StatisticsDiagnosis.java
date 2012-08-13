@@ -6,13 +6,13 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.owlapi3.utils.creation.ontology.OAEI11ConferenceOntologyCreator;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -30,14 +30,14 @@ import static junit.framework.Assert.assertTrue;
  */
 public class StatisticsDiagnosis {
 
-    private static Logger logger = Logger.getLogger(StatisticsDiagnosis.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(StatisticsDiagnosis.class.getName());
     private long time;
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
     @Test
     public void testUnsat() throws SolverException, URISyntaxException, OWLException, InconsistentTheoryException {
@@ -142,7 +142,7 @@ public class StatisticsDiagnosis {
                 }
             } catch (Exception e) {
                 //file.renameTo(new File(file + ".checked"));
-                logger.error(e);
+                logger.error(e.toString());
             }
 
     }
