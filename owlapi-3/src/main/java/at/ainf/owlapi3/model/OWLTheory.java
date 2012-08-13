@@ -6,7 +6,6 @@ import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -14,6 +13,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -33,7 +34,7 @@ import static _dev.TimeLog.stop;
 public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> implements
         ITheory<OWLLogicalAxiom> {
 
-    private static Logger logger = Logger.getLogger(OWLTheory.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(OWLTheory.class.getName());
 
     private OWLOntologyManager owlOntologyManager;
 

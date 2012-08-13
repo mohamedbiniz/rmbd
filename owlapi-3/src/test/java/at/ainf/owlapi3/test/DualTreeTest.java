@@ -19,8 +19,6 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import junit.framework.Assert;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -29,6 +27,8 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -46,17 +46,17 @@ import static org.junit.Assert.assertTrue;
  */
 public class DualTreeTest {//extends BasePerformanceTests {
 
-    private static Logger logger = Logger.getLogger(DualTreeTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(DualTreeTest.class.getName());
 
     String[] ontologies = {"Univ.owl"}; //, "Univ2.owl"};
 
     private static final boolean TEST_CACHING = false;
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    } */
 
     @Ignore
     @Test

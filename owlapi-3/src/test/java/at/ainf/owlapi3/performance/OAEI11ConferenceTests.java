@@ -23,8 +23,6 @@ import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
 import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
 import at.ainf.owlapi3.utils.StatisticsTools;
 import at.ainf.owlapi3.utils.session.SimulatedSession;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,6 +33,8 @@ import org.semanticweb.owlapi.io.OWLOntologyDocumentTarget;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -50,13 +50,12 @@ import java.util.concurrent.*;
  */
 public class OAEI11ConferenceTests {
 
-    private static Logger logger = Logger.getLogger(OAEI11ConferenceTests.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(OAEI11ConferenceTests.class.getName());
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
-        PropertyConfigurator.configure(conf);
-    }
+        PropertyConfigurator.configure(conf); }*/
 
     @Test
     public void saveOntologiesConference2011()

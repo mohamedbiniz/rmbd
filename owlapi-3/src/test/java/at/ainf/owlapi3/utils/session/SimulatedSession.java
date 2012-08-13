@@ -25,13 +25,14 @@ import at.ainf.owlapi3.utils.ProbabMapCreator;
 import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
 import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
-import org.apache.log4j.Logger;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.perf4j.aop.Profiled;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.math.BigDecimal;
@@ -48,7 +49,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class SimulatedSession extends CalculateDiagnoses {
 
-    private static Logger logger = Logger.getLogger(SimulatedSession.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(SimulatedSession.class.getName());
 
     protected boolean showElRates = true;
 
@@ -117,7 +118,7 @@ public class SimulatedSession extends CalculateDiagnoses {
     protected <E extends OWLObject> void prinths
             (Collection<AxiomSet<E>> c) {
         for (AxiomSet<E> hs : c) {
-            logger.info(hs);
+            logger.info(hs.getName());
             print(hs);
         }
     }
@@ -425,11 +426,11 @@ public class SimulatedSession extends CalculateDiagnoses {
 
             } catch (SolverException e) {
                 querySessionEnd = true;
-                logger.error(e);
+                logger.error(e.toString());
 
             } catch (InconsistentTheoryException e) {
                 querySessionEnd = true;
-                logger.error(e);
+                logger.error(e.toString());
 
             }
         }

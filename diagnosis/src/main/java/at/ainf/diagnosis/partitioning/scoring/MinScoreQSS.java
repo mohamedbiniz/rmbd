@@ -5,7 +5,8 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Set;
  */
 public class MinScoreQSS<T> extends AbstractQSS<T> {
 
-    private static Logger logger = Logger.getLogger(MinScoreQSS.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(MinScoreQSS.class.getName());
 
     public BigDecimal getScore(Partition<?> partition) {
         if (partition == null || partition.dx.isEmpty())

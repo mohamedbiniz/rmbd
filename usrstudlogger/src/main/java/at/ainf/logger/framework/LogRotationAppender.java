@@ -1,7 +1,7 @@
 package at.ainf.logger.framework;
 
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Layout;
+
+
 
 import java.io.File;
 import java.net.Inet4Address;
@@ -16,7 +16,7 @@ import java.util.Map;
  * Time: 15:01
  * To change this template use File | Settings | File Templates.
  */
-public class LogRotationAppender extends FileAppender {
+public class LogRotationAppender {
     private static final String ROTATION_COUNT_MARKER = "%u";
     private Integer rotationCount;
     private File directory;
@@ -70,7 +70,7 @@ public class LogRotationAppender extends FileAppender {
 
     private void initializeIfReady() {
         if (configured()) {
-            setFile(getNextLogFile());
+            //setFile(getNextLogFile());
         }
     }
 

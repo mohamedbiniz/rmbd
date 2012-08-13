@@ -19,7 +19,8 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomRenderer;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     private int iterations = 0;
 
-    private static Logger logger = Logger.getLogger(NewQuickXplain.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(NewQuickXplain.class.getName());
 
     private AxiomRenderer<Id> axiomRenderer;
 

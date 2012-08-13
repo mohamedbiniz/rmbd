@@ -1,5 +1,7 @@
 package at.ainf.logging;
 
+import org.perf4j.aop.Profiled;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -9,7 +11,9 @@ package at.ainf.logging;
  */
 public class TestClass {
 
+    @Profiled(tag="uvar")
     public void print() {
+        long uvar = 10;
         System.out.println("testclass Method ");
     }
 

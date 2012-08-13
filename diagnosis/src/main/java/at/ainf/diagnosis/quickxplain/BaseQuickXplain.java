@@ -19,7 +19,8 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Set;
@@ -34,7 +35,7 @@ import static _dev.TimeLog.stop;
  */
 public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
-    private static final Logger logger = Logger.getLogger(BaseQuickXplain.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(BaseQuickXplain.class.getName());
 
     /*
     private long minTime = 10000000;

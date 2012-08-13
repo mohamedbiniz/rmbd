@@ -9,11 +9,12 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.File;
@@ -64,7 +65,7 @@ public class Example2Test extends AbstractExample {
         }
     }
 
-    private static Logger logger = Logger.getLogger(Example2Test.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Example2Test.class.getName());
 
     enum Diag {
         D1(new Axiom[]{Axiom.AX1}),
@@ -368,7 +369,7 @@ public class Example2Test extends AbstractExample {
             res.add(Diag.getDiagnosis(col));
         }
         TreeSet<Diag> d_nxPlus0;
-        logger.info(res);
+        logger.info(res.toString());
         d_nxPlus0 = new TreeSet<Diag>();
         d_nxPlus0.addAll(Query.X5.getD_nx());
         d_nxPlus0.addAll(Query.X5.getD_0());

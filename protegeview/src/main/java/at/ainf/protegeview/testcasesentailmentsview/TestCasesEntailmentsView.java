@@ -3,7 +3,6 @@ package at.ainf.protegeview.testcasesentailmentsview;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.protegeview.controlpanel.OptionsDialog;
 import at.ainf.protegeview.debugmanager.DebugManager;
-import org.apache.log4j.Logger;
 import org.protege.editor.core.ProtegeManager;
 import org.protege.editor.core.ui.error.ErrorLogPanel;
 import org.protege.editor.core.ui.workspace.Workspace;
@@ -13,6 +12,8 @@ import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.SaveConfirmationPanel;
 import org.protege.editor.owl.ui.view.cls.AbstractOWLClassViewComponent;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +39,7 @@ public class TestCasesEntailmentsView extends AbstractOWLClassViewComponent {
     private static final long serialVersionUID = -7899828024396593253L;
     private TcaeFramelist frameList;
 
-    private static Logger logger = Logger.getLogger(TestCasesEntailmentsView.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(TestCasesEntailmentsView.class.getName());
 
     public void initialiseClassView() throws Exception {
         frameList = new TcaeFramelist(getOWLEditorKit(), new TcaeFrame(getOWLEditorKit()));

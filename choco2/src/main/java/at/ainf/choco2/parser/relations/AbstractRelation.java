@@ -20,7 +20,8 @@ import choco.kernel.model.variables.real.RealVariable;
 import choco.kernel.model.variables.set.SetVariable;
 import org.antlr.runtime.IntStream;
 import org.antlr.runtime.RecognitionException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public abstract class AbstractRelation implements Relation {
     /**
      * Logger for this class
      */
-    private static final Logger logger = Logger.getLogger(AbstractRelation.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractRelation.class);
 
     protected IValue left;
 

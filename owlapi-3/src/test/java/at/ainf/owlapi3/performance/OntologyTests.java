@@ -5,6 +5,7 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
+import at.ainf.logging.ValueLogWatch;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -23,19 +24,16 @@ import at.ainf.owlapi3.utils.*;
 import at.ainf.owlapi3.utils.session.CalculateDiagnoses;
 import at.ainf.owlapi3.utils.session.SimulatedSession;
 import junit.framework.Assert;
-//import org.apache.log4j.Logger;
-//import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.perf4j.LoggingStopWatch;
 import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -55,7 +53,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class OntologyTests {
 
-    private static Logger logger = Logger.getLogger(OntologyTests.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(OntologyTests.class.getName());
 
     //private boolean showElRates = true;
 
@@ -75,12 +73,6 @@ public class OntologyTests {
 
     //private boolean traceDiagnosesAndQueries = false;
     //private boolean minimizeQuery = false;
-
-    @BeforeClass
-    public static void setUp() {
-        String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
-        PropertyConfigurator.configure(conf);
-    }
 
 
     /*protected BreadthFirstSearch<OWLLogicalAxiom> createBreathFirstSearch(OWLTheory th, boolean dual) {
@@ -158,16 +150,16 @@ public class OntologyTests {
 
         TableList e = new TableList();
         String message = "act," + type + "," + dual + "," + name + "," + preprocessModulExtract;
-        StopWatch stopWatch = new LoggingStopWatch("codeBlock1");
+        StopWatch stopWatch = new Slf4JStopWatch("codeBlock1");
         //Logger LOG = LoggerFactory.getLogger("logback logger");
         logger.info("start session ");
         session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
         stopWatch.stop();
+        new ValueLogWatch(9,"diagnosis","number of diagnoses",
+                LoggerFactory.getLogger(ValueLogWatch.DEFAULT_LOGGER_NAME)).logValue();
         logger.info("stop session ");
 
     }
-
-
 
 
     protected void doOverallTreeTestEconomy(boolean dual) throws IOException, SolverException, InconsistentTheoryException, NoConflictException {

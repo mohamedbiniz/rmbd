@@ -2,8 +2,6 @@ package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -11,6 +9,8 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -28,15 +28,15 @@ import static _dev.TimeLog.stop;
  */
 public class ReasonerHermTest {
 
-        private static Logger logger = Logger.getLogger(ReasonerHermTest.class.getName());
+        private static Logger logger = LoggerFactory.getLogger(ReasonerHermTest.class.getName());
 
 
 
-        @BeforeClass
+        /*@BeforeClass
         public static void setUp() {
             String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
             PropertyConfigurator.configure(conf);
-        }
+        }*/
 
     @Test
     public void testReasoner() throws InconsistentTheoryException, SolverException, URISyntaxException, OWLException {

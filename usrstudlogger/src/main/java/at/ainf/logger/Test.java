@@ -8,10 +8,11 @@ package at.ainf.logger;
  * To change this template use File | Settings | File Templates.
  */
 
-import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -31,7 +32,7 @@ import java.util.StringTokenizer;
 @Aspect
 public class Test {
 
-    private static Logger logger = Logger.getLogger(Test.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(Test.class.getName());
 
     LogToolsManager logToolsManager;
 

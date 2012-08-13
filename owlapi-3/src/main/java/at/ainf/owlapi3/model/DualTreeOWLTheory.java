@@ -2,10 +2,11 @@ package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import org.apache.log4j.Logger;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.Set;
  */
 public class DualTreeOWLTheory extends OWLTheory {
 
-    private static Logger logger = Logger.getLogger(DualTreeOWLTheory.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(DualTreeOWLTheory.class.getName());
 
     public DualTreeOWLTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms) throws InconsistentTheoryException, SolverException {
         super(reasonerFactory, ontology, backgroundAxioms);

@@ -20,7 +20,8 @@ import choco.kernel.model.variables.real.RealVariable;
 import org.antlr.runtime.IntStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.Token;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -39,7 +40,7 @@ public class Choco2ParserHelper implements IParserHelper {
     private List<Constraint> changable = new LinkedList<Constraint>();
     private List<Constraint> background = new LinkedList<Constraint>();
     private final Model model;
-    private static final Logger logger = Logger.getLogger(Choco2ParserHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(Choco2ParserHelper.class);
     private Map<Constraint, String> nameMap = new HashMap<Constraint, String>();
 
 

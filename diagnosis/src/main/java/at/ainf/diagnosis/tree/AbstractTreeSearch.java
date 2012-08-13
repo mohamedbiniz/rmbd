@@ -15,7 +15,8 @@ import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -34,9 +35,9 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     private int maxHittingSets = Integer.MAX_VALUE;
 
-    private static Logger logger = Logger.getLogger(AbstractTreeSearch.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(AbstractTreeSearch.class.getName());
 
-    private static Logger loggerDual = Logger.getLogger("dualtreelogger");
+    private static Logger loggerDual = LoggerFactory.getLogger("dualtreelogger");
 
     private Node<Id> root = null;
 

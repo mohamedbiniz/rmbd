@@ -18,12 +18,12 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -38,13 +38,13 @@ import static org.junit.Assert.assertTrue;
  * To change this template use File | Settings | File Templates.
  */
 public class TreeEvaluation {
-    private static Logger logger = Logger.getLogger(TreeEvaluation.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(TreeEvaluation.class.getName());
 
-    @Before
+    /*@Before
     public void setUp() {
         String conf = ClassLoader.getSystemResource("sat4j-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
-    }
+    }*/
 
     @Test
     public void createTree() throws SolverException, ContradictionException,
@@ -219,7 +219,7 @@ public class TreeEvaluation {
         assertEquals(search.getDiagnoses().size(), 1);
 
         for (Collection<IVecIntComparable> hs : search.getDiagnoses()) {
-            logger.info(hs);
+            logger.info(hs.toString());
             assertTrue(hs.toString().equals("[-1,5]"));
         }
 

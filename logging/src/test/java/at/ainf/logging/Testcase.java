@@ -1,6 +1,7 @@
 package at.ainf.logging;
 
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created with IntelliJ IDEA.
