@@ -5,7 +5,7 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.logging.ValueLogWatch;
+import at.ainf.logging.ProfVarLogWatch;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -155,8 +155,8 @@ public class OntologyTests {
         logger.info("start session ");
         session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
         stopWatch.stop();
-        new ValueLogWatch(9,"diagnosis","number of diagnoses",
-                LoggerFactory.getLogger(ValueLogWatch.DEFAULT_LOGGER_NAME)).logValue();
+        new ProfVarLogWatch(9,"diagnosis","number of diagnoses",
+                LoggerFactory.getLogger(ProfVarLogWatch.DEFAULT_LOGGER_NAME)).logValue();
         logger.info("stop session ");
 
     }

@@ -1,6 +1,7 @@
 package at.ainf.logging;
 
 import org.junit.Test;
+import org.perf4j.slf4j.aop.TimingAspect;
 import org.slf4j.LoggerFactory;
 
 /**

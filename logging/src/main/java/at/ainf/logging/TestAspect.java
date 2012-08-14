@@ -1,12 +1,8 @@
 package at.ainf.logging;
 
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
-import org.perf4j.aop.Profiled;
 import org.slf4j.LoggerFactory;
 
 @Aspect
@@ -21,8 +17,8 @@ public class TestAspect {
 
     @Before("mainCodeAspectPointcut()")
     public void addMethod() {
-        new ValueLogWatch(9,"diagnosis","number of diagnoses",
-                LoggerFactory.getLogger(ValueLogWatch.DEFAULT_LOGGER_NAME)).logValue();
+        new ProfVarLogWatch(9,"diagnosis","number of diagnoses",
+                LoggerFactory.getLogger(ProfVarLogWatch.DEFAULT_LOGGER_NAME)).logValue();
     }*/
 
     @Around(value = "execution(* *(..)) && @annotation(profiledVar)", argNames = "pjp,profiledVar")
@@ -30,8 +26,8 @@ public class TestAspect {
 
         Object ret = pjp.proceed();
 
-        new ValueLogWatch((Integer)ret,profiledVar.varname(),"number of diagnoses",
-                LoggerFactory.getLogger(ValueLogWatch.DEFAULT_LOGGER_NAME)).logValue();
+        new ProfVarLogWatch((Integer)ret,profiledVar.varname(),"number of diagnoses",
+                LoggerFactory.getLogger(ProfVarLogWatch.DEFAULT_LOGGER_NAME)).logValue();
 
         return ret;
           }
