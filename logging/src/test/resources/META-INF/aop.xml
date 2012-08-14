@@ -10,15 +10,13 @@
   -->
   <aspects>
       <!--<aspect name="org.perf4j.sl4j.aop.TimingAspect"/>-->
-      <aspect name="at.ainf.logging.AinfSL4JTimingAspect"/>
-      <aspect name="at.ainf.logging.TestAspect"/>
+      <aspect name="at.ainf.logging.aop.AinfTimingAspect"/>
+      <aspect name="at.ainf.logging.aop.AinfVarsAspect"/>
   </aspects>
 
-  <weaver options="-verbose -showWeaveInfo">
-    <!--
-      Here is where we specify the classes to be woven. You can specify package
-      names like com.company.project.*
-    -->
+   <weaver>
+       <!-- </weaver><weaver options="-verbose -showWeaveInfo">-->
+
     <include within="at.ainf..*"/>
   </weaver>
 </aspectj>

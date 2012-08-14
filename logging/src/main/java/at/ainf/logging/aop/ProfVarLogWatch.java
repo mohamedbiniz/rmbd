@@ -1,4 +1,4 @@
-package at.ainf.logging;
+package at.ainf.logging.aop;
 
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;

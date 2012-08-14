@@ -1,5 +1,6 @@
 package at.ainf.logging;
 
+import at.ainf.logging.aop.ProfiledVar;
 import org.perf4j.aop.Profiled;
 
 /**

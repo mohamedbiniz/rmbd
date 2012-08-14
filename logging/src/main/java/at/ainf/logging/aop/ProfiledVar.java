@@ -1,4 +1,4 @@
-package at.ainf.logging;
+package at.ainf.logging.aop;
 
 import org.perf4j.StopWatch;
 
