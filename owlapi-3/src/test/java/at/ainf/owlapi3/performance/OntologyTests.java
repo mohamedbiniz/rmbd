@@ -6,6 +6,7 @@ import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.logging.aop.ProfVarLogWatch;
+import at.ainf.logging.aop.ProfiledVar;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -28,6 +29,7 @@ import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.perf4j.StopWatch;
+import org.perf4j.aop.Profiled;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -150,15 +152,19 @@ public class OntologyTests {
 
         TableList e = new TableList();
         String message = "act," + type + "," + dual + "," + name + "," + preprocessModulExtract;
-        StopWatch stopWatch = new Slf4JStopWatch("codeBlock1");
-        //Logger LOG = LoggerFactory.getLogger("logback logger");
+
         logger.info("start session ");
+        loggingTest();
         session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
-        stopWatch.stop();
-        new ProfVarLogWatch(9,"diagnosis","number of diagnoses",
-                LoggerFactory.getLogger(ProfVarLogWatch.DEFAULT_LOGGER_NAME)).logValue();
         logger.info("stop session ");
 
+    }
+
+    @Profiled(tag="time_loggingTest")
+    @ProfiledVar(varname = "loggingTest")
+    public long loggingTest() {
+        logger.info("loggingTest does work");
+        return 7;
     }
 
 
