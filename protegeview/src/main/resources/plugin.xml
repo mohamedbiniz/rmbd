@@ -58,9 +58,9 @@
         <category value="Debugger"/>
     </extension>
 
-    <extension id="at.ainf.protegeview.basis.Ehook"
+    <extension id="at.ainf.protegeview.basis.EditorKitHook"
             point="org.protege.editor.core.application.EditorKitHook">
-        <class value="at.ainf.protegeview.basis.Ehook"/>
+        <class value="at.ainf.protegeview.basis.EditorKitHook"/>
         <editorKitId value="OWLEditorKit"/>
     </extension>
 

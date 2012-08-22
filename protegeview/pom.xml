@@ -44,6 +44,8 @@
                             <!--!at.ainf.controller.*, -->
                             <!--!at.ainf.owlcontroller.*,-->
                             !org.picocontainer.*,
+                            !ch.qos.logback.*,
+                            !org.slf4j.*,
                             *</Import-Package>
                         <!--<Embed-Directory>lib</Embed-Directory>-->
                         <Bundle-ClassPath>.;at.ainf.diagnosis.jar;
@@ -51,6 +53,9 @@
                             at.ainf.owlapi3.jar;
                             <!--at.ainf.owlcontroller.jar;-->
                             <!--at.ainf.controller.jar; -->
+                            org.slf4j.slf4j.jar;
+                            ch.qos.logback.logback-classic.jar;
+                            ch.qos.logback.logback-core.jar;
                             org.picocontainer.picocontainer.jar</Bundle-ClassPath>
                         <!--<Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
                             org.protege.editor.core.application;bundle-version="4.1",org.protege.editor.owl;bundle-version="4.1",
@@ -128,7 +133,31 @@
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>org.picocontainer.picocontainer.jar</destFileName>
-                </artifactItem>
+                </artifactItem> <artifactItem>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+                  <version>1.6.6</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>org.slf4j.slf4j.jar</destFileName>
+              </artifactItem>  <artifactItem>
+                  <groupId>ch.qos.logback</groupId>
+                  <artifactId>logback-classic</artifactId>
+                  <version>1.0.6</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>ch.qos.logback.logback-classic.jar</destFileName>
+              </artifactItem>  <artifactItem>
+                  <groupId>ch.qos.logback</groupId>
+                  <artifactId>logback-core</artifactId>
+                  <version>1.0.6</version>
+                  <type>jar</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <destFileName>ch.qos.logback.logback-core.jar</destFileName>
+              </artifactItem>
               </artifactItems>
               <outputDirectory>${project.build.directory}/wars</outputDirectory>
               <overWriteReleases>false</overWriteReleases>
@@ -250,6 +279,17 @@
             <artifactId>osgi_R4_core</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.5</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+
 
     </dependencies>
 

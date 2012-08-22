@@ -22,7 +22,7 @@ import java.util.*;
  * Time: 09:25
  * To change this template use File | Settings | File Templates.
  */
-public class OWLControllerImpl implements OWLController {
+public class OWLControllerImpl  {
 
     private SearchConfiguration config;
 
@@ -109,20 +109,6 @@ public class OWLControllerImpl implements OWLController {
 
 
 
-    Map<Class,List<OWLControllerListener>> listeners = new HashMap<Class,List<OWLControllerListener>>();
 
-    public void addControllerListener(OWLControllerListener listener, Class listenerClass) {
-        if (listeners.get(listenerClass) != null)
-            listeners.get(listenerClass).add(listener);
-        else {
-            List<OWLControllerListener> list = new LinkedList<OWLControllerListener>();
-            list.add(listener);
-            listeners.put(listenerClass,list);
-        }
-    }
-
-    public void removeControllerListener(OWLControllerListener listener, Class listenerClass) {
-        listeners.get(listenerClass).remove(listener);
-    }
 
 }

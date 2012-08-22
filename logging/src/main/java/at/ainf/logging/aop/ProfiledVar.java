@@ -20,7 +20,11 @@ public @interface ProfiledVar {
 
     public static final String DEFAULT_VARNAME_NAME = "@@USE_METHOD_NAME";
 
-    String varname() default DEFAULT_VARNAME_NAME;
+    String tag() default DEFAULT_VARNAME_NAME;
+
+    boolean isCollection() default false;
+
+
 
     String message() default "";
 

@@ -5,7 +5,7 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.logging.aop.ProfVarLogWatch;
+import at.ainf.logging.SimulatedCalculationTest;
 import at.ainf.logging.aop.ProfiledVar;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -28,9 +28,7 @@ import junit.framework.Assert;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.perf4j.StopWatch;
 import org.perf4j.aop.Profiled;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -153,7 +151,7 @@ public class OntologyTests {
         TableList e = new TableList();
         String message = "act," + type + "," + dual + "," + name + "," + preprocessModulExtract;
 
-        logger.info("start session ");
+        logger.info("start session");
         loggingTest();
         session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
         logger.info("stop session ");
@@ -161,9 +159,10 @@ public class OntologyTests {
     }
 
     @Profiled(tag="time_loggingTest")
-    @ProfiledVar(varname = "loggingTest")
+    @ProfiledVar(tag = "loggingTest")
     public long loggingTest() {
         logger.info("loggingTest does work");
+        new SimulatedCalculationTest().doSimulation();
         return 7;
     }
 
