@@ -12,8 +12,6 @@ import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.SaveConfirmationPanel;
 import org.protege.editor.owl.ui.view.cls.AbstractOWLClassViewComponent;
 import org.semanticweb.owlapi.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +37,7 @@ public class TestCasesEntailmentsView extends AbstractOWLClassViewComponent {
     private static final long serialVersionUID = -7899828024396593253L;
     private TcaeFramelist frameList;
 
-    private static Logger logger = LoggerFactory.getLogger(TestCasesEntailmentsView.class.getName());
+    //private static Logger logger = LoggerFactory.getLogger(TestCasesEntailmentsView.class.getName());
 
     public void initialiseClassView() throws Exception {
         frameList = new TcaeFramelist(getOWLEditorKit(), new TcaeFrame(getOWLEditorKit()));
@@ -58,7 +56,7 @@ public class TestCasesEntailmentsView extends AbstractOWLClassViewComponent {
 
         //OptionsDialog.getDialog().getProbabTableModel().saveToTheOnt();
 
-        /*EditorKitManager manager = ProtegeManager.getInstance().getEditorKitManager();
+        /*OntologyDiagnosisSearcherManager manager = ProtegeManager.getInstance().getEditorKitManager();
         final Workspace workspace = getWorkspace();
         final WorkspaceFrame frame = manager.getWorkspaceManager().getFrame(workspace);
         frame.addWindowListener(new WindowAdapter() {
@@ -99,7 +97,7 @@ public class TestCasesEntailmentsView extends AbstractOWLClassViewComponent {
                         OWLOntology ont = editorKit.getModelManager().getActiveOntology();
                         OWLOntologyFormat format = editorKit.getModelManager().getOWLOntologyManager().getOntologyFormat(ont);
                         String message = "Could not save ontology in the specified format (" + format + ").\n" + "Please select 'Save As' and choose another format.";
-                        logger.warn(message);
+                        //logger.warn(message);
                         ErrorLogPanel.showErrorDialog(new OWLOntologyStorageException(message, e));
                     }
                 }

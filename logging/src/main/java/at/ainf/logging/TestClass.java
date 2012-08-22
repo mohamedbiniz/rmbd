@@ -12,8 +12,10 @@ import org.perf4j.aop.Profiled;
  */
 public class TestClass {
 
-    @ProfiledVar(varname="diagnoses")
-    @Profiled(tag="time_diagnoses")
+    private int var = 4711;
+
+    @Profiled(tag = "time_diagnoses")
+    @ProfiledVar(tag = "diagnoses")
     public int print() {
         int retv = 9;
         System.out.println("testclass Method ");

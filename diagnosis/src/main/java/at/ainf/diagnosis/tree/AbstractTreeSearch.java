@@ -15,6 +15,8 @@ import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
+import at.ainf.logging.aop.ProfiledVar;
+import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,6 +174,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     protected int numOfInvalidatedHS;
 
+    @Profiled(tag = "time_calcdiagnoses")
+    @ProfiledVar(tag = "calcdiagnoses", isCollection = true)
     public Set<T> run(int numberOfDiags) throws SolverException, NoConflictException, InconsistentTheoryException {
 
         start("Overall runPostprocessor");
