@@ -42,11 +42,13 @@ public class CalculateDiagnoses {
 
     protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
 
-    public void init() {
-        OWLOntology ontology = new SimpleOntologyCreator(file).getOntology();
-        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
+    protected void init() {
 
-        OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
+        OWLOntology ontology = getOntology();
+
+        ontology = getExtractedOntology(ontology);
+
+        OWLTheory theory = getTheory(ontology);
 
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, false).getSearch();
 
@@ -56,6 +58,19 @@ public class CalculateDiagnoses {
         search.setCostsEstimator(es);
         init=true;
         this.search = search;
+    }
+
+    protected OWLOntology getExtractedOntology(OWLOntology ontology) {
+        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntology());
+        return ontology;
+    }
+
+    protected OWLTheory getTheory(OWLOntology ontology) {
+        return new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
+    }
+
+    protected OWLOntology getOntology() {
+        return new SimpleOntologyCreator(file).getOntology();
     }
 
     public TreeSet<AxiomSet<OWLLogicalAxiom>> getDiagnoses(int number) {

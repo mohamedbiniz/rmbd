@@ -13,8 +13,4 @@ public class OAEI08OntologyCreator extends SimpleOntologyCreator {
         super("alignment/" + matcher + "_incoherent_matched_ontologies", name + ".owl");
     }
 
-    public OAEI08OntologyCreator(String name) {
-        super(ClassLoader.getSystemResource("alignment").getPath(),name+".owl");
-    }
-
 }
