@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 public class ProfVarLogWatch extends Slf4JStopWatch {
 
     public ProfVarLogWatch(long elapsedTime, String tag, String message, Logger logger) {
-        super(0,elapsedTime,tag,message,logger,INFO_LEVEL,WARN_LEVEL);
+        super(System.currentTimeMillis(),elapsedTime,tag,message,logger,INFO_LEVEL,WARN_LEVEL);
     }
 
     public void logValue() {

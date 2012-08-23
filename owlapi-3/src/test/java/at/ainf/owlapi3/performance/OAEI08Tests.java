@@ -12,6 +12,7 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.ProbabMapCreator;
+import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
 import at.ainf.owlapi3.utils.creation.target.OAEI08TargetChooser;
 import at.ainf.owlapi3.utils.creation.target.OAEI08TargetProvider;
 import at.ainf.owlapi3.utils.session.SimulatedSession;
@@ -210,8 +211,8 @@ public class
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             if (background_add) {
-                                OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
-                                OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
+                                OWLOntology ontology1 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[0].trim()+".owl").getOntology();
+                                OWLOntology ontology2 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[1].trim()+".owl").getOntology();
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
@@ -333,8 +334,8 @@ public class
                                     + ".txt").getPath();
 
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
-                            OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
-                            OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
+                            OWLOntology ontology1 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[0].trim()+".owl").getOntology();
+                            OWLOntology ontology2 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[1].trim()+".owl").getOntology();
                             if (background == BackgroundO.O1_O2) {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
@@ -399,8 +400,9 @@ public class
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, false).getSearch();
-        OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
-        OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
+        //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
+        //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
+
         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
         //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
         //ProbabilityTableModel mo = new ProbabilityTableModel();
@@ -566,8 +568,8 @@ public class
                 for (BackgroundO background : backgrounds) {
                     OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
                     Set<OWLLogicalAxiom> targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
-                    OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
-                    OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
+                    OWLOntology ontology1 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[0].trim()+".owl").getOntology();
+                    OWLOntology ontology2 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[1].trim()+".owl").getOntology();
                     OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
                     TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, false).getSearch();
                     //ProbabilityTableModel mo = new ProbabilityTableModel();
@@ -633,8 +635,8 @@ public class
                         //ProbabilityTableModel mo = new ProbabilityTableModel();
                         HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
 
-                        OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
-                        OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
+                        //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
+                        //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
 
                         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                 + m.trim()
@@ -775,8 +777,8 @@ public class
                                 OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
                                 TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
                                 if (background) {
-                                    OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
-                                    OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
+                                    OWLOntology ontology1 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[0].trim()+".owl").getOntology();
+                                    OWLOntology ontology2 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[1].trim()+".owl").getOntology();
                                     theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                     theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                                 }

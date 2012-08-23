@@ -71,7 +71,6 @@
     </appender>
 
 
-
     <!-- This file appender is used to output aggregated performance statistics -->
     <appender name="perfStatApp" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
@@ -120,7 +119,7 @@
           GroupedTimingStatistics log. Here we set it to 10 seconds, overriding
           the default of 30000 ms
         -->
-        <param name="TimeSlice" value="100"/>
+        <param name="TimeSlice" value="10000000"/>
         <appender-ref ref="graphExecutionTimes"/>
         <appender-ref ref="perfStatApp"/>
     </appender>

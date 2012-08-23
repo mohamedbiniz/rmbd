@@ -6,6 +6,7 @@ import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.logging.SimulatedCalculationTest;
+import at.ainf.logging.aop.ProfVarLogWatch;
 import at.ainf.logging.aop.ProfiledVar;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -24,6 +25,9 @@ import at.ainf.owlapi3.performance.table.TableList;
 import at.ainf.owlapi3.utils.*;
 import at.ainf.owlapi3.utils.session.CalculateDiagnoses;
 import at.ainf.owlapi3.utils.session.SimulatedSession;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
 import junit.framework.Assert;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Ignore;
@@ -155,7 +159,10 @@ public class OntologyTests {
         loggingTest();
         session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
         logger.info("stop session ");
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Appender<ILoggingEvent> coalescingStatistics = loggerContext.getLogger(ProfVarLogWatch.DEFAULT_LOGGER_NAME).getAppender("CoalescingStatistics");
 
+        coalescingStatistics.stop();
     }
 
     @Profiled(tag="time_loggingTest")

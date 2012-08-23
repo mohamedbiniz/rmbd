@@ -378,28 +378,12 @@ public class SimulatedSession extends CalculateDiagnoses {
                     } catch (NoConflictException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
-                    remainingAllDiags = secondsearch.getDiagnoses();
-                    int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
-                    int eliminatedInRemaining = getEliminationRate(secondsearch.getTheory(), remainingAllDiags, answer, actPa);
-                    int eliminatedInRemainingSize = remainingAllDiags.size();
-                    int eliminatedInfull = getEliminationRate(t3, allDiagnoses, answer, actPa);
-                    // deleteDiag(search.getTheory(),remainingAllDiags,answer,actPa.partition);
-
-                    AxiomSet<OWLLogicalAxiom> foundTarget;
-                    foundTarget = null;
-                    for (AxiomSet<OWLLogicalAxiom> axiom : allDiagnoses)
-                        if (targetDiag.containsAll(axiom)) {
-                            if (foundTarget != null)
-                                logger.info("");
-                            foundTarget = axiom;
-                        }
                     if (answer)
                         secondsearch.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                     else
                         secondsearch.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-                    logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiagnoses.size() +
-                            "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
-                            "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size() + " " + foundTarget);
+
+                    logStatistics(search, targetDiag, allDiagnoses, secondsearch, t3, actPa, diagnoses, answer);
                 }
 
                 int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
@@ -491,6 +475,29 @@ public class SimulatedSession extends CalculateDiagnoses {
         entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
         return msg;
+    }
+
+    private void logStatistics(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3, Partition<OWLLogicalAxiom> actPa, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, boolean answer) throws SolverException, InconsistentTheoryException {
+        Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags;
+        remainingAllDiags = secondsearch.getDiagnoses();
+        int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
+        int eliminatedInRemaining = getEliminationRate(secondsearch.getTheory(), remainingAllDiags, answer, actPa);
+        int eliminatedInRemainingSize = remainingAllDiags.size();
+        int eliminatedInfull = getEliminationRate(t3, allDiagnoses, answer, actPa);
+        // deleteDiag(search.getTheory(),remainingAllDiags,answer,actPa.partition);
+
+        AxiomSet<OWLLogicalAxiom> foundTarget;
+        foundTarget = null;
+        for (AxiomSet<OWLLogicalAxiom> axiom : allDiagnoses)
+            if (targetDiag.containsAll(axiom)) {
+                if (foundTarget != null)
+                    logger.info("");
+                foundTarget = axiom;
+            }
+
+        logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiagnoses.size() +
+                "; in all remaining diags ;" + eliminatedInRemaining + "/" + eliminatedInRemainingSize +
+                "; in leading ;" + eliminatedInLeading + "/" + diagnoses.size() + " " + foundTarget);
     }
 
     public enum TargetSource {FROM_FILE, FROM_30_DIAGS}
