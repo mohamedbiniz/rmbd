@@ -1,17 +1,12 @@
-package at.ainf.owlapi3.utils.creation.ontology;
+package at.ainf.owlapi3.base.tools;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.security.PublicKey;
 import java.util.*;
 
 /**

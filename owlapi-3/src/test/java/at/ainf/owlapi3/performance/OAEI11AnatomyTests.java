@@ -4,18 +4,14 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
+import at.ainf.owlapi3.base.OAEI11AnatomySession;
+import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.utils.ProbabMapCreator;
-import at.ainf.owlapi3.utils.creation.target.OAEI11AnatomyTargetProvider;
-import at.ainf.owlapi3.utils.session.SimulatedSession;
-import at.ainf.owlapi3.utils.creation.ontology.OAEI11AnatomyOntologyCreator;
-import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
-import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
+import at.ainf.owlapi3.base.tools.ProbabMapCreator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -38,7 +34,7 @@ import java.util.*;
  * Time: 08:03
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11AnatomyTests {
+public class OAEI11AnatomyTests extends OAEI11AnatomySession {
 
     private static Logger logger = LoggerFactory.getLogger(OAEI11AnatomyTests.class.getName());
 
@@ -78,15 +74,15 @@ public class OAEI11AnatomyTests {
                             //String[] targetAxioms = AlignmentUtils.getDiagnosis2(m,o);
                             //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
 
-                            OWLOntology ontology = new OAEI11AnatomyOntologyCreator(file).getOntology();
+                            OWLOntology ontology = getOntology(file);
 
                             Set<OWLLogicalAxiom> targetDg;
                             long preprocessModulExtract = System.currentTimeMillis();
                             ontology = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
-                            OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+                            OWLTheory theory = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
@@ -121,7 +117,7 @@ public class OAEI11AnatomyTests {
 
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = new OAEI11AnatomyTargetProvider(file).getDiagnosisTarget();
+                                targetDg = getDiagnosisTarget(file);
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -165,15 +161,15 @@ public class OAEI11AnatomyTests {
                             //String[] targetAxioms = AlignmentUtils.getDiagnosis2(m,o);
                             //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
 
-                            OWLOntology ontology = new OAEI11AnatomyOntologyCreator(file).getOntology();
+                            OWLOntology ontology = getOntology(file);
 
                             Set<OWLLogicalAxiom> targetDg;
                             long preprocessModulExtract = System.currentTimeMillis();
                             ontology = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
-                            OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+                            OWLTheory theory = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
@@ -208,7 +204,7 @@ public class OAEI11AnatomyTests {
 
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = new OAEI11AnatomyTargetProvider(file).getDiagnosisTarget();
+                                targetDg = getDiagnosisTarget(file);
 
                             TableList e = new TableList();
                             out += "," + type + ",";

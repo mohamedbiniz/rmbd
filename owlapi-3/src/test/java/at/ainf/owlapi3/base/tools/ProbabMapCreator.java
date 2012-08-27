@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.utils;
+package at.ainf.owlapi3.base.tools;
 
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 
