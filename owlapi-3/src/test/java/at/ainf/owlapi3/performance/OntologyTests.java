@@ -8,6 +8,9 @@ import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.logging.SimulatedCalculationTest;
 import at.ainf.logging.aop.ProfVarLogWatch;
 import at.ainf.logging.aop.ProfiledVar;
+import at.ainf.owlapi3.base.CalculateDiagnoses;
+import at.ainf.owlapi3.base.OntologySession;
+import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -15,16 +18,11 @@ import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
-import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
-import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
-import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
-import at.ainf.owlapi3.utils.creation.theory.SimpleTheoryCreator;
-import at.ainf.owlapi3.utils.distribution.ExtremeDistribution;
-import at.ainf.owlapi3.utils.distribution.ModerateDistribution;
+import at.ainf.owlapi3.base.distribution.ExtremeDistribution;
+import at.ainf.owlapi3.base.distribution.ModerateDistribution;
 import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.utils.*;
-import at.ainf.owlapi3.utils.session.CalculateDiagnoses;
-import at.ainf.owlapi3.utils.session.SimulatedSession;
+import at.ainf.owlapi3.base.tools.LogUtil;
+import at.ainf.owlapi3.base.tools.ProbabMapCreator;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -43,8 +41,6 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static at.ainf.owlapi3.utils.session.SimulatedSession.QSSType;
-
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -55,7 +51,7 @@ import static org.junit.Assert.assertTrue;
  * Time: 08:26
  * To change this template use File | Settings | File Templates.
  */
-public class OntologyTests {
+public class OntologyTests extends OntologySession {
 
     private static Logger logger = LoggerFactory.getLogger(OntologyTests.class.getName());
 
@@ -128,7 +124,7 @@ public class OntologyTests {
         String name = "koala.owl";
         //String name = "dualpaper.owl";
 
-        OWLOntology ontology = new SimpleOntologyCreator("ontologies", name).getOntology();
+        OWLOntology ontology = getOntologySimple("ontologies", name);
 
         Set<OWLLogicalAxiom> targetDg = new LinkedHashSet<OWLLogicalAxiom>();
         targetDg.add(new MyOWLRendererParser(ontology).parse("Marsupials DisjointWith Person"));
@@ -141,12 +137,12 @@ public class OntologyTests {
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
 
-        OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
+        OWLTheory theory = getExtendTheory(ontology, dual);
         //theory.addEntailedTest(new MyOWLRendererParser(ontology).parse("w Type B"));
         theory.setIncludeClassAssertionAxioms(true);
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
         //((NewQuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
         CostsEstimator es = new SimpleCostsEstimator();
@@ -193,15 +189,15 @@ public class OntologyTests {
                         for (int i = 0; i < 20; i++) {
 
 
-                        OWLOntology ontology = new SimpleOntologyCreator("queryontologies", o + ".owl").getOntology();
+                        OWLOntology ontology = getOntologySimple("queryontologies", o + ".owl");
                         //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                         long preprocessModulExtract = System.currentTimeMillis();
                         ontology = new OWLIncoherencyExtractor(
                                 new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                         Set<OWLLogicalAxiom> targetDg;
-                        OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+                        OWLTheory theory = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
 
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -323,9 +319,9 @@ public class OntologyTests {
             for (boolean dual : new boolean[] {true}) {
 
                 OWLOntology extracted1 = new OWLIncoherencyExtractor(
-                        new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(new SimpleOntologyCreator("queryontologies", name).getOntology());
-                OWLTheory theory1 = new BackgroundExtendedTheoryCreator(extracted1, false).getTheory();
-                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = new UniformCostSearchCreator(theory1, false).getSearch();
+                        new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("queryontologies", name));
+                OWLTheory theory1 = getExtendTheory(extracted1, false);
+                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = getSearch(theory1, false);
 
                 OWLAxiomKeywordCostsEstimator es1 = new OWLAxiomKeywordCostsEstimator(theory1);
 
@@ -353,9 +349,9 @@ public class OntologyTests {
                         for (int run = 7; run < MAX_RUNS; run++) {
 
                             OWLOntology extracted = new OWLIncoherencyExtractor(
-                                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(new SimpleOntologyCreator("queryontologies", name).getOntology());
-                            OWLTheory theory = new BackgroundExtendedTheoryCreator(extracted, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = new UniformCostSearchCreator(theory, dual).getSearch();
+                                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("queryontologies", name));
+                            OWLTheory theory = getExtendTheory(extracted, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = getSearch(theory, dual);
 
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
 
@@ -561,7 +557,7 @@ public class OntologyTests {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies", ontology).getOntology(), false).getTheory();
+        OWLTheory theoryNormal = getSimpleTheory(getOntologySimple("ontologies", ontology), false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(false, 0);
         HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
@@ -575,7 +571,7 @@ public class OntologyTests {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies", ontology).getOntology(), true).getTheory();
+        OWLTheory theoryDual = getSimpleTheory(getOntologySimple("ontologies", ontology), true);
         theoryDual.useCache(false, 0);
         searchDual.setTheory(theoryDual);
         map = ProbabMapCreator.getProbabMap();
@@ -703,7 +699,7 @@ public class OntologyTests {
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = new SimpleTheoryCreator(new SimpleOntologyCreator(path, ont).getOntology(), false).getTheory();
+        OWLTheory theoryNormal = getSimpleTheory(getOntologySimple(path, ont), false);
         searchNormal.setTheory(theoryNormal);
         HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
@@ -716,7 +712,7 @@ public class OntologyTests {
         InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = new SimpleTheoryCreator(new SimpleOntologyCreator(path, ont).getOntology(), true).getTheory();
+        OWLTheory theoryDual = getSimpleTheory(getOntologySimple(path, ont), true);
         searchDual.setTheory(theoryDual);
         map = ProbabMapCreator.getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
@@ -794,15 +790,15 @@ public class OntologyTests {
                         for (int i = 0; i < 1500; i++) {
 
 
-                            OWLOntology ontology = new SimpleOntologyCreator("queryontologies", o + ".owl").getOntology();
+                            OWLOntology ontology = getOntologySimple("queryontologies", o + ".owl");
                             //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
                             long preprocessModulExtract = System.currentTimeMillis();
                             ontology = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             Set<OWLLogicalAxiom> targetDg;
-                            OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, true).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, true).getSearch();
+                            OWLTheory theory = getExtendTheory(ontology, true);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, true);
 
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);

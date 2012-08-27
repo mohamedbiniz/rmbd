@@ -7,10 +7,10 @@ import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
+import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.utils.ProbabMapCreator;
-import at.ainf.owlapi3.utils.session.SimulatedSession;
-import at.ainf.owlapi3.utils.LogUtil;
+import at.ainf.owlapi3.base.tools.ProbabMapCreator;
+import at.ainf.owlapi3.base.tools.LogUtil;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -20,7 +20,6 @@ import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import junit.framework.Assert;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -34,7 +33,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static at.ainf.owlapi3.utils.session.SimulatedSession.QSSType;
+import static at.ainf.owlapi3.base.SimulatedSession.QSSType;
 import static org.junit.Assert.assertTrue;
 
 /**

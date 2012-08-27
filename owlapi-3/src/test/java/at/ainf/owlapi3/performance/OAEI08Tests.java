@@ -5,25 +5,18 @@ import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.utils.ProbabMapCreator;
-import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
-import at.ainf.owlapi3.utils.creation.target.OAEI08TargetChooser;
-import at.ainf.owlapi3.utils.creation.target.OAEI08TargetProvider;
-import at.ainf.owlapi3.utils.session.SimulatedSession;
-import at.ainf.owlapi3.utils.LogUtil;
-import at.ainf.owlapi3.utils.creation.ontology.OAEI08OntologyCreator;
-import at.ainf.owlapi3.utils.creation.search.UniformCostSearchCreator;
-import at.ainf.owlapi3.utils.creation.theory.BackgroundExtendedTheoryCreator;
-import at.ainf.owlapi3.utils.StatisticsTools;
+import at.ainf.owlapi3.base.tools.ProbabMapCreator;
+import at.ainf.owlapi3.base.OAEI08Session;
+import at.ainf.owlapi3.base.tools.LogUtil;
 import junit.framework.Assert;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -49,8 +42,7 @@ import static org.junit.Assert.assertTrue;
  * Time: 14:41
  * To change this template use File | Settings | File Templates.
  */
-public class
-         OAEI08Tests {
+public class OAEI08Tests extends OAEI08Session {
 
     /*@BeforeClass
     public static void setUp() {
@@ -102,10 +94,10 @@ public class
                         for (SimulatedSession.QSSType type : qssTypes) {
                             SimulatedSession  a = new SimulatedSession();
 
-                            OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
+                            OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
-                            OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+                            OWLTheory theory = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
 
@@ -115,9 +107,9 @@ public class
                                     + o.trim()
                                     + ".txt").getPath();
 
-                            OWLTheory theory2 = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            OWLTheory t3 = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = new UniformCostSearchCreator(theory2, dual).getSearch();
+                            OWLTheory theory2 = getExtendTheory(ontology, dual);
+                            OWLTheory t3 = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -165,14 +157,14 @@ public class
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
+                                AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
                             }
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
+                                targetDg = getDiagnosisTarget(m, o, ontology);
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -205,14 +197,14 @@ public class
                         String out = "STAT, " + m + ", " + o;
                         for (SimulatedSession.QSSType type : qssTypes) {
 
-                            OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
+                            OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
-                            OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+                            OWLTheory theory = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             if (background_add) {
-                                OWLOntology ontology1 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[0].trim()+".owl").getOntology();
-                                OWLOntology ontology2 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[1].trim()+".owl").getOntology();
+                                OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
+                                OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
@@ -224,9 +216,9 @@ public class
                                     + o.trim()
                                     + ".txt").getPath();
 
-                            OWLTheory theory2 = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            OWLTheory t3 = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = new UniformCostSearchCreator(theory2, dual).getSearch();
+                            OWLTheory theory2 = getExtendTheory(ontology, dual);
+                            OWLTheory t3 = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -275,14 +267,14 @@ public class
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
+                                AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
                             }
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
+                                targetDg = getDiagnosisTarget(m, o, ontology);
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -320,10 +312,10 @@ public class
                             SimulatedSession s = new SimulatedSession();
                             s.setNumberOfHittingSets(4);
 
-                            OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
+                            OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
-                            OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, false).getSearch();
+                            OWLTheory theory = getExtendTheory(ontology, false);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
 
@@ -334,8 +326,8 @@ public class
                                     + ".txt").getPath();
 
                             OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
-                            OWLOntology ontology1 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[0].trim()+".owl").getOntology();
-                            OWLOntology ontology2 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[1].trim()+".owl").getOntology();
+                            OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
+                            OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
                             if (background == BackgroundO.O1_O2) {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
@@ -360,14 +352,14 @@ public class
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
+                                AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
                             }
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
+                                targetDg = getDiagnosisTarget(m, o, ontology);
 
                             TableList e = new TableList();
                             String message = "running "
@@ -396,10 +388,10 @@ public class
         SimulatedSession.TargetSource targetSource = SimulatedSession.TargetSource.FROM_FILE;
         SimulatedSession.QSSType type = SimulatedSession.QSSType.SPLITINHALF;
 
-        OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
+        OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
-        OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, false).getSearch();
+        OWLTheory theory = getExtendTheory(ontology, false);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
         //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
         //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
 
@@ -432,14 +424,14 @@ public class
 
             Set<AxiomSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
             search.reset();
-            AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
+            AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
             targetDg = new LinkedHashSet<OWLLogicalAxiom>();
             for (OWLLogicalAxiom axiom : targD)
                 targetDg.add(axiom);
         }
 
         if (targetSource == SimulatedSession.TargetSource.FROM_FILE) {
-            targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
+            targetDg = getDiagnosisTarget(m, o, ontology);
             int diags = -1;
             try {
                 search.run(diags);
@@ -473,10 +465,10 @@ public class
                         for (SimulatedSession.QSSType type : qssTypes) {
                             SimulatedSession s = new SimulatedSession();
 
-                            OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
+                            OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
-                            OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+                            OWLTheory theory = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
 
@@ -486,9 +478,9 @@ public class
                                     + o.trim()
                                     + ".txt").getPath();
 
-                            OWLTheory theory2 = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            OWLTheory t3 = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = new UniformCostSearchCreator(theory2, dual).getSearch();
+                            OWLTheory theory2 = getExtendTheory(ontology, dual);
+                            OWLTheory t3 = getExtendTheory(ontology, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -536,14 +528,14 @@ public class
                                 Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
+                                AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
                             }
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
+                                targetDg = getDiagnosisTarget(m, o, ontology);
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -566,12 +558,12 @@ public class
             for (String o : mapOntos.get(m)) {
                 BackgroundO[] backgrounds = new BackgroundO[]{BackgroundO.O1_O2};
                 for (BackgroundO background : backgrounds) {
-                    OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
-                    Set<OWLLogicalAxiom> targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
-                    OWLOntology ontology1 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[0].trim()+".owl").getOntology();
-                    OWLOntology ontology2 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[1].trim()+".owl").getOntology();
-                    OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
-                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, false).getSearch();
+                    OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
+                    Set<OWLLogicalAxiom> targetDg = getDiagnosisTarget(m, o, ontology);
+                    OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
+                    OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
+                    OWLTheory theory = getExtendTheory(ontology, false);
+                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
                     //ProbabilityTableModel mo = new ProbabilityTableModel();
                     HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
                     OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -628,10 +620,10 @@ public class
                         String out = "STAT, " + m + ", " + o;
 
 
-                        OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
+                        OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                         Set<OWLLogicalAxiom> targetDg;
-                        OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+                        OWLTheory theory = getExtendTheory(ontology, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
                         //ProbabilityTableModel mo = new ProbabilityTableModel();
                         HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
 
@@ -644,9 +636,9 @@ public class
                                 + o.trim()
                                 + ".txt").getPath();
 
-                        OWLTheory theory2 = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                        OWLTheory t3 = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = new UniformCostSearchCreator(theory2, dual).getSearch();
+                        OWLTheory theory2 = getExtendTheory(ontology, dual);
+                        OWLTheory t3 = getExtendTheory(ontology, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getSearch(theory2, dual);
                         search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
                         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
@@ -671,12 +663,12 @@ public class
                         }
                         time = System.nanoTime() - time;
 
-                        int minDiagnosisC = StatisticsTools.minCard(search.getDiagnoses());
-                        double meanDiagnosisC = StatisticsTools.meanCard(search.getDiagnoses());
-                        int maxDiagnosisC = StatisticsTools.maxCard(search.getDiagnoses());
-                        int minConfC = StatisticsTools.minCard(search.getConflicts());
-                        double meanConfC = StatisticsTools.meanCard(search.getConflicts());
-                        int maxConfC = StatisticsTools.maxCard(search.getConflicts());
+                        int minDiagnosisC = minCard(search.getDiagnoses());
+                        double meanDiagnosisC = meanCard(search.getDiagnoses());
+                        int maxDiagnosisC = maxCard(search.getDiagnoses());
+                        int minConfC = minCard(search.getConflicts());
+                        double meanConfC = meanCard(search.getConflicts());
+                        int maxConfC = maxCard(search.getConflicts());
 
                         int c = search.getConflicts().size();
                         String s = nd + ", " + minDiagnosisC + ", " + meanDiagnosisC + ", " + maxDiagnosisC + ", " +
@@ -699,11 +691,11 @@ public class
 
 
 
-        OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
+        OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
-        OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, false).getTheory();
+        OWLTheory theory = getExtendTheory(ontology, false);
         Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, false).getSearch();
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                 + m.trim()
                 + "-incoherent-evaluation/"
@@ -770,15 +762,15 @@ public class
                                 //String[] targetAxioms = properties.getProperty(m.trim() + "." + o.trim()).split(",");
 
 
-                                OWLOntology ontology = new OAEI08OntologyCreator(m.trim(), o.trim()).getOntology();
+                                OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                                 ontology = new OWLIncoherencyExtractor(
                                         new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                                 Set<OWLLogicalAxiom> targetDg;
-                                OWLTheory theory = new BackgroundExtendedTheoryCreator(ontology, dual).getTheory();
-                                TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new UniformCostSearchCreator(theory, dual).getSearch();
+                                OWLTheory theory = getExtendTheory(ontology, dual);
+                                TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
                                 if (background) {
-                                    OWLOntology ontology1 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[0].trim()+".owl").getOntology();
-                                    OWLOntology ontology2 = new SimpleOntologyCreator(ClassLoader.getSystemResource("alignment").getPath(),o.split("-")[1].trim()+".owl").getOntology();
+                                    OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
+                                    OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
                                     theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                     theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                                 }
@@ -835,14 +827,14 @@ public class
                                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                                             Collections.unmodifiableSet(search.getDiagnoses());
                                     search.reset();
-                                    AxiomSet<OWLLogicalAxiom> targD = new OAEI08TargetChooser(diagnoses,es).getDgTarget();
+                                    AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                     targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                     for (OWLLogicalAxiom axiom : targD)
                                         targetDg.add(axiom);
                                 }
 
                                 if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                    targetDg = new OAEI08TargetProvider(m,o,ontology).getDiagnosisTarget();
+                                    targetDg = getDiagnosisTarget(m, o, ontology);
 
                                 TableList e = new TableList();
                                 out += "," + type + ",";
@@ -884,7 +876,7 @@ public class
         String filename = ClassLoader.getSystemResource("alignment/evaluation/owlctxmatch-incoherent-evaluation/CMT-CONFTOOL.txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
-        OAEI08TargetProvider.readData(filename, axioms, targetDiag);
+        readData(filename, axioms, targetDiag);
         logger.info("Read " + axioms.size() + " " + targetDiag.size());
         assertEquals(axioms.size(), 36);
         assertEquals(targetDiag.size(), 6);
@@ -892,7 +884,7 @@ public class
         filename = ClassLoader.getSystemResource("alignment/evaluation/hmatch-incoherent-evaluation/CMT-CRS.txt").getFile();
         axioms.clear();
         targetDiag.clear();
-        OAEI08TargetProvider.readData(filename, axioms, targetDiag);
+        readData(filename, axioms, targetDiag);
         logger.info("Read " + axioms.size() + " " + targetDiag.size());
         assertEquals(axioms.size(), 2 * (17 - 5));
         assertEquals(targetDiag.size(), 4);
@@ -903,7 +895,7 @@ public class
         String filename = ClassLoader.getSystemResource("alignment/evaluation/coma-evaluation/CMT-CONFTOOL.txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
-        OAEI08TargetProvider.readData(filename, axioms, targetDiag);
+        readData(filename, axioms, targetDiag);
         logger.info("Read " + axioms.size() + " " + targetDiag.size());
     }
 
@@ -912,7 +904,7 @@ public class
         String filename = ClassLoader.getSystemResource("alignment/evaluation/coma-evaluation/CMT-CONFTOOL.txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
-        OAEI08TargetProvider.readData(filename, axioms, targetDiag);
+        readData(filename, axioms, targetDiag);
         logger.info("Read " + axioms.size() + " " + targetDiag.size());
     }
 

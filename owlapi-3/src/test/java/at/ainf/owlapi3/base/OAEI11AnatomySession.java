@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.utils.creation.ontology;
+package at.ainf.owlapi3.base;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -16,16 +16,25 @@ import java.util.Set;
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
- * Date: 06.08.12
- * Time: 14:40
+ * Date: 23.08.12
+ * Time: 12:03
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11AnatomyOntologyCreator implements OntologyCreator {
+public class OAEI11AnatomySession extends SimulatedSession {
 
-    private String file;
+    public Set<OWLLogicalAxiom> getDiagnosisTarget(String file) {
+        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
-    public OAEI11AnatomyOntologyCreator (String file) {
-        this.file = file;
+        Map<OWLLogicalAxiom, Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
+        Set<OWLLogicalAxiom> targetDiagnosis = new LinkedHashSet<OWLLogicalAxiom>();
+        try {
+            String path = ClassLoader.getSystemResource("oaei11").getPath() + "/";
+            readDataOAEI(path + file + ".txt", axioms, targetDiagnosis, man);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return targetDiagnosis;
     }
 
     public Set<OWLLogicalAxiom> getAxiomsInMappingOAEI(String path, String source) {
@@ -108,7 +117,7 @@ public class OAEI11AnatomyOntologyCreator implements OntologyCreator {
         // "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
     }
 
-    public OWLOntology getOntology () {
+    public OWLOntology getOntology(String file) {
         try {
             OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
@@ -119,7 +128,8 @@ public class OAEI11AnatomyOntologyCreator implements OntologyCreator {
 
             OWLOntologyMerger merger = new OWLOntologyMerger(man);
             OWLOntology merged = merger.createMergedOntology(man, IRI.create("matched" + file + ".txt"));
-            Set<OWLLogicalAxiom> mappAx = getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").getPath() + "/", file);
+            Set<OWLLogicalAxiom> mappAx = getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").
+                    getPath() + "/", file);
             for (OWLLogicalAxiom axiom : mappAx)
                 man.applyChange(new AddAxiom(merged, axiom));
 
@@ -128,5 +138,6 @@ public class OAEI11AnatomyOntologyCreator implements OntologyCreator {
             return null;
         }
     }
+
 
 }

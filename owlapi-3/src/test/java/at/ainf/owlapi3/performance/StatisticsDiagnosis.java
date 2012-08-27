@@ -1,12 +1,11 @@
 package at.ainf.owlapi3.performance;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
+import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.owlapi3.utils.creation.ontology.OAEI11ConferenceOntologyCreator;
-import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
-import org.junit.BeforeClass;
+import at.ainf.owlapi3.base.OAEI11ConferenceSession;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
@@ -171,11 +170,10 @@ public class StatisticsDiagnosis {
             o2 = o2.substring(0,o2.length()-4);
             String pathMapping = "oaei11conference/matchings/" + file.getParentFile().getName();
             String mappingName = file.getName();
-            ontology = new OAEI11ConferenceOntologyCreator(pathOntologies, o1, o2, pathMapping, mappingName).
-                    getOntology();
+            ontology = OAEI11ConferenceSession.getOntology(pathOntologies, o1, o2, pathMapping, mappingName);
         }
         else {
-            ontology = new SimpleOntologyCreator(file).getOntology();
+            ontology = CalculateDiagnoses.getOntologyBase(file);
 
         }
         OWLTheory th = createTheory(ontology);
@@ -247,7 +245,7 @@ public class StatisticsDiagnosis {
     public void showMetrics() {
 
         String o = "koala.owl";
-        OWLOntology ont = new SimpleOntologyCreator("ontologies", o).getOntology();
+        OWLOntology ont = CalculateDiagnoses.getOntologySimple("ontologies/" + o);
         logger.info(o);
 
         Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();

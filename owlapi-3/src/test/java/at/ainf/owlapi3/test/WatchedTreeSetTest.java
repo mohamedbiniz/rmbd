@@ -1,14 +1,12 @@
 package at.ainf.owlapi3.test;
 
+import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.watchedset.WatchedTreeSet;
-import at.ainf.owlapi3.utils.creation.ontology.SimpleOntologyCreator;
-import at.ainf.owlapi3.utils.creation.theory.SimpleTheoryCreator;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -52,7 +50,7 @@ public class WatchedTreeSetTest {
     @Test
     public void testSet() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        OWLTheory theory = new SimpleTheoryCreator(new SimpleOntologyCreator("ontologies/koala.owl").getOntology(),false).getTheory();
+        OWLTheory theory = CalculateDiagnoses.getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/koala.owl"), false);
         ArrayList<OWLLogicalAxiom> list = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
         Collections.sort(list);
         WatchedTreeSet<AxiomSet<OWLLogicalAxiom>,BigDecimal> set = new WatchedTreeSet<AxiomSet<OWLLogicalAxiom>, BigDecimal>();

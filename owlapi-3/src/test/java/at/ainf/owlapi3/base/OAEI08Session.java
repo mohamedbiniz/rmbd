@@ -1,5 +1,7 @@
-package at.ainf.owlapi3.utils.creation.target;
+package at.ainf.owlapi3.base;
 
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
@@ -8,33 +10,99 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
- * Date: 08.08.12
- * Time: 13:01
+ * Date: 23.08.12
+ * Time: 12:02
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI08TargetProvider implements TargetProvider {
+public class OAEI08Session extends SimulatedSession {
 
-    private static Logger logger = LoggerFactory.getLogger(OAEI08TargetProvider.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(OAEI08Session.class.getName());
 
-    private OWLOntology onto;
+    public static <X> int minCard(Set<? extends Set<X>> s) {
+        int r = -1;
 
-    private String matcher;
+        try {
+            for (Set<X> set : s)
+                if (r == -1 || set.size() < r)
+                    r = set.size();
+        } catch (NoSuchElementException e) {
 
-    private String ontologies;
+        }
 
-    public OAEI08TargetProvider(String matcher, String ontologies, OWLOntology onto) {
-        this.onto = onto;
-        this.matcher = matcher;
-        this.ontologies = ontologies;
+        return r;
+    }
 
+    public static <X> int maxCard(Set<? extends Set<X>> s) {
+        int r = -1;
+
+        try {
+            for (Set<X> set : s)
+                if (set.size() > r)
+                    r = set.size();
+        } catch (NoSuchElementException e) {
+
+        }
+
+        return r;
+    }
+
+    public static <X> double meanCard(Set<? extends Set<X>> s) {
+        double sum = 0;
+        int cnt = 0;
+
+        for (Set<X> set : s) {
+            sum += set.size();
+            cnt++;
+        }
+
+        if (cnt == 0) return -1;
+        return sum / cnt;
+    }
+
+    public AxiomSet<OWLLogicalAxiom> getDgTarget(Set<AxiomSet<OWLLogicalAxiom>> diagnoses, final CostsEstimator<OWLLogicalAxiom> estimator) {
+        Comparator<AxiomSet<OWLLogicalAxiom>> c = new Comparator<AxiomSet<OWLLogicalAxiom>>() {
+            public int compare(AxiomSet<OWLLogicalAxiom> o1, AxiomSet<OWLLogicalAxiom> o2) {
+                int numOfOntologyAxiomsO1 = 0;
+                int numOfMatchingAxiomO1 = 0;
+                for (OWLLogicalAxiom axiom : o1) {
+                    if (estimator.getAxiomCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
+                        numOfMatchingAxiomO1++;
+                    else
+                        numOfOntologyAxiomsO1++;
+                }
+                double percAxiomFromOntO1 = (double) numOfOntologyAxiomsO1;// / (numOfOntologyAxiomsO1 + numOfMatchingAxiomO1);
+
+                int numOfOntologyAxiomsO2 = 0;
+                int numOfMatchingAxiomO2 = 0;
+                for (OWLLogicalAxiom axiom : o2) {
+                    if (estimator.getAxiomCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
+                        numOfMatchingAxiomO2++;
+                    else
+                        numOfOntologyAxiomsO2++;
+                }
+                double percAxiomFromOntO2 = (double) numOfOntologyAxiomsO2;// / (numOfOntologyAxiomsO2 + numOfMatchingAxiomO2);
+
+
+                if (percAxiomFromOntO1 < percAxiomFromOntO2)
+                    return -1;
+                else if (percAxiomFromOntO1 == percAxiomFromOntO2)
+                    return 0;
+                else
+                    return 1;
+            }
+        };
+
+        return Collections.max(diagnoses, c);
+    }
+
+    public Set<OWLLogicalAxiom> getDiagnosisTarget(String matcher, String ontologies, OWLOntology onto) {
+        return getDiagnosis(getDiagnosis(matcher, ontologies), onto);
     }
 
     protected static String[] getDiagnosis(String matcher, String ontology) {
@@ -130,9 +198,9 @@ public class OAEI08TargetProvider implements TargetProvider {
         return "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
     }
 
-    @Override
-    public Set<OWLLogicalAxiom> getDiagnosisTarget() {
-        return getDiagnosis(getDiagnosis(matcher,ontologies),onto);
+    public OWLOntology getOntologyOAEI08(String matcher, String name) {
+        return getOntologySimple("alignment/" + matcher + "_incoherent_matched_ontologies", name + ".owl");
+
     }
 
 }

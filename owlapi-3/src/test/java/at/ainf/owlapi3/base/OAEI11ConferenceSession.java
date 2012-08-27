@@ -1,5 +1,6 @@
-package at.ainf.owlapi3.utils.creation.ontology;
+package at.ainf.owlapi3.base;
 
+import at.ainf.owlapi3.base.tools.OAEI11ConferenceRdfMatchingParser;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
 import org.xml.sax.SAXException;
@@ -16,25 +17,21 @@ import java.util.Set;
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
- * Date: 06.08.12
- * Time: 14:43
+ * Date: 23.08.12
+ * Time: 12:03
  * To change this template use File | Settings | File Templates.
  */
-public class OAEI11ConferenceOntologyCreator implements OntologyCreator {
+public class OAEI11ConferenceSession extends SimulatedSession {
 
-    private OWLOntology ontology;
-
-    public OAEI11ConferenceOntologyCreator(String pathToOntologies,
-                                                            String o1, String o2, String pathToMapping, String mappingName) {
-        OWLOntology ontology1 = new SimpleOntologyCreator(pathToOntologies, o1 + ".owl").getOntology();
-        OWLOntology ontology2 = new SimpleOntologyCreator(pathToOntologies, o2 + ".owl").getOntology();
+    public static OWLOntology getOntology(String pathToOntologies,
+                                          String o1, String o2, String pathToMapping, String mappingName) {
+        OWLOntology ontology1 = getOntologySimple(pathToOntologies + "/" + o1 + ".owl");
+        OWLOntology ontology2 = getOntologySimple(pathToOntologies + "/"+o2 + ".owl");
         OWLOntology merged = mergeOntologies(ontology1, ontology2);
         Set<OWLLogicalAxiom> mapping = readRdfMapping(pathToMapping, mappingName).keySet();
         for (OWLLogicalAxiom axiom : mapping)
             merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
-        ontology = merged;
-
-
+        return merged;
     }
 
     public static Map<OWLLogicalAxiom,BigDecimal> readRdfMapping(String path, String name) {
@@ -75,10 +72,6 @@ public class OAEI11ConferenceOntologyCreator implements OntologyCreator {
         } catch (OWLOntologyCreationException e) {
             return null;
         }
-    }
-
-    public OWLOntology getOntology() {
-        return ontology;
     }
 
 }

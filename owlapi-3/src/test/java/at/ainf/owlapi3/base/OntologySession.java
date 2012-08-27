@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.utils.session;
+package at.ainf.owlapi3.base;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,5 +7,5 @@ package at.ainf.owlapi3.utils.session;
  * Time: 12:03
  * To change this template use File | Settings | File Templates.
  */
-public class OntologySession {
+public class OntologySession extends SimulatedSession {
 }

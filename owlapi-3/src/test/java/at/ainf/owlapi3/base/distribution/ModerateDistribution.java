@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.utils.distribution;
+package at.ainf.owlapi3.base.distribution;
 
 import java.util.Random;
 
