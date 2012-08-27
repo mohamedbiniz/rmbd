@@ -14,16 +14,17 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.base.tools.ProbabMapCreator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,24 +35,76 @@ import java.util.*;
  */
 public class CalculateDiagnoses {
 
-    private String file;
+    private static ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
+                ManchesterOWLSyntax.ONLY,
+                ManchesterOWLSyntax.MIN,
+                ManchesterOWLSyntax.MAX,
+                ManchesterOWLSyntax.EXACTLY,
+                ManchesterOWLSyntax.AND,
+                ManchesterOWLSyntax.OR,
+                ManchesterOWLSyntax.NOT,
+                ManchesterOWLSyntax.VALUE,
+                ManchesterOWLSyntax.INVERSE,
+                ManchesterOWLSyntax.SUBCLASS_OF,
+                ManchesterOWLSyntax.EQUIVALENT_TO,
+                ManchesterOWLSyntax.DISJOINT_CLASSES,
+                ManchesterOWLSyntax.DISJOINT_WITH,
+                ManchesterOWLSyntax.FUNCTIONAL,
+                ManchesterOWLSyntax.INVERSE_OF,
+                ManchesterOWLSyntax.SUB_PROPERTY_OF,
+                ManchesterOWLSyntax.SAME_AS,
+                ManchesterOWLSyntax.DIFFERENT_FROM,
+                ManchesterOWLSyntax.RANGE,
+                ManchesterOWLSyntax.DOMAIN,
+                ManchesterOWLSyntax.TYPE,
+                ManchesterOWLSyntax.TRANSITIVE,
+                ManchesterOWLSyntax.SYMMETRIC
+        };
 
-    public CalculateDiagnoses() {}
+    public CalculateDiagnoses() {
 
-    public CalculateDiagnoses(String file) {
-        this.file = file;
     }
 
-    protected boolean init = false;
+    public static HashMap<ManchesterOWLSyntax, BigDecimal> getProbabMap() {
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = new HashMap<ManchesterOWLSyntax, BigDecimal>();
 
-    protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
+        for (ManchesterOWLSyntax keyword : keywords) {
+            map.put(keyword, BigDecimal.valueOf(0.01));
+        }
 
-    public static <X> Set<X> getIntersection (Set<X> axioms1, Set<X> axioms2) {
-        Set<X> intersection = new LinkedHashSet<X>();
-        intersection.addAll(axioms1);
-        intersection.retainAll(axioms2);
+        map.put(ManchesterOWLSyntax.SOME, BigDecimal.valueOf(0.05));
+        map.put(ManchesterOWLSyntax.ONLY, BigDecimal.valueOf(0.05));
+        map.put(ManchesterOWLSyntax.AND, BigDecimal.valueOf(0.001));
+        map.put(ManchesterOWLSyntax.OR, BigDecimal.valueOf(0.001));
+        map.put(ManchesterOWLSyntax.NOT, BigDecimal.valueOf(0.01));
 
-        return intersection;
+        return map;
+    }
+
+    public static String getStringTime(long millis) {
+        long timeInHours = TimeUnit.MILLISECONDS.toHours(millis);
+        long timeInMinutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long timeInSec = TimeUnit.MILLISECONDS.toSeconds(millis);
+        long timeInMillisec = TimeUnit.MILLISECONDS.toMillis(millis);
+
+        long hours = timeInHours;
+        long minutes = timeInMinutes - TimeUnit.HOURS.toMinutes(timeInHours);
+        long seconds = timeInSec - TimeUnit.MINUTES.toSeconds(timeInMinutes);
+        long milliseconds = timeInMillisec - TimeUnit.SECONDS.toMillis(timeInSec);
+
+        return String.format("%d , (%d h %d m %d s %d ms)", millis, hours, minutes, seconds, milliseconds);
+    }
+
+    public static String renderAxioms(Collection<OWLLogicalAxiom> axioms) {
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        String result = "";
+
+        for (OWLLogicalAxiom axiom : axioms) {
+            result += renderer.render(axiom) + ", ";
+        }
+        result = (String) result.subSequence(0,result.length()-2);
+
+        return result;
     }
 
     public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch(OWLTheory theory, boolean dual) {
@@ -69,9 +122,9 @@ public class CalculateDiagnoses {
         return search;
     }
 
-    protected void init() {
+    protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> init(String file) {
 
-        OWLOntology ontology = getOntology();
+        OWLOntology ontology = getOntologySimple(file);
 
         ontology = getExtractedOntology(ontology);
 
@@ -79,16 +132,16 @@ public class CalculateDiagnoses {
 
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
 
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
-        init=true;
-        this.search = search;
+
+        return search;
     }
 
     protected OWLOntology getExtractedOntology(OWLOntology ontology) {
-        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntology());
+        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
         return ontology;
     }
 
@@ -96,15 +149,12 @@ public class CalculateDiagnoses {
         return getExtendTheory(ontology, false);
     }
 
-    protected OWLOntology getOntology() {
-        return getOntologySimple(file);
-    }
 
-    public TreeSet<AxiomSet<OWLLogicalAxiom>> getDiagnoses(int number) {
-        if(!init) init();
+    public TreeSet<AxiomSet<OWLLogicalAxiom>> getDiagnoses(String file) {
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = init(file);
 
         try {
-            search.run(number);
+            search.run(-1);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (NoConflictException e) {
@@ -121,7 +171,7 @@ public class CalculateDiagnoses {
 
 
 
-    protected static OWLTheory createTheory(OWLOntology ontology, boolean dual, Set<OWLLogicalAxiom> bax) {
+    protected OWLTheory createTheory(OWLOntology ontology, boolean dual, Set<OWLLogicalAxiom> bax) {
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
         OWLTheory theory = null;
         try {
@@ -139,7 +189,7 @@ public class CalculateDiagnoses {
         return theory;
     }
 
-    public static OWLTheory getSimpleTheory(OWLOntology ontology, boolean dual) {
+    public OWLTheory getSimpleTheory(OWLOntology ontology, boolean dual) {
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));
@@ -151,7 +201,7 @@ public class CalculateDiagnoses {
         return createTheory(ontology,dual,bax);
     }
 
-    protected static void configureEntailments(OWLTheory theory) {
+    protected void configureEntailments(OWLTheory theory) {
         theory.activateReduceToUns();
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
@@ -163,7 +213,7 @@ public class CalculateDiagnoses {
         theory.setIncludeOntologyAxioms(true);
     }
 
-    public static OWLTheory getExtendTheory(OWLOntology ontology, boolean dual) {
+    public OWLTheory getExtendTheory(OWLOntology ontology, boolean dual) {
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));

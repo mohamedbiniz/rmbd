@@ -51,7 +51,7 @@ public class OAEI11AnatomySession extends SimulatedSession {
         return axioms.keySet();
     }
 
-    public static void readDataOAEI(String filename, Map<OWLLogicalAxiom, Double> axioms, Set<OWLLogicalAxiom> targetDiag, OWLOntologyManager man) throws IOException {
+    public void readDataOAEI(String filename, Map<OWLLogicalAxiom, Double> axioms, Set<OWLLogicalAxiom> targetDiag, OWLOntologyManager man) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));
         String line;
         String sourceNamespace = "";
@@ -106,7 +106,7 @@ public class OAEI11AnatomySession extends SimulatedSession {
         }
     }
 
-    public static OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
+    public OWLLogicalAxiom createAxiomOAEI(String sourceNamespace, String source, String targetNamespace, String target, OWLOntologyManager man) {
         OWLDataFactory factory = man.getOWLDataFactory();
         OWLClass clsA = factory.getOWLClass(IRI.create(sourceNamespace + "#" + source));
         OWLClass clsB = factory.getOWLClass(IRI.create(targetNamespace + "#" + target));

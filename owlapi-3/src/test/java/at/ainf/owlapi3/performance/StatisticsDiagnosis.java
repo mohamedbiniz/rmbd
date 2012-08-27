@@ -170,7 +170,7 @@ public class StatisticsDiagnosis {
             o2 = o2.substring(0,o2.length()-4);
             String pathMapping = "oaei11conference/matchings/" + file.getParentFile().getName();
             String mappingName = file.getName();
-            ontology = OAEI11ConferenceSession.getOntology(pathOntologies, o1, o2, pathMapping, mappingName);
+            ontology = new OAEI11ConferenceSession().getOntology(pathOntologies, o1, o2, pathMapping, mappingName);
         }
         else {
             ontology = CalculateDiagnoses.getOntologyBase(file);

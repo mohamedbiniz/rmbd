@@ -107,7 +107,7 @@ public class TreeTest {
 
     @Test
     public void testDiagnosisSearcher() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
-        OWLTheory th = CalculateDiagnoses.getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/ecai.simple.owl"), false);
+        OWLTheory th = new CalculateDiagnoses().getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/ecai.simple.owl"), false);
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getActiveFormulas(), null);
 
@@ -118,7 +118,7 @@ public class TreeTest {
     @Test
     public void testSimpleTestCases() throws InconsistentTheoryException, SolverException, URISyntaxException, OWLException {
 
-        OWLTheory th = CalculateDiagnoses.getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/ecai.simple.owl"), false);
+        OWLTheory th = new CalculateDiagnoses().getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/ecai.simple.owl"), false);
         debug.set_Theory(th);
         debug.reset();
         OWLOntologyManager manager = th.getOntology().getOWLOntologyManager();
@@ -376,7 +376,7 @@ public class TreeTest {
                                    Collection<OWLLogicalAxiom> negativeCases) throws OWLException, SolverException,
             URISyntaxException, InconsistentTheoryException {
         //debugger.reset();
-        OWLTheory th = CalculateDiagnoses.getSimpleTheory(CalculateDiagnoses.getOntologySimple(path), false);
+        OWLTheory th = new CalculateDiagnoses().getSimpleTheory(CalculateDiagnoses.getOntologySimple(path), false);
 
         if (positiveCases != null)
             for (OWLLogicalAxiom test : positiveCases)

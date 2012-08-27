@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class OAEI11ConferenceSession extends SimulatedSession {
 
-    public static OWLOntology getOntology(String pathToOntologies,
+    public OWLOntology getOntology(String pathToOntologies,
                                           String o1, String o2, String pathToMapping, String mappingName) {
         OWLOntology ontology1 = getOntologySimple(pathToOntologies + "/" + o1 + ".owl");
         OWLOntology ontology2 = getOntologySimple(pathToOntologies + "/"+o2 + ".owl");
@@ -34,7 +34,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         return merged;
     }
 
-    public static Map<OWLLogicalAxiom,BigDecimal> readRdfMapping(String path, String name) {
+    public Map<OWLLogicalAxiom,BigDecimal> readRdfMapping(String path, String name) {
         OAEI11ConferenceRdfMatchingParser handler = new OAEI11ConferenceRdfMatchingParser();
         SAXParserFactory factory = SAXParserFactory.newInstance();
 
@@ -52,7 +52,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         return handler.getMappings();
     }
 
-    public static OWLOntology mergeOntologies (OWLOntology ontology1, OWLOntology ontology2) {
+    public OWLOntology mergeOntologies (OWLOntology ontology1, OWLOntology ontology2) {
         try {
             OWLOntologyManager man = ontology1.getOWLOntologyManager();
             final Set<OWLOntology> ontologies = new LinkedHashSet<OWLOntology>();

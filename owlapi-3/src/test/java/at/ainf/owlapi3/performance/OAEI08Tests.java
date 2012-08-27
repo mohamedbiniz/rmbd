@@ -11,10 +11,8 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
-import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.base.tools.ProbabMapCreator;
+import at.ainf.owlapi3.base.tools.TableList;
 import at.ainf.owlapi3.base.OAEI08Session;
-import at.ainf.owlapi3.base.tools.LogUtil;
 import junit.framework.Assert;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Ignore;
@@ -99,7 +97,7 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLTheory theory = getExtendTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -208,7 +206,7 @@ public class OAEI08Tests extends OAEI08Session {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -317,7 +315,7 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLTheory theory = getExtendTheory(ontology, false);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -398,7 +396,7 @@ public class OAEI08Tests extends OAEI08Session {
         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
         //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
         //ProbabilityTableModel mo = new ProbabilityTableModel();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                 + m.trim()
@@ -470,7 +468,7 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLTheory theory = getExtendTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -565,7 +563,7 @@ public class OAEI08Tests extends OAEI08Session {
                     OWLTheory theory = getExtendTheory(ontology, false);
                     TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
                     //ProbabilityTableModel mo = new ProbabilityTableModel();
-                    HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                    HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                     OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                     es.updateKeywordProb(map);
                     if (background == BackgroundO.O1 || background == BackgroundO.O1_O2)
@@ -586,7 +584,7 @@ public class OAEI08Tests extends OAEI08Session {
                         logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                     time = System.nanoTime() - time;
-                    String t = LogUtil.getStringTime(time / 1000000);
+                    String t = getStringTime(time / 1000000);
 
                     Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
                             Collections.unmodifiableSet(search.getDiagnoses());
@@ -625,7 +623,7 @@ public class OAEI08Tests extends OAEI08Session {
                         OWLTheory theory = getExtendTheory(ontology, dual);
                         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
                         //ProbabilityTableModel mo = new ProbabilityTableModel();
-                        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                         //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
                         //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
@@ -676,7 +674,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                         logger.info("Stat, " + m.trim() + ", " + o.trim() + ", "
                                 + s + ", "
-                                + theory.getConsistencyCount() + ", " + dual + ", " + LogUtil.getStringTime(time / 1000000));
+                                + theory.getConsistencyCount() + ", " + dual + ", " + getStringTime(time / 1000000));
                     }
                 }
             }
@@ -775,7 +773,7 @@ public class OAEI08Tests extends OAEI08Session {
                                     theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                                 }
                                 //ProbabilityTableModel mo = new ProbabilityTableModel();
-                                HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                                HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                                 String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                         + m.trim()

@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance.table;
+package at.ainf.owlapi3.base.tools;
 
 /**
  * Created by IntelliJ IDEA.

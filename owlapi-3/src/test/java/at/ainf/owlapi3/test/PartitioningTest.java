@@ -47,7 +47,7 @@ public class PartitioningTest {
 
     @Test
     public void testBruteForce() throws OWLException, InconsistentTheoryException, SolverException {
-        OWLTheory theory = CalculateDiagnoses.getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/partition.owl"), false);
+        OWLTheory theory = new CalculateDiagnoses().getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/partition.owl"), false);
         debugger.set_Theory(theory);
         debugger.reset();
         assertEquals(true, debugger.debug());
@@ -61,7 +61,7 @@ public class PartitioningTest {
     //@Ignore
     @Test
     public void testGreedyForce() throws OWLException, InconsistentTheoryException, SolverException {
-        OWLTheory theory = CalculateDiagnoses.getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/partition.owl"), false);
+        OWLTheory theory = new CalculateDiagnoses().getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/partition.owl"), false);
         debugger.set_Theory(theory);
         debugger.reset();
         assertEquals(true, debugger.debug());
@@ -82,7 +82,7 @@ public class PartitioningTest {
     @Ignore
     @Test
     public void testGreedyForce2() throws OWLException, InconsistentTheoryException, SolverException {
-        OWLTheory theory = CalculateDiagnoses.getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/ecai.simple.owl"), false);
+        OWLTheory theory = new CalculateDiagnoses().getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/ecai.simple.owl"), false);
         debugger.set_Theory(theory);
         debugger.reset();
         assertEquals(true, debugger.debug());
@@ -108,7 +108,7 @@ public class PartitioningTest {
     @Test
     public void testBruteForce2() throws OWLException, InconsistentTheoryException, SolverException {
 
-        OWLTheory theory = CalculateDiagnoses.getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/Univ.owl"), false);
+        OWLTheory theory = new CalculateDiagnoses().getSimpleTheory(CalculateDiagnoses.getOntologySimple("ontologies/Univ.owl"), false);
         debugger.set_Theory(theory);
         debugger.reset();
         debugger.updateMaxHittingSets(9);

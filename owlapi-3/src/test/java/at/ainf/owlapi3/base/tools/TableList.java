@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.performance.table;
+package at.ainf.owlapi3.base.tools;
 
 import java.util.Collections;
 import java.util.Comparator;

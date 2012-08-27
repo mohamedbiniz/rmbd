@@ -17,8 +17,7 @@ import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.base.tools.LogUtil;
+import at.ainf.owlapi3.base.tools.TableList;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -51,6 +50,14 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf); }*/
+
+    public <X> Set<X> getIntersection (Set<X> axioms1, Set<X> axioms2) {
+        Set<X> intersection = new LinkedHashSet<X>();
+        intersection.addAll(axioms1);
+        intersection.retainAll(axioms2);
+
+        return intersection;
+    }
 
     @Test
     public void saveOntologiesConference2011()
@@ -282,7 +289,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
         randomDiagNr = rnd;
         logger.info(file.getName() + ",diagnosis selected as target," + rnd);
         targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>) diagnoses.toArray()[rnd]);
-        logger.info(file.getName() + ",target diagnosis axioms," + LogUtil.renderAxioms(targetDg));
+        logger.info(file.getName() + ",target diagnosis axioms," + renderAxioms(targetDg));
 
         search30.reset();
         return targetDg;

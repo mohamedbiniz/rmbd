@@ -20,9 +20,7 @@ import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
 import at.ainf.owlapi3.base.distribution.ExtremeDistribution;
 import at.ainf.owlapi3.base.distribution.ModerateDistribution;
-import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.base.tools.LogUtil;
-import at.ainf.owlapi3.base.tools.ProbabMapCreator;
+import at.ainf.owlapi3.base.tools.TableList;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -183,7 +181,7 @@ public class OntologyTests extends OntologySession {
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
                 String out = "STAT, " + o;
-                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses("ontologies/"+o+".owl").getDiagnoses(-1);
+                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl");
                 for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : DiagProbab.values()) {
                         for (int i = 0; i < 20; i++) {
@@ -199,7 +197,7 @@ public class OntologyTests extends OntologySession {
                         OWLTheory theory = getExtendTheory(ontology, dual);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
 
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                             es.updateKeywordProb(map);
                             search.setCostsEstimator(es);
@@ -407,7 +405,7 @@ public class OntologyTests extends OntologySession {
                      usersProbab, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, ExtremeDistribution extremeDistribution, ModerateDistribution moderateDistribution) {
         Map<ManchesterOWLSyntax, BigDecimal> keywordProbs = new HashMap<ManchesterOWLSyntax, BigDecimal>();
         //ProbabilityTableModel m = new ProbabilityTableModel();
-        ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(ProbabMapCreator.getProbabMap().keySet()));
+        ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(getProbabMap().keySet()));
         ManchesterOWLSyntax[] selectedKeywords = new ManchesterOWLSyntax[]{ManchesterOWLSyntax.SOME, ManchesterOWLSyntax.ONLY,
                 ManchesterOWLSyntax.DISJOINT_CLASSES, ManchesterOWLSyntax.DISJOINT_WITH, ManchesterOWLSyntax.SUBCLASS_OF,
                 ManchesterOWLSyntax.EQUIVALENT_CLASSES, ManchesterOWLSyntax.NOT, ManchesterOWLSyntax.AND};
@@ -503,7 +501,7 @@ public class OntologyTests extends OntologySession {
 
         logger.info("dual tree iteration finished: window size "
                 + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() +
-                " time " + LogUtil.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
+                " time " + getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative tests " + hasNegativeTestcases + " diagnoses in storage " + daStr +
                 " cached subsets " + theoryDual.getCache().size()
@@ -540,7 +538,7 @@ public class OntologyTests extends OntologySession {
         searchNormal.reset();
         logger.info("hstree iteration finished: window size "
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
-                LogUtil.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
+                getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr +
                 " cached subsets " + theoryNormal.getCache().size()
@@ -560,7 +558,7 @@ public class OntologyTests extends OntologySession {
         OWLTheory theoryNormal = getSimpleTheory(getOntologySimple("ontologies", ontology), false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(false, 0);
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
@@ -574,7 +572,7 @@ public class OntologyTests extends OntologySession {
         OWLTheory theoryDual = getSimpleTheory(getOntologySimple("ontologies", ontology), true);
         theoryDual.useCache(false, 0);
         searchDual.setTheory(theoryDual);
-        map = ProbabMapCreator.getProbabMap();
+        map = getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
@@ -616,17 +614,17 @@ public class OntologyTests extends OntologySession {
         }
 
         long needed = System.currentTimeMillis() - t;
-        logger.info("needed overall " + LogUtil.getStringTime(needed));
+        logger.info("needed overall " + getStringTime(needed));
         for (QSSType type : QSSType.values()) {
             List<Double> nqueries2 = nqueries1.get(type);
             double res1 = 0;
             for (Double qs1 : nqueries2) {
                 res1 += qs1;
             }
-            logger.info("needed normal " + type + " " + LogUtil.getStringTime(ntimes.get(type).getOverall()) +
-                    " max " + LogUtil.getStringTime(ntimes.get(type).getMax()) +
-                    " min " + LogUtil.getStringTime(ntimes.get(type).getMin()) +
-                    " avg2 " + LogUtil.getStringTime(ntimes.get(type).getMean()) +
+            logger.info("needed normal " + type + " " + getStringTime(ntimes.get(type).getOverall()) +
+                    " max " + getStringTime(ntimes.get(type).getMax()) +
+                    " min " + getStringTime(ntimes.get(type).getMin()) +
+                    " avg2 " + getStringTime(ntimes.get(type).getMean()) +
                     " Queries max " + Collections.max(nqueries1.get(type)) +
                     " min " + Collections.min(nqueries1.get(type)) +
                     " avg2 " + res1 / nqueries2.size()
@@ -636,10 +634,10 @@ public class OntologyTests extends OntologySession {
             for (Double qs : nqueries) {
                 res += qs;
             }
-            logger.info("needed dual " + type + " " + LogUtil.getStringTime(dtimes.get(type).getOverall()) +
-                    " max " + LogUtil.getStringTime(dtimes.get(type).getMax()) +
-                    " min " + LogUtil.getStringTime(dtimes.get(type).getMin()) +
-                    " avg2 " + LogUtil.getStringTime(dtimes.get(type).getMean()) +
+            logger.info("needed dual " + type + " " + getStringTime(dtimes.get(type).getOverall()) +
+                    " max " + getStringTime(dtimes.get(type).getMax()) +
+                    " min " + getStringTime(dtimes.get(type).getMin()) +
+                    " avg2 " + getStringTime(dtimes.get(type).getMean()) +
                     " Queries max " + Collections.max(dqueries1.get(type)) +
                     " min " + Collections.min(dqueries1.get(type)) +
                     " avg2 " + res / nqueries.size());
@@ -701,7 +699,7 @@ public class OntologyTests extends OntologySession {
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = getSimpleTheory(getOntologySimple(path, ont), false);
         searchNormal.setTheory(theoryNormal);
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
@@ -714,7 +712,7 @@ public class OntologyTests extends OntologySession {
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = getSimpleTheory(getOntologySimple(path, ont), true);
         searchDual.setTheory(theoryDual);
-        map = ProbabMapCreator.getProbabMap();
+        map = getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
@@ -784,7 +782,7 @@ public class OntologyTests extends OntologySession {
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
                 String out = "STAT, " + o;
-                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses("ontologies/"+o+".owl").getDiagnoses(-1);
+                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl");
                 for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.GOOD}) {
                         for (int i = 0; i < 1500; i++) {
@@ -800,7 +798,7 @@ public class OntologyTests extends OntologySession {
                             OWLTheory theory = getExtendTheory(ontology, true);
                             TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, true);
 
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                             es.updateKeywordProb(map);
                             search.setCostsEstimator(es);
@@ -819,7 +817,7 @@ public class OntologyTests extends OntologySession {
                             out += "," + type + ",";
                             String message = "act," + "," + o.trim() + "," + targetSource + "," +
                                     "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
-                            logger.info("target diagnosis:" + targetDg.size() + " " + LogUtil.renderAxioms(targetDg));
+                            logger.info("target diagnosis:" + targetDg.size() + " " + renderAxioms(targetDg));
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
                             out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
