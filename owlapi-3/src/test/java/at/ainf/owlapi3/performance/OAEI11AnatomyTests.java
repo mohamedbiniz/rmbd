@@ -9,8 +9,7 @@ import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.base.tools.ProbabMapCreator;
+import at.ainf.owlapi3.base.tools.TableList;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -101,7 +100,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             theory.addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
@@ -188,7 +187,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             if (background) theory.addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = ProbabMapCreator.getProbabMap();
+                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 

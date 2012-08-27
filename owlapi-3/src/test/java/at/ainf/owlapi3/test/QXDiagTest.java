@@ -5,7 +5,7 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
-import at.ainf.owlapi3.base.tools.LogUtil;
+import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
@@ -59,7 +59,7 @@ public class QXDiagTest {
         search.run();
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
-            logger.info(LogUtil.renderAxioms(hs));
+            logger.info(CalculateDiagnoses.renderAxioms(hs));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class QXDiagTest {
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th, l, set);
 
-        logger.info(LogUtil.renderAxioms(res));
+        logger.info(CalculateDiagnoses.renderAxioms(res));
 
     }
 
@@ -118,7 +118,7 @@ public class QXDiagTest {
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
-        logger.info(LogUtil.renderAxioms(l) + "\n\n"+ LogUtil.renderAxioms(res));
+        logger.info(CalculateDiagnoses.renderAxioms(l) + "\n\n"+ CalculateDiagnoses.renderAxioms(res));
 
     }
 
@@ -228,7 +228,7 @@ public class QXDiagTest {
 
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
-            logger.info(LogUtil.renderAxioms(hs));
+            logger.info(CalculateDiagnoses.renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getActiveFormulas(), null);

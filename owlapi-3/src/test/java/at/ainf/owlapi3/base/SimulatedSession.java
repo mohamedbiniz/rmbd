@@ -16,9 +16,8 @@ import at.ainf.diagnosis.tree.Rounding;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.performance.table.TableList;
-import at.ainf.owlapi3.performance.table.Time;
-import at.ainf.owlapi3.base.tools.LogUtil;
+import at.ainf.owlapi3.base.tools.TableList;
+import at.ainf.owlapi3.base.tools.Time;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import org.slf4j.Logger;
@@ -39,7 +38,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class SimulatedSession extends CalculateDiagnoses {
 
-    private static Logger logger = LoggerFactory.getLogger(SimulatedSession.class.getName());
+    private  Logger logger = LoggerFactory.getLogger(SimulatedSession.class.getName());
 
     protected boolean showElRates = true;
 
@@ -47,10 +46,12 @@ public class SimulatedSession extends CalculateDiagnoses {
     protected BigDecimal SIGMA = new BigDecimal("100");
     protected boolean userBrk = true;
 
-    protected int diagnosesCalc = 0;
-    protected int conflictsCalc = 0;
-    protected String daStr = "";
 
+
+    //protected int diagnosesCalc = 0;
+    //protected int conflictsCalc = 0;
+
+    //protected String daStr = "";
     public enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
 
     protected boolean traceDiagnosesAndQueries = false;
@@ -225,9 +226,9 @@ public class SimulatedSession extends CalculateDiagnoses {
                     //search.reset();
                     search.run(NUMBER_OF_HITTING_SETS);
 
-                    daStr += search.getDiagnoses().size() + "/";
-                    diagnosesCalc += search.getDiagnoses().size();
-                    conflictsCalc += search.getConflicts().size();
+                    //daStr += search.getDiagnoses().size() + "/";
+                    //diagnosesCalc += search.getDiagnoses().size();
+                    //conflictsCalc += search.getConflicts().size();
 
                     diagnoses = search.getDiagnoses();
                     diagTime.setTime(System.currentTimeMillis() - diag);
@@ -251,7 +252,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 if (traceDiagnosesAndQueries) {
                     String diag1 = "";
                     for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
-                        diag1 += LogUtil.renderAxioms(diagnosis) + " ; ";
+                        diag1 += renderAxioms(diagnosis) + " ; ";
                     logger.info("diagnoses before query " + num_of_queries + ":" + diag1);
                 }
 
@@ -354,7 +355,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 if (qss != null) qss.updateParameters(answer);
 
                 if (traceDiagnosesAndQueries)
-                    logger.info("query asked: " + LogUtil.renderAxioms(actPa.partition));
+                    logger.info("query asked: " + renderAxioms(actPa.partition));
 
                 // fine all dz diagnoses
                 // TODO do we need this fine?
@@ -448,13 +449,13 @@ public class SimulatedSession extends CalculateDiagnoses {
         logger.info(message);
         if (possibleError) {
             logger.info("Possible an error occured: ");
-            logger.info("target diagnosis: " + LogUtil.renderAxioms(targetDiag));
+            logger.info("target diagnosis: " + renderAxioms(targetDiag));
             if (diagnoses == null) {
                 logger.info("diagnoses is null!");
             } else {
                 logger.info("diagnoses in window: " + diagnoses.size());
                 for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
-                    logger.info("diagnosis: " + LogUtil.renderAxioms(diagnosis));
+                    logger.info("diagnosis: " + renderAxioms(diagnosis));
             }
         }
 

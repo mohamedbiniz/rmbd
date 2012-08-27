@@ -22,9 +22,9 @@ import java.util.*;
  */
 public class OAEI08Session extends SimulatedSession {
 
-    private static Logger logger = LoggerFactory.getLogger(OAEI08Session.class.getName());
+    private Logger logger = LoggerFactory.getLogger(OAEI08Session.class.getName());
 
-    public static <X> int minCard(Set<? extends Set<X>> s) {
+    public <X> int minCard(Set<? extends Set<X>> s) {
         int r = -1;
 
         try {
@@ -38,7 +38,7 @@ public class OAEI08Session extends SimulatedSession {
         return r;
     }
 
-    public static <X> int maxCard(Set<? extends Set<X>> s) {
+    public <X> int maxCard(Set<? extends Set<X>> s) {
         int r = -1;
 
         try {
@@ -52,7 +52,7 @@ public class OAEI08Session extends SimulatedSession {
         return r;
     }
 
-    public static <X> double meanCard(Set<? extends Set<X>> s) {
+    public <X> double meanCard(Set<? extends Set<X>> s) {
         double sum = 0;
         int cnt = 0;
 
@@ -105,7 +105,7 @@ public class OAEI08Session extends SimulatedSession {
         return getDiagnosis(getDiagnosis(matcher, ontologies), onto);
     }
 
-    protected static String[] getDiagnosis(String matcher, String ontology) {
+    protected String[] getDiagnosis(String matcher, String ontology) {
         String filename = ClassLoader.getSystemResource("alignment/evaluation/" + matcher.trim() + "-incoherent-evaluation/" + ontology.trim() + ".txt").getFile();
         Map<String, Double> axioms = new LinkedHashMap<String, Double>();
         Set<String> targetDiag = new LinkedHashSet<String>();
@@ -126,7 +126,7 @@ public class OAEI08Session extends SimulatedSession {
         return result;
     }
 
-    protected static Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
+    protected Set<OWLLogicalAxiom> getDiagnosis(String[] targetAxioms, OWLOntology ontology) {
 
         Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>();
         for (String targetAxiom : targetAxioms) {
@@ -138,7 +138,7 @@ public class OAEI08Session extends SimulatedSession {
         return res;
     }
 
-    public static void readData(String filename, Map<String, Double> axioms, Set<String> targetDiag) throws IOException {
+    public void readData(String filename, Map<String, Double> axioms, Set<String> targetDiag) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));
         String line;
         String sourceNamespace = "";
@@ -194,7 +194,7 @@ public class OAEI08Session extends SimulatedSession {
         }
     }
 
-    protected static String createAxiom(String sourceNamespace, String source, String targetNamespace, String target) {
+    protected String createAxiom(String sourceNamespace, String source, String targetNamespace, String target) {
         return "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
     }
 
