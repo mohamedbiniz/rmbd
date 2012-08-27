@@ -183,7 +183,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                     bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
                     theory.addBackgroundFormulas(bx);
 
-                    Map<OWLLogicalAxiom, BigDecimal> map1 = OAEI11ConferenceSession.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
+                    Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
 
                     OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
@@ -260,7 +260,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
         bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
         theory.addBackgroundFormulas(bx);
 
-        Map<OWLLogicalAxiom, BigDecimal> map1 = OAEI11ConferenceSession.readRdfMapping(mapd, n + ".rdf");
+        Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(mapd, n + ".rdf");
 
         OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
 
@@ -276,7 +276,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
         OWLTheory th30 = getExtendTheory(ontology, true);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getSearch(th30, true);
         th30.addBackgroundFormulas(bx);
-        OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, OAEI11ConferenceSession.readRdfMapping(mapd, n + ".rdf"));
+        OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
 
         try {
@@ -335,7 +335,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
             String refmatchPath = "oaei11conference/matchings/references";
             String refMatch = o1 + "-" + o2 + ".rdf";
-            Set<OWLLogicalAxiom> correctMappingAxioms = OAEI11ConferenceSession.readRdfMapping(refmatchPath, refMatch).keySet();
+            Set<OWLLogicalAxiom> correctMappingAxioms = readRdfMapping(refmatchPath, refMatch).keySet();
             ontoBackground.addAll(getIntersection(extracted.getLogicalAxioms(), correctMappingAxioms));
 
             OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
@@ -629,9 +629,9 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             o2 = o2.substring(0,o2.length()-4);
             OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
             OWLOntology ontology2 = getOntologySimple("oaei11conference/ontology", o2 + ".owl");
-            OWLOntology merged = OAEI11ConferenceSession.mergeOntologies(ontology1, ontology2);
+            OWLOntology merged = mergeOntologies(ontology1, ontology2);
             String n = file.getName().substring(0,file.getName().length()-4);
-            Set<OWLLogicalAxiom> mapping = OAEI11ConferenceSession.readRdfMapping("oaei11conference/matchings", n + ".rdf").keySet();
+            Set<OWLLogicalAxiom> mapping = readRdfMapping("oaei11conference/matchings", n + ".rdf").keySet();
             for (OWLLogicalAxiom axiom : mapping)
                 merged.getOWLOntologyManager().applyChange(new AddAxiom(merged, axiom));
 
