@@ -47,7 +47,7 @@ public class SimpleQueryTest {
     public void univNoDiagnosesTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
+
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
@@ -102,7 +102,7 @@ public class SimpleQueryTest {
     public void queryMnTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
+
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
@@ -147,7 +147,7 @@ public class SimpleQueryTest {
     public void koalaTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
+
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());

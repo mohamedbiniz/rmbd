@@ -59,7 +59,7 @@ public class QXDiagTest {
         search.run();
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
-            logger.info(CalculateDiagnoses.renderAxioms(hs));
+            logger.info(new CalculateDiagnoses().renderAxioms(hs));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class QXDiagTest {
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th, l, set);
 
-        logger.info(CalculateDiagnoses.renderAxioms(res));
+        logger.info(new CalculateDiagnoses().renderAxioms(res));
 
     }
 
@@ -118,7 +118,7 @@ public class QXDiagTest {
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
-        logger.info(CalculateDiagnoses.renderAxioms(l) + "\n\n"+ CalculateDiagnoses.renderAxioms(res));
+        logger.info(new CalculateDiagnoses().renderAxioms(l) + "\n\n"+ new CalculateDiagnoses().renderAxioms(res));
 
     }
 
@@ -228,7 +228,7 @@ public class QXDiagTest {
 
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
-            logger.info(CalculateDiagnoses.renderAxioms(hs));
+            logger.info(new CalculateDiagnoses().renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getActiveFormulas(), null);

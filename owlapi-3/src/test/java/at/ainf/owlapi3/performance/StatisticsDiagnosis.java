@@ -173,7 +173,7 @@ public class StatisticsDiagnosis {
             ontology = new OAEI11ConferenceSession().getOntology(pathOntologies, o1, o2, pathMapping, mappingName);
         }
         else {
-            ontology = CalculateDiagnoses.getOntologyBase(file);
+            ontology = new CalculateDiagnoses().getOntologyBase(file);
 
         }
         OWLTheory th = createTheory(ontology);
@@ -245,7 +245,7 @@ public class StatisticsDiagnosis {
     public void showMetrics() {
 
         String o = "koala.owl";
-        OWLOntology ont = CalculateDiagnoses.getOntologySimple("ontologies/" + o);
+        OWLOntology ont = new CalculateDiagnoses().getOntologySimple("ontologies/" + o);
         logger.info(o);
 
         Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();

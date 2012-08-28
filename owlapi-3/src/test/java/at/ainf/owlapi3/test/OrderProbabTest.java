@@ -55,7 +55,7 @@ public class OrderProbabTest {
         Random r = new Random();
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = new CalculateDiagnoses().getProbabMap();
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
 

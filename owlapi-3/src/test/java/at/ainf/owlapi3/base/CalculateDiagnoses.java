@@ -19,6 +19,8 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.File;
@@ -35,7 +37,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class CalculateDiagnoses {
 
-    private static ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
+    private Logger logger = LoggerFactory.getLogger(CalculateDiagnoses.class.getName());
+
+    private ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
                 ManchesterOWLSyntax.ONLY,
                 ManchesterOWLSyntax.MIN,
                 ManchesterOWLSyntax.MAX,
@@ -61,11 +65,7 @@ public class CalculateDiagnoses {
                 ManchesterOWLSyntax.SYMMETRIC
         };
 
-    public CalculateDiagnoses() {
-
-    }
-
-    public static HashMap<ManchesterOWLSyntax, BigDecimal> getProbabMap() {
+    public HashMap<ManchesterOWLSyntax, BigDecimal> getProbabMap() {
         HashMap<ManchesterOWLSyntax, BigDecimal> map = new HashMap<ManchesterOWLSyntax, BigDecimal>();
 
         for (ManchesterOWLSyntax keyword : keywords) {
@@ -81,7 +81,7 @@ public class CalculateDiagnoses {
         return map;
     }
 
-    public static String getStringTime(long millis) {
+    public String getStringTime(long millis) {
         long timeInHours = TimeUnit.MILLISECONDS.toHours(millis);
         long timeInMinutes = TimeUnit.MILLISECONDS.toMinutes(millis);
         long timeInSec = TimeUnit.MILLISECONDS.toSeconds(millis);
@@ -95,7 +95,7 @@ public class CalculateDiagnoses {
         return String.format("%d , (%d h %d m %d s %d ms)", millis, hours, minutes, seconds, milliseconds);
     }
 
-    public static String renderAxioms(Collection<OWLLogicalAxiom> axioms) {
+    public String renderAxioms(Collection<OWLLogicalAxiom> axioms) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         String result = "";
 
@@ -107,7 +107,7 @@ public class CalculateDiagnoses {
         return result;
     }
 
-    public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch(OWLTheory theory, boolean dual) {
+    public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getUniformCostSearch(OWLTheory theory, boolean dual) {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
         if (dual) {
             search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
@@ -122,39 +122,17 @@ public class CalculateDiagnoses {
         return search;
     }
 
-    protected TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> init(String file) {
+    public TreeSet<AxiomSet<OWLLogicalAxiom>> getDiagnoses(String file, int num) {
 
         OWLOntology ontology = getOntologySimple(file);
+        ontology = extractModules(ontology);
 
-        ontology = getExtractedOntology(ontology);
-
-        OWLTheory theory = getTheory(ontology);
-
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
-
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
-        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
-        es.updateKeywordProb(map);
-        search.setCostsEstimator(es);
-
-        return search;
-    }
-
-    protected OWLOntology getExtractedOntology(OWLOntology ontology) {
-        ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
-        return ontology;
-    }
-
-    protected OWLTheory getTheory(OWLOntology ontology) {
-        return getExtendTheory(ontology, false);
-    }
-
-
-    public TreeSet<AxiomSet<OWLLogicalAxiom>> getDiagnoses(String file) {
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = init(file);
+        OWLTheory theory = getExtendTheory(ontology, false);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
+        setAxiomKeywordCostsEstimator(search);
 
         try {
-            search.run(-1);
+            search.run(num);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (NoConflictException e) {
@@ -166,10 +144,17 @@ public class CalculateDiagnoses {
 
     }
 
+    private OWLOntology extractModules(OWLOntology ontology) {
+        return new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
 
+    }
 
-
-
+    private void setAxiomKeywordCostsEstimator(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(search.getTheory());
+        es.updateKeywordProb(map);
+        search.setCostsEstimator(es);
+    }
 
     protected OWLTheory createTheory(OWLOntology ontology, boolean dual, Set<OWLLogicalAxiom> bax) {
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
@@ -195,8 +180,6 @@ public class CalculateDiagnoses {
             bax.addAll(ontology.getClassAssertionAxioms(ind));
             bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
         }
-
-
 
         return createTheory(ontology,dual,bax);
     }
@@ -227,22 +210,15 @@ public class CalculateDiagnoses {
         return theory;
     }
 
-
-
-
     public OWLOntology getOntologySimple (String path, String name) {
         return getOntologySimple(path + "/" + name);
     }
 
-    public static OWLOntology getOntologySimple (String name) {
+    public OWLOntology getOntologySimple (String name) {
         return getOntologyBase(new File(ClassLoader.getSystemResource(name).getPath()));
     }
 
-    public OWLOntology getOntologySimple (File filename) {
-        return getOntologyBase(filename);
-    }
-
-    public static OWLOntology getOntologyBase(File file) {
+    public OWLOntology getOntologyBase(File file) {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntology ontology = null;
         try {

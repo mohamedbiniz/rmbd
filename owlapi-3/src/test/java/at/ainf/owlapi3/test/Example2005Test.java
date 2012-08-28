@@ -52,7 +52,7 @@ public class Example2005Test {
 
         //search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
 
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
+
         createOntology();
         //theory = new OWLTheory(reasonerFactory, ontology, bax);
         //search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));

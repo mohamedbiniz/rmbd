@@ -200,7 +200,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         int queryCardinality = 0;
         long reactionTime = 0;
         Partitioning<OWLLogicalAxiom> queryGenerator = new CKK<OWLLogicalAxiom>(theory, qss);
-        Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags = null;
+
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
@@ -221,24 +221,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                     prinths(actPa.dz);
                 }
 
-                try {
-                    long diag = System.currentTimeMillis();
-                    //search.reset();
-                    search.run(NUMBER_OF_HITTING_SETS);
-
-                    //daStr += search.getDiagnoses().size() + "/";
-                    //diagnosesCalc += search.getDiagnoses().size();
-                    //conflictsCalc += search.getConflicts().size();
-
-                    diagnoses = search.getDiagnoses();
-                    diagTime.setTime(System.currentTimeMillis() - diag);
-                } catch (SolverException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-
-                } catch (NoConflictException e) {
-                    diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
-
-                }
+                diagnoses = calcDiagnoses(search, diagnoses, diagTime);
 
                 if (diagnoses.isEmpty())
                     logger.error("No diagnoses found!");
@@ -249,18 +232,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                     break;
                 }
 
-                if (traceDiagnosesAndQueries) {
-                    String diag1 = "";
-                    for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
-                        diag1 += renderAxioms(diagnosis) + " ; ";
-                    logger.info("diagnoses before query " + num_of_queries + ":" + diag1);
-                }
-
-                String infoCa = "";
-                for (Set<OWLLogicalAxiom> diagnose : diagnoses)
-                    infoCa += diagnose.size() + "/";
-                logger.info("cardinality of diagnoses " + infoCa);
-                logger.info("num of hitting sets " + search.getDiagnoses().size());
+                logDiagnoses(search, diagnoses, num_of_queries);
 
                 // cast should be corrected
                 Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
@@ -269,16 +241,8 @@ public class SimulatedSession extends CalculateDiagnoses {
 
                 boolean isTargetDiagFirst = d.equals(targetDiag);
                 BigDecimal dp = d.getMeasure();
-                if (logger.isInfoEnabled()) {
-                    AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
-                    BigDecimal diagProbabilities = new BigDecimal("0");
-                    for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
-                        diagProbabilities = diagProbabilities.add(tempd.getMeasure());
-                    logger.trace("diagnoses: " + diagnoses.size() +
-                            " (" + diagProbabilities + ") first diagnosis: " + d +
-                            " is target: " + isTargetDiagFirst + " is in window: " +
-                            ((o == null) ? false : o.toString()));
-                }
+
+                logTraceDiagnoses(targetDiag, diagnoses, d, isTargetDiagFirst);
 
                 if (d1 != null) {// && scoringFunc != QSSType.SPLITINHALF) {
                     BigDecimal d1p = d1.getMeasure();
@@ -310,17 +274,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 actPa = queryGenerator.generatePartition(diagnoses);
 
                 if (minimizeQuery) {
-                    QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(actPa, theory);
-                    NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
-                    try {
-                        actPa.partition = q.search(mnz, actPa.partition, null);
-                    } catch (NoConflictException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    } catch (SolverException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    } catch (InconsistentTheoryException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
+                    minimizeQuery(theory, actPa);
                 }
 
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
@@ -374,7 +328,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                     else
                         secondsearch.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
 
-                    logStatistics(search, targetDiag, allDiagnoses, secondsearch, t3, actPa, diagnoses, answer);
+                    logEliminationRateHelp(search, targetDiag, allDiagnoses, secondsearch, t3, actPa, diagnoses, answer);
                 }
 
                 int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
@@ -468,7 +422,71 @@ public class SimulatedSession extends CalculateDiagnoses {
         return msg;
     }
 
-    private void logStatistics(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3, Partition<OWLLogicalAxiom> actPa, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, boolean answer) throws SolverException, InconsistentTheoryException {
+    private void logTraceDiagnoses(Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, AxiomSet<OWLLogicalAxiom> d, boolean targetDiagFirst) {
+        if (logger.isInfoEnabled()) {
+            AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
+            BigDecimal diagProbabilities = new BigDecimal("0");
+            for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
+                diagProbabilities = diagProbabilities.add(tempd.getMeasure());
+            logger.trace("diagnoses: " + diagnoses.size() +
+                    " (" + diagProbabilities + ") first diagnosis: " + d +
+                    " is target: " + targetDiagFirst + " is in window: " +
+                    ((o == null) ? false : o.toString()));
+        }
+    }
+
+    private void logDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, int num_of_queries) {
+        if (traceDiagnosesAndQueries) {
+            String diag1 = "";
+            for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
+                diag1 += renderAxioms(diagnosis) + " ; ";
+            logger.info("diagnoses before query " + num_of_queries + ":" + diag1);
+        }
+
+        String infoCa = "";
+        for (Set<OWLLogicalAxiom> diagnose : diagnoses)
+            infoCa += diagnose.size() + "/";
+        logger.info("cardinality of diagnoses " + infoCa);
+        logger.info("num of hitting sets " + search.getDiagnoses().size());
+    }
+
+    private void minimizeQuery(OWLTheory theory, Partition<OWLLogicalAxiom> actPa) {
+        QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(actPa, theory);
+        NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
+        try {
+            actPa.partition = q.search(mnz, actPa.partition, null);
+        } catch (NoConflictException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (SolverException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InconsistentTheoryException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    private Set<AxiomSet<OWLLogicalAxiom>> calcDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, Time diagTime) throws InconsistentTheoryException {
+        try {
+            long diag = System.currentTimeMillis();
+            //search.reset();
+            search.run(NUMBER_OF_HITTING_SETS);
+
+            //daStr += search.getDiagnoses().size() + "/";
+            //diagnosesCalc += search.getDiagnoses().size();
+            //conflictsCalc += search.getConflicts().size();
+
+            diagnoses = search.getDiagnoses();
+            diagTime.setTime(System.currentTimeMillis() - diag);
+        } catch (SolverException e) {
+            diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+
+        } catch (NoConflictException e) {
+            diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+
+        }
+        return diagnoses;
+    }
+
+    private void logEliminationRateHelp(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3, Partition<OWLLogicalAxiom> actPa, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, boolean answer) throws SolverException, InconsistentTheoryException {
         Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags;
         remainingAllDiags = secondsearch.getDiagnoses();
         int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);

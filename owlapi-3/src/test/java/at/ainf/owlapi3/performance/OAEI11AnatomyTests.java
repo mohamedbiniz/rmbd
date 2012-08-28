@@ -10,7 +10,6 @@ import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.base.tools.TableList;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -23,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -81,7 +79,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
@@ -100,7 +98,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             theory.addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
@@ -168,7 +166,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
@@ -187,7 +185,6 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             if (background) theory.addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
