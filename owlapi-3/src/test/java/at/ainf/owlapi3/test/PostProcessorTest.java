@@ -120,7 +120,7 @@ public class PostProcessorTest {
         OWLTheory th = createTheory(manager, "ontologies/Univ.owl", false);
         search.setTheory(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = new CalculateDiagnoses().getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(th);
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
@@ -138,7 +138,7 @@ public class PostProcessorTest {
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        logger.info("Partition " + CalculateDiagnoses.renderAxioms(best.partition));
+        logger.info("Partition " + new CalculateDiagnoses().renderAxioms(best.partition));
 
     }
 

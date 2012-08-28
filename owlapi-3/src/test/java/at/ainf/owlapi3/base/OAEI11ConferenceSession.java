@@ -3,6 +3,8 @@ package at.ainf.owlapi3.base;
 import at.ainf.owlapi3.base.tools.OAEI11ConferenceRdfMatchingParser;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,6 +24,8 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class OAEI11ConferenceSession extends SimulatedSession {
+
+    private Logger logger = LoggerFactory.getLogger(OAEI11ConferenceSession.class.getName());
 
     public OWLOntology getOntology(String pathToOntologies,
                                           String o1, String o2, String pathToMapping, String mappingName) {

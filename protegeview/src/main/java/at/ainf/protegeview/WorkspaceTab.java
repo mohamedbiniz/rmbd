@@ -89,7 +89,7 @@ public class
         } else {
             getSearch().setMaxHittingSets(-1);
         }
-        //getWS().getSearch().setTheory(getWS().getOwlTheory());
+        //getWS().getUniformCostSearch().setTheory(getWS().getOwlTheory());
 
         //OwlControllerMngr.getOWLController().calculateDiags();
 
@@ -97,7 +97,7 @@ public class
         Frame parent = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);
 
         BackgroundSearcher searcher = new BackgroundSearcher(getSearch(), parent);
-        //getWS().getSearch().runPostprocessor();
+        //getWS().getUniformCostSearch().runPostprocessor();
         switch (searcher.doBackgroundSearch()) {
             case FINISHED:
                 Collection<? extends AxiomSet<OWLLogicalAxiom>> hittingsets = getSearch().getDiagnoses();

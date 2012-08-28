@@ -174,7 +174,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                             new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
                     preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                     OWLTheory theory = getExtendTheory(ontology, true);
-                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, true);
+                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
 
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                     OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
@@ -251,7 +251,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
         OWLOntology ontology = new OWLIncoherencyExtractor(
                 new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
         OWLTheory theory = getExtendTheory(ontology, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, true);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
 
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
         OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
@@ -274,7 +274,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
 
         OWLTheory th30 = getExtendTheory(ontology, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getSearch(th30, true);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getUniformCostSearch(th30, true);
         th30.addBackgroundFormulas(bx);
         OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);

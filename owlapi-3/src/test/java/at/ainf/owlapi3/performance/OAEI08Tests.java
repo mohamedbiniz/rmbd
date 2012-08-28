@@ -95,9 +95,9 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -107,7 +107,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                             OWLTheory theory2 = getExtendTheory(ontology, dual);
                             OWLTheory t3 = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getSearch(theory2, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -198,7 +198,7 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             if (background_add) {
                                 OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
@@ -206,7 +206,7 @@ public class OAEI08Tests extends OAEI08Session {
                                 theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
                                 theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -216,7 +216,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                             OWLTheory theory2 = getExtendTheory(ontology, dual);
                             OWLTheory t3 = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getSearch(theory2, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -313,9 +313,9 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, false);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -389,14 +389,14 @@ public class OAEI08Tests extends OAEI08Session {
         OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = getExtendTheory(ontology, false);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
         //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
         //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
 
         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
         //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
         //ProbabilityTableModel mo = new ProbabilityTableModel();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+        //HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                 + m.trim()
@@ -466,9 +466,9 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
-                            HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+
 
                             String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                     + m.trim()
@@ -478,7 +478,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                             OWLTheory theory2 = getExtendTheory(ontology, dual);
                             OWLTheory t3 = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getSearch(theory2, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -561,7 +561,7 @@ public class OAEI08Tests extends OAEI08Session {
                     OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
                     OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
                     OWLTheory theory = getExtendTheory(ontology, false);
-                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
+                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
                     //ProbabilityTableModel mo = new ProbabilityTableModel();
                     HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                     OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -621,9 +621,9 @@ public class OAEI08Tests extends OAEI08Session {
                         OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                         Set<OWLLogicalAxiom> targetDg;
                         OWLTheory theory = getExtendTheory(ontology, dual);
-                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                         //ProbabilityTableModel mo = new ProbabilityTableModel();
-                        HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+
 
                         //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
                         //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
@@ -636,7 +636,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                         OWLTheory theory2 = getExtendTheory(ontology, dual);
                         OWLTheory t3 = getExtendTheory(ontology, dual);
-                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getSearch(theory2, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
                         search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
                         //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
@@ -693,7 +693,7 @@ public class OAEI08Tests extends OAEI08Session {
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = getExtendTheory(ontology, false);
         Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, false);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                 + m.trim()
                 + "-incoherent-evaluation/"
@@ -765,7 +765,7 @@ public class OAEI08Tests extends OAEI08Session {
                                         new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                                 Set<OWLLogicalAxiom> targetDg;
                                 OWLTheory theory = getExtendTheory(ontology, dual);
-                                TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+                                TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                                 if (background) {
                                     OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
                                     OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
@@ -773,7 +773,7 @@ public class OAEI08Tests extends OAEI08Session {
                                     theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
                                 }
                                 //ProbabilityTableModel mo = new ProbabilityTableModel();
-                                HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
+
 
                                 String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                         + m.trim()

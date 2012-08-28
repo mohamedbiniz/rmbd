@@ -3,6 +3,8 @@ package at.ainf.owlapi3.base;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -21,6 +23,8 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class OAEI11AnatomySession extends SimulatedSession {
+
+    private Logger logger = LoggerFactory.getLogger(OAEI11AnatomySession.class.getName());
 
     public Set<OWLLogicalAxiom> getDiagnosisTarget(String file) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();

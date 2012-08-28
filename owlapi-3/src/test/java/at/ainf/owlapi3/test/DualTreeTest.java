@@ -165,9 +165,9 @@ public class DualTreeTest {//extends BasePerformanceTests {
         theoryNormal.addNonEntailedTest(negativeTestcase);
         searchNormal.run(runs);
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getDiagnoses())
-            logger.info("HS " + CalculateDiagnoses.renderAxioms(hs));
+            logger.info("HS " + new CalculateDiagnoses().renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getConflicts())
-            logger.info("cs " + CalculateDiagnoses.renderAxioms(confl));
+            logger.info("cs " + new CalculateDiagnoses().renderAxioms(confl));
     }
 
 
@@ -200,8 +200,8 @@ public class DualTreeTest {//extends BasePerformanceTests {
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
         dual = System.currentTimeMillis() - dual;
 
-        logger.info("normal " + CalculateDiagnoses.getStringTime(normal) + " subsets: " + theoryNormal.getCache().size());
-        logger.info("dual " + CalculateDiagnoses.getStringTime(dual) + " subsets: " + theoryDual.getCache().size());
+        logger.info("normal " + new CalculateDiagnoses().getStringTime(normal) + " subsets: " + theoryNormal.getCache().size());
+        logger.info("dual " + new CalculateDiagnoses().getStringTime(dual) + " subsets: " + theoryDual.getCache().size());
 
         assert (resultNormal.equals(resultDual));
 
@@ -276,7 +276,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
         logger.info("dual tree iteration finished: window size "
                 + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() +
-                " time " + CalculateDiagnoses.getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
+                " time " + new CalculateDiagnoses().getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative tests " + hasNegativeTestcases + " diagnoses in storage " + daStr +
                 " cached subsets " + theoryDual.getCache().size()
@@ -314,7 +314,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchNormal.reset();
         logger.info("hstree iteration finished: window size "
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
-                CalculateDiagnoses.getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
+                new CalculateDiagnoses().getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
                 " has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr +
                 " cached subsets " + theoryNormal.getCache().size()
@@ -335,7 +335,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ontology, false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
+        HashMap<ManchesterOWLSyntax, BigDecimal> map = new CalculateDiagnoses().getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
@@ -350,7 +350,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         theoryDual.useCache(useSubsets, threshold);
         searchDual.setTheory(theoryDual);
         //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
-        map = CalculateDiagnoses.getProbabMap();
+        map = new CalculateDiagnoses().getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
@@ -387,19 +387,20 @@ public class DualTreeTest {//extends BasePerformanceTests {
         }
 
         long needed = System.currentTimeMillis() - t;
-        logger.info("needed overall " + CalculateDiagnoses.getStringTime(needed));
-        logger.info("needed normal " + CalculateDiagnoses.getStringTime(timeNormalOverall) +
-                " max " + CalculateDiagnoses.getStringTime(timeNormalMax) +
-                " min " + CalculateDiagnoses.getStringTime(timeNormalMin) +
-                " avg2 " + CalculateDiagnoses.getStringTime(timeNormalOverall / count) +
+        CalculateDiagnoses d = new CalculateDiagnoses();
+        logger.info("needed overall " + d.getStringTime(needed));
+        logger.info("needed normal " + d.getStringTime(timeNormalOverall) +
+                " max " + d.getStringTime(timeNormalMax) +
+                " min " + d.getStringTime(timeNormalMin) +
+                " avg2 " + d.getStringTime(timeNormalOverall / count) +
                 " Queries max " + Collections.max(nqueries) +
                 " min " + Collections.min(nqueries) +
                 " avg2 " + avg(nqueries)
         );
-        logger.info("needed dual " + CalculateDiagnoses.getStringTime(timeDualOverall) +
-                " max " + CalculateDiagnoses.getStringTime(timeDualMax) +
-                " min " + CalculateDiagnoses.getStringTime(timeDualMin) +
-                " avg2 " + CalculateDiagnoses.getStringTime(timeDualOverall / count) +
+        logger.info("needed dual " + d.getStringTime(timeDualOverall) +
+                " max " + d.getStringTime(timeDualMax) +
+                " min " + d.getStringTime(timeDualMin) +
+                " avg2 " + d.getStringTime(timeDualOverall / count) +
                 " Queries max " + Collections.max(dqueries) +
                 " min " + Collections.min(dqueries) +
                 " avg2 " + avg(dqueries));

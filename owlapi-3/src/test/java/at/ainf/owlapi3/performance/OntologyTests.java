@@ -140,7 +140,7 @@ public class OntologyTests extends OntologySession {
         theory.setIncludeClassAssertionAxioms(true);
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
         //((NewQuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
         CostsEstimator es = new SimpleCostsEstimator();
@@ -181,7 +181,7 @@ public class OntologyTests extends OntologySession {
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
                 String out = "STAT, " + o;
-                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl");
+                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl", -1);
                 for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : DiagProbab.values()) {
                         for (int i = 0; i < 20; i++) {
@@ -195,7 +195,7 @@ public class OntologyTests extends OntologySession {
                         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                         Set<OWLLogicalAxiom> targetDg;
                         OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
 
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -319,7 +319,7 @@ public class OntologyTests extends OntologySession {
                 OWLOntology extracted1 = new OWLIncoherencyExtractor(
                         new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("queryontologies", name));
                 OWLTheory theory1 = getExtendTheory(extracted1, false);
-                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = getSearch(theory1, false);
+                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = getUniformCostSearch(theory1, false);
 
                 OWLAxiomKeywordCostsEstimator es1 = new OWLAxiomKeywordCostsEstimator(theory1);
 
@@ -349,7 +349,7 @@ public class OntologyTests extends OntologySession {
                             OWLOntology extracted = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("queryontologies", name));
                             OWLTheory theory = getExtendTheory(extracted, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = getSearch(theory, dual);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = getUniformCostSearch(theory, dual);
 
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
 
@@ -782,7 +782,7 @@ public class OntologyTests extends OntologySession {
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
                 String out = "STAT, " + o;
-                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl");
+                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl", -1);
                 for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.GOOD}) {
                         for (int i = 0; i < 1500; i++) {
@@ -796,7 +796,7 @@ public class OntologyTests extends OntologySession {
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, true);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getSearch(theory, true);
+                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
 
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);

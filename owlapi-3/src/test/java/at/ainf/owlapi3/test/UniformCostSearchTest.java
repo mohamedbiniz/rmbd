@@ -40,7 +40,7 @@ public class UniformCostSearchTest {
     @Test
     public void testEcai2010Abox() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
+        // HashMap<ManchesterOWLSyntax, BigDecimal> map = CalculateDiagnoses.getProbabMap();
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());

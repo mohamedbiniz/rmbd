@@ -345,7 +345,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
         processAnswer(SectionType.ET);
         try {
             //for (OWLLogicalAxiom a : actQuery.partition)
-            //    workspace.getSearch().getTheory().addEntailedTest (a);
+            //    workspace.getUniformCostSearch().getTheory().addEntailedTest (a);
             workspace.getSearch().getTheory().addEntailedTest(actQuery.partition);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -371,7 +371,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
         processAnswer(SectionType.NET);
         try {
             //for (OWLLogicalAxiom a : actQuery.partition)
-            //    workspace.getSearch().getTheory().addNonEntailedTest(a);
+            //    workspace.getUniformCostSearch().getTheory().addNonEntailedTest(a);
             workspace.getSearch().getTheory().addNonEntailedTest(actQuery.partition);
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -473,7 +473,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
                 //workspace.displaySection();
 
                 positiveTestCases.add(axiom);
-                //workspace.getSearch().getTheory().addEntailedTest(axiom);
+                //workspace.getUniformCostSearch().getTheory().addEntailedTest(axiom);
 
             }
             if (item.isNonEntailedMarked()) {
@@ -485,7 +485,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
                 workspace.displaySection();*/
 
                 negativeTestCases.add(axiom);
-                //workspace.getSearch().getTheory().addNonEntailedTest(axiom);
+                //workspace.getUniformCostSearch().getTheory().addNonEntailedTest(axiom);
 
             }
         }
