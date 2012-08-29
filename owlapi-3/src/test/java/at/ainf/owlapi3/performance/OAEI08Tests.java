@@ -23,9 +23,6 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -49,33 +46,6 @@ public class OAEI08Tests extends OAEI08Session {
     }*/
 
     private static Logger logger = LoggerFactory.getLogger(OAEI08Tests.class.getName());
-
-    public static Map<String, List<String>> readOntologiesFromFile(String str) {
-        Properties properties = new Properties();
-        String config = ClassLoader.getSystemResource(str).getFile();
-        BufferedInputStream stream = null;
-        try {
-            stream = new BufferedInputStream(new FileInputStream(config));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        try {
-            properties.load(stream);
-            stream.close();
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        String[] testsuites = properties.getProperty("alignment.testsuites").split(",");
-
-        Map<String, List<String>> ontologies = new HashMap<String, List<String>>();
-
-        for (String testsuite : testsuites) {
-            List<String> ontologie = Arrays.asList(properties.getProperty(testsuite.trim()).split(","));
-            ontologies.put(testsuite, ontologie);
-        }
-        return ontologies;
-    }
 
 
     @Test
@@ -167,7 +137,10 @@ public class OAEI08Tests extends OAEI08Session {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            out +=  a.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                            a.setEntry(e);
+                            a.setMessage(message);
+                            a.setScoringFunct(type);
+                            out +=  a.simulateQuerySession(search, theory, targetDg, type, message);
 
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, null, null);
                         }
@@ -279,7 +252,10 @@ public class OAEI08Tests extends OAEI08Session {
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                            session.setEntry(e);
+                            session.setMessage(message);
+                            session.setScoringFunct(type);
+                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
 
                         }
                         logger.info(out);
@@ -366,7 +342,10 @@ public class OAEI08Tests extends OAEI08Session {
                                     + ", source " + targetSource
                                     + ", qss " + type
                                     + ", background " + background;
-                            s.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                            s.setEntry(e);
+                            s.setScoringFunct(type);
+                            s.setMessage(message);
+                            s.simulateQuerySession(search, theory, targetDg, type, message);
                         }
                     }
                 }
@@ -448,7 +427,10 @@ public class OAEI08Tests extends OAEI08Session {
 
         TableList e = new TableList();
         String message = "act " + m + " - " + o + " - " + targetSource + " " + type;
-        s.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+        s.setEntry(e);
+        s.setMessage(message);
+        s.setScoringFunct(type);
+        s.simulateQuerySession(search, theory, targetDg, type, message);
     }
 
     @Test
@@ -538,7 +520,14 @@ public class OAEI08Tests extends OAEI08Session {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            out += s.simulateQuerySession(search, theory, targetDg, e, type, message, allD, search2, t3);
+                            s.setEntry(e);
+                            s.setLogElRate(true);
+                            s.setAllDiags(allD);
+                            s.setSearch2(search2);
+                            s.setTheory3(t3);
+                            s.setMessage(message);
+                            s.setScoringFunct(type);
+                            out += s.simulateQuerySession(search, theory, targetDg, type, message);
                         }
                         logger.info(out);
                     }
@@ -615,18 +604,8 @@ public class OAEI08Tests extends OAEI08Session {
             for (String m : mapOntos.keySet()) {
                 for (String o : mapOntos.get(m)) {
                     for (int nd : new int[]{1, 5, 9}) {
-                        String out = "STAT, " + m + ", " + o;
-
 
                         OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
-                        Set<OWLLogicalAxiom> targetDg;
-                        OWLTheory theory = getExtendTheory(ontology, dual);
-                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
-                        //ProbabilityTableModel mo = new ProbabilityTableModel();
-
-
-                        //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
-                        //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
 
                         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                                 + m.trim()
@@ -634,31 +613,13 @@ public class OAEI08Tests extends OAEI08Session {
                                 + o.trim()
                                 + ".txt").getPath();
 
-                        OWLTheory theory2 = getExtendTheory(ontology, dual);
-                        OWLTheory t3 = getExtendTheory(ontology, dual);
-                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
-                        search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
-
-                        //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                        //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
-
+                        OWLTheory theory = getExtendTheory(ontology, dual);
+                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                         OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
-
-                        //es.updateKeywordProb(map);
-                        targetDg = null;
-
                         search.setCostsEstimator(es);
-                        //
+
                         long time = System.nanoTime();
-                        try {
-                            search.run(nd);
-                        } catch (SolverException e) {
-                            logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                        } catch (NoConflictException e) {
-                            logger.error(e.toString());//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                        } catch (InconsistentTheoryException e) {
-                            logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                        }
+                        runSearch(search,nd);
                         time = System.nanoTime() - time;
 
                         int minDiagnosisC = minCard(search.getDiagnoses());
@@ -686,8 +647,6 @@ public class OAEI08Tests extends OAEI08Session {
     public void calcOnlyDiagnoses() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
         String m = "coma";
         String o = "CRS-EKAW";
-
-
 
         OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
@@ -839,7 +798,10 @@ public class OAEI08Tests extends OAEI08Session {
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
                                 //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                                out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                                session.setEntry(e);
+                                session.setMessage(message);
+                                session.setScoringFunct(type);
+                                out += session.simulateQuerySession(search, theory, targetDg, type, message);
 
                             }
                             logger.info(out);

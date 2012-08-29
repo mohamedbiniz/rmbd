@@ -131,6 +131,12 @@ public class CalculateDiagnoses {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
         setAxiomKeywordCostsEstimator(search);
 
+        runSearch(search, num);
+        return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+
+    }
+
+    protected void runSearch(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, int num) {
         try {
             search.run(num);
         } catch (SolverException e) {
@@ -140,8 +146,6 @@ public class CalculateDiagnoses {
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
-
     }
 
     private OWLOntology extractModules(OWLOntology ontology) {

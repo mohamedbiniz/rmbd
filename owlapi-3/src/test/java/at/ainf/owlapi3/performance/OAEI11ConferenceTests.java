@@ -51,14 +51,6 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf); }*/
 
-    public <X> Set<X> getIntersection (Set<X> axioms1, Set<X> axioms2) {
-        Set<X> intersection = new LinkedHashSet<X>();
-        intersection.addAll(axioms1);
-        intersection.retainAll(axioms2);
-
-        return intersection;
-    }
-
     @Test
     public void saveOntologiesConference2011()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
@@ -152,7 +144,11 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                 String out = "STAT, " + file;
 
 
-                Set<OWLLogicalAxiom> targetDg = getRandomDiag(file, map.get(file));
+                Random random = new Random(12311);
+                Set<AxiomSet<OWLLogicalAxiom>> targetDgSet = getRandomDiagSet(file, map.get(file));
+                int randomNr = chooseRandomNum(targetDgSet,random);
+                Set<OWLLogicalAxiom> targetDg = chooseRandomDiag(targetDgSet,file,randomNr);
+
 
                 for (SimulatedSession.QSSType type : qssTypes) {
 
@@ -196,8 +192,11 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                     TableList e = new TableList();
                     out += "," + type + ",";
                     String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
-                            + "," + type + "," + preprocessModulExtract + "," + randomDiagNr;
-                    out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                            + "," + type + "," + preprocessModulExtract + "," + randomNr;
+                    session.setEntry(e);
+                    session.setMessage(message);
+                    session.setScoringFunct(type);
+                    out += session.simulateQuerySession(search, theory, targetDg, type, message);
 
                 }
                 logger.info(out);
@@ -206,98 +205,6 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             }
         }
     }
-
-    private class MyFilenameFilter implements FilenameFilter {
-        private Set<String> acceptedNames;
-
-        public MyFilenameFilter(File includedNames) {
-            acceptedNames = new LinkedHashSet<String>();
-            try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(includedNames)));
-                String strLine;
-                while ((strLine = br.readLine()) != null) {
-                    if (!strLine.startsWith("#") || !strLine.endsWith(".rdf"))
-                        acceptedNames.add(strLine);
-                }
-                br.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        }
-
-        public boolean accept(File dir, String name) {
-            return acceptedNames.contains(name);
-        }
-    }
-
-    private Set<OWLLogicalAxiom> getRandomDiag(File file, String directory) throws SolverException, InconsistentTheoryException {
-        String matchingsDir = "oaei11conference/matchings/";
-        String mapd = matchingsDir + directory;
-
-        String fileName = file.getName();
-        StringTokenizer t = new StringTokenizer(fileName, "-");
-        String matcher = t.nextToken();
-
-        String o1 = t.nextToken();
-        String o2 = t.nextToken();
-        o2 = o2.substring(0, o2.length() - 4);
-
-        String n = file.getName().substring(0, file.getName().length() - 4);
-        OWLOntology merged = getOntology("oaei11conference/ontology",
-                o1, o2, mapd, n + ".rdf");
-
-        OWLOntology ontology = new OWLIncoherencyExtractor(
-                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
-        OWLTheory theory = getExtendTheory(ontology, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
-
-        LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-        OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
-        OWLOntology ontology2 = getOntologySimple("oaei11conference/ontology", o2 + ".owl");
-        bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-        bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
-        theory.addBackgroundFormulas(bx);
-
-        Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(mapd, n + ".rdf");
-
-        OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, map1);
-
-
-        search.setCostsEstimator(es);
-
-        search.reset();
-
-
-        Set<OWLLogicalAxiom> targetDg = null;
-
-
-        OWLTheory th30 = getExtendTheory(ontology, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getUniformCostSearch(th30, true);
-        th30.addBackgroundFormulas(bx);
-        OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, readRdfMapping(mapd, n + ".rdf"));
-        search30.setCostsEstimator(es30);
-
-        try {
-            search30.run(30);
-        } catch (NoConflictException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search30.getDiagnoses();
-        int rnd = random.nextInt(diagnoses.size());
-        randomDiagNr = rnd;
-        logger.info(file.getName() + ",diagnosis selected as target," + rnd);
-        targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>) diagnoses.toArray()[rnd]);
-        logger.info(file.getName() + ",target diagnosis axioms," + renderAxioms(targetDg));
-
-        search30.reset();
-        return targetDg;
-    }
-
-    int randomDiagNr = -1;
-
-    Random random = new Random(12311);
 
     private class SearchThread implements Callable<String> {
         private boolean dual;
@@ -469,10 +376,10 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
         }
     }
 
-    private class MyFilenameFilter2 implements FilenameFilter {
+    private class MyFilenameFilter implements FilenameFilter {
         private Set<String> acceptedNames;
 
-        public MyFilenameFilter2(File includedNames) {
+        public MyFilenameFilter(File includedNames) {
             acceptedNames = new LinkedHashSet<String>();
             try{
                 BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(includedNames)));
@@ -498,7 +405,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
         String d = "incoherent";
         File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/included.txt").getFile());
-        MyFilenameFilter2 filter = new MyFilenameFilter2(incl);
+        MyFilenameFilter filter = new MyFilenameFilter(incl);
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
                 .getFile()).listFiles(filter);
 
@@ -529,7 +436,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
     public void testSearchDiagnosisTimes() throws SolverException, InconsistentTheoryException, NoConflictException {
         String d = "incoherent";
         File incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/includedIncoher.txt").getFile());
-        MyFilenameFilter2 filter = new MyFilenameFilter2(incl);
+        MyFilenameFilter filter = new MyFilenameFilter(incl);
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
                 .getFile()).listFiles(filter);
 
@@ -551,7 +458,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
         d = "inconsistent";
         incl = new File(ClassLoader.getSystemResource("oaei11conference/matchings/included.txt").getFile());
-        filter = new MyFilenameFilter2(incl);
+        filter = new MyFilenameFilter(incl);
         f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/"+d)
                 .getFile()).listFiles(filter);
 

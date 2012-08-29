@@ -34,6 +34,7 @@ import java.util.*;
 
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType;
 import static org.junit.Assert.assertTrue;
+import static at.ainf.owlapi3.base.SimulatedSession.QSSType.MINSCORE;
 
 /**
  * Created by IntelliJ IDEA.
@@ -268,7 +269,10 @@ public class DualTreeTest {//extends BasePerformanceTests {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
-        session.simulateQuerySession(searchDual, theoryDual, diagnosis, entry2, type, "", null, null, null);
+        session.setEntry(entry2);
+        session.setMessage("");
+        session.setScoringFunct(type);
+        session.simulateQuerySession(searchDual, theoryDual, diagnosis, type, "");
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -305,7 +309,10 @@ public class DualTreeTest {//extends BasePerformanceTests {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
-        session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, entry, type, "", null, null, null);
+        session.setEntry(entry);
+        session.setMessage("");
+        session.setScoringFunct(type);
+        session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, type, "");
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
@@ -372,8 +379,8 @@ public class DualTreeTest {//extends BasePerformanceTests {
             logger.info("iteration " + ++count);
             long timeNormal, timeDual;
             if (count % 2 != 0) {
-                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, QSSType.MINSCORE);
-                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, QSSType.MINSCORE);
+                timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, MINSCORE);
+                timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, MINSCORE);
             } else {
                 timeDual = computeDual(searchDual, theoryDual, diagnosis, dqueries, QSSType.MINSCORE);
                 timeNormal = computeHS(searchNormal, theoryNormal, diagnosis, nqueries, QSSType.MINSCORE);

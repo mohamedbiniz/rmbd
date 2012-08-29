@@ -66,8 +66,6 @@ public class OntologyTests extends OntologySession {
 
     //public enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
 
-    protected Random rnd = new Random();
-
 
     //private boolean traceDiagnosesAndQueries = false;
     //private boolean minimizeQuery = false;
@@ -151,7 +149,11 @@ public class OntologyTests extends OntologySession {
 
         logger.info("start session");
         loggingTest();
-        session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+
+        session.setEntry(e);
+        session.setScoringFunct(type);
+        session.setMessage(message);
+        session.simulateQuerySession(search, theory, targetDg, type, message);
         logger.info("stop session ");
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         Appender<ILoggingEvent> coalescingStatistics = loggerContext.getLogger(ProfVarLogWatch.DEFAULT_LOGGER_NAME).getAppender("CoalescingStatistics");
@@ -217,7 +219,10 @@ public class OntologyTests extends OntologySession {
                                     + "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                            session.setEntry(e);
+                            session.setMessage(message);
+                            session.setScoringFunct(type);
+                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
 
                             //logger.info(out);
                         }
@@ -228,82 +233,6 @@ public class OntologyTests extends OntologySession {
     }
 
 
-
-
-
-    public AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
-            (DiagProbab
-                     diagProbab, TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
-
-
-        BigDecimal sum = new BigDecimal("0");
-        TreeSet<AxiomSet<OWLLogicalAxiom>> res;
-        TreeSet<AxiomSet<OWLLogicalAxiom>> good = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        TreeSet<AxiomSet<OWLLogicalAxiom>> avg = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        TreeSet<AxiomSet<OWLLogicalAxiom>> bad = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-
-        for (AxiomSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
-            if (sum.compareTo(BigDecimal.valueOf(0.33)) <= 0) {
-                good.add(hs);
-            } else if (sum.compareTo(BigDecimal.valueOf(0.33)) >= 0 && sum.compareTo(BigDecimal.valueOf(0.66)) <= 0) {
-                avg.add(hs);
-            } else if (sum.compareTo(BigDecimal.valueOf(0.66)) >= 0) {
-                bad.add(hs);
-            }
-            sum = sum.add(hs.getMeasure());
-        }
-        switch (diagProbab) {
-            case GOOD:
-                while (good.size() < 3) {
-                    if (!avg.isEmpty()) {
-                        good.add(avg.pollLast());
-                    } else if (!bad.isEmpty())
-                        good.add(bad.pollLast());
-                    else
-                        break;
-                }
-                res = good;
-                break;
-            case AVERAGE:
-                if (avg.size() < 3 && !good.isEmpty())
-                    avg.add(good.pollFirst());
-                while (avg.size() < 3) {
-                    if (!bad.isEmpty())
-                        avg.add(bad.pollLast());
-                    else break;
-                }
-                res = avg;
-                break;
-            default: {
-                if (bad.size() < 3)
-                    logger.error("No diagnoses in bad! " + diagnoses);
-                while (bad.size() < 3) {
-                    if (!avg.isEmpty()) {
-                        bad.add(avg.pollFirst());
-                    } else if (!good.isEmpty())
-                        bad.add(good.pollFirst());
-                    else
-                        break;
-                }
-                res = bad;
-            }
-        }
-
-        int number = rnd.nextInt(res.size());
-
-
-        int i = 1;
-        AxiomSet<OWLLogicalAxiom> next = null;
-        for (Iterator<AxiomSet<OWLLogicalAxiom>> it = res.descendingIterator(); it.hasNext(); i++) {
-            next = it.next();
-            if (i == number)
-                break;
-        }
-        logger.info(diagProbab + ": selected target diagnosis " + next + " positioned " + number + " out of " + res.size());
-        return next;
-    }
-
-
     @Test
     public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
 
@@ -311,7 +240,7 @@ public class OntologyTests extends OntologySession {
 
         session.setShowElRates(false);
         int MAX_RUNS = 7+1;
-        rnd = new Random(121);
+        getRandom().setSeed(121);
 
         for (String name : new String[]{"Economy-SDA.owl"}) {
             for (boolean dual : new boolean[] {true}) {
@@ -368,7 +297,10 @@ public class OntologyTests extends OntologySession {
                             String message = "act," + name + "," + dual + "," + usersProbab + ","
                                     + diagProbab + "," + run  ;
 
-                            out += session.simulateQuerySession(search2, (OWLTheory) search2.getTheory(), targetDiag, e, QSSType.MINSCORE, message, null, null, null);
+                            session.setEntry(e);
+                            session.setScoringFunct(QSSType.MINSCORE);
+                            session.setMessage(message);
+                            out += session.simulateQuerySession(search2, (OWLTheory) search2.getTheory(), targetDiag, QSSType.MINSCORE, message);
 
                         }
                     }
@@ -382,106 +314,6 @@ public class OntologyTests extends OntologySession {
 
     }
 
-    private Set<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
-        TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        for (AxiomSet<OWLLogicalAxiom> hs : axiomSets)
-            phs.add(hs);
-        return Collections.unmodifiableSet(phs);
-    }
-
-    private void shuffleKeyword(ArrayList<ManchesterOWLSyntax> keywordList) {
-        ArrayList<ManchesterOWLSyntax> cp = new ArrayList<ManchesterOWLSyntax>(keywordList.size());
-        cp.addAll(keywordList);
-        keywordList.clear();
-        for (int i = 0; cp.size() > 0; i++) {
-            int j = rnd.nextInt(cp.size());
-            keywordList.add(i, cp.remove(j));
-        }
-        keywordList.addAll(cp);
-    }
-
-    private Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
-            (UsersProbab
-                     usersProbab, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, ExtremeDistribution extremeDistribution, ModerateDistribution moderateDistribution) {
-        Map<ManchesterOWLSyntax, BigDecimal> keywordProbs = new HashMap<ManchesterOWLSyntax, BigDecimal>();
-        //ProbabilityTableModel m = new ProbabilityTableModel();
-        ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(getProbabMap().keySet()));
-        ManchesterOWLSyntax[] selectedKeywords = new ManchesterOWLSyntax[]{ManchesterOWLSyntax.SOME, ManchesterOWLSyntax.ONLY,
-                ManchesterOWLSyntax.DISJOINT_CLASSES, ManchesterOWLSyntax.DISJOINT_WITH, ManchesterOWLSyntax.SUBCLASS_OF,
-                ManchesterOWLSyntax.EQUIVALENT_CLASSES, ManchesterOWLSyntax.NOT, ManchesterOWLSyntax.AND};
-
-        /*
-        keywordList = new ArrayList<ManchesterOWLSyntax>(Arrays.asList(selectedKeywords));
-        shuffleKeyword(keywordList);
-        */
-        //Set<Integer> highKeywordPos = new HashSet<Integer>();
-
-        List<ManchesterOWLSyntax> c = new ArrayList<ManchesterOWLSyntax>(Arrays.asList(selectedKeywords));
-        for (int i = 0; i < c.size() / 2; i++) {
-            int j = rnd.nextInt(c.size());
-            keywordList.remove(c.get(j));
-        }
-        c.removeAll(keywordList);
-        shuffleKeyword(keywordList);
-        for (int i = 0; c.size() > 0; i++) {
-            int j = rnd.nextInt(c.size());
-            keywordList.add(i, c.remove(j));
-        }
-        //keywordList.addAll(c);
-
-        int n = keywordList.size();
-        int k = n / 4;
-        double[] probabilities;
-
-        switch (usersProbab) {
-            case EXTREME:
-                probabilities = extremeDistribution.getProbabilities(n);
-                for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, BigDecimal.valueOf(probabilities[keywordList.indexOf(keyword)]));
-                }
-                /*highKeywordPos.add(rnd.nextInt(n));
-                for(ManchesterOWLSyntax keyword : keywordList) {
-                    if (highKeywordPos.contains(keywordList.indexOf(keyword)))
-                        keywordProbs.put(keyword,getProbabBetween(LOWER_BOUND_EXTREME_HIGH,HIGHER_BOUND_EXTREME_HIGH));
-                    else
-                        keywordProbs.put(keyword, getProbabBetween(LOWER_BOUND_EXTREME_LOW,HIGHER_BOUND_EXTREME_LOW));
-                }*/
-                break;
-            case MODERATE:
-                probabilities = moderateDistribution.getProbabilities(n);
-                for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, BigDecimal.valueOf(probabilities[keywordList.indexOf(keyword)]));
-                }
-                /*for (int i = 0; i < k; i++) {
-                    int num = rnd.nextInt(n);
-                    while (!highKeywordPos.add(num))
-                        num = rnd.nextInt();
-                }
-                for(ManchesterOWLSyntax keyword : keywordList) {
-                    if (highKeywordPos.contains(keywordList.indexOf(keyword)))
-                        keywordProbs.put(keyword,getProbabBetween(LOWER_BOUND_MODERATE_HIGH,HIGHER_BOUND_MODERATE_HIGH));
-                    else
-                        keywordProbs.put(keyword, getProbabBetween(LOWER_BOUND_MODERATE_LOW,HIGHER_BOUND_MODERATE_LOW));
-                }*/
-                break;
-            case UNIFORM:
-                for (ManchesterOWLSyntax keyword : keywordList) {
-                    keywordProbs.put(keyword, BigDecimal.valueOf(1.0 / n));
-                }
-                break;
-        }
-        ((OWLAxiomKeywordCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(keywordProbs, diagnoses);
-        return sortDiagnoses(diagnoses);
-
-
-    }
-
-
-
-
-
-
-
 
     protected long computeDual(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual, OWLTheory theoryDual,
                                AxiomSet<OWLLogicalAxiom> diagnosis, List<Double> queries, QSSType type) {
@@ -493,7 +325,10 @@ public class OntologyTests extends OntologySession {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
-        session.simulateQuerySession(searchDual, theoryDual, diagnosis, entry2, type, "", null, null, null);
+        session.setEntry(entry2);
+        session.setMessage("");
+        session.setScoringFunct(type);
+        session.simulateQuerySession(searchDual, theoryDual, diagnosis, type, "");
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -513,12 +348,6 @@ public class OntologyTests extends OntologySession {
         return timeDual;
     }
 
-    protected AxiomSet<OWLLogicalAxiom> getMostProbable(Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
-        TreeSet<AxiomSet<OWLLogicalAxiom>> ts = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        ts.addAll(diagnoses);
-        return ts.last();
-    }
-
     protected long computeHS(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal,
                              OWLTheory theoryNormal, AxiomSet<OWLLogicalAxiom> diagnoses,
                              List<Double> queries, QSSType type) {
@@ -528,8 +357,10 @@ public class OntologyTests extends OntologySession {
         int diagnosesCalc = 0;
         String daStr = "";
         int conflictsCalc = 0;
-
-        session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, entry, type, "", null, null, null);
+        session.setEntry(entry);
+        session.setMessage("");
+        session.setScoringFunct(type);
+        session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, type, "");
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
@@ -548,14 +379,16 @@ public class OntologyTests extends OntologySession {
         return timeNormal;
     }
 
-    private void compareDualWithHS(String ontology) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
+
+    @Test
+    public void testCompareDiagnosisMethods() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         long t = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        OWLTheory theoryNormal = getSimpleTheory(getOntologySimple("ontologies", ontology), false);
+        OWLTheory theoryNormal = getSimpleTheory(getOntologySimple("ontologies", "koala.owl"), false);
         searchNormal.setTheory(theoryNormal);
         theoryNormal.useCache(false, 0);
         HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
@@ -569,7 +402,7 @@ public class OntologyTests extends OntologySession {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        OWLTheory theoryDual = getSimpleTheory(getOntologySimple("ontologies", ontology), true);
+        OWLTheory theoryDual = getSimpleTheory(getOntologySimple("ontologies", "koala.owl"), true);
         theoryDual.useCache(false, 0);
         searchDual.setTheory(theoryDual);
         map = getProbabMap();
@@ -645,12 +478,6 @@ public class OntologyTests extends OntologySession {
     }
 
 
-    @Test
-    public void testCompareDiagnosisMethods() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
-        compareDualWithHS("koala.owl");
-    }
-
-
     class DurationStat {
         long min = Long.MAX_VALUE;
         long max = 0;
@@ -722,7 +549,10 @@ public class OntologyTests extends OntologySession {
 
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
-            session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, entry, null, "", null, null, null);
+            session.setEntry(entry);
+            session.setScoringFunct(null);
+            session.setMessage("");
+            session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, null, "");
             theoryNormal.clearTestCases();
             searchNormal.reset();
             assert(entry.getMeanWin() == 1);
@@ -730,7 +560,11 @@ public class OntologyTests extends OntologySession {
 
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
-            session.simulateQuerySession(searchDual, theoryDual, diagnoses, entry, null, "", null, null, null);
+
+            session.setEntry(entry);
+            session.setScoringFunct(null);
+            session.setMessage("");
+            session.simulateQuerySession(searchDual, theoryDual, diagnoses, null, "");
             theoryDual.clearTestCases();
             searchDual.reset();
             assert (entry.getMeanWin() == 1);
@@ -820,7 +654,10 @@ public class OntologyTests extends OntologySession {
                             logger.info("target diagnosis:" + targetDg.size() + " " + renderAxioms(targetDg));
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                            session.setEntry(e);
+                            session.setMessage(message);
+                            session.setScoringFunct(type);
+                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
 
                             //logger.info(out);
                         }
