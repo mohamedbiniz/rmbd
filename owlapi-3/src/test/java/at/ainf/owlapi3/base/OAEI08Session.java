@@ -7,9 +7,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -203,4 +201,30 @@ public class OAEI08Session extends SimulatedSession {
 
     }
 
+    public Map<String, List<String>> readOntologiesFromFile(String str) {
+        Properties properties = new Properties();
+        String config = ClassLoader.getSystemResource(str).getFile();
+        BufferedInputStream stream = null;
+        try {
+            stream = new BufferedInputStream(new FileInputStream(config));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            properties.load(stream);
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        String[] testsuites = properties.getProperty("alignment.testsuites").split(",");
+
+        Map<String, List<String>> ontologies = new HashMap<String, List<String>>();
+
+        for (String testsuite : testsuites) {
+            List<String> ontologie = Arrays.asList(properties.getProperty(testsuite.trim()).split(","));
+            ontologies.put(testsuite, ontologie);
+        }
+        return ontologies;
+    }
 }

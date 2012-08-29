@@ -40,11 +40,11 @@ public class SimulatedSession extends CalculateDiagnoses {
 
     private  Logger logger = LoggerFactory.getLogger(SimulatedSession.class.getName());
 
-    protected boolean showElRates = true;
+    private boolean showElRates = true;
 
-    protected int NUMBER_OF_HITTING_SETS = 9;
-    protected BigDecimal SIGMA = new BigDecimal("100");
-    protected boolean userBrk = true;
+    private int numberOfHittingSets = 9;
+    private BigDecimal SIGMA = new BigDecimal("100");
+    private boolean userBreak = true;
 
 
 
@@ -54,8 +54,44 @@ public class SimulatedSession extends CalculateDiagnoses {
     //protected String daStr = "";
     public enum QSSType {MINSCORE, SPLITINHALF, STATICRISK, DYNAMICRISK, PENALTY, NO_QSS};
 
-    protected boolean traceDiagnosesAndQueries = false;
-    protected boolean minimizeQuery = false;
+    private boolean traceDiagnosesAndQueries = false;
+    private boolean minimizeQuery = false;
+
+    public int getNumberOfHittingSets() {
+        return numberOfHittingSets;
+    }
+
+    public void setNumberOfHittingSets(int numberOfHittingSets) {
+        this.numberOfHittingSets = numberOfHittingSets;
+    }
+
+    public boolean isUserBreak() {
+        return userBreak;
+    }
+
+    public void setUserBreak(boolean userBreak) {
+        this.userBreak = userBreak;
+    }
+
+    public BigDecimal getSIGMA() {
+        return SIGMA;
+    }
+
+    public void setSIGMA(BigDecimal SIGMA) {
+        this.SIGMA = SIGMA;
+    }
+
+    public boolean isShowElRates() {
+        return showElRates;
+    }
+
+    public boolean isTraceDiagnosesAndQueries() {
+        return traceDiagnosesAndQueries;
+    }
+
+    public boolean isMinimizeQuery() {
+        return minimizeQuery;
+    }
 
     public void setTraceDiagnosesAndQueries(boolean traceDiagnosesAndQueries) {
         this.traceDiagnosesAndQueries = traceDiagnosesAndQueries;
@@ -63,10 +99,6 @@ public class SimulatedSession extends CalculateDiagnoses {
 
     public void setMinimizeQuery(boolean minimizeQuery) {
         this.minimizeQuery = minimizeQuery;
-    }
-
-    public void setNumberOfHittingSets(int num) {
-        this.NUMBER_OF_HITTING_SETS = num;
     }
 
     public void setShowElRates(boolean showElRates) {
@@ -174,14 +206,84 @@ public class SimulatedSession extends CalculateDiagnoses {
 
     }
 
+    private TableList entry;
+
+    public TableList getEntry() {
+        return entry;
+    }
+
+    public void setEntry(TableList entryLoc) {
+        this.entry = entryLoc;
+    }
+
+    private Set<AxiomSet<OWLLogicalAxiom>> allDiags;
+
+    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2;
+
+    private OWLTheory theory3;
+
+    public Set<AxiomSet<OWLLogicalAxiom>> getAllDiags() {
+        return allDiags;
+    }
+
+    public void setAllDiags(Set<AxiomSet<OWLLogicalAxiom>> allDiags) {
+        this.allDiags = allDiags;
+    }
+
+    public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch2() {
+        return search2;
+    }
+
+    public void setSearch2(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2) {
+        this.search2 = search2;
+    }
+
+    public OWLTheory getTheory3() {
+        return theory3;
+    }
+
+    public void setTheory3(OWLTheory theory3) {
+        this.theory3 = theory3;
+    }
+
+    private boolean logElRate = false;
+
+    public boolean isLogElRate() {
+        return logElRate;
+    }
+
+    public void setLogElRate(boolean logElRate) {
+        this.logElRate = logElRate;
+    }
+
+    private String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    private QSSType scoringFunct;
+
+    public QSSType getScoringFunct() {
+        return scoringFunct;
+    }
+
+    public void setScoringFunct(QSSType scoringFunct) {
+        this.scoringFunct = scoringFunct;
+    }
+
     public String simulateQuerySession(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
-                                       OWLTheory theory, Set<OWLLogicalAxiom> targetDiag,
-                                       TableList entry, QSSType scoringFunc, String message, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3) {
-        //DiagProvider diagProvider = new DiagProvider(search, false, 9);
+                                       OWLTheory theory,
+                                       Set<OWLLogicalAxiom> targetDiag,
+                                       QSSType scoringFunc,
+                                       String message) {
 
-        QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(scoringFunc);
-        //userBrk=false;
-
+        QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(getScoringFunct());
+        //userBreak=false;
         Partition<OWLLogicalAxiom> actPa = null;
 
         Set<AxiomSet<OWLLogicalAxiom>> diagnoses = null;
@@ -250,7 +352,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                     temp = temp.divide(dp, Rounding.PRECISION,Rounding.ROUNDING_MODE);
                     BigDecimal diff = new BigDecimal("100").subtract(temp);
                     logger.trace("difference : " + (dp.subtract(d1p)) + " - " + diff + " %");
-                    if (userBrk && diff.compareTo(SIGMA) > 0 && isTargetDiagFirst && num_of_queries > 0) {
+                    if (this.userBreak && diff.compareTo(SIGMA) > 0 && isTargetDiagFirst && num_of_queries > 0) {
                         // user brake
                         querySessionEnd = true;
                         userBreak = true;
@@ -316,19 +418,19 @@ public class SimulatedSession extends CalculateDiagnoses {
                 for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
                     ph.setMeasure(new BigDecimal("0.5").multiply(ph.getMeasure()));
                 }
-                if (allDiagnoses != null) {
+                if (isLogElRate()) {
 
                     try {
-                        secondsearch.run();
+                        search2.run();
                     } catch (NoConflictException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                     if (answer)
-                        secondsearch.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                        search2.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                     else
-                        secondsearch.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                        search2.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
 
-                    logEliminationRateHelp(search, targetDiag, allDiagnoses, secondsearch, t3, actPa, diagnoses, answer);
+                    logEliminationRateHelp(search, targetDiag, allDiags, search2, theory3, actPa, diagnoses, answer);
                 }
 
                 int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
@@ -338,7 +440,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 if (answer) {
                     try {
                         search.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-                        if (actPa.dnx.isEmpty() && diagnoses.size() < NUMBER_OF_HITTING_SETS)
+                        if (actPa.dnx.isEmpty() && diagnoses.size() < numberOfHittingSets)
                             querySessionEnd = true;
                     } catch (InconsistentTheoryException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -346,7 +448,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 } else {
                     try {
                         search.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-                        if (actPa.dx.isEmpty() && diagnoses.size() < NUMBER_OF_HITTING_SETS)
+                        if (actPa.dx.isEmpty() && diagnoses.size() < numberOfHittingSets)
                             querySessionEnd = true;
                     } catch (InconsistentTheoryException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -395,12 +497,12 @@ public class SimulatedSession extends CalculateDiagnoses {
 //                + ", reaction " + reactionTime + ", user " + userBreak +
 //                ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
 //                ", consistency checks " + consistencyCount;
-        message += "," + time + "," + num_of_queries + ","
+        String msg = getMessage() + "," + time + "," + num_of_queries + ","
                 + targetDiagnosisIsMostProbable + "," + targetDiagnosisIsInWind + "," + diagWinSize
                 + "," + reactionTime + "," + userBreak + "," + possibleError +
                 "," + systemBreak + "," + hasQueryWithNoDecisionPossible +
                 "," + consistencyCount + "," + consistencyTime;
-        logger.info(message);
+        logger.info (msg);
         if (possibleError) {
             logger.info("Possible an error occured: ");
             logger.info("target diagnosis: " + renderAxioms(targetDiag));
@@ -413,13 +515,13 @@ public class SimulatedSession extends CalculateDiagnoses {
             }
         }
 
-        String msg = time + ", " + num_of_queries + ", " + targetDiagnosisIsMostProbable + ", " + targetDiagnosisIsInWind + ", " + diagWinSize
+        String msg1 = time + ", " + num_of_queries + ", " + targetDiagnosisIsMostProbable + ", " + targetDiagnosisIsInWind + ", " + diagWinSize
                 + ", " + reactionTime + ", " + userBreak + "," + possibleError +
                 ", " + systemBreak + ", " + hasQueryWithNoDecisionPossible +
                 ", " + consistencyCount;
-        entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
+        this.entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
-        return msg;
+        return msg1;
     }
 
     private void logTraceDiagnoses(Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, AxiomSet<OWLLogicalAxiom> d, boolean targetDiagFirst) {
@@ -468,7 +570,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         try {
             long diag = System.currentTimeMillis();
             //search.reset();
-            search.run(NUMBER_OF_HITTING_SETS);
+            search.run(numberOfHittingSets);
 
             //daStr += search.getDiagnoses().size() + "/";
             //diagnosesCalc += search.getDiagnoses().size();

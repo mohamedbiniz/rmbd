@@ -35,19 +35,10 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
 
     private static Logger logger = LoggerFactory.getLogger(OAEI11AnatomyTests.class.getName());
 
-    /*@BeforeClass
-    public static void setUp() {
-        String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
-        PropertyConfigurator.configure(conf);
-    }*/
-
     @Test
-    public void doTestAroma()
-
-            throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
+    public void doTestAroma() {
 
         SimulatedSession session = new SimulatedSession();
-
 
         session.setShowElRates(false);
 
@@ -84,25 +75,33 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
 
-                            OWLOntologyManager man = OWLManager.createOWLOntologyManager();
-                            InputStream st = ClassLoader.getSystemResourceAsStream("oaei11/mouse.owl");
-                            OWLOntology mouse = man.loadOntologyFromOntologyDocument(st);
-                            st = ClassLoader.getSystemResourceAsStream("oaei11/human.owl");
-                            OWLOntology human = man.loadOntologyFromOntologyDocument(st);
+                            OWLOntology mouse = getOntologySimple("oaei11/mouse.owl");
+                            OWLOntology human = getOntologySimple("oaei11/human.owl");
 
                             r.addAll(mouse.getLogicalAxioms());
                             r.addAll(human.getLogicalAxioms());
 
                             bx.addAll(r);
                             bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
-                            theory.addBackgroundFormulas(bx);
+                            try {
+                                theory.addBackgroundFormulas(bx);
+                            } catch (InconsistentTheoryException e) {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            } catch (SolverException e) {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
 
 
                             String path = ClassLoader.getSystemResource("oaei11/" + file + ".txt").getPath();
 
-                            OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
+                            OWLAxiomCostsEstimator es = null;
+                            try {
+                                es = new OWLAxiomCostsEstimator(theory, path);
+                            } catch (IOException e) {
+                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            }
 
 
                             targetDg = null;
@@ -121,7 +120,10 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                            session.setEntry(e);
+                            session.setMessage(message);
+                            session.setScoringFunct(type);
+                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
 
                         }
                         logger.info(out);
@@ -207,7 +209,10 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
 
-                            out += session.simulateQuerySession(search, theory, targetDg, e, type, message, null, null, null);
+                            session.setEntry(e);
+                            session.setMessage(message);
+                            session.setScoringFunct(type);
+                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
 
                         }
                         logger.info(out);
