@@ -272,7 +272,10 @@ public class DualTreeTest {//extends BasePerformanceTests {
         session.setEntry(entry2);
         session.setMessage("");
         session.setScoringFunct(type);
-        session.simulateQuerySession(searchDual, theoryDual, diagnosis, type, "");
+        session.setTargetD(diagnosis);
+        session.setTheory(theoryDual);
+        session.setSearch(searchDual);
+        session.simulateQuerySession();
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -312,7 +315,10 @@ public class DualTreeTest {//extends BasePerformanceTests {
         session.setEntry(entry);
         session.setMessage("");
         session.setScoringFunct(type);
-        session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, type, "");
+        session.setTargetD(diagnoses);
+        session.setTheory(theoryNormal);
+        session.setSearch(searchNormal);
+        session.simulateQuerySession();
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);

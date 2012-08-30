@@ -140,7 +140,10 @@ public class OAEI08Tests extends OAEI08Session {
                             a.setEntry(e);
                             a.setMessage(message);
                             a.setScoringFunct(type);
-                            out +=  a.simulateQuerySession(search, theory, targetDg, type, message);
+                            a.setTargetD(targetDg);
+                            a.setTheory(theory);
+                            a.setSearch(search);
+                            out +=  a.simulateQuerySession();
 
                             //out += simulateQuerySession(search, theory, diags, e, type, message, allD, null, null);
                         }
@@ -254,8 +257,11 @@ public class OAEI08Tests extends OAEI08Session {
 
                             session.setEntry(e);
                             session.setMessage(message);
+                            session.setTargetD(targetDg);
                             session.setScoringFunct(type);
-                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
+                            session.setTheory(theory);
+                            session.setSearch(search);
+                            out += session.simulateQuerySession();
 
                         }
                         logger.info(out);
@@ -344,8 +350,11 @@ public class OAEI08Tests extends OAEI08Session {
                                     + ", background " + background;
                             s.setEntry(e);
                             s.setScoringFunct(type);
+                            s.setTargetD(targetDg);
                             s.setMessage(message);
-                            s.simulateQuerySession(search, theory, targetDg, type, message);
+                            s.setTheory(theory);
+                            s.setSearch(search);
+                            s.simulateQuerySession();
                         }
                     }
                 }
@@ -429,8 +438,11 @@ public class OAEI08Tests extends OAEI08Session {
         String message = "act " + m + " - " + o + " - " + targetSource + " " + type;
         s.setEntry(e);
         s.setMessage(message);
+        s.setTargetD(targetDg);
         s.setScoringFunct(type);
-        s.simulateQuerySession(search, theory, targetDg, type, message);
+        s.setTheory(theory);
+        s.setSearch(search);
+        s.simulateQuerySession();
     }
 
     @Test
@@ -527,7 +539,10 @@ public class OAEI08Tests extends OAEI08Session {
                             s.setTheory3(t3);
                             s.setMessage(message);
                             s.setScoringFunct(type);
-                            out += s.simulateQuerySession(search, theory, targetDg, type, message);
+                            s.setTargetD(targetDg);
+                            s.setTheory(theory);
+                            s.setSearch(search);
+                            out += s.simulateQuerySession();
                         }
                         logger.info(out);
                     }
@@ -801,7 +816,10 @@ public class OAEI08Tests extends OAEI08Session {
                                 session.setEntry(e);
                                 session.setMessage(message);
                                 session.setScoringFunct(type);
-                                out += session.simulateQuerySession(search, theory, targetDg, type, message);
+                                session.setTargetD(targetDg);
+                                session.setTheory(theory);
+                                session.setSearch(search);
+                                out += session.simulateQuerySession();
 
                             }
                             logger.info(out);
