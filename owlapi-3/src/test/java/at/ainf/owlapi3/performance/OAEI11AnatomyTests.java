@@ -123,7 +123,10 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             session.setEntry(e);
                             session.setMessage(message);
                             session.setScoringFunct(type);
-                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
+                            session.setTargetD(targetDg);
+                            session.setTheory(theory);
+                            session.setSearch(search);
+                            out += session.simulateQuerySession();
 
                         }
                         logger.info(out);
@@ -212,7 +215,10 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             session.setEntry(e);
                             session.setMessage(message);
                             session.setScoringFunct(type);
-                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
+                            session.setTargetD(targetDg);
+                            session.setTheory(theory);
+                            session.setSearch(search);
+                            out += session.simulateQuerySession();
 
                         }
                         logger.info(out);

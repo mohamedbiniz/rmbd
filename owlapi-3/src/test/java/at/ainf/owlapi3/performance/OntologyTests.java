@@ -152,8 +152,11 @@ public class OntologyTests extends OntologySession {
 
         session.setEntry(e);
         session.setScoringFunct(type);
+        session.setTargetD(targetDg);
         session.setMessage(message);
-        session.simulateQuerySession(search, theory, targetDg, type, message);
+        session.setTheory(theory);
+        session.setSearch(search);
+        session.simulateQuerySession();
         logger.info("stop session ");
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         Appender<ILoggingEvent> coalescingStatistics = loggerContext.getLogger(ProfVarLogWatch.DEFAULT_LOGGER_NAME).getAppender("CoalescingStatistics");
@@ -222,7 +225,10 @@ public class OntologyTests extends OntologySession {
                             session.setEntry(e);
                             session.setMessage(message);
                             session.setScoringFunct(type);
-                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
+                            session.setTargetD(targetDg);
+                            session.setTheory(theory);
+                            session.setSearch(search);
+                            out += session.simulateQuerySession();
 
                             //logger.info(out);
                         }
@@ -299,8 +305,11 @@ public class OntologyTests extends OntologySession {
 
                             session.setEntry(e);
                             session.setScoringFunct(QSSType.MINSCORE);
+                            session.setTargetD(targetDiag);
                             session.setMessage(message);
-                            out += session.simulateQuerySession(search2, (OWLTheory) search2.getTheory(), targetDiag, QSSType.MINSCORE, message);
+                            session.setTheory((OWLTheory) search2.getTheory());
+                            session.setSearch(search2);
+                            out += session.simulateQuerySession();
 
                         }
                     }
@@ -328,7 +337,10 @@ public class OntologyTests extends OntologySession {
         session.setEntry(entry2);
         session.setMessage("");
         session.setScoringFunct(type);
-        session.simulateQuerySession(searchDual, theoryDual, diagnosis, type, "");
+        session.setTargetD(diagnosis);
+        session.setTheory(theoryDual);
+        session.setSearch(searchDual);
+        session.simulateQuerySession();
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
@@ -359,8 +371,11 @@ public class OntologyTests extends OntologySession {
         int conflictsCalc = 0;
         session.setEntry(entry);
         session.setMessage("");
+        session.setTargetD(diagnoses);
         session.setScoringFunct(type);
-        session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, type, "");
+        session.setTheory(theoryNormal);
+        session.setSearch(searchNormal);
+        session.simulateQuerySession();
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
@@ -551,8 +566,11 @@ public class OntologyTests extends OntologySession {
             TableList entry = new TableList();
             session.setEntry(entry);
             session.setScoringFunct(null);
+            session.setTargetD(diagnoses);
             session.setMessage("");
-            session.simulateQuerySession(searchNormal, theoryNormal, diagnoses, null, "");
+            session.setTheory(theoryNormal);
+            session.setSearch(searchNormal);
+            session.simulateQuerySession();
             theoryNormal.clearTestCases();
             searchNormal.reset();
             assert(entry.getMeanWin() == 1);
@@ -564,7 +582,10 @@ public class OntologyTests extends OntologySession {
             session.setEntry(entry);
             session.setScoringFunct(null);
             session.setMessage("");
-            session.simulateQuerySession(searchDual, theoryDual, diagnoses, null, "");
+            session.setTargetD(diagnoses);
+            session.setTheory(theoryDual);
+            session.setSearch(searchDual);
+            session.simulateQuerySession();
             theoryDual.clearTestCases();
             searchDual.reset();
             assert (entry.getMeanWin() == 1);
@@ -657,7 +678,10 @@ public class OntologyTests extends OntologySession {
                             session.setEntry(e);
                             session.setMessage(message);
                             session.setScoringFunct(type);
-                            out += session.simulateQuerySession(search, theory, targetDg, type, message);
+                            session.setTargetD(targetDg);
+                            session.setTheory(theory);
+                            session.setSearch(search);
+                            out += session.simulateQuerySession();
 
                             //logger.info(out);
                         }

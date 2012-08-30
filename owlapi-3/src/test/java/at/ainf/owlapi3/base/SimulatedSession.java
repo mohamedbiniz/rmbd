@@ -15,6 +15,7 @@ import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.Rounding;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.base.tools.NoDecisionPossibleException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.base.tools.TableList;
 import at.ainf.owlapi3.base.tools.Time;
@@ -146,7 +147,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         }
     }
 
-    private int getEliminationRate(ITheory<OWLLogicalAxiom> theory, Set<AxiomSet<OWLLogicalAxiom>> d,
+    protected int getEliminationRate(ITheory<OWLLogicalAxiom> theory, Set<AxiomSet<OWLLogicalAxiom>> d,
                                    boolean a, Partition<OWLLogicalAxiom> partition)
             throws SolverException {
         int deleted = 0;
@@ -179,10 +180,6 @@ public class SimulatedSession extends CalculateDiagnoses {
             }
         }
         return null;
-    }
-
-    class NoDecisionPossibleException extends Exception {
-
     }
 
     protected boolean generateQueryAnswer
@@ -276,11 +273,37 @@ public class SimulatedSession extends CalculateDiagnoses {
         this.scoringFunct = scoringFunct;
     }
 
-    public String simulateQuerySession(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
-                                       OWLTheory theory,
-                                       Set<OWLLogicalAxiom> targetDiag,
-                                       QSSType scoringFunc,
-                                       String message) {
+    private Set<OWLLogicalAxiom> targetD;
+
+    public Set<OWLLogicalAxiom> getTargetD() {
+        return targetD;
+    }
+
+    public void setTargetD(Set<OWLLogicalAxiom> targetD) {
+        this.targetD = targetD;
+    }
+
+    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+
+    private OWLTheory theory;
+
+    public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
+        return search;
+    }
+
+    public void setSearch(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
+        this.search = search;
+    }
+
+    public OWLTheory getTheory() {
+        return theory;
+    }
+
+    public void setTheory(OWLTheory theory) {
+        this.theory = theory;
+    }
+
+    public String simulateQuerySession() {
 
         QSS<OWLLogicalAxiom> qss = createQSSWithDefaultParam(getScoringFunct());
         //userBreak=false;
@@ -301,7 +324,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         Time diagTime = new Time();
         int queryCardinality = 0;
         long reactionTime = 0;
-        Partitioning<OWLLogicalAxiom> queryGenerator = new CKK<OWLLogicalAxiom>(theory, qss);
+        Partitioning<OWLLogicalAxiom> queryGenerator = new CKK<OWLLogicalAxiom>(getTheory(), qss);
 
         while (!querySessionEnd) {
             try {
@@ -316,14 +339,14 @@ public class SimulatedSession extends CalculateDiagnoses {
 
                 if (actPa != null && actPa.dx.size() == 1 && actPa.dz.size() == 1 && actPa.dnx.isEmpty()) {
                     logger.error("Help!");
-                    printc(theory.getEntailedTests());
-                    printc(theory.getNonentailedTests());
+                    printc(getTheory().getEntailedTests());
+                    printc(getTheory().getNonentailedTests());
                     print(actPa.partition);
                     prinths(actPa.dx);
                     prinths(actPa.dz);
                 }
 
-                diagnoses = calcDiagnoses(search, diagnoses, diagTime);
+                diagnoses = calcDiagnoses(getSearch(), diagnoses, diagTime);
 
                 if (diagnoses.isEmpty())
                     logger.error("No diagnoses found!");
@@ -334,17 +357,17 @@ public class SimulatedSession extends CalculateDiagnoses {
                     break;
                 }
 
-                logDiagnoses(search, diagnoses, num_of_queries);
+                logDiagnoses(getSearch(), diagnoses, num_of_queries);
 
                 // cast should be corrected
                 Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
                 AxiomSet<OWLLogicalAxiom> d = descendSet.next();
                 AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
 
-                boolean isTargetDiagFirst = d.equals(targetDiag);
+                boolean isTargetDiagFirst = d.equals(getTargetD());
                 BigDecimal dp = d.getMeasure();
 
-                logTraceDiagnoses(targetDiag, diagnoses, d, isTargetDiagFirst);
+                logTraceDiagnoses(getTargetD(), diagnoses, d, isTargetDiagFirst);
 
                 if (d1 != null) {// && scoringFunc != QSSType.SPLITINHALF) {
                     BigDecimal d1p = d1.getMeasure();
@@ -376,7 +399,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 actPa = queryGenerator.generatePartition(diagnoses);
 
                 if (minimizeQuery) {
-                    minimizeQuery(theory, actPa);
+                    minimizeQuery(getTheory(), actPa);
                 }
 
                 if (actPa == null || actPa.partition == null || (last != null && actPa.partition.equals(last.partition))) {
@@ -396,7 +419,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 boolean hasAn = false;
                 while (!hasAn) {
                     try {
-                        answer = generateQueryAnswer(search, actPa, targetDiag);
+                        answer = generateQueryAnswer(getSearch(), actPa, getTargetD());
                         hasAn = true;
                     } catch (NoDecisionPossibleException e) {
                         hasQueryWithNoDecisionPossible = true;
@@ -430,16 +453,16 @@ public class SimulatedSession extends CalculateDiagnoses {
                     else
                         search2.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
 
-                    logEliminationRateHelp(search, targetDiag, allDiags, search2, theory3, actPa, diagnoses, answer);
+                    logEliminationRateHelp(getSearch(), getTargetD(), allDiags, search2, theory3, actPa, diagnoses, answer);
                 }
 
-                int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
+                int eliminatedInLeading = getEliminationRate(getSearch().getTheory(), diagnoses, answer, actPa);
                 if (showElRates)
                     logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size());
 
                 if (answer) {
                     try {
-                        search.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                        getSearch().getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                         if (actPa.dnx.isEmpty() && diagnoses.size() < numberOfHittingSets)
                             querySessionEnd = true;
                     } catch (InconsistentTheoryException e) {
@@ -447,7 +470,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                     }
                 } else {
                     try {
-                        search.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                        getSearch().getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                         if (actPa.dx.isEmpty() && diagnoses.size() < numberOfHittingSets)
                             querySessionEnd = true;
                     } catch (InconsistentTheoryException e) {
@@ -470,8 +493,8 @@ public class SimulatedSession extends CalculateDiagnoses {
         boolean targetDiagnosisIsMostProbable = false;
         if (diagnoses != null) {
             //TreeSet<ProbabilisticHittingSet> diags = new TreeSet<ProbabilisticHittingSet>(diagnoses);
-            targetDiagnosisIsInWind = isInWindow(targetDiag, diagnoses);
-            if (diagnoses.size() >= 1 && targetDiag.
+            targetDiagnosisIsInWind = isInWindow(getTargetD(), diagnoses);
+            if (diagnoses.size() >= 1 && getTargetD().
                     containsAll((new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).last())) {
                 targetDiagnosisIsMostProbable = true;
                 targetDiagnosisIsInWind = true;
@@ -486,11 +509,11 @@ public class SimulatedSession extends CalculateDiagnoses {
             diagWinSize = diagnoses.size();
 
         int consistencyCount = 0;
-        if (num_of_queries != 0) consistencyCount = theory.getConsistencyCount() / num_of_queries;
+        if (num_of_queries != 0) consistencyCount = getTheory().getConsistencyCount() / num_of_queries;
         if (num_of_queries != 0) reactionTime = reactionTime / num_of_queries;
 
         long consistencyTime = 0;
-        if (consistencyCount != 0) consistencyTime = theory.getConsistencyTime() / consistencyCount;
+        if (consistencyCount != 0) consistencyTime = getTheory().getConsistencyTime() / consistencyCount;
 
 //        message += " , Iteration finished within " + time + " ms, required " + num_of_queries + " queries, most probable "
 //                + targetDiagnosisIsMostProbable + ", is in window " + targetDiagnosisIsInWind + ", size of window  " + diagWinSize
@@ -505,7 +528,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         logger.info (msg);
         if (possibleError) {
             logger.info("Possible an error occured: ");
-            logger.info("target diagnosis: " + renderAxioms(targetDiag));
+            logger.info("target diagnosis: " + renderAxioms(getTargetD()));
             if (diagnoses == null) {
                 logger.info("diagnoses is null!");
             } else {
@@ -524,7 +547,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         return msg1;
     }
 
-    private void logTraceDiagnoses(Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, AxiomSet<OWLLogicalAxiom> d, boolean targetDiagFirst) {
+    protected void logTraceDiagnoses(Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, AxiomSet<OWLLogicalAxiom> d, boolean targetDiagFirst) {
         if (logger.isInfoEnabled()) {
             AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
             BigDecimal diagProbabilities = new BigDecimal("0");
@@ -537,7 +560,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         }
     }
 
-    private void logDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, int num_of_queries) {
+    protected void logDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, int num_of_queries) {
         if (traceDiagnosesAndQueries) {
             String diag1 = "";
             for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
@@ -552,7 +575,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         logger.info("num of hitting sets " + search.getDiagnoses().size());
     }
 
-    private void minimizeQuery(OWLTheory theory, Partition<OWLLogicalAxiom> actPa) {
+    protected void minimizeQuery(OWLTheory theory, Partition<OWLLogicalAxiom> actPa) {
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(actPa, theory);
         NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
         try {
@@ -566,7 +589,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         }
     }
 
-    private Set<AxiomSet<OWLLogicalAxiom>> calcDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, Time diagTime) throws InconsistentTheoryException {
+    protected Set<AxiomSet<OWLLogicalAxiom>> calcDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, Time diagTime) throws InconsistentTheoryException {
         try {
             long diag = System.currentTimeMillis();
             //search.reset();
@@ -588,7 +611,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         return diagnoses;
     }
 
-    private void logEliminationRateHelp(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3, Partition<OWLLogicalAxiom> actPa, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, boolean answer) throws SolverException, InconsistentTheoryException {
+    protected void logEliminationRateHelp(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3, Partition<OWLLogicalAxiom> actPa, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, boolean answer) throws SolverException, InconsistentTheoryException {
         Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags;
         remainingAllDiags = secondsearch.getDiagnoses();
         int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
