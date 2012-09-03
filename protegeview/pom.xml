@@ -39,24 +39,17 @@
                         <!--<Bundle-Activator>at.ainf.pluginprotege.BundleActivator</Bundle-Activator>-->
                         <!--<Update-Url>http://wwwu.edu.uni-klu.ac.at/pfleiss/update.properties</Update-Url>-->
                         <Import-Package>!at.ainf.diagnosis.*,
-                            <!--!at.ainf.theory.*,-->
                             !at.ainf.owlapi3.*,
-                            <!--!at.ainf.controller.*, -->
-                            <!--!at.ainf.owlcontroller.*,-->
-                            !org.picocontainer.*,
-                            !ch.qos.logback.*,
+                            <!--!org.picocontainer.*,-->
                             !org.slf4j.*,
                             *</Import-Package>
                         <!--<Embed-Directory>lib</Embed-Directory>-->
                         <Bundle-ClassPath>.;at.ainf.diagnosis.jar;
-                            <!--at.ainf.theory.jar;-->
                             at.ainf.owlapi3.jar;
-                            <!--at.ainf.owlcontroller.jar;-->
-                            <!--at.ainf.controller.jar; -->
                             org.slf4j.slf4j.jar;
-                            ch.qos.logback.logback-classic.jar;
-                            ch.qos.logback.logback-core.jar;
-                            org.picocontainer.picocontainer.jar</Bundle-ClassPath>
+                            org.slf4j.slf4j-simple.jar;
+                            <!--org.picocontainer.picocontainer.jar-->
+                        </Bundle-ClassPath>
                         <!--<Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
                             org.protege.editor.core.application;bundle-version="4.1",org.protege.editor.owl;bundle-version="4.1",
                             org.semanticweb.owl.owlapi;bundle-version="3.0"
@@ -82,15 +75,6 @@
             </goals>
             <configuration>
               <artifactItems>
-                  <!--<artifactItem>
-                  <groupId>at.ainf</groupId>
-                  <artifactId>theory</artifactId>
-                  <version>1.0</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <destFileName>at.ainf.theory.jar</destFileName>
-                </artifactItem>-->
                 <artifactItem>
                   <groupId>at.ainf</groupId>
                   <artifactId>diagnosis</artifactId>
@@ -100,15 +84,6 @@
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>at.ainf.diagnosis.jar</destFileName>
                 </artifactItem>
-                  <!--<artifactItem>
-                  <groupId>at.ainf</groupId>
-                  <artifactId>controller</artifactId>
-                  <version>1.0</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <destFileName>at.ainf.controller.jar</destFileName>
-                </artifactItem> -->
                   <artifactItem>
                   <groupId>at.ainf</groupId>
                   <artifactId>owlapi-3</artifactId>
@@ -117,15 +92,7 @@
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>at.ainf.owlapi3.jar</destFileName>
-                </artifactItem><!--<artifactItem>
-                  <groupId>at.ainf</groupId>
-                  <artifactId>owlcontroller</artifactId>
-                  <version>1.0</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <destFileName>at.ainf.owlcontroller.jar</destFileName>
-                </artifactItem>--> <artifactItem>
+                </artifactItem> <!--<artifactItem>
                   <groupId>org.picocontainer</groupId>
                   <artifactId>picocontainer</artifactId>
                   <version>2.14.1</version>
@@ -133,7 +100,7 @@
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>org.picocontainer.picocontainer.jar</destFileName>
-                </artifactItem> <artifactItem>
+                </artifactItem>--> <artifactItem>
                   <groupId>org.slf4j</groupId>
                   <artifactId>slf4j-api</artifactId>
                   <version>1.6.6</version>
@@ -141,22 +108,14 @@
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
                   <destFileName>org.slf4j.slf4j.jar</destFileName>
-              </artifactItem>  <artifactItem>
-                  <groupId>ch.qos.logback</groupId>
-                  <artifactId>logback-classic</artifactId>
-                  <version>1.0.6</version>
+              </artifactItem> <artifactItem>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-simple</artifactId>
+                  <version>1.6.6</version>
                   <type>jar</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <destFileName>ch.qos.logback.logback-classic.jar</destFileName>
-              </artifactItem>  <artifactItem>
-                  <groupId>ch.qos.logback</groupId>
-                  <artifactId>logback-core</artifactId>
-                  <version>1.0.6</version>
-                  <type>jar</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <destFileName>ch.qos.logback.logback-core.jar</destFileName>
+                  <destFileName>org.slf4j.slf4j-simple.jar</destFileName>
               </artifactItem>
               </artifactItems>
               <outputDirectory>${project.build.directory}/wars</outputDirectory>
@@ -185,31 +144,7 @@
                                         <include>at.ainf.querydebugger.jar</include>
                                     </includes>
                                 </resource>
-                                <!--
-                                <resource>
-                                    <directory>${project.basedir}/../owlapi-3/target/</directory>
-                                    <includes>
-                                        <include>at.ainf.owlapi3.jar</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>${project.basedir}/../diagnosis/target/</directory>
-                                    <includes>
-                                        <include>at.ainf.diagnosis.jar</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>${project.basedir}/../querygen/target/</directory>
-                                    <includes>
-                                        <include>at.ainf.querygen.jar</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>${project.basedir}/../theory/target/</directory>
-                                    <includes>
-                                        <include>at.ainf.theory.jar</include>
-                                    </includes>
-                                </resource>-->
+
                             </resources>
                         </configuration>
                     </execution>
@@ -238,11 +173,11 @@
 
     <dependencies>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.picocontainer</groupId>
             <artifactId>picocontainer</artifactId>
             <version>2.14.1</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>at.ainf</groupId>
@@ -285,12 +220,15 @@
             <version>1.6.5</version>
         </dependency>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.0.6</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.6</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
     </dependencies>
 
 

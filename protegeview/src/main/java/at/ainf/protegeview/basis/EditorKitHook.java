@@ -1,19 +1,17 @@
 package at.ainf.protegeview.basis;
 
 import at.ainf.protegeview.DebuggerPluginManager;
+import org.apache.log4j.Logger;
+import org.protege.editor.core.ProtegeManager;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.OWLEditorKitHook;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,7 +22,7 @@ import java.util.Map;
  */
 public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerListener {
 
-    private Logger logger = LoggerFactory.getLogger(EditorKitHook.class.getName());
+    private Logger logger = Logger.getLogger(EditorKitHook.class.getName());
 
     private int id = 0;
 
@@ -42,11 +40,11 @@ public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerLi
             getEditorKit().getModelManager().addListener(this);
             id = cnt;
             cnt++;
-            logger.info("initialised editorKitHook " + id);
+            logger.debug("initialised editorKitHook " + id);
             initialized = true;
         }
         else
-            logger.info("editorKitHook is already initialized " + id);
+            logger.debug("editorKitHook is already initialized " + id);
 
     }
 
@@ -55,7 +53,7 @@ public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerLi
     public void dispose() throws Exception {
         getEditorKit().getModelManager().removeListener(this);
         map.remove(getEditorKit());
-        logger.info("disposed editorKitHook " + id);
+        logger.debug("disposed editorKitHook " + id);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerLi
             if (!map.get(getEditorKit()).containsKey(activeOntology)) {
                 map.get(getEditorKit()).put(activeOntology,new OntologyDiagnosisSearcher(event.getSource()));
             }
-            logger.info("ontology changed");
+            logger.debug("ontology changed");
         }
     }
 
