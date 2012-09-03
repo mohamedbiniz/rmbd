@@ -1,9 +1,12 @@
 package at.ainf.protegeview;
 
+import org.apache.log4j.Logger;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.logging.LogManager;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,10 +17,22 @@ import org.slf4j.LoggerFactory;
  */
 public class Activator implements BundleActivator {
 
-    private static Logger logger = LoggerFactory.getLogger(Activator.class.getName());
+    static {
+        System.setProperty("org.slf4j.simplelogger.defaultlog","warn");
+    }
+
+    private static Logger logger = Logger.getLogger(Activator.class.getName());
+
+    public void configureLogging (BundleContext bundleContext) throws Exception {
+        Bundle bundle = bundleContext.getBundle();
+        InputStream inputStream = bundle.getEntry("/logging.properties").openStream();
+
+        LogManager.getLogManager().readConfiguration(inputStream);
+    }
 
     public void start(BundleContext bundleContext) throws Exception {
-        logger.info("bundle started");
+        logger.debug("bundle started");
+
     }
 
     public void stop(BundleContext bundleContext) throws Exception {
