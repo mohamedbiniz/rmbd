@@ -20,6 +20,8 @@ import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -40,6 +42,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
     private static Logger logger = LoggerFactory.getLogger(AbstractTreeSearch.class.getName());
 
     private static Logger loggerDual = LoggerFactory.getLogger("dualtreelogger");
+
+    private Set<ChangeListener> searchListeners = new LinkedHashSet<ChangeListener>();
 
     private Node<Id> root = null;
 
@@ -319,6 +323,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
                 hs.setValid(valid);
                 addHittingSet(hs);
+                notifySearchListeners();
                 start("Diagnosis", "diagnosis");
                 if (logger.isInfoEnabled()) {
                     logger.info("Found conflicts: " + getConflicts().size() + " and diagnoses " + getDiagnoses().size());
@@ -421,6 +426,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             pruneConflictSets(node, conflictSet);
 
         addNodeLabel(conflictSet);
+        notifySearchListeners();
 
         // current node should ge a conflict only if a path from
         // this node to root does not include closed nodes
@@ -651,6 +657,19 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
 
         return hittingSets.add(hittingSet);
+    }
+
+    public void addSearchListener(ChangeListener listener) {
+        searchListeners.add(listener);
+    }
+
+    public void removeSearchListener(ChangeListener listener) {
+        searchListeners.remove(listener);
+    }
+
+    private void notifySearchListeners() {
+        for (ChangeListener searchListener : searchListeners)
+            searchListener.stateChanged(new ChangeEvent(this));
     }
 
     public boolean removeHittingSet(final T diagnosis) {

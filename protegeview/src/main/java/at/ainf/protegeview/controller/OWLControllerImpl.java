@@ -9,11 +9,11 @@ import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.protegeview.model.configuration.ConfigFileManager;
+import at.ainf.protegeview.model.configuration.SearchConfiguration;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-
-import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,7 +30,7 @@ public class OWLControllerImpl  {
         SearchConfiguration config = ConfigFileManager.readConfiguration();
 
         if (config == null) {
-            ConfigFileManager.writeConfiguration(ConfigFileManager.getDefaultConfig());
+            //ConfigFileManager.writeConfiguration(ConfigFileManager.getDefaultConfig());
             config = ConfigFileManager.readConfiguration();
         }
 

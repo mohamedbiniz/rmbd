@@ -213,7 +213,7 @@ public class Test {
 
     @Before("execution(void at.ainf.protegeview.WorkspaceTab.doResetAct(..))")
     public void logReset() {
-        logMsg("User; Toolbox; toolbox reset clicked");
+        logMsg("User; Toolbox; toolboxview reset clicked");
     }
 
     @Before("execution(void at.ainf.protegeview.WorkspaceTab.doConfigOptions(..))")

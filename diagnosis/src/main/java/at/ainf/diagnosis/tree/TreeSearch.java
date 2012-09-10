@@ -15,6 +15,8 @@ import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.storage.AxiomRenderer;
 import at.ainf.diagnosis.storage.AxiomSet;
 
+import javax.swing.event.ChangeListener;
+
 /**
  * Created by IntelliJ IDEA.
  * User: student99
@@ -47,9 +49,12 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> extends DiagSearch<T,Id>
 
     public void setAxiomRenderer(AxiomRenderer<Id> renderer);
 
+    public void addSearchListener(ChangeListener listener);
+
+    public void removeSearchListener(ChangeListener listener);
+
     public void addOpenNodesListener (OpenNodesListener l);
 
     public void removeOpenNodesListener (OpenNodesListener l);
-
 
 }

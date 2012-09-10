@@ -1,7 +1,7 @@
-package at.ainf.protegeview.controller;
+package at.ainf.protegeview.model.configuration;
 
-import at.ainf.protegeview.model.configuration.SearchConfiguration;
-
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.Properties;
 
@@ -23,8 +23,10 @@ public class ConfigFileManager {
         Properties properties = new Properties();
         SearchConfiguration c = new SearchConfiguration();
 
-        if (!confFile.exists())
-            return null;
+        if (!confFile.exists()) {
+            writeConfiguration(getDefaultConfig());
+            return getDefaultConfig();
+        }
 
         try {
             properties.load(new FileInputStream(confFile));
@@ -61,9 +63,9 @@ public class ConfigFileManager {
     }
 
     private static SearchConfiguration.SearchType parseSearchType(String searchType) {
-       for (SearchConfiguration.SearchType type : SearchConfiguration.SearchType.values())
-           if (type.toString().equals(searchType))
-               return type;
+        for (SearchConfiguration.SearchType type : SearchConfiguration.SearchType.values())
+            if (type.toString().equals(searchType))
+                return type;
         return null;
     }
 

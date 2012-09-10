@@ -1,4 +1,6 @@
-package at.ainf.protegeview.menuactions;
+package at.ainf.protegeview.gui.menu;
+
+import at.ainf.protegeview.menuactions.AbstractAction;
 
 import java.awt.event.ActionEvent;
 
@@ -9,11 +11,10 @@ import java.awt.event.ActionEvent;
  * Time: 10:14
  * To change this template use File | Settings | File Templates.
  */
-public class OptionsDialogAction extends AbstractAction {
+public class OpenOptionsDialog extends AbstractAction {
 
     public void actionPerformed(ActionEvent e) {
 
-        getWS().doConfigOptions();
-
     }
+
 }
