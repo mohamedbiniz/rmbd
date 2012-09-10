@@ -5,8 +5,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import java.io.InputStream;
-import java.util.logging.LogManager;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,13 +20,6 @@ public class Activator implements BundleActivator {
     }
 
     private static Logger logger = Logger.getLogger(Activator.class.getName());
-
-    public void configureLogging (BundleContext bundleContext) throws Exception {
-        Bundle bundle = bundleContext.getBundle();
-        InputStream inputStream = bundle.getEntry("/logging.properties").openStream();
-
-        LogManager.getLogManager().readConfiguration(inputStream);
-    }
 
     public void start(BundleContext bundleContext) throws Exception {
         logger.debug("bundle started");

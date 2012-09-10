@@ -293,7 +293,7 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
                     ((VerifiedInputEditor) editor)
                             .removeStatusChangedListener(verificationListener);
                 }
-                // axiomeditor.reset();
+                // axiomeditor.fullReset();
                 if (isRowEditor) {
                     editor.dispose();
                 }
