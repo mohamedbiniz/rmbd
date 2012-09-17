@@ -18,9 +18,9 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     private static final String MESSAGE = "The test case cannot be added!";
     private Solver solver;
 
-    private final Set<T> activeFormulas = new LinkedHashSet<T>();
+    protected final Set<T> activeFormulas = new LinkedHashSet<T>();
 
-    private Set<T> backgroundFormulas = new LinkedHashSet<T>();
+    protected Set<T> backgroundFormulas = new LinkedHashSet<T>();
 
     private Collection<Set<T>> positiveTests = new LinkedHashSet<Set<T>>();
     private Collection<Set<T>> negativeTests = new LinkedHashSet<Set<T>>();

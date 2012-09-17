@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
     <VSNode splits="1.0">
-        <HSNode splits="0.09112149532710279 0.9088785046728972">
+        <HSNode splits="0.08368874278722804 0.916311257212772">
             <CNode>
                 <Component label="Toolbox">
                     <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.toolboxview.ToolboxView"/>
                 </Component>
             </CNode>
-            <VSNode splits="0.12469152900886384 0.1285955501863765 0.12171292080475966">
-                <CNode>
-                    <Component label="Testcases and Entailments">
-                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.tcaeview.TestcaseView"/>
-                    </Component>
-                </CNode>
-                <CNode>
-                    <Component label="Diagnoses">
-                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.axiomsetviews.DiagnosesView"/>
-                    </Component>
-                </CNode>
+            <VSNode splits="0.08530775799332065 0.0889301364718431 0.07607057652597242">
+                <HSNode splits="0.016074443773297063">
+                    <CNode>
+                        <Component label="Diagnoses">
+                            <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.axiomsetviews.DiagnosesView"/>
+                        </Component>
+                    </CNode>
+                </HSNode>
                 <CNode>
                     <Component label="Conflicts">
                         <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.axiomsetviews.ConflictsView"/>
+                    </Component>
+                </CNode>
+                <CNode>
+                    <Component label="Testcases and Entailments">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.tcaeview.TestcaseView"/>
                     </Component>
                 </CNode>
             </VSNode>

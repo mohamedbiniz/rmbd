@@ -13,12 +13,16 @@ import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
+import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -89,13 +93,22 @@ public class SearchCreator {
     }
 
     private OWLTheory createTheory(boolean dual) {
-        //OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(reasonerFactory);
-        //OWLOntology ont = extractor.getIncoherentPartAsOntology(ontology);
-        OWLOntology ont = ontology;
+
+        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(reasonerFactory);
+        OWLOntology ont = extractor.getIncoherentPartAsOntology(ontology);
+        //OWLOntology ont = ontology;
+
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
-        for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
-            bax.addAll(ontology.getClassAssertionAxioms(ind));
-            bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
+        if (config.aBoxInBG) {
+            for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
+                bax.addAll(ontology.getClassAssertionAxioms(ind));
+                bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
+            }
+        }
+        if (config.tBoxInBG) {
+            for (OWLAxiom axiom : ontology.getTBoxAxioms(false)) {
+                bax.add((OWLLogicalAxiom) axiom);
+            }
         }
 
         OWLTheory theory = null;
@@ -104,6 +117,17 @@ public class SearchCreator {
                 theory = new DualTreeOWLTheory(reasonerFactory, ont, bax);
             else
                 theory = new OWLTheory(reasonerFactory, ont, bax);
+
+            if(config.reduceIncoherency)
+                theory.activateReduceToUns();
+            theory.setIncludeSubClassOfAxioms(config.inclEntSubClass);
+            theory.setIncludeClassAssertionAxioms(config.inclEntSubClass);
+            theory.setIncludeEquivalentClassAxioms(config.inclEntSubClass);
+            theory.setIncludeDisjointClassAxioms(config.inclEntSubClass);
+            theory.setIncludePropertyAssertAxioms(config.inclEntSubClass);
+            theory.setIncludeReferencingThingAxioms(config.inclEntSubClass);
+            theory.setIncludeOntologyAxioms(config.inclEntSubClass);
+
         }
         catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -136,13 +160,18 @@ public class SearchCreator {
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         }
-
         search.setTheory(theory);
+
     }
 
     private void readConfiguration() {
         config = ConfigFileManager.readConfiguration();
 
+    }
+
+    public void updateConfig(SearchConfiguration newConfiguration) {
+        ConfigFileManager.writeConfiguration(newConfiguration);
+        reset();
     }
 
 }
