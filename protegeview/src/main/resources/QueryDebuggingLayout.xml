@@ -8,15 +8,10 @@
                 </Component>
             </CNode>
             <VSNode splits="0.03992544346292266 0.06375446307913342">
-                <HSNode splits="0.02348586715451397 0.02835408611651407">
+                <HSNode splits="0.02348586715451397">
                     <CNode>
                         <Component label="Query View">
                             <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.queryview.QueryView"/>
-                        </Component>
-                    </CNode>
-                    <CNode>
-                        <Component label="Testcases and Entailments">
-                            <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.tcaeview.TestcaseView"/>
                         </Component>
                     </CNode>
                 </HSNode>

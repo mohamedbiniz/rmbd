@@ -41,7 +41,7 @@ public class OWLIncoherencyExtractor {
         Set<OWLAxiom> aBoxAxioms = null;
         boolean consistent = reasoner.isConsistent();
         if (!consistent) {
-            OWLOntologyManager man = ontology.getOWLOntologyManager();
+            OWLOntologyManager man = OWLManager.createOWLOntologyManager(); //ontology.getOWLOntologyManager();
             aBoxAxioms = ontology.getABoxAxioms(false);
             man.removeAxioms(ontology, aBoxAxioms);
         }
@@ -55,7 +55,9 @@ public class OWLIncoherencyExtractor {
 
         Set<OWLOntology> result;
 
-        SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(ontology.getOWLOntologyManager(), ontology, ModuleType.STAR);
+        SyntacticLocalityModuleExtractor sme = new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontology, ModuleType.STAR);
+
+
         String iriString = "http://ainf.at/IncoherencyModule";
         try {
             if (!incoherentEntities.isEmpty()) {

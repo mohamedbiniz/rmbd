@@ -126,7 +126,11 @@ public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalA
 
         }
 
-        private void updateDiagnosisProbabilities(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
+    public Map<ManchesterOWLSyntax, BigDecimal> getKeywordProbabilities() {
+        return keywordProbabilities;
+    }
+
+    private void updateDiagnosisProbabilities(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
 
             if (axiomSets == null)
                 return;

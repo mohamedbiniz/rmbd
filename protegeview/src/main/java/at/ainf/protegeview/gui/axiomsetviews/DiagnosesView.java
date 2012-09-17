@@ -5,6 +5,7 @@ import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 import at.ainf.protegeview.model.configuration.SearchCreator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.util.Set;
@@ -24,12 +25,15 @@ public class DiagnosesView extends AbstractAxiomSetView {
         Set<AxiomSet<OWLLogicalAxiom>> setOfAxiomSets = searchCreator.getSearch().getDiagnoses();
         updateList(setOfAxiomSets);
 
+        JComponent statusBar = getOWLEditorKit().getOWLWorkspace().getStatusArea();
+        statusBar.add(new JLabel("Diagnoses: " + searchCreator.getSearch().getDiagnoses().size()));
+        statusBar.add(Box.createHorizontalStrut(20));
 
     }
 
     @Override
     protected Color getHeaderColor() {
-        return new Color(255, 24, 44, 174);
+        return new Color(85, 255, 97, 174);
     }
 
     @Override

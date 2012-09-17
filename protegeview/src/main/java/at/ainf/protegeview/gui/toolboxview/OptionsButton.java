@@ -1,5 +1,7 @@
 package at.ainf.protegeview.gui.toolboxview;
 
+import org.protege.editor.core.ui.preferences.PreferencesDialogPanel;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -18,7 +20,7 @@ public class OptionsButton extends AbstractGuiButton {
                 new AbstractAction(){
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("test");
+                        PreferencesDialogPanel.showPreferencesDialog("QueryDebugger", toolboxView.getOWLEditorKit());
                     }
                 }
         );

@@ -1,6 +1,7 @@
 package at.ainf.protegeview.model;
 
 import org.apache.log4j.Logger;
+import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.OWLEditorKitHook;
 import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
@@ -47,6 +48,10 @@ public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerLi
         else
             logger.debug("editorKitHook is already initialized " + id);
 
+    }
+
+    public OWLEditorKit getOWLEditorKit() {
+        return getEditorKit();
     }
 
     public OntologyDiagnosisSearcher getActiveOntologyDiagnosisSearcher() {

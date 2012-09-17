@@ -9,12 +9,15 @@ import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.model.configuration.SearchConfiguration;
 import at.ainf.protegeview.model.configuration.SearchCreator;
 import org.apache.log4j.Logger;
+import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.inference.ProtegeOWLReasonerInfo;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -24,7 +27,9 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.math.BigDecimal;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,6 +44,15 @@ import static at.ainf.protegeview.model.OntologyDiagnosisSearcher.ErrorStatus.*;
  * To change this template use File | Settings | File Templates.
  */
 public class OntologyDiagnosisSearcher {
+
+    public void updateConfig(SearchConfiguration newConfiguration) {
+        getSearchCreator().updateConfig(newConfiguration);
+    }
+
+    public void updateProbab(Map<ManchesterOWLSyntax, BigDecimal> map) {
+        CostsEstimator<OWLLogicalAxiom> estimator = getSearchCreator().getSearch().getCostsEstimator();
+        ((OWLAxiomKeywordCostsEstimator)estimator).updateKeywordProb(map);
+    }
 
     public static enum TestCaseType {POSITIVE_TC, NEGATIVE_TC, ENTAILED_TC, NON_ENTAILED_TC}
 
@@ -146,7 +160,10 @@ public class OntologyDiagnosisSearcher {
 
     public void doCalculateDiagnosis(ErrorHandler errorHandler) {
 
-        new SearchThrea(creator.getSearch(),creator.getConfig().numOfLeadingDiags, errorHandler).start();
+        int n = creator.getConfig().numOfLeadingDiags;
+        if (creator.getConfig().calcAllDiags)
+            n = -1;
+        new SearchThrea(creator.getSearch(),n, errorHandler).start();
         logger.debug("model: calculate diagnosis ");
     }
 
