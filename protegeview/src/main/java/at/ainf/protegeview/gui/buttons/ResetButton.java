@@ -1,4 +1,6 @@
-package at.ainf.protegeview.gui.toolboxview;
+package at.ainf.protegeview.gui.buttons;
+
+import at.ainf.protegeview.gui.axiomsetviews.DiagnosesView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +15,7 @@ import java.awt.event.KeyEvent;
  */
 public class ResetButton extends AbstractGuiButton {
 
-    public ResetButton(final ToolboxView toolboxView) {
+    public ResetButton(final DiagnosesView toolboxView) {
         super("Reset","Reset","clear.png",KeyEvent.VK_R,
                 new AbstractAction() {
                     @Override

@@ -1,6 +1,6 @@
 package at.ainf.protegeview.gui.queryview;
 
-import at.ainf.protegeview.gui.toolboxview.AbstractGuiButton;
+import at.ainf.protegeview.gui.buttons.AbstractGuiButton;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

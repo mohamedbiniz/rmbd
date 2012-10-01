@@ -1,7 +1,6 @@
-package at.ainf.protegeview.gui.toolboxview;
+package at.ainf.protegeview.gui.buttons;
 
-import at.ainf.protegeview.model.ErrorHandler;
-import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
+import at.ainf.protegeview.gui.axiomsetviews.DiagnosesView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,7 +15,7 @@ import java.awt.event.KeyEvent;
  */
 public class StartButton extends AbstractGuiButton {
 
-    public StartButton(final ToolboxView toolboxView) {
+    public StartButton(final DiagnosesView toolboxView) {
         super("Start","start to calculate diagnoses","Search.png",KeyEvent.VK_S,
                 new AbstractAction() {
                     @Override

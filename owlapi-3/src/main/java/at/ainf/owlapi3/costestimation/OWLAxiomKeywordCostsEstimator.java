@@ -23,7 +23,7 @@ public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalA
 
     private ITheory<OWLLogicalAxiom> theory;
 
-    private ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
+    public final static ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
                 ManchesterOWLSyntax.ONLY,
                 ManchesterOWLSyntax.MIN,
                 ManchesterOWLSyntax.MAX,
@@ -49,6 +49,15 @@ public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalA
                 ManchesterOWLSyntax.SYMMETRIC
         };
 
+
+    public static int getMaxLengthKeyword() {
+        int max = 0;
+        for (ManchesterOWLSyntax keyword : keywords)
+            if (keyword.toString().length() > max)
+                max = keyword.toString().length();
+
+        return max;
+    }
 
     public OWLAxiomKeywordCostsEstimator(ITheory<OWLLogicalAxiom> t) {
         this.keywordProbabilities = createKeywordProbs();

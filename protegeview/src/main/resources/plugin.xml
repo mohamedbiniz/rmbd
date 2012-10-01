@@ -216,14 +216,6 @@
         <editorKitId value="OWLEditorKit"/>
     </extension>
 
-    <extension id="at.ainf.protegeview.gui.toolboxview.ToolboxView"
-               point="org.protege.editor.core.application.ViewComponent">
-        <label value="Toolbox"/>
-        <class value="at.ainf.protegeview.gui.toolboxview.ToolboxView"/>
-        <headerColor value="810000"/>
-        <category value="Debugger"/>
-    </extension>
-
     <extension id="at.ainf.protegeview.gui.tcaeview.TestcaseView"
                point="org.protege.editor.core.application.ViewComponent">
         <label value="Testcases"/>
@@ -258,6 +250,14 @@
                point="org.protege.editor.core.application.ViewComponent">
         <label value="Query View"/>
         <class value="at.ainf.protegeview.gui.queryview.QueryView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>
+
+    <extension id="at.ainf.protegeview.gui.backgroundview.BackgroundView"
+               point="org.protege.editor.core.application.ViewComponent">
+        <label value="Background View"/>
+        <class value="at.ainf.protegeview.gui.backgroundview.BackgroundView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>

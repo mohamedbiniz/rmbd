@@ -3,9 +3,6 @@
     <VSNode splits="0.306311253589862">
         <HSNode splits="0.010075934579439252 0.11492406542056076">
             <CNode>
-                <Component label="Toolbox">
-                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.toolboxview.ToolboxView"/>
-                </Component>
             </CNode>
             <VSNode splits="0.03992544346292266 0.06375446307913342">
                 <HSNode splits="0.02348586715451397">
