@@ -1,6 +1,8 @@
 package at.ainf.protegeview.gui.axiomsetviews;
 
 import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.protegeview.gui.buttons.ResetButton;
+import at.ainf.protegeview.gui.buttons.StartButton;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 import at.ainf.protegeview.model.configuration.SearchCreator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -19,15 +21,35 @@ import java.util.Set;
  */
 public class DiagnosesView extends AbstractAxiomSetView {
 
+    private StartButton startButton;
+
+    @Override
+    protected void initialiseOWLView() throws Exception {
+        super.initialiseOWLView();
+        add(createDiagnosesToolBar(), BorderLayout.NORTH);
+    }
+
+    protected JToolBar createDiagnosesToolBar() {
+        JToolBar toolBar = new JToolBar();
+
+        toolBar.setFloatable(false);
+        startButton = new StartButton(this);
+        toolBar.add(startButton);
+        toolBar.add(new ResetButton(this));
+        toolBar.add(Box.createHorizontalGlue());
+
+        return toolBar;
+    }
+
     @Override
     public void stateChanged(ChangeEvent e) {
         SearchCreator searchCreator = ((OntologyDiagnosisSearcher) e.getSource()).getSearchCreator();
         Set<AxiomSet<OWLLogicalAxiom>> setOfAxiomSets = searchCreator.getSearch().getDiagnoses();
+        if (((OntologyDiagnosisSearcher)e.getSource()).getSearchStatus().equals(OntologyDiagnosisSearcher.SearchStatus.RUNNING))
+            startButton.setEnabled(false);
+        else
+            startButton.setEnabled(true);
         updateList(setOfAxiomSets);
-
-        JComponent statusBar = getOWLEditorKit().getOWLWorkspace().getStatusArea();
-        statusBar.add(new JLabel("Diagnoses: " + searchCreator.getSearch().getDiagnoses().size()));
-        statusBar.add(Box.createHorizontalStrut(20));
 
     }
 

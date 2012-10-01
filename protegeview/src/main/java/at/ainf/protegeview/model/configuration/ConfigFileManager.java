@@ -66,21 +66,21 @@ public class ConfigFileManager {
         for (SearchConfiguration.SearchType type : SearchConfiguration.SearchType.values())
             if (type.toString().equals(searchType))
                 return type;
-        return null;
+        throw new IllegalStateException("Unknown Search Type");
     }
 
     private static SearchConfiguration.TreeType parseTreeType(String treeType) {
         for (SearchConfiguration.TreeType type : SearchConfiguration.TreeType.values())
             if (type.toString().equals(treeType))
                 return type;
-        return null;
+        throw new IllegalStateException("Unknown Tree Type");
     }
 
     private static SearchConfiguration.QSS parseQSS (String qss) {
         for (SearchConfiguration.QSS type : SearchConfiguration.QSS.values())
             if (type.toString().equals(qss))
                 return type;
-        return null;
+        throw new IllegalStateException("Unknown QSS ");
     }
 
     public static SearchConfiguration getDefaultConfig() {

@@ -9,11 +9,62 @@ package at.ainf.protegeview.model.configuration;
  */
 public class SearchConfiguration {
 
-    public static enum SearchType {UNIFORM_COST, BREATHFIRST};
+    public static enum SearchType {
+        UNIFORM_COST,
+        BREATHFIRST;
 
-    public static enum TreeType {REITER, DUAL};
+        @Override
+        public String toString() {
+            switch (this) {
+                case UNIFORM_COST:
+                    return "Uniform Cost Search";
+                case  BREATHFIRST:
+                    return "Breadth First Search";
+                default:
+                    return this.toString();
+            }
+        }
 
-    public static enum QSS {MINSCORE, SPLIT, DYNAMIC};
+    }
+
+    public static enum TreeType {
+        REITER,
+        DUAL;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case REITER:
+                    return "HS-Tree";
+                case  DUAL:
+                    return "Inv-HS-Tree";
+                default:
+                    return this.toString();
+            }
+        }
+
+    }
+
+    public static enum QSS {
+        MINSCORE,
+        SPLIT,
+        DYNAMIC;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case MINSCORE:
+                    return "Entropy";
+                case  SPLIT:
+                    return "Split in Half";
+                case  DYNAMIC:
+                    return "Dynamic Risk";
+                default:
+                    return this.toString();
+            }
+        }
+
+    }
 
 
     public Boolean aBoxInBG = true;

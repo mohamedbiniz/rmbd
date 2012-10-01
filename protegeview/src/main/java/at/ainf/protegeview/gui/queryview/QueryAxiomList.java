@@ -10,9 +10,17 @@ import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.ui.explanation.ExplanationManager;
+import org.protege.editor.owl.ui.frame.OWLFrameSectionRow;
+import org.protege.editor.owl.ui.framelist.ExplainButton;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +45,8 @@ public class QueryAxiomList extends AbstractAxiomList {
         buttons.addAll(super.getButtons(value));
         buttons.add(new AxiomIsEntailedButton(this,s.isMarkedEntailed(axiom)));
         buttons.add(new AxiomIsNotEntailedButton(this,s.isMarkedNonEntailed(axiom)));
+        buttons.add(new DebugExplainButton(this));
+
         return buttons;
     }
 
@@ -76,10 +86,23 @@ public class QueryAxiomList extends AbstractAxiomList {
 
     }
 
+
+    public void handleAxiomExplain() {
+        Object obj = getSelectedValue();
+        if (!(obj instanceof AxiomListItem))
+            return;
+        AxiomListItem item = (AxiomListItem) obj;
+        OWLAxiom axiom = item.getAxiom();
+        ExplanationManager explanationMngr = editorKitHook.getOWLEditorKit().getModelManager().getExplanationManager();
+        if (explanationMngr.hasExplanation(axiom)) {
+            explanationMngr.handleExplain((Frame) SwingUtilities.getAncestorOfClass(Frame.class, this), axiom);
+        }
+    }
+
     public QueryAxiomList(OWLEditorKit editorKit, EditorKitHook editorKitHook) {
         super(editorKit);
         this.editorKitHook = editorKitHook;
-        setCellRenderer(new BasicAxiomListItemRenderer(editorKit));
+        //setCellRenderer(new BasicAxiomListItemRenderer(editorKit));
     }
 
     private EditorKitHook editorKitHook;

@@ -4,6 +4,7 @@ import at.ainf.protegeview.model.configuration.SearchConfiguration;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,12 +27,12 @@ public class DiagnosisOptPanel extends AbstractOptPanel {
 
     private JCheckBox calcAllDiags_checkbox = new JCheckBox("calc all diagnoses ", true);
 
-    private JComboBox<SearchConfiguration.TreeType> treeType = new JComboBox<SearchConfiguration.TreeType>();
+    private JComboBox treeType = new JComboBox();
 
-    private JComboBox<SearchConfiguration.SearchType> searchType = new JComboBox<SearchConfiguration.SearchType>();
+    private JComboBox searchType = new JComboBox();
 
     public DiagnosisOptPanel(SearchConfiguration configuration, SearchConfiguration newConfiguration) {
-        super(configuration,newConfiguration);
+        super(configuration, newConfiguration);
 
         for (SearchConfiguration.SearchType type : SearchConfiguration.SearchType.values())
             searchType.addItem(type);
@@ -44,25 +45,30 @@ public class DiagnosisOptPanel extends AbstractOptPanel {
     }
 
     protected void createPanel() {
-        setLayout(new GridLayout(7, 1));
-        add(test_Abox_Checkbox);
-        add(test_Tbox_Checkbox);
+        setLayout(new BorderLayout());
+        Box holder = Box.createVerticalBox();
 
 
-        add(createPane("Search Type: ", searchType));
-        add(createPane("Tree Type: ", treeType));
-        add(createPane("NumOfLeadingDiag: ", numofLeadingDiagsField));
+        OptionGroupBox holderBoxes = new OptionGroupBox("Background Axioms");
+        holderBoxes.addOptionBox(new OptionBox("abox",getListener(),test_Abox_Checkbox));
+        holderBoxes.addOptionBox(new OptionBox("tbox",getListener(),test_Tbox_Checkbox));
 
-        add(calcAllDiags_checkbox);
-        add(test_incoherency_inconsistency_Checkbox);
+        OptionGroupBox holderSearch = new OptionGroupBox("Search Tree");
+        holderSearch.addOptionBox(new OptionBox("searchtype",getListener(),new JLabel("Search Type: "), searchType));
+        holderSearch.addOptionBox(new OptionBox("treetype",getListener(),new JLabel("Tree Type: "), treeType));
 
-    }
+        OptionGroupBox holderCalculation = new OptionGroupBox("Calculation");
+        holderCalculation.addOptionBox(new OptionBox("numofleadingdiags",getListener(),new JLabel("NumOfLeadingDiag: "), numofLeadingDiagsField));
+        holderCalculation.addOptionBox(new OptionBox("calcalldiags",getListener(),calcAllDiags_checkbox));
+        holderCalculation.addOptionBox(new OptionBox("testincoherencyinconsistency",getListener(),test_incoherency_inconsistency_Checkbox));
 
-    protected JPanel createPane(String option, JComponent component) {
-        JPanel panel = new JPanel(new GridLayout(1,2));
-        panel.add(new JLabel(option));
-        panel.add(component);
-        return panel;
+        holder.add(holderBoxes);
+        holder.add(holderSearch);
+        holder.add(holderCalculation);
+
+        add(holder, BorderLayout.NORTH);
+        add(getHelpAreaPane(),BorderLayout.CENTER);
+
     }
 
     protected void loadConfiguration() {

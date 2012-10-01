@@ -29,6 +29,7 @@ public class QueryView extends AbstractListQueryViewComponent {
         toolBar.add(new GetQueryButton(this));
         toolBar.add(Box.createHorizontalGlue());
         toolBar.add(new GetAlternativeQueryButton(this));
+        toolBar.setMaximumSize(toolBar.getPreferredSize());
 
         return toolBar;
     }

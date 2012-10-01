@@ -14,11 +14,13 @@ import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.protegeview.gui.axiomsetviews.axiomslist.AxiomListItem;
 import at.ainf.protegeview.model.configuration.SearchConfiguration;
 import at.ainf.protegeview.model.configuration.SearchCreator;
 import org.apache.log4j.Logger;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.model.inference.OWLReasonerManager;
 import org.protege.editor.owl.model.inference.ProtegeOWLReasonerInfo;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -28,10 +30,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.math.BigDecimal;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static at.ainf.protegeview.model.OntologyDiagnosisSearcher.ErrorStatus.*;
 
@@ -82,19 +81,10 @@ public class OntologyDiagnosisSearcher {
     private Set<OWLLogicalAxiom> axiomsMarkedNonEntailed = new LinkedHashSet<OWLLogicalAxiom>();
 
     public OntologyDiagnosisSearcher(OWLEditorKit editorKit) {
-        OWLReasonerFactory reasonerFactory= null ;
-
-        for (ProtegeOWLReasonerInfo reasonerIn : editorKit.getOWLModelManager().getOWLReasonerManager().getInstalledReasonerFactories()) {
-            if (reasonerIn.getReasonerName().startsWith("HermiT "))
-                reasonerFactory = reasonerIn.getReasonerFactory();
-        }
-
-        if (reasonerFactory==null)
-            throw new IllegalStateException("We need HermiT Reasoner to work");
-
+        OWLReasonerManager reasonerMan = editorKit.getModelManager().getOWLReasonerManager();
         OWLOntology ontology = editorKit.getModelManager().getActiveOntology();
 
-        creator = new SearchCreator(ontology,reasonerFactory);
+        creator = new SearchCreator(ontology,reasonerMan);
     }
 
     protected ErrorStatus getErrorStatus() {
@@ -103,6 +93,37 @@ public class OntologyDiagnosisSearcher {
 
     public SearchCreator getSearchCreator() {
         return creator;
+    }
+
+    protected Set<OWLLogicalAxiom> extract(List selectedValuesList) {
+        Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>();
+        for (Object value : selectedValuesList)
+            axioms.add(((AxiomListItem) value).getAxiom());
+        return axioms;
+    }
+
+    public void removeBackgroundAxioms(List selectedValuesList) {
+        Set<OWLLogicalAxiom> backgroundAxioms = extract(selectedValuesList);
+        try {
+            getSearchCreator().getSearch().getTheory().removeBackgroundFormulas(backgroundAxioms);
+        } catch (InconsistentTheoryException e) {
+            e.printStackTrace();
+        } catch (SolverException e) {
+            e.printStackTrace();
+        }
+        notifyListeners();
+    }
+
+    public void addBackgroundAxioms(List selectedValuesList) {
+        Set<OWLLogicalAxiom> axioms = extract(selectedValuesList);
+        try {
+            getSearchCreator().getSearch().getTheory().addBackgroundFormulas(axioms);
+        } catch (InconsistentTheoryException e) {
+            e.printStackTrace();
+        } catch (SolverException e) {
+            e.printStackTrace();
+        }
+        notifyListeners();
     }
 
     public class SearchThrea extends Thread implements ChangeListener {
@@ -186,6 +207,25 @@ public class OntologyDiagnosisSearcher {
         creator.fullReset();
         notifyListeners();
         logger.debug("model: do fullReset");
+    }
+
+    public void doAddBackgroundAxioms(Set<OWLLogicalAxiom> axioms, ErrorHandler errorHandler) {
+
+        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getTheory();
+
+        try {
+            theory.addBackgroundFormulas(axioms);
+            errorStatus = NO_ERROR;
+        } catch (InconsistentTheoryException e) {
+            errorStatus = INCONSISTENT_THEORY_EXCEPTION;
+        } catch (SolverException e) {
+            errorStatus = SOLVER_EXCEPTION;
+        }
+
+        if(!getErrorStatus().equals(NO_ERROR))
+            errorHandler.errorHappend(getErrorStatus());
+        notifyListeners();
+
     }
 
     public void doAddTestcase(Set<OWLLogicalAxiom> testcase, TestCaseType type, ErrorHandler errorHandler) {

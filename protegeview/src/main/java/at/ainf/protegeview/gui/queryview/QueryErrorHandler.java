@@ -1,6 +1,6 @@
 package at.ainf.protegeview.gui.queryview;
 
-import at.ainf.protegeview.gui.toolboxview.SearchErrorHandler;
+import at.ainf.protegeview.gui.buttons.SearchErrorHandler;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 
 import javax.swing.*;

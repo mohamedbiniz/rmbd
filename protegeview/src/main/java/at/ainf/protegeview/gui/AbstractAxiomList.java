@@ -1,13 +1,11 @@
 package at.ainf.protegeview.gui;
 
+import at.ainf.protegeview.gui.axiomsetviews.axiomslist.BasicAxiomListItemRenderer;
 import org.protege.editor.core.ui.list.MList;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +24,7 @@ public abstract class AbstractAxiomList extends MList implements LinkedObjectCom
 
     public AbstractAxiomList(OWLEditorKit editorKit) {
         this.mediator = new LinkedObjectComponentMediator(editorKit, this);
+        setCellRenderer(new BasicAxiomListItemRenderer(editorKit));
         getMouseListeners();
     }
 

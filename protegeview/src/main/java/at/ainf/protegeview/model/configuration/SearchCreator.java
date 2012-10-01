@@ -16,6 +16,7 @@ import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
+import org.protege.editor.owl.model.inference.OWLReasonerManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
@@ -40,11 +41,11 @@ public class SearchCreator {
 
     private SearchConfiguration config;
 
-    private OWLReasonerFactory reasonerFactory;
+    private OWLReasonerManager reasonerMan;
 
-    public SearchCreator(OWLOntology ontology, OWLReasonerFactory reasonerFactory) {
+    public SearchCreator(OWLOntology ontology, OWLReasonerManager reasonerMan) {
         this.ontology = ontology;
-        this.reasonerFactory = reasonerFactory;
+        this.reasonerMan = reasonerMan;
         readConfiguration();
     }
 
@@ -93,20 +94,19 @@ public class SearchCreator {
     }
 
     private OWLTheory createTheory(boolean dual) {
-
+        OWLReasonerFactory reasonerFactory = reasonerMan.getCurrentReasonerFactory().getReasonerFactory();
         OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(reasonerFactory);
         OWLOntology ont = extractor.getIncoherentPartAsOntology(ontology);
-        //OWLOntology ont = ontology;
 
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         if (config.aBoxInBG) {
-            for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
-                bax.addAll(ontology.getClassAssertionAxioms(ind));
-                bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
+            for (OWLIndividual ind : ont.getIndividualsInSignature()) {
+                bax.addAll(ont.getClassAssertionAxioms(ind));
+                bax.addAll(ont.getObjectPropertyAssertionAxioms(ind));
             }
         }
         if (config.tBoxInBG) {
-            for (OWLAxiom axiom : ontology.getTBoxAxioms(false)) {
+            for (OWLAxiom axiom : ont.getTBoxAxioms(false)) {
                 bax.add((OWLLogicalAxiom) axiom);
             }
         }

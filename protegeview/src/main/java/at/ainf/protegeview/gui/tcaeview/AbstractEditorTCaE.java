@@ -5,9 +5,11 @@ import at.ainf.protegeview.model.EditorKitHook;
 import at.ainf.protegeview.testcasesentailmentsview.axiomeditor.CreateOWLEntityAction;
 import org.osgi.framework.Bundle;
 import org.protege.editor.core.ProtegeApplication;
+import org.protege.editor.core.ui.util.Icons;
 import org.protege.editor.core.ui.util.InputVerificationStatusChangedListener;
 import org.protege.editor.core.ui.util.VerifyingOptionPane;
 import org.protege.editor.owl.OWLEditorKit;
+import org.protege.editor.owl.ui.OWLIcons;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.protege.editor.owl.ui.clsdescriptioneditor.OWLExpressionChecker;
 import org.semanticweb.owlapi.model.*;
@@ -37,14 +39,6 @@ public abstract class AbstractEditorTCaE {
 
     }
 
-    public ImageIcon getIcon(String name) {
-        Bundle bundle=null;
-        for (Bundle b : ProtegeApplication.getContext().getBundles())
-            if (b.getSymbolicName().equals("at.ainf.protegeview"))
-                bundle = b;
-        return new ImageIcon(bundle.getEntry("/lib/icons/" + name));
-    }
-
     public EditorKitHook getEditorKitHook() {
         return editorKitHook;
     }
@@ -58,11 +52,11 @@ public abstract class AbstractEditorTCaE {
         //setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
 
-        this.addAction(toolBar,new CreateOWLEntityAction<OWLClass>("Add subclass", editorKit, getIcon("class.add.png"), "Please enter a class name", OWLClass.class));
-        this.addAction(toolBar,new CreateOWLEntityAction<OWLObjectProperty>("Add object property", editorKit, getIcon("property.object.add.png"), "Please enter an object property name", OWLObjectProperty.class));
-        this.addAction(toolBar,new CreateOWLEntityAction<OWLDataProperty>("Add data property", editorKit, getIcon("property.data.add.png"), "Please enter a data property name", OWLDataProperty.class));
-        this.addAction(toolBar,new CreateOWLEntityAction<OWLNamedIndividual>("Add individual", editorKit, getIcon("individual.add.png"), "Please enter an individual name", OWLNamedIndividual.class));
-        this.addAction(toolBar,new CreateOWLEntityAction<OWLDatatype>("Add datatype", editorKit, getIcon("datarange.add.png"), "Please enter a datatype name", OWLDatatype.class));
+        this.addAction(toolBar,new CreateOWLEntityAction<OWLClass>("Add subclass", editorKit, OWLIcons.getIcon("class.add.png"), "Please enter a class name", OWLClass.class));
+        this.addAction(toolBar,new CreateOWLEntityAction<OWLObjectProperty>("Add object property", editorKit, OWLIcons.getIcon("property.object.add.png"), "Please enter an object property name", OWLObjectProperty.class));
+        this.addAction(toolBar,new CreateOWLEntityAction<OWLDataProperty>("Add data property", editorKit, OWLIcons.getIcon("property.data.add.png"), "Please enter a data property name", OWLDataProperty.class));
+        this.addAction(toolBar,new CreateOWLEntityAction<OWLNamedIndividual>("Add individual", editorKit, OWLIcons.getIcon("individual.add.png"), "Please enter an individual name", OWLNamedIndividual.class));
+        this.addAction(toolBar,new CreateOWLEntityAction<OWLDatatype>("Add datatype", editorKit, OWLIcons.getIcon("datarange.add.png"), "Please enter a datatype name", OWLDatatype.class));
 
         return toolBar;
 
@@ -82,7 +76,7 @@ public abstract class AbstractEditorTCaE {
 
         JScrollPane scroller = new JScrollPane(editor);
         panel.add(scroller, BorderLayout.CENTER);
-        panel.setSize(600,400);
+        panel.setPreferredSize(new Dimension(400,300));
 
         final VerifyingOptionPane optionPane = new VerifyingOptionPane(panel);
 
@@ -102,7 +96,7 @@ public abstract class AbstractEditorTCaE {
         dlg.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentHidden(ComponentEvent e) {
-                if(optionPane.getValue().equals(JOptionPane.OK_OPTION))
+                if (optionPane.getValue() != null && optionPane.getValue().equals(JOptionPane.OK_OPTION))
                     try {
                         handleEditorConfirmed(editor.createObject());
                     } catch (OWLException e1) {

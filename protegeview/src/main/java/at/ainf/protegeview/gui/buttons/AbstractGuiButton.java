@@ -1,4 +1,4 @@
-package at.ainf.protegeview.gui.toolboxview;
+package at.ainf.protegeview.gui.buttons;
 
 import org.osgi.framework.Bundle;
 import org.protege.editor.core.ProtegeApplication;

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
     <VSNode splits="1.0">
-        <HSNode splits="0.08368874278722804 0.916311257212772">
-            <CNode>
-                <Component label="Toolbox">
-                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.toolboxview.ToolboxView"/>
-                </Component>
-            </CNode>
+        <HSNode splits="0.916311257212772">
             <VSNode splits="0.08530775799332065 0.0889301364718431 0.07607057652597242">
                 <HSNode splits="0.016074443773297063">
                     <CNode>
@@ -23,6 +18,9 @@
                 <CNode>
                     <Component label="Testcases and Entailments">
                         <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.tcaeview.TestcaseView"/>
+                    </Component>
+                    <Component label="Background View">
+                        <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.gui.backgroundview.BackgroundView"/>
                     </Component>
                 </CNode>
             </VSNode>

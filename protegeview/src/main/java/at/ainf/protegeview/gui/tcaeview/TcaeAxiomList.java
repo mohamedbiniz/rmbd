@@ -35,7 +35,7 @@ public class TcaeAxiomList extends AbstractAxiomList {
         super(editorKit);
         this.editorKitHook = editorKitHook;
         this.editorKit = editorKit;
-        setCellRenderer(new BasicAxiomListItemRenderer(editorKit));
+        //setCellRenderer(new BasicAxiomListItemRenderer(editorKit));
         setupKeyboardHandlers();
         updateView();
 

@@ -1,4 +1,4 @@
-package at.ainf.protegeview.gui.toolboxview;
+package at.ainf.protegeview.gui.buttons;
 
 import at.ainf.protegeview.model.ErrorHandler;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;

@@ -26,6 +26,7 @@ public class QueryDebuggerPreferencesPanel extends OWLPreferencesPanel {
         EditorKitHook editorKitHook = (EditorKitHook)
                 getOWLEditorKit().get("at.ainf.protegeview.at.ainf.protegeview.model.EditorKitHook");
 
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.ontoSearch = editorKitHook.getActiveOntologyDiagnosisSearcher();
         SearchConfiguration configuration = ontoSearch.getSearchCreator().getConfig();
         newConfiguration = new SearchConfiguration();
@@ -36,7 +37,6 @@ public class QueryDebuggerPreferencesPanel extends OWLPreferencesPanel {
         addPane(tabbedPane,"Probabilities",new ProbabPanel(configuration,newConfiguration,editorKitHook),KeyEvent.VK_P);
 
         //optionPanel = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-
 
         add(tabbedPane);
 

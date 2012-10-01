@@ -1,13 +1,12 @@
 package at.ainf.protegeview.gui.options;
 
-import at.ainf.protegeview.gui.options.probabtable.ProbabTable;
-import at.ainf.protegeview.gui.options.probabtable.ProbabilityTableModel;
+import at.ainf.protegeview.gui.options.probabpane.ProbabPane;
 import at.ainf.protegeview.model.EditorKitHook;
-import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 import at.ainf.protegeview.model.configuration.SearchConfiguration;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 
 import javax.swing.*;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,25 +20,26 @@ import java.util.Map;
  */
 public class ProbabPanel extends AbstractOptPanel {
 
-    private ProbabTable table;
-
-    private Map<ManchesterOWLSyntax,BigDecimal> map;
+    private ProbabPane probabPane;
 
     public ProbabPanel(SearchConfiguration configuration, SearchConfiguration newConfiguration, EditorKitHook editorKitHook) {
         super(configuration,newConfiguration);
-        this.map = new HashMap<ManchesterOWLSyntax, BigDecimal>();
-        table = new ProbabTable(editorKitHook);
-        add(new JScrollPane(table));
+        setLayout(new BorderLayout());
+        probabPane = new ProbabPane(editorKitHook);
+        add(new JScrollPane(probabPane),BorderLayout.CENTER);
+        JEditorPane helpArea = createHelpEditorPane();
+        helpArea.setText("<html>Here you can specifiy the fault probabilities for the OWL keywords<html>");
+        add(helpArea, BorderLayout.SOUTH);
 
     }
 
     @Override
     public void saveChanges() {
-        map = ((ProbabilityTableModel)table.getModel()).getMap();
+
     }
 
     public Map<ManchesterOWLSyntax, BigDecimal> getMap() {
-        return map;
+        return probabPane.getProbabMap();
     }
 
 }
