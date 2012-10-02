@@ -32,7 +32,7 @@ public interface ITheory<Id> extends Searchable<Id> {
      */
     public Collection<Id> getActiveFormulas();
 
-    public int getTheoryCount();
+    //public int getTheoryCount();
 
     public boolean hasTests();
 
@@ -86,6 +86,12 @@ public interface ITheory<Id> extends Searchable<Id> {
 
     Set<Id> getEntailments(Set<Id> hittingSet) throws SolverException;
 
+    public Object getOriginalOntology();
+
+    public Object getOntology();
+
+    //---------------------------------------------------
+
     boolean diagnosisEntails(AxiomSet<Id> hs, Set<Id> ent);
 
     boolean diagnosisConsistent(AxiomSet<Id> hs, Set<Id> ent);
@@ -95,10 +101,6 @@ public interface ITheory<Id> extends Searchable<Id> {
     boolean isEntailed(Set<Id> n);
 
     public void doBayesUpdate(Set<? extends AxiomSet<Id>> hittingSets);
-
-    public Object getOriginalOntology();
-
-    public Object getOntology();
 
     public void reset();
 
