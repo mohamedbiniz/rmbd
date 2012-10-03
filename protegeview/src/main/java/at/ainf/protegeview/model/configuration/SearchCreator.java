@@ -62,8 +62,6 @@ public class SearchCreator {
     }
 
     protected void copyTestcases(OWLTheory copyFrom, OWLTheory copyTo) {
-
-        try {
             for (Set<OWLLogicalAxiom> testcase : copyFrom.getPositiveTests())
                 copyTo.addPositiveTest(testcase);
             for (Set<OWLLogicalAxiom> testcase : copyFrom.getNegativeTests())
@@ -72,11 +70,7 @@ public class SearchCreator {
                 copyTo.addEntailedTest(testcase);
             for (Set<OWLLogicalAxiom> testcase : copyFrom.getNonentailedTests())
                 copyTo.addNonEntailedTest(testcase);
-        } catch (SolverException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InconsistentTheoryException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+
     }
 
     public void reset() {

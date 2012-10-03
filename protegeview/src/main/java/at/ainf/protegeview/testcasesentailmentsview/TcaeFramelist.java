@@ -3,6 +3,7 @@ package at.ainf.protegeview.testcasesentailmentsview;
 import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.protegeview.testcasesentailmentsview.axiomeditor.OWLAxiomEditor;
 import org.protege.editor.core.ProtegeApplication;
@@ -108,6 +109,70 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
         sectionItems.get((TcaeFrameSection)item.getFrameSection()).remove(item);
     }
 
+    protected boolean addCheckedPositiveTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.addPositiveTest(axioms);
+        try {
+            if (!theory.isTestConsistent()) {
+                theory.removePositiveTest(axioms);
+                JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } catch (SolverException e) {
+            JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    protected boolean addCheckedNegativeTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.addNegativeTest(axioms);
+        try {
+            if (!theory.isTestConsistent()) {
+                theory.removeNegativeTest(axioms);
+                JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } catch (SolverException e) {
+            JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    protected boolean addCheckedEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.addEntailedTest(axioms);
+        try {
+            if (!theory.isTestConsistent()) {
+                theory.removeEntailedTest(axioms);
+                JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } catch (SolverException e) {
+            JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
+    protected boolean addCheckedNonEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.addNonEntailedTest(axioms);
+        try {
+            if (!theory.isTestConsistent()) {
+                theory.removeNonEntailedTest(axioms);
+                JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } catch (SolverException e) {
+            JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
+
     protected boolean addAxiomToTcae(Set<OWLLogicalAxiom> axiom, SectionType type) {
 
         if (workspace.getOwlTheory() == null) {
@@ -116,30 +181,17 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
         }
         ITheory<OWLLogicalAxiom> theory = workspace.getOwlTheory();
 
-        try {
             switch (type) {
                 case PT:
-                    theory.addPositiveTest(axiom);
-                    break;
+                    return addCheckedPositiveTest(theory,axiom);
                 case NT:
-                    theory.addNegativeTest(axiom);
-                    break;
+                    return addCheckedNegativeTest(theory,axiom);
                 case ET:
-                    theory.addEntailedTest(axiom);
-                    break;
+                    return addCheckedEntailedTest(theory,axiom);
                 case NET:
-                    theory.addNonEntailedTest(axiom);
-                    break;
+                    return addCheckedNonEntailedTest(theory,axiom);
             }
-        } catch (SolverException e) {
-            JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
-            return false;
 
-        } catch (InconsistentTheoryException e) {
-            JOptionPane.showMessageDialog(null, "The background theory is unsatisfiable ", "InconsistentTheoryException", JOptionPane.ERROR_MESSAGE);
-            return false;
-
-        }
         return true;
 
     }

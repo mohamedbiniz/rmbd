@@ -100,7 +100,7 @@ public class Example2005Test {
         QueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
         debugger.updateMaxHittingSets(0);
 
-        debugger.getTheory().addPositiveTest(parser.parse("w Type not C"));
+        debugger.getTheory().addPositiveTest(Collections.singleton(parser.parse("w Type not C")));
 
         debugger.debug();
 

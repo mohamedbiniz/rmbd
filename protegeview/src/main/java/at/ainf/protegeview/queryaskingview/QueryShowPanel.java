@@ -343,15 +343,11 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
     public void processPosAnswer() {
 
         processAnswer(SectionType.ET);
-        try {
+
             //for (OWLLogicalAxiom a : actQuery.partition)
             //    workspace.getUniformCostSearch().getTheory().addEntailedTest (a);
             workspace.getSearch().getTheory().addEntailedTest(actQuery.partition);
-        } catch (SolverException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InconsistentTheoryException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+
 
         // diagProvider.calculateLead();
 
@@ -369,15 +365,11 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
     public void processNegAnswer() {
 
         processAnswer(SectionType.NET);
-        try {
+
             //for (OWLLogicalAxiom a : actQuery.partition)
             //    workspace.getUniformCostSearch().getTheory().addNonEntailedTest(a);
             workspace.getSearch().getTheory().addNonEntailedTest(actQuery.partition);
-        } catch (SolverException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InconsistentTheoryException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+
 
         //diagProvider.calculateLead();
 
@@ -497,26 +489,18 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
             items.add(new TcaeFrameSectionItem(sec.getOWLEditorKit(), sec, null, null, positiveTestCases));
 
             workspace.displaySection();
-            try {
+
                 workspace.getSearch().getTheory().addEntailedTest(positiveTestCases);
-            } catch (SolverException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (InconsistentTheoryException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+
         }
         else if (negativeTestCases.size() > 0) {
             TcaeFrameSection sec = workspace.getListSections().get(SectionType.NET);
             List<TcaeFrameSectionItem> items = workspace.getSectionItems().get(sec);
             items.add(new TcaeFrameSectionItem(sec.getOWLEditorKit(), sec, null, null, negativeTestCases));
             workspace.displaySection();
-            try {
+
                 workspace.getSearch().getTheory().addNonEntailedTest(negativeTestCases);
-            } catch (SolverException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (InconsistentTheoryException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+
         }
         else {
             JOptionPane.showMessageDialog(null, "You have to mark at least one axiom ", "No decision made", JOptionPane.WARNING_MESSAGE);

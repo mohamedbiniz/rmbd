@@ -67,64 +67,48 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         typeOfTest.put(test,  type);
     }
 
-    public boolean addPositiveTest(T test) throws SolverException, InconsistentTheoryException {
-        return addPositiveTest(getTestSet(test));
-    }
-
-    public boolean addNegativeTest(T test) throws SolverException, InconsistentTheoryException {
-        return addNegativeTest(getTestSet(test));
-    }
-
-    public boolean addEntailedTest(T test) throws SolverException, InconsistentTheoryException {
-        return addEntailedTest(getTestSet(test));
-    }
-
-    public boolean addNonEntailedTest(T test) throws SolverException, InconsistentTheoryException {
-        return addNonEntailedTest(getTestSet(test));
-    }
-
-    public boolean addPositiveTest(Set<T> test) throws SolverException, InconsistentTheoryException {
+    public boolean addPositiveTest(Set<T> test) {
         boolean val = this.positiveTests.add(test);
-        if (val && !isTestConsistent()) {
+        /*if (val && !isTestConsistent()) {
             this.positiveTests.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
-        }
+        }*/
         if (val)
             addToTestList(test, true);
 
         return val;
     }
 
-    public boolean addNegativeTest(Set<T> test) throws SolverException, InconsistentTheoryException {
+    public boolean addNegativeTest(Set<T> test) {
         boolean val = this.negativeTests.add(test);
-        if (val && !isTestConsistent()) {
+        /*if (val && !isTestConsistent()) {
             this.negativeTests.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
-        }
+        } */
         if (val)
             addToTestList(test, false);
 
         return val;
     }
 
-    public boolean addEntailedTest(Set<T> test) throws SolverException, InconsistentTheoryException {
+    public boolean addEntailedTest(Set<T> test) {
         boolean val = this.entailed.add(test);
-        if (val && !isTestConsistent()) {
+        /*if (val && !isTestConsistent()) {
             this.entailed.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
-        }
+        } */
         if (val)
             addToTestList(test, true);
 
         return val;
     }
 
-    public boolean addNonEntailedTest(Set<T> test) throws SolverException, InconsistentTheoryException {
+    public boolean addNonEntailedTest(Set<T> test) {
         boolean val = this.nonentailed.add(test);
-        if (val && !isTestConsistent()) {
+        /*if (val && !isTestConsistent()) {
             this.nonentailed.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
-        }
+        } */
         if (val)
             addToTestList(test, false);
 
@@ -135,22 +119,6 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         tests.remove(test);
         typeOfTest.remove(test);
 
-    }
-
-    public boolean removeNonEntailedTest(T test) {
-        return removeNonEntailedTest(getTestSet(test));
-    }
-
-    public boolean removeEntailedTest(T test) {
-        return removeEntailedTest(getTestSet(test));
-    }
-
-    public void removePositiveTest(T test) {
-        removePositiveTest(getTestSet(test));
-    }
-
-    public void removeNegativeTest(T test) {
-        removeNegativeTest(getTestSet(test));
     }
 
     public boolean removeNonEntailedTest(Set<T> test) {
@@ -194,7 +162,7 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
                 && this.entailed.isEmpty() && this.nonentailed.isEmpty());
     }
 
-    protected boolean isTestConsistent() throws SolverException {
+    public boolean isTestConsistent() throws SolverException {
         // clear stack
         pop(getTheoryCount());
         for (Set<T> test : getNegativeTests()) {
@@ -226,15 +194,13 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     protected abstract T negate(T formula);
 
     public void registerTestCases() throws SolverException, InconsistentTheoryException {
-        try {
+
             for (Set<T> test : getEntailedTests())
                 this.addNegativeTest(negate(test));
             for (Set<T> test : getNonentailedTests())
                 this.addPositiveTest(negate(test));
 
-        } catch (InconsistentTheoryException e) {
-            throw new RuntimeException("Invalid tests or background knowledge are saved in the theory!");
-        }
+
 
         for (Set<T> testCase : positiveTests)
             this.backgroundFormulas.addAll(testCase);
@@ -243,10 +209,10 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     public void unregisterTestCases() throws SolverException {
         for (Set<T> test : getEntailedTests())
             for (T negatedTest : negate(test))
-                this.removeNegativeTest(negatedTest);
+                this.removeNegativeTest(Collections.singleton(negatedTest));
         for (Set<T> test : getNonentailedTests())
             for (T negatedTest : negate(test))
-                this.removePositiveTest(negatedTest);
+                this.removePositiveTest(Collections.singleton(negatedTest));
         for (Set<T> testCase : positiveTests)
             this.backgroundFormulas.removeAll(testCase);
     }
@@ -374,17 +340,8 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         return fl;
     }
 
-    public boolean diagnosisEntails(AxiomSet<T> hs, Set<T> ent) {
-        throw new RuntimeException("Unimplemented method");
-    }
 
-    public boolean diagnosisConsistent(AxiomSet<T> hs, Set<T> ent) {
-        throw new RuntimeException("Unimplemented method");
-    }
 
-    public void doBayesUpdate(Set<? extends AxiomSet<T>> hittingSets) {
-        throw new RuntimeException("Unimplemented method");
-    }
 
     public Object getOriginalOntology() {
         throw new RuntimeException("Unimplemented method");
@@ -393,12 +350,5 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     public Object getOntology() {
         throw new RuntimeException("Unimplemented method");
     }
-
-
-
-    public void reset() {
-        throw new RuntimeException("Unimplemented method");
-    }
-
 
 }

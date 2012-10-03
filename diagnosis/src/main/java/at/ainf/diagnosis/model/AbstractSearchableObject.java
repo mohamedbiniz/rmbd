@@ -1,6 +1,7 @@
 package at.ainf.diagnosis.model;
 
 import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.util.*;
 
@@ -99,4 +100,55 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
     public boolean verifyRequirements() throws SolverException {
         return verifyConsistency();
     }
+
+    public boolean supportEntailments() {
+        return false;
+    }
+
+
+
+    public Set<T> getEntailments(Set<T> hittingSet) throws SolverException {
+        throw new RuntimeException("This theory does not support computation of entailments!");
+    }
+
+    public boolean isEntailed(Set<T> n) {
+        throw new RuntimeException("This theory does not support verification of entailments!");
+    }
+
+    public void reset() {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    public boolean diagnosisEntails(AxiomSet<T> hs, Set<T> ent) {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    public boolean diagnosisConsistent(AxiomSet<T> hs, Set<T> ent) {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    public void doBayesUpdate(Set<? extends AxiomSet<T>> hittingSets) {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    @Override
+    public boolean isTestConsistent() throws SolverException {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    @Override
+    public boolean testDiagnosis(Collection<T> diagnosis) throws SolverException {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    @Override
+    public void registerTestCases() throws SolverException, InconsistentTheoryException {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    @Override
+    public void unregisterTestCases() throws SolverException {
+        throw new RuntimeException("Unimplemented method");
+    }
+
 }

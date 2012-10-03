@@ -461,21 +461,14 @@ public class SimulatedSession extends CalculateDiagnoses {
                     logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size());
 
                 if (answer) {
-                    try {
                         getSearch().getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                         if (actPa.dnx.isEmpty() && diagnoses.size() < numberOfHittingSets)
                             querySessionEnd = true;
-                    } catch (InconsistentTheoryException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
                 } else {
-                    try {
                         getSearch().getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                         if (actPa.dx.isEmpty() && diagnoses.size() < numberOfHittingSets)
                             querySessionEnd = true;
-                    } catch (InconsistentTheoryException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
+
                 }
 
             } catch (SolverException e) {

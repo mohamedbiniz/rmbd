@@ -183,35 +183,35 @@ public class TreeEvaluation {
         // search.getStorage().resetStorage();
 
 
-        th.addPositiveTest(new VecIntComparable(new int[]{2}));
+        th.addPositiveTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{2})));
         boolean test = false;
-        try {
-            th.addNegativeTest(new VecIntComparable(new int[]{2}));
-        } catch (InconsistentTheoryException e) {
+
+            th.addNegativeTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{2})));
+        if (!th.isTestConsistent()) {
             test = true;
         }
         assertTrue(test);
 
         // specify 4 types of tests
         IVecIntComparable ntest = new VecIntComparable(new int[]{-4});
-        th.addNegativeTest(ntest);
+        th.addNegativeTest(Collections.<IVecIntComparable>singleton(ntest));
         IVecIntComparable ptest = new VecIntComparable(new int[]{2});
-        th.addPositiveTest(ptest);
-        th.addEntailedTest(new VecIntComparable(new int[]{3}));
+        th.addPositiveTest(Collections.singleton(ptest));
+        th.addEntailedTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{3})));
         // this is unsat with background
         VecIntComparable net = new VecIntComparable(new int[]{-6});
 
         // verify the results
         test = false;
-        try {
-            th.addNonEntailedTest(net);
-        } catch (InconsistentTheoryException e) {
+
+            th.addNonEntailedTest(Collections.<IVecIntComparable>singleton(net));
+        if (!th.isTestConsistent()) {
             test = true;
         }
         assertTrue(test);
 
-        th.removeNonEntailedTest(net);
-        th.addNonEntailedTest(new VecIntComparable(new int[]{5}));
+        th.removeNonEntailedTest(Collections.<IVecIntComparable>singleton(net));
+        th.addNonEntailedTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{5})));
 
         search.setTheory(th);
         search.run();

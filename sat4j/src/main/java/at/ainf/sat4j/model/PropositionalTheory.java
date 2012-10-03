@@ -126,15 +126,5 @@ public class PropositionalTheory extends AbstractTheory<ISolver, IVecIntComparab
         return res;
     }
 
-    public Set<IVecIntComparable> getEntailments(Set<IVecIntComparable> hittingSet) throws SolverException {
-        throw new RuntimeException("This theory does not support computation of entailments!");
-    }
 
-    public boolean supportEntailments() {
-        return false;
-    }
-
-    public boolean isEntailed(Set<IVecIntComparable> n) {
-        throw new RuntimeException("This theory does not support verification of entailments!");
-    }
 }
