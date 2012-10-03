@@ -36,37 +36,18 @@ public interface ITheory<Id> extends Searchable<Id> {
 
     public boolean hasTests();
 
-    public boolean testDiagnosis(Collection<Id> diagnosis) throws SolverException;
 
-    public void registerTestCases() throws SolverException, InconsistentTheoryException;
-
-    public void unregisterTestCases() throws SolverException;
 
     // handling test cases
 
-    boolean addPositiveTest(Id test) throws SolverException, InconsistentTheoryException;
 
-    boolean addNegativeTest(Id test) throws SolverException, InconsistentTheoryException;
+    boolean addPositiveTest(Set<Id> test);
 
-    boolean addEntailedTest(Id test) throws SolverException, InconsistentTheoryException;
+    boolean addNegativeTest(Set<Id> test);
 
-    boolean addNonEntailedTest(Id test) throws SolverException, InconsistentTheoryException;
+    boolean addEntailedTest(Set<Id> test);
 
-    boolean addPositiveTest(Set<Id> test) throws SolverException, InconsistentTheoryException;
-
-    boolean addNegativeTest(Set<Id> test) throws SolverException, InconsistentTheoryException;
-
-    boolean addEntailedTest(Set<Id> test) throws SolverException, InconsistentTheoryException;
-
-    boolean addNonEntailedTest(Set<Id> test) throws SolverException, InconsistentTheoryException;
-
-    boolean removeNonEntailedTest(Id test);
-
-    boolean removeEntailedTest(Id test);
-
-    void removePositiveTest(Id test);
-
-    void removeNegativeTest(Id test);
+    boolean addNonEntailedTest(Set<Id> test);
 
     boolean removeNonEntailedTest(Set<Id> test);
 
@@ -84,7 +65,6 @@ public interface ITheory<Id> extends Searchable<Id> {
 
     Collection<Set<Id>> getNonentailedTests();
 
-    Set<Id> getEntailments(Set<Id> hittingSet) throws SolverException;
 
     public Object getOriginalOntology();
 
@@ -92,17 +72,13 @@ public interface ITheory<Id> extends Searchable<Id> {
 
     //---------------------------------------------------
 
-    boolean diagnosisEntails(AxiomSet<Id> hs, Set<Id> ent);
 
-    boolean diagnosisConsistent(AxiomSet<Id> hs, Set<Id> ent);
 
-    boolean supportEntailments();
 
-    boolean isEntailed(Set<Id> n);
 
-    public void doBayesUpdate(Set<? extends AxiomSet<Id>> hittingSets);
 
-    public void reset();
+
+
 
     //boolean testDiagnosis(Id conflictSet, Set<Id> pathLabels);
 }

@@ -31,10 +31,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static choco.Choco.*;
 import static org.junit.Assert.assertTrue;
@@ -100,7 +97,7 @@ public class TreeEvaluation {
         Constraint ntest = gt(k, 1);
 
         //cth.addNegativeTest(ntest);
-        cth.addPositiveTest(ptest);
+        cth.addPositiveTest(Collections.singleton(ptest));
 
         // reasoning
         //cth.push(list.subList(0, 2));

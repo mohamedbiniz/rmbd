@@ -1,5 +1,6 @@
 package at.ainf.protegeview.model;
 
+import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
@@ -236,31 +237,82 @@ public class OntologyDiagnosisSearcher {
 
     }
 
+    protected void addCheckedPositiveTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.addPositiveTest(axioms);
+        try {
+            if (!theory.isTestConsistent()) {
+                theory.removePositiveTest(axioms);
+                errorStatus = SOLVER_EXCEPTION;
+            }
+            else {
+                errorStatus = NO_ERROR;
+            }
+        } catch (SolverException e) {
+            errorStatus = SOLVER_EXCEPTION;
+        }
+    }
+
+    protected void addCheckedNegativeTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.addNegativeTest(axioms);
+        try {
+            if (!theory.isTestConsistent()) {
+                theory.removeNegativeTest(axioms);
+                errorStatus = SOLVER_EXCEPTION;
+            }
+            else {
+                errorStatus = NO_ERROR;
+            }
+        } catch (SolverException e) {
+            errorStatus = SOLVER_EXCEPTION;
+        }
+    }
+
+    protected void addCheckedEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.addEntailedTest(axioms);
+        try {
+            if (!theory.isTestConsistent()) {
+                theory.removeEntailedTest(axioms);
+                errorStatus = SOLVER_EXCEPTION;
+            }
+            else {
+                errorStatus = NO_ERROR;
+            }
+        } catch (SolverException e) {
+            errorStatus = SOLVER_EXCEPTION;
+        }
+    }
+
+    protected void addCheckedNonEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.addNonEntailedTest(axioms);
+        try {
+            if (!theory.isTestConsistent()) {
+                theory.removeNonEntailedTest(axioms);
+                errorStatus = SOLVER_EXCEPTION;
+            }
+            else {
+                errorStatus = NO_ERROR;
+            }
+        } catch (SolverException e) {
+            errorStatus = SOLVER_EXCEPTION;
+        }
+    }
+
+
     protected void addNewTestcase(Set<OWLLogicalAxiom> testcase, TestCaseType type) {
 
         OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getTheory();
 
-        try {
             switch(type) {
                 case POSITIVE_TC:
-                    theory.addPositiveTest(testcase);
+                    addCheckedPositiveTest(theory,testcase);
                     break;
                 case NEGATIVE_TC:
-                    theory.addNegativeTest(testcase);
-                    break;
+                    addCheckedNegativeTest(theory,testcase);
                 case ENTAILED_TC:
-                    theory.addEntailedTest(testcase);
-                    break;
+                    addCheckedEntailedTest(theory,testcase);
                 case NON_ENTAILED_TC:
-                    theory.addNonEntailedTest(testcase);
-                    break;
+                    addCheckedNonEntailedTest(theory,testcase);
             }
-            errorStatus = NO_ERROR;
-        } catch (SolverException e) {
-            errorStatus = SOLVER_EXCEPTION;
-        } catch (InconsistentTheoryException e) {
-            errorStatus = INCONSISTENT_THEORY_EXCEPTION;
-        }
 
     }
 

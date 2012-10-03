@@ -373,7 +373,7 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
         return true;
     }
 
-    protected boolean isTestConsistent() throws SolverException {
+    public boolean isTestConsistent() throws SolverException {
         // clear stack
         pop(getTheoryCount());
         for (Set<OWLLogicalAxiom> test : getPositiveTests()) {

@@ -2,6 +2,7 @@ package at.ainf.diagnosis;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.util.Collection;
 import java.util.Set;
@@ -16,8 +17,6 @@ import java.util.Set;
 public interface Searchable<E> {
 
     public boolean verifyRequirements() throws SolverException;
-
-    public boolean verifyConsistency() throws SolverException;
 
     boolean push(Collection<E> u) throws SolverException;
 
@@ -34,5 +33,33 @@ public interface Searchable<E> {
     public void removeBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
 
     public Set<E> getBackgroundFormulas();
+
+
+    public boolean verifyConsistency() throws SolverException;
+
+    public boolean supportEntailments();
+
+    Set<E> getEntailments(Set<E> hittingSet) throws SolverException;
+
+    boolean isEntailed(Set<E> n);
+
+    public void reset();
+
+    boolean diagnosisEntails(AxiomSet<E> hs, Set<E> ent);
+
+    boolean diagnosisConsistent(AxiomSet<E> hs, Set<E> ent);
+
+    public void doBayesUpdate(Set<? extends AxiomSet<E>> hittingSets);
+
+    public boolean isTestConsistent() throws SolverException;
+
+    public boolean testDiagnosis(Collection<E> diagnosis) throws SolverException;
+
+    public void registerTestCases() throws SolverException, InconsistentTheoryException;
+
+    public void unregisterTestCases() throws SolverException;
+
+
+
 
 }
