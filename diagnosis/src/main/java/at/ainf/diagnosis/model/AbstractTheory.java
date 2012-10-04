@@ -12,11 +12,11 @@ import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.util.*;
 
-public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject<T> implements
+public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> implements
         ITheory<T> {
 
     private static final String MESSAGE = "The test case cannot be added!";
-    private Solver solver;
+
 
     protected final Set<T> activeFormulas = new LinkedHashSet<T>();
 
@@ -36,8 +36,8 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
 
     }
 
-    public AbstractTheory(Solver solver) {
-        this.solver = solver;
+    public AbstractTheory(Object solver) {
+        super(solver);
     }
 
     protected int getTestsSize() {
@@ -157,10 +157,49 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         return Collections.unmodifiableCollection(nonentailed);
     }
 
+    public Set<T> getActiveFormulas() {
+        return Collections.unmodifiableSet(activeFormulas);
+    }
+
     public boolean hasTests() {
         return !(this.positiveTests.isEmpty() && this.negativeTests.isEmpty()
                 && this.entailed.isEmpty() && this.nonentailed.isEmpty());
     }
+
+    public void clearTestCases() {
+        this.positiveTests.clear();
+        this.negativeTests.clear();
+        this.entailed.clear();
+        this.nonentailed.clear();
+    }
+
+    public boolean hasBackgroundTheory() {
+        return this.backgroundFormulas.size() > 0;
+    }
+
+    protected Integer addActiveFormula(T expr) {
+        Integer formula = activeFormulas.size();
+        activeFormulas.add(expr);
+        return formula;
+    }
+
+
+    protected List<Integer> addActiveFormulas(Collection<T> exprs) {
+        List<Integer> fl = new ArrayList<Integer>(exprs.size());
+        int count = this.activeFormulas.size();
+        //this.activeFormulas.ensureCapacity(exprs.size() + count);
+        for (T expr : exprs) {
+            this.activeFormulas.add(expr);
+            Integer formula = count++;
+            fl.add(formula);
+        }
+        return fl;
+    }
+
+
+
+
+
 
     public boolean isTestConsistent() throws SolverException {
         // clear stack
@@ -181,17 +220,6 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         pop(getTheoryCount());
         return res;
     }
-
-    public Set<T> negate(Set<T> cnf) {
-        throw new RuntimeException("Negation of CNFs is not implemented yet.");
-        /*Set<T> negated = new TreeSet<T>();
-        for (T test : cnf)
-            negated.add(negate(test));
-        return negated;
-        */
-    }
-
-    protected abstract T negate(T formula);
 
     public void registerTestCases() throws SolverException, InconsistentTheoryException {
 
@@ -217,23 +245,6 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
             this.backgroundFormulas.removeAll(testCase);
     }
 
-    public void clearTestCases() {
-        this.positiveTests.clear();
-        this.negativeTests.clear();
-        this.entailed.clear();
-        this.nonentailed.clear();
-    }
-
-    public Collection<Collection<T>> testDiagnoses(Collection<Collection<T>> diagnoses) throws SolverException {
-        Collection<Collection<T>> res = new LinkedHashSet<Collection<T>>();
-
-        for (Collection<T> diag : diagnoses) {
-            if (testDiagnosis(diag))
-                res.add(diag);
-        }
-        return res;
-    }
-
     public boolean testDiagnosis(Collection<T> diag) throws SolverException {
         List<T> kb = new LinkedList<T>(getActiveFormulas());
         // apply diagnosis
@@ -256,9 +267,6 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
     }
 
 
-    public Set<T> getActiveFormulas() {
-        return Collections.unmodifiableSet(activeFormulas);
-    }
 
     public void setBackgroundFormulas(Collection<T> fs) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas = new LinkedHashSet<T>(fs);
@@ -267,10 +275,6 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
             throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }
         this.activeFormulas.removeAll(backgroundFormulas);
-    }
-
-    public void removeActiveFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
-        this.activeFormulas.remove(formulas);
     }
 
     public void addBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
@@ -295,50 +299,13 @@ public abstract class AbstractTheory<Solver, T> extends AbstractSearchableObject
         this.backgroundFormulas.removeAll(tests);
     }
 
-    public void removeBackgroundFormulas() {
-        this.backgroundFormulas.clear();
-    }
-    /*
-    public List<T> getFormulaStack() {
-        return Collections.unmodifiableList(this.formulaStack);
-    }
-    */
-
     public Set<T> getBackgroundFormulas() {
         return Collections.unmodifiableSet(this.backgroundFormulas);
     }
 
 
-    public Solver getSolver() {
-        return this.solver;
-    }
-
-    public void setSolver(Solver solver) {
-        this.solver = solver;
-    }
-
-    public boolean hasBackgroundTheory() {
-        return this.backgroundFormulas.size() > 0;
-    }
-
-    protected Integer addActiveFormula(T expr) {
-        Integer formula = activeFormulas.size();
-        activeFormulas.add(expr);
-        return formula;
-    }
 
 
-    protected List<Integer> addActiveFormulas(Collection<T> exprs) {
-        List<Integer> fl = new ArrayList<Integer>(exprs.size());
-        int count = this.activeFormulas.size();
-        //this.activeFormulas.ensureCapacity(exprs.size() + count);
-        for (T expr : exprs) {
-            this.activeFormulas.add(expr);
-            Integer formula = count++;
-            fl.add(formula);
-        }
-        return fl;
-    }
 
 
 

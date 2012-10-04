@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public class ConstraintTheory extends AbstractTheory<Solver, Constraint> implements
+public class ConstraintTheory extends AbstractTheory<Constraint> implements
         ITheory<Constraint> {
 
     private final Model model;

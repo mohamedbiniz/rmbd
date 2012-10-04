@@ -31,7 +31,7 @@ import static _dev.TimeLog.stop;
  * Time: 14:21:13
  * To change this template use File | Settings | File Templates.
  */
-public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> implements
+public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         ITheory<OWLLogicalAxiom> {
 
     private static Logger logger = LoggerFactory.getLogger(OWLTheory.class.getName());
@@ -520,6 +520,11 @@ public class OWLTheory extends AbstractTheory<OWLReasoner, OWLLogicalAxiom> impl
             }
         }
         return false;
+    }
+
+    public OWLReasoner getSolver() {
+        return (OWLReasoner) super.getSolver();
+
     }
 
 
