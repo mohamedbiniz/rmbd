@@ -145,6 +145,8 @@ public class DigiCamSource {
 
         ConstraintTheory cth = new ConstraintTheory(solver, md);
         cth.setBackgroundFormulas(unchangable);
+        if (!cth.verifyRequirements())
+            cth.setEmptyBackgroundFormulas();
         cth.addConstraints(changable);
         return cth;
     }

@@ -166,6 +166,8 @@ public class TreeEvaluation {
         LinkedList<IVecIntComparable> bg = new LinkedList<IVecIntComparable>();
         bg.add(vecInt);
         th.setBackgroundFormulas(bg);
+        if (th.verifyRequirements())
+            th.setNumOfLiterals(bg);
 
 
         // create unsat theory

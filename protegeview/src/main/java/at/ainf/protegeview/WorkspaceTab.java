@@ -181,7 +181,7 @@ public class
             // getOwlTheory().getOntology().getOWLOntologyManager();
 
 
-            OWLOntology orig = (OWLOntology) getOwlTheory().getOriginalOntology();
+            OWLOntology orig = ((OWLTheory)getOwlTheory()).getOriginalOntology();
             // String prefix = "\"TestcasesAndEnt ";
             // String ss = null;
             // for (OWLAnnotation annotation : orig.getAnnotations()) {
@@ -309,7 +309,7 @@ public class
             // getOwlTheory().getOntology().getOWLOntologyManager();
 
 
-            OWLOntology orig = (OWLOntology) getOwlTheory().getOriginalOntology();
+            OWLOntology orig = ((OWLTheory) getOwlTheory()).getOriginalOntology();
             // String prefix = "\"TestcasesAndEnt ";
             // String ss = null;
             // for (OWLAnnotation annotation : orig.getAnnotations()) {
@@ -366,19 +366,19 @@ public class
 
                 createOWLTheory();
             }
-            OWLOntologyManager manager = ((OWLOntology)getOwlTheory().getOntology()).getOWLOntologyManager();
+            OWLOntologyManager manager = (((OWLTheory)getOwlTheory()).getOntology()).getOWLOntologyManager();
 
 
 
 
             String result = "Probabilities " + map.toString();
 
-            for (Iterator<OWLAnnotation> iter = ((OWLOntology)getOwlTheory().getOriginalOntology()).getAnnotations().iterator(); iter.hasNext(); ) {
+            for (Iterator<OWLAnnotation> iter = ((OWLTheory)getOwlTheory()).getOriginalOntology().getAnnotations().iterator(); iter.hasNext(); ) {
                 OWLAnnotation ann = iter.next();
                 if (ann.getValue() instanceof OWLLiteral) {
                     String s = ((OWLLiteral) ann.getValue()).getLiteral();
                     if (s.startsWith("Probabilities ")) {
-                        manager.applyChange(new RemoveOntologyAnnotation(((OWLOntology)getOwlTheory().getOriginalOntology()), ann));
+                        manager.applyChange(new RemoveOntologyAnnotation(((OWLTheory)getOwlTheory()).getOriginalOntology(), ann));
                     }
 
                 }
@@ -387,8 +387,8 @@ public class
             OWLLiteral lit = manager.getOWLDataFactory().getOWLLiteral(result);
             IRI iri = OWLRDFVocabulary.RDFS_COMMENT.getIRI();   //  IRI.create("http://www.ainf.at/isbi#comment");
             OWLAnnotation anno = manager.getOWLDataFactory().getOWLAnnotation(manager.getOWLDataFactory().getOWLAnnotationProperty(iri), lit);
-            manager.applyChange(new AddOntologyAnnotation((OWLOntology)getOwlTheory().getOriginalOntology(), anno));
-            getOWLModelManager().setDirty((OWLOntology)getOwlTheory().getOriginalOntology());
+            manager.applyChange(new AddOntologyAnnotation(((OWLTheory)getOwlTheory()).getOriginalOntology(), anno));
+            getOWLModelManager().setDirty(((OWLTheory)getOwlTheory()).getOriginalOntology());
 
 
 
@@ -410,7 +410,7 @@ public class
 
                 createOWLTheory();
             }
-            OWLOntologyManager manager = ((OWLOntology)getOwlTheory().getOntology()).getOWLOntologyManager();
+            OWLOntologyManager manager = (((OWLTheory)getOwlTheory()).getOntology()).getOWLOntologyManager();
             OWLOntology on = null;
 
             try {
@@ -459,12 +459,12 @@ public class
             manager.removeOntology(on);
             String result = "Testcases " + ((StringDocumentTarget) documentTarget).toString();
 
-            for (Iterator<OWLAnnotation> iter = ((OWLOntology)getOwlTheory().getOriginalOntology()).getAnnotations().iterator(); iter.hasNext(); ) {
+            for (Iterator<OWLAnnotation> iter = ((OWLTheory)getOwlTheory()).getOriginalOntology().getAnnotations().iterator(); iter.hasNext(); ) {
                 OWLAnnotation ann = iter.next();
                 if (ann.getValue() instanceof OWLLiteral) {
                     String s = ((OWLLiteral) ann.getValue()).getLiteral();
                     if (s.startsWith("Testcases ")) {
-                        manager.applyChange(new RemoveOntologyAnnotation((OWLOntology)getOwlTheory().getOriginalOntology(), ann));
+                        manager.applyChange(new RemoveOntologyAnnotation(((OWLTheory)getOwlTheory()).getOriginalOntology(), ann));
                     }
 
                 }
@@ -473,8 +473,8 @@ public class
             OWLLiteral lit = manager.getOWLDataFactory().getOWLLiteral(result);
             IRI iri = OWLRDFVocabulary.RDFS_COMMENT.getIRI();   //  IRI.create("http://www.ainf.at/isbi#comment");
             OWLAnnotation anno = manager.getOWLDataFactory().getOWLAnnotation(manager.getOWLDataFactory().getOWLAnnotationProperty(iri), lit);
-            manager.applyChange(new AddOntologyAnnotation((OWLOntology)getOwlTheory().getOriginalOntology(), anno));
-            getOWLModelManager().setDirty((OWLOntology)getOwlTheory().getOriginalOntology());
+            manager.applyChange(new AddOntologyAnnotation(((OWLTheory)getOwlTheory()).getOriginalOntology(), anno));
+            getOWLModelManager().setDirty(((OWLTheory)getOwlTheory()).getOriginalOntology());
 
 
         } catch (OWLOntologyStorageException ex) {
@@ -554,8 +554,8 @@ public class
         //OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
         if (theory != null) {
-            ((OWLOntology)theory.getOntology()).getOWLOntologyManager().removeOntology((OWLOntology)theory.getOntology());
-            getOWLModelManager().removeOntology((OWLOntology)theory.getOntology());
+            ((OWLTheory)theory).getOntology().getOWLOntologyManager().removeOntology(((OWLTheory)theory).getOntology());
+            getOWLModelManager().removeOntology(((OWLTheory)theory).getOntology());
         }
 
 

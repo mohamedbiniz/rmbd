@@ -30,9 +30,7 @@ public class PropositionalTheory extends AbstractTheory<IVecIntComparable> imple
         super(solver);
     }
 
-    @Override
-    public void setBackgroundFormulas(Collection<IVecIntComparable> expressions) throws InconsistentTheoryException, SolverException {
-        super.setBackgroundFormulas(expressions);
+    public void setNumOfLiterals(Collection<IVecIntComparable> expressions) {
         for (IVecIntComparable formula : expressions) {
             this.numOfLiterals += formula.size();
         }
