@@ -66,9 +66,6 @@ public interface ITheory<Id> extends Searchable<Id> {
     Collection<Set<Id>> getNonentailedTests();
 
 
-    public Object getOriginalOntology();
-
-    public Object getOntology();
 
     //---------------------------------------------------
 

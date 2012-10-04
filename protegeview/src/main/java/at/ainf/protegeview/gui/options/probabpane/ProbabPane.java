@@ -1,6 +1,7 @@
 package at.ainf.protegeview.gui.options.probabpane;
 
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.model.EditorKitHook;
 import at.ainf.protegeview.model.configuration.SearchCreator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -67,7 +68,7 @@ public class ProbabPane extends JPanel {
 
     public ProbabPane(EditorKitHook editorKitHook) {
         SearchCreator creator = editorKitHook.getActiveOntologyDiagnosisSearcher().getSearchCreator();
-        OWLOntology ontology =  (OWLOntology) creator.getSearch().getTheory().getOriginalOntology();
+        OWLOntology ontology =  ((OWLTheory) creator.getSearch().getTheory()).getOriginalOntology();
 
         OWLAxiomKeywordCostsEstimator est = (OWLAxiomKeywordCostsEstimator) creator.getSearch().getCostsEstimator();
 

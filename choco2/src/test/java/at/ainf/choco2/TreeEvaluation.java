@@ -90,6 +90,8 @@ public class TreeEvaluation {
         CPSolver solver = new CPSolver();
         ConstraintTheory cth = new ConstraintTheory(solver, md);
         cth.setBackgroundFormulas(unchangable);
+        if (!cth.verifyRequirements())
+            cth.setEmptyBackgroundFormulas();
         cth.addConstraints(changable);
 
         Constraint ptest = eq(k, l);
@@ -230,6 +232,8 @@ public class TreeEvaluation {
         CPSolver solver = new CPSolver();
         ConstraintTheory cth = new ConstraintTheory(solver, md);
         cth.setBackgroundFormulas(unchangable);
+        if (!cth.verifyRequirements())
+            cth.setEmptyBackgroundFormulas();
         cth.addConstraints(changable);
 
 

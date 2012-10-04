@@ -196,6 +196,56 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
         return fl;
     }
 
+    public void removeBackgroundFormulas(Set<T> tests) {
+        this.backgroundFormulas.removeAll(tests);
+    }
+
+    public Set<T> getBackgroundFormulas() {
+        return Collections.unmodifiableSet(this.backgroundFormulas);
+    }
+
+    public void setEmptyBackgroundFormulas() {
+        this.backgroundFormulas = new LinkedHashSet<T>();
+    }
+
+    public void setBackgroundFormulas(Collection<T> fs) {
+        this.backgroundFormulas = new LinkedHashSet<T>(fs);
+        /*if (!verifyRequirements()) {
+            this.backgroundFormulas.clear();
+            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
+        }*/
+        this.activeFormulas.removeAll(backgroundFormulas);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public void addBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
+        this.backgroundFormulas.addAll(formulas);
+        if (!verifyRequirements()) {
+            this.backgroundFormulas.removeAll(formulas);
+            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
+        }
+        this.activeFormulas.remove(formulas);
+    }
+
+    public void addBackgroundFormula(T formulas) throws InconsistentTheoryException, SolverException {
+        this.backgroundFormulas.add(formulas);
+        if (!verifyRequirements()) {
+            this.backgroundFormulas.remove(formulas);
+            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
+        }
+        this.activeFormulas.remove(formulas);
+    }
+
+
 
 
 
@@ -268,54 +318,11 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
 
 
-    public void setBackgroundFormulas(Collection<T> fs) throws InconsistentTheoryException, SolverException {
-        this.backgroundFormulas = new LinkedHashSet<T>(fs);
-        if (!verifyRequirements()) {
-            this.backgroundFormulas.clear();
-            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
-        }
-        this.activeFormulas.removeAll(backgroundFormulas);
-    }
-
-    public void addBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
-        this.backgroundFormulas.addAll(formulas);
-        if (!verifyRequirements()) {
-            this.backgroundFormulas.removeAll(formulas);
-            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
-        }
-        this.activeFormulas.remove(formulas);
-    }
-
-    public void addBackgroundFormula(T formula) throws InconsistentTheoryException, SolverException {
-        this.backgroundFormulas.add(formula);
-        if (!verifyRequirements()) {
-            this.backgroundFormulas.remove(formula);
-            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
-        }
-        this.activeFormulas.remove(formula);
-    }
-
-    public void removeBackgroundFormulas(Set<T> tests) {
-        this.backgroundFormulas.removeAll(tests);
-    }
-
-    public Set<T> getBackgroundFormulas() {
-        return Collections.unmodifiableSet(this.backgroundFormulas);
-    }
 
 
 
 
 
 
-
-
-    public Object getOriginalOntology() {
-        throw new RuntimeException("Unimplemented method");
-    }
-
-    public Object getOntology() {
-        throw new RuntimeException("Unimplemented method");
-    }
 
 }
