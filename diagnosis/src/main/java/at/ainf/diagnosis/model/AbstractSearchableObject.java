@@ -18,6 +18,24 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
     private final LinkedList<Integer> stackCount = new LinkedList<Integer>();
     private Boolean result = null;
 
+    private Object solver;
+
+    public AbstractSearchableObject() {
+
+    }
+
+    public AbstractSearchableObject(Object solver) {
+        this.solver = solver;
+    }
+
+    public Object getSolver() {
+        return this.solver;
+    }
+
+    public void setSolver(Object solver) {
+        this.solver = solver;
+    }
+
     /**
      * Adds a statement to the theory.
      */
@@ -149,6 +167,19 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
     @Override
     public void unregisterTestCases() throws SolverException {
         throw new RuntimeException("Unimplemented method");
+    }
+
+    protected T negate(T formula) {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    public Set<T> negate(Set<T> cnf) {
+        throw new RuntimeException("Negation of CNFs is not implemented yet.");
+        /*Set<T> negated = new TreeSet<T>();
+        for (T test : cnf)
+            negated.add(negate(test));
+        return negated;
+        */
     }
 
 }

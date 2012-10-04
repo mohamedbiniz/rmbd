@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class PropositionalTheory extends AbstractTheory<ISolver, IVecIntComparable> implements
+public class PropositionalTheory extends AbstractTheory<IVecIntComparable> implements
         ITheory<IVecIntComparable> {
 
     private boolean createNew = false;
@@ -50,7 +50,7 @@ public class PropositionalTheory extends AbstractTheory<ISolver, IVecIntComparab
 
     public boolean verifyConsistency() throws SolverException {
         try {
-            ISolver solver = getSolver();
+            ISolver solver = (ISolver) getSolver();
 
             if (createNew)
                 solver = SolverFactory.newDefault();
