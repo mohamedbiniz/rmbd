@@ -177,7 +177,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                     OWLOntology ontology2 = getOntologySimple("oaei11conference/ontology", o2 + ".owl");
                     bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
                     bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
-                    theory.addBackgroundFormulas(bx);
+                    theory.addCheckedBackgroundFormulas(bx);
 
                     Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
 
@@ -561,8 +561,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
             Set<OWLLogicalAxiom> ontology1CutExtracted = getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
             Set<OWLLogicalAxiom> ontology2CutExtracted = getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms());
-            theory.addBackgroundFormulas(ontology1CutExtracted);
-            theory.addBackgroundFormulas(ontology2CutExtracted);
+            theory.addCheckedBackgroundFormulas(ontology1CutExtracted);
+            theory.addCheckedBackgroundFormulas(ontology2CutExtracted);
 
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             search.setTheory(theory);

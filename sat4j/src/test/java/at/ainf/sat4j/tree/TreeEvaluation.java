@@ -18,7 +18,6 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import org.junit.Before;
 import org.junit.Test;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
@@ -70,7 +69,7 @@ public class TreeEvaluation {
 
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
-        th.addBackgroundFormula(new VecIntComparable(clause));
+        th.addCheckedBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
 
         List<IVecIntComparable> conflict1 = new LinkedList<IVecIntComparable>();
         Set<IVecIntComparable> diagnosis1 = new LinkedHashSet<IVecIntComparable>();

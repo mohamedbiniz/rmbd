@@ -8,8 +8,6 @@
 
 package at.ainf.diagnosis.model;
 
-import at.ainf.diagnosis.storage.AxiomSet;
-
 import java.util.*;
 
 public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> implements
@@ -19,6 +17,8 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
 
     protected final Set<T> activeFormulas = new LinkedHashSet<T>();
+
+    protected final Set<T> allFormulas = new LinkedHashSet<T>();
 
     protected Set<T> backgroundFormulas = new LinkedHashSet<T>();
 
@@ -38,6 +38,10 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
     public AbstractTheory(Object solver) {
         super(solver);
+    }
+
+    public Set<T> getAllFormulas() {
+        return allFormulas;
     }
 
     protected int getTestsSize() {
@@ -189,19 +193,14 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
         int count = this.activeFormulas.size();
         //this.activeFormulas.ensureCapacity(exprs.size() + count);
         for (T expr : exprs) {
-            this.activeFormulas.add(expr);
-            Integer formula = count++;
-            fl.add(formula);
+            boolean isAddedNew = this.activeFormulas.add(expr);
+            if (isAddedNew) {
+                Integer formula = count++;
+                fl.add(formula);
+            }
+
         }
         return fl;
-    }
-
-    public void removeBackgroundFormulas(Set<T> tests) {
-        this.backgroundFormulas.removeAll(tests);
-    }
-
-    public Set<T> getBackgroundFormulas() {
-        return Collections.unmodifiableSet(this.backgroundFormulas);
     }
 
     public void setEmptyBackgroundFormulas() {
@@ -217,39 +216,31 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
         this.activeFormulas.removeAll(backgroundFormulas);
     }
 
+    public void removeBackgroundFormulas(Set<T> tests) {
+        this.backgroundFormulas.removeAll(tests);
+        addActiveFormulas(getAllFormulas());
+    }
 
-
-
-
-
-
-
-
-
-
-    public void addBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
+    public void addBackgroundFormulas(Set<T> formulas) {
         this.backgroundFormulas.addAll(formulas);
-        if (!verifyRequirements()) {
-            this.backgroundFormulas.removeAll(formulas);
-            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
-        }
-        this.activeFormulas.remove(formulas);
+        this.activeFormulas.removeAll(formulas);
     }
 
-    public void addBackgroundFormula(T formulas) throws InconsistentTheoryException, SolverException {
-        this.backgroundFormulas.add(formulas);
-        if (!verifyRequirements()) {
-            this.backgroundFormulas.remove(formulas);
-            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
-        }
-        this.activeFormulas.remove(formulas);
+    public Set<T> getBackgroundFormulas() {
+        return Collections.unmodifiableSet(this.backgroundFormulas);
     }
 
 
 
 
 
-
+    public void addCheckedBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
+        addBackgroundFormulas(formulas);
+        if (!verifyRequirements()) {
+            removeBackgroundFormulas(formulas);
+            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
+        }
+    }
 
     public boolean isTestConsistent() throws SolverException {
         // clear stack
@@ -280,8 +271,9 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
 
 
-        for (Set<T> testCase : positiveTests)
-            this.backgroundFormulas.addAll(testCase);
+        for (Set<T> testCase : getPositiveTests())
+            addBackgroundFormulas(testCase);
+
     }
 
     public void unregisterTestCases() throws SolverException {
@@ -291,8 +283,9 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
         for (Set<T> test : getNonentailedTests())
             for (T negatedTest : negate(test))
                 this.removePositiveTest(Collections.singleton(negatedTest));
-        for (Set<T> testCase : positiveTests)
-            this.backgroundFormulas.removeAll(testCase);
+        for (Set<T> testCase : getPositiveTests())
+            removeBackgroundFormulas(testCase);
+
     }
 
     public boolean testDiagnosis(Collection<T> diag) throws SolverException {

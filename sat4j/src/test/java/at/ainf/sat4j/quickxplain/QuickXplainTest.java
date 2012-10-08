@@ -21,10 +21,7 @@ import org.junit.Test;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ISolver;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -56,7 +53,7 @@ public class QuickXplainTest {
         reasoner.setExpectedNumberOfClauses(20);
         reasoner.newVar(10);
         PropositionalTheory theory = new PropositionalTheory(reasoner);
-        theory.addBackgroundFormula(new VecIntComparable(fm10));
+        theory.addCheckedBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(fm10)));
 
         List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
         check(quick, theory, list, true);

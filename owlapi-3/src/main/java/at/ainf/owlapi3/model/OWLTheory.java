@@ -212,6 +212,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         }
 
         Set<OWLLogicalAxiom> logicalAxioms = ontology.getLogicalAxioms();
+        getAllFormulas().addAll(logicalAxioms);
         addActiveFormulas(setminus(logicalAxioms, backgroundAxioms));
         this.original = ontology;
 
@@ -221,11 +222,11 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         for (OWLOntology ont : importsClosure) {
             if (!ont.equals(ontology))
                 for (OWLLogicalAxiom ax : ont.getLogicalAxioms()) {
-                    addBackgroundFormula(ax);
+                    addCheckedBackgroundFormulas(Collections.<OWLLogicalAxiom>singleton(ax));
                 }
         }
 
-        addBackgroundFormulas(backgroundAxioms);
+        addCheckedBackgroundFormulas(backgroundAxioms);
 
         /*if (reduce) {
             REDUCE_TO_UNSAT = true;
@@ -265,7 +266,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
                     OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "d_" + cl.getIRI().getFragment()));
 
                     try {
-                        addBackgroundFormula(fac.getOWLClassAssertionAxiom(cl, test_individual));
+                        addCheckedBackgroundFormulas(Collections.<OWLLogicalAxiom>singleton(fac.getOWLClassAssertionAxiom(cl, test_individual)));
                     } catch (InconsistentTheoryException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     } catch (SolverException e) {
@@ -320,7 +321,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         for (Set<? extends OWLLogicalAxiom> testCase : getEntailedTests())
             tests.addAll(testCase);
 
-        addBackgroundFormulas(tests);
+        addCheckedBackgroundFormulas(tests);
     }
 
     public void unregisterTestCases() throws SolverException {

@@ -9,7 +9,6 @@ import at.ainf.owlapi3.base.tools.OAEI11ConferenceRdfMatchingParser;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.performance.OAEI11ConferenceTests;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
@@ -124,7 +123,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         OWLOntology ontology2 = getOntologySimple("oaei11conference/ontology", o2 + ".owl");
         bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
         bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
-        theory.addBackgroundFormulas(bx);
+        theory.addCheckedBackgroundFormulas(bx);
 
         Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(mapd, n + ".rdf");
 
@@ -137,7 +136,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
 
         OWLTheory th30 = getExtendTheory(ontology, true);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getUniformCostSearch(th30, true);
-        th30.addBackgroundFormulas(bx);
+        th30.addCheckedBackgroundFormulas(bx);
         OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
 

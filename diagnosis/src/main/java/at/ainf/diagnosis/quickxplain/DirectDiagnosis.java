@@ -21,7 +21,7 @@ public class DirectDiagnosis<Id> extends NewQuickXplain<Id> {
             throws InconsistentTheoryException, SolverException {
         // add axioms to the background theory
         if (changes != null) {
-            c.addBackgroundFormulas(changes);
+            c.addCheckedBackgroundFormulas(changes);
             for (Id axiom : changes)
                 formulas.remove(axiom);}
 

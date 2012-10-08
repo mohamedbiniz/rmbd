@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ public class PropositionalTheoryTest {
     public void testTheory() throws ContradictionException, SolverException, InconsistentTheoryException {
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
-        th.addBackgroundFormula(new VecIntComparable(clause));
+        th.addCheckedBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
         assertTrue(th.hasBackgroundTheory());
 
         int count = th.getTheoryCount();

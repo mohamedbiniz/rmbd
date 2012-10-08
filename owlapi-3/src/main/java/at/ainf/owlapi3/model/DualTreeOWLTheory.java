@@ -26,7 +26,7 @@ public class DualTreeOWLTheory extends OWLTheory {
         super(reasonerFactory, ontology, backgroundAxioms);
     }
 
-    public void addBackgroundFormulas(Set<OWLLogicalAxiom> formulas) throws InconsistentTheoryException, SolverException {
+    public void addCheckedBackgroundFormulas(Set<OWLLogicalAxiom> formulas) throws InconsistentTheoryException, SolverException {
         this.backgroundFormulas.addAll(formulas);
         if (!verifyRequirements()) {
             this.backgroundFormulas.removeAll(formulas);

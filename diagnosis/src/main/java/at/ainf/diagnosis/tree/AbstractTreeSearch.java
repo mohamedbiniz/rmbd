@@ -371,7 +371,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         if (getSearcher().isDual()) {
             boolean valid = true;
             if (getTheory().hasTests()) {
-//                getTheory().addBackgroundFormulas(pathLabels);
+//                getTheory().addCheckedBackgroundFormulas(pathLabels);
                 valid = getTheory().testDiagnosis(conflictSet);
                 //              getTheory().removeBackgroundFormulas(pathLabels);
             }

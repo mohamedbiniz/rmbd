@@ -52,11 +52,16 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
         return verifyQuery(getFormulaStack());
     }
 
-    public void addBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
+
+    public void addBackgroundFormulas(Set<Id> formulas) {
         theory.addBackgroundFormulas(formulas);
     }
 
-    public void removeBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
+    public void addCheckedBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
+        theory.addCheckedBackgroundFormulas(formulas);
+    }
+
+    public void removeBackgroundFormulas(Set<Id> formulas) {
         theory.removeBackgroundFormulas(formulas);
     }
 
