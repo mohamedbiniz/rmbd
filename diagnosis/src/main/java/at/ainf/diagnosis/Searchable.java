@@ -28,9 +28,11 @@ public interface Searchable<E> {
 
     void pop(int k);
 
-    public void addBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
+    public void addBackgroundFormulas(Set<E> formulas);
 
-    public void removeBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
+    public void addCheckedBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
+
+    public void removeBackgroundFormulas(Set<E> formulas);
 
     public Set<E> getBackgroundFormulas();
 

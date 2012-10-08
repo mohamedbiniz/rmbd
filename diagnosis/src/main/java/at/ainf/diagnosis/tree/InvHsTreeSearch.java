@@ -21,7 +21,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
     public void proveValidnessConflict(T conflictSet) throws SolverException {
         boolean valid = true;
         if (getTheory().hasTests()) {
-//                getTheory().addBackgroundFormulas(pathLabels);
+//                getTheory().addCheckedBackgroundFormulas(pathLabels);
             valid = getTheory().testDiagnosis(conflictSet);
             //              getTheory().removeBackgroundFormulas(pathLabels);
         }

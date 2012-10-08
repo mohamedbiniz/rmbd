@@ -179,8 +179,8 @@ public class OAEI08Tests extends OAEI08Session {
                             if (background_add) {
                                 OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
                                 OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
-                                theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                                theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                                theory.addCheckedBackgroundFormulas(ontology1.getLogicalAxioms());
+                                theory.addCheckedBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
 
 
@@ -309,8 +309,8 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
                             OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
                             if (background == BackgroundO.O1_O2) {
-                                theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                                theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                                theory.addCheckedBackgroundFormulas(ontology1.getLogicalAxioms());
+                                theory.addCheckedBackgroundFormulas(ontology2.getLogicalAxioms());
                             }
                             //es.updateKeywordProb(map);
                             targetDg = null;
@@ -381,8 +381,8 @@ public class OAEI08Tests extends OAEI08Session {
         //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
         //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
 
-        //theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-        //theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+        //theory.addCheckedBackgroundFormulas(ontology1.getLogicalAxioms());
+        //theory.addCheckedBackgroundFormulas(ontology2.getLogicalAxioms());
         //ProbabilityTableModel mo = new ProbabilityTableModel();
         //HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
 
@@ -571,9 +571,9 @@ public class OAEI08Tests extends OAEI08Session {
                     OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
                     es.updateKeywordProb(map);
                     if (background == BackgroundO.O1 || background == BackgroundO.O1_O2)
-                        theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
+                        theory.addCheckedBackgroundFormulas(ontology1.getLogicalAxioms());
                     if (background == BackgroundO.O2 || background == BackgroundO.O1_O2)
-                        theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                        theory.addCheckedBackgroundFormulas(ontology2.getLogicalAxioms());
                     search.setCostsEstimator(es);
 
 
@@ -743,8 +743,8 @@ public class OAEI08Tests extends OAEI08Session {
                                 if (background) {
                                     OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
                                     OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
-                                    theory.addBackgroundFormulas(ontology1.getLogicalAxioms());
-                                    theory.addBackgroundFormulas(ontology2.getLogicalAxioms());
+                                    theory.addCheckedBackgroundFormulas(ontology1.getLogicalAxioms());
+                                    theory.addCheckedBackgroundFormulas(ontology2.getLogicalAxioms());
                                 }
                                 //ProbabilityTableModel mo = new ProbabilityTableModel();
 

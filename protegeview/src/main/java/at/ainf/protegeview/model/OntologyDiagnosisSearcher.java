@@ -22,10 +22,8 @@ import org.apache.log4j.Logger;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.inference.OWLReasonerManager;
-import org.protege.editor.owl.model.inference.ProtegeOWLReasonerInfo;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -105,20 +103,14 @@ public class OntologyDiagnosisSearcher {
 
     public void removeBackgroundAxioms(List selectedValuesList) {
         Set<OWLLogicalAxiom> backgroundAxioms = extract(selectedValuesList);
-        try {
             getSearchCreator().getSearch().getTheory().removeBackgroundFormulas(backgroundAxioms);
-        } catch (InconsistentTheoryException e) {
-            e.printStackTrace();
-        } catch (SolverException e) {
-            e.printStackTrace();
-        }
         notifyListeners();
     }
 
     public void addBackgroundAxioms(List selectedValuesList) {
         Set<OWLLogicalAxiom> axioms = extract(selectedValuesList);
         try {
-            getSearchCreator().getSearch().getTheory().addBackgroundFormulas(axioms);
+            getSearchCreator().getSearch().getTheory().addCheckedBackgroundFormulas(axioms);
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();
         } catch (SolverException e) {
@@ -215,7 +207,7 @@ public class OntologyDiagnosisSearcher {
         OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getTheory();
 
         try {
-            theory.addBackgroundFormulas(axioms);
+            theory.addCheckedBackgroundFormulas(axioms);
             errorStatus = NO_ERROR;
         } catch (InconsistentTheoryException e) {
             errorStatus = INCONSISTENT_THEORY_EXCEPTION;
