@@ -1,5 +1,6 @@
 package at.ainf.diagnosis;
 
+import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
@@ -18,6 +19,8 @@ public interface Searchable<E> {
 
     public boolean verifyRequirements() throws SolverException;
 
+    // manager
+
     boolean push(Collection<E> u) throws SolverException;
 
     boolean push(E u) throws SolverException;
@@ -27,6 +30,10 @@ public interface Searchable<E> {
     Set<E> getFormulaStack();
 
     void pop(int k);
+
+    public void doBayesUpdate(Set<? extends AxiomSet<E>> hittingSets);
+
+    // knowledge base
 
     public void addBackgroundFormulas(Set<E> formulas);
 
@@ -45,23 +52,28 @@ public interface Searchable<E> {
 
     boolean isEntailed(Set<E> n);
 
+    // ?
+
     public void reset();
+
+    // split method in O \ D to manager and verifyCons here
 
     boolean diagnosisEntails(AxiomSet<E> hs, Set<E> ent);
 
     boolean diagnosisConsistent(AxiomSet<E> hs, Set<E> ent);
 
-    public void doBayesUpdate(Set<? extends AxiomSet<E>> hittingSets);
+    // here the two methods should be unified
 
-    public boolean isTestConsistent() throws SolverException;
+    public boolean areTestsConsistent() throws SolverException;
 
     public boolean testDiagnosis(Collection<E> diagnosis) throws SolverException;
+
 
     public void registerTestCases() throws SolverException, InconsistentTheoryException;
 
     public void unregisterTestCases() throws SolverException;
 
-
+    public ITheory<E> getKnowledgeBase();
 
 
 }

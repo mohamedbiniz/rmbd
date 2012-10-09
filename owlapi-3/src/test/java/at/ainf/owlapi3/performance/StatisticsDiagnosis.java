@@ -180,7 +180,7 @@ public class StatisticsDiagnosis {
         //debugger.setTheory(th);
         SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(th);
         OWLOntology on = th.getOriginalOntology();
-        logger.info(th.getActiveFormulas().size() + "/" + th.getBackgroundFormulas().size() + " axioms, "
+        logger.info(th.getFaultyFormulas().size() + "/" + th.getBackgroundFormulas().size() + " axioms, "
                 + on.getClassesInSignature().size() + "/"
                 + (on.getDataPropertiesInSignature().size() + on.getObjectPropertiesInSignature().size()) + "/"
                 + on.getIndividualsInSignature().size());

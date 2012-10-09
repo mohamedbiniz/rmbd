@@ -68,4 +68,5 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
     public Set<Id> getBackgroundFormulas() {
         return theory.getBackgroundFormulas();
     }
+
 }

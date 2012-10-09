@@ -232,7 +232,7 @@ public class OntologyDiagnosisSearcher {
     protected void addCheckedPositiveTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
         theory.addPositiveTest(axioms);
         try {
-            if (!theory.isTestConsistent()) {
+            if (!theory.areTestsConsistent()) {
                 theory.removePositiveTest(axioms);
                 errorStatus = SOLVER_EXCEPTION;
             }
@@ -247,7 +247,7 @@ public class OntologyDiagnosisSearcher {
     protected void addCheckedNegativeTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
         theory.addNegativeTest(axioms);
         try {
-            if (!theory.isTestConsistent()) {
+            if (!theory.areTestsConsistent()) {
                 theory.removeNegativeTest(axioms);
                 errorStatus = SOLVER_EXCEPTION;
             }
@@ -262,7 +262,7 @@ public class OntologyDiagnosisSearcher {
     protected void addCheckedEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
         theory.addEntailedTest(axioms);
         try {
-            if (!theory.isTestConsistent()) {
+            if (!theory.areTestsConsistent()) {
                 theory.removeEntailedTest(axioms);
                 errorStatus = SOLVER_EXCEPTION;
             }
@@ -277,7 +277,7 @@ public class OntologyDiagnosisSearcher {
     protected void addCheckedNonEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
         theory.addNonEntailedTest(axioms);
         try {
-            if (!theory.isTestConsistent()) {
+            if (!theory.areTestsConsistent()) {
                 theory.removeNonEntailedTest(axioms);
                 errorStatus = SOLVER_EXCEPTION;
             }

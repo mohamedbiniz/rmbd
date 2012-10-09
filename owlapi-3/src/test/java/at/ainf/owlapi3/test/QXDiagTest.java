@@ -100,7 +100,7 @@ public class QXDiagTest {
         set.add(parser.parse("isHardWorking Domain Person"));
         set.add(parser.parse("Koala SubClassOf Marsupials"));
         set.add(parser.parse("Quokka SubClassOf Marsupials"));
-        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getActiveFormulas());
+        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getFaultyFormulas());
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th, l, set);
 
@@ -114,7 +114,7 @@ public class QXDiagTest {
         OWLTheory th = createTheory(manager, "ontologies/koala.owl", true);
         MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
         set.add(parser.parse("Marsupials DisjointWith Person"));
-        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getActiveFormulas());
+        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getFaultyFormulas());
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
@@ -231,7 +231,7 @@ public class QXDiagTest {
             logger.info(new CalculateDiagnoses().renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
-        Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getActiveFormulas(), null);
+        Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getFaultyFormulas(), null);
 
         String logd = "Hitting set: {" + LogUtil.logCollection(diagnosis);
         logger.info(logd);*/

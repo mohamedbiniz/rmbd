@@ -11,14 +11,12 @@ package at.ainf.sat4j.model;
 import at.ainf.diagnosis.model.AbstractTheory;
 import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class PropositionalTheory extends AbstractTheory<IVecIntComparable> implements
         ITheory<IVecIntComparable> {
@@ -113,7 +111,7 @@ public class PropositionalTheory extends AbstractTheory<IVecIntComparable> imple
 
     public IVecIntComparable addClause(int[] vector) {
         VecIntComparable anInt = new VecIntComparable(vector);
-        addActiveFormula(anInt);
+        addFaultyFormula(anInt);
         return anInt;
     }
 

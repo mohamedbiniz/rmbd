@@ -360,7 +360,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         // if there is already a root
         if (getRoot() != null) return;
         Set<Id> conflict = calculateConflict(null);
-        Node<Id> node = getSearchStrategy().createRootNode(conflict, getCostsEstimator(), getTheory().getActiveFormulas());
+        Node<Id> node = getSearchStrategy().createRootNode(conflict, getCostsEstimator(), getTheory().getFaultyFormulas());
         setRoot(node);
     }
 
@@ -384,7 +384,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             SolverException, NoConflictException, InconsistentTheoryException {
         // if conflict was already calculated
         Set<Id> quickConflict;
-        List<Id> list = new ArrayList<Id>(getTheory().getActiveFormulas());
+        List<Id> list = new ArrayList<Id>(getTheory().getFaultyFormulas());
         Collections.sort(list, new Comparator<Id>() {
             public int compare(Id o1, Id o2) {
                 BigDecimal nodeCosts = getCostsEstimator().getAxiomCosts(o1);
