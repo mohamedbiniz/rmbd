@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.base;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
@@ -147,7 +148,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         }
     }
 
-    protected int getEliminationRate(ITheory<OWLLogicalAxiom> theory, Set<AxiomSet<OWLLogicalAxiom>> d,
+    protected int getEliminationRate(Searchable<OWLLogicalAxiom> theory, Set<AxiomSet<OWLLogicalAxiom>> d,
                                    boolean a, Partition<OWLLogicalAxiom> partition)
             throws SolverException {
         int deleted = 0;
@@ -186,7 +187,7 @@ public class SimulatedSession extends CalculateDiagnoses {
             (TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
              Partition<OWLLogicalAxiom> actualQuery, Set<OWLLogicalAxiom> t) throws NoDecisionPossibleException {
         boolean answer;
-        ITheory<OWLLogicalAxiom> theory = search.getTheory();
+        Searchable<OWLLogicalAxiom> theory = search.getSearchable();
 
         AxiomSet<OWLLogicalAxiom> target = AxiomSetFactory.createHittingSet(BigDecimal.valueOf(0.5), t, new LinkedHashSet<OWLLogicalAxiom>());
         if (theory.diagnosisEntails(target, actualQuery.partition)) {
@@ -449,23 +450,23 @@ public class SimulatedSession extends CalculateDiagnoses {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
                     if (answer)
-                        search2.getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                        search2.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                     else
-                        search2.getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                        search2.getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
 
                     logEliminationRateHelp(getSearch(), getTargetD(), allDiags, search2, theory3, actPa, diagnoses, answer);
                 }
 
-                int eliminatedInLeading = getEliminationRate(getSearch().getTheory(), diagnoses, answer, actPa);
+                int eliminatedInLeading = getEliminationRate(getSearch().getSearchable(), diagnoses, answer, actPa);
                 if (showElRates)
                     logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size());
 
                 if (answer) {
-                        getSearch().getTheory().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                        getSearch().getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                         if (actPa.dnx.isEmpty() && diagnoses.size() < numberOfHittingSets)
                             querySessionEnd = true;
                 } else {
-                        getSearch().getTheory().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                        getSearch().getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
                         if (actPa.dx.isEmpty() && diagnoses.size() < numberOfHittingSets)
                             querySessionEnd = true;
 
@@ -607,11 +608,11 @@ public class SimulatedSession extends CalculateDiagnoses {
     protected void logEliminationRateHelp(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3, Partition<OWLLogicalAxiom> actPa, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, boolean answer) throws SolverException, InconsistentTheoryException {
         Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags;
         remainingAllDiags = secondsearch.getDiagnoses();
-        int eliminatedInLeading = getEliminationRate(search.getTheory(), diagnoses, answer, actPa);
-        int eliminatedInRemaining = getEliminationRate(secondsearch.getTheory(), remainingAllDiags, answer, actPa);
+        int eliminatedInLeading = getEliminationRate(search.getSearchable(), diagnoses, answer, actPa);
+        int eliminatedInRemaining = getEliminationRate(secondsearch.getSearchable(), remainingAllDiags, answer, actPa);
         int eliminatedInRemainingSize = remainingAllDiags.size();
         int eliminatedInfull = getEliminationRate(t3, allDiagnoses, answer, actPa);
-        // deleteDiag(search.getTheory(),remainingAllDiags,answer,actPa.partition);
+        // deleteDiag(search.getSearchable(),remainingAllDiags,answer,actPa.partition);
 
         AxiomSet<OWLLogicalAxiom> foundTarget;
         foundTarget = null;

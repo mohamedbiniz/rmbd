@@ -177,7 +177,7 @@ public class StatisticsDiagnosis {
 
         }
         OWLTheory th = createTheory(ontology);
-        //debugger.setTheory(th);
+        //debugger.setSearchable(th);
         SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(th);
         OWLOntology on = th.getOriginalOntology();
         logger.info(th.getFaultyFormulas().size() + "/" + th.getBackgroundFormulas().size() + " axioms, "

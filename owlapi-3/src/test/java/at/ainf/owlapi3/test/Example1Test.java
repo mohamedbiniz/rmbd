@@ -233,7 +233,7 @@ public class Example1Test extends AbstractExample {
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
-            search.setTheory(theory);
+            search.setSearchable(theory);
             search.setMaxHittingSets(0);
 
             search.run();
@@ -270,7 +270,7 @@ public class Example1Test extends AbstractExample {
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
-            search.setTheory(theory);
+            search.setSearchable(theory);
             search.setMaxHittingSets(0);
 
             theory.addNonEntailedTest(query.getAxioms());

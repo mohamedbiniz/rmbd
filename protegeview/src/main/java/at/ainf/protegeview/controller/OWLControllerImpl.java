@@ -86,7 +86,7 @@ public class OWLControllerImpl  {
 
 
 
-        search.setTheory(theory);
+        search.setSearchable(theory);
 
         return search;
     }

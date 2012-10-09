@@ -90,7 +90,7 @@ public class TreeEvaluation {
         conflict1.add(var);
         diagnosis3.add(var);
 
-        //Storage.getStorage().setTheory(th);
+        //Storage.getStorage().setSearchable(th);
         // fails to create a root since th is sat
         //search.runPostprocessor();
 
@@ -108,7 +108,7 @@ public class TreeEvaluation {
         diagnosis2.add(var);
         diagnosis3.add(var);
 
-        search.setTheory(th);
+        search.setSearchable(th);
         //search.setMaxHittingSets(2);
         // succeeds to create a root since th is unsat
         search.run();
@@ -177,7 +177,7 @@ public class TreeEvaluation {
         th.addClause(new int[]{4});
         th.addClause(new int[]{1});
 
-        search.setTheory(th);
+        search.setSearchable(th);
         search.run();
 
         assertEquals(6, search.getDiagnoses().size());
@@ -214,7 +214,7 @@ public class TreeEvaluation {
         th.removeNonEntailedTest(Collections.<IVecIntComparable>singleton(net));
         th.addNonEntailedTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{5})));
 
-        search.setTheory(th);
+        search.setSearchable(th);
         search.run();
 
         assertEquals(search.getDiagnoses().size(), 1);
@@ -247,7 +247,7 @@ public class TreeEvaluation {
 
 
         // find 2 first diagnoses
-        search.setTheory(th);
+        search.setSearchable(th);
         search.setMaxHittingSets(2);
         search.run();
         assertEquals(2, search.getDiagnoses().size());

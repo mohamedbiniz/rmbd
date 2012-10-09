@@ -20,14 +20,14 @@ import java.util.Set;
 public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements Searchable<Id> {
 
     private Partition<Id> partition;
-    private ITheory<Id> theory;
+    private Searchable<Id> theory;
 
-    public QueryMinimizer(Partition<Id> partition, ITheory<Id> theory) {
+    public QueryMinimizer(Partition<Id> partition, Searchable<Id> theory) {
         this.theory = theory;
         this.partition = partition;
     }
 
-    public ITheory<Id> getTheory() {
+    public Searchable<Id> getTheory() {
         return theory;
     }
 

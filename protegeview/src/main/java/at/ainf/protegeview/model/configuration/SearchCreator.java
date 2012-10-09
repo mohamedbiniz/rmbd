@@ -15,15 +15,11 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.protege.editor.owl.model.inference.OWLReasonerManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
-import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -76,10 +72,10 @@ public class SearchCreator {
     public void reset() {
 
         readConfiguration();
-        OWLTheory theoryOld = (OWLTheory) getSearch().getTheory();
+        OWLTheory theoryOld = (OWLTheory) getSearch().getSearchable();
 
         search = null;
-        OWLTheory theory = (OWLTheory) getSearch().getTheory();
+        OWLTheory theory = (OWLTheory) getSearch().getSearchable();
         copyTestcases(theoryOld,theory);
     }
 
@@ -154,7 +150,7 @@ public class SearchCreator {
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         }
-        search.setTheory(theory);
+        search.setSearchable(theory);
 
     }
 

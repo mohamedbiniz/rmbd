@@ -5,13 +5,11 @@ import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -19,9 +17,7 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -62,7 +58,7 @@ public class UniformCostSearchTest {
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
-        search.setTheory(theory);
+        search.setSearchable(theory);
 
 
         Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
@@ -88,7 +84,7 @@ public class UniformCostSearchTest {
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setTheory(theory);
+        search.setSearchable(theory);
 
 
         Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
@@ -106,7 +102,7 @@ public class UniformCostSearchTest {
 
         createTh();
 
-        search.setTheory(theory);
+        search.setSearchable(theory);
         search.setMaxHittingSets(0);
 
         search.run();
@@ -122,7 +118,7 @@ public class UniformCostSearchTest {
 
         createTh();
 
-        search.setTheory(theory);
+        search.setSearchable(theory);
         search.setMaxHittingSets(0);
 
         search.runPostprocessor();

@@ -50,9 +50,9 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         search.setCostsEstimator(new SimpleCostsEstimator<Id>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
         search.setSearcher(new NewQuickXplain<Id>());
-        search.setTheory(getTheory());
+        search.setSearchable(getTheory());
         //search.setSearcher(new NewQuickXplain<Id>());
-        //search.setTheory(getTheory());
+        //search.setSearchable(getSearchable());
 
     }
 
@@ -91,7 +91,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         }
 
         for (AxiomSet<Id> hs : query.dx) {
-            if (!hs.getEntailments().containsAll(query.partition) && !search.getTheory().diagnosisEntails(hs, query.partition))
+            if (!hs.getEntailments().containsAll(query.partition) && !search.getSearchable().diagnosisEntails(hs, query.partition))
                 throw new IllegalStateException("DX diagnosis is not entailing a query");
         }
 
@@ -101,7 +101,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
                 : query.dnx)
 
         {
-            if (search.getTheory().diagnosisConsistent(hs, query.partition))
+            if (search.getSearchable().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DNX diagnosis might entail a query");
         }
 
@@ -110,9 +110,9 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
                 : query.dz)
 
         {
-            if (search.getTheory().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
+            if (search.getSearchable().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query");
-            if (!search.getTheory().diagnosisConsistent(hs, query.partition))
+            if (!search.getSearchable().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query complement");
         }
     }

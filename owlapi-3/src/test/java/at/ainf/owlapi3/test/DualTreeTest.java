@@ -139,7 +139,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         searchNormal.setSearcher(searcher);
         OWLTheory theoryNormal = createTheory(manager, ont, dual);
-        searchNormal.setTheory(theoryNormal);
+        searchNormal.setSearchable(theoryNormal);
         /*
         searchNormal.run(runs);
 
@@ -184,7 +184,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
-        searchNormal.setTheory(theoryNormal);
+        searchNormal.setSearchable(theoryNormal);
         searchNormal.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
         normal = System.currentTimeMillis() - normal;
@@ -196,7 +196,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, true);
-        searchDual.setTheory(theoryDual);
+        searchDual.setSearchable(theoryDual);
         searchDual.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
         dual = System.currentTimeMillis() - dual;
@@ -279,7 +279,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
-        boolean hasNegativeTestcases = searchDual.getTheory().getNonentailedTests().size() > 0;
+        boolean hasNegativeTestcases = searchDual.getSearchable().getKnowledgeBase().getNonentailedTests().size() > 0;
 
         logger.info("dual tree iteration finished: window size "
                 + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() +
@@ -322,7 +322,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         timeNormal = System.currentTimeMillis() - timeNormal;
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
-        boolean hasNegativeTestcases = searchNormal.getTheory().getNonentailedTests().size() > 0;
+        boolean hasNegativeTestcases = searchNormal.getSearchable().getKnowledgeBase().getNonentailedTests().size() > 0;
         theoryNormal.clearTestCases();
         searchNormal.reset();
         logger.info("hstree iteration finished: window size "
@@ -346,7 +346,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ontology, false);
-        searchNormal.setTheory(theoryNormal);
+        searchNormal.setSearchable(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);
         HashMap<ManchesterOWLSyntax, BigDecimal> map = new CalculateDiagnoses().getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
@@ -361,7 +361,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ontology, true);
         theoryDual.useCache(useSubsets, threshold);
-        searchDual.setTheory(theoryDual);
+        searchDual.setSearchable(theoryDual);
         //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
         map = new CalculateDiagnoses().getProbabMap();
         es = new OWLAxiomKeywordCostsEstimator(theoryDual);

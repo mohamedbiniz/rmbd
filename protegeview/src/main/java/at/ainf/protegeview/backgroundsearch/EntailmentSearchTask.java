@@ -50,7 +50,7 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
 
     @Override
     public Partition<OWLLogicalAxiom> doInBackground() {
-        CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getTheory(), func);
+        CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getSearchable(), func);
         ckk.setThreshold(QueryDebuggerPreference.getInstance().getPartitioningThres());
 
         TreeSet<AxiomSet<OWLLogicalAxiom>> set = new TreeSet<AxiomSet<OWLLogicalAxiom>>(diags);
@@ -75,7 +75,7 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
 
     private void minimizePartitionAx(Partition<OWLLogicalAxiom> query) {
         if (query.partition == null) return;
-        QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, search.getTheory());
+        QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, search.getSearchable());
         NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
         try {
             query.partition = q.search(mnz, query.partition, null);
@@ -88,20 +88,20 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
         }
 
         for (AxiomSet<OWLLogicalAxiom> hs : query.dx) {
-            if (!hs.getEntailments().containsAll(query.partition) && !search.getTheory().diagnosisEntails(hs, query.partition))
+            if (!hs.getEntailments().containsAll(query.partition) && !search.getSearchable().diagnosisEntails(hs, query.partition))
                 throw new IllegalStateException("DX diagnosis is not entailing a query");
         }
 
 
         for (AxiomSet<OWLLogicalAxiom> hs : query.dnx) {
-            if (search.getTheory().diagnosisConsistent(hs, query.partition))
+            if (search.getSearchable().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DNX diagnosis might entail a query");
         }
 
         for (AxiomSet<OWLLogicalAxiom> hs : query.dz) {
-            if (search.getTheory().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
+            if (search.getSearchable().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query");
-            if (!search.getTheory().diagnosisConsistent(hs, query.partition))
+            if (!search.getSearchable().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query complement");
         }
     }

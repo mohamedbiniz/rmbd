@@ -241,7 +241,7 @@ public class Example2Test extends AbstractExample {
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
 
-        search.setTheory(theory);
+        search.setSearchable(theory);
         search.setMaxHittingSets(0);
 
         TreeSet<Diag> set = new TreeSet<Diag>();
@@ -280,7 +280,7 @@ public class Example2Test extends AbstractExample {
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
-            search.setTheory(theory);
+            search.setSearchable(theory);
             search.setMaxHittingSets(0);
 
             search.run();
@@ -325,7 +325,7 @@ public class Example2Test extends AbstractExample {
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
-            search.setTheory(theory);
+            search.setSearchable(theory);
             search.setMaxHittingSets(0);
 
             theory.addNonEntailedTest(query.getAxioms());
@@ -358,7 +358,7 @@ public class Example2Test extends AbstractExample {
         theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
-        search.setTheory(theory);
+        search.setSearchable(theory);
         search.setMaxHittingSets(0);
 
 

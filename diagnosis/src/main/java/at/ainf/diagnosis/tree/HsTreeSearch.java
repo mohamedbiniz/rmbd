@@ -24,8 +24,8 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
 
     public boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
 
-        if (getTheory().hasTests())
-            return getTheory().testDiagnosis(diagnosis);
+        if (getSearchable().getKnowledgeBase().hasTests())
+            return getSearchable().testDiagnosis(diagnosis);
 
         return true;
 
@@ -61,7 +61,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
     public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
 
         for (T ax : getConflicts()) {
-            Set<Id> axioms = getSearcher().search(getTheory(), ax, null);
+            Set<Id> axioms = getSearcher().search(getSearchable(), ax, null);
             if (!axioms.equals(ax)) {
                 AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());
                 updateTree(conflict);

@@ -1,8 +1,6 @@
 package at.ainf.protegeview.queryaskingview;
 
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
@@ -345,8 +343,8 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
         processAnswer(SectionType.ET);
 
             //for (OWLLogicalAxiom a : actQuery.partition)
-            //    workspace.getUniformCostSearch().getTheory().addEntailedTest (a);
-            workspace.getSearch().getTheory().addEntailedTest(actQuery.partition);
+            //    workspace.getUniformCostSearch().getSearchable().addEntailedTest (a);
+            workspace.getSearch().getSearchable().getKnowledgeBase().addEntailedTest(actQuery.partition);
 
 
         // diagProvider.calculateLead();
@@ -367,8 +365,8 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
         processAnswer(SectionType.NET);
 
             //for (OWLLogicalAxiom a : actQuery.partition)
-            //    workspace.getUniformCostSearch().getTheory().addNonEntailedTest(a);
-            workspace.getSearch().getTheory().addNonEntailedTest(actQuery.partition);
+            //    workspace.getUniformCostSearch().getSearchable().addNonEntailedTest(a);
+            workspace.getSearch().getSearchable().getKnowledgeBase().addNonEntailedTest(actQuery.partition);
 
 
         //diagProvider.calculateLead();
@@ -465,7 +463,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
                 //workspace.displaySection();
 
                 positiveTestCases.add(axiom);
-                //workspace.getUniformCostSearch().getTheory().addEntailedTest(axiom);
+                //workspace.getUniformCostSearch().getSearchable().addEntailedTest(axiom);
 
             }
             if (item.isNonEntailedMarked()) {
@@ -477,7 +475,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
                 workspace.displaySection();*/
 
                 negativeTestCases.add(axiom);
-                //workspace.getUniformCostSearch().getTheory().addNonEntailedTest(axiom);
+                //workspace.getUniformCostSearch().getSearchable().addNonEntailedTest(axiom);
 
             }
         }
@@ -490,7 +488,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
 
             workspace.displaySection();
 
-                workspace.getSearch().getTheory().addEntailedTest(positiveTestCases);
+                workspace.getSearch().getSearchable().getKnowledgeBase().addEntailedTest(positiveTestCases);
 
         }
         else if (negativeTestCases.size() > 0) {
@@ -499,7 +497,7 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
             items.add(new TcaeFrameSectionItem(sec.getOWLEditorKit(), sec, null, null, negativeTestCases));
             workspace.displaySection();
 
-                workspace.getSearch().getTheory().addNonEntailedTest(negativeTestCases);
+                workspace.getSearch().getSearchable().getKnowledgeBase().addNonEntailedTest(negativeTestCases);
 
         }
         else {

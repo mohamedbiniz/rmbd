@@ -20,6 +20,8 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     private Object solver;
 
+    private ITheory<T> knowledgeBase;
+
     public AbstractSearchableObject() {
 
     }
@@ -132,7 +134,11 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
     }
 
     public ITheory<T> getKnowledgeBase() {
-        return (ITheory<T>)this;
+        return knowledgeBase;
+    }
+
+    public void setKnowledgeBase(ITheory<T> knowledgeBase) {
+        this.knowledgeBase = knowledgeBase;
     }
 
     public boolean areTestsConsistent() throws SolverException {

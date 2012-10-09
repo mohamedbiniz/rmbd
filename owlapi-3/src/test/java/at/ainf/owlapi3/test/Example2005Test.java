@@ -57,7 +57,7 @@ public class Example2005Test {
         //theory = new OWLTheory(reasonerFactory, ontology, bax);
         //search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
 
-        //search.setTheory(theory);
+        //search.setSearchable(theory);
 
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
         SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
@@ -95,7 +95,7 @@ public class Example2005Test {
         createOntology();
         //theory = new OWLTheory(reasonerFactory, ontology, bax);
 
-        //search.setTheory(theory);
+        //search.setSearchable(theory);
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
         QueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
         debugger.updateMaxHittingSets(0);

@@ -313,16 +313,16 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
                         Set<OWLLogicalAxiom> axioms = new TreeSet<OWLLogicalAxiom>(((TcaeFrameSectionItem) frameObject).getAxioms());
                         switch (type) {
                             case PT:
-                                workspace.getSearch().getTheory().removePositiveTest(axioms);
+                                workspace.getSearch().getSearchable().getKnowledgeBase().removePositiveTest(axioms);
                                 break;
                             case NT:
-                                workspace.getSearch().getTheory().removeNegativeTest(axioms);
+                                workspace.getSearch().getSearchable().getKnowledgeBase().removeNegativeTest(axioms);
                                 break;
                             case ET:
-                                workspace.getSearch().getTheory().removeEntailedTest(axioms);
+                                workspace.getSearch().getSearchable().getKnowledgeBase().removeEntailedTest(axioms);
                                 break;
                             case NET:
-                                workspace.getSearch().getTheory().removeNonEntailedTest(axioms);
+                                workspace.getSearch().getSearchable().getKnowledgeBase().removeNonEntailedTest(axioms);
                                 break;
                         }
                         if (!addAxiomToTcae(axiom, type)) return;

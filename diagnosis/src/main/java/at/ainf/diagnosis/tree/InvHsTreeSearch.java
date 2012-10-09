@@ -20,10 +20,10 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
 
     public void proveValidnessConflict(T conflictSet) throws SolverException {
         boolean valid = true;
-        if (getTheory().hasTests()) {
-//                getTheory().addCheckedBackgroundFormulas(pathLabels);
-            valid = getTheory().testDiagnosis(conflictSet);
-            //              getTheory().removeBackgroundFormulas(pathLabels);
+        if (getSearchable().getKnowledgeBase().hasTests()) {
+//                getSearchable().addCheckedBackgroundFormulas(pathLabels);
+            valid = getSearchable().testDiagnosis(conflictSet);
+            //              getSearchable().removeBackgroundFormulas(pathLabels);
         }
         conflictSet.setValid(valid);
     }
@@ -41,8 +41,8 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
             return;
         }
         for (T ax : invalidAxiomSets) {
-            //ArrayList<Id> formulas = new ArrayList<Id>(tree.getTheory().getFaultyFormulas());
-            //Set<Id> axioms = tree.getSearcher().search(tree.getTheory(), formulas, ax, null);
+            //ArrayList<Id> formulas = new ArrayList<Id>(tree.getSearchable().getFaultyFormulas());
+            //Set<Id> axioms = tree.getSearcher().search(tree.getSearchable(), formulas, ax, null);
             //if (axioms.equals(ax))
             removeNodeLabel(ax);
         }
@@ -134,7 +134,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
                                 }
                             }
                         }
-                        getTheory().addPositiveTest(cnode.getArcLabel());
+                        getSearchable().addPositiveTest(cnode.getArcLabel());
                         cnode.removeArcLabel();
                         */
                     }
