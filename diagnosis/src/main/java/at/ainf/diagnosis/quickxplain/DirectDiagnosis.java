@@ -32,7 +32,7 @@ public class DirectDiagnosis<Id> extends NewQuickXplain<Id> {
     protected void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException {
         if (changes != null)
-            c.removeBackgroundFormulas(changes);
+            c.getKnowledgeBase().removeBackgroundFormulas(changes);
     }
 
     @Override

@@ -103,7 +103,7 @@ public class OntologyDiagnosisSearcher {
 
     public void removeBackgroundAxioms(List selectedValuesList) {
         Set<OWLLogicalAxiom> backgroundAxioms = extract(selectedValuesList);
-            getSearchCreator().getSearch().getSearchable().removeBackgroundFormulas(backgroundAxioms);
+            getSearchCreator().getSearch().getSearchable().getKnowledgeBase().removeBackgroundFormulas(backgroundAxioms);
         notifyListeners();
     }
 

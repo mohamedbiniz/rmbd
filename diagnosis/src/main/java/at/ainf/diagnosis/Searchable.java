@@ -35,13 +35,13 @@ public interface Searchable<E> {
 
     // knowledge base
 
-    public void addBackgroundFormulas(Set<E> formulas);
+
 
     public void addCheckedBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
 
-    public void removeBackgroundFormulas(Set<E> formulas);
 
-    public Set<E> getBackgroundFormulas();
+
+
 
 
     public boolean verifyConsistency() throws SolverException;

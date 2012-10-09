@@ -65,6 +65,12 @@ public interface ITheory<Id> extends Searchable<Id> {
 
     Collection<Set<Id>> getNonentailedTests();
 
+    public void removeBackgroundFormulas(Set<Id> formulas);
+
+    public Set<Id> getBackgroundFormulas();
+
+    public void addBackgroundFormulas(Set<Id> formulas);
+
 
 
     //---------------------------------------------------
