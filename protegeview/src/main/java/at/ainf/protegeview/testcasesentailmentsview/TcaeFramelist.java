@@ -1,9 +1,7 @@
 package at.ainf.protegeview.testcasesentailmentsview;
 
 import at.ainf.diagnosis.model.ITheory;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.protegeview.testcasesentailmentsview.axiomeditor.OWLAxiomEditor;
 import org.protege.editor.core.ProtegeApplication;
@@ -112,7 +110,7 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
     protected boolean addCheckedPositiveTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
         theory.addPositiveTest(axioms);
         try {
-            if (!theory.isTestConsistent()) {
+            if (!theory.areTestsConsistent()) {
                 theory.removePositiveTest(axioms);
                 JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -128,7 +126,7 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
     protected boolean addCheckedNegativeTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
         theory.addNegativeTest(axioms);
         try {
-            if (!theory.isTestConsistent()) {
+            if (!theory.areTestsConsistent()) {
                 theory.removeNegativeTest(axioms);
                 JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -144,7 +142,7 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
     protected boolean addCheckedEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
         theory.addEntailedTest(axioms);
         try {
-            if (!theory.isTestConsistent()) {
+            if (!theory.areTestsConsistent()) {
                 theory.removeEntailedTest(axioms);
                 JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -160,7 +158,7 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
     protected boolean addCheckedNonEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
         theory.addNonEntailedTest(axioms);
         try {
-            if (!theory.isTestConsistent()) {
+            if (!theory.areTestsConsistent()) {
                 theory.removeNonEntailedTest(axioms);
                 JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
                 return false;

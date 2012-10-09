@@ -30,7 +30,7 @@ public interface ITheory<Id> extends Searchable<Id> {
      *
      * @return list of statements
      */
-    public Collection<Id> getActiveFormulas();
+    public Collection<Id> getFaultyFormulas();
 
     //public int getTheoryCount();
 

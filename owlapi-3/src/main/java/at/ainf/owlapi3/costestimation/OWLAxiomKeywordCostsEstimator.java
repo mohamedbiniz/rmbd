@@ -89,7 +89,7 @@ public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalA
             for (OWLLogicalAxiom axiom : labelSet) {
                 probability = probability.multiply(getAxiomCosts(axiom));
             }
-            Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
+            Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getFaultyFormulas());
             activeFormulas.removeAll(labelSet);
             for (OWLLogicalAxiom axiom : activeFormulas) {
                 probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
@@ -164,7 +164,7 @@ public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalA
         private void updateAxiomProbabilities() {
             Map<OWLLogicalAxiom, BigDecimal> axiomsProbs = new HashMap<OWLLogicalAxiom, BigDecimal>();
             ManchesterOWLSyntaxOWLObjectRendererImpl impl = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-            Collection<OWLLogicalAxiom> activeFormulas = theory.getActiveFormulas();
+            Collection<OWLLogicalAxiom> activeFormulas = theory.getFaultyFormulas();
             BigDecimal sum = BigDecimal.ZERO;
             for (OWLLogicalAxiom axiom : activeFormulas) {
                 String renderedAxiom = impl.render(axiom); // String renderedAxiom = modelManager.getRendering(axiom);

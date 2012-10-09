@@ -213,7 +213,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
 
         Set<OWLLogicalAxiom> logicalAxioms = ontology.getLogicalAxioms();
         getAllFormulas().addAll(logicalAxioms);
-        addActiveFormulas(setminus(logicalAxioms, backgroundAxioms));
+        addFaultyFormulas(setminus(logicalAxioms, backgroundAxioms));
         this.original = ontology;
 
         // add all axioms from imported ontologies, as well as background axioms into a new test ontology
@@ -337,7 +337,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
     public boolean testDiagnosis(Collection<OWLLogicalAxiom> diag) throws SolverException {
         // clean up formula stack
         pop(getTheoryCount());
-        List<OWLLogicalAxiom> kb = new LinkedList<OWLLogicalAxiom>(getActiveFormulas());
+        List<OWLLogicalAxiom> kb = new LinkedList<OWLLogicalAxiom>(getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
         push(kb);
@@ -374,7 +374,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         return true;
     }
 
-    public boolean isTestConsistent() throws SolverException {
+    public boolean areTestsConsistent() throws SolverException {
         // clear stack
         pop(getTheoryCount());
         for (Set<OWLLogicalAxiom> test : getPositiveTests()) {
@@ -594,7 +594,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
 
-        updateAxioms(ontology, getBackgroundFormulas(), setminus(getActiveFormulas(), hs));
+        updateAxioms(ontology, getBackgroundFormulas(), setminus(getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
@@ -611,7 +611,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         pop(getTheoryCount());
 
         updateAxioms(ontology, flatten(getPositiveTests()), flatten(getEntailedTests()),
-                getBackgroundFormulas(), setminus(getActiveFormulas(), hs));
+                getBackgroundFormulas(), setminus(getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
@@ -669,7 +669,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         pop(getTheoryCount());
 
         // add axioms to the ontology
-        push(setminus(getActiveFormulas(), hs));
+        push(setminus(getFaultyFormulas(), hs));
         push(getBackgroundFormulas());
         push(ent);
         //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
@@ -703,7 +703,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
             push(test);
         }
         // add axioms to the ontology
-        push(setminus(getActiveFormulas(), hs));
+        push(setminus(getFaultyFormulas(), hs));
         push(getBackgroundFormulas());
         push(ent);
         //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
@@ -741,7 +741,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
             push(test);
         }
         // add axioms to the ontology
-        push(setminus(getActiveFormulas(), hs));
+        push(setminus(getFaultyFormulas(), hs));
         push(getBackgroundFormulas());
         push(axioms);
         push(ent);
@@ -767,7 +767,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
 
         OWLReasoner reasoner = getSolver();
 
-        Set<OWLLogicalAxiom> axioms = setminus(getActiveFormulas(), hittingSet);
+        Set<OWLLogicalAxiom> axioms = setminus(getFaultyFormulas(), hittingSet);
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
 

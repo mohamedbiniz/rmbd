@@ -1,6 +1,5 @@
 package at.ainf.owlapi3.costestimation;
 
-import at.ainf.diagnosis.partitioning.BigFunctions;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -112,7 +111,7 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
         for (OWLLogicalAxiom axiom : labelSet) {
             probability = probability.multiply(getAxiomCosts(axiom));
         }
-        Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getActiveFormulas());
+        Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getFaultyFormulas());
         activeFormulas.removeAll(labelSet);
         for (OWLLogicalAxiom axiom : activeFormulas) {
                 probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));

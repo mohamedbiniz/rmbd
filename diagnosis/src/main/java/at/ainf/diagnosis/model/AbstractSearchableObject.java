@@ -123,6 +123,85 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         return false;
     }
 
+    public void addCheckedBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
+        getKnowledgeBase().addBackgroundFormulas(formulas);
+        if (!verifyRequirements()) {
+            getKnowledgeBase().removeBackgroundFormulas(formulas);
+            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
+        }
+    }
+
+    public ITheory<T> getKnowledgeBase() {
+        return (ITheory<T>)this;
+    }
+
+    public boolean areTestsConsistent() throws SolverException {
+        // clear stack
+        pop(getTheoryCount());
+        for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
+            push(negate(test));
+        }
+        for (Set<T> test : getKnowledgeBase().getPositiveTests()) {
+            push(test);
+        }
+        for (Set<T> test : getKnowledgeBase().getEntailedTests()) {
+            push(negate(test));
+        }
+        for (Set<T> test : getKnowledgeBase().getNonentailedTests()) {
+            push(test);
+        }
+        boolean res = verifyConsistency();
+        pop(getTheoryCount());
+        return res;
+    }
+
+    public void registerTestCases() throws SolverException, InconsistentTheoryException {
+
+        for (Set<T> test : getKnowledgeBase().getEntailedTests())
+            getKnowledgeBase().addNegativeTest(negate(test));
+        for (Set<T> test : getKnowledgeBase().getNonentailedTests())
+            getKnowledgeBase().addPositiveTest(negate(test));
+
+
+
+        for (Set<T> testCase : getKnowledgeBase().getPositiveTests())
+            getKnowledgeBase().addBackgroundFormulas(testCase);
+
+    }
+
+    public void unregisterTestCases() throws SolverException {
+        for (Set<T> test : getKnowledgeBase().getEntailedTests())
+            for (T negatedTest : negate(test))
+                getKnowledgeBase().removeNegativeTest(Collections.singleton(negatedTest));
+        for (Set<T> test : getKnowledgeBase().getNonentailedTests())
+            for (T negatedTest : negate(test))
+                getKnowledgeBase().removePositiveTest(Collections.singleton(negatedTest));
+        for (Set<T> testCase : getKnowledgeBase().getPositiveTests())
+            getKnowledgeBase().removeBackgroundFormulas(testCase);
+
+    }
+
+    public boolean testDiagnosis(Collection<T> diag) throws SolverException {
+        List<T> kb = new LinkedList<T>(getKnowledgeBase().getFaultyFormulas());
+        // apply diagnosis
+        kb.removeAll(diag);
+        pop(getTheoryCount());
+        // positive test cases are in background theory
+        push(getKnowledgeBase().getBackgroundFormulas());
+        push(kb);
+
+        for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
+            push(test);
+            if (verifyRequirements()) {
+                pop(getTheoryCount());
+                return false;
+            }
+            pop();
+        }
+        pop(getTheoryCount());
+        return true;
+    }
+
 
 
     public Set<T> getEntailments(Set<T> hittingSet) throws SolverException {
@@ -149,25 +228,9 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         throw new RuntimeException("Unimplemented method");
     }
 
-    @Override
-    public boolean isTestConsistent() throws SolverException {
-        throw new RuntimeException("Unimplemented method");
-    }
 
-    @Override
-    public boolean testDiagnosis(Collection<T> diagnosis) throws SolverException {
-        throw new RuntimeException("Unimplemented method");
-    }
 
-    @Override
-    public void registerTestCases() throws SolverException, InconsistentTheoryException {
-        throw new RuntimeException("Unimplemented method");
-    }
 
-    @Override
-    public void unregisterTestCases() throws SolverException {
-        throw new RuntimeException("Unimplemented method");
-    }
 
     protected T negate(T formula) {
         throw new RuntimeException("Unimplemented method");

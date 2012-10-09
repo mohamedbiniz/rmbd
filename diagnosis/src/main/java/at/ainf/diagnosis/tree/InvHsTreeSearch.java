@@ -41,7 +41,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
             return;
         }
         for (T ax : invalidAxiomSets) {
-            //ArrayList<Id> formulas = new ArrayList<Id>(tree.getTheory().getActiveFormulas());
+            //ArrayList<Id> formulas = new ArrayList<Id>(tree.getTheory().getFaultyFormulas());
             //Set<Id> axioms = tree.getSearcher().search(tree.getTheory(), formulas, ax, null);
             //if (axioms.equals(ax))
             removeNodeLabel(ax);

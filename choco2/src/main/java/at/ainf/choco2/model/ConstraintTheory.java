@@ -21,7 +21,6 @@ import choco.kernel.solver.Solver;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 
 public class ConstraintTheory extends AbstractTheory<Constraint> implements
@@ -73,11 +72,11 @@ public class ConstraintTheory extends AbstractTheory<Constraint> implements
     }
 
     public void addConstraint(Constraint cnt) {
-        addActiveFormula(cnt);
+        addFaultyFormula(cnt);
     }
 
     public List<Integer> addConstraints(Collection<Constraint> cnts) {
-        return addActiveFormulas(cnts);
+        return addFaultyFormulas(cnts);
     }
 
     public Model getModel() {

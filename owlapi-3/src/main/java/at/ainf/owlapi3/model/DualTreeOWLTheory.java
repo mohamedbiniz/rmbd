@@ -32,12 +32,12 @@ public class DualTreeOWLTheory extends OWLTheory {
             this.backgroundFormulas.removeAll(formulas);
             //throw new InconsistentTheoryException("The ontology is satisfiable!");
         }
-        this.activeFormulas.remove(formulas);
+        this.faultyFormulas.remove(formulas);
     }
 
     public boolean verifyRequirements() {
         OWLOntology ontology = getOntology();
-        Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getActiveFormulas());
+        Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getFaultyFormulas());
         axiomSet.removeAll(getFormulaStack());
         updateAxioms(getOntology(), axiomSet, getBackgroundFormulas());
 

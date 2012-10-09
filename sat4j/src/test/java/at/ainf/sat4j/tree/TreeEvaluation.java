@@ -188,7 +188,7 @@ public class TreeEvaluation {
         boolean test = false;
 
             th.addNegativeTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{2})));
-        if (!th.isTestConsistent()) {
+        if (!th.areTestsConsistent()) {
             test = true;
         }
         assertTrue(test);
@@ -206,7 +206,7 @@ public class TreeEvaluation {
         test = false;
 
             th.addNonEntailedTest(Collections.<IVecIntComparable>singleton(net));
-        if (!th.isTestConsistent()) {
+        if (!th.areTestsConsistent()) {
             test = true;
         }
         assertTrue(test);

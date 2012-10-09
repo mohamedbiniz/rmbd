@@ -16,7 +16,7 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
     private static final String MESSAGE = "The test case cannot be added!";
 
 
-    protected final Set<T> activeFormulas = new LinkedHashSet<T>();
+    protected final Set<T> faultyFormulas = new LinkedHashSet<T>();
 
     protected final Set<T> allFormulas = new LinkedHashSet<T>();
 
@@ -39,6 +39,7 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
     public AbstractTheory(Object solver) {
         super(solver);
     }
+
 
     public Set<T> getAllFormulas() {
         return allFormulas;
@@ -73,7 +74,7 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
     public boolean addPositiveTest(Set<T> test) {
         boolean val = this.positiveTests.add(test);
-        /*if (val && !isTestConsistent()) {
+        /*if (val && !areTestsConsistent()) {
             this.positiveTests.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
         }*/
@@ -85,7 +86,7 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
     public boolean addNegativeTest(Set<T> test) {
         boolean val = this.negativeTests.add(test);
-        /*if (val && !isTestConsistent()) {
+        /*if (val && !areTestsConsistent()) {
             this.negativeTests.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
         } */
@@ -97,7 +98,7 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
     public boolean addEntailedTest(Set<T> test) {
         boolean val = this.entailed.add(test);
-        /*if (val && !isTestConsistent()) {
+        /*if (val && !areTestsConsistent()) {
             this.entailed.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
         } */
@@ -109,7 +110,7 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
     public boolean addNonEntailedTest(Set<T> test) {
         boolean val = this.nonentailed.add(test);
-        /*if (val && !isTestConsistent()) {
+        /*if (val && !areTestsConsistent()) {
             this.nonentailed.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
         } */
@@ -161,8 +162,8 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
         return Collections.unmodifiableCollection(nonentailed);
     }
 
-    public Set<T> getActiveFormulas() {
-        return Collections.unmodifiableSet(activeFormulas);
+    public Set<T> getFaultyFormulas() {
+        return Collections.unmodifiableSet(faultyFormulas);
     }
 
     public boolean hasTests() {
@@ -181,19 +182,19 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
         return this.backgroundFormulas.size() > 0;
     }
 
-    protected Integer addActiveFormula(T expr) {
-        Integer formula = activeFormulas.size();
-        activeFormulas.add(expr);
+    protected Integer addFaultyFormula(T expr) {
+        Integer formula = faultyFormulas.size();
+        faultyFormulas.add(expr);
         return formula;
     }
 
 
-    protected List<Integer> addActiveFormulas(Collection<T> exprs) {
+    protected List<Integer> addFaultyFormulas(Collection<T> exprs) {
         List<Integer> fl = new ArrayList<Integer>(exprs.size());
-        int count = this.activeFormulas.size();
-        //this.activeFormulas.ensureCapacity(exprs.size() + count);
+        int count = this.faultyFormulas.size();
+        //this.faultyFormulas.ensureCapacity(exprs.size() + count);
         for (T expr : exprs) {
-            boolean isAddedNew = this.activeFormulas.add(expr);
+            boolean isAddedNew = this.faultyFormulas.add(expr);
             if (isAddedNew) {
                 Integer formula = count++;
                 fl.add(formula);
@@ -213,17 +214,17 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
             this.backgroundFormulas.clear();
             throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }*/
-        this.activeFormulas.removeAll(backgroundFormulas);
+        this.faultyFormulas.removeAll(backgroundFormulas);
     }
 
     public void removeBackgroundFormulas(Set<T> tests) {
         this.backgroundFormulas.removeAll(tests);
-        addActiveFormulas(getAllFormulas());
+        addFaultyFormulas(getAllFormulas());
     }
 
     public void addBackgroundFormulas(Set<T> formulas) {
         this.backgroundFormulas.addAll(formulas);
-        this.activeFormulas.removeAll(formulas);
+        this.faultyFormulas.removeAll(formulas);
     }
 
     public Set<T> getBackgroundFormulas() {
@@ -234,80 +235,7 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
 
 
-    public void addCheckedBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
-        addBackgroundFormulas(formulas);
-        if (!verifyRequirements()) {
-            removeBackgroundFormulas(formulas);
-            throw new InconsistentTheoryException("The background theory is unsatisfiable!");
-        }
-    }
 
-    public boolean isTestConsistent() throws SolverException {
-        // clear stack
-        pop(getTheoryCount());
-        for (Set<T> test : getNegativeTests()) {
-            push(negate(test));
-        }
-        for (Set<T> test : getPositiveTests()) {
-            push(test);
-        }
-        for (Set<T> test : getEntailedTests()) {
-            push(negate(test));
-        }
-        for (Set<T> test : getNonentailedTests()) {
-            push(test);
-        }
-        boolean res = verifyConsistency();
-        pop(getTheoryCount());
-        return res;
-    }
-
-    public void registerTestCases() throws SolverException, InconsistentTheoryException {
-
-            for (Set<T> test : getEntailedTests())
-                this.addNegativeTest(negate(test));
-            for (Set<T> test : getNonentailedTests())
-                this.addPositiveTest(negate(test));
-
-
-
-        for (Set<T> testCase : getPositiveTests())
-            addBackgroundFormulas(testCase);
-
-    }
-
-    public void unregisterTestCases() throws SolverException {
-        for (Set<T> test : getEntailedTests())
-            for (T negatedTest : negate(test))
-                this.removeNegativeTest(Collections.singleton(negatedTest));
-        for (Set<T> test : getNonentailedTests())
-            for (T negatedTest : negate(test))
-                this.removePositiveTest(Collections.singleton(negatedTest));
-        for (Set<T> testCase : getPositiveTests())
-            removeBackgroundFormulas(testCase);
-
-    }
-
-    public boolean testDiagnosis(Collection<T> diag) throws SolverException {
-        List<T> kb = new LinkedList<T>(getActiveFormulas());
-        // apply diagnosis
-        kb.removeAll(diag);
-        pop(getTheoryCount());
-        // positive test cases are in background theory
-        push(getBackgroundFormulas());
-        push(kb);
-
-        for (Set<T> test : getNegativeTests()) {
-            push(test);
-            if (verifyRequirements()) {
-                pop(getTheoryCount());
-                return false;
-            }
-            pop();
-        }
-        pop(getTheoryCount());
-        return true;
-    }
 
 
 
