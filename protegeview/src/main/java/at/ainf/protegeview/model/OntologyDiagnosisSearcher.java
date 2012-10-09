@@ -103,14 +103,14 @@ public class OntologyDiagnosisSearcher {
 
     public void removeBackgroundAxioms(List selectedValuesList) {
         Set<OWLLogicalAxiom> backgroundAxioms = extract(selectedValuesList);
-            getSearchCreator().getSearch().getTheory().removeBackgroundFormulas(backgroundAxioms);
+            getSearchCreator().getSearch().getSearchable().removeBackgroundFormulas(backgroundAxioms);
         notifyListeners();
     }
 
     public void addBackgroundAxioms(List selectedValuesList) {
         Set<OWLLogicalAxiom> axioms = extract(selectedValuesList);
         try {
-            getSearchCreator().getSearch().getTheory().addCheckedBackgroundFormulas(axioms);
+            getSearchCreator().getSearch().getSearchable().addCheckedBackgroundFormulas(axioms);
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();
         } catch (SolverException e) {
@@ -189,7 +189,7 @@ public class OntologyDiagnosisSearcher {
     }
 
     public boolean isTestcasesEmpty() {
-        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getTheory();
+        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getSearchable();
         return theory.getPositiveTests().isEmpty() && theory.getNegativeTests().isEmpty() &&
                  theory.getEntailedTests().isEmpty() && theory.getNonentailedTests().isEmpty();
 
@@ -204,7 +204,7 @@ public class OntologyDiagnosisSearcher {
 
     public void doAddBackgroundAxioms(Set<OWLLogicalAxiom> axioms, ErrorHandler errorHandler) {
 
-        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getTheory();
+        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getSearchable();
 
         try {
             theory.addCheckedBackgroundFormulas(axioms);
@@ -292,7 +292,7 @@ public class OntologyDiagnosisSearcher {
 
     protected void addNewTestcase(Set<OWLLogicalAxiom> testcase, TestCaseType type) {
 
-        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getTheory();
+        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getSearchable();
 
             switch(type) {
                 case POSITIVE_TC:
@@ -321,7 +321,7 @@ public class OntologyDiagnosisSearcher {
 
     public void doRemoveTestcase(Set<OWLLogicalAxiom> testcase, TestCaseType type) {
 
-        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getTheory();
+        OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getSearchable();
 
         switch(type) {
             case POSITIVE_TC:
@@ -359,7 +359,7 @@ public class OntologyDiagnosisSearcher {
 
         private void minimizePartitionAx(Partition<OWLLogicalAxiom> query) {
             if (query.partition == null) return;
-            QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, search.getTheory());
+            QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, search.getSearchable());
             NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
             try {
                 query.partition = q.search(mnz, query.partition, null);
@@ -372,20 +372,20 @@ public class OntologyDiagnosisSearcher {
             }
 
             for (AxiomSet<OWLLogicalAxiom> hs : query.dx) {
-                if (!hs.getEntailments().containsAll(query.partition) && !search.getTheory().diagnosisEntails(hs, query.partition))
+                if (!hs.getEntailments().containsAll(query.partition) && !search.getSearchable().diagnosisEntails(hs, query.partition))
                     throw new IllegalStateException("DX diagnosis is not entailing a query");
             }
 
 
             for (AxiomSet<OWLLogicalAxiom> hs : query.dnx) {
-                if (search.getTheory().diagnosisConsistent(hs, query.partition))
+                if (search.getSearchable().diagnosisConsistent(hs, query.partition))
                     throw new IllegalStateException("DNX diagnosis might entail a query");
             }
 
             for (AxiomSet<OWLLogicalAxiom> hs : query.dz) {
-                if (search.getTheory().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
+                if (search.getSearchable().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
                     throw new IllegalStateException("DZ diagnosis entails a query");
-                if (!search.getTheory().diagnosisConsistent(hs, query.partition))
+                if (!search.getSearchable().diagnosisConsistent(hs, query.partition))
                     throw new IllegalStateException("DZ diagnosis entails a query complement");
             }
         }
@@ -418,7 +418,7 @@ public class OntologyDiagnosisSearcher {
                     throw new IllegalStateException("qss unknown");
             }
 
-            CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getTheory(), qss);
+            CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getSearchable(), qss);
             ckk.setThreshold(searchConfig.entailmentCalThres);
 
             TreeSet<AxiomSet<OWLLogicalAxiom>> set = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());

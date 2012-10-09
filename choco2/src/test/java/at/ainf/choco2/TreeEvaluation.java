@@ -25,7 +25,6 @@ import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
 import choco.kernel.model.variables.integer.IntegerVariable;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -117,7 +116,7 @@ public class TreeEvaluation {
         Searcher<Constraint> searcher = new NewQuickXplain<Constraint>();
         strategy.setSearcher(searcher);
 
-        strategy.setTheory(cth);
+        strategy.setSearchable(cth);
 
         try {
             strategy.run();
@@ -165,7 +164,7 @@ public class TreeEvaluation {
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
         strategy.setSearcher(new NewQuickXplain<Constraint>());
 
-        strategy.setTheory(cth);
+        strategy.setSearchable(cth);
 
         try {
             strategy.run();
@@ -252,7 +251,7 @@ public class TreeEvaluation {
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
         strategy.setSearcher(new NewQuickXplain<Constraint>());
 
-        strategy.setTheory(cth);
+        strategy.setSearchable(cth);
         //strategy.setMaxHittingSets(1);
 
         long startTime = System.currentTimeMillis();

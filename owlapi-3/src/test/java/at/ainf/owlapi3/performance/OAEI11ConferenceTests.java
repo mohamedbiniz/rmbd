@@ -287,7 +287,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
-            searchDual.setTheory(theory);
+            searchDual.setSearchable(theory);
             //if (dual) searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
 
             long start = System.currentTimeMillis();
@@ -565,7 +565,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             theory.addCheckedBackgroundFormulas(ontology2CutExtracted);
 
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-            search.setTheory(theory);
+            search.setSearchable(theory);
 
             try {
                 search.run(9);

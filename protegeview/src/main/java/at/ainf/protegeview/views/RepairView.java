@@ -1,5 +1,6 @@
 package at.ainf.protegeview.views;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.SolverException;
@@ -62,7 +63,7 @@ public class RepairView extends AbstractOWLViewComponent implements EntailmentsS
 
     public void processAxiom(Set<ResultsListSection> hs) {
         HashMap<ResultsListSection, Set<OWLLogicalAxiom>> map = new HashMap<ResultsListSection, Set<OWLLogicalAxiom>>();
-        ITheory<OWLLogicalAxiom> theory = getWS().getSearch().getTheory();
+        Searchable<OWLLogicalAxiom> theory = getWS().getSearch().getSearchable();
 
         for (ResultsListSection section : hs) {
             try {

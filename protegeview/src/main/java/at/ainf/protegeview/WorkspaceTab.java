@@ -89,7 +89,7 @@ public class
         } else {
             getSearch().setMaxHittingSets(-1);
         }
-        //getWS().getUniformCostSearch().setTheory(getWS().getOwlTheory());
+        //getWS().getUniformCostSearch().setSearchable(getWS().getOwlTheory());
 
         //OwlControllerMngr.getOWLController().calculateDiags();
 
@@ -591,7 +591,7 @@ public class
                 /* getOWLModelManager().getDirtyOntologies().remove(theory.getOntology());
             }*/
 
-            search.setTheory(theory);
+            search.setSearchable(theory);
             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
             HashMap<ManchesterOWLSyntax,BigDecimal> bigMap = new HashMap<ManchesterOWLSyntax, BigDecimal>();
             for (ManchesterOWLSyntax keyword : map.keySet())

@@ -53,7 +53,7 @@ public class QXDiagTest {
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "ontologies/koala.owl", true);
-        search.setTheory(th);
+        search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
 
         search.run();
@@ -72,7 +72,7 @@ public class QXDiagTest {
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
-        searchNormal.setTheory(theoryNormal);
+        searchNormal.setSearchable(theoryNormal);
         searchNormal.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
@@ -82,7 +82,7 @@ public class QXDiagTest {
         searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, true);
-        searchDual.setTheory(theoryDual);
+        searchDual.setSearchable(theoryDual);
         searchDual.run();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
 
@@ -144,7 +144,7 @@ public class QXDiagTest {
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
-        search.setTheory(th);
+        search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();
 
@@ -179,7 +179,7 @@ public class QXDiagTest {
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-        search.setTheory(th);
+        search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();
 
@@ -219,7 +219,7 @@ public class QXDiagTest {
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "ontologies/koala.owl", false);
-        search.setTheory(th);
+        search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         search.run();
 

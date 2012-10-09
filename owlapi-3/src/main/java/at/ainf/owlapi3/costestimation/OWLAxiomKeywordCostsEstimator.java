@@ -1,9 +1,10 @@
 package at.ainf.owlapi3.costestimation;
 
 import static at.ainf.diagnosis.tree.Rounding.*;
+
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.BigFunctions;
 import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.storage.AxiomSet;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -21,7 +22,7 @@ import java.util.*;
  */
 public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
 
-    private ITheory<OWLLogicalAxiom> theory;
+    private Searchable<OWLLogicalAxiom> searchable;
 
     public final static ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
                 ManchesterOWLSyntax.ONLY,
@@ -59,9 +60,9 @@ public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalA
         return max;
     }
 
-    public OWLAxiomKeywordCostsEstimator(ITheory<OWLLogicalAxiom> t) {
+    public OWLAxiomKeywordCostsEstimator(Searchable<OWLLogicalAxiom> t) {
         this.keywordProbabilities = createKeywordProbs();
-        this.theory = t;
+        this.searchable = t;
         updateAxiomProbabilities();
     }
 
@@ -89,7 +90,7 @@ public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalA
             for (OWLLogicalAxiom axiom : labelSet) {
                 probability = probability.multiply(getAxiomCosts(axiom));
             }
-            Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getFaultyFormulas());
+            Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(searchable.getKnowledgeBase().getFaultyFormulas());
             activeFormulas.removeAll(labelSet);
             for (OWLLogicalAxiom axiom : activeFormulas) {
                 probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
@@ -164,7 +165,7 @@ public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalA
         private void updateAxiomProbabilities() {
             Map<OWLLogicalAxiom, BigDecimal> axiomsProbs = new HashMap<OWLLogicalAxiom, BigDecimal>();
             ManchesterOWLSyntaxOWLObjectRendererImpl impl = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-            Collection<OWLLogicalAxiom> activeFormulas = theory.getFaultyFormulas();
+            Collection<OWLLogicalAxiom> activeFormulas = searchable.getKnowledgeBase().getFaultyFormulas();
             BigDecimal sum = BigDecimal.ZERO;
             for (OWLLogicalAxiom axiom : activeFormulas) {
                 String renderedAxiom = impl.render(axiom); // String renderedAxiom = modelManager.getRendering(axiom);

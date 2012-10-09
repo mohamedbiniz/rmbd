@@ -1,5 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -88,7 +89,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
     private double threshold = 0.01d;
 
-    public CKK(ITheory<Id> theory, Scoring<Id> function) {
+    public CKK(Searchable<Id> theory, Scoring<Id> function) {
         super(theory, function);
     }
 

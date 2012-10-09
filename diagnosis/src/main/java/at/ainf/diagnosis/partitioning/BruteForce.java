@@ -1,5 +1,6 @@
 package at.ainf.diagnosis.partitioning;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -22,7 +23,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     private static Logger logger = LoggerFactory.getLogger(BruteForce.class.getName());
 
-    private ITheory<Id> theory;
+    private Searchable<Id> theory;
 
     private Set<? extends AxiomSet<Id>> hittingSets;
 
@@ -36,7 +37,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     private double threshold = 0.01d;
 
-    public BruteForce(ITheory<Id> theory, Scoring<Id> function) {
+    public BruteForce(Searchable<Id> theory, Scoring<Id> function) {
         this.theory = theory;
         this.scoring = function;
         this.scoring.setPartitionSearcher(this);
@@ -244,7 +245,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
     }
 
 
-    public ITheory<Id> getTheory() {
+    public Searchable<Id> getTheory() {
         return theory;
     }
 

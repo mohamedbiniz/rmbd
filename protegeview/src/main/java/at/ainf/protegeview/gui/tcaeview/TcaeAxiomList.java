@@ -3,7 +3,6 @@ package at.ainf.protegeview.gui.tcaeview;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.gui.AbstractAxiomList;
 import at.ainf.protegeview.gui.axiomsetviews.axiomslist.AxiomListItem;
-import at.ainf.protegeview.gui.axiomsetviews.axiomslist.BasicAxiomListItemRenderer;
 import at.ainf.protegeview.model.EditorKitHook;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 import org.protege.editor.owl.OWLEditorKit;
@@ -101,7 +100,7 @@ public class TcaeAxiomList extends AbstractAxiomList {
 
     public void updateView() {
         OntologyDiagnosisSearcher diagnosisSearcher = getEditorKitHook().getActiveOntologyDiagnosisSearcher();
-        OWLTheory theory = (OWLTheory) diagnosisSearcher.getSearchCreator().getSearch().getTheory();
+        OWLTheory theory = (OWLTheory) diagnosisSearcher.getSearchCreator().getSearch().getSearchable();
 
         List<Object> items = new ArrayList<Object>();
         addToItems(items, POSITIVE_TC, theory.getPositiveTests());

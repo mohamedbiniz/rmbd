@@ -10,7 +10,6 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -115,7 +114,7 @@ public class ModuleExtractTest {
         searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLOntology ontology = loadOntology (  ont);
         OWLTheory theoryNormal = createTheory(manager, ontology, false);
-        searchNormal.setTheory(theoryNormal);
+        searchNormal.setSearchable(theoryNormal);
         searchNormal.run();
 
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
@@ -148,7 +147,7 @@ public class ModuleExtractTest {
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
             p[i] = System.currentTimeMillis() - pre;
                 OWLTheory theoryNormal = createTheory(manager, ontology, false);
-                searchNormal.setTheory(theoryNormal);
+                searchNormal.setSearchable(theoryNormal);
                 long stop1 = System.currentTimeMillis();
                 searchNormal.run();
                 stop1A[i] = System.currentTimeMillis() - stop1;
@@ -161,7 +160,7 @@ public class ModuleExtractTest {
                 searchDual.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
                 OWLOntology ontology2 = loadOntology(  ont);
                 OWLTheory theoryDual = createTheory(manager, ontology2, false);
-                searchDual.setTheory(theoryDual);
+                searchDual.setSearchable(theoryDual);
                 long stop2 = System.currentTimeMillis();
                 searchDual.run();
                 stop2a[i] = System.currentTimeMillis() - stop2 ;

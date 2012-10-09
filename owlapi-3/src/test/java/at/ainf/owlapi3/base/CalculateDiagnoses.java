@@ -117,7 +117,7 @@ public class CalculateDiagnoses {
             search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         }
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        search.setTheory(theory);
+        search.setSearchable(theory);
 
         return search;
     }
@@ -155,7 +155,7 @@ public class CalculateDiagnoses {
 
     private void setAxiomKeywordCostsEstimator(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
         HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
-        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(search.getTheory());
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(search.getSearchable());
         es.updateKeywordProb(map);
         search.setCostsEstimator(es);
     }

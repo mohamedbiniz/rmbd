@@ -343,13 +343,13 @@ public class TreeTest {
     public void testEntailment() throws OWLException, SolverException, URISyntaxException {
         testOntology("ontologies/ecai.corrected.owl", true);
 
-        Collection<OWLLogicalAxiom> inferredAxioms = debugger.getTheory().getEntailments();
+        Collection<OWLLogicalAxiom> inferredAxioms = debugger.getSearchable().getEntailments();
         OWLLogicalAxiom ax = inferredAxioms.iterator().next();
         OWLOntology owlOntology = debugger.getOWLOntology();
-        OWLReasoner reasoner = debugger.getTheory().getSolver();
+        OWLReasoner reasoner = debugger.getSearchable().getSolver();
 
         assertTrue(reasoner.isEntailed(ax));
-        OWLLogicalAxiom neg = debugger.getTheory().negateFormulas(ax);
+        OWLLogicalAxiom neg = debugger.getSearchable().negateFormulas(ax);
         owlOntology.getOWLOntologyManager().addAxiom(owlOntology, neg);
         reasoner.flush();
         boolean consistent = reasoner.verifyRequirements();
@@ -387,7 +387,7 @@ public class TreeTest {
         debug.set_Theory(th);
         debug.reset();
         debug.debug();
-        //debugger.setTheory(th);
+        //debugger.setSearchable(th);
         //assertEquals(debugger.debug(), !sat);
         return th;
     }

@@ -13,17 +13,13 @@ import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -72,7 +68,7 @@ public class WikiExamplesTest {
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
         // at last we combine theory with search and get our ready to use object
-        search.setTheory(theory);
+        search.setSearchable(theory);
 
         // here we run our search and want to get 9 diagnoses
         try {

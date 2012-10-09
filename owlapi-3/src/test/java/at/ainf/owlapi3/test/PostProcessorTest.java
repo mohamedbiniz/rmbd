@@ -79,7 +79,7 @@ public class PostProcessorTest {
         }
 
         for (AxiomSet<OWLLogicalAxiom> hs : query.dx) {
-            if (!hs.getEntailments().containsAll(query.partition) && !search.getTheory().diagnosisEntails(hs, query.partition))
+            if (!hs.getEntailments().containsAll(query.partition) && !search.getSearchable().diagnosisEntails(hs, query.partition))
                 throw new IllegalStateException("DX diagnosis is not entailing a query");
         }
 
@@ -89,7 +89,7 @@ public class PostProcessorTest {
                 : query.dnx)
 
         {
-            if (search.getTheory().diagnosisConsistent(hs, query.partition))
+            if (search.getSearchable().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DNX diagnosis might entail a query");
         }
 
@@ -98,9 +98,9 @@ public class PostProcessorTest {
                 : query.dz)
 
         {
-            if (search.getTheory().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
+            if (search.getSearchable().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query");
-            if (!search.getTheory().diagnosisConsistent(hs, query.partition))
+            if (!search.getSearchable().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query complement");
         }
     }
@@ -118,7 +118,7 @@ public class PostProcessorTest {
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "ontologies/Univ.owl", false);
-        search.setTheory(th);
+        search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
         HashMap<ManchesterOWLSyntax, BigDecimal> map = new CalculateDiagnoses().getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(th);

@@ -9,6 +9,7 @@
 package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.DiagSearch;
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.diagnosis.model.ITheory;
@@ -31,9 +32,9 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> extends DiagSearch<T,Id>
 
     public void setSearcher(Searcher<Id> searcher);
 
-    public ITheory<Id> getTheory();
+    public Searchable<Id> getSearchable();
 
-    public void setTheory(ITheory<Id> theory);
+    public void setSearchable(Searchable<Id> theory);
 
     public int getMaxHittingSets();
 

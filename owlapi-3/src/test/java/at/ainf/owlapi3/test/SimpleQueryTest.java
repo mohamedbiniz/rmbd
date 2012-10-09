@@ -4,14 +4,12 @@ import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -20,7 +18,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -66,7 +63,7 @@ public class SimpleQueryTest {
         OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
-        search.setTheory(theory);
+        search.setSearchable(theory);
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         //theory.getAxiomGenerators().add(new InferredEquivalentClassAxiomGenerator());
         //theory.getAxiomGenerators().add(new InferredDisjointClassesAxiomGenerator());
@@ -122,7 +119,7 @@ public class SimpleQueryTest {
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
-        search.setTheory(theory);
+        search.setSearchable(theory);
 
         //theory.getAxiomGenerators().add(new InferredEquivalentClassAxiomGenerator());
         //theory.getAxiomGenerators().add(new InferredDisjointClassesAxiomGenerator());
@@ -167,7 +164,7 @@ public class SimpleQueryTest {
 
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
-        search.setTheory(theory);
+        search.setSearchable(theory);
 
 
         Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);

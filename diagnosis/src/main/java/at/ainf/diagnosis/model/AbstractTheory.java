@@ -33,11 +33,12 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
 
     protected AbstractTheory() {
-
+        setKnowledgeBase(this);
     }
 
     public AbstractTheory(Object solver) {
         super(solver);
+        setKnowledgeBase(this);
     }
 
 
