@@ -31,6 +31,11 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
         return theory;
     }
 
+    @Override
+    public ITheory<Id> getKnowledgeBase() {
+        return theory.getKnowledgeBase();
+    }
+
     private Boolean verifyQuery(Set<Id> query) {
         for (AxiomSet<Id> hs : partition.dx) {
             if (!getTheory().diagnosisEntails(hs, query))
@@ -53,20 +58,20 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
     }
 
 
-    public void addBackgroundFormulas(Set<Id> formulas) {
+    /*public void addBackgroundFormulas(Set<Id> formulas) {
         theory.addBackgroundFormulas(formulas);
-    }
+    }*/
 
     public void addCheckedBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
         theory.addCheckedBackgroundFormulas(formulas);
     }
 
-    public void removeBackgroundFormulas(Set<Id> formulas) {
+    /*public void removeBackgroundFormulas(Set<Id> formulas) {
         theory.removeBackgroundFormulas(formulas);
     }
 
     public Set<Id> getBackgroundFormulas() {
         return theory.getBackgroundFormulas();
-    }
+    } */
 
 }

@@ -90,7 +90,7 @@ public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException {
         if (axiomRenderer!=null)
-            logger.info("B = {" + axiomRenderer.renderAxioms(b.getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(b.getFormulaStack())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
+            logger.info("B = {" + axiomRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(b.getFormulaStack())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
         iterations++;
         if (d != null && d.size() != 0 && ! b.verifyRequirements())
             return null;

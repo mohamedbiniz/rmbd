@@ -121,7 +121,8 @@ public class BackgroundView extends AbstractQueryViewComponent {
 
     protected void updateDisplayedOntologyAxioms() {
         SearchCreator searchCreator = getEditorKitHook().getActiveOntologyDiagnosisSearcher().getSearchCreator();
-        Set<OWLLogicalAxiom> bgAxioms = searchCreator.getSearch().getSearchable().getBackgroundFormulas();
+        Set<OWLLogicalAxiom> bgAxioms = searchCreator.getSearch().getSearchable().
+                getKnowledgeBase().getBackgroundFormulas();
         OWLOntology ontology = getOWLEditorKit().getModelManager().getActiveOntology();
 
         Set<OWLLogicalAxiom> ontologyAxMinusBg = new LinkedHashSet<OWLLogicalAxiom>();
@@ -139,7 +140,8 @@ public class BackgroundView extends AbstractQueryViewComponent {
 
     protected void updateDisplayedBackgroundAxioms() {
         SearchCreator searchCreator = getEditorKitHook().getActiveOntologyDiagnosisSearcher().getSearchCreator();
-        Set<OWLLogicalAxiom> bgAxioms = searchCreator.getSearch().getSearchable().getBackgroundFormulas();
+        Set<OWLLogicalAxiom> bgAxioms = searchCreator.getSearch().getSearchable().
+                getKnowledgeBase().getBackgroundFormulas();
         OWLOntology ontology = getOWLEditorKit().getModelManager().getActiveOntology();
         backgroundAxiomList.updateList(bgAxioms,ontology);
     }
