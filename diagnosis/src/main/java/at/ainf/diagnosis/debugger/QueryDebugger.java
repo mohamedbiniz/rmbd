@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.debugger;
 
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.Searchable;
 
 import at.ainf.diagnosis.storage.AxiomSet;
 
@@ -22,7 +22,7 @@ public interface QueryDebugger<Id> {
 
     public Set<? extends AxiomSet<Id>> getValidHittingSets();
 
-    public ITheory<Id> getTheory();
+    public Searchable<Id> getTheory();
 
     public void init();
 

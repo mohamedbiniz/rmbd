@@ -2,7 +2,6 @@ package at.ainf.protegeview.views;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.protegeview.debugmanager.*;
 import org.protege.editor.core.ui.util.ComponentFactory;

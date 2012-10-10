@@ -1,6 +1,6 @@
 package at.ainf.diagnosis;
 
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
@@ -73,7 +73,7 @@ public interface Searchable<E> {
 
     public void unregisterTestCases() throws SolverException;
 
-    public ITheory<E> getKnowledgeBase();
+    public IKnowledgeBase<E> getKnowledgeBase();
 
 
 }

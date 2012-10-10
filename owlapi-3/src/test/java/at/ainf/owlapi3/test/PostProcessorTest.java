@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.test;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
@@ -13,7 +14,6 @@ import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
@@ -64,7 +64,7 @@ public class PostProcessorTest {
         return theory;
     }
 
-    private void minimizePartitionAx(Partition<OWLLogicalAxiom> query, TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, ITheory<OWLLogicalAxiom> theory) {
+    private void minimizePartitionAx(Partition<OWLLogicalAxiom> query, TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Searchable<OWLLogicalAxiom> theory) {
         if (query.partition == null) return;
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, theory);
         NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();

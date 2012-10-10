@@ -2,7 +2,6 @@ package at.ainf.diagnosis.partitioning;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;

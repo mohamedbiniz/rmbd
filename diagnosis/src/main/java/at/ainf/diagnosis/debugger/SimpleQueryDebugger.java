@@ -1,5 +1,6 @@
 package at.ainf.diagnosis.debugger;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
@@ -9,7 +10,6 @@ import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
@@ -27,19 +27,19 @@ import java.util.TreeSet;
 public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
 
-    protected ITheory<Id> theory;
+    protected Searchable<Id> theory;
 
     protected TreeSearch<? extends AxiomSet<Id>, Id> search;
 
     private int maxDiags = 9;
 
-    protected SimpleQueryDebugger(ITheory<Id> theory, boolean init) {
+    protected SimpleQueryDebugger(Searchable<Id> theory, boolean init) {
         this.theory = theory;
         if (init)
             init();
     }
 
-    public SimpleQueryDebugger(ITheory<Id> theory) {
+    public SimpleQueryDebugger(Searchable<Id> theory) {
         this(theory, true);
     }
 
@@ -68,11 +68,11 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         return search.getDiagnoses();
     }
 
-    public void set_Theory(ITheory<Id> theory) {
+    public void set_Theory(Searchable<Id> theory) {
         this.theory = theory;
     }
 
-    public ITheory<Id> getTheory() {
+    public Searchable<Id> getTheory() {
         return theory;
     }
 

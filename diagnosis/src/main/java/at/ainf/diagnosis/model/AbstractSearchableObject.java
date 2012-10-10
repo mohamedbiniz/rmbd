@@ -20,7 +20,7 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     private Object solver;
 
-    private ITheory<T> knowledgeBase;
+    private IKnowledgeBase<T> knowledgeBase;
 
     public AbstractSearchableObject() {
 
@@ -133,11 +133,11 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         }
     }
 
-    public ITheory<T> getKnowledgeBase() {
+    public IKnowledgeBase<T> getKnowledgeBase() {
         return knowledgeBase;
     }
 
-    public void setKnowledgeBase(ITheory<T> knowledgeBase) {
+    public void setKnowledgeBase(IKnowledgeBase<T> knowledgeBase) {
         this.knowledgeBase = knowledgeBase;
     }
 

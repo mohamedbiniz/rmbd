@@ -10,7 +10,7 @@ package at.ainf.choco2.model;
 
 
 import at.ainf.diagnosis.model.AbstractTheory;
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
 import choco.Choco;
 import choco.cp.model.CPModel;
@@ -24,7 +24,7 @@ import java.util.List;
 
 
 public class ConstraintTheory extends AbstractTheory<Constraint> implements
-        ITheory<Constraint> {
+        IKnowledgeBase<Constraint> {
 
     private final Model model;
 

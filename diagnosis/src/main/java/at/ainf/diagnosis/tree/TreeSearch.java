@@ -12,7 +12,6 @@ import at.ainf.diagnosis.DiagSearch;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.storage.AxiomRenderer;
 import at.ainf.diagnosis.storage.AxiomSet;
 
