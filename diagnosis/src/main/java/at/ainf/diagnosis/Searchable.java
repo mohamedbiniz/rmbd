@@ -1,5 +1,6 @@
 package at.ainf.diagnosis;
 
+import at.ainf.diagnosis.model.FaultyAxiomsManager;
 import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
@@ -21,19 +22,9 @@ public interface Searchable<E> {
 
     // manager
 
-    boolean push(Collection<E> u) throws SolverException;
 
-    boolean push(E u) throws SolverException;
-
-    void pop();
-
-    Set<E> getFormulaStack();
-
-    void pop(int k);
 
     public void doBayesUpdate(Set<? extends AxiomSet<E>> hittingSets);
-
-    // knowledge base
 
 
 
@@ -75,5 +66,5 @@ public interface Searchable<E> {
 
     public IKnowledgeBase<E> getKnowledgeBase();
 
-
+    public FaultyAxiomsManager<E> getFaultyAxiomsManager();
 }

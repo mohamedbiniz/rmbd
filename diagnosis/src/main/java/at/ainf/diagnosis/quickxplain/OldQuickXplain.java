@@ -75,16 +75,16 @@ public class OldQuickXplain<E> extends BaseQuickXplain<E> {
         FormulaList<E> u1 = (i >= 0) ? u.setBounds(0, i) : null;
         FormulaList<E> u2 = (k - 1 >= i + 1) ? u.setBounds(i + 1, k - 1) : null;
         if (u2 != null && u.size() != 0) {
-            c.push(x);
-            if (u1 != null) c.push(u1);
+            c.getFaultyAxiomsManager().push(x);
+            if (u1 != null) c.getFaultyAxiomsManager().push(u1);
             x.addAll(quickXplain(c, u2));
-            if (u1 != null) c.pop();
-            c.pop();
+            if (u1 != null) c.getFaultyAxiomsManager().pop();
+            c.getFaultyAxiomsManager().pop();
         }
         if (u1 != null && u1.size() != 0) {
-            c.push(x);
+            c.getFaultyAxiomsManager().push(x);
             x.addAll(quickXplain(c, u1));
-            c.pop();
+            c.getFaultyAxiomsManager().pop();
         }
         return x;
     }
@@ -107,12 +107,12 @@ public class OldQuickXplain<E> extends BaseQuickXplain<E> {
         // c.push();
         while (isCoherent && iter.hasNext()) {
             E next = iter.next();
-            c.push(next);
+            c.getFaultyAxiomsManager().push(next);
             isCoherent = c.verifyRequirements();
 
             k++;
         }
-        c.pop(k);
+        c.getFaultyAxiomsManager().pop(k);
         // decrease k, because it was unnecessary incremented at the end of the
         // while loop
         k--;

@@ -63,7 +63,7 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
      *            formulas to the model, and remove in the opposite case.
      */
     private void modifyModel(boolean add) {
-        for (Constraint cnst : getFormulaStack()) {
+        for (Constraint cnst : getFaultyAxiomsManager().getFormulaStack()) {
             if (add)
                 this.model.addConstraint(cnst);
             else
