@@ -109,13 +109,8 @@ public class OntologyDiagnosisSearcher {
 
     public void addBackgroundAxioms(List selectedValuesList) {
         Set<OWLLogicalAxiom> axioms = extract(selectedValuesList);
-        try {
-            getSearchCreator().getSearch().getSearchable().addCheckedBackgroundFormulas(axioms);
-        } catch (InconsistentTheoryException e) {
-            e.printStackTrace();
-        } catch (SolverException e) {
-            e.printStackTrace();
-        }
+            getSearchCreator().getSearch().getSearchable().getKnowledgeBase().addBackgroundFormulas(axioms);
+
         notifyListeners();
     }
 
@@ -206,14 +201,18 @@ public class OntologyDiagnosisSearcher {
 
         OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getSearchable();
 
+        theory.getKnowledgeBase().addBackgroundFormulas(axioms);
+        errorStatus = NO_ERROR;
         try {
-            theory.addCheckedBackgroundFormulas(axioms);
-            errorStatus = NO_ERROR;
-        } catch (InconsistentTheoryException e) {
-            errorStatus = INCONSISTENT_THEORY_EXCEPTION;
-        } catch (SolverException e) {
+            if (!theory.verifyRequirements()) {
+                theory.getKnowledgeBase().removeBackgroundFormulas(axioms);
+                errorStatus = INCONSISTENT_THEORY_EXCEPTION;
+            }
+        }
+        catch (SolverException e) {
             errorStatus = SOLVER_EXCEPTION;
         }
+
 
         if(!getErrorStatus().equals(NO_ERROR))
             errorHandler.errorHappend(getErrorStatus());

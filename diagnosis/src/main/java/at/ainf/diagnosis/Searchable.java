@@ -37,7 +37,7 @@ public interface Searchable<E> {
 
 
 
-    public void addCheckedBackgroundFormulas(Set<E> formulas) throws InconsistentTheoryException, SolverException;
+
 
 
 

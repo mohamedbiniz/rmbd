@@ -17,7 +17,7 @@ import java.util.Set;
  * Time: 18:46
  * To change this template use File | Settings | File Templates.
  */
-public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements Searchable<Id> {
+public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> {
 
     private Partition<Id> partition;
     private Searchable<Id> theory;
@@ -62,9 +62,9 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
         theory.addBackgroundFormulas(formulas);
     }*/
 
-    public void addCheckedBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
-        theory.addCheckedBackgroundFormulas(formulas);
-    }
+    /*public void addCheckedBackgroundFormulas(Set<Id> formulas) throws InconsistentTheoryException, SolverException {
+        theory.getKnowledgeBase().addBackgroundFormulas(formulas);
+    }*/
 
     /*public void removeBackgroundFormulas(Set<Id> formulas) {
         theory.removeBackgroundFormulas(formulas);

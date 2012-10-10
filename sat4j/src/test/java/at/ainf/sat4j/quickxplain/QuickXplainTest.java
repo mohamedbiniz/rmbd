@@ -53,7 +53,7 @@ public class QuickXplainTest {
         reasoner.setExpectedNumberOfClauses(20);
         reasoner.newVar(10);
         PropositionalTheory theory = new PropositionalTheory(reasoner);
-        theory.addCheckedBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(fm10)));
+        theory.getKnowledgeBase().addBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(fm10)));
 
         List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
         check(quick, theory, list, true);

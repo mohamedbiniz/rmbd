@@ -126,13 +126,13 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         return false;
     }
 
-    public void addCheckedBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
+    /*public void addCheckedBackgroundFormulas(Set<T> formulas) throws InconsistentTheoryException, SolverException {
         getKnowledgeBase().addBackgroundFormulas(formulas);
         if (!verifyRequirements()) {
             getKnowledgeBase().removeBackgroundFormulas(formulas);
             throw new InconsistentTheoryException("The background theory is unsatisfiable!");
         }
-    }
+    }*/
 
     public IKnowledgeBase<T> getKnowledgeBase() {
         return knowledgeBase;
