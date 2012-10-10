@@ -134,13 +134,13 @@ public class DiagnosisValidationTest {
         tc2.add(parser.parse("Person DisjointWith TasmanianDevil"));
         tc2.add(parser.parse("Quokka DisjointWith Student"));
         tc2.add(parser.parse("Student DisjointWith TasmanianDevil"));
-        theory.addNonEntailedTest(tc2);
+        theory.getKnowledgeBase().addNonEntailedTest(tc2);
 
         HashSet<OWLLogicalAxiom> tc3 = new HashSet<OWLLogicalAxiom>();
         tc3.add(parser.parse("Koala SubClassOf Person"));
         tc3.add(parser.parse("Koala DisjointWith Marsupials"));
         tc3.add(parser.parse("Koala DisjointWith TasmanianDevil"));
-        theory.addNonEntailedTest(tc3);
+        theory.getKnowledgeBase().addNonEntailedTest(tc3);
 
         HashSet<OWLLogicalAxiom> tc4 = new HashSet<OWLLogicalAxiom>();
         tc4.add(parser.parse("Koala SubClassOf Marsupials"));

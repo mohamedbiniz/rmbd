@@ -73,7 +73,7 @@ public class QuickXplainTest {
         vec.add(clause);
 
         Collection<IVecIntComparable> test = theory.addClauses(vec);
-        list.addAll(theory.getFaultyFormulas());
+        list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
         check(quick, theory, list, true);
 
         IVecIntComparable fm4 = theory.addClause(new int[]{-4});

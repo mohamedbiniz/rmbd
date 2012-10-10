@@ -108,7 +108,7 @@ public class TreeTest {
     public void testDiagnosisSearcher() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         OWLTheory th = new CalculateDiagnoses().getSimpleTheory(new CalculateDiagnoses().getOntologySimple("ontologies/ecai.simple.owl"), true);
         Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
-        Set<OWLLogicalAxiom> diagnosis = searcher.search(th, th.getFaultyFormulas(), null);
+        Set<OWLLogicalAxiom> diagnosis = searcher.search(th, th.getKnowledgeBase().getFaultyFormulas(), null);
 
         String logd = "Hitting set: {" + logCollection(diagnosis);
         logger.info(logd);
@@ -128,7 +128,7 @@ public class TreeTest {
 
         OWLClassAssertionAxiom axiom = owlDataFactory.getOWLClassAssertionAxiom(owlDataFactory.getOWLClass(IRI.create(TEST_IRI + "C")),
                 owlDataFactory.getOWLNamedIndividual(IRI.create(TEST_IRI + "w")));
-        th.addEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
+        th.getKnowledgeBase().addEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
 
         assertTrue(debug.debug());
 
@@ -141,8 +141,8 @@ public class TreeTest {
 
         debug.reset();
 
-        th.removeEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
-        th.addNonEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
+        th.getKnowledgeBase().removeEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
+        th.getKnowledgeBase().addNonEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
         assertTrue(debug.debug());
 
         logd = logCollection(logger, "Hitting sets", debug.getValidHittingSets());
@@ -152,13 +152,13 @@ public class TreeTest {
 
         // test both test casea
         debug.reset();
-        th.removeNonEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
+        th.getKnowledgeBase().removeNonEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
 
-        th.addEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
+        th.getKnowledgeBase().addEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
 
         OWLClassAssertionAxiom naxiom = owlDataFactory.getOWLClassAssertionAxiom(owlDataFactory.getOWLClass(IRI.create(TEST_IRI + "D")),
                 owlDataFactory.getOWLNamedIndividual(IRI.create(TEST_IRI + "v")));
-        th.addNonEntailedTest(Collections.<OWLLogicalAxiom>singleton(naxiom));
+        th.getKnowledgeBase().addNonEntailedTest(Collections.<OWLLogicalAxiom>singleton(naxiom));
 
         assertTrue(debug.debug());
 
@@ -170,8 +170,8 @@ public class TreeTest {
         // test without test cases
 
         debug.reset();
-        th.removeEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
-        th.removeNonEntailedTest(Collections.<OWLLogicalAxiom>singleton(naxiom));
+        th.getKnowledgeBase().removeEntailedTest(Collections.<OWLLogicalAxiom>singleton(axiom));
+        th.getKnowledgeBase().removeNonEntailedTest(Collections.<OWLLogicalAxiom>singleton(naxiom));
         assertTrue(debug.debug());
 
         logd = logCollection(logger, "Hitting sets", debug.getValidHittingSets());
@@ -379,10 +379,10 @@ public class TreeTest {
 
         if (positiveCases != null)
             for (OWLLogicalAxiom test : positiveCases)
-                th.addPositiveTest(Collections.singleton(test));
+                th.getKnowledgeBase().addPositiveTest(Collections.singleton(test));
         if (negativeCases != null)
             for (OWLLogicalAxiom test : negativeCases)
-                th.addNegativeTest(Collections.singleton(test));
+                th.getKnowledgeBase().addNegativeTest(Collections.singleton(test));
 
         debug.set_Theory(th);
         debug.reset();

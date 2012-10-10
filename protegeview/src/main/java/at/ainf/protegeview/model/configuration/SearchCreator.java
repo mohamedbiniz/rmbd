@@ -58,14 +58,14 @@ public class SearchCreator {
     }
 
     protected void copyTestcases(OWLTheory copyFrom, OWLTheory copyTo) {
-            for (Set<OWLLogicalAxiom> testcase : copyFrom.getPositiveTests())
-                copyTo.addPositiveTest(testcase);
-            for (Set<OWLLogicalAxiom> testcase : copyFrom.getNegativeTests())
-                copyTo.addNegativeTest(testcase);
-            for (Set<OWLLogicalAxiom> testcase : copyFrom.getEntailedTests())
-                copyTo.addEntailedTest(testcase);
-            for (Set<OWLLogicalAxiom> testcase : copyFrom.getNonentailedTests())
-                copyTo.addNonEntailedTest(testcase);
+            for (Set<OWLLogicalAxiom> testcase : copyFrom.getKnowledgeBase().getPositiveTests())
+                copyTo.getKnowledgeBase().addPositiveTest(testcase);
+            for (Set<OWLLogicalAxiom> testcase : copyFrom.getKnowledgeBase().getNegativeTests())
+                copyTo.getKnowledgeBase().addNegativeTest(testcase);
+            for (Set<OWLLogicalAxiom> testcase : copyFrom.getKnowledgeBase().getEntailedTests())
+                copyTo.getKnowledgeBase().addEntailedTest(testcase);
+            for (Set<OWLLogicalAxiom> testcase : copyFrom.getKnowledgeBase().getNonentailedTests())
+                copyTo.getKnowledgeBase().addNonEntailedTest(testcase);
 
     }
 

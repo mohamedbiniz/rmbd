@@ -691,7 +691,7 @@ public class OAEI08Tests extends OAEI08Session {
         testcase.add(parser.parse("Conference_Session SubClassOf conference"));
         testcase.add(parser.parse("conference SubClassOf Conference_Session"));
 
-        theory.addNonEntailedTest(testcase);
+        theory.getKnowledgeBase().addNonEntailedTest(testcase);
         Set<AxiomSet<OWLLogicalAxiom>> toRemove = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
         for (AxiomSet<OWLLogicalAxiom> axiomSet : allD)
             if (!theory.testDiagnosis(axiomSet))

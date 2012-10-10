@@ -62,8 +62,8 @@ public class MultithrValidTest {
         debugger.set_Theory(theory);
         debugger.reset();
         debugger.updateMaxHittingSets(9);
-        theory.addEntailedTest(Collections.singleton(parser.parse("AI_Dept SubClassOf CS_Department")));
-        theory.addNonEntailedTest(Collections.singleton(parser.parse("CS_Library SubClassOf EE_Department")));
+        theory.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("AI_Dept SubClassOf CS_Department")));
+        theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("CS_Library SubClassOf EE_Department")));
         assertEquals(true, debugger.debug());
 
         long time = System.currentTimeMillis();

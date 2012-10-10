@@ -28,7 +28,7 @@ public class PropositionalTheoryTest {
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
         th.addCheckedBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
-        assertTrue(th.hasBackgroundTheory());
+        assertTrue(th.getKnowledgeBase().hasBackgroundTheory());
 
         int count = th.getTheoryCount();
         assertEquals(0, count);

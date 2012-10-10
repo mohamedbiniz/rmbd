@@ -8,7 +8,8 @@
 
 package at.ainf.sat4j.model;
 
-import at.ainf.diagnosis.model.AbstractTheory;
+import at.ainf.diagnosis.model.AbstractSearchableObject;
+import at.ainf.diagnosis.model.KnowledgeBase;
 import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
 import org.sat4j.minisat.SolverFactory;
@@ -18,8 +19,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PropositionalTheory extends AbstractTheory<IVecIntComparable> implements
-        IKnowledgeBase<IVecIntComparable> {
+public class PropositionalTheory extends AbstractSearchableObject<IVecIntComparable> {
 
     private boolean createNew = false;
     private int numOfLiterals = 0;
@@ -54,10 +54,10 @@ public class PropositionalTheory extends AbstractTheory<IVecIntComparable> imple
                 solver.reset();
 
             solver.newVar(numOfLiterals);
-            solver.setExpectedNumberOfClauses(getFormulaStack().size() + getBackgroundFormulas().size());
+            solver.setExpectedNumberOfClauses(getFormulaStack().size() + getKnowledgeBase().getBackgroundFormulas().size());
             boolean res;
             try {
-                addFormulas(solver, getBackgroundFormulas());
+                addFormulas(solver, getKnowledgeBase().getBackgroundFormulas());
                 addFormulas(solver, getFormulaStack());
                 res = solver.isSatisfiable();
             } catch (ContradictionException e) {
@@ -111,7 +111,7 @@ public class PropositionalTheory extends AbstractTheory<IVecIntComparable> imple
 
     public IVecIntComparable addClause(int[] vector) {
         VecIntComparable anInt = new VecIntComparable(vector);
-        addFaultyFormula(anInt);
+        getKnowledgeBase().addFaultyFormula(anInt);
         return anInt;
     }
 

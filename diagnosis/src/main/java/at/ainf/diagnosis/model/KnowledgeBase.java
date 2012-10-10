@@ -10,8 +10,7 @@ package at.ainf.diagnosis.model;
 
 import java.util.*;
 
-public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> implements
-        IKnowledgeBase<T> {
+public class KnowledgeBase<T> implements IKnowledgeBase<T> {
 
     private static final String MESSAGE = "The test case cannot be added!";
 
@@ -32,33 +31,24 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
 
 
 
-    protected AbstractTheory() {
-        setKnowledgeBase(this);
-    }
-
-    public AbstractTheory(Object solver) {
-        super(solver);
-        setKnowledgeBase(this);
-    }
-
 
     public Set<T> getAllFormulas() {
         return allFormulas;
     }
 
-    protected int getTestsSize() {
+    public int getTestsSize() {
         return tests.size();
     }
 
-    protected Set<T> getTest(int i) {
+    public Set<T> getTest(int i) {
         return tests.get(i);
     }
 
-    protected List<Set<T>> getTests(int from, int to) {
+    public List<Set<T>> getTests(int from, int to) {
         return tests.subList(from, to);
     }
 
-    protected boolean getTypeOfTest(Set<T> testcase) {
+    public boolean getTypeOfTest(Set<T> testcase) {
         return typeOfTest.get(testcase);
     }
 
@@ -183,14 +173,14 @@ public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> imp
         return this.backgroundFormulas.size() > 0;
     }
 
-    protected Integer addFaultyFormula(T expr) {
+    public Integer addFaultyFormula(T expr) {
         Integer formula = faultyFormulas.size();
         faultyFormulas.add(expr);
         return formula;
     }
 
 
-    protected List<Integer> addFaultyFormulas(Collection<T> exprs) {
+    public List<Integer> addFaultyFormulas(Collection<T> exprs) {
         List<Integer> fl = new ArrayList<Integer>(exprs.size());
         int count = this.faultyFormulas.size();
         //this.faultyFormulas.ensureCapacity(exprs.size() + count);

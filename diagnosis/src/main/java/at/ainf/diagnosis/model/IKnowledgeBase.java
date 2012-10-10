@@ -12,6 +12,8 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -30,7 +32,7 @@ public interface IKnowledgeBase<Id> {
      *
      * @return list of statements
      */
-    public Collection<Id> getFaultyFormulas();
+    public Set<Id> getFaultyFormulas();
 
     //public int getTheoryCount();
 
@@ -71,6 +73,27 @@ public interface IKnowledgeBase<Id> {
 
     public void addBackgroundFormulas(Set<Id> formulas);
 
+    public Integer addFaultyFormula(Id expr);
+
+    public List<Integer> addFaultyFormulas(Collection<Id> exprs);
+
+    public int getTestsSize();
+
+    public Set<Id> getTest(int i);
+
+    public List<Set<Id>> getTests(int from, int to);
+
+    public boolean getTypeOfTest(Set<Id> testcase);
+
+    public Set<Id> getAllFormulas();
+
+    public void clearTestCases();
+
+    public void setEmptyBackgroundFormulas();
+
+    public void setBackgroundFormulas(Collection<Id> fs);
+
+    public boolean hasBackgroundTheory();
 
 
     //---------------------------------------------------

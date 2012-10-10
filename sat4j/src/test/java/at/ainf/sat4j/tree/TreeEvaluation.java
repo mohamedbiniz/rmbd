@@ -164,7 +164,7 @@ public class TreeEvaluation {
         VecIntComparable vecInt = new VecIntComparable(new int[]{-6});
         LinkedList<IVecIntComparable> bg = new LinkedList<IVecIntComparable>();
         bg.add(vecInt);
-        th.setBackgroundFormulas(bg);
+        th.getKnowledgeBase().setBackgroundFormulas(bg);
         if (th.verifyRequirements())
             th.setNumOfLiterals(bg);
 
@@ -184,10 +184,10 @@ public class TreeEvaluation {
         // search.getStorage().resetStorage();
 
 
-        th.addPositiveTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{2})));
+        th.getKnowledgeBase().addPositiveTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{2})));
         boolean test = false;
 
-            th.addNegativeTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{2})));
+            th.getKnowledgeBase().addNegativeTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{2})));
         if (!th.areTestsConsistent()) {
             test = true;
         }
@@ -195,24 +195,24 @@ public class TreeEvaluation {
 
         // specify 4 types of tests
         IVecIntComparable ntest = new VecIntComparable(new int[]{-4});
-        th.addNegativeTest(Collections.<IVecIntComparable>singleton(ntest));
+        th.getKnowledgeBase().addNegativeTest(Collections.<IVecIntComparable>singleton(ntest));
         IVecIntComparable ptest = new VecIntComparable(new int[]{2});
-        th.addPositiveTest(Collections.singleton(ptest));
-        th.addEntailedTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{3})));
+        th.getKnowledgeBase().addPositiveTest(Collections.singleton(ptest));
+        th.getKnowledgeBase().addEntailedTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{3})));
         // this is unsat with background
         VecIntComparable net = new VecIntComparable(new int[]{-6});
 
         // verify the results
         test = false;
 
-            th.addNonEntailedTest(Collections.<IVecIntComparable>singleton(net));
+            th.getKnowledgeBase().addNonEntailedTest(Collections.<IVecIntComparable>singleton(net));
         if (!th.areTestsConsistent()) {
             test = true;
         }
         assertTrue(test);
 
-        th.removeNonEntailedTest(Collections.<IVecIntComparable>singleton(net));
-        th.addNonEntailedTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{5})));
+        th.getKnowledgeBase().removeNonEntailedTest(Collections.<IVecIntComparable>singleton(net));
+        th.getKnowledgeBase().addNonEntailedTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{5})));
 
         search.setSearchable(th);
         search.run();
