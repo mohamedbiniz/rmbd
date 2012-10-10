@@ -54,7 +54,7 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        return verifyQuery(getFormulaStack());
+        return verifyQuery(getFaultyAxiomsManager().getFormulaStack());
     }
 
 

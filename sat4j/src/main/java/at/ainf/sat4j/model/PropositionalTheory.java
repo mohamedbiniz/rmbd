@@ -8,10 +8,7 @@
 
 package at.ainf.sat4j.model;
 
-import at.ainf.diagnosis.model.AbstractSearchableObject;
-import at.ainf.diagnosis.model.KnowledgeBase;
-import at.ainf.diagnosis.model.IKnowledgeBase;
-import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.model.*;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
 
@@ -22,15 +19,20 @@ import java.util.List;
 public class PropositionalTheory extends AbstractSearchableObject<IVecIntComparable> {
 
     private boolean createNew = false;
-    private int numOfLiterals = 0;
 
     public PropositionalTheory(ISolver solver) {
         super(solver);
+        setFaultyAxiomsManager(new Sat4jFaultyAxiomsManager());
+    }
+
+    public Sat4jFaultyAxiomsManager getFaultyAxiomsManager() {
+        return (Sat4jFaultyAxiomsManager) super.getFaultyAxiomsManager();
     }
 
     public void setNumOfLiterals(Collection<IVecIntComparable> expressions) {
         for (IVecIntComparable formula : expressions) {
-            this.numOfLiterals += formula.size();
+            getFaultyAxiomsManager().setNumOfLiterals(getFaultyAxiomsManager().getNumOfLiterals()+formula.size());
+
         }
     }
 
@@ -53,12 +55,12 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
             else
                 solver.reset();
 
-            solver.newVar(numOfLiterals);
-            solver.setExpectedNumberOfClauses(getFormulaStack().size() + getKnowledgeBase().getBackgroundFormulas().size());
+            solver.newVar(getFaultyAxiomsManager().getNumOfLiterals());
+            solver.setExpectedNumberOfClauses(getFaultyAxiomsManager().getFormulaStack().size() + getKnowledgeBase().getBackgroundFormulas().size());
             boolean res;
             try {
                 addFormulas(solver, getKnowledgeBase().getBackgroundFormulas());
-                addFormulas(solver, getFormulaStack());
+                addFormulas(solver, getFaultyAxiomsManager().getFormulaStack());
                 res = solver.isSatisfiable();
             } catch (ContradictionException e) {
                 res = false;
@@ -87,27 +89,7 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
         return position;
     }
 
-    @Override
-    /**
-     * Saves the approximate number of variables in {@link #DefaultTheory.numOfLiterals}
-     */
-    public boolean push(Collection<IVecIntComparable> formulas) {
-        boolean res = super.push(formulas);
-        if (res)
-            for (IVecIntComparable formula : formulas) {
-                this.numOfLiterals += (formula).size();
-            }
-        return res;
-    }
 
-    @Override
-    public boolean push(IVecIntComparable formula) {
-        boolean res = super.push(formula);
-        if (res)
-            this.numOfLiterals += (formula).size();
-        return res;
-
-    }
 
     public IVecIntComparable addClause(int[] vector) {
         VecIntComparable anInt = new VecIntComparable(vector);

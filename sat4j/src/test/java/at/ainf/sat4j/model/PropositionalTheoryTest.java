@@ -30,29 +30,29 @@ public class PropositionalTheoryTest {
         th.getKnowledgeBase().addBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
         assertTrue(th.getKnowledgeBase().hasBackgroundTheory());
 
-        int count = th.getTheoryCount();
+        int count = th.getFaultyAxiomsManager().getTheoryCount();
         assertEquals(0, count);
 
         insertConflicts(th);
         assertTrue(th.verifyRequirements());
 
-        assertEquals(1, th.getTheoryCount());
+        assertEquals(1, th.getFaultyAxiomsManager().getTheoryCount());
 
         clause = new int[]{-3};
         IVecIntComparable fl = th.addClause(clause);
-        th.push(fl);
-        assertEquals(2, th.getTheoryCount());
+        th.getFaultyAxiomsManager().push(fl);
+        assertEquals(2, th.getFaultyAxiomsManager().getTheoryCount());
         assertFalse(th.verifyRequirements());
-        th.pop();
+        th.getFaultyAxiomsManager().pop();
 
-        assertEquals(1, th.getTheoryCount());
+        assertEquals(1, th.getFaultyAxiomsManager().getTheoryCount());
 
         addTheories(3, 7, th);
-        assertEquals(4, th.getTheoryCount());
-        th.pop(4);
+        assertEquals(4, th.getFaultyAxiomsManager().getTheoryCount());
+        th.getFaultyAxiomsManager().pop(4);
 
         fl = th.addClause(clause);
-        th.push(fl);
+        th.getFaultyAxiomsManager().push(fl);
         assertTrue(th.verifyRequirements());
     }
 
@@ -73,7 +73,7 @@ public class PropositionalTheoryTest {
             IVecIntComparable fl = th.addClause(lclause);
             list.add(fl);
         }
-        th.push(list);
+        th.getFaultyAxiomsManager().push(list);
         addTheories(--numberOfTheories, from, th);
     }
 
@@ -91,6 +91,6 @@ public class PropositionalTheoryTest {
         clause = new int[]{2};
         list.add(th.addClause(clause));
 
-        th.push(list);
+        th.getFaultyAxiomsManager().push(list);
     }
 }
