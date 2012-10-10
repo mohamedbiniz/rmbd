@@ -69,7 +69,7 @@ public class TreeEvaluation {
 
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
-        th.addCheckedBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
+        th.getKnowledgeBase().addBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
 
         List<IVecIntComparable> conflict1 = new LinkedList<IVecIntComparable>();
         Set<IVecIntComparable> diagnosis1 = new LinkedHashSet<IVecIntComparable>();

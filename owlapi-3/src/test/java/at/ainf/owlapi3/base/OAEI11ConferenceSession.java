@@ -123,7 +123,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         OWLOntology ontology2 = getOntologySimple("oaei11conference/ontology", o2 + ".owl");
         bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
         bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
-        theory.addCheckedBackgroundFormulas(bx);
+        theory.getKnowledgeBase().addBackgroundFormulas(bx);
 
         Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(mapd, n + ".rdf");
 
@@ -136,7 +136,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
 
         OWLTheory th30 = getExtendTheory(ontology, true);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getUniformCostSearch(th30, true);
-        th30.addCheckedBackgroundFormulas(bx);
+        th30.getKnowledgeBase().addBackgroundFormulas(bx);
         OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
 

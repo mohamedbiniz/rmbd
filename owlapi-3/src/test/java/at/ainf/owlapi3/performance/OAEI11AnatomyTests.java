@@ -83,13 +83,8 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
 
                             bx.addAll(r);
                             bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
-                            try {
-                                theory.addCheckedBackgroundFormulas(bx);
-                            } catch (InconsistentTheoryException e) {
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            } catch (SolverException e) {
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                            }
+                                theory.getKnowledgeBase().addBackgroundFormulas(bx);
+
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
 
@@ -187,7 +182,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
 
                             bx.addAll(r);
                             bx.retainAll(theory.getOriginalOntology().getLogicalAxioms());
-                            if (background) theory.addCheckedBackgroundFormulas(bx);
+                            if (background) theory.getKnowledgeBase().addBackgroundFormulas(bx);
 
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
 

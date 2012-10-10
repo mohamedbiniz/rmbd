@@ -27,7 +27,7 @@ public class PropositionalTheoryTest {
     public void testTheory() throws ContradictionException, SolverException, InconsistentTheoryException {
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
-        th.addCheckedBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
+        th.getKnowledgeBase().addBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
         assertTrue(th.getKnowledgeBase().hasBackgroundTheory());
 
         int count = th.getTheoryCount();
