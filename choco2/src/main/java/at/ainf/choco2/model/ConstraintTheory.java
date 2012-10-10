@@ -9,7 +9,8 @@
 package at.ainf.choco2.model;
 
 
-import at.ainf.diagnosis.model.AbstractTheory;
+import at.ainf.diagnosis.model.AbstractSearchableObject;
+import at.ainf.diagnosis.model.KnowledgeBase;
 import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
 import choco.Choco;
@@ -23,8 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class ConstraintTheory extends AbstractTheory<Constraint> implements
-        IKnowledgeBase<Constraint> {
+public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
 
     private final Model model;
 
@@ -72,11 +72,11 @@ public class ConstraintTheory extends AbstractTheory<Constraint> implements
     }
 
     public void addConstraint(Constraint cnt) {
-        addFaultyFormula(cnt);
+        getKnowledgeBase().addFaultyFormula(cnt);
     }
 
     public List<Integer> addConstraints(Collection<Constraint> cnts) {
-        return addFaultyFormulas(cnts);
+        return getKnowledgeBase().addFaultyFormulas(cnts);
     }
 
     public Model getModel() {

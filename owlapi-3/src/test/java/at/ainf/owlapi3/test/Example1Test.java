@@ -238,7 +238,7 @@ public class Example1Test extends AbstractExample {
 
             search.run();
 
-            theory.addEntailedTest(query.getAxioms());
+            theory.getKnowledgeBase().addEntailedTest(query.getAxioms());
             search.run();
             Collection<Diagnosis> res = new TreeSet<Diagnosis>();
             for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
@@ -247,7 +247,7 @@ public class Example1Test extends AbstractExample {
             assertTrue(query.getDx().equals(res));
             result.put(query, query.getDx().equals(res));
 
-            theory.removeEntailedTest(query.getAxioms());
+            theory.getKnowledgeBase().removeEntailedTest(query.getAxioms());
         }
         /* for (Query query : result.keySet())
             System.out.println(query + " " + result.get(query)); */
@@ -273,7 +273,7 @@ public class Example1Test extends AbstractExample {
             search.setSearchable(theory);
             search.setMaxHittingSets(0);
 
-            theory.addNonEntailedTest(query.getAxioms());
+            theory.getKnowledgeBase().addNonEntailedTest(query.getAxioms());
             search.run();
             Collection<Diagnosis> res = new TreeSet<Diagnosis>();
             for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
@@ -285,7 +285,7 @@ public class Example1Test extends AbstractExample {
             d_nxPlus0.addAll(query.getD_0());
             result.put(query, d_nxPlus0.equals(res));
             assertTrue(d_nxPlus0.equals(res));
-            theory.removeNonEntailedTest(query.getAxioms());
+            theory.getKnowledgeBase().removeNonEntailedTest(query.getAxioms());
         }
         for (Query query : result.keySet())
             logger.info(query + " " + result.get(query));

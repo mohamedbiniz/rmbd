@@ -354,7 +354,7 @@ public class OntologyTests extends OntologySession {
                 " cached subsets " + theoryDual.getCache().size()
         );
         Assert.assertTrue(foundCorrectD2);
-        theoryDual.clearTestCases();
+        theoryDual.getKnowledgeBase().clearTestCases();
         searchDual.reset();
         queries.add(entry2.getMeanQuery());
         return timeDual;
@@ -380,7 +380,7 @@ public class OntologyTests extends OntologySession {
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
         boolean hasNegativeTestcases = searchNormal.getSearchable().getKnowledgeBase().getNonentailedTests().size() > 0;
-        theoryNormal.clearTestCases();
+        theoryNormal.getKnowledgeBase().clearTestCases();
         searchNormal.reset();
         logger.info("hstree iteration finished: window size "
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
@@ -425,7 +425,7 @@ public class OntologyTests extends OntologySession {
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
 
-        theoryNormal.clearTestCases();
+        theoryNormal.getKnowledgeBase().clearTestCases();
         searchNormal.reset();
 
         Map<QSSType, DurationStat> ntimes = new HashMap<QSSType, DurationStat>();
@@ -559,7 +559,7 @@ public class OntologyTests extends OntologySession {
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
 
-        theoryNormal.clearTestCases();
+        theoryNormal.getKnowledgeBase().clearTestCases();
         searchNormal.reset();
 
         for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
@@ -571,7 +571,7 @@ public class OntologyTests extends OntologySession {
             session.setTheory(theoryNormal);
             session.setSearch(searchNormal);
             session.simulateQuerySession();
-            theoryNormal.clearTestCases();
+            theoryNormal.getKnowledgeBase().clearTestCases();
             searchNormal.reset();
             assert(entry.getMeanWin() == 1);
         }
@@ -586,7 +586,7 @@ public class OntologyTests extends OntologySession {
             session.setTheory(theoryDual);
             session.setSearch(searchDual);
             session.simulateQuerySession();
-            theoryDual.clearTestCases();
+            theoryDual.getKnowledgeBase().clearTestCases();
             searchDual.reset();
             assert (entry.getMeanWin() == 1);
         }

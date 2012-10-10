@@ -111,7 +111,7 @@ public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
         for (OWLLogicalAxiom axiom : labelSet) {
             probability = probability.multiply(getAxiomCosts(axiom));
         }
-        Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getFaultyFormulas());
+        Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getKnowledgeBase().getFaultyFormulas());
         activeFormulas.removeAll(labelSet);
         for (OWLLogicalAxiom axiom : activeFormulas) {
                 probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));

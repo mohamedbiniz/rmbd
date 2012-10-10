@@ -88,9 +88,9 @@ public class TreeEvaluation {
 
         CPSolver solver = new CPSolver();
         ConstraintTheory cth = new ConstraintTheory(solver, md);
-        cth.setBackgroundFormulas(unchangable);
+        cth.getKnowledgeBase().setBackgroundFormulas(unchangable);
         if (!cth.verifyRequirements())
-            cth.setEmptyBackgroundFormulas();
+            cth.getKnowledgeBase().setEmptyBackgroundFormulas();
         cth.addConstraints(changable);
 
         Constraint ptest = eq(k, l);
@@ -98,7 +98,7 @@ public class TreeEvaluation {
         Constraint ntest = gt(k, 1);
 
         //cth.addNegativeTest(ntest);
-        cth.addPositiveTest(Collections.singleton(ptest));
+        cth.getKnowledgeBase().addPositiveTest(Collections.singleton(ptest));
 
         // reasoning
         //cth.push(list.subList(0, 2));
@@ -230,9 +230,9 @@ public class TreeEvaluation {
 
         CPSolver solver = new CPSolver();
         ConstraintTheory cth = new ConstraintTheory(solver, md);
-        cth.setBackgroundFormulas(unchangable);
+        cth.getKnowledgeBase().setBackgroundFormulas(unchangable);
         if (!cth.verifyRequirements())
-            cth.setEmptyBackgroundFormulas();
+            cth.getKnowledgeBase().setEmptyBackgroundFormulas();
         cth.addConstraints(changable);
 
 

@@ -27,19 +27,19 @@ public class DualTreeOWLTheory extends OWLTheory {
     }
 
     public void addCheckedBackgroundFormulas(Set<OWLLogicalAxiom> formulas) throws InconsistentTheoryException, SolverException {
-        this.backgroundFormulas.addAll(formulas);
+        getKnowledgeBase().addBackgroundFormulas(formulas);
         if (!verifyRequirements()) {
-            this.backgroundFormulas.removeAll(formulas);
+            getKnowledgeBase().removeBackgroundFormulas(formulas);
             //throw new InconsistentTheoryException("The ontology is satisfiable!");
         }
-        this.faultyFormulas.remove(formulas);
+        //this.faultyFormulas.remove(formulas);
     }
 
     public boolean verifyRequirements() {
         OWLOntology ontology = getOntology();
-        Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getFaultyFormulas());
+        Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getKnowledgeBase().getFaultyFormulas());
         axiomSet.removeAll(getFormulaStack());
-        updateAxioms(getOntology(), axiomSet, getBackgroundFormulas());
+        updateAxioms(getOntology(), axiomSet, getKnowledgeBase().getBackgroundFormulas());
 
         boolean consistent = !doConsistencyTest(getSolver());
 

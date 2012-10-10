@@ -1,10 +1,7 @@
 package at.ainf.owlapi3.model;
 
-import at.ainf.diagnosis.model.IKnowledgeBase;
+import at.ainf.diagnosis.model.*;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
-import at.ainf.diagnosis.model.AbstractTheory;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -31,8 +28,7 @@ import static _dev.TimeLog.stop;
  * Time: 14:21:13
  * To change this template use File | Settings | File Templates.
  */
-public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
-        IKnowledgeBase<OWLLogicalAxiom> {
+public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     private static Logger logger = LoggerFactory.getLogger(OWLTheory.class.getName());
 
@@ -107,17 +103,17 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         for (AxiomSet<OWLLogicalAxiom> hs : hittingSets) {
             Set<OWLLogicalAxiom> positive = new LinkedHashSet<OWLLogicalAxiom>();
             
-            for (int i = 0; i < getTestsSize(); i++) {
-                Set<OWLLogicalAxiom> testcase = getTest(i);
+            for (int i = 0; i < getKnowledgeBase().getTestsSize(); i++) {
+                Set<OWLLogicalAxiom> testcase = getKnowledgeBase().getTest(i);
                 
                 if(i-1>-1) {
-                    Set<OWLLogicalAxiom> olderTC = getTest(i-1);
-                    if (getTypeOfTest(olderTC))
+                    Set<OWLLogicalAxiom> olderTC = getKnowledgeBase().getTest(i-1);
+                    if (getKnowledgeBase().getTypeOfTest(olderTC))
                         positive.addAll(olderTC);
                 }
                 BigDecimal value = hs.getMeasure().divide(BigDecimal.valueOf(2));
 
-                if (getTypeOfTest(testcase)) {
+                if (getKnowledgeBase().getTypeOfTest(testcase)) {
                     if (!diagnosisEntails(hs, testcase, positive)) {
                         hs.setMeasure(value);
                     }
@@ -156,7 +152,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         Set<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
 
         for (Set<OWLLogicalAxiom> testcase : list) {
-            if (getTypeOfTest(testcase))
+            if (getKnowledgeBase().getTypeOfTest(testcase))
                 set.addAll(testcase);
         }
 
@@ -212,8 +208,8 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         }
 
         Set<OWLLogicalAxiom> logicalAxioms = ontology.getLogicalAxioms();
-        getAllFormulas().addAll(logicalAxioms);
-        addFaultyFormulas(setminus(logicalAxioms, backgroundAxioms));
+        getKnowledgeBase().getAllFormulas().addAll(logicalAxioms);
+        getKnowledgeBase().addFaultyFormulas(setminus(logicalAxioms, backgroundAxioms));
         this.original = ontology;
 
         // add all axioms from imported ontologies, as well as background axioms into a new test ontology
@@ -252,7 +248,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
     }
 
     public void activateReduceToUns() {
-        updateAxioms(getOntology(), getOriginalOntology().getLogicalAxioms(), getBackgroundFormulas());
+        updateAxioms(getOntology(), getOriginalOntology().getLogicalAxioms(), getKnowledgeBase().getBackgroundFormulas());
         getSolver().flush();
         if (getSolver().isConsistent()) {
             Set<OWLClass> entities = getSolver().getUnsatisfiableClasses().getEntities();
@@ -316,9 +312,9 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
 
     public void registerTestCases() throws SolverException, InconsistentTheoryException {
         Set<OWLLogicalAxiom> tests = new HashSet<OWLLogicalAxiom>();
-        for (Set<? extends OWLLogicalAxiom> testCase : getPositiveTests())
+        for (Set<? extends OWLLogicalAxiom> testCase : getKnowledgeBase().getPositiveTests())
             tests.addAll(testCase);
-        for (Set<? extends OWLLogicalAxiom> testCase : getEntailedTests())
+        for (Set<? extends OWLLogicalAxiom> testCase : getKnowledgeBase().getEntailedTests())
             tests.addAll(testCase);
 
         addCheckedBackgroundFormulas(tests);
@@ -326,18 +322,18 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
 
     public void unregisterTestCases() throws SolverException {
         Set<OWLLogicalAxiom> tests = new HashSet<OWLLogicalAxiom>();
-        for (Set<? extends OWLLogicalAxiom> testCase : getPositiveTests())
+        for (Set<? extends OWLLogicalAxiom> testCase : getKnowledgeBase().getPositiveTests())
             tests.addAll(testCase);
-        for (Set<? extends OWLLogicalAxiom> testCase : getEntailedTests())
+        for (Set<? extends OWLLogicalAxiom> testCase : getKnowledgeBase().getEntailedTests())
             tests.addAll(testCase);
-        removeBackgroundFormulas(tests);
+        getKnowledgeBase().removeBackgroundFormulas(tests);
     }
 
 
     public boolean testDiagnosis(Collection<OWLLogicalAxiom> diag) throws SolverException {
         // clean up formula stack
         pop(getTheoryCount());
-        List<OWLLogicalAxiom> kb = new LinkedList<OWLLogicalAxiom>(getFaultyFormulas());
+        List<OWLLogicalAxiom> kb = new LinkedList<OWLLogicalAxiom>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
         push(kb);
@@ -356,14 +352,14 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
             return false;
         }
 
-        for (Set<OWLLogicalAxiom> test : getNegativeTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNegativeTests()) {
             if (!isEntailed(test)) {
                 pop(getTheoryCount());
                 return false;
             }
         }
 
-        for (Set<OWLLogicalAxiom> test : getNonentailedTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNonentailedTests()) {
             if (isEntailed(test)) {
                 pop(getTheoryCount());
                 return false;
@@ -377,10 +373,10 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
         pop(getTheoryCount());
-        for (Set<OWLLogicalAxiom> test : getPositiveTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getPositiveTests()) {
             push(test);
         }
-        for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
             push(test);
         }
         if (!verifyConsistency()) {
@@ -389,7 +385,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         }
 
         // verify negative tests
-        for (Set<OWLLogicalAxiom> test : getNegativeTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNegativeTests()) {
             if (isEntailed(test)) {
                 pop(getTheoryCount());
                 return false;
@@ -397,7 +393,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         }
 
         // verify negative tests
-        for (Set<OWLLogicalAxiom> test : getNonentailedTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNonentailedTests()) {
             if (isEntailed(test)) {
                 pop(getTheoryCount());
                 return false;
@@ -437,7 +433,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
 
     public boolean verifyConsistency() {
         start("Overall consistency check including management");
-        updateAxioms(getOntology(), getFormulaStack(), getBackgroundFormulas());
+        updateAxioms(getOntology(), getFormulaStack(), getKnowledgeBase().getBackgroundFormulas());
         boolean consistent = doConsistencyTest(getSolver());
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getFormulaStack(), getOntology());
@@ -509,13 +505,13 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
 
     private boolean checkTestsConsistency() {
         OWLReasoner solver = getSolver();
-        for (Set<OWLLogicalAxiom> test : getNegativeTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNegativeTests()) {
             if (!solver.isEntailed(test)) {
                 return true;
             }
         }
 
-        for (Set<OWLLogicalAxiom> test : getNonentailedTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNonentailedTests()) {
             if (test != null && solver.isEntailed(test)) {
                 return true;
             }
@@ -594,7 +590,7 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
 
-        updateAxioms(ontology, getBackgroundFormulas(), setminus(getFaultyFormulas(), hs));
+        updateAxioms(ontology, getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
@@ -610,8 +606,8 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
 
-        updateAxioms(ontology, flatten(getPositiveTests()), flatten(getEntailedTests()),
-                getBackgroundFormulas(), setminus(getFaultyFormulas(), hs));
+        updateAxioms(ontology, flatten(getKnowledgeBase().getPositiveTests()), flatten(getKnowledgeBase().getEntailedTests()),
+                getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
@@ -638,12 +634,12 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         //removeAxioms(logicalAxioms, getOntology());
 
         // add entailed test cases to simulate extension EX
-        for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
             push(test);
         }
         // add axioms to the ontology
         push(setminus(getOriginalOntology().getLogicalAxioms(), hs));
-        push(getBackgroundFormulas());
+        push(getKnowledgeBase().getBackgroundFormulas());
         push(axioms);
         //removeAxioms(hs, getOntology());
         //addAxioms(, getOntology());
@@ -669,8 +665,8 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         pop(getTheoryCount());
 
         // add axioms to the ontology
-        push(setminus(getFaultyFormulas(), hs));
-        push(getBackgroundFormulas());
+        push(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        push(getKnowledgeBase().getBackgroundFormulas());
         push(ent);
         //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
         //removeAxioms(hs, getOntology());
@@ -699,12 +695,12 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         //removeAxioms(logicalAxioms, getOntology());
 
         // add entailed test cases to simulate extension EX
-        for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
             push(test);
         }
         // add axioms to the ontology
-        push(setminus(getFaultyFormulas(), hs));
-        push(getBackgroundFormulas());
+        push(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        push(getKnowledgeBase().getBackgroundFormulas());
         push(ent);
         //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
         //removeAxioms(hs, getOntology());
@@ -737,12 +733,12 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
         //removeAxioms(logicalAxioms, getOntology());
 
         // add entailed test cases to simulate extension EX
-        for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
+        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
             push(test);
         }
         // add axioms to the ontology
-        push(setminus(getFaultyFormulas(), hs));
-        push(getBackgroundFormulas());
+        push(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        push(getKnowledgeBase().getBackgroundFormulas());
         push(axioms);
         push(ent);
         //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
@@ -767,12 +763,12 @@ public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
 
         OWLReasoner reasoner = getSolver();
 
-        Set<OWLLogicalAxiom> axioms = setminus(getFaultyFormulas(), hittingSet);
+        Set<OWLLogicalAxiom> axioms = setminus(getKnowledgeBase().getFaultyFormulas(), hittingSet);
         Collection<OWLLogicalAxiom> stack = getFormulaStack();
         pop(getTheoryCount());
 
         push(axioms);
-        push(getBackgroundFormulas());
+        push(getKnowledgeBase().getBackgroundFormulas());
 
         if (!verifyConsistency()) {
             pop(getTheoryCount());

@@ -285,7 +285,7 @@ public class Example2Test extends AbstractExample {
 
             search.run();
 
-            theory.addEntailedTest(query.getAxioms());
+            theory.getKnowledgeBase().addEntailedTest(query.getAxioms());
             try {
                 search.run(-1);
             }
@@ -303,7 +303,7 @@ public class Example2Test extends AbstractExample {
             //assertTrue(query.getDx().equals(res));
             result.put(query, d_xPlus0.equals(res));
 
-            theory.removeEntailedTest(query.getAxioms());
+            theory.getKnowledgeBase().removeEntailedTest(query.getAxioms());
         }
         for (Query query : result.keySet())
             logger.info(query + " " + result.get(query));
@@ -328,7 +328,7 @@ public class Example2Test extends AbstractExample {
             search.setSearchable(theory);
             search.setMaxHittingSets(0);
 
-            theory.addNonEntailedTest(query.getAxioms());
+            theory.getKnowledgeBase().addNonEntailedTest(query.getAxioms());
             search.run();
             Collection<Diag> res = new TreeSet<Diag>();
             for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
@@ -340,7 +340,7 @@ public class Example2Test extends AbstractExample {
             d_nxPlus0.addAll(query.getD_0());
             result.put(query, d_nxPlus0.equals(res));
             assertTrue(d_nxPlus0.equals(res));
-            theory.removeNonEntailedTest(query.getAxioms());
+            theory.getKnowledgeBase().removeNonEntailedTest(query.getAxioms());
         }
         for (Query query : result.keySet())
             logger.info(query + " " + result.get(query));
@@ -362,7 +362,7 @@ public class Example2Test extends AbstractExample {
         search.setMaxHittingSets(0);
 
 
-        theory.addNonEntailedTest(Query.X5.getAxioms());
+        theory.getKnowledgeBase().addNonEntailedTest(Query.X5.getAxioms());
         search.run();
         Collection<Diag> res = new TreeSet<Diag>();
         for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {

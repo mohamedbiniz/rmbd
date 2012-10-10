@@ -72,10 +72,10 @@ public class SimpleQueryTest {
         // theory.setIncludeOntAxioms(true);
 
         MyOWLRendererParser parser = new MyOWLRendererParser(theory.getOriginalOntology());
-        theory.addNonEntailedTest(Collections.singleton(parser.parse("AssistantProfessor DisjointWith Lecturer")));
-        theory.addNonEntailedTest(Collections.singleton(parser.parse("AIStudent DisjointWith HCIStudent")));
-        theory.addNonEntailedTest(Collections.singleton(parser.parse("AI_Dept DisjointWith EE_Department")));
-        theory.addNonEntailedTest(Collections.singleton(parser.parse("CS_Library SubClassOf EE_Department")));
+        theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("AssistantProfessor DisjointWith Lecturer")));
+        theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("AIStudent DisjointWith HCIStudent")));
+        theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("AI_Dept DisjointWith EE_Department")));
+        theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("CS_Library SubClassOf EE_Department")));
         search.setMaxHittingSets(-1);
         //BackgroundSearcher s = new BackgroundSearcher(search, null);
 

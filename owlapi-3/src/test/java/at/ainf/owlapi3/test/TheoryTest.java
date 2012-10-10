@@ -47,7 +47,7 @@ public class TheoryTest {
         URL path = ClassLoader.getSystemResource("ontologies/ecai.1.owl");
         OWLTheory th = createTheory(getManager().loadOntologyFromOntologyDocument(path.openStream()));
 
-        Collection<OWLLogicalAxiom> res = negateFormulas(th.getFaultyFormulas(), th);
+        Collection<OWLLogicalAxiom> res = negateFormulas(th.getKnowledgeBase().getFaultyFormulas(), th);
         OWLDataFactory dataFactory = manager.getOWLDataFactory();
         String str = "http://negation.ainf.at/";
 

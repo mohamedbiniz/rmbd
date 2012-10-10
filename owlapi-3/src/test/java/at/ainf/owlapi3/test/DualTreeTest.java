@@ -162,8 +162,8 @@ public class DualTreeTest {//extends BasePerformanceTests {
             negativeTestcase.add(parser.parse(testcase));
 
         logger.info("All diagnoses and conflicts with test cases");
-        theoryNormal.addEntailedTest(positiveTestcase);
-        theoryNormal.addNonEntailedTest(negativeTestcase);
+        theoryNormal.getKnowledgeBase().addEntailedTest(positiveTestcase);
+        theoryNormal.getKnowledgeBase().addNonEntailedTest(negativeTestcase);
         searchNormal.run(runs);
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getDiagnoses())
             logger.info("HS " + new CalculateDiagnoses().renderAxioms(hs));
@@ -289,7 +289,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
                 " cached subsets " + theoryDual.getCache().size()
         );
         Assert.assertTrue(foundCorrectD2);
-        theoryDual.clearTestCases();
+        theoryDual.getKnowledgeBase().clearTestCases();
         searchDual.reset();
         queries.add(entry2.getMeanQuery());
         return timeDual;
@@ -323,7 +323,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
         boolean hasNegativeTestcases = searchNormal.getSearchable().getKnowledgeBase().getNonentailedTests().size() > 0;
-        theoryNormal.clearTestCases();
+        theoryNormal.getKnowledgeBase().clearTestCases();
         searchNormal.reset();
         logger.info("hstree iteration finished: window size "
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
@@ -368,7 +368,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         es.updateKeywordProb(map);
         searchDual.setCostsEstimator(es);
 
-        theoryNormal.clearTestCases();
+        theoryNormal.getKnowledgeBase().clearTestCases();
         searchNormal.reset();
 
         long timeNormalOverall = 0;

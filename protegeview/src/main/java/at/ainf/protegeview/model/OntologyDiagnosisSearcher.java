@@ -190,8 +190,8 @@ public class OntologyDiagnosisSearcher {
 
     public boolean isTestcasesEmpty() {
         OWLTheory theory = (OWLTheory) getSearchCreator().getSearch().getSearchable();
-        return theory.getPositiveTests().isEmpty() && theory.getNegativeTests().isEmpty() &&
-                 theory.getEntailedTests().isEmpty() && theory.getNonentailedTests().isEmpty();
+        return theory.getKnowledgeBase().getPositiveTests().isEmpty() && theory.getKnowledgeBase().getNegativeTests().isEmpty() &&
+                 theory.getKnowledgeBase().getEntailedTests().isEmpty() && theory.getKnowledgeBase().getNonentailedTests().isEmpty();
 
     }
 
@@ -325,16 +325,16 @@ public class OntologyDiagnosisSearcher {
 
         switch(type) {
             case POSITIVE_TC:
-                theory.removePositiveTest(testcase);
+                theory.getKnowledgeBase().removePositiveTest(testcase);
                 break;
             case NEGATIVE_TC:
-                theory.removeNegativeTest(testcase);
+                theory.getKnowledgeBase().removeNegativeTest(testcase);
                 break;
             case ENTAILED_TC:
-                theory.removeEntailedTest(testcase);
+                theory.getKnowledgeBase().removeEntailedTest(testcase);
                 break;
             case NON_ENTAILED_TC:
-                theory.removeNonEntailedTest(testcase);
+                theory.getKnowledgeBase().removeNonEntailedTest(testcase);
                 break;
         }
         notifyListeners();

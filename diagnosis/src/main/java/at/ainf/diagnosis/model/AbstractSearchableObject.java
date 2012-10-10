@@ -23,11 +23,12 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
     private IKnowledgeBase<T> knowledgeBase;
 
     public AbstractSearchableObject() {
-
+        this(null);
     }
 
     public AbstractSearchableObject(Object solver) {
         this.solver = solver;
+        setKnowledgeBase(new KnowledgeBase<T>());
     }
 
     public Object getSolver() {

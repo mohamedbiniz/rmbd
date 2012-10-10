@@ -100,7 +100,7 @@ public class QXDiagTest {
         set.add(parser.parse("isHardWorking Domain Person"));
         set.add(parser.parse("Koala SubClassOf Marsupials"));
         set.add(parser.parse("Quokka SubClassOf Marsupials"));
-        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getFaultyFormulas());
+        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getKnowledgeBase().getFaultyFormulas());
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th, l, set);
 
@@ -114,7 +114,7 @@ public class QXDiagTest {
         OWLTheory th = createTheory(manager, "ontologies/koala.owl", true);
         MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
         set.add(parser.parse("Marsupials DisjointWith Person"));
-        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getFaultyFormulas());
+        ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getKnowledgeBase().getFaultyFormulas());
         Collections.sort(l);
         Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th,l,set);
 
@@ -132,8 +132,8 @@ public class QXDiagTest {
         positiveTestcase.add(parser.parse("AIStudent DisjointWith HCIStudent"));
         negativeTestcase.add(parser.parse("CS_Department SubClassOf affiliatedWith some CS_Library"));
         negativeTestcase.add(parser.parse("hasAdvisor InverseOf advisorOf"));
-        th.addEntailedTest(positiveTestcase);
-        th.addNonEntailedTest(negativeTestcase);
+        th.getKnowledgeBase().addEntailedTest(positiveTestcase);
+        th.getKnowledgeBase().addNonEntailedTest(negativeTestcase);
         HashSet<OWLLogicalAxiom> target = new HashSet<OWLLogicalAxiom>();
         target.add(parser.parse("AssistantProfessor EquivalentTo TeachingFaculty and (hasTenure value false)"));
         target.add(parser.parse("CS_Library SubClassOf affiliatedWith some EE_Library"));
@@ -166,8 +166,8 @@ public class QXDiagTest {
         positiveTestcase.add(parser.parse("AIStudent DisjointWith HCIStudent"));
         negativeTestcase.add(parser.parse("CS_Department SubClassOf affiliatedWith some CS_Library"));
         negativeTestcase.add(parser.parse("hasAdvisor InverseOf advisorOf"));
-        th.addEntailedTest(positiveTestcase);
-        th.addNonEntailedTest(negativeTestcase);
+        th.getKnowledgeBase().addEntailedTest(positiveTestcase);
+        th.getKnowledgeBase().addNonEntailedTest(negativeTestcase);
         HashSet<OWLLogicalAxiom> target = new HashSet<OWLLogicalAxiom>();
         target.add(parser.parse("AssistantProfessor EquivalentTo TeachingFaculty and (hasTenure value false)"));
         target.add(parser.parse("CS_Library SubClassOf affiliatedWith some EE_Library"));

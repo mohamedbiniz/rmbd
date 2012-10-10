@@ -67,9 +67,9 @@ public class TheoryTest {
         unchangable.add(e1);
         CPSolver solver = new CPSolver();
         ConstraintTheory cth = new ConstraintTheory(solver, md);
-        cth.setBackgroundFormulas(unchangable);
+        cth.getKnowledgeBase().setBackgroundFormulas(unchangable);
         if (!cth.verifyRequirements())
-            cth.setEmptyBackgroundFormulas();
+            cth.getKnowledgeBase().setEmptyBackgroundFormulas();
         cth.addConstraints(changable);
 
         // reasoning

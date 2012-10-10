@@ -339,8 +339,8 @@ public class SimulatedSession extends CalculateDiagnoses {
 
                 if (actPa != null && actPa.dx.size() == 1 && actPa.dz.size() == 1 && actPa.dnx.isEmpty()) {
                     logger.error("Help!");
-                    printc(getTheory().getEntailedTests());
-                    printc(getTheory().getNonentailedTests());
+                    printc(getTheory().getKnowledgeBase().getEntailedTests());
+                    printc(getTheory().getKnowledgeBase().getNonentailedTests());
                     print(actPa.partition);
                     prinths(actPa.dx);
                     prinths(actPa.dz);

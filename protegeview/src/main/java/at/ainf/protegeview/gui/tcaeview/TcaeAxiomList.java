@@ -103,10 +103,10 @@ public class TcaeAxiomList extends AbstractAxiomList {
         OWLTheory theory = (OWLTheory) diagnosisSearcher.getSearchCreator().getSearch().getSearchable();
 
         List<Object> items = new ArrayList<Object>();
-        addToItems(items, POSITIVE_TC, theory.getPositiveTests());
-        addToItems(items, NEGATIVE_TC, theory.getNegativeTests());
-        addToItems(items, ENTAILED_TC, theory.getEntailedTests());
-        addToItems(items, NON_ENTAILED_TC, theory.getNonentailedTests());
+        addToItems(items, POSITIVE_TC, theory.getKnowledgeBase().getPositiveTests());
+        addToItems(items, NEGATIVE_TC, theory.getKnowledgeBase().getNegativeTests());
+        addToItems(items, ENTAILED_TC, theory.getKnowledgeBase().getEntailedTests());
+        addToItems(items, NON_ENTAILED_TC, theory.getKnowledgeBase().getNonentailedTests());
 
         setListData(items.toArray());
         setFixedCellHeight(24);
