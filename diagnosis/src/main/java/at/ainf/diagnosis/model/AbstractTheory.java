@@ -11,7 +11,7 @@ package at.ainf.diagnosis.model;
 import java.util.*;
 
 public abstract class  AbstractTheory<T> extends AbstractSearchableObject<T> implements
-        ITheory<T> {
+        IKnowledgeBase<T> {
 
     private static final String MESSAGE = "The test case cannot be added!";
 

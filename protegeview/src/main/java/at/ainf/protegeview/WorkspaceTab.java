@@ -1,10 +1,10 @@
 package at.ainf.protegeview;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.NewQuickXplain;
@@ -57,7 +57,7 @@ public class
 
     private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
-    private ITheory<OWLLogicalAxiom> theory;
+    private Searchable<OWLLogicalAxiom> theory;
 
     private boolean testcasesChange = true;
 
@@ -599,16 +599,16 @@ public class
             es.updateKeywordProb(bigMap);
             search.setCostsEstimator(es);
             for (Set<OWLLogicalAxiom> axiom : posTests) {
-                theory.addPositiveTest(axiom);
+                theory.getKnowledgeBase().addPositiveTest(axiom);
             }
             for (Set<OWLLogicalAxiom> axiom : negTests) {
-                theory.addNegativeTest(axiom);
+                theory.getKnowledgeBase().addNegativeTest(axiom);
             }
             for (Set<OWLLogicalAxiom> axiom : entailedTests) {
-                theory.addEntailedTest(axiom);
+                theory.getKnowledgeBase().addEntailedTest(axiom);
             }
             for (Set<OWLLogicalAxiom> axiom : nentailedTests) {
-                theory.addNonEntailedTest(axiom);
+                theory.getKnowledgeBase().addNonEntailedTest(axiom);
             }
         } catch (SolverException e) {
             JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
@@ -637,7 +637,7 @@ public class
     }
 
 
-    public ITheory<OWLLogicalAxiom> getOwlTheory() {
+    public Searchable<OWLLogicalAxiom> getOwlTheory() {
         return theory;
     }
 

@@ -1,7 +1,6 @@
 package at.ainf.owlapi3.base;
 
 import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;

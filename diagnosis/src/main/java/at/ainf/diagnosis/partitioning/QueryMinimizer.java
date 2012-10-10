@@ -2,7 +2,7 @@ package at.ainf.diagnosis.partitioning;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.AbstractSearchableObject;
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
@@ -32,7 +32,7 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> implements 
     }
 
     @Override
-    public ITheory<Id> getKnowledgeBase() {
+    public IKnowledgeBase<Id> getKnowledgeBase() {
         return theory.getKnowledgeBase();
     }
 

@@ -1,6 +1,6 @@
 package at.ainf.protegeview.model;
 
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
@@ -229,11 +229,11 @@ public class OntologyDiagnosisSearcher {
 
     }
 
-    protected void addCheckedPositiveTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
-        theory.addPositiveTest(axioms);
+    protected void addCheckedPositiveTest(Searchable<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.getKnowledgeBase().addPositiveTest(axioms);
         try {
             if (!theory.areTestsConsistent()) {
-                theory.removePositiveTest(axioms);
+                theory.getKnowledgeBase().removePositiveTest(axioms);
                 errorStatus = SOLVER_EXCEPTION;
             }
             else {
@@ -244,11 +244,11 @@ public class OntologyDiagnosisSearcher {
         }
     }
 
-    protected void addCheckedNegativeTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
-        theory.addNegativeTest(axioms);
+    protected void addCheckedNegativeTest(Searchable<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.getKnowledgeBase().addNegativeTest(axioms);
         try {
             if (!theory.areTestsConsistent()) {
-                theory.removeNegativeTest(axioms);
+                theory.getKnowledgeBase().removeNegativeTest(axioms);
                 errorStatus = SOLVER_EXCEPTION;
             }
             else {
@@ -259,11 +259,11 @@ public class OntologyDiagnosisSearcher {
         }
     }
 
-    protected void addCheckedEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
-        theory.addEntailedTest(axioms);
+    protected void addCheckedEntailedTest(Searchable<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.getKnowledgeBase().addEntailedTest(axioms);
         try {
             if (!theory.areTestsConsistent()) {
-                theory.removeEntailedTest(axioms);
+                theory.getKnowledgeBase().removeEntailedTest(axioms);
                 errorStatus = SOLVER_EXCEPTION;
             }
             else {
@@ -274,11 +274,11 @@ public class OntologyDiagnosisSearcher {
         }
     }
 
-    protected void addCheckedNonEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
-        theory.addNonEntailedTest(axioms);
+    protected void addCheckedNonEntailedTest(Searchable<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.getKnowledgeBase().addNonEntailedTest(axioms);
         try {
             if (!theory.areTestsConsistent()) {
-                theory.removeNonEntailedTest(axioms);
+                theory.getKnowledgeBase().removeNonEntailedTest(axioms);
                 errorStatus = SOLVER_EXCEPTION;
             }
             else {

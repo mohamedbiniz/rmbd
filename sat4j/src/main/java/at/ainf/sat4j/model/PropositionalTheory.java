@@ -9,7 +9,7 @@
 package at.ainf.sat4j.model;
 
 import at.ainf.diagnosis.model.AbstractTheory;
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PropositionalTheory extends AbstractTheory<IVecIntComparable> implements
-        ITheory<IVecIntComparable> {
+        IKnowledgeBase<IVecIntComparable> {
 
     private boolean createNew = false;
     private int numOfLiterals = 0;

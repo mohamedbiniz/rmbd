@@ -1,7 +1,7 @@
 package at.ainf.diagnosis.partitioning;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
@@ -65,7 +65,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
         }
     }
 
-    public GreedySearch(ITheory<Id> theory, Scoring<Id> function) {
+    public GreedySearch(Searchable<Id> theory, Scoring<Id> function) {
         super(theory, function);
     }
 

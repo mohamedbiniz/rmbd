@@ -23,7 +23,7 @@ import java.util.Set;
  * @param <Id>
  * @author kostya
  */
-public interface ITheory<Id> extends Searchable<Id> {
+public interface IKnowledgeBase<Id> {
 
     /**
      * Returns a list of all formulas registered in the theory except the background ones.

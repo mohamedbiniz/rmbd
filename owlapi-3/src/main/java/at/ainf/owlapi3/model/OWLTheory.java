@@ -1,8 +1,8 @@
 package at.ainf.owlapi3.model;
 
+import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import at.ainf.diagnosis.model.AbstractTheory;
-import at.ainf.diagnosis.model.ITheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
@@ -32,7 +32,7 @@ import static _dev.TimeLog.stop;
  * To change this template use File | Settings | File Templates.
  */
 public class OWLTheory extends AbstractTheory<OWLLogicalAxiom> implements
-        ITheory<OWLLogicalAxiom> {
+        IKnowledgeBase<OWLLogicalAxiom> {
 
     private static Logger logger = LoggerFactory.getLogger(OWLTheory.class.getName());
 

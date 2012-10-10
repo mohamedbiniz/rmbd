@@ -1,6 +1,6 @@
 package at.ainf.protegeview.testcasesentailmentsview;
 
-import at.ainf.diagnosis.model.ITheory;
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.protegeview.WorkspaceTab;
 import at.ainf.protegeview.testcasesentailmentsview.axiomeditor.OWLAxiomEditor;
@@ -107,11 +107,11 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
         sectionItems.get((TcaeFrameSection)item.getFrameSection()).remove(item);
     }
 
-    protected boolean addCheckedPositiveTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
-        theory.addPositiveTest(axioms);
+    protected boolean addCheckedPositiveTest(Searchable<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.getKnowledgeBase().addPositiveTest(axioms);
         try {
             if (!theory.areTestsConsistent()) {
-                theory.removePositiveTest(axioms);
+                theory.getKnowledgeBase().removePositiveTest(axioms);
                 JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -123,11 +123,11 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
         return true;
     }
 
-    protected boolean addCheckedNegativeTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
-        theory.addNegativeTest(axioms);
+    protected boolean addCheckedNegativeTest(Searchable<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.getKnowledgeBase().addNegativeTest(axioms);
         try {
             if (!theory.areTestsConsistent()) {
-                theory.removeNegativeTest(axioms);
+                theory.getKnowledgeBase().removeNegativeTest(axioms);
                 JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -139,11 +139,11 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
         return true;
     }
 
-    protected boolean addCheckedEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
-        theory.addEntailedTest(axioms);
+    protected boolean addCheckedEntailedTest(Searchable<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.getKnowledgeBase().addEntailedTest(axioms);
         try {
             if (!theory.areTestsConsistent()) {
-                theory.removeEntailedTest(axioms);
+                theory.getKnowledgeBase().removeEntailedTest(axioms);
                 JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -155,11 +155,11 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
         return true;
     }
 
-    protected boolean addCheckedNonEntailedTest(ITheory<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
-        theory.addNonEntailedTest(axioms);
+    protected boolean addCheckedNonEntailedTest(Searchable<OWLLogicalAxiom> theory, Set<OWLLogicalAxiom> axioms) {
+        theory.getKnowledgeBase().addNonEntailedTest(axioms);
         try {
             if (!theory.areTestsConsistent()) {
-                theory.removeNonEntailedTest(axioms);
+                theory.getKnowledgeBase().removeNonEntailedTest(axioms);
                 JOptionPane.showMessageDialog(null, "There was a solver exception", "SolverException", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -177,7 +177,7 @@ public class TcaeFramelist extends OWLFrameList<OWLClass> {
             workspace.createOWLTheory();
 
         }
-        ITheory<OWLLogicalAxiom> theory = workspace.getOwlTheory();
+        Searchable<OWLLogicalAxiom> theory = workspace.getOwlTheory();
 
             switch (type) {
                 case PT:
