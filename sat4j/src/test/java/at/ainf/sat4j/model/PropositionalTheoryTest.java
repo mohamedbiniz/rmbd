@@ -40,7 +40,7 @@ public class PropositionalTheoryTest {
 
         clause = new int[]{-3};
         IVecIntComparable fl = th.addClause(clause);
-        th.getFaultyAxiomsManager().push(fl);
+        th.getFaultyAxiomsManager().push(Collections.singleton(fl));
         assertEquals(2, th.getFaultyAxiomsManager().getTheoryCount());
         assertFalse(th.verifyRequirements());
         th.getFaultyAxiomsManager().pop();
@@ -52,7 +52,7 @@ public class PropositionalTheoryTest {
         th.getFaultyAxiomsManager().pop(4);
 
         fl = th.addClause(clause);
-        th.getFaultyAxiomsManager().push(fl);
+        th.getFaultyAxiomsManager().push(Collections.singleton(fl));
         assertTrue(th.verifyRequirements());
     }
 
