@@ -18,10 +18,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.model.SolverException;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 
 /**
@@ -107,7 +104,7 @@ public class OldQuickXplain<E> extends BaseQuickXplain<E> {
         // c.push();
         while (isCoherent && iter.hasNext()) {
             E next = iter.next();
-            c.getFaultyAxiomsManager().push(next);
+            c.getFaultyAxiomsManager().push(Collections.singleton(next));
             isCoherent = c.verifyRequirements();
 
             k++;

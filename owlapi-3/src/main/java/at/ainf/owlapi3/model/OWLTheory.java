@@ -327,7 +327,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     public boolean testDiagnosis(Collection<OWLLogicalAxiom> diag) throws SolverException {
         // clean up formula stack
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         List<OWLLogicalAxiom> kb = new LinkedList<OWLLogicalAxiom>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
@@ -343,31 +343,31 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         }
         */
         if (!verifyConsistency()) {
-            getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+            getFaultyAxiomsManager().clean();
             return false;
         }
 
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNegativeTests()) {
             if (!isEntailed(test)) {
-                getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+                getFaultyAxiomsManager().clean();
                 return false;
             }
         }
 
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNonentailedTests()) {
             if (isEntailed(test)) {
-                getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+                getFaultyAxiomsManager().clean();
                 return false;
             }
         }
 
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         return true;
     }
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getPositiveTests()) {
             getFaultyAxiomsManager().push(test);
         }
@@ -375,14 +375,14 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
             getFaultyAxiomsManager().push(test);
         }
         if (!verifyConsistency()) {
-            getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+            getFaultyAxiomsManager().clean();
             return false;
         }
 
         // verify negative tests
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNegativeTests()) {
             if (isEntailed(test)) {
-                getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+                getFaultyAxiomsManager().clean();
                 return false;
             }
         }
@@ -390,12 +390,12 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         // verify negative tests
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNonentailedTests()) {
             if (isEntailed(test)) {
-                getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+                getFaultyAxiomsManager().clean();
                 return false;
             }
         }
 
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         return true;
     }
 
@@ -583,14 +583,14 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     public boolean diagnosisEntailsWithoutEntailedTC(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFaultyAxiomsManager().getFormulaStack();
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
 
         updateAxioms(ontology, getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
         // restore the state of the theory prior to the test
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         //updateAxioms(getOntology(), logicalAxioms);
         getFaultyAxiomsManager().push(stack);
         return res;
@@ -600,7 +600,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     public boolean diagnosisConsistent(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFaultyAxiomsManager().getFormulaStack();
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         // cleanup ontology
         //Set<OWLLogicalAxiom> logicalAxioms = getOntology().getLogicalAxioms();
         //removeAxioms(logicalAxioms, getOntology());
@@ -621,7 +621,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = verifyConsistency();
 
         // restore the state of the theory prior to the test
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         //removeAxioms(ent, getOntology());
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
@@ -635,7 +635,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFaultyAxiomsManager().getFormulaStack();
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
 
         updateAxioms(ontology, flatten(getKnowledgeBase().getPositiveTests()), flatten(getKnowledgeBase().getEntailedTests()),
                 getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
@@ -643,7 +643,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
         // restore the state of the theory prior to the test
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         //updateAxioms(getOntology(), logicalAxioms);
         getFaultyAxiomsManager().push(stack);
         return res;
@@ -659,7 +659,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFaultyAxiomsManager().getFormulaStack();
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         // cleanup ontology
         //Set<OWLLogicalAxiom> logicalAxioms = getOntology().getLogicalAxioms();
         //removeAxioms(logicalAxioms, getOntology());
@@ -678,7 +678,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
         // restore the state of the theory prior to the test
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         //updateAxioms(getOntology(), logicalAxioms);
         getFaultyAxiomsManager().push(stack);
         return res;
@@ -693,7 +693,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     public boolean diagnosisConsistentWithoutEntailedTc(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFaultyAxiomsManager().getFormulaStack();
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
 
         // add axioms to the ontology
         getFaultyAxiomsManager().push(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
@@ -707,7 +707,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = verifyConsistency();
 
         // restore the state of the theory prior to the test
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         //removeAxioms(ent, getOntology());
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
@@ -726,7 +726,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     public boolean diagnosisConsistent(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getFaultyAxiomsManager().getFormulaStack();
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         // cleanup ontology
         //Set<OWLLogicalAxiom> logicalAxioms = getOntology().getLogicalAxioms();
         //removeAxioms(logicalAxioms, getOntology());
@@ -748,7 +748,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = verifyConsistency();
 
         // restore the state of the theory prior to the test
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         //removeAxioms(ent, getOntology());
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
@@ -764,20 +764,20 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
         Set<OWLLogicalAxiom> axioms = setminus(getKnowledgeBase().getFaultyFormulas(), hittingSet);
         Collection<OWLLogicalAxiom> stack = getFaultyAxiomsManager().getFormulaStack();
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
 
         getFaultyAxiomsManager().push(axioms);
         getFaultyAxiomsManager().push(getKnowledgeBase().getBackgroundFormulas());
 
         if (!verifyConsistency()) {
-            getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+            getFaultyAxiomsManager().clean();
             getFaultyAxiomsManager().push(stack);
             return null;
         }
 
         Set<OWLLogicalAxiom> entailments = extractEntailments(reasoner, getOwlOntologyManager());
 
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         getFaultyAxiomsManager().push(stack);
         return entailments;
     }

@@ -15,17 +15,7 @@ public class FaultyAxiomsManager<T> {
     private final LinkedList<Integer> stackCount = new LinkedList<Integer>();
     private Boolean result = null;
 
-    /**
-     * Adds a statement to the theory.
-     */
-    public boolean push(T formula) {
-        if (formula == null)
-            return false;
-        stackCount.add(formulaStack.size());
-        resetResult();
-        this.formulaStack.add(formula);
-        return true;
-    }
+
 
     public boolean push(Collection<T> formulas) {
         if (formulas == null)
@@ -34,6 +24,10 @@ public class FaultyAxiomsManager<T> {
         resetResult();
         this.formulaStack.addAll(formulas);
         return true;
+    }
+
+    public void clean() {
+        pop(getTheoryCount());
     }
 
     public void pop(int stackCount) {

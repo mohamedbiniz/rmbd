@@ -83,7 +83,7 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
             getFaultyAxiomsManager().push(negate(test));
         }
@@ -97,7 +97,7 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
             getFaultyAxiomsManager().push(test);
         }
         boolean res = verifyConsistency();
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         return res;
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         List<T> kb = new LinkedList<T>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         // positive test cases are in background theory
         getFaultyAxiomsManager().push(getKnowledgeBase().getBackgroundFormulas());
         getFaultyAxiomsManager().push(kb);
@@ -139,12 +139,12 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
             getFaultyAxiomsManager().push(test);
             if (verifyRequirements()) {
-                getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+                getFaultyAxiomsManager().clean();
                 return false;
             }
             getFaultyAxiomsManager().pop();
         }
-        getFaultyAxiomsManager().pop(getFaultyAxiomsManager().getTheoryCount());
+        getFaultyAxiomsManager().clean();
         return true;
     }
 

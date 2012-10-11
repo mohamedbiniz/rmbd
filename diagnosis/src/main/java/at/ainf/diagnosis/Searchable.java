@@ -22,16 +22,7 @@ public interface Searchable<E> {
 
     // manager
 
-
-
     public void doBayesUpdate(Set<? extends AxiomSet<E>> hittingSets);
-
-
-
-
-
-
-
 
 
 
