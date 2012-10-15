@@ -26,21 +26,11 @@ public class FaultyAxiomsManager<T> {
         return true;
     }
 
-    public void pop(int stackCount) {
+    public void pop() {
         if (this.stackCount.isEmpty())
             return;
         resetResult();
-        /*
-        int btc = 0;
-        int size = this.stackCount.size();
-        if (size == btc)
-            throw new IllegalStateException("Trying to remove the background theory!");
-        if (size - stackCount < btc)
-            throw new IllegalArgumentException("Illegal stack count value!");
-         */
 
-        for (int i = 1; i < stackCount; i++)
-            this.stackCount.removeLast();
 
         int index = this.stackCount.removeLast();
         //int size = this.formulaStack.size();
@@ -51,8 +41,6 @@ public class FaultyAxiomsManager<T> {
                 iterator.remove();
             count++;
         }
-        //for (int i = index; i < size; i++)
-        //    this.formulaStack.removeLast();
     }
 
     public void clean() {
@@ -61,21 +49,13 @@ public class FaultyAxiomsManager<T> {
 
     }
 
-    /**
-     * This method uses to make an
-     * empty theory and then adds all statements of the current theory into it
-     * using {@link #push(java.util.Collection)}.
-     */
-    public void pop() {
-        pop(1);
-    }
 
     public Set<T> getFormulaStack() {
         return Collections.unmodifiableSet(this.formulaStack);
     }
 
     /*public int getTheoryCount() {
-        return this.stackCount.size();
+        return this.lastStackCount.size();
     }*/
 
     public void resetResult() {
