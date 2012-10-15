@@ -50,7 +50,7 @@ public class Example2005Test {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         //UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
 
-        //search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        //search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
 
         createOntology();
@@ -91,7 +91,7 @@ public class Example2005Test {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         //BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
 
-        //search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        //search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         createOntology();
         //theory = new OWLTheory(reasonerFactory, ontology, bax);
 

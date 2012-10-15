@@ -12,12 +12,12 @@ import at.ainf.choco2.model.ConstraintTheory;
 import at.ainf.choco2.parser.ConstraintReader;
 import at.ainf.choco2.parser.ConstraintReaderException;
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import choco.cp.model.CPModel;
@@ -113,7 +113,7 @@ public class TreeEvaluation {
         HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
-        Searcher<Constraint> searcher = new NewQuickXplain<Constraint>();
+        Searcher<Constraint> searcher = new QuickXplain<Constraint>();
         strategy.setSearcher(searcher);
 
         strategy.setSearchable(cth);
@@ -162,7 +162,7 @@ public class TreeEvaluation {
         HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
-        strategy.setSearcher(new NewQuickXplain<Constraint>());
+        strategy.setSearcher(new QuickXplain<Constraint>());
 
         strategy.setSearchable(cth);
 
@@ -249,7 +249,7 @@ public class TreeEvaluation {
         HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
         strategy.setCostsEstimator(new SimpleCostsEstimator<Constraint>());
         strategy.setSearchStrategy(new BreadthFirstSearchStrategy<Constraint>());
-        strategy.setSearcher(new NewQuickXplain<Constraint>());
+        strategy.setSearcher(new QuickXplain<Constraint>());
 
         strategy.setSearchable(cth);
         //strategy.setMaxHittingSets(1);

@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -228,7 +228,7 @@ public class Example1Test extends AbstractExample {
             HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
-            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+            search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
@@ -265,7 +265,7 @@ public class Example1Test extends AbstractExample {
             HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
-            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+            search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
             if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));

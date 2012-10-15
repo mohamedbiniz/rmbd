@@ -32,15 +32,15 @@ import static _dev.TimeLog.start;
  * @author kostya TODO To change the template for this generated type comment go
  *         to Window - Preferences - Java - Code Style - Code Templates
  */
-public class NewQuickXplain<Id> extends BaseQuickXplain<Id> {
+public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
     private int iterations = 0;
 
-    private static Logger logger = LoggerFactory.getLogger(NewQuickXplain.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(QuickXplain.class.getName());
 
     private AxiomRenderer<Id> axiomRenderer;
 
-    public NewQuickXplain() {
+    public QuickXplain() {
     }
 
     @Override

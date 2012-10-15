@@ -14,7 +14,7 @@ import java.util.Set;
  * Time: 11:16
  * To change this template use File | Settings | File Templates.
  */
-public class DirectDiagnosis<Id> extends NewQuickXplain<Id> {
+public class DirectDiagnosis<Id> extends QuickXplain<Id> {
 
     @Override
     protected Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)

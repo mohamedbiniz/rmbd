@@ -7,7 +7,7 @@ import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.owlapi3.model.OWLTheory;
@@ -503,7 +503,7 @@ public class
 
             search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         }
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         Collection<Set<OWLLogicalAxiom>> posTests = getOWLLogicalAxioms(SectionType.PT);
         Collection<Set<OWLLogicalAxiom>> negTests = getOWLLogicalAxioms(SectionType.NT);

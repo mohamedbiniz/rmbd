@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -48,7 +48,7 @@ public class SimpleQueryTest {
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         OWLOntology ontology =
                 manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/Univ.owl"));
@@ -89,7 +89,7 @@ public class SimpleQueryTest {
         //diagnoses = diagProvider.getDiagnoses(9);
         //query = diagProvider.getBestQuery(diagnoses);
         //QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, theory);
-        //NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
+        //QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
         //Set<OWLLogicalAxiom> r = q.search(mnz,query.partition);
 
         //theory.addEntailedTest(query.getQueryAxioms());
@@ -103,7 +103,7 @@ public class SimpleQueryTest {
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         OWLOntology ontology =
           manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/Univ.owl"));
@@ -134,7 +134,7 @@ public class SimpleQueryTest {
         diagnoses = diagProvider.getDiagnoses(9);
         query = diagProvider.getBestQuery(diagnoses);
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, theory);*/
-        NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
+        QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
         //Set<OWLLogicalAxiom> r = q.search(mnz, query.partition);
 
         //theory.addEntailedTest(query.getQueryAxioms());
@@ -148,7 +148,7 @@ public class SimpleQueryTest {
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         OWLOntology ontology =
                 manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/koala.owl"));

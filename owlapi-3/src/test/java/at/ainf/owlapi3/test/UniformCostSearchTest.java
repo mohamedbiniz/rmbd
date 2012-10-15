@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
@@ -41,7 +41,7 @@ public class UniformCostSearchTest {
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntology ontology =
@@ -73,7 +73,7 @@ public class UniformCostSearchTest {
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
 
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntology ontology =
                 manager.loadOntologyFromOntologyDocument(ClassLoader.getSystemResourceAsStream("ontologies/ecai2010.owl"));
@@ -98,7 +98,7 @@ public class UniformCostSearchTest {
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
 
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         createTh();
 
@@ -114,7 +114,7 @@ public class UniformCostSearchTest {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         TreeSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
 
-        search.setConflictSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setConflictSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         createTh();
 

@@ -3,7 +3,7 @@ package at.ainf.owlapi3.base;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
@@ -114,7 +114,7 @@ public class CalculateDiagnoses {
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         } else {
             search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
-            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+            search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         }
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearchable(theory);

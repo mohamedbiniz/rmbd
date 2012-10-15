@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -67,7 +67,7 @@ public class PostProcessorTest {
     private void minimizePartitionAx(Partition<OWLLogicalAxiom> query, TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Searchable<OWLLogicalAxiom> theory) {
         if (query.partition == null) return;
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, theory);
-        NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
+        QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
         try {
             query.partition = q.search(mnz, query.partition, null);
         } catch (NoConflictException e) {
@@ -116,7 +116,7 @@ public class PostProcessorTest {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "ontologies/Univ.owl", false);
         search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));

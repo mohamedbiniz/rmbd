@@ -2,7 +2,7 @@ package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -62,7 +62,7 @@ public class WikiExamplesTest {
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
         // because we use Reiter's Tree nodes are conflicts which we search using QuickXplain
-        search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         // because we use UniformCostSearch we have to give a cost estimator to the search
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));

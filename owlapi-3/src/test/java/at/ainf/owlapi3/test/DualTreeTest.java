@@ -2,7 +2,7 @@ package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
@@ -90,17 +90,17 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>());
 
-        ((NewQuickXplain<OWLLogicalAxiom>)dualSearcher).setAxiomRenderer(new MyOWLRendererParser(null));
+        ((QuickXplain<OWLLogicalAxiom>)dualSearcher).setAxiomRenderer(new MyOWLRendererParser(null));
 
         computeQueryExample(ont, runs, true, dualSearcher, searchDual, ptestCases, ntestCases);
 
         logger.info("----- Computing normal case -----");
-        Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
+        Searcher<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         computeQueryExample(ont, runs, false, searcher, searchNormal, ptestCases, ntestCases);
 
@@ -182,7 +182,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
         searchNormal.setSearchable(theoryNormal);
         searchNormal.run();
@@ -344,7 +344,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         SIGMA = new BigDecimal("85");
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ontology, false);
         searchNormal.setSearchable(theoryNormal);
         theoryNormal.useCache(useSubsets, threshold);

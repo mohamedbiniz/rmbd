@@ -2,7 +2,7 @@ package at.ainf.protegeview.controller;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -51,7 +51,7 @@ public class OWLControllerImpl  {
     private Searcher<OWLLogicalAxiom> createSearcher() {
         switch (config.treeType) {
             case REITER:
-                return new NewQuickXplain<OWLLogicalAxiom>();
+                return new QuickXplain<OWLLogicalAxiom>();
             case DUAL:
                 return new DirectDiagnosis<OWLLogicalAxiom>();
             default:

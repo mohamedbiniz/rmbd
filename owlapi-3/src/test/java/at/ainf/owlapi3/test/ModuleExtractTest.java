@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
@@ -111,7 +111,7 @@ public class ModuleExtractTest {
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLOntology ontology = loadOntology (  ont);
         OWLTheory theoryNormal = createTheory(manager, ontology, false);
         searchNormal.setSearchable(theoryNormal);
@@ -141,7 +141,7 @@ public class ModuleExtractTest {
                 TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
                 searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
                 searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-                searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+                searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
                 OWLOntology ontology = loadOntology (  ont);
                 long pre = System.currentTimeMillis();
         ontology = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
@@ -157,7 +157,7 @@ public class ModuleExtractTest {
             TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
             searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-                searchDual.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+                searchDual.setSearcher(new QuickXplain<OWLLogicalAxiom>());
                 OWLOntology ontology2 = loadOntology(  ont);
                 OWLTheory theoryDual = createTheory(manager, ontology2, false);
                 searchDual.setSearchable(theoryDual);

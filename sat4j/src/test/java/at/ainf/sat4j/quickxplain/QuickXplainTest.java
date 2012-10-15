@@ -9,8 +9,7 @@
 package at.ainf.sat4j.quickxplain;
 
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
-import at.ainf.diagnosis.quickxplain.OldQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.sat4j.model.IVecIntComparable;
 import at.ainf.sat4j.model.PropositionalTheory;
 import at.ainf.sat4j.model.VecIntComparable;
@@ -28,17 +27,17 @@ import static org.junit.Assert.*;
 public class QuickXplainTest {
 
 
-    @Test
+    /*@Test
     public void testOld() throws SolverException, InconsistentTheoryException {
         Searcher<IVecIntComparable> quick = new OldQuickXplain<IVecIntComparable>();
         for (int i = 0; i < 1000; i++) {
             runQuick(quick);
         }
-    }
+    }*/
 
     @Test
     public void testNew() throws SolverException, InconsistentTheoryException {
-        Searcher<IVecIntComparable> quick = new NewQuickXplain<IVecIntComparable>();
+        Searcher<IVecIntComparable> quick = new QuickXplain<IVecIntComparable>();
         for (int i = 0; i < 1000; i++) {
             runQuick(quick);
         }
