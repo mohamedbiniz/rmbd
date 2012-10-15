@@ -3,7 +3,7 @@ package at.ainf.owlapi3.performance;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
@@ -264,7 +264,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                 searchDual = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
                 searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
                 searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-                searchDual.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+                searchDual.setSearcher(new QuickXplain<OWLLogicalAxiom>());
             }
 
 

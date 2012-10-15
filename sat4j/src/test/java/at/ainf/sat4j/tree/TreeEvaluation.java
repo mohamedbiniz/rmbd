@@ -15,7 +15,7 @@ import at.ainf.sat4j.model.PropositionalTheory;
 import at.ainf.sat4j.model.VecIntComparable;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class TreeEvaluation {
     }
 
     private void run(TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable> search) throws SolverException, ContradictionException, NoConflictException, InconsistentTheoryException {
-        search.setSearcher(new NewQuickXplain<IVecIntComparable>());
+        search.setSearcher(new QuickXplain<IVecIntComparable>());
 
         int[] clause = new int[]{5, 6};
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
@@ -159,7 +159,7 @@ public class TreeEvaluation {
         HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>();
         search.setCostsEstimator(new SimpleCostsEstimator<IVecIntComparable>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<IVecIntComparable>());
-        search.setSearcher(new NewQuickXplain<IVecIntComparable>());
+        search.setSearcher(new QuickXplain<IVecIntComparable>());
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
         VecIntComparable vecInt = new VecIntComparable(new int[]{-6});
         LinkedList<IVecIntComparable> bg = new LinkedList<IVecIntComparable>();
@@ -232,7 +232,7 @@ public class TreeEvaluation {
         HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>();
         search.setCostsEstimator(new SimpleCostsEstimator<IVecIntComparable>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<IVecIntComparable>());
-        search.setSearcher(new NewQuickXplain<IVecIntComparable>());
+        search.setSearcher(new QuickXplain<IVecIntComparable>());
         PropositionalTheory th = new PropositionalTheory(SolverFactory.newDefault());
 
 

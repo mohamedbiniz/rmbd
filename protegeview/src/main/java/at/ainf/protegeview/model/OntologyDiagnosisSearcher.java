@@ -7,7 +7,7 @@ import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.CostsEstimator;
@@ -359,7 +359,7 @@ public class OntologyDiagnosisSearcher {
         private void minimizePartitionAx(Partition<OWLLogicalAxiom> query) {
             if (query.partition == null) return;
             QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, search.getSearchable());
-            NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
+            QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
             try {
                 query.partition = q.search(mnz, query.partition, null);
             } catch (NoConflictException e) {

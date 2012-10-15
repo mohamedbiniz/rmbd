@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -49,9 +49,9 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         search = new HsTreeSearch<AxiomSet<Id>,Id>();
         search.setCostsEstimator(new SimpleCostsEstimator<Id>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
-        search.setSearcher(new NewQuickXplain<Id>());
+        search.setSearcher(new QuickXplain<Id>());
         search.setSearchable(getTheory());
-        //search.setSearcher(new NewQuickXplain<Id>());
+        //search.setSearcher(new QuickXplain<Id>());
         //search.setSearchable(getSearchable());
 
     }
@@ -79,7 +79,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     private void minimizePartitionAx(Partition<Id> query) {
         if (query.partition == null) return;
         QueryMinimizer<Id> mnz = new QueryMinimizer<Id>(query, getTheory());
-        NewQuickXplain<Id> q = new NewQuickXplain<Id>();
+        QuickXplain<Id> q = new QuickXplain<Id>();
         try {
             query.partition = q.search(mnz, query.partition, null);
         } catch (NoConflictException e) {

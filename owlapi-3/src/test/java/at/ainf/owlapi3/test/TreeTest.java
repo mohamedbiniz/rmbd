@@ -2,7 +2,7 @@ package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
@@ -107,7 +107,7 @@ public class TreeTest {
     @Test
     public void testDiagnosisSearcher() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         OWLTheory th = new CalculateDiagnoses().getSimpleTheory(new CalculateDiagnoses().getOntologySimple("ontologies/ecai.simple.owl"), true);
-        Searcher<OWLLogicalAxiom> searcher = new NewQuickXplain<OWLLogicalAxiom>();
+        Searcher<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> diagnosis = searcher.search(th, th.getKnowledgeBase().getFaultyFormulas(), null);
 
         String logd = "Hitting set: {" + logCollection(diagnosis);

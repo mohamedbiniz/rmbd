@@ -1,7 +1,7 @@
 package at.ainf.owlapi3.performance;
 
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -83,7 +83,7 @@ public class OntologyTests extends OntologySession {
            search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
            search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
        } else
-           search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+           search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
        search.setSearchable(th);
 
        return search;
@@ -139,7 +139,7 @@ public class OntologyTests extends OntologySession {
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
-        //((NewQuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
+        //((QuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
         CostsEstimator es = new SimpleCostsEstimator();
         search.setCostsEstimator(es);
@@ -402,7 +402,7 @@ public class OntologyTests extends OntologySession {
 
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = getSimpleTheory(getOntologySimple("ontologies", "koala.owl"), false);
         searchNormal.setSearchable(theoryNormal);
         theoryNormal.useCache(false, 0);
@@ -538,7 +538,7 @@ public class OntologyTests extends OntologySession {
 
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        searchNormal.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = getSimpleTheory(getOntologySimple(path, ont), false);
         searchNormal.setSearchable(theoryNormal);
         HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();

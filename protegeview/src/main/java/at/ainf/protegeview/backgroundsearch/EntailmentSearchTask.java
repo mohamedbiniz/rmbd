@@ -6,7 +6,7 @@ import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -76,7 +76,7 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
     private void minimizePartitionAx(Partition<OWLLogicalAxiom> query) {
         if (query.partition == null) return;
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, search.getSearchable());
-        NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
+        QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
         try {
             query.partition = q.search(mnz, query.partition, null);
         } catch (NoConflictException e) {

@@ -3,7 +3,7 @@ package at.ainf.protegeview.model.configuration;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
@@ -133,7 +133,7 @@ public class SearchCreator {
         OWLTheory theory = null;
         if (config.treeType == SearchConfiguration.TreeType.REITER ) {
             search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
-            search.setSearcher(new NewQuickXplain<OWLLogicalAxiom>());
+            search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
             theory = createTheory(false);
         }
         else if (config.treeType == SearchConfiguration.TreeType.DUAL ) {

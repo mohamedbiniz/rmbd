@@ -8,7 +8,7 @@ import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
-import at.ainf.diagnosis.quickxplain.NewQuickXplain;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.storage.Partition;
@@ -570,7 +570,7 @@ public class SimulatedSession extends CalculateDiagnoses {
 
     protected void minimizeQuery(OWLTheory theory, Partition<OWLLogicalAxiom> actPa) {
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(actPa, theory);
-        NewQuickXplain<OWLLogicalAxiom> q = new NewQuickXplain<OWLLogicalAxiom>();
+        QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
         try {
             actPa.partition = q.search(mnz, actPa.partition, null);
         } catch (NoConflictException e) {
