@@ -26,10 +26,6 @@ public class FaultyAxiomsManager<T> {
         return true;
     }
 
-    public void clean() {
-        pop(getTheoryCount());
-    }
-
     public void pop(int stackCount) {
         if (this.stackCount.isEmpty())
             return;
@@ -59,12 +55,8 @@ public class FaultyAxiomsManager<T> {
         //    this.formulaStack.removeLast();
     }
 
-    public Set<T> getFormulaStack() {
-        return Collections.unmodifiableSet(this.formulaStack);
-    }
-
-    public int getTheoryCount() {
-        return this.stackCount.size();
+    public void clean() {
+        pop(this.stackCount.size());
     }
 
     /**
@@ -75,6 +67,14 @@ public class FaultyAxiomsManager<T> {
     public void pop() {
         pop(1);
     }
+
+    public Set<T> getFormulaStack() {
+        return Collections.unmodifiableSet(this.formulaStack);
+    }
+
+    /*public int getTheoryCount() {
+        return this.stackCount.size();
+    }*/
 
     public void resetResult() {
         this.result = null;
