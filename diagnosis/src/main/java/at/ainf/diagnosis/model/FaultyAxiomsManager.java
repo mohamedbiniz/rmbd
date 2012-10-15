@@ -56,7 +56,9 @@ public class FaultyAxiomsManager<T> {
     }
 
     public void clean() {
-        pop(this.stackCount.size());
+        formulaStack.clear();
+        stackCount.clear();
+
     }
 
     /**
