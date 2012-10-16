@@ -101,13 +101,13 @@ public class TreeEvaluation {
         cth.getKnowledgeBase().addPositiveTest(Collections.singleton(ptest));
 
         // reasoning
-        //cth.push(list.subList(0, 2));
+        //cth.add(list.subList(0, 2));
 
         // reasoning
-        //cth.push(list.subList(1, 4));
+        //cth.add(list.subList(1, 4));
 
         // reasoning
-        //cth.push(list.subList(2, 5));
+        //cth.add(list.subList(2, 5));
 
         // SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
         HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();
@@ -237,13 +237,13 @@ public class TreeEvaluation {
 
 
         // reasoning
-        //cth.push(list.subList(0, 2));
+        //cth.add(list.subList(0, 2));
 
         // reasoning
-        //cth.push(list.subList(1, 4));
+        //cth.add(list.subList(1, 4));
 
         // reasoning
-        //cth.push(list.subList(2, 5));
+        //cth.add(list.subList(2, 5));
 
         //SimpleStorage<Constraint> storage = new SimpleStorage<Constraint>();
         HsTreeSearch<AxiomSet<Constraint>,Constraint> strategy = new HsTreeSearch<AxiomSet<Constraint>,Constraint>();

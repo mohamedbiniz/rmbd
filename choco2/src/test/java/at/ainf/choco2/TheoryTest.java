@@ -73,22 +73,22 @@ public class TheoryTest {
         cth.addConstraints(changable);
 
         // reasoning
-        cth.getFaultyAxiomsManager().push(changable.subList(0, 2));
+        cth.getFaultyAxiomsManager().add(changable.subList(0, 2));
         boolean res = cth.verifyRequirements();
         assertFalse(res);
-        cth.getFaultyAxiomsManager().pop();
+        cth.getFaultyAxiomsManager().remove(changable.subList(0, 2));
 
         // reasoning
-        cth.getFaultyAxiomsManager().push(changable.subList(1, 4));
+        cth.getFaultyAxiomsManager().add(changable.subList(1, 4));
         res = cth.verifyRequirements();
         assertTrue(res);
-        cth.getFaultyAxiomsManager().pop();
+        cth.getFaultyAxiomsManager().remove(changable.subList(1, 4));
 
         // reasoning
-        // cth.push(changable.subList(2, 5));
+        // cth.add(changable.subList(2, 5));
         // res = cth.verifyRequirements();
         // assertFalse(res);
-        // cth.pop();
+        // cth.remove();
 
     }
 

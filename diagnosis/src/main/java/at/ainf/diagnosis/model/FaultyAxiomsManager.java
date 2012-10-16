@@ -12,41 +12,26 @@ import java.util.*;
 public class FaultyAxiomsManager<T> {
 
     private final LinkedHashSet<T> formulaStack = new LinkedHashSet<T>();
-    private final LinkedList<Integer> stackCount = new LinkedList<Integer>();
     private Boolean result = null;
 
 
 
-    public boolean push(Collection<T> formulas) {
+    public boolean add(Collection<T> formulas) {
         if (formulas == null)
             return false;
-        stackCount.add(formulaStack.size());
         resetResult();
         this.formulaStack.addAll(formulas);
         return true;
     }
 
-    public void pop() {
-        if (this.stackCount.isEmpty())
-            return;
+    public void remove(Collection<T> formulas) {
         resetResult();
+        formulaStack.removeAll(formulas);
 
-
-        int index = this.stackCount.removeLast();
-        //int size = this.formulaStack.size();
-        int count = 0;
-        for (Iterator<T> iterator = formulaStack.iterator(); iterator.hasNext(); ) {
-            iterator.next();
-            if (count >= index)
-                iterator.remove();
-            count++;
-        }
     }
 
     public void clean() {
         formulaStack.clear();
-        stackCount.clear();
-
     }
 
 

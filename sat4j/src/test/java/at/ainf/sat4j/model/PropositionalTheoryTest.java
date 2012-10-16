@@ -9,16 +9,9 @@
 package at.ainf.sat4j.model;
 
 
-import static org.junit.Assert.*;
-
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -41,19 +34,19 @@ public class PropositionalTheoryTest {
 
         clause = new int[]{-3};
         IVecIntComparable fl = th.addClause(clause);
-        th.getFaultyAxiomsManager().push(Collections.singleton(fl));
+        th.getFaultyAxiomsManager().add(Collections.singleton(fl));
         //assertEquals(2, th.getFaultyAxiomsManager().getTheoryCount());
         assertFalse(th.verifyRequirements());
-        th.getFaultyAxiomsManager().pop();
+        th.getFaultyAxiomsManager().remove();
 
         //assertEquals(1, th.getFaultyAxiomsManager().getTheoryCount());
 
         addTheories(3, 7, th);
         //assertEquals(4, th.getFaultyAxiomsManager().getTheoryCount());
-        th.getFaultyAxiomsManager().pop(4);
+        th.getFaultyAxiomsManager().remove(4);
 
         fl = th.addClause(clause);
-        th.getFaultyAxiomsManager().push(Collections.singleton(fl));
+        th.getFaultyAxiomsManager().add(Collections.singleton(fl));
         assertTrue(th.verifyRequirements()); }*/
 
     private void addTheories(int numberOfTheories, int from, PropositionalTheory th) throws SolverException {
@@ -73,7 +66,7 @@ public class PropositionalTheoryTest {
             IVecIntComparable fl = th.addClause(lclause);
             list.add(fl);
         }
-        th.getFaultyAxiomsManager().push(list);
+        th.getFaultyAxiomsManager().add(list);
         addTheories(--numberOfTheories, from, th);
     }
 
@@ -91,6 +84,6 @@ public class PropositionalTheoryTest {
         clause = new int[]{2};
         list.add(th.addClause(clause));
 
-        th.getFaultyAxiomsManager().push(list);
+        th.getFaultyAxiomsManager().add(list);
     }
 }
