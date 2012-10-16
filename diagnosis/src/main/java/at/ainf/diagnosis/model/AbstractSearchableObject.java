@@ -85,16 +85,16 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         // clear stack
         getFaultyAxiomsManager().clean();
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getFaultyAxiomsManager().push(negate(test));
+            getFaultyAxiomsManager().add(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getPositiveTests()) {
-            getFaultyAxiomsManager().push(test);
+            getFaultyAxiomsManager().add(test);
         }
         for (Set<T> test : getKnowledgeBase().getEntailedTests()) {
-            getFaultyAxiomsManager().push(negate(test));
+            getFaultyAxiomsManager().add(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getNonentailedTests()) {
-            getFaultyAxiomsManager().push(test);
+            getFaultyAxiomsManager().add(test);
         }
         boolean res = verifyConsistency();
         getFaultyAxiomsManager().clean();
@@ -133,16 +133,16 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         kb.removeAll(diag);
         getFaultyAxiomsManager().clean();
         // positive test cases are in background theory
-        getFaultyAxiomsManager().push(getKnowledgeBase().getBackgroundFormulas());
-        getFaultyAxiomsManager().push(kb);
+        getFaultyAxiomsManager().add(getKnowledgeBase().getBackgroundFormulas());
+        getFaultyAxiomsManager().add(kb);
 
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getFaultyAxiomsManager().push(test);
+            getFaultyAxiomsManager().add(test);
             if (verifyRequirements()) {
                 getFaultyAxiomsManager().clean();
                 return false;
             }
-            getFaultyAxiomsManager().pop();
+            getFaultyAxiomsManager().remove(test);
         }
         getFaultyAxiomsManager().clean();
         return true;

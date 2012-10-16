@@ -24,8 +24,8 @@ public class Sat4jFaultyAxiomsManager extends FaultyAxiomsManager<IVecIntCompara
     }
 
     @Override
-    public boolean push(Collection<IVecIntComparable> formulas) {
-        boolean res = super.push(formulas);
+    public boolean add(Collection<IVecIntComparable> formulas) {
+        boolean res = super.add(formulas);
         if (res)
             for (IVecIntComparable formula : formulas) {
                 this.numOfLiterals += (formula).size();
