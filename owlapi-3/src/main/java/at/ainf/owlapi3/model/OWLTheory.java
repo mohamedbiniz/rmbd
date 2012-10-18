@@ -209,7 +209,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
         Set<OWLLogicalAxiom> logicalAxioms = ontology.getLogicalAxioms();
         getKnowledgeBase().addFormular(logicalAxioms);
-        getKnowledgeBase().addFaultyFormulas(setminus(logicalAxioms, backgroundAxioms));
+        //getKnowledgeBase().addFaultyFormulas(setminus(logicalAxioms, backgroundAxioms));
         this.original = ontology;
 
         // add all axioms from imported ontologies, as well as background axioms into a new test ontology

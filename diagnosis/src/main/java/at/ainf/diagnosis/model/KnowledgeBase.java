@@ -12,10 +12,7 @@ import java.util.*;
 
 public class KnowledgeBase<T> implements IKnowledgeBase<T> {
 
-    private static final String MESSAGE = "The test case cannot be added!";
 
-
-    protected final Set<T> faultyFormulas = new LinkedHashSet<T>();
 
     protected final Set<T> allFormulas = new LinkedHashSet<T>();
 
@@ -33,11 +30,11 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         return Collections.unmodifiableSet(allFormulas);
     }
 
-    public void addFormular(Set<T> formular) {
+    public void addFormular(Collection<T> formular) {
         allFormulas.addAll(formular);
     }
 
-    public void removeFormular(Set<T> formular) {
+    public void removeFormular(Collection<T> formular) {
         allFormulas.removeAll(formular);
     }
 
@@ -159,7 +156,11 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     }
 
     public Set<T> getFaultyFormulas() {
-        return Collections.unmodifiableSet(faultyFormulas);
+        Set<T> result = new LinkedHashSet<T>();
+        for (T formular : allFormulas)
+            if (!backgroundFormulas.contains(formular))
+                result.add(formular);
+        return Collections.unmodifiableSet(result);
     }
 
     public boolean hasTests() {
@@ -178,28 +179,6 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         return this.backgroundFormulas.size() > 0;
     }
 
-    public void addFaultyFormula(T expr) {
-        Integer formula = faultyFormulas.size();
-        faultyFormulas.add(expr);
-        //return formula;
-    }
-
-
-    public void addFaultyFormulas(Collection<T> exprs) {
-        List<Integer> fl = new ArrayList<Integer>(exprs.size());
-        int count = this.faultyFormulas.size();
-        //this.faultyFormulas.ensureCapacity(exprs.size() + count);
-        for (T expr : exprs) {
-            boolean isAddedNew = this.faultyFormulas.add(expr);
-            if (isAddedNew) {
-                Integer formula = count++;
-                fl.add(formula);
-            }
-
-        }
-
-    }
-
     public void setEmptyBackgroundFormulas() {
         this.backgroundFormulas = new LinkedHashSet<T>();
     }
@@ -209,18 +188,18 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         /*if (!verifyRequirements()) {
             this.backgroundFormulas.clear();
             throw new InconsistentTheoryException("The background theory is unsatisfiable!");
-        }*/
-        this.faultyFormulas.removeAll(backgroundFormulas);
+        }
+        this.faultyFormulas.removeAll(backgroundFormulas);*/
     }
 
     public void removeBackgroundFormulas(Set<T> tests) {
         this.backgroundFormulas.removeAll(tests);
-        addFaultyFormulas(getAllFormulas());
+
     }
 
     public void addBackgroundFormulas(Set<T> formulas) {
         this.backgroundFormulas.addAll(formulas);
-        this.faultyFormulas.removeAll(formulas);
+        //this.faultyFormulas.removeAll(formulas);
     }
 
     public Set<T> getBackgroundFormulas() {
