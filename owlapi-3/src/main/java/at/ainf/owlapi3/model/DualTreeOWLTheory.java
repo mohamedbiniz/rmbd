@@ -38,7 +38,7 @@ public class DualTreeOWLTheory extends OWLTheory {
     public boolean verifyRequirements() {
         OWLOntology ontology = getOntology();
         Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getKnowledgeBase().getFaultyFormulas());
-        axiomSet.removeAll(getFaultyAxiomsManager().getFormulaStack());
+        axiomSet.removeAll(getReasonerKB().getFormularSet());
         updateAxioms(getOntology(), axiomSet, getKnowledgeBase().getBackgroundFormulas());
 
         boolean consistent = !doConsistencyTest(getSolver());

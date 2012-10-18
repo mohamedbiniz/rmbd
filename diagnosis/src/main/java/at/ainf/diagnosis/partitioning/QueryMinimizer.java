@@ -3,7 +3,6 @@ package at.ainf.diagnosis.partitioning;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.AbstractSearchableObject;
 import at.ainf.diagnosis.model.IKnowledgeBase;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
@@ -54,7 +53,7 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        return verifyQuery(getFaultyAxiomsManager().getFormulaStack());
+        return verifyQuery(getReasonerKB().getFormularSet());
     }
 
 

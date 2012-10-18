@@ -1,6 +1,6 @@
 package at.ainf.diagnosis;
 
-import at.ainf.diagnosis.model.FaultyAxiomsManager;
+import at.ainf.diagnosis.model.ReasonerKB;
 import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
@@ -57,5 +57,5 @@ public interface Searchable<E> {
 
     public IKnowledgeBase<E> getKnowledgeBase();
 
-    public FaultyAxiomsManager<E> getFaultyAxiomsManager();
+    public ReasonerKB<E> getReasonerKB();
 }
