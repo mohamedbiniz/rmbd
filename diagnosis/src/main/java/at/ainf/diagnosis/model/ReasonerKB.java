@@ -9,7 +9,7 @@ import java.util.*;
  * Time: 16:05
  * To change this template use File | Settings | File Templates.
  */
-public class FaultyAxiomsManager<T> {
+public class ReasonerKB<T> {
 
     private final LinkedHashSet<T> formulaStack = new LinkedHashSet<T>();
     private Boolean result = null;
@@ -35,7 +35,7 @@ public class FaultyAxiomsManager<T> {
     }
 
 
-    public Set<T> getFormulaStack() {
+    public Set<T> getFormularSet() {
         return Collections.unmodifiableSet(this.formulaStack);
     }
 

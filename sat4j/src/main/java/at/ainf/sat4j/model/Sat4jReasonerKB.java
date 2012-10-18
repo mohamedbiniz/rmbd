@@ -1,6 +1,6 @@
 package at.ainf.sat4j.model;
 
-import at.ainf.diagnosis.model.FaultyAxiomsManager;
+import at.ainf.diagnosis.model.ReasonerKB;
 
 import java.util.Collection;
 
@@ -11,7 +11,7 @@ import java.util.Collection;
  * Time: 16:25
  * To change this template use File | Settings | File Templates.
  */
-public class Sat4jFaultyAxiomsManager extends FaultyAxiomsManager<IVecIntComparable> {
+public class Sat4jReasonerKB extends ReasonerKB<IVecIntComparable> {
 
     private int numOfLiterals = 0;
 

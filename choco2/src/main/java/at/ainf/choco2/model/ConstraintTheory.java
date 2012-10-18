@@ -10,8 +10,6 @@ package at.ainf.choco2.model;
 
 
 import at.ainf.diagnosis.model.AbstractSearchableObject;
-import at.ainf.diagnosis.model.KnowledgeBase;
-import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
 import choco.Choco;
 import choco.cp.model.CPModel;
@@ -63,7 +61,7 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
      *            formulas to the model, and remove in the opposite case.
      */
     private void modifyModel(boolean add) {
-        for (Constraint cnst : getFaultyAxiomsManager().getFormulaStack()) {
+        for (Constraint cnst : getReasonerKB().getFormularSet()) {
             if (add)
                 this.model.addConstraint(cnst);
             else

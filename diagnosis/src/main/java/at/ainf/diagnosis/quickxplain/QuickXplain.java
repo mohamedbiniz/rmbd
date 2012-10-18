@@ -72,9 +72,9 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
         if (!c.verifyRequirements())
             throw new InconsistentTheoryException("Background theory or test cases are inconsistent! Finding conflicts is impossible!");
-        c.getFaultyAxiomsManager().add(u);
+        c.getReasonerKB().add(u);
         final boolean isCons = c.verifyRequirements();
-        c.getFaultyAxiomsManager().remove(u);
+        c.getReasonerKB().remove(u);
 
         if (isCons) {
             throw new NoConflictException("The theory is satisfiable!");
@@ -83,14 +83,14 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             return new TreeSet<Id>();
         }
         start("Conflict", "qx");
-        return qqXPlain(c, c.getFaultyAxiomsManager().getFormulaStack(), new FormulaList<Id>(u));
+        return qqXPlain(c, c.getReasonerKB().getFormularSet(), new FormulaList<Id>(u));
 
     }
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException {
         if (axiomRenderer!=null)
-            logger.info("B = {" + axiomRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(b.getFaultyAxiomsManager().getFormulaStack())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
+            logger.info("B = {" + axiomRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(b.getReasonerKB().getFormularSet())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
         iterations++;
         if (d != null && d.size() != 0 && ! b.verifyRequirements())
             return null;
@@ -103,16 +103,16 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         FormulaList<Id> c1 = c.setBounds(0, k - 1);
         FormulaList<Id> c2 = c.setBounds(k, c.size() - 1);
 
-        boolean res = b.getFaultyAxiomsManager().add(c1);
+        boolean res = b.getReasonerKB().add(c1);
         Set<Id> d2 = qqXPlain(b, c1, c2);
         if (axiomRenderer!=null)
             logger.info("D2 = {" + axiomRenderer.renderAxioms(d2) + "}");
-        if (res) b.getFaultyAxiomsManager().remove(c1);
-        res = b.getFaultyAxiomsManager().add(d2);
+        if (res) b.getReasonerKB().remove(c1);
+        res = b.getReasonerKB().add(d2);
         Set<Id> d1 = qqXPlain(b, d2, c1);
         if (axiomRenderer!=null)
             logger.info("D1 = {" + axiomRenderer.renderAxioms(d1) + "}");
-        if (res) b.getFaultyAxiomsManager().remove(d2);
+        if (res) b.getReasonerKB().remove(d2);
 
         if (d2 != null)
             if (d1 == null)

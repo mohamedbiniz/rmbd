@@ -27,24 +27,24 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     private IKnowledgeBase<T> knowledgeBase;
 
-    private FaultyAxiomsManager<T> faultyAxiomsManager;
+    private ReasonerKB<T> reasonerKB;
 
     public AbstractSearchableObject() {
         this(null);
     }
 
-    public FaultyAxiomsManager<T> getFaultyAxiomsManager() {
-        return faultyAxiomsManager;
+    public ReasonerKB<T> getReasonerKB() {
+        return reasonerKB;
     }
 
-    public void setFaultyAxiomsManager(FaultyAxiomsManager<T> faultyAxiomsManager) {
-        this.faultyAxiomsManager = faultyAxiomsManager;
+    public void setReasonerKB(ReasonerKB<T> reasonerKB) {
+        this.reasonerKB = reasonerKB;
     }
 
     public AbstractSearchableObject(Object solver) {
         this.solver = solver;
         setKnowledgeBase(new KnowledgeBase<T>());
-        setFaultyAxiomsManager(new FaultyAxiomsManager<T>());
+        setReasonerKB(new ReasonerKB<T>());
     }
 
     public Object getSolver() {
@@ -83,21 +83,21 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        getFaultyAxiomsManager().clean();
+        getReasonerKB().clean();
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getFaultyAxiomsManager().add(negate(test));
+            getReasonerKB().add(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getPositiveTests()) {
-            getFaultyAxiomsManager().add(test);
+            getReasonerKB().add(test);
         }
         for (Set<T> test : getKnowledgeBase().getEntailedTests()) {
-            getFaultyAxiomsManager().add(negate(test));
+            getReasonerKB().add(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getNonentailedTests()) {
-            getFaultyAxiomsManager().add(test);
+            getReasonerKB().add(test);
         }
         boolean res = verifyConsistency();
-        getFaultyAxiomsManager().clean();
+        getReasonerKB().clean();
         return res;
     }
 
@@ -131,20 +131,20 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         List<T> kb = new LinkedList<T>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
-        getFaultyAxiomsManager().clean();
+        getReasonerKB().clean();
         // positive test cases are in background theory
-        getFaultyAxiomsManager().add(getKnowledgeBase().getBackgroundFormulas());
-        getFaultyAxiomsManager().add(kb);
+        getReasonerKB().add(getKnowledgeBase().getBackgroundFormulas());
+        getReasonerKB().add(kb);
 
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getFaultyAxiomsManager().add(test);
+            getReasonerKB().add(test);
             if (verifyRequirements()) {
-                getFaultyAxiomsManager().clean();
+                getReasonerKB().clean();
                 return false;
             }
-            getFaultyAxiomsManager().remove(test);
+            getReasonerKB().remove(test);
         }
-        getFaultyAxiomsManager().clean();
+        getReasonerKB().clean();
         return true;
     }
 

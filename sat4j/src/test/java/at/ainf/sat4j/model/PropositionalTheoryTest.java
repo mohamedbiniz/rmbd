@@ -24,29 +24,29 @@ public class PropositionalTheoryTest {
         th.getKnowledgeBase().addBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(clause)));
         assertTrue(th.getKnowledgeBase().hasBackgroundTheory());
 
-        //int count = th.getFaultyAxiomsManager().getTheoryCount();
+        //int count = th.getReasonerKB().getTheoryCount();
         //assertEquals(0, count);
 
         insertConflicts(th);
         assertTrue(th.verifyRequirements());
 
-        //assertEquals(1, th.getFaultyAxiomsManager().getTheoryCount());
+        //assertEquals(1, th.getReasonerKB().getTheoryCount());
 
         clause = new int[]{-3};
         IVecIntComparable fl = th.addClause(clause);
-        th.getFaultyAxiomsManager().add(Collections.singleton(fl));
-        //assertEquals(2, th.getFaultyAxiomsManager().getTheoryCount());
+        th.getReasonerKB().add(Collections.singleton(fl));
+        //assertEquals(2, th.getReasonerKB().getTheoryCount());
         assertFalse(th.verifyRequirements());
-        th.getFaultyAxiomsManager().remove();
+        th.getReasonerKB().remove();
 
-        //assertEquals(1, th.getFaultyAxiomsManager().getTheoryCount());
+        //assertEquals(1, th.getReasonerKB().getTheoryCount());
 
         addTheories(3, 7, th);
-        //assertEquals(4, th.getFaultyAxiomsManager().getTheoryCount());
-        th.getFaultyAxiomsManager().remove(4);
+        //assertEquals(4, th.getReasonerKB().getTheoryCount());
+        th.getReasonerKB().remove(4);
 
         fl = th.addClause(clause);
-        th.getFaultyAxiomsManager().add(Collections.singleton(fl));
+        th.getReasonerKB().add(Collections.singleton(fl));
         assertTrue(th.verifyRequirements()); }*/
 
     private void addTheories(int numberOfTheories, int from, PropositionalTheory th) throws SolverException {
@@ -66,7 +66,7 @@ public class PropositionalTheoryTest {
             IVecIntComparable fl = th.addClause(lclause);
             list.add(fl);
         }
-        th.getFaultyAxiomsManager().add(list);
+        th.getReasonerKB().add(list);
         addTheories(--numberOfTheories, from, th);
     }
 
@@ -84,6 +84,6 @@ public class PropositionalTheoryTest {
         clause = new int[]{2};
         list.add(th.addClause(clause));
 
-        th.getFaultyAxiomsManager().add(list);
+        th.getReasonerKB().add(list);
     }
 }
