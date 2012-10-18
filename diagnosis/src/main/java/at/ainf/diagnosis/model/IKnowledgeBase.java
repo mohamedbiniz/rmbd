@@ -73,9 +73,9 @@ public interface IKnowledgeBase<Id> {
 
     public void addBackgroundFormulas(Set<Id> formulas);
 
-    public Integer addFaultyFormula(Id expr);
+    public void addFaultyFormula(Id expr);
 
-    public List<Integer> addFaultyFormulas(Collection<Id> exprs);
+    public void addFaultyFormulas(Collection<Id> exprs);
 
     public int getTestsSize();
 
@@ -86,6 +86,10 @@ public interface IKnowledgeBase<Id> {
     public boolean getTypeOfTest(Set<Id> testcase);
 
     public Set<Id> getAllFormulas();
+
+    public void removeFormular(Set<Id> formular);
+
+    public void addFormular(Set<Id> formular);
 
     public void clearTestCases();
 
