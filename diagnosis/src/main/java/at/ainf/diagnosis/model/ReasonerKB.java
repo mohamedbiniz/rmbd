@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class ReasonerKB<T> {
 
-    private final LinkedHashSet<T> formulaStack = new LinkedHashSet<T>();
+    private final LinkedHashSet<T> formulas = new LinkedHashSet<T>();
     private Boolean result = null;
 
 
@@ -20,23 +20,23 @@ public class ReasonerKB<T> {
         if (formulas == null)
             return false;
         resetResult();
-        this.formulaStack.addAll(formulas);
+        this.formulas.addAll(formulas);
         return true;
     }
 
     public void remove(Collection<T> formulas) {
         resetResult();
-        formulaStack.removeAll(formulas);
+        this.formulas.removeAll(formulas);
 
     }
 
     public void clean() {
-        formulaStack.clear();
+        formulas.clear();
     }
 
 
     public Set<T> getFormularSet() {
-        return Collections.unmodifiableSet(this.formulaStack);
+        return Collections.unmodifiableSet(this.formulas);
     }
 
     /*public int getTheoryCount() {

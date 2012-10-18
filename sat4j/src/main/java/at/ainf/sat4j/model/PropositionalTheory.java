@@ -81,13 +81,6 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
         }
     }
 
-    protected int getStorageId(Integer id) {
-        return id;
-    }
-
-    protected Integer createFormula(int position) {
-        return position;
-    }
 
 
 
