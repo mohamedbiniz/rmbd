@@ -28,9 +28,7 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
 
 
     public ConstraintTheory(Solver solver) {
-        super(solver);
-        setReasoner(new ConstraintSolver());
-        model = new CPModel();
+        this(solver,new CPModel());
     }
 
 
@@ -42,6 +40,7 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
 
     public ConstraintTheory(Solver solver, Model model) {
         super(solver);
+        setReasoner(new ConstraintSolver(model));
         this.model = model;
     }
 

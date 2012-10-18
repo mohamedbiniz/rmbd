@@ -1,8 +1,12 @@
 package at.ainf.choco2.model;
 
 import at.ainf.diagnosis.model.Solver;
+import choco.cp.model.CPModel;
+import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -14,14 +18,31 @@ import java.util.Set;
  */
 public class ConstraintSolver implements Solver<Constraint> {
 
+    private Model model;
+
+    public ConstraintSolver() {
+        this.model = new CPModel();
+    }
+
+    public ConstraintSolver(Model model) {
+        this.model = model;
+    }
+
     @Override
     public void updateModell(Set<Constraint> formulas) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        for (Iterator<Constraint> iterator = model.getConstraintIterator(); iterator.hasNext(); ) {
+            iterator.next();
+            iterator.remove();
+        }
+
+        for (Constraint cons : formulas)
+            model.addConstraint(cons);
     }
 
     @Override
     public boolean isConsistent() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
 }
