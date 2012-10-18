@@ -11,7 +11,9 @@ import java.util.Set;
  */
 public interface Solver<T> {
 
-    public void updateModell(Set<T> formulas);
+    public void setFormulars(Set<T> formulas);
+
+    public Set<T> getFormulars();
 
     public boolean isConsistent();
 

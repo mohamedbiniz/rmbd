@@ -2,12 +2,11 @@ package at.ainf.choco2.model;
 
 import at.ainf.diagnosis.model.Solver;
 import choco.cp.model.CPModel;
+import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,7 +28,7 @@ public class ConstraintSolver implements Solver<Constraint> {
     }
 
     @Override
-    public void updateModell(Set<Constraint> formulas) {
+    public void setFormulars(Set<Constraint> formulas) {
 
         for (Iterator<Constraint> iterator = model.getConstraintIterator(); iterator.hasNext(); ) {
             iterator.next();
@@ -40,9 +39,18 @@ public class ConstraintSolver implements Solver<Constraint> {
             model.addConstraint(cons);
     }
 
+    public Set<Constraint> getFormulars() {
+        Set<Constraint> formulars = new LinkedHashSet<Constraint>();
+        for (Iterator<Constraint> iterator = model.getConstraintIterator(); iterator.hasNext(); )
+            formulars.add(iterator.next());
+        return Collections.unmodifiableSet(formulars);
+    }
+
     @Override
     public boolean isConsistent() {
-        return false;
+        choco.kernel.solver.Solver solver = new CPSolver();
+        solver.read(this.model);
+        return solver.solve();
     }
 
 }

@@ -19,7 +19,9 @@ import choco.kernel.model.constraints.Constraint;
 import choco.kernel.solver.Solver;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
@@ -45,39 +47,22 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        modifyModel(true);
+        for (Constraint cnst : getReasonerKB().getFormularSet())
+            model.addConstraint(cnst);
         //Solver solver = getSolver();
         Solver solver = new CPSolver();
         solver.read(this.model);
         boolean res = solver.solve();
-        modifyModel(false);
-        return res;
-    }
-
-    /**
-     * Adds/removes constraints from the model.
-     * Background constraints remain in the model.
-     *
-     * @param add if <code>true</code>, the method will add all
-     *            formulas to the model, and remove in the opposite case.
-     */
-    private void modifyModel(boolean add) {
         for (Constraint cnst : getReasonerKB().getFormularSet()) {
-            if (add)
-                this.model.addConstraint(cnst);
-            else
-                this.model.removeConstraint(cnst);
+            model.removeConstraint(cnst);
         }
+        return res;
     }
 
 
 
     public void addConstraints(Collection<Constraint> cnts) {
         getKnowledgeBase().addFormular(cnts);
-    }
-
-    public Model getModel() {
-        return this.model;
     }
 
 
