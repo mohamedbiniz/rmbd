@@ -29,6 +29,8 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     private ReasonerKB<T> reasonerKB;
 
+    private Solver<T> reasoner;
+
     public AbstractSearchableObject() {
         this(null);
     }
@@ -55,7 +57,13 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         this.solver = solver;
     }
 
+    public Solver<T> getReasoner() {
+        return reasoner;
+    }
 
+    public void setReasoner(Solver<T> reasoner) {
+        this.reasoner = reasoner;
+    }
 
     public boolean verifyRequirements() throws SolverException {
         return verifyConsistency();
