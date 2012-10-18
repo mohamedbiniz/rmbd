@@ -11,49 +11,33 @@ import java.util.*;
  */
 public class ReasonerKB<T> {
 
-    private final LinkedHashSet<T> formulas = new LinkedHashSet<T>();
-    private Boolean result = null;
-
+    private final LinkedHashSet<T> reasonedFormulars = new LinkedHashSet<T>();
 
 
     public boolean add(Collection<T> formulas) {
         if (formulas == null)
             return false;
-        resetResult();
-        this.formulas.addAll(formulas);
+
+        this.reasonedFormulars.addAll(formulas);
         return true;
     }
 
     public void remove(Collection<T> formulas) {
-        resetResult();
-        this.formulas.removeAll(formulas);
-
+        this.reasonedFormulars.removeAll(formulas);
     }
 
     public void clean() {
-        formulas.clear();
+        reasonedFormulars.clear();
     }
 
 
-    public Set<T> getFormularSet() {
-        return Collections.unmodifiableSet(this.formulas);
+    public Set<T> getReasonendFormulars() {
+        return Collections.unmodifiableSet(this.reasonedFormulars);
     }
 
-    /*public int getTheoryCount() {
-        return this.lastStackCount.size();
-    }*/
 
-    public void resetResult() {
-        this.result = null;
-    }
 
-    public Boolean getResult() {
-        return this.result;
-    }
 
-    public void setResult(Boolean result) {
-        this.result = result;
-    }
 
 
 }

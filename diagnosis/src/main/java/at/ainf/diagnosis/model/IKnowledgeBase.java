@@ -85,7 +85,7 @@ public interface IKnowledgeBase<Id> {
 
     public boolean getTypeOfTest(Set<Id> testcase);
 
-    public Set<Id> getAllFormulas();
+    public Set<Id> getKnowledgeBase();
 
     public void removeFormular(Collection<Id> formular);
 

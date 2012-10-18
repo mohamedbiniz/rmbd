@@ -83,14 +83,14 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             return new TreeSet<Id>();
         }
         start("Conflict", "qx");
-        return qqXPlain(c, c.getReasonerKB().getFormularSet(), new FormulaList<Id>(u));
+        return qqXPlain(c, c.getReasonerKB().getReasonendFormulars(), new FormulaList<Id>(u));
 
     }
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException {
         if (axiomRenderer!=null)
-            logger.info("B = {" + axiomRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(b.getReasonerKB().getFormularSet())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
+            logger.info("B = {" + axiomRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(b.getReasonerKB().getReasonendFormulars())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
         iterations++;
         if (d != null && d.size() != 0 && ! b.verifyRequirements())
             return null;
