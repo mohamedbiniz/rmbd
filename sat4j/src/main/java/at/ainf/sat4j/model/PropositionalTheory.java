@@ -13,6 +13,7 @@ import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
 
     public IVecIntComparable addClause(int[] vector) {
         VecIntComparable anInt = new VecIntComparable(vector);
-        getKnowledgeBase().addFaultyFormula(anInt);
+        getKnowledgeBase().addFormular(Collections.<IVecIntComparable>singleton(anInt));
         return anInt;
     }
 
