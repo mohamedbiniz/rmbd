@@ -29,8 +29,10 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
 
     public ConstraintTheory(Solver solver) {
         super(solver);
+        setReasoner(new ConstraintSolver());
         model = new CPModel();
     }
+
 
 
     @Override

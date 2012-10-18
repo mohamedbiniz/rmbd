@@ -1,5 +1,7 @@
 package at.ainf.diagnosis.model;
 
+import java.util.Set;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -9,7 +11,7 @@ package at.ainf.diagnosis.model;
  */
 public interface Solver<T> {
 
-    public void updateModell(ReasonerKB<T> reasonerKB);
+    public void updateModell(Set<T> formulas);
 
     public boolean isConsistent();
 
