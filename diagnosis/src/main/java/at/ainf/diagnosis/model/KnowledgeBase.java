@@ -14,7 +14,7 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
 
 
 
-    protected final Set<T> allFormulas = new LinkedHashSet<T>();
+    protected final Set<T> knowledgeBase = new LinkedHashSet<T>();
 
     protected Set<T> backgroundFormulas = new LinkedHashSet<T>();
 
@@ -26,16 +26,16 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     private List<Set<T>> tests = new LinkedList<Set<T>>();
     private Map<Set<T>, Boolean> typeOfTest = new HashMap<Set<T>, Boolean>();
 
-    public Set<T> getAllFormulas() {
-        return Collections.unmodifiableSet(allFormulas);
+    public Set<T> getKnowledgeBase() {
+        return Collections.unmodifiableSet(knowledgeBase);
     }
 
     public void addFormular(Collection<T> formular) {
-        allFormulas.addAll(formular);
+        knowledgeBase.addAll(formular);
     }
 
     public void removeFormular(Collection<T> formular) {
-        allFormulas.removeAll(formular);
+        knowledgeBase.removeAll(formular);
     }
 
     public int getTestsSize() {
@@ -157,7 +157,7 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
 
     public Set<T> getFaultyFormulas() {
         Set<T> result = new LinkedHashSet<T>();
-        for (T formular : allFormulas)
+        for (T formular : knowledgeBase)
             if (!backgroundFormulas.contains(formular))
                 result.add(formular);
         return Collections.unmodifiableSet(result);

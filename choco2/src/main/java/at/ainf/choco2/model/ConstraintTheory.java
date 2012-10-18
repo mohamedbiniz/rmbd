@@ -19,9 +19,6 @@ import choco.kernel.model.constraints.Constraint;
 import choco.kernel.solver.Solver;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 
 public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
@@ -47,13 +44,13 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        for (Constraint cnst : getReasonerKB().getFormularSet())
+        for (Constraint cnst : getReasonerKB().getReasonendFormulars())
             model.addConstraint(cnst);
         //Solver solver = getSolver();
         Solver solver = new CPSolver();
         solver.read(this.model);
         boolean res = solver.solve();
-        for (Constraint cnst : getReasonerKB().getFormularSet()) {
+        for (Constraint cnst : getReasonerKB().getReasonendFormulars()) {
             model.removeConstraint(cnst);
         }
         return res;

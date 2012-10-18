@@ -57,11 +57,11 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
                 solver.reset();
 
             solver.newVar(getReasonerKB().getNumOfLiterals());
-            solver.setExpectedNumberOfClauses(getReasonerKB().getFormularSet().size() + getKnowledgeBase().getBackgroundFormulas().size());
+            solver.setExpectedNumberOfClauses(getReasonerKB().getReasonendFormulars().size() + getKnowledgeBase().getBackgroundFormulas().size());
             boolean res;
             try {
                 addFormulas(solver, getKnowledgeBase().getBackgroundFormulas());
-                addFormulas(solver, getReasonerKB().getFormularSet());
+                addFormulas(solver, getReasonerKB().getReasonendFormulars());
                 res = solver.isSatisfiable();
             } catch (ContradictionException e) {
                 res = false;
