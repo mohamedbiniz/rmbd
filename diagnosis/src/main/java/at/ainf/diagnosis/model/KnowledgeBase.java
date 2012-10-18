@@ -29,11 +29,16 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     private List<Set<T>> tests = new LinkedList<Set<T>>();
     private Map<Set<T>, Boolean> typeOfTest = new HashMap<Set<T>, Boolean>();
 
-
-
-
     public Set<T> getAllFormulas() {
-        return allFormulas;
+        return Collections.unmodifiableSet(allFormulas);
+    }
+
+    public void addFormular(Set<T> formular) {
+        allFormulas.addAll(formular);
+    }
+
+    public void removeFormular(Set<T> formular) {
+        allFormulas.removeAll(formular);
     }
 
     public int getTestsSize() {
@@ -173,14 +178,14 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         return this.backgroundFormulas.size() > 0;
     }
 
-    public Integer addFaultyFormula(T expr) {
+    public void addFaultyFormula(T expr) {
         Integer formula = faultyFormulas.size();
         faultyFormulas.add(expr);
-        return formula;
+        //return formula;
     }
 
 
-    public List<Integer> addFaultyFormulas(Collection<T> exprs) {
+    public void addFaultyFormulas(Collection<T> exprs) {
         List<Integer> fl = new ArrayList<Integer>(exprs.size());
         int count = this.faultyFormulas.size();
         //this.faultyFormulas.ensureCapacity(exprs.size() + count);
@@ -192,7 +197,7 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
             }
 
         }
-        return fl;
+
     }
 
     public void setEmptyBackgroundFormulas() {

@@ -74,8 +74,8 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
         getKnowledgeBase().addFaultyFormula(cnt);
     }
 
-    public List<Integer> addConstraints(Collection<Constraint> cnts) {
-        return getKnowledgeBase().addFaultyFormulas(cnts);
+    public void addConstraints(Collection<Constraint> cnts) {
+        getKnowledgeBase().addFaultyFormulas(cnts);
     }
 
     public Model getModel() {
