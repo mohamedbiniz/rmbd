@@ -24,8 +24,8 @@ public class Sat4jReasonerKB extends ReasonerKB<IVecIntComparable> {
     }
 
     @Override
-    public boolean add(Collection<IVecIntComparable> formulas) {
-        boolean res = super.add(formulas);
+    public boolean addReasonedFormulars(Collection<IVecIntComparable> formulas) {
+        boolean res = super.addReasonedFormulars(formulas);
         if (res)
             for (IVecIntComparable formula : formulas) {
                 this.numOfLiterals += (formula).size();

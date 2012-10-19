@@ -27,7 +27,6 @@ public class ConstraintSolver implements Solver<Constraint> {
         this.model = model;
     }
 
-    @Override
     public void setFormulars(Set<Constraint> formulas) {
 
         for (Iterator<Constraint> iterator = model.getConstraintIterator(); iterator.hasNext(); ) {
