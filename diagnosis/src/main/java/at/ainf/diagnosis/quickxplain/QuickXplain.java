@@ -72,9 +72,9 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
         if (!c.verifyRequirements())
             throw new InconsistentTheoryException("Background theory or test cases are inconsistent! Finding conflicts is impossible!");
-        c.getReasonerKB().add(u);
+        c.getReasonerKB().addReasonedFormulars(u);
         final boolean isCons = c.verifyRequirements();
-        c.getReasonerKB().remove(u);
+        c.getReasonerKB().removeReasonedFormulars(u);
 
         if (isCons) {
             throw new NoConflictException("The theory is satisfiable!");
@@ -103,16 +103,16 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         FormulaList<Id> c1 = c.setBounds(0, k - 1);
         FormulaList<Id> c2 = c.setBounds(k, c.size() - 1);
 
-        boolean res = b.getReasonerKB().add(c1);
+        boolean res = b.getReasonerKB().addReasonedFormulars(c1);
         Set<Id> d2 = qqXPlain(b, c1, c2);
         if (axiomRenderer!=null)
             logger.info("D2 = {" + axiomRenderer.renderAxioms(d2) + "}");
-        if (res) b.getReasonerKB().remove(c1);
-        res = b.getReasonerKB().add(d2);
+        if (res) b.getReasonerKB().removeReasonedFormulars(c1);
+        res = b.getReasonerKB().addReasonedFormulars(d2);
         Set<Id> d1 = qqXPlain(b, d2, c1);
         if (axiomRenderer!=null)
             logger.info("D1 = {" + axiomRenderer.renderAxioms(d1) + "}");
-        if (res) b.getReasonerKB().remove(d2);
+        if (res) b.getReasonerKB().removeReasonedFormulars(d2);
 
         if (d2 != null)
             if (d1 == null)

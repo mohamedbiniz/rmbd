@@ -14,7 +14,7 @@ public class ReasonerKB<T> {
     private final LinkedHashSet<T> reasonedFormulars = new LinkedHashSet<T>();
 
 
-    public boolean add(Collection<T> formulas) {
+    public boolean addReasonedFormulars(Collection<T> formulas) {
         if (formulas == null)
             return false;
 
@@ -22,11 +22,11 @@ public class ReasonerKB<T> {
         return true;
     }
 
-    public void remove(Collection<T> formulas) {
+    public void removeReasonedFormulars(Collection<T> formulas) {
         this.reasonedFormulars.removeAll(formulas);
     }
 
-    public void clean() {
+    public void cleanReasonedFormulars() {
         reasonedFormulars.clear();
     }
 

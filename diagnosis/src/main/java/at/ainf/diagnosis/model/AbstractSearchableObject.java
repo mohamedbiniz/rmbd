@@ -91,21 +91,21 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        getReasonerKB().clean();
+        getReasonerKB().cleanReasonedFormulars();
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getReasonerKB().add(negate(test));
+            getReasonerKB().addReasonedFormulars(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getPositiveTests()) {
-            getReasonerKB().add(test);
+            getReasonerKB().addReasonedFormulars(test);
         }
         for (Set<T> test : getKnowledgeBase().getEntailedTests()) {
-            getReasonerKB().add(negate(test));
+            getReasonerKB().addReasonedFormulars(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getNonentailedTests()) {
-            getReasonerKB().add(test);
+            getReasonerKB().addReasonedFormulars(test);
         }
         boolean res = verifyConsistency();
-        getReasonerKB().clean();
+        getReasonerKB().cleanReasonedFormulars();
         return res;
     }
 
@@ -139,20 +139,20 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         List<T> kb = new LinkedList<T>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
-        getReasonerKB().clean();
+        getReasonerKB().cleanReasonedFormulars();
         // positive test cases are in background theory
-        getReasonerKB().add(getKnowledgeBase().getBackgroundFormulas());
-        getReasonerKB().add(kb);
+        getReasonerKB().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasonerKB().addReasonedFormulars(kb);
 
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getReasonerKB().add(test);
+            getReasonerKB().addReasonedFormulars(test);
             if (verifyRequirements()) {
-                getReasonerKB().clean();
+                getReasonerKB().cleanReasonedFormulars();
                 return false;
             }
-            getReasonerKB().remove(test);
+            getReasonerKB().removeReasonedFormulars(test);
         }
-        getReasonerKB().clean();
+        getReasonerKB().cleanReasonedFormulars();
         return true;
     }
 
