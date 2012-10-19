@@ -44,13 +44,13 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        for (Constraint cnst : getReasonerKB().getReasonendFormulars())
+        for (Constraint cnst : getReasoner().getReasonendFormulars())
             model.addConstraint(cnst);
         //Solver solver = getSolver();
         Solver solver = new CPSolver();
         solver.read(this.model);
         boolean res = solver.solve();
-        for (Constraint cnst : getReasonerKB().getReasonendFormulars()) {
+        for (Constraint cnst : getReasoner().getReasonendFormulars()) {
             model.removeConstraint(cnst);
         }
         return res;
