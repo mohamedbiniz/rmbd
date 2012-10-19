@@ -24,6 +24,7 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
     public PropositionalTheory(ISolver solver) {
         super(solver);
         setReasonerKB(new Sat4jReasonerKB());
+        setReasoner(new Sat4jSolver());
     }
 
     public Sat4jReasonerKB getReasonerKB() {
