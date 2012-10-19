@@ -1,5 +1,8 @@
 package at.ainf.diagnosis.model;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -14,6 +17,15 @@ public interface Solver<T> {
     //public void setFormulars(Set<T> formulas);
 
     //public Set<T> getFormulars();
+
+    public boolean addReasonedFormulars(Collection<T> formulas);
+
+    public void removeReasonedFormulars(Collection<T> formulas);
+
+    public void cleanReasonedFormulars();
+
+
+    public Set<T> getReasonendFormulars();
 
     public boolean isConsistent();
 

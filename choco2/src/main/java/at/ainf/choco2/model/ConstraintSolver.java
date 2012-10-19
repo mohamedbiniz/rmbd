@@ -1,5 +1,6 @@
 package at.ainf.choco2.model;
 
+import at.ainf.diagnosis.model.AbstractSolver;
 import at.ainf.diagnosis.model.Solver;
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
@@ -15,7 +16,7 @@ import java.util.*;
  * Time: 10:09
  * To change this template use File | Settings | File Templates.
  */
-public class ConstraintSolver implements Solver<Constraint> {
+public class ConstraintSolver extends AbstractSolver<Constraint> {
 
     private Model model;
 
