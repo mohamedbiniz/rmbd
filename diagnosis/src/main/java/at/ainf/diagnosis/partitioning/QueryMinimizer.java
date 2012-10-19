@@ -53,7 +53,7 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        return verifyQuery(getReasonerKB().getReasonendFormulars());
+        return verifyQuery(getReasoner().getReasonendFormulars());
     }
 
 

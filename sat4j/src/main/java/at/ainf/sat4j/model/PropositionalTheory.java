@@ -23,17 +23,16 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
 
     public PropositionalTheory(ISolver solver) {
         super(solver);
-        setReasonerKB(new Sat4jReasonerKB());
         setReasoner(new Sat4jSolver());
     }
 
-    public Sat4jReasonerKB getReasonerKB() {
-        return (Sat4jReasonerKB) super.getReasonerKB();
+    public Sat4jSolver getReasoner() {
+        return (Sat4jSolver) super.getReasoner();
     }
 
     public void setNumOfLiterals(Collection<IVecIntComparable> expressions) {
         for (IVecIntComparable formula : expressions) {
-            getReasonerKB().setNumOfLiterals(getReasonerKB().getNumOfLiterals()+formula.size());
+            getReasoner().setNumOfLiterals(getReasoner().getNumOfLiterals()+formula.size());
 
         }
     }
@@ -57,12 +56,12 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
             else
                 solver.reset();
 
-            solver.newVar(getReasonerKB().getNumOfLiterals());
-            solver.setExpectedNumberOfClauses(getReasonerKB().getReasonendFormulars().size() + getKnowledgeBase().getBackgroundFormulas().size());
+            solver.newVar(getReasoner().getNumOfLiterals());
+            solver.setExpectedNumberOfClauses(getReasoner().getReasonendFormulars().size() + getKnowledgeBase().getBackgroundFormulas().size());
             boolean res;
             try {
                 addFormulas(solver, getKnowledgeBase().getBackgroundFormulas());
-                addFormulas(solver, getReasonerKB().getReasonendFormulars());
+                addFormulas(solver, getReasoner().getReasonendFormulars());
                 res = solver.isSatisfiable();
             } catch (ContradictionException e) {
                 res = false;

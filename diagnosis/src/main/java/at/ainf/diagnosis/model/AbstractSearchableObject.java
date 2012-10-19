@@ -27,26 +27,16 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     private IKnowledgeBase<T> knowledgeBase;
 
-    private ReasonerKB<T> reasonerKB;
-
     private Solver<T> reasoner;
 
     public AbstractSearchableObject() {
         this(null);
     }
 
-    public ReasonerKB<T> getReasonerKB() {
-        return reasonerKB;
-    }
-
-    public void setReasonerKB(ReasonerKB<T> reasonerKB) {
-        this.reasonerKB = reasonerKB;
-    }
 
     public AbstractSearchableObject(Object solver) {
         this.solver = solver;
         setKnowledgeBase(new KnowledgeBase<T>());
-        setReasonerKB(new ReasonerKB<T>());
     }
 
     public Object getSolver() {
@@ -91,21 +81,21 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getReasonerKB().addReasonedFormulars(negate(test));
+            getReasoner().addReasonedFormulars(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getPositiveTests()) {
-            getReasonerKB().addReasonedFormulars(test);
+            getReasoner().addReasonedFormulars(test);
         }
         for (Set<T> test : getKnowledgeBase().getEntailedTests()) {
-            getReasonerKB().addReasonedFormulars(negate(test));
+            getReasoner().addReasonedFormulars(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getNonentailedTests()) {
-            getReasonerKB().addReasonedFormulars(test);
+            getReasoner().addReasonedFormulars(test);
         }
         boolean res = verifyConsistency();
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         return res;
     }
 
@@ -139,20 +129,20 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         List<T> kb = new LinkedList<T>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         // positive test cases are in background theory
-        getReasonerKB().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
-        getReasonerKB().addReasonedFormulars(kb);
+        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addReasonedFormulars(kb);
 
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getReasonerKB().addReasonedFormulars(test);
+            getReasoner().addReasonedFormulars(test);
             if (verifyRequirements()) {
-                getReasonerKB().cleanReasonedFormulars();
+                getReasoner().cleanReasonedFormulars();
                 return false;
             }
-            getReasonerKB().removeReasonedFormulars(test);
+            getReasoner().removeReasonedFormulars(test);
         }
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         return true;
     }
 

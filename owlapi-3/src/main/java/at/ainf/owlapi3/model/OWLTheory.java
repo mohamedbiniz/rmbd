@@ -328,11 +328,11 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     public boolean testDiagnosis(Collection<OWLLogicalAxiom> diag) throws SolverException {
         // clean up formula stack
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         List<OWLLogicalAxiom> kb = new LinkedList<OWLLogicalAxiom>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
-        getReasonerKB().addReasonedFormulars(kb);
+        getReasoner().addReasonedFormulars(kb);
         /*
         add(getBackgroundFormulas());
         for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
@@ -344,46 +344,46 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         }
         */
         if (!verifyConsistency()) {
-            getReasonerKB().cleanReasonedFormulars();
+            getReasoner().cleanReasonedFormulars();
             return false;
         }
 
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNegativeTests()) {
             if (!isEntailed(test)) {
-                getReasonerKB().cleanReasonedFormulars();
+                getReasoner().cleanReasonedFormulars();
                 return false;
             }
         }
 
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNonentailedTests()) {
             if (isEntailed(test)) {
-                getReasonerKB().cleanReasonedFormulars();
+                getReasoner().cleanReasonedFormulars();
                 return false;
             }
         }
 
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         return true;
     }
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getPositiveTests()) {
-            getReasonerKB().addReasonedFormulars(test);
+            getReasoner().addReasonedFormulars(test);
         }
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
-            getReasonerKB().addReasonedFormulars(test);
+            getReasoner().addReasonedFormulars(test);
         }
         if (!verifyConsistency()) {
-            getReasonerKB().cleanReasonedFormulars();
+            getReasoner().cleanReasonedFormulars();
             return false;
         }
 
         // verify negative tests
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNegativeTests()) {
             if (isEntailed(test)) {
-                getReasonerKB().cleanReasonedFormulars();
+                getReasoner().cleanReasonedFormulars();
                 return false;
             }
         }
@@ -391,12 +391,12 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         // verify negative tests
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNonentailedTests()) {
             if (isEntailed(test)) {
-                getReasonerKB().cleanReasonedFormulars();
+                getReasoner().cleanReasonedFormulars();
                 return false;
             }
         }
 
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         return true;
     }
 
@@ -429,7 +429,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     public boolean verifyConsistency() {
         start("Overall consistency check including management");
-        updateAxioms(getOntology(), getReasonerKB().getReasonendFormulars(), getKnowledgeBase().getBackgroundFormulas());
+        updateAxioms(getOntology(), getReasoner().getReasonendFormulars(), getKnowledgeBase().getBackgroundFormulas());
         boolean consistent = doConsistencyTest(getSolver());
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getReasonendFormulars(), getOntology());
@@ -583,37 +583,37 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     public boolean diagnosisEntailsWithoutEntailedTC(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
-        Collection<OWLLogicalAxiom> stack = getReasonerKB().getReasonendFormulars();
-        getReasonerKB().cleanReasonedFormulars();
+        Collection<OWLLogicalAxiom> stack = getReasoner().getReasonendFormulars();
+        getReasoner().cleanReasonedFormulars();
 
         updateAxioms(ontology, getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
         // restore the state of the theory prior to the test
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         //updateAxioms(getOntology(), logicalAxioms);
-        getReasonerKB().addReasonedFormulars(stack);
+        getReasoner().addReasonedFormulars(stack);
         return res;
     }
 
     // A
     public boolean diagnosisConsistent(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
-        Collection<OWLLogicalAxiom> stack = getReasonerKB().getReasonendFormulars();
-        getReasonerKB().cleanReasonedFormulars();
+        Collection<OWLLogicalAxiom> stack = getReasoner().getReasonendFormulars();
+        getReasoner().cleanReasonedFormulars();
         // cleanup ontology
         //Set<OWLLogicalAxiom> logicalAxioms = getOntology().getLogicalAxioms();
         //removeAxioms(logicalAxioms, getOntology());
 
         // add entailed test cases to simulate extension EX
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
-            getReasonerKB().addReasonedFormulars(test);
+            getReasoner().addReasonedFormulars(test);
         }
         // add axioms to the ontology
-        getReasonerKB().addReasonedFormulars(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
-        getReasonerKB().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
-        getReasonerKB().addReasonedFormulars(ent);
+        getReasoner().addReasonedFormulars(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addReasonedFormulars(ent);
         //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
         //removeAxioms(hs, getOntology());
         //addAxioms(ent, getOntology());
@@ -622,21 +622,21 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = verifyConsistency();
 
         // restore the state of the theory prior to the test
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         //removeAxioms(ent, getOntology());
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
         //addAxioms(logicalAxioms, getOntology());
         //updateAxioms(getOntology(), logicalAxioms);
-        getReasonerKB().addReasonedFormulars(stack);
+        getReasoner().addReasonedFormulars(stack);
         return res;
     }
 
     //B
     public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
-        Collection<OWLLogicalAxiom> stack = getReasonerKB().getReasonendFormulars();
-        getReasonerKB().cleanReasonedFormulars();
+        Collection<OWLLogicalAxiom> stack = getReasoner().getReasonendFormulars();
+        getReasoner().cleanReasonedFormulars();
 
         updateAxioms(ontology, flatten(getKnowledgeBase().getPositiveTests()), flatten(getKnowledgeBase().getEntailedTests()),
                 getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
@@ -644,9 +644,9 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
         // restore the state of the theory prior to the test
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         //updateAxioms(getOntology(), logicalAxioms);
-        getReasonerKB().addReasonedFormulars(stack);
+        getReasoner().addReasonedFormulars(stack);
         return res;
     }
 
@@ -659,29 +659,29 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
         // cleanup stack
-        Collection<OWLLogicalAxiom> stack = getReasonerKB().getReasonendFormulars();
-        getReasonerKB().cleanReasonedFormulars();
+        Collection<OWLLogicalAxiom> stack = getReasoner().getReasonendFormulars();
+        getReasoner().cleanReasonedFormulars();
         // cleanup ontology
         //Set<OWLLogicalAxiom> logicalAxioms = getOntology().getLogicalAxioms();
         //removeAxioms(logicalAxioms, getOntology());
 
         // add entailed test cases to simulate extension EX
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
-            getReasonerKB().addReasonedFormulars(test);
+            getReasoner().addReasonedFormulars(test);
         }
         // add axioms to the ontology
-        getReasonerKB().addReasonedFormulars(setminus(getOriginalOntology().getLogicalAxioms(), hs));
-        getReasonerKB().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
-        getReasonerKB().addReasonedFormulars(axioms);
+        getReasoner().addReasonedFormulars(setminus(getOriginalOntology().getLogicalAxioms(), hs));
+        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addReasonedFormulars(axioms);
         //removeAxioms(hs, getOntology());
         //addAxioms(, getOntology());
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
         // restore the state of the theory prior to the test
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         //updateAxioms(getOntology(), logicalAxioms);
-        getReasonerKB().addReasonedFormulars(stack);
+        getReasoner().addReasonedFormulars(stack);
         return res;
     }
 
@@ -693,13 +693,13 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     public boolean diagnosisConsistentWithoutEntailedTc(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
-        Collection<OWLLogicalAxiom> stack = getReasonerKB().getReasonendFormulars();
-        getReasonerKB().cleanReasonedFormulars();
+        Collection<OWLLogicalAxiom> stack = getReasoner().getReasonendFormulars();
+        getReasoner().cleanReasonedFormulars();
 
         // add axioms to the ontology
-        getReasonerKB().addReasonedFormulars(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
-        getReasonerKB().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
-        getReasonerKB().addReasonedFormulars(ent);
+        getReasoner().addReasonedFormulars(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addReasonedFormulars(ent);
         //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
         //removeAxioms(hs, getOntology());
         //addAxioms(ent, getOntology());
@@ -708,13 +708,13 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = verifyConsistency();
 
         // restore the state of the theory prior to the test
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         //removeAxioms(ent, getOntology());
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
         //addAxioms(logicalAxioms, getOntology());
         //updateAxioms(getOntology(), logicalAxioms);
-        getReasonerKB().addReasonedFormulars(stack);
+        getReasoner().addReasonedFormulars(stack);
         return res;
     }
 
@@ -726,21 +726,21 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     public boolean diagnosisConsistent(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
         // cleanup stack
-        Collection<OWLLogicalAxiom> stack = getReasonerKB().getReasonendFormulars();
-        getReasonerKB().cleanReasonedFormulars();
+        Collection<OWLLogicalAxiom> stack = getReasoner().getReasonendFormulars();
+        getReasoner().cleanReasonedFormulars();
         // cleanup ontology
         //Set<OWLLogicalAxiom> logicalAxioms = getOntology().getLogicalAxioms();
         //removeAxioms(logicalAxioms, getOntology());
 
         // add entailed test cases to simulate extension EX
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
-            getReasonerKB().addReasonedFormulars(test);
+            getReasoner().addReasonedFormulars(test);
         }
         // add axioms to the ontology
-        getReasonerKB().addReasonedFormulars(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
-        getReasonerKB().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
-        getReasonerKB().addReasonedFormulars(axioms);
-        getReasonerKB().addReasonedFormulars(ent);
+        getReasoner().addReasonedFormulars(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addReasonedFormulars(axioms);
+        getReasoner().addReasonedFormulars(ent);
         //addAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
         //removeAxioms(hs, getOntology());
         //addAxioms(ent, getOntology());
@@ -749,13 +749,13 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         boolean res = verifyConsistency();
 
         // restore the state of the theory prior to the test
-        getReasonerKB().cleanReasonedFormulars();
+        getReasoner().cleanReasonedFormulars();
         //removeAxioms(ent, getOntology());
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getOriginalOntology().getLogicalAxioms(), getOntology());
         //addAxioms(logicalAxioms, getOntology());
         //updateAxioms(getOntology(), logicalAxioms);
-        getReasonerKB().addReasonedFormulars(stack);
+        getReasoner().addReasonedFormulars(stack);
         return res;
     }
 
@@ -764,22 +764,22 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         OWLReasoner reasoner = getSolver();
 
         Set<OWLLogicalAxiom> axioms = setminus(getKnowledgeBase().getFaultyFormulas(), hittingSet);
-        Collection<OWLLogicalAxiom> stack = getReasonerKB().getReasonendFormulars();
-        getReasonerKB().cleanReasonedFormulars();
+        Collection<OWLLogicalAxiom> stack = getReasoner().getReasonendFormulars();
+        getReasoner().cleanReasonedFormulars();
 
-        getReasonerKB().addReasonedFormulars(axioms);
-        getReasonerKB().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addReasonedFormulars(axioms);
+        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
 
         if (!verifyConsistency()) {
-            getReasonerKB().cleanReasonedFormulars();
-            getReasonerKB().addReasonedFormulars(stack);
+            getReasoner().cleanReasonedFormulars();
+            getReasoner().addReasonedFormulars(stack);
             return null;
         }
 
         Set<OWLLogicalAxiom> entailments = extractEntailments(reasoner, getOwlOntologyManager());
 
-        getReasonerKB().cleanReasonedFormulars();
-        getReasonerKB().addReasonedFormulars(stack);
+        getReasoner().cleanReasonedFormulars();
+        getReasoner().addReasonedFormulars(stack);
         return entailments;
     }
 

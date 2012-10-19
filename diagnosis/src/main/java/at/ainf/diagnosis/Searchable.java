@@ -1,9 +1,6 @@
 package at.ainf.diagnosis;
 
-import at.ainf.diagnosis.model.ReasonerKB;
-import at.ainf.diagnosis.model.IKnowledgeBase;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.util.Collection;
@@ -50,12 +47,12 @@ public interface Searchable<E> {
 
     public boolean testDiagnosis(Collection<E> diagnosis) throws SolverException;
 
+    public IKnowledgeBase<E> getKnowledgeBase();
+
+    public Solver<E> getReasoner();
+
 
     public void registerTestCases() throws SolverException, InconsistentTheoryException;
 
     public void unregisterTestCases() throws SolverException;
-
-    public IKnowledgeBase<E> getKnowledgeBase();
-
-    public ReasonerKB<E> getReasonerKB();
 }
