@@ -23,8 +23,6 @@ import java.util.Collection;
 
 public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
 
-    private final Model model;
-
 
     public ConstraintTheory(Solver solver) {
         this(solver,new CPModel());
@@ -40,20 +38,12 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
     public ConstraintTheory(Solver solver, Model model) {
         super(solver);
         setReasoner(new ReasonerConstraint(model));
-        this.model = model;
     }
 
     public boolean verifyConsistency() throws SolverException {
-        for (Constraint cnst : getReasoner().getReasonendFormulars())
-            model.addConstraint(cnst);
-        //IReasoner solver = getSolver();
-        Solver solver = new CPSolver();
-        solver.read(this.model);
-        boolean res = solver.solve();
-        for (Constraint cnst : getReasoner().getReasonendFormulars()) {
-            model.removeConstraint(cnst);
-        }
-        return res;
+        getReasoner().sync();
+        return getReasoner().isConsistent();
+
     }
 
 

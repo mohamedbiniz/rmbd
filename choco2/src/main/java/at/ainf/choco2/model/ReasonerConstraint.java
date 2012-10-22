@@ -5,6 +5,7 @@ import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
+import choco.kernel.solver.Solver;
 
 import java.util.*;
 
@@ -27,29 +28,27 @@ public class ReasonerConstraint extends AbstractReasoner<Constraint> {
         this.model = model;
     }
 
-    public void setFormulars(Set<Constraint> formulas) {
-
-        for (Iterator<Constraint> iterator = model.getConstraintIterator(); iterator.hasNext(); ) {
-            iterator.next();
-            iterator.remove();
-        }
-
-        for (Constraint cons : formulas)
-            model.addConstraint(cons);
+    @Override
+    public boolean isConsistent() {
+        Solver solver = new CPSolver();
+        solver.read(this.model);
+        return solver.solve();
     }
 
-    public Set<Constraint> getFormulars() {
-        Set<Constraint> formulars = new LinkedHashSet<Constraint>();
-        for (Iterator<Constraint> iterator = model.getConstraintIterator(); iterator.hasNext(); )
-            formulars.add(iterator.next());
-        return Collections.unmodifiableSet(formulars);
+    private void clearModel() {
+        Set<Constraint> contraints = new LinkedHashSet<Constraint>();
+        for (Iterator<Constraint> iter = model.getConstraintIterator(); iter.hasNext();)
+            contraints.add(iter.next());
+        for (Constraint constraint : contraints)
+            model.removeConstraint(constraint);
     }
 
     @Override
-    public boolean isConsistent() {
-        choco.kernel.solver.Solver solver = new CPSolver();
-        solver.read(this.model);
-        return solver.solve();
+    public void sync() {
+        clearModel();
+        for (Constraint cons : getReasonendFormulars())
+            model.addConstraint(cons);
+
     }
 
 }
