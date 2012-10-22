@@ -28,18 +28,12 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
         this.reasonedFormulars.removeAll(formulas);
     }
 
-    public void cleanReasonedFormulars() {
-        reasonedFormulars.clear();
-    }
-
-
     public Set<T> getReasonendFormulars() {
         return Collections.unmodifiableSet(this.reasonedFormulars);
     }
 
-    @Override
-    public void sync() {
-        // implement method
+    public void cleanReasonedFormulars() {
+        reasonedFormulars.clear();
     }
 
 }

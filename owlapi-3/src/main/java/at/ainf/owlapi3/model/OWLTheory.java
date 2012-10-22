@@ -191,7 +191,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
             throws InconsistentTheoryException, SolverException {
         OWLOntologyManager man = ontology.getOWLOntologyManager();
         setOwlOntologyManager(man);
-        setReasoner(new ReasonerOWL());
+        setReasoner(new ReasonerOWL(man, reasonerFactory));
 
         try {
             OWLOntology dontology = owlOntologyManager.createOntology();
