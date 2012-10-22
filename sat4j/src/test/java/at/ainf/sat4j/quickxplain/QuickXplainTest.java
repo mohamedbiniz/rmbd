@@ -71,7 +71,10 @@ public class QuickXplainTest {
         clause = new int[]{3};
         vec.add(clause);
 
-        Collection<IVecIntComparable> test = theory.addClauses(vec);
+        //Collection<IVecIntComparable> test = theory.addClauses(vec);
+        Collection<IVecIntComparable> test = new LinkedList<IVecIntComparable>();
+        for (int[] e : vec)
+            test.add(theory.addClause(e));
         list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
         check(quick, theory, list, true);
 

@@ -12,10 +12,7 @@ import at.ainf.diagnosis.model.*;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class PropositionalTheory extends AbstractSearchableObject<IVecIntComparable> {
 
@@ -23,18 +20,7 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
 
     public PropositionalTheory(ISolver solver) {
         super(solver);
-        setReasoner(new ReasonerSat4j());
-    }
-
-    public ReasonerSat4j getReasoner() {
-        return (ReasonerSat4j) super.getReasoner();
-    }
-
-    public void setNumOfLiterals(Collection<IVecIntComparable> expressions) {
-        for (IVecIntComparable formula : expressions) {
-            getReasoner().setNumOfLiterals(getReasoner().getNumOfLiterals() + formula.size());
-
-        }
+        setReasoner(new ReasonerSat4j(solver));
     }
 
     @Override
@@ -48,54 +34,25 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
     }
 
     public boolean verifyConsistency() throws SolverException {
-        try {
-            ISolver solver = (ISolver) getSolver();
 
-            if (createNew)
-                solver = SolverFactory.newDefault();
-            else
-                solver.reset();
+        LinkedHashSet<IVecIntComparable> backup = new LinkedHashSet<IVecIntComparable>();
+        backup.addAll(getReasoner().getReasonendFormulars());
 
-            solver.newVar(getReasoner().getNumOfLiterals());
-            solver.setExpectedNumberOfClauses(getReasoner().getReasonendFormulars().size() + getKnowledgeBase().getBackgroundFormulas().size());
-            boolean res;
-            try {
-                addFormulas(solver, getKnowledgeBase().getBackgroundFormulas());
-                addFormulas(solver, getReasoner().getReasonendFormulars());
-                res = solver.isSatisfiable();
-            } catch (ContradictionException e) {
-                res = false;
-            }
-            if (createNew)
-                solver = null;
-            return res;
+        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().sync();
+        boolean result = getReasoner().isConsistent();
 
-        } catch (TimeoutException e) {
-            throw new SolverException(e);
-        }
+
+        getReasoner().cleanReasonedFormulars();
+        getReasoner().addReasonedFormulars(backup);
+
+        return result;
     }
-
-    private void addFormulas(ISolver solver, Collection<IVecIntComparable> formulas) throws ContradictionException {
-        for (IVecIntComparable stat : formulas) {
-            IVecIntComparable literals = stat;
-            solver.addClause(literals);
-        }
-    }
-
-
-
 
     public IVecIntComparable addClause(int[] vector) {
         VecIntComparable anInt = new VecIntComparable(vector);
         getKnowledgeBase().addFormular(Collections.<IVecIntComparable>singleton(anInt));
         return anInt;
-    }
-
-    public List<IVecIntComparable> addClauses(List<int[]> vectors) {
-        List<IVecIntComparable> res = new LinkedList<IVecIntComparable>();
-        for (int[] vec : vectors)
-            res.add(addClause(vec));
-        return res;
     }
 
 

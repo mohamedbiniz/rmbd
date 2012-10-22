@@ -1,6 +1,11 @@
 package at.ainf.sat4j.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
+import at.ainf.diagnosis.model.SolverException;
+import org.sat4j.minisat.SolverFactory;
+import org.sat4j.specs.ContradictionException;
+import org.sat4j.specs.ISolver;
+import org.sat4j.specs.TimeoutException;
 
 import java.util.Collection;
 
@@ -15,27 +20,44 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
 
     private int numOfLiterals = 0;
 
-    public int getNumOfLiterals() {
-        return numOfLiterals;
+    private ISolver solver;
+
+    public ReasonerSat4j(ISolver solv) {
+        this.solver = solv;
     }
 
-    public void setNumOfLiterals(int numOfLiterals) {
-        this.numOfLiterals = numOfLiterals;
-    }
-
-    @Override
-    public boolean addReasonedFormulars(Collection<IVecIntComparable> formulas) {
-        boolean res = super.addReasonedFormulars(formulas);
-        if (res)
-            for (IVecIntComparable formula : formulas) {
-                this.numOfLiterals += (formula).size();
+    public void sync() {
+        solver.reset();
+        for (IVecIntComparable stat : getReasonendFormulars()) {
+            try {
+                solver.addClause(stat);
+            } catch (ContradictionException e) {
+                e.printStackTrace();
             }
-        return res;
+        }
+    }
+
+    protected int getNumOfLiterals() {
+        int numOfLiterals = 0;
+        for (IVecIntComparable formular : getReasonendFormulars())
+            numOfLiterals += formular.size();
+        return numOfLiterals;
+
     }
 
     @Override
     public boolean isConsistent() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+            solver.reset();
+            solver.newVar(getNumOfLiterals());
+            solver.setExpectedNumberOfClauses(getReasonendFormulars().size());
+            sync();
+
+            return solver.isSatisfiable();
+
+        } catch (TimeoutException e) {
+            return false;
+        }
     }
 
 }
