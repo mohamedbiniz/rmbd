@@ -12,10 +12,9 @@ import java.util.Set;
  * Time: 10:02
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractSolver<T> implements Solver<T> {
+public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
     private final LinkedHashSet<T> reasonedFormulars = new LinkedHashSet<T>();
-
 
     public boolean addReasonedFormulars(Collection<T> formulas) {
         if (formulas == null)
@@ -36,6 +35,11 @@ public abstract class AbstractSolver<T> implements Solver<T> {
 
     public Set<T> getReasonendFormulars() {
         return Collections.unmodifiableSet(this.reasonedFormulars);
+    }
+
+    @Override
+    public void sync() {
+        // implement method
     }
 
 }

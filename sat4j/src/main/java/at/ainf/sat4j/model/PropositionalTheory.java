@@ -23,16 +23,16 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
 
     public PropositionalTheory(ISolver solver) {
         super(solver);
-        setReasoner(new Sat4jSolver());
+        setReasoner(new ReasonerSat4j());
     }
 
-    public Sat4jSolver getReasoner() {
-        return (Sat4jSolver) super.getReasoner();
+    public ReasonerSat4j getReasoner() {
+        return (ReasonerSat4j) super.getReasoner();
     }
 
     public void setNumOfLiterals(Collection<IVecIntComparable> expressions) {
         for (IVecIntComparable formula : expressions) {
-            getReasoner().setNumOfLiterals(getReasoner().getNumOfLiterals()+formula.size());
+            getReasoner().setNumOfLiterals(getReasoner().getNumOfLiterals() + formula.size());
 
         }
     }

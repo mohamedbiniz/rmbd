@@ -18,7 +18,7 @@ public class SearchErrorHandler extends ErrorHandler {
     public void errorHappend(OntologyDiagnosisSearcher.ErrorStatus error) {
         switch (error) {
             case SOLVER_EXCEPTION:
-                JOptionPane.showMessageDialog(null, "There are problems with the solver", "Solver Exception", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "There are problems with the solver", "IReasoner Exception", JOptionPane.ERROR_MESSAGE);
                 break;
             case INCONSISTENT_THEORY_EXCEPTION:
                 JOptionPane.showMessageDialog(null, "The set of testcases itself is inconsistent with the theory.", "Inconsistent Theory Exception", JOptionPane.ERROR_MESSAGE);

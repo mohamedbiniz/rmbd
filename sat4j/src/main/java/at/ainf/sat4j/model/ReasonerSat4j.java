@@ -1,6 +1,6 @@
 package at.ainf.sat4j.model;
 
-import at.ainf.diagnosis.model.AbstractSolver;
+import at.ainf.diagnosis.model.AbstractReasoner;
 
 import java.util.Collection;
 
@@ -11,7 +11,7 @@ import java.util.Collection;
  * Time: 10:04
  * To change this template use File | Settings | File Templates.
  */
-public class Sat4jSolver extends AbstractSolver<IVecIntComparable> {
+public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
 
     private int numOfLiterals = 0;
 

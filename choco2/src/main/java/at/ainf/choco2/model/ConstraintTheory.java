@@ -39,14 +39,14 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
 
     public ConstraintTheory(Solver solver, Model model) {
         super(solver);
-        setReasoner(new ConstraintSolver(model));
+        setReasoner(new ReasonerConstraint(model));
         this.model = model;
     }
 
     public boolean verifyConsistency() throws SolverException {
         for (Constraint cnst : getReasoner().getReasonendFormulars())
             model.addConstraint(cnst);
-        //Solver solver = getSolver();
+        //IReasoner solver = getSolver();
         Solver solver = new CPSolver();
         solver.read(this.model);
         boolean res = solver.solve();
