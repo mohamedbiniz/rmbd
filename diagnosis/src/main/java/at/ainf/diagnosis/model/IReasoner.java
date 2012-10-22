@@ -12,7 +12,7 @@ import java.util.Set;
  * Time: 09:39
  * To change this template use File | Settings | File Templates.
  */
-public interface Solver<T> {
+public interface IReasoner<T> {
 
     //public void setFormulars(Set<T> formulas);
 
@@ -23,6 +23,8 @@ public interface Solver<T> {
     public void removeReasonedFormulars(Collection<T> formulas);
 
     public void cleanReasonedFormulars();
+
+    public void sync();
 
 
     public Set<T> getReasonendFormulars();

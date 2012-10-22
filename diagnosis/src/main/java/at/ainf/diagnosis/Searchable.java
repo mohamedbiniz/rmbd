@@ -49,7 +49,7 @@ public interface Searchable<E> {
 
     public IKnowledgeBase<E> getKnowledgeBase();
 
-    public Solver<E> getReasoner();
+    public IReasoner<E> getReasoner();
 
 
     public void registerTestCases() throws SolverException, InconsistentTheoryException;
