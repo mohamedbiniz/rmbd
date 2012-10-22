@@ -18,8 +18,6 @@ import java.util.Collection;
  */
 public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
 
-    private int numOfLiterals = 0;
-
     private ISolver solver;
 
     public ReasonerSat4j(ISolver solv) {
