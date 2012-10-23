@@ -26,7 +26,17 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
         return true;
     }
 
+    public boolean isCoherent() {
+
+        throw new RuntimeException("This theory does not support coherency checks");
+    }
+
     public boolean isEntailed(Set<T> test) {
+
+        throw new RuntimeException("This theory does not support the verification of entailments");
+    }
+
+    public Set<T> getEntailments() {
 
         throw new RuntimeException("This theory does not support the calculation of entailments");
     }
