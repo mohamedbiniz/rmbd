@@ -31,6 +31,10 @@ public interface IReasoner<T> {
 
     public boolean isConsistent();
 
+    public boolean isCoherent();
+
+    public Set<T> getEntailments();
+
     public boolean isEntailed(Set<T> test);
 
 }
