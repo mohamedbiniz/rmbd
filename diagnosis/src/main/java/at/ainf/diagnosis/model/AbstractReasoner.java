@@ -1,5 +1,7 @@
 package at.ainf.diagnosis.model;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -22,6 +24,11 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
         this.reasonedFormulars.addAll(formulas);
         return true;
+    }
+
+    public boolean isEntailed(Set<T> test) {
+
+        throw new RuntimeException("This theory does not support the calculation of entailments");
     }
 
     public void removeReasonedFormulars(Collection<T> formulas) {
