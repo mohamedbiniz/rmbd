@@ -31,4 +31,6 @@ public interface IReasoner<T> {
 
     public boolean isConsistent();
 
+    public boolean isEntailed(Set<T> test);
+
 }

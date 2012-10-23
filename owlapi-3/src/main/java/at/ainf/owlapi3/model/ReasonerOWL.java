@@ -2,12 +2,16 @@ package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static _dev.TimeLog.start;
+import static _dev.TimeLog.stop;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,7 +44,14 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
     @Override
     public boolean isConsistent() {
-        return false;
+
+        return reasoner.isConsistent();
+    }
+
+    @Override
+    public boolean isEntailed(Set<OWLLogicalAxiom> test) {
+
+        return reasoner.isEntailed(test);
     }
 
     @Override
@@ -62,6 +73,10 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
             ontology.getOWLOntologyManager().addAxioms(ontology, axiomsToAdd);
         if (!axiomsToRemove.isEmpty())
             ontology.getOWLOntologyManager().removeAxioms(ontology, axiomsToRemove);
+        start("Reasoner sync ");
+        reasoner.flush();
+        stop();
+
     }
 
 }
