@@ -93,6 +93,17 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         return entailments;
     }
 
+    @Override
+    protected void updateReasonerModel(Set<OWLLogicalAxiom> axiomsToAdd, Set<OWLLogicalAxiom> axiomsToRemove) {
+        if (!axiomsToAdd.isEmpty())
+            ontology.getOWLOntologyManager().addAxioms(ontology, axiomsToAdd);
+        if (!axiomsToRemove.isEmpty())
+            ontology.getOWLOntologyManager().removeAxioms(ontology, axiomsToRemove);
+        start("Reasoner sync ");
+        reasoner.flush();
+        stop();
+    }
+
     public void setAxiomGenerators(List<InferredAxiomGenerator<? extends OWLLogicalAxiom>> axiomGenerators) {
         this.axiomGenerators = axiomGenerators;
     }
@@ -108,31 +119,6 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
     public Set<OWLClass> getUnsatisfiableEntities() {
         return reasoner.getUnsatisfiableClasses().getEntities();
-    }
-
-    @Override
-    public void sync() {
-        Set<OWLLogicalAxiom> axiomsToAdd = new HashSet<OWLLogicalAxiom>();
-        Set<OWLLogicalAxiom> axiomsToRemove = new HashSet<OWLLogicalAxiom>();
-
-        for (OWLLogicalAxiom axiom : getFormularCache()) {
-            if (!ontology.containsAxiom(axiom))
-                axiomsToAdd.add(axiom);
-        }
-
-        for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
-            if (!getFormularCache().contains(axiom))
-                axiomsToRemove.add(axiom);
-        }
-
-        if (!axiomsToAdd.isEmpty())
-            ontology.getOWLOntologyManager().addAxioms(ontology, axiomsToAdd);
-        if (!axiomsToRemove.isEmpty())
-            ontology.getOWLOntologyManager().removeAxioms(ontology, axiomsToRemove);
-        start("Reasoner sync ");
-        reasoner.flush();
-        stop();
-
     }
 
 }

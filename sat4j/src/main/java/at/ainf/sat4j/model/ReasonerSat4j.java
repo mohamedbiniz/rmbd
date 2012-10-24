@@ -5,6 +5,8 @@ import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
 
+import java.util.Set;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -20,9 +22,10 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
         this.solver = solv;
     }
 
-    public void sync() {
+    @Override
+    protected void updateReasonerModel(Set<IVecIntComparable> axiomsToAdd, Set<IVecIntComparable> axiomsToRemove) {
         solver.reset();
-        for (IVecIntComparable stat : getFormularCache()) {
+        for (IVecIntComparable stat : getReasonedFormulars()) {
             try {
                 solver.addClause(stat);
             } catch (ContradictionException e) {

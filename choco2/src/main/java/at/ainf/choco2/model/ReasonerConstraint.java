@@ -21,11 +21,12 @@ public class ReasonerConstraint extends AbstractReasoner<Constraint> {
     private Model model;
 
     public ReasonerConstraint() {
-        this.model = new CPModel();
+        this(new CPModel());
     }
 
     public ReasonerConstraint(Model model) {
         this.model = model;
+        setReasonedFormulars(getConstraintsInModel());
     }
 
     @Override
@@ -35,19 +36,20 @@ public class ReasonerConstraint extends AbstractReasoner<Constraint> {
         return solver.solve();
     }
 
-    private void clearModel() {
+
+    private Set<Constraint> getConstraintsInModel() {
         Set<Constraint> contraints = new LinkedHashSet<Constraint>();
         for (Iterator<Constraint> iter = model.getConstraintIterator(); iter.hasNext();)
             contraints.add(iter.next());
-        for (Constraint constraint : contraints)
-            model.removeConstraint(constraint);
+        return contraints;
     }
 
     @Override
-    public void sync() {
-        clearModel();
-        for (Constraint cons : getFormularCache())
+    protected void updateReasonerModel(Set<Constraint> axiomsToAdd, Set<Constraint> axiomsToRemove) {
+        for (Constraint cons : axiomsToAdd)
             model.addConstraint(cons);
+        for (Constraint cons : axiomsToRemove)
+            model.removeConstraint(cons);
 
     }
 
