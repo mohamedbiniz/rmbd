@@ -1,11 +1,6 @@
 package at.ainf.diagnosis.model;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,20 +11,64 @@ import java.util.Set;
  */
 public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
-    private final LinkedHashSet<T> reasonedFormulars = new LinkedHashSet<T>();
+    private final LinkedHashSet<T> reasonedFormularsCache = new LinkedHashSet<T>();
+
+    protected Set<T> reasonedFormulars = new LinkedHashSet<T>();
+
 
     public boolean addFormularsToCache(Collection<T> formulas) {
         if (formulas == null)
             return false;
 
-        this.reasonedFormulars.addAll(formulas);
+        this.reasonedFormularsCache.addAll(formulas);
         return true;
     }
 
-    public boolean isCoherent() {
-
-        throw new RuntimeException("This theory does not support coherency checks");
+    public void removeFormularsFromCache(Collection<T> formulas) {
+        this.reasonedFormularsCache.removeAll(formulas);
     }
+
+    public void clearFormularCache() {
+        reasonedFormularsCache.clear();
+    }
+
+    public Set<T> getFormularCache() {
+        return Collections.unmodifiableSet(this.reasonedFormularsCache);
+    }
+
+
+    public void setReasonedFormulars(Set<T> reasonedFormulars) {
+        this.reasonedFormulars = reasonedFormulars;
+    }
+
+    public Set<T> getReasonedFormulars() {
+        return Collections.unmodifiableSet(reasonedFormulars);
+    }
+
+
+    protected abstract void updateReasonerModel(Set<T> axiomsToAdd, Set<T> axiomsToRemove);
+
+    public void sync() {
+        Set<T> axiomsToAdd = new HashSet<T>();
+        Set<T> axiomsToRemove = new HashSet<T>();
+
+        for (T axiom : getFormularCache()) {
+            if (!getReasonedFormulars().contains(axiom))
+                axiomsToAdd.add(axiom);
+        }
+
+        for (T axiom : getReasonedFormulars()) {
+            if (!getFormularCache().contains(axiom))
+                axiomsToRemove.add(axiom);
+        }
+
+        reasonedFormulars.clear();
+        reasonedFormulars.addAll(getFormularCache());
+
+        updateReasonerModel(axiomsToAdd,axiomsToRemove);
+
+    }
+
 
     public boolean isEntailed(Set<T> test) {
 
@@ -41,16 +80,9 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
         throw new RuntimeException("This theory does not support the calculation of entailments");
     }
 
-    public void removeFormularsFromCache(Collection<T> formulas) {
-        this.reasonedFormulars.removeAll(formulas);
-    }
+    public boolean isCoherent() {
 
-    public Set<T> getFormularCache() {
-        return Collections.unmodifiableSet(this.reasonedFormulars);
-    }
-
-    public void clearFormularCache() {
-        reasonedFormulars.clear();
+        throw new RuntimeException("This theory does not support coherency checks");
     }
 
 }
