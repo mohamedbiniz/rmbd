@@ -1,13 +1,9 @@
 package at.ainf.sat4j.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.model.SolverException;
-import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
-
-import java.util.Collection;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,7 +22,7 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
 
     public void sync() {
         solver.reset();
-        for (IVecIntComparable stat : getReasonendFormulars()) {
+        for (IVecIntComparable stat : getFormularCache()) {
             try {
                 solver.addClause(stat);
             } catch (ContradictionException e) {
@@ -37,7 +33,7 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
 
     protected int getNumOfLiterals() {
         int numOfLiterals = 0;
-        for (IVecIntComparable formular : getReasonendFormulars())
+        for (IVecIntComparable formular : getFormularCache())
             numOfLiterals += formular.size();
         return numOfLiterals;
 
@@ -48,7 +44,7 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
         try {
             solver.reset();
             solver.newVar(getNumOfLiterals());
-            solver.setExpectedNumberOfClauses(getReasonendFormulars().size());
+            solver.setExpectedNumberOfClauses(getFormularCache().size());
             sync();
 
             return solver.isSatisfiable();

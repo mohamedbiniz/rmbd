@@ -18,7 +18,7 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
     private final LinkedHashSet<T> reasonedFormulars = new LinkedHashSet<T>();
 
-    public boolean addReasonedFormulars(Collection<T> formulas) {
+    public boolean addFormularsToCache(Collection<T> formulas) {
         if (formulas == null)
             return false;
 
@@ -41,15 +41,15 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
         throw new RuntimeException("This theory does not support the calculation of entailments");
     }
 
-    public void removeReasonedFormulars(Collection<T> formulas) {
+    public void removeFormularsFromCache(Collection<T> formulas) {
         this.reasonedFormulars.removeAll(formulas);
     }
 
-    public Set<T> getReasonendFormulars() {
+    public Set<T> getFormularCache() {
         return Collections.unmodifiableSet(this.reasonedFormulars);
     }
 
-    public void cleanReasonedFormulars() {
+    public void clearFormularCache() {
         reasonedFormulars.clear();
     }
 

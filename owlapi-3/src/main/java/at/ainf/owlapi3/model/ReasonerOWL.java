@@ -115,13 +115,13 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         Set<OWLLogicalAxiom> axiomsToAdd = new HashSet<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> axiomsToRemove = new HashSet<OWLLogicalAxiom>();
 
-        for (OWLLogicalAxiom axiom : getReasonendFormulars()) {
+        for (OWLLogicalAxiom axiom : getFormularCache()) {
             if (!ontology.containsAxiom(axiom))
                 axiomsToAdd.add(axiom);
         }
 
         for (OWLLogicalAxiom axiom : ontology.getLogicalAxioms()) {
-            if (!getReasonendFormulars().contains(axiom))
+            if (!getFormularCache().contains(axiom))
                 axiomsToRemove.add(axiom);
         }
 

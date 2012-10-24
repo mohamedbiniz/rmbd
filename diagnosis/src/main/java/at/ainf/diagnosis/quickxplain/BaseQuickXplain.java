@@ -102,7 +102,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
             if (isDual()) {
                 //searchable.getReasonerKB().remove();
-                searchable.getReasoner().addReasonedFormulars(conflictFormulas);
+                searchable.getReasoner().addFormularsToCache(conflictFormulas);
                 searchable.verifyRequirements();
             }
             rollbackChanges(searchable, formulas, changes);

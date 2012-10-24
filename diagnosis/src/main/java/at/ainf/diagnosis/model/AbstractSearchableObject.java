@@ -81,21 +81,21 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        getReasoner().cleanReasonedFormulars();
+        getReasoner().clearFormularCache();
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getReasoner().addReasonedFormulars(negate(test));
+            getReasoner().addFormularsToCache(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getPositiveTests()) {
-            getReasoner().addReasonedFormulars(test);
+            getReasoner().addFormularsToCache(test);
         }
         for (Set<T> test : getKnowledgeBase().getEntailedTests()) {
-            getReasoner().addReasonedFormulars(negate(test));
+            getReasoner().addFormularsToCache(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getNonentailedTests()) {
-            getReasoner().addReasonedFormulars(test);
+            getReasoner().addFormularsToCache(test);
         }
         boolean res = verifyConsistency();
-        getReasoner().cleanReasonedFormulars();
+        getReasoner().clearFormularCache();
         return res;
     }
 
@@ -129,20 +129,20 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         List<T> kb = new LinkedList<T>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
-        getReasoner().cleanReasonedFormulars();
+        getReasoner().clearFormularCache();
         // positive test cases are in background theory
-        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
-        getReasoner().addReasonedFormulars(kb);
+        getReasoner().addFormularsToCache(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addFormularsToCache(kb);
 
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getReasoner().addReasonedFormulars(test);
+            getReasoner().addFormularsToCache(test);
             if (verifyRequirements()) {
-                getReasoner().cleanReasonedFormulars();
+                getReasoner().clearFormularCache();
                 return false;
             }
-            getReasoner().removeReasonedFormulars(test);
+            getReasoner().removeFormularsFromCache(test);
         }
-        getReasoner().cleanReasonedFormulars();
+        getReasoner().clearFormularCache();
         return true;
     }
 
