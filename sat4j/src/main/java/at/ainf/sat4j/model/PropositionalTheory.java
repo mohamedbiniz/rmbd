@@ -9,7 +9,6 @@
 package at.ainf.sat4j.model;
 
 import at.ainf.diagnosis.model.*;
-import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
 
 import java.util.*;
@@ -36,15 +35,15 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
     public boolean verifyConsistency() throws SolverException {
 
         LinkedHashSet<IVecIntComparable> backup = new LinkedHashSet<IVecIntComparable>();
-        backup.addAll(getReasoner().getReasonendFormulars());
+        backup.addAll(getReasoner().getFormularCache());
 
-        getReasoner().addReasonedFormulars(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addFormularsToCache(getKnowledgeBase().getBackgroundFormulas());
         getReasoner().sync();
         boolean result = getReasoner().isConsistent();
 
 
-        getReasoner().cleanReasonedFormulars();
-        getReasoner().addReasonedFormulars(backup);
+        getReasoner().clearFormularCache();
+        getReasoner().addFormularsToCache(backup);
 
         return result;
     }

@@ -46,7 +46,7 @@ public class ReasonerConstraint extends AbstractReasoner<Constraint> {
     @Override
     public void sync() {
         clearModel();
-        for (Constraint cons : getReasonendFormulars())
+        for (Constraint cons : getFormularCache())
             model.addConstraint(cons);
 
     }

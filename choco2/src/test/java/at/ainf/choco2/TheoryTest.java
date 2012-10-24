@@ -73,16 +73,16 @@ public class TheoryTest {
         cth.addConstraints(changable);
 
         // reasoning
-        cth.getReasoner().addReasonedFormulars(changable.subList(0, 2));
+        cth.getReasoner().addFormularsToCache(changable.subList(0, 2));
         boolean res = cth.verifyRequirements();
         assertFalse(res);
-        cth.getReasoner().removeReasonedFormulars(changable.subList(0, 2));
+        cth.getReasoner().removeFormularsFromCache(changable.subList(0, 2));
 
         // reasoning
-        cth.getReasoner().addReasonedFormulars(changable.subList(1, 4));
+        cth.getReasoner().addFormularsToCache(changable.subList(1, 4));
         res = cth.verifyRequirements();
         assertTrue(res);
-        cth.getReasoner().removeReasonedFormulars(changable.subList(1, 4));
+        cth.getReasoner().removeFormularsFromCache(changable.subList(1, 4));
 
         // reasoning
         // cth.add(changable.subList(2, 5));

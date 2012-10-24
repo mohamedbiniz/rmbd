@@ -14,20 +14,17 @@ import java.util.Set;
  */
 public interface IReasoner<T> {
 
-    //public void setFormulars(Set<T> formulas);
+    public boolean addFormularsToCache(Collection<T> formulas);
 
-    //public Set<T> getFormulars();
+    public void removeFormularsFromCache(Collection<T> formulas);
 
-    public boolean addReasonedFormulars(Collection<T> formulas);
+    public void clearFormularCache();
 
-    public void removeReasonedFormulars(Collection<T> formulas);
+    public Set<T> getFormularCache();
 
-    public void cleanReasonedFormulars();
 
     public void sync();
 
-
-    public Set<T> getReasonendFormulars();
 
     public boolean isConsistent();
 
