@@ -38,7 +38,6 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
         backup.addAll(getReasoner().getFormularCache());
 
         getReasoner().addFormularsToCache(getKnowledgeBase().getBackgroundFormulas());
-        getReasoner().sync();
         boolean result = getReasoner().isConsistent();
 
 

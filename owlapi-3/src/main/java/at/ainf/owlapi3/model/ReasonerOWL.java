@@ -53,25 +53,27 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
     @Override
     public boolean isConsistent() {
-
+        sync();
         return reasoner.isConsistent();
     }
 
     @Override
     public boolean isCoherent() {
+        sync();
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         return reasoner.getBottomClassNode().isSingleton();
     }
 
     @Override
     public boolean isEntailed(Set<OWLLogicalAxiom> test) {
-
+        sync();
         return reasoner.isEntailed(test);
     }
 
     @Override
     public Set<OWLLogicalAxiom> getEntailments() {
 
+        sync();
         InferenceType[] infType = new InferenceType[]{InferenceType.CLASS_HIERARCHY, InferenceType.CLASS_ASSERTIONS,
                 InferenceType.DISJOINT_CLASSES, InferenceType.DIFFERENT_INDIVIDUALS, InferenceType.SAME_INDIVIDUAL};
         if (!axiomGenerators.isEmpty())

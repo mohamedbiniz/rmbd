@@ -23,9 +23,6 @@ public interface IReasoner<T> {
     public Set<T> getFormularCache();
 
 
-    public void sync();
-
-
     public boolean isConsistent();
 
     public boolean isCoherent();
