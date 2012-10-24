@@ -91,9 +91,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     
     private List<CacheEntry> cache = new ArrayList<CacheEntry>(threshold);
 
-    public boolean isIncludeTrivialEntailments() {
-        return includeTrivialEntailments;
-    }
+
 
     public void setIncludeTrivialEntailments(boolean includeTrivialEntailments) {
         this.includeTrivialEntailments = includeTrivialEntailments;
@@ -126,39 +124,8 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         }
     }
 
-    /* public void doBayesUpdate(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
-        for (AxiomSet<OWLLogicalAxiom> hs : hittingSets) {
-            for (int i = 0; i < getTestsSize(); i++) {
-                Set<OWLLogicalAxiom> testcase = getTest(i);
-                List<Set<OWLLogicalAxiom>> olderTestcases = getTests(0, i);
-                Set<OWLLogicalAxiom> positive = getPositiveTests(olderTestcases);
 
-                double value = (hs.getMeasure() / 2) > 0 ? (hs.getMeasure() / 2) : Double.MIN_VALUE;
 
-                if (getTypeOfTest(testcase)) {
-                    if (!diagnosisEntails(hs, testcase, positive)) {
-                        hs.setMeasure(value);
-                    }
-                } else {
-                    if (diagnosisConsistent(hs, testcase, positive)) {
-                        hs.setMeasure(value);
-                    }
-                }
-            }
-        }
-    } */
-
-    private Set<OWLLogicalAxiom> getPositiveTests(List<Set<OWLLogicalAxiom>> list) {
-        Set<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
-
-        for (Set<OWLLogicalAxiom> testcase : list) {
-            if (getKnowledgeBase().getTypeOfTest(testcase))
-                set.addAll(testcase);
-        }
-
-        return set;
-
-    }
 
 
     protected static final OWLClass TOP_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
@@ -224,27 +191,6 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         }
 
         getKnowledgeBase().addBackgroundFormulas(backgroundAxioms);
-
-        /*if (reduce) {
-            REDUCE_TO_UNSAT = true;
-            updateAxioms(getOntology(), logicalAxioms, backgroundAxioms);
-            getSolver().flush();
-            if (getSolver().verifyRequirements()) {
-                Set<OWLClass> entities = getSolver().getUnsatisfiableClasses().getEntities();
-                updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
-                entities.remove(BOTTOM_CLASS);
-                if (!entities.isEmpty()) {
-                    String iri = "http://ainf.at/testiri#";
-                    for (OWLClass cl : entities) {
-                        OWLDataFactory fac = man.getOWLDataFactory();
-                        OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "d_" + cl.getIRI().getFragment()));
-
-                        addBackgroundFormula(fac.getOWLClassAssertionAxiom(cl, test_individual));
-                    }
-                }
-            } else
-                updateAxioms(getOntology(), Collections.<OWLLogicalAxiom>emptySet());
-        }*/
 
     }
 
@@ -333,16 +279,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         // apply diagnosis
         kb.removeAll(diag);
         getReasoner().addFormularsToCache(kb);
-        /*
-        add(getBackgroundFormulas());
-        for (Set<OWLLogicalAxiom> test : getEntailedTests()) {
-            add(test);
-        }
 
-        for (Set<OWLLogicalAxiom> test : getPositiveTests()) {
-            add(test);
-        }
-        */
         if (!verifyConsistency()) {
             getReasoner().clearFormularCache();
             return false;
@@ -465,33 +402,6 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         //if (useCache && consistent)
         //    updateCache(ontology.getLogicalAxioms());
         return consistent;
-    }
-
-    private void updateCache(Set<OWLLogicalAxiom> ax) {
-        int count = 0;
-        Collections.sort(getCache());
-        for (Iterator<CacheEntry> it = getCache().iterator();it.hasNext();)
-        {
-            CacheEntry saved = it.next();
-            if (count >= threshold) {
-                it.remove();
-                continue;
-            }
-            if (saved.size() < ax.size() && ax.containsAll(saved.set))
-                it.remove();
-            else
-                count++;
-        }
-        getCache().add(new CacheEntry(ax));
-    }
-
-    private boolean verifyCache(Set<OWLLogicalAxiom> ax) {
-        for (CacheEntry saved : getCache())
-        {            
-            if (saved.size() >= ax.size() && saved.containsAll(ax))
-                return true;               
-        }
-        return false;
     }
 
     private boolean checkCoherency(OWLReasoner reasoner) {
@@ -867,31 +777,6 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
             axiomGenerators.add(new InferredDisjointClassesAxiomGenerator());
         if (isIncludePropertyAssertAxioms())
             axiomGenerators.add(new InferredPropertyAssertionGenerator());
-
-        /*
-        axiomGenerators.add(new InferredSubClassAxiomGenerator());
-        axiomGenerators.add(new InferredEquivalentClassAxiomGenerator());
-        axiomGenerators.add(new InferredClassAssertionAxiomGenerator());
-        axiomGenerators.add(new InferredPropertyAssertionGenerator());
-        /*
-
-           // axiomGenerators.add(new InferredDisjointClassesAxiomGenerator());
-
-
-
-
-            axiomGenerators.add(new InferredSubObjectPropertyAxiomGenerator());
-              axiomGenerators.add(new InferredSubDataPropertyAxiomGenerator());
-
-              axiomGenerators.add(new InferredEquivalentDataPropertiesAxiomGenerator());
-              axiomGenerators.add(new InferredEquivalentObjectPropertyAxiomGenerator());
-              axiomGenerators.add(new InferredInverseObjectPropertiesAxiomGenerator());
-              axiomGenerators.add(new InferredObjectPropertyCharacteristicAxiomGenerator());
-              axiomGenerators.add(new InferredSubDataPropertyAxiomGenerator());
-              axiomGenerators.add(new InferredSubObjectPropertyAxiomGenerator());
-              axiomGenerators.add(new InferredDataPropertyCharacteristicAxiomGenerator());
-        */
-
         InferenceType[] infType = new InferenceType[]{InferenceType.CLASS_HIERARCHY, InferenceType.CLASS_ASSERTIONS,
                 InferenceType.DISJOINT_CLASSES, InferenceType.DIFFERENT_INDIVIDUALS, InferenceType.SAME_INDIVIDUAL};
         if (!axiomGenerators.isEmpty())
@@ -915,29 +800,6 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         if (isIncludeOntologyAxioms())
             entailments.addAll(getOntology().getLogicalAxioms());
         return entailments;
-    }
-
-    /*private void addDisjoint(OWLReasoner reasoner, OWLOntologyManager manager, Set<OWLLogicalAxiom> entailments) {
-        OWLDataFactory dataFactory = manager.getOWLDataFactory();
-        for (OWLClass cls : getOntology().getClassesInSignature()) {
-            for (OWLClass dis : ((Reasoner) reasoner).getDisjointClasses(cls).getFlattened()) {
-                OWLLogicalAxiom ax = dataFactory.getOWLDisjointClassesAxiom(cls, dis);
-                if (includeTrivialEntailments || (!getOntology().containsAxiom(ax) && !ax.getClassesInSignature().contains(TOP_CLASS)))
-                    entailments.add(ax);
-            }
-        }*/
-    //}
-
-    private void addSubclass(OWLReasoner reasoner, OWLOntologyManager manager, Set<OWLLogicalAxiom> entailments) {
-        OWLDataFactory dataFactory = manager.getOWLDataFactory();
-        for (OWLClass cls : getOntology().getClassesInSignature()) {
-            for (OWLClass dis : reasoner.getSubClasses(cls, true).getFlattened()) {
-                OWLLogicalAxiom ax = dataFactory.getOWLSubClassOfAxiom(dis, cls);
-                if (includeTrivialEntailments || (!getOntology().containsAxiom(ax) && !ax.getClassesInSignature().contains(TOP_CLASS)))
-                    entailments.add(ax);
-            }
-            ;
-        }
     }
 
     //

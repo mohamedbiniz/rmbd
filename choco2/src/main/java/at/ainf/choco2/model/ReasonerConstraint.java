@@ -31,6 +31,7 @@ public class ReasonerConstraint extends AbstractReasoner<Constraint> {
 
     @Override
     public boolean isConsistent() {
+        sync();
         Solver solver = new CPSolver();
         solver.read(this.model);
         return solver.solve();

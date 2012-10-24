@@ -41,7 +41,6 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        getReasoner().sync();
         return getReasoner().isConsistent();
 
     }
