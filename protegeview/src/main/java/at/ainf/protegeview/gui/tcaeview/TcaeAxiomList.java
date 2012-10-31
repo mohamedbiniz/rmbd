@@ -108,8 +108,12 @@ public class TcaeAxiomList extends AbstractAxiomList {
         addToItems(items, ENTAILED_TC, theory.getKnowledgeBase().getEntailedTests());
         addToItems(items, NON_ENTAILED_TC, theory.getKnowledgeBase().getNonentailedTests());
 
+        /*DefaultListModel model = (DefaultListModel) getModel();
+        model.clear();
+        for (Object item : items)
+            model.addElement(item);*/
         setListData(items.toArray());
-        setFixedCellHeight(24);
+        //setFixedCellHeight(24);
     }
 
     protected void addToItems(List<Object> items, TestCaseType type, Collection<Set<OWLLogicalAxiom>> testcases) {

@@ -1,62 +1,72 @@
 <?xml version="1.0" ?>
 
 <plugin>
-    <extension id="at.ainf.protegeview.views.ConflictSetView"
+
+    <!--<extension id="at.ainf.protegeview.views.ConflictSetView"
             point="org.protege.editor.core.application.ViewComponent">
-        <label value="Conflict Sets OLD"/>
+        <label value="OLD Conflict Sets"/>
         <class value="at.ainf.protegeview.views.ConflictSetView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
     <extension id="at.ainf.protegeview.views.HittingSetView"
             point="org.protege.editor.core.application.ViewComponent">
-        <label value="Diagnoses OLD"/>
+        <label value="OLD Diagnoses"/>
         <class value="at.ainf.protegeview.views.HittingSetView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
     <extension id="at.ainf.protegeview.testcasesentailmentsview.TestCasesEntailmentsView"
             point="org.protege.editor.core.application.ViewComponent">
-        <label value="Test Cases and Entailments OLD"/>
+        <label value="OLD Test Cases and Entailments"/>
         <class value="at.ainf.protegeview.testcasesentailmentsview.TestCasesEntailmentsView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
     <extension id="at.ainf.protegeview.queryaskingview.QueryAskingView"
             point="org.protege.editor.core.application.ViewComponent">
-        <label value="Query Asking OLD"/>
+        <label value="OLD Query Asking"/>
         <class value="at.ainf.protegeview.queryaskingview.QueryAskingView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
     <extension id="at.ainf.protegeview.views.AxiomExplainView"
             point="org.protege.editor.core.application.ViewComponent">
-        <label value="Axiom Explanation OLD"/>
+        <label value="OLD Axiom Explanation"/>
         <class value="at.ainf.protegeview.views.AxiomExplainView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
     <extension id="at.ainf.protegeview.views.RepairView"
             point="org.protege.editor.core.application.ViewComponent">
-        <label value="Entailments OLD"/>
+        <label value="OLD Entailments"/>
         <class value="at.ainf.protegeview.views.RepairView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
     <extension id="at.ainf.protegeview.views.diagnosistreeview.DiagnosisTreeView"
             point="org.protege.editor.core.application.ViewComponent">
-        <label value="HS Tree OLD"/>
+        <label value="OLD HsTree"/>
         <class value="at.ainf.protegeview.views.diagnosistreeview.DiagnosisTreeView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
     <extension id="at.ainf.protegeview.buttonview.ButtonView"
             point="org.protege.editor.core.application.ViewComponent">
-        <label value="Toolbox OLD"/>
+        <label value="OLD Toolbox"/>
         <class value="at.ainf.protegeview.buttonview.ButtonView"/>
         <headerColor value="810000"/>
         <category value="Debugger"/>
     </extension>
+    <extension id="WorkspaceTab"
+               point="org.protege.editor.core.application.WorkspaceTab">
+        <label value="Debugger"/>
+        <class value="at.ainf.protegeview.WorkspaceTab"/>
+        <index value="X"/>
+        <editorKitId value="OWLEditorKit"/>
+        <defaultViewConfigFileName value="tab_layout_plugin.xml"/>
+    </extension> -->
+
 
     <extension id="at.ainf.protegeview.model.EditorKitHook"
             point="org.protege.editor.core.application.EditorKitHook">
@@ -122,9 +132,31 @@
        <name value="Options "/>
        <toolTip value="Options"/>
        <class value="at.ainf.protegeview.gui.menu.OpenOptionsDialog"/>
-       <path value="at.ainf.protegeview.menu.menudebug/SlotAC-C"/>
+       <path value="at.ainf.protegeview.menu.menudebug/SlotAD-C"/>
        <editorKitId value="any"/>
+        <accelerator value=" alt O"/>
    </extension>
+
+    <extension id="menu.menudebug.calculatediagnoses"
+               point="org.protege.editor.core.application.EditorKitMenuAction">
+        <name value="Calculate Diagnoses"/>
+        <toolTip value="Calculate Diagnoses"/>
+        <class value="at.ainf.protegeview.gui.menu.CalculateDiagnoses"/>
+        <path value="at.ainf.protegeview.menu.menudebug/SlotAC-B"/>
+        <editorKitId value="any"/>
+        <accelerator value=" alt C"/>
+    </extension>
+
+    <extension id="menu.menudebug.reset"
+               point="org.protege.editor.core.application.EditorKitMenuAction">
+        <name value="Reset "/>
+        <toolTip value="Reset"/>
+        <class value="at.ainf.protegeview.gui.menu.Reset"/>
+        <path value="at.ainf.protegeview.menu.menudebug/SlotAC-C"/>
+        <editorKitId value="any"/>
+        <accelerator value="alt R"/>
+    </extension>
+
 
     <!--<extension id="menu.menudebug.configwizad"
               point="org.protege.editor.core.application.EditorKitMenuAction">
@@ -171,47 +203,39 @@
        <editorKitId value="any"/>
    </extension>-->
 
-   <extension id="WorkspaceTab"
-              point="org.protege.editor.core.application.WorkspaceTab">
-      <label value="Debugger"/>
-      <class value="at.ainf.protegeview.WorkspaceTab"/>
-      <index value="X"/>
-      <editorKitId value="OWLEditorKit"/>
-      <defaultViewConfigFileName value="tab_layout_plugin.xml"/>
-    </extension>
 
     <extension id="menu.menudebug.openmanualdebugtab"
                point="org.protege.editor.core.application.EditorKitMenuAction">
-        <name value="Open Manual Debug Tab"/>
-        <toolTip value="Open Manual Debug Tab"/>
-        <class value="at.ainf.protegeview.gui.menu.OpenManualDebugTab"/>
+        <name value="Open Ontology Debug Tab"/>
+        <toolTip value="Open Ontology Debug Tab"/>
+        <class value="at.ainf.protegeview.gui.menu.OpenOntologyDebugTab"/>
         <path value="at.ainf.protegeview.menu.menudebug/SlotAA-B"/>
         <editorKitId value="any"/>
     </extension>
 
-    <extension id="menu.menudebug.openquerydebugtab"
+    <extension id="menu.menudebug.openinteractivedebugtab"
                point="org.protege.editor.core.application.EditorKitMenuAction">
-        <name value="Open Query Debug Tab"/>
-        <toolTip value="Open Query Debug Tab"/>
-        <class value="at.ainf.protegeview.gui.menu.OpenQueryDebugTab"/>
+        <name value="Open Interactive Debug Tab"/>
+        <toolTip value="Open Interactive Debug Tab"/>
+        <class value="at.ainf.protegeview.gui.menu.OpenInteractiveDebugTab"/>
         <path value="at.ainf.protegeview.menu.menudebug/SlotAA-C"/>
         <editorKitId value="any"/>
     </extension>
 
-    <extension id="ManualDebugging"
+    <extension id="OntologyDebugging"
                point="org.protege.editor.core.application.WorkspaceTab">
-        <label value="Manual Debugging"/>
+        <label value="Ontology Debugging"/>
         <class value="org.protege.editor.core.ui.workspace.WorkspaceViewsTab"/>
-        <defaultViewConfigFileName value="ManualDebuggingLayout.xml"/>
+        <defaultViewConfigFileName value="OntologyDebuggingLayout.xml"/>
         <index value="X1"/>
         <editorKitId value="OWLEditorKit"/>
     </extension>
 
-    <extension id="QueryDebugging"
+    <extension id="InteractiveDebugging"
                point="org.protege.editor.core.application.WorkspaceTab">
-        <label value="Query Debugging"/>
+        <label value="Interactive Debugging"/>
         <class value="org.protege.editor.core.ui.workspace.WorkspaceViewsTab"/>
-        <defaultViewConfigFileName value="QueryDebuggingLayout.xml"/>
+        <defaultViewConfigFileName value="InteractiveDebuggingLayout.xml"/>
         <index value="X2"/>
         <editorKitId value="OWLEditorKit"/>
     </extension>

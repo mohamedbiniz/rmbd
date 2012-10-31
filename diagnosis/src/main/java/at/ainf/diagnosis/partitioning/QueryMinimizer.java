@@ -24,6 +24,7 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> {
     public QueryMinimizer(Partition<Id> partition, Searchable<Id> theory) {
         this.theory = theory;
         this.partition = partition;
+        setReasoner(new MinimizerReasoner<Id>());
     }
 
     public Searchable<Id> getTheory() {

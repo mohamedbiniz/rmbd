@@ -8,6 +8,7 @@ import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,8 +30,14 @@ public class BasicAxiomList extends AbstractAxiomList {
         List<Object> items = new ArrayList<Object>();
         for (OWLLogicalAxiom axiom : backgroundAxioms)
             items.add(new AxiomListItem(axiom,ontology));
+
+        /*DefaultListModel model = (DefaultListModel) getModel();
+        model.clear();
+        for (Object item : items)
+            model.addElement(item); */
         setListData(items.toArray());
-        setFixedCellHeight(24);
+
+        //setFixedCellHeight(24);
     }
 
 }

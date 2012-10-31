@@ -108,8 +108,12 @@ public class QueryAxiomList extends AbstractAxiomList {
     private EditorKitHook editorKitHook;
 
     public void clearList() {
+
+        /*DefaultListModel model = (DefaultListModel) getModel();
+        model.clear();
+        */
         setListData(new ArrayList<Object>().toArray());
-        setFixedCellHeight(24);
+        //setFixedCellHeight(24);
     }
 
     public void updateList(OntologyDiagnosisSearcher diagnosisSearcher, OWLOntology ontology) {
@@ -119,8 +123,12 @@ public class QueryAxiomList extends AbstractAxiomList {
             items.add(new QueryAxiomListItem(axiom,ontology));
         }
 
+        /*DefaultListModel model = (DefaultListModel) getModel();
+        model.clear();
+        for (Object item : items)
+            model.addElement(item);*/
+
         setListData(items.toArray());
-        setFixedCellHeight(24);
     }
 
 }

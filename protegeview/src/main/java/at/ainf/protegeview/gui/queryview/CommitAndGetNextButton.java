@@ -16,7 +16,7 @@ import java.awt.event.KeyEvent;
 public class CommitAndGetNextButton extends AbstractGuiButton {
 
     public CommitAndGetNextButton(final QueryView queryView) {
-        super("Commit and Get Next","Commit and Get New Query", "Next2.png", KeyEvent.VK_X ,
+        super("Commit","Commit and Get New Query", "Next2.png", KeyEvent.VK_C ,
                 new AbstractAction(){
                     @Override
                     public void actionPerformed(ActionEvent e) {

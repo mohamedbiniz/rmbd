@@ -16,7 +16,7 @@ import java.awt.event.KeyEvent;
 public class StartButton extends AbstractGuiButton {
 
     public StartButton(final DiagnosesView toolboxView) {
-        super("Start","start to calculate diagnoses","Search.png",KeyEvent.VK_S,
+        super("Refresh Diagnoses","start to calculate diagnoses","Search.png",KeyEvent.VK_D,
                 new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {

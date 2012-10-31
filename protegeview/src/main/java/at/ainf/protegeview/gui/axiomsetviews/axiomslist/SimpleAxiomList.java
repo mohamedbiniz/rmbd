@@ -40,8 +40,16 @@ public class SimpleAxiomList extends AbstractAxiomList {
         }
         if (items.size()>0)
             items.remove(items.size()-1);
+
+        /*DefaultListModel model = (DefaultListModel) getModel();
+        model.clear();
+        for (Object item : items)
+            model.addElement(item);*/
+
+
+
         setListData(items.toArray());
-        setFixedCellHeight(24);
+        //setFixedCellHeight(24);
 
                 //listModel.addElement(MyOWLRendererParser.render(axiom));
 
