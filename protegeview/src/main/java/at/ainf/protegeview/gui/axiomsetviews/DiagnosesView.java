@@ -26,7 +26,7 @@ public class DiagnosesView extends AbstractAxiomSetView {
     @Override
     protected void initialiseOWLView() throws Exception {
         super.initialiseOWLView();
-        add(createDiagnosesToolBar(), BorderLayout.NORTH);
+        //add(createDiagnosesToolBar(), BorderLayout.NORTH);
     }
 
     protected JToolBar createDiagnosesToolBar() {
@@ -45,10 +45,10 @@ public class DiagnosesView extends AbstractAxiomSetView {
     public void stateChanged(ChangeEvent e) {
         SearchCreator searchCreator = ((OntologyDiagnosisSearcher) e.getSource()).getSearchCreator();
         Set<AxiomSet<OWLLogicalAxiom>> setOfAxiomSets = searchCreator.getSearch().getDiagnoses();
-        if (((OntologyDiagnosisSearcher)e.getSource()).getSearchStatus().equals(OntologyDiagnosisSearcher.SearchStatus.RUNNING))
+        /*if (((OntologyDiagnosisSearcher)e.getSource()).getSearchStatus().equals(OntologyDiagnosisSearcher.SearchStatus.RUNNING))
             startButton.setEnabled(false);
         else
-            startButton.setEnabled(true);
+            startButton.setEnabled(true);*/
         updateList(setOfAxiomSets);
 
     }
