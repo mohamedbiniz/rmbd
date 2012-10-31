@@ -48,6 +48,8 @@ public class BackgroundView extends AbstractQueryViewComponent {
         box.add(ontologyPanel);
 
         add(box, BorderLayout.CENTER);
+        updateDisplayedBackgroundAxioms();
+        updateDisplayedOntologyAxioms();
 
     }
 
