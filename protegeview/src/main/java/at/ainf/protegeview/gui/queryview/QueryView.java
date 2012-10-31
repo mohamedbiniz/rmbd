@@ -27,20 +27,10 @@ public class QueryView extends AbstractListQueryViewComponent {
 
         toolBar.setFloatable(false);
         toolBar.add(new GetQueryButton(this));
-        toolBar.add(Box.createHorizontalGlue());
         toolBar.add(new GetAlternativeQueryButton(this));
-        toolBar.setMaximumSize(toolBar.getPreferredSize());
-
-        return toolBar;
-    }
-
-    protected JToolBar createCommitQueryToolBar() {
-        JToolBar toolBar = new JToolBar();
-
-        toolBar.setFloatable(false);
         toolBar.add(Box.createHorizontalGlue());
-        toolBar.add(new CommitButton(this));
         toolBar.add(new CommitAndGetNextButton(this));
+        toolBar.setMaximumSize(toolBar.getPreferredSize());
 
         return toolBar;
     }
@@ -49,7 +39,6 @@ public class QueryView extends AbstractListQueryViewComponent {
     protected void initialiseOWLView() throws Exception {
         super.initialiseOWLView();
         add(createNewQueryToolBar(), BorderLayout.NORTH);
-        add(createCommitQueryToolBar(), BorderLayout.SOUTH);
 
     }
 

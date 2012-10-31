@@ -241,9 +241,25 @@ public class StatisticsDiagnosis {
         logger.info(message + (System.currentTimeMillis() - this.time) + " ms");
     }
 
+    private int getLogicalAxiomsCount(String name) {
+        OWLOntology ont = new CalculateDiagnoses().getOntologySimple(name);
+        return ont.getLogicalAxiomCount();
+    }
+
+    @Test
+    public void showNumLogicalAxioms() {
+
+        String[] names = {"oaei11/human.owl", "oaei11/mouse.owl",
+         "oaei11conference/ontology/cmt.owl",
+        "oaei11conference/ontology/conference.owl","oaei11conference/ontology/confof.owl",
+        "oaei11conference/ontology/edas.owl","oaei11conference/ontology/ekaw.owl",
+        "oaei11conference/ontology/iasted.owl","oaei11conference/ontology/sigkdd.owl",};
+        for (String name : names)
+            logger.info("name:\t" + name + ",\t" + "logical axioms:\t" + getLogicalAxiomsCount(name));
+    }
+
     @Test
     public void showMetrics() {
-
         String o = "koala.owl";
         OWLOntology ont = new CalculateDiagnoses().getOntologySimple("ontologies/" + o);
         logger.info(o);

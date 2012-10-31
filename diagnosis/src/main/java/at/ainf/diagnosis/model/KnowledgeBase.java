@@ -71,7 +71,8 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
             this.positiveTests.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
         }*/
-        if (val)
+
+        //if (val)
             addToTestList(test, true);
 
         return val;
@@ -83,7 +84,8 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
             this.negativeTests.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
         } */
-        if (val)
+
+        //if (val)
             addToTestList(test, false);
 
         return val;
@@ -95,7 +97,8 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
             this.entailed.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
         } */
-        if (val)
+
+        //if (val)
             addToTestList(test, true);
 
         return val;
@@ -107,7 +110,8 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
             this.nonentailed.remove(test);
             throw new InconsistentTheoryException(MESSAGE);
         } */
-        if (val)
+
+        //if (val)
             addToTestList(test, false);
 
         return val;

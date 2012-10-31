@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.model;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.debugging.DebuggerClassExpressionGenerator;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -35,22 +36,42 @@ public class OWLIncoherencyExtractor {
         return extract(ontology, true);
     }
 
-    private Set<OWLOntology> extract(OWLOntology ontology, boolean multiple) {
-        Set<OWLEntity> incoherentEntities = new LinkedHashSet<OWLEntity>();
+    private OWLOntology createCopyForExtraction(OWLOntology ontology) {
+
+        OWLOntology result = null;
+        try {
+            result = OWLManager.createOWLOntologyManager().createOntology(IRI.create("http://ainf.at/TempExtractionOntology"));
+        } catch (OWLOntologyCreationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        result.getOWLOntologyManager().addAxioms(result,ontology.getLogicalAxioms());
+        return result;
+    }
+
+    private Set<OWLOntology> extract(OWLOntology ont, boolean multiple) {
+
+        Set<OWLEntity> signature = new LinkedHashSet<OWLEntity>();
+        OWLOntology ontology = createCopyForExtraction(ont);
         OWLReasoner reasoner = reasonerFactory.createReasoner(ontology);
         Set<OWLAxiom> aBoxAxioms = null;
         boolean consistent = reasoner.isConsistent();
         if (!consistent) {
-            OWLOntologyManager man = OWLManager.createOWLOntologyManager(); //ontology.getOWLOntologyManager();
-            aBoxAxioms = ontology.getABoxAxioms(false);
-            man.removeAxioms(ontology, aBoxAxioms);
+            //OWLOntologyManager man = OWLManager.createOWLOntologyManager(); //ontology.getOWLOntologyManager();
+            aBoxAxioms = ontology.getABoxAxioms(false);      //true
+            ontology.getOWLOntologyManager().removeAxioms(ontology, aBoxAxioms);
+            reasoner.flush();
+            if (!reasoner.isConsistent())
+                throw new RuntimeException("The ontology without ABox is not consistent! Reasoner Flush Problem? ");
+            /*for (OWLAxiom aBoxAxiom : aBoxAxioms) {
+                // if contains negation
+                signature.addAll(aBoxAxiom.getClassesInSignature());
+            }*/
         }
 
-        reasoner.flush();
         for (OWLClass entity : reasoner.getUnsatisfiableClasses().getEntities())
-            incoherentEntities.add(entity);
+            signature.add(entity);
 
-        incoherentEntities.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+        signature.remove(OWLManager.getOWLDataFactory().getOWLNothing());
 
 
         Set<OWLOntology> result;
@@ -60,17 +81,17 @@ public class OWLIncoherencyExtractor {
 
         String iriString = "http://ainf.at/IncoherencyModule";
         try {
-            if (!incoherentEntities.isEmpty()) {
+            if (!signature.isEmpty()) {
                 if (multiple) {
                     result = new LinkedHashSet<OWLOntology>();
                     int cnt = 0;
-                    for (OWLEntity i : incoherentEntities) {
+                    for (OWLEntity i : signature) {
                         result.add(sme.extractAsOntology(Collections.singleton(i), IRI.create(iriString + "_" + cnt)));
                         cnt++;
                     }
                 }
                 else
-                    result = Collections.singleton(sme.extractAsOntology(incoherentEntities, IRI.create(iriString)));
+                    result = Collections.singleton(sme.extractAsOntology(signature, IRI.create(iriString)));
 
             } else
                 result = Collections.singleton(OWLManager.createOWLOntologyManager().createOntology(IRI.create(iriString)));

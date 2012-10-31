@@ -131,7 +131,12 @@ public class BackgroundAxiomFinder extends AugmentedJTextField {
 
     private void closeResults() {
         getWindow().setVisible(false);
+
+        /*DefaultListModel model = (DefaultListModel) resultsList.getModel();
+        model.clear();*/
+
         resultsList.setListData(new Object []{});
+
     }
 
 
@@ -171,6 +176,8 @@ public class BackgroundAxiomFinder extends AugmentedJTextField {
             addFocusListener(new FocusAdapter() {
                 public void focusLost(FocusEvent e) {
                     window.setVisible(false);
+                    /*DefaultListModel model = (DefaultListModel) resultsList.getModel();
+                    model.clear();*/
                     resultsList.setListData(new Object []{});
                 }
             });
@@ -191,12 +198,20 @@ public class BackgroundAxiomFinder extends AugmentedJTextField {
             SwingUtilities.convertPointToScreen(pt, this);
             window.setLocation(pt.x, pt.y + getHeight() + 2);
             window.setSize(getWidth(), 400);
+
+            /*DefaultListModel model = (DefaultListModel) resultsList.getModel();
+            model.clear();
+            for (Object item : getSortedResults(results))
+                model.addElement(item);*/
+
             resultsList.setListData(getSortedResults(results));
             window.setVisible(true);
             window.validate();
             resultsList.setSelectedIndex(0);
         }
         else {
+            /*DefaultListModel model = (DefaultListModel) resultsList.getModel();
+            model.clear();*/
             resultsList.setListData(new Object [0]);
         }
     }

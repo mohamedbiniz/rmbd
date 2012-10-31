@@ -55,7 +55,7 @@ public class OntologyDiagnosisSearcher {
     public static enum TestCaseType {POSITIVE_TC, NEGATIVE_TC, ENTAILED_TC, NON_ENTAILED_TC}
 
     public static enum ErrorStatus {NO_CONFLICT_EXCEPTION, SOLVER_EXCEPTION, INCONSISTENT_THEORY_EXCEPTION,
-                                  NO_QUERY, NO_ERROR}
+                                  NO_QUERY, ONLY_ONE_DIAG, NO_ERROR}
 
     public static enum QuerySearchStatus { IDLE, SEARCH_DIAG, GENERATING_QUERY, MINIMZE_QUERY, ASKING_QUERY }
 
@@ -299,10 +299,13 @@ public class OntologyDiagnosisSearcher {
                     break;
                 case NEGATIVE_TC:
                     addCheckedNegativeTest(theory,testcase);
+                    break;
                 case ENTAILED_TC:
                     addCheckedEntailedTest(theory,testcase);
+                    break;
                 case NON_ENTAILED_TC:
                     addCheckedNonEntailedTest(theory,testcase);
+                    break;
             }
 
     }
@@ -427,6 +430,13 @@ public class OntologyDiagnosisSearcher {
                 resetQuery();
                 notifyListeners();
                 errorHandler.errorHappend(NO_QUERY);
+                return;
+            }
+            if (set.size()==1) {
+                errorStatus = ONLY_ONE_DIAG;
+                resetQuery();
+                notifyListeners();
+                errorHandler.errorHappend(ONLY_ONE_DIAG);
                 return;
             }
 
