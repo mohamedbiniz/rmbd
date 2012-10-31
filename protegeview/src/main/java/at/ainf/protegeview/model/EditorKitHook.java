@@ -76,6 +76,7 @@ public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerLi
                 searcher.addChangeListener(this);
                 ontologyDiagnosisSearcherMap.put(activeOntology,searcher);
             }
+            notifyActiveSearcherListeners(new ChangeEvent(getActiveOntologyDiagnosisSearcher()));
             logger.debug("ontology changed to " + activeOntology.getOntologyID().getOntologyIRI().getFragment());
         }
     }

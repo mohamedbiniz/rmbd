@@ -30,6 +30,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import static at.ainf.protegeview.model.OntologyDiagnosisSearcher.ErrorStatus.*;
 
@@ -114,7 +115,7 @@ public class OntologyDiagnosisSearcher {
         notifyListeners();
     }
 
-    public class SearchThrea extends Thread implements ChangeListener {
+    public class SearchThrea extends SwingWorker<Object,Object> implements ChangeListener {
 
         private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
@@ -129,11 +130,12 @@ public class OntologyDiagnosisSearcher {
         }
 
         @Override
-        public void run() {
+        public Object doInBackground() {
 
             search.addSearchListener(this);
             searchStatus = SearchStatus.RUNNING;
-            notifyListeners();
+            publish(new Object());
+            //notifyListeners();
             try {
                 search.run(number);
                 errorStatus = NO_ERROR;
@@ -148,13 +150,22 @@ public class OntologyDiagnosisSearcher {
             if (!errorStatus.equals(NO_ERROR))
                 errorHandler.errorHappend(errorStatus);
 
-            notifyListeners();
+            publish(new Object());
+            //notifyListeners();
             search.removeSearchListener(this);
+
+            return null;
+        }
+
+        @Override
+        protected void process(List<Object> chunks) {
+            notifyListeners();
         }
 
         @Override
         public void stateChanged(ChangeEvent e) {
-            notifyListeners();
+            publish(new Object());
+            //notifyListeners();
         }
 
     }
@@ -172,7 +183,7 @@ public class OntologyDiagnosisSearcher {
         int n = creator.getConfig().numOfLeadingDiags;
         if (creator.getConfig().calcAllDiags)
             n = -1;
-        new SearchThrea(creator.getSearch(),n, errorHandler).start();
+        new SearchThrea(creator.getSearch(),n, errorHandler).execute();
         logger.debug("model: calculate diagnosis ");
     }
 
@@ -344,7 +355,7 @@ public class OntologyDiagnosisSearcher {
 
     }
 
-    public class QueryGenerationThread extends Thread {
+    public class QueryGenerationThread extends SwingWorker<Object,Object> {
 
         private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
@@ -357,6 +368,11 @@ public class OntologyDiagnosisSearcher {
             this.errorHandler = errorHandler;
             search = searchCreator.getSearch();
 
+        }
+
+        @Override
+        protected void process(List<Object> chunks) {
+            notifyListeners();
         }
 
         private void minimizePartitionAx(Partition<OWLLogicalAxiom> query) {
@@ -393,18 +409,22 @@ public class OntologyDiagnosisSearcher {
         }
 
         @Override
-        public void run() {
+        public Object doInBackground() {
             querySearchStatus = QuerySearchStatus.SEARCH_DIAG;
-            notifyListeners();
+            publish(new Object());
+            //notifyListeners();
             SearchThrea searchThread = new SearchThrea(search,searchConfig.numOfLeadingDiags,errorHandler);
-            searchThread.start();
+            searchThread.execute();
             try {
-                searchThread.join();
+                searchThread.get();
             } catch (InterruptedException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (ExecutionException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
             querySearchStatus = QuerySearchStatus.GENERATING_QUERY;
-            notifyListeners();
+            publish(new Object());
+            //notifyListeners();
             QSS<OWLLogicalAxiom> qss;
             switch (searchConfig.qss) {
                 case MINSCORE:
@@ -428,16 +448,18 @@ public class OntologyDiagnosisSearcher {
             if (set.isEmpty()) {
                 errorStatus = NO_QUERY;
                 resetQuery();
-                notifyListeners();
+                publish(new Object());
+                //notifyListeners();
                 errorHandler.errorHappend(NO_QUERY);
-                return;
+                return null;
             }
             if (set.size()==1) {
                 errorStatus = ONLY_ONE_DIAG;
                 resetQuery();
-                notifyListeners();
+                publish(new Object());
+                //notifyListeners();
                 errorHandler.errorHappend(ONLY_ONE_DIAG);
-                return;
+                return null;
             }
 
             Partition<OWLLogicalAxiom> best = null;
@@ -452,22 +474,25 @@ public class OntologyDiagnosisSearcher {
             if (best==null) {
                 errorStatus = NO_QUERY;
                 resetQuery();
-                notifyListeners();
+                publish(new Object());
+                //notifyListeners();
                 errorHandler.errorHappend(NO_QUERY);
-                return;
+                return null;
             }
 
             if (searchConfig.minimizeQuery) {
                 querySearchStatus = QuerySearchStatus.MINIMZE_QUERY;
-                notifyListeners();
+                publish(new Object());
+                //notifyListeners();
                 minimizePartitionAx(best);
             }
 
             actualQuery = best;
             querySearchStatus = QuerySearchStatus.ASKING_QUERY;
             errorStatus = NO_ERROR;
-            notifyListeners();
-
+            publish(new Object());
+            //notifyListeners();
+            return null;
         }
     }
 
@@ -486,7 +511,7 @@ public class OntologyDiagnosisSearcher {
     }
 
     public void doGetQuery(ErrorHandler errorHandler) {
-        new QueryGenerationThread(getSearchCreator(), errorHandler).start();
+        new QueryGenerationThread(getSearchCreator(), errorHandler).execute();
 
     }
 
