@@ -26,7 +26,7 @@ public class DiagnosesView extends AbstractAxiomSetView {
     @Override
     protected void initialiseOWLView() throws Exception {
         super.initialiseOWLView();
-        //add(createDiagnosesToolBar(), BorderLayout.NORTH);
+        add(createDiagnosesToolBar(), BorderLayout.NORTH);
         updateView();
     }
 
