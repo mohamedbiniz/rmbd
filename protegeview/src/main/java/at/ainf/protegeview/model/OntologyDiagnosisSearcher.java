@@ -538,8 +538,12 @@ public class OntologyDiagnosisSearcher {
     }
 
     public void doCommitQuery() {
-        doAddTestcase(new LinkedHashSet<OWLLogicalAxiom>(axiomsMarkedEntailed),TestCaseType.ENTAILED_TC, new ErrorHandler());
-        doAddTestcase(new LinkedHashSet<OWLLogicalAxiom>(axiomsMarkedNonEntailed), TestCaseType.NON_ENTAILED_TC, new ErrorHandler());
+        if (!axiomsMarkedEntailed.isEmpty())
+            doAddTestcase(new LinkedHashSet<OWLLogicalAxiom>(axiomsMarkedEntailed),
+                    TestCaseType.ENTAILED_TC, new ErrorHandler());
+        if (!axiomsMarkedNonEntailed.isEmpty())
+            doAddTestcase(new LinkedHashSet<OWLLogicalAxiom>(axiomsMarkedNonEntailed),
+                    TestCaseType.NON_ENTAILED_TC, new ErrorHandler());
         resetQuery();
         notifyListeners();
     }
