@@ -189,6 +189,7 @@ public class OntologyDiagnosisSearcher {
 
     public void doReset() {
         resetQuery();
+        resetQueryHistory();
         creator.reset();
         notifyListeners();
         logger.debug("model: do reset");
@@ -201,8 +202,14 @@ public class OntologyDiagnosisSearcher {
 
     }
 
+    private void resetQueryHistory() {
+        queryHistory.clear();
+        queryHistoryType.clear();
+    }
+
     public void doFullReset() {
         resetQuery();
+        resetQueryHistory();
         creator.fullReset();
         notifyListeners();
         logger.debug("model: do fullReset");
@@ -537,13 +544,43 @@ public class OntologyDiagnosisSearcher {
         notifyListeners();
     }
 
+    private List<Set<OWLLogicalAxiom>> queryHistory = new LinkedList<Set<OWLLogicalAxiom>>();
+
+    private Map<Set<OWLLogicalAxiom>,TestCaseType> queryHistoryType = new LinkedHashMap<Set<OWLLogicalAxiom>, TestCaseType>();
+
+    protected void addToQueryHistory(Set<OWLLogicalAxiom> ax, TestCaseType type) {
+        LinkedHashSet<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(ax);
+        queryHistory.add(axioms);
+        queryHistoryType.put(axioms,type);
+    }
+
+    public List<Set<OWLLogicalAxiom>> getQueryHistory() {
+        return queryHistory;
+    }
+
+    public Map<Set<OWLLogicalAxiom>, TestCaseType> getQueryHistoryType() {
+        return queryHistoryType;
+    }
+
+    public void doRemoveQueryHistoryTestcase(Set<OWLLogicalAxiom> testcase, TestCaseType type) {
+        doRemoveTestcase(testcase,type);
+        queryHistory.remove(testcase);
+        queryHistoryType.remove(testcase);
+        notifyListeners();
+
+    }
+
     public void doCommitQuery() {
-        if (!axiomsMarkedEntailed.isEmpty())
+        if (!axiomsMarkedEntailed.isEmpty()) {
             doAddTestcase(new LinkedHashSet<OWLLogicalAxiom>(axiomsMarkedEntailed),
                     TestCaseType.ENTAILED_TC, new ErrorHandler());
-        if (!axiomsMarkedNonEntailed.isEmpty())
+            addToQueryHistory(axiomsMarkedEntailed,TestCaseType.ENTAILED_TC);
+        }
+        if (!axiomsMarkedNonEntailed.isEmpty()) {
             doAddTestcase(new LinkedHashSet<OWLLogicalAxiom>(axiomsMarkedNonEntailed),
                     TestCaseType.NON_ENTAILED_TC, new ErrorHandler());
+            addToQueryHistory(axiomsMarkedNonEntailed,TestCaseType.NON_ENTAILED_TC);
+        }
         resetQuery();
         notifyListeners();
     }
