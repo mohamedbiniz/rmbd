@@ -81,16 +81,16 @@ public class OrderProbabTest {
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-            //search.setNormalize_keywords(false);
-            //search.setNormalize_axioms (false);
-            //search.setNormalize_diagnoses (true);
+            //start.setNormalize_keywords(false);
+            //start.setNormalize_axioms (false);
+            //start.setNormalize_diagnoses (true);
             search.setSearchable(theory);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             ((OWLAxiomKeywordCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(map, null);
 
-
-            Collection<? extends AxiomSet<OWLLogicalAxiom>> res = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.run(9));
+            search.setMaxDiagnosesNumber(9);
+            Collection<? extends AxiomSet<OWLLogicalAxiom>> res = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.start());
             TreeSet<AxiomSet<OWLLogicalAxiom>> result = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
             BigDecimal measure = new BigDecimal("0.0");
             for (AxiomSet<OWLLogicalAxiom> hs : res) {

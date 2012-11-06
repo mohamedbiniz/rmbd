@@ -48,16 +48,16 @@ public class Example2005Test {
     @Test
     public void testCSandHS() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException, ParserException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        //UniformCostSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        //UniformCostSearch<OWLLogicalAxiom> start = new UniformCostSearch<OWLLogicalAxiom>(storage);
 
-        //search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+        //start.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
 
         createOntology();
         //theory = new OWLTheory(reasonerFactory, ontology, bax);
-        //search.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
+        //start.setNodeCostsEstimator(new OWLAxiomNodeCostsEstimator(theory,map));
 
-        //search.setSearchable(theory);
+        //start.setSearchable(theory);
 
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
         SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
@@ -89,13 +89,13 @@ public class Example2005Test {
     @Test
     public void testposT() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        //BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+        //BreadthFirstSearch<OWLLogicalAxiom> start = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
 
-        //search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+        //start.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         createOntology();
         //theory = new OWLTheory(reasonerFactory, ontology, bax);
 
-        //search.setSearchable(theory);
+        //start.setSearchable(theory);
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
         QueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
         debugger.updateMaxHittingSets(0);

@@ -28,10 +28,10 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
     private JProgressBar progressBar;
 
     /* public void updateNumOpenNodes(int n) {
-        int numOfHittingSets = search.getStorage().getValidHittingSets().size();
-        int numOfConflictSets = search.getStorage().getConflictSets().size();
-        int maxDiags = search.getMaxHittingSets();
-        int numOfonodes=search.getOpenNodes().size();
+        int numOfHittingSets = start.getStorage().getValidHittingSets().size();
+        int numOfConflictSets = start.getStorage().getConflictSets().size();
+        int maxDiags = start.getMaxDiagnosesNumber();
+        int numOfonodes=start.getOpenNodes().size();
         if (numOfonodes > maxOpeNodes) maxOpeNodes = numOfonodes;
 
         publish(new BackgroundTaskDataExchange(numOfHittingSets, numOfConflictSets,
@@ -46,7 +46,7 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
     public void updateOpenNodesAdded() {
         int numOfHittingSets = search.getDiagnoses().size();
         int numOfConflictSets = search.getConflicts().size();
-        int maxDiags = search.getMaxHittingSets();
+        int maxDiags = search.getMaxDiagnosesNumber();
         addedOnodes++;
 
         publish(new BackgroundTaskDataExchange(numOfHittingSets, numOfConflictSets,
@@ -56,7 +56,7 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
     public void updateOpenNodesRemoved() {
         int numOfHittingSets = search.getDiagnoses().size();
         int numOfConflictSets = search.getConflicts().size();
-        int maxDiags = search.getMaxHittingSets();
+        int maxDiags = search.getMaxDiagnosesNumber();
         removedOnodes++;
 
         publish(new BackgroundTaskDataExchange(numOfHittingSets, numOfConflictSets,
@@ -108,7 +108,7 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
     public void elementAdded(StorageItemAddedEvent e) {
         int numOfHittingSets = search.getDiagnoses().size();
         int numOfConflictSets = search.getConflicts().size();
-        int maxDiags = search.getMaxHittingSets();
+        int maxDiags = search.getMaxDiagnosesNumber();
 
         publish(new BackgroundTaskDataExchange(numOfHittingSets, numOfConflictSets,
                 maxDiags,removedOnodes,addedOnodes));
@@ -118,7 +118,7 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
     @Override
     public Result doInBackground() {                      // what to do if maxhittingset is 0
         try {
-            search.run(search.getMaxHittingSets());
+            search.start();
         } catch (SolverException e) {
             return Result.SOLVER_EXCEPTION;
         } catch (NoConflictException e) {

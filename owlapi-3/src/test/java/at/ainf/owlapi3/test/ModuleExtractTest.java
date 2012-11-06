@@ -115,7 +115,7 @@ public class ModuleExtractTest {
         OWLOntology ontology = loadOntology (  ont);
         OWLTheory theoryNormal = createTheory(manager, ontology, false);
         searchNormal.setSearchable(theoryNormal);
-        searchNormal.run();
+        searchNormal.start();
 
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
@@ -149,7 +149,7 @@ public class ModuleExtractTest {
                 OWLTheory theoryNormal = createTheory(manager, ontology, false);
                 searchNormal.setSearchable(theoryNormal);
                 long stop1 = System.currentTimeMillis();
-                searchNormal.run();
+                searchNormal.start();
                 stop1A[i] = System.currentTimeMillis() - stop1;
                 Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
@@ -162,7 +162,7 @@ public class ModuleExtractTest {
                 OWLTheory theoryDual = createTheory(manager, ontology2, false);
                 searchDual.setSearchable(theoryDual);
                 long stop2 = System.currentTimeMillis();
-                searchDual.run();
+                searchDual.start();
                 stop2a[i] = System.currentTimeMillis() - stop2 ;
                 Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
 

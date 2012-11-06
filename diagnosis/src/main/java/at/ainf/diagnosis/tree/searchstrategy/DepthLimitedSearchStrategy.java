@@ -18,9 +18,9 @@ public class DepthLimitedSearchStrategy<Id> extends DepthFirstSearchStrategy<Id>
         this.limit = Integer.MAX_VALUE;
     }
 
-    /*public Set<AxiomSet<Id>> run() throws NoConflictException, SolverException, InconsistentTheoryException {
+    /*public Set<AxiomSet<Id>> start() throws NoConflictException, SolverException, InconsistentTheoryException {
         this.expandable = false;
-        return super.run();
+        return super.start();
     }*/
 
     @Override

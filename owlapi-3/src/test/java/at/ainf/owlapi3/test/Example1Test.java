@@ -234,12 +234,12 @@ public class Example1Test extends AbstractExample {
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setSearchable(theory);
-            search.setMaxHittingSets(0);
+            search.setMaxDiagnosesNumber(0);
 
-            search.run();
+            search.start();
 
             theory.getKnowledgeBase().addEntailedTest(query.getAxioms());
-            search.run();
+            search.start();
             Collection<Diagnosis> res = new TreeSet<Diagnosis>();
             for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
                 res.add(Diagnosis.getDiagnosis(col));
@@ -271,10 +271,10 @@ public class Example1Test extends AbstractExample {
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setSearchable(theory);
-            search.setMaxHittingSets(0);
+            search.setMaxDiagnosesNumber(0);
 
             theory.getKnowledgeBase().addNonEntailedTest(query.getAxioms());
-            search.run();
+            search.start();
             Collection<Diagnosis> res = new TreeSet<Diagnosis>();
             for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
                 res.add(Diagnosis.getDiagnosis(col));

@@ -35,7 +35,7 @@ public class BackgroundAxiomFinder extends AugmentedJTextField {
 
     public BackgroundAxiomFinder(BackgroundView parent, OWLEditorKit editorKit) {
         super(20, "Filter by entity");
-        putClientProperty("JTextField.variant", "search");
+        putClientProperty("JTextField.variant", "start");
         this.parent = parent;
         this.editorKit = editorKit;
         addKeyListener(new KeyAdapter() {

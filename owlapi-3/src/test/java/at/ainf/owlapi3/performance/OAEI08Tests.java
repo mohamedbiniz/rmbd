@@ -5,14 +5,14 @@ import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.base.OAEI08Session;
 import at.ainf.owlapi3.base.SimulatedSession;
+import at.ainf.owlapi3.base.tools.TableList;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
-import at.ainf.owlapi3.base.tools.TableList;
-import at.ainf.owlapi3.base.OAEI08Session;
 import junit.framework.Assert;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Ignore;
@@ -28,7 +28,6 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created with IntelliJ IDEA.
@@ -99,7 +98,7 @@ public class OAEI08Tests extends OAEI08Session {
                             search.setCostsEstimator(es);
                             /*
                             try {
-                                search.run();
+                                start.start();
                             } catch (SolverException e) {
                                 logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             } catch (NoConflictException e) {
@@ -108,12 +107,13 @@ public class OAEI08Tests extends OAEI08Session {
                                 logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getStorage().getDiagnoses());
-                            search.reset();
+                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(start.getStorage().getDiagnoses());
+                            start.reset();
                             */
                             if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                 try {
-                                    search.run(30);
+                                    search.setMaxDiagnosesNumber(30);
+                                    search.start();
                                 } catch (SolverException e) {
                                     logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (NoConflictException e) {
@@ -145,7 +145,7 @@ public class OAEI08Tests extends OAEI08Session {
                             a.setSearch(search);
                             out +=  a.simulateQuerySession();
 
-                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, null, null);
+                            //out += simulateQuerySession(start, theory, diags, e, type, message, allD, null, null);
                         }
                         logger.info(out);
                     }
@@ -215,7 +215,7 @@ public class OAEI08Tests extends OAEI08Session {
                             search.setCostsEstimator(es);
                             //
 //                            try {
-//                                search.run();
+//                                start.start();
 //                            } catch (SolverException e) {
 //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //                            } catch (NoConflictException e) {
@@ -229,7 +229,8 @@ public class OAEI08Tests extends OAEI08Session {
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                 try {
-                                    search.run(30);
+                                    search.setMaxDiagnosesNumber(30);
+                                    search.start();
                                 } catch (SolverException e) {
                                     logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (NoConflictException e) {
@@ -253,7 +254,7 @@ public class OAEI08Tests extends OAEI08Session {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act " + m + " - " + o + " - " + targetSource + " " + type + " d " + dual;
-                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(start, theory, diags, e, type, message, allD, search2, t3);
 
                             session.setEntry(e);
                             session.setMessage(message);
@@ -318,7 +319,8 @@ public class OAEI08Tests extends OAEI08Session {
                             search.setCostsEstimator(es);
                             if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                 try {
-                                    search.run(30);
+                                    search.setMaxDiagnosesNumber(30);
+                                    search.start();
                                 } catch (SolverException e) {
                                     //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (NoConflictException e) {
@@ -399,7 +401,8 @@ public class OAEI08Tests extends OAEI08Session {
         search.setCostsEstimator(es);
         if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
             try {
-                search.run(30);
+                search.setMaxDiagnosesNumber(30);
+                search.start();
             } catch (SolverException e) {
                 //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
@@ -420,7 +423,8 @@ public class OAEI08Tests extends OAEI08Session {
             targetDg = getDiagnosisTarget(m, o, ontology);
             int diags = -1;
             try {
-                search.run(diags);
+                search.setMaxDiagnosesNumber(diags);
+                search.start();
             } catch (SolverException e) {
                 //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
@@ -494,7 +498,7 @@ public class OAEI08Tests extends OAEI08Session {
                             search.setCostsEstimator(es);
                             //
                             try {
-                                search.run();
+                                search.start();
                             } catch (SolverException e) {
                                 logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             } catch (NoConflictException e) {
@@ -508,7 +512,8 @@ public class OAEI08Tests extends OAEI08Session {
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                 try {
-                                    search.run(30);
+                                    search.setMaxDiagnosesNumber(30);
+                                    search.start();
                                 } catch (SolverException e) {
                                     logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 } catch (NoConflictException e) {
@@ -579,7 +584,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                     long time = System.nanoTime();
                     try {
-                        search.run();
+                        search.start();
                     } catch (SolverException e) {
                         logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     } catch (NoConflictException e) {
@@ -679,12 +684,13 @@ public class OAEI08Tests extends OAEI08Session {
 
         search.setCostsEstimator(es);
 
-        search.run();
+        search.start();
 
         allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
         search.reset();
 
-        search.run(9);
+        search.setMaxDiagnosesNumber(9);
+        search.start();
         TreeSet<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>();
         MyOWLRendererParser parser = new MyOWLRendererParser(ontology);
         testcase.add(parser.parse("conference DisjointWith session"));
@@ -699,7 +705,8 @@ public class OAEI08Tests extends OAEI08Session {
         allD.removeAll(toRemove);
         //deleteDiag(theory,allDiags,false,testcase);
 
-        search.run(9);
+        search.setMaxDiagnosesNumber(9);
+        search.start();
         Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
         /*for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
             if(!theory.testDiagnosis(diagnosis))
@@ -773,7 +780,7 @@ public class OAEI08Tests extends OAEI08Session {
                                 search.setCostsEstimator(es);
                                 //
                                 //                            try {
-                                //                                search.run();
+                                //                                start.start();
                                 //                            } catch (SolverException e) {
                                 //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 //                            } catch (NoConflictException e) {
@@ -787,7 +794,8 @@ public class OAEI08Tests extends OAEI08Session {
 
                                 if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
                                     try {
-                                        search.run(30);
+                                        search.setMaxDiagnosesNumber(30);
+                                        search.start();
                                     } catch (SolverException e) {
                                         logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                     } catch (NoConflictException e) {
@@ -811,7 +819,7 @@ public class OAEI08Tests extends OAEI08Session {
                                 TableList e = new TableList();
                                 out += "," + type + ",";
                                 String message = "act," + m.trim() + "," + o.trim() + "," + targetSource + "," + type + "," + dual + "," + background;
-                                //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
+                                //out += simulateQuerySession(start, theory, diags, e, type, message, allD, search2, t3);
 
                                 session.setEntry(e);
                                 session.setMessage(message);

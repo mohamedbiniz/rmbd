@@ -14,11 +14,17 @@ import java.util.Set;
  * Time: 10:06
  * To change this template use File | Settings | File Templates.
  */
-public interface DiagSearch<T extends AxiomSet<Id>, Id> {
+public interface Debugger<T extends AxiomSet<Id>, Id> {
 
-    public Set<T> run() throws SolverException, NoConflictException, InconsistentTheoryException;
+    public static int ALL_DIAGNOSES = -1;
 
-    public Set<T> run(int numberOfDiags) throws SolverException, NoConflictException, InconsistentTheoryException;
+    public void setMaxDiagnosesNumber(int number);
+
+    public int getMaxDiagnosesNumber();
+
+    public Set<T> start() throws SolverException, NoConflictException, InconsistentTheoryException;
+
+    public Set<T> resume() throws SolverException, NoConflictException, InconsistentTheoryException;
 
     public void reset();
 

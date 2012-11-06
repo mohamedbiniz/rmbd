@@ -138,7 +138,8 @@ public class CalculateDiagnoses {
 
     protected void runSearch(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, int num) {
         try {
-            search.run(num);
+            search.setMaxDiagnosesNumber(num);
+            search.start();
         } catch (SolverException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (NoConflictException e) {

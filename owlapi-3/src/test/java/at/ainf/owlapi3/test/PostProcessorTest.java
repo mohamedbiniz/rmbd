@@ -128,7 +128,8 @@ public class PostProcessorTest {
         CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(th, new MinScoreQSS<OWLLogicalAxiom>());
         ckk.setThreshold(0.01);
 
-        Set<? extends AxiomSet<OWLLogicalAxiom>> diagnoses = search.run(9);
+        search.setMaxDiagnosesNumber(9);
+        Set<? extends AxiomSet<OWLLogicalAxiom>> diagnoses = search.start();
 
         Partition<OWLLogicalAxiom> best=null;
         try {

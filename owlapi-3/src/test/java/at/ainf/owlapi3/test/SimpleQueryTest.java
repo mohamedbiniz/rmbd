@@ -76,10 +76,10 @@ public class SimpleQueryTest {
         theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("AIStudent DisjointWith HCIStudent")));
         theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("AI_Dept DisjointWith EE_Department")));
         theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("CS_Library SubClassOf EE_Department")));
-        search.setMaxHittingSets(-1);
-        //BackgroundSearcher s = new BackgroundSearcher(search, null);
+        search.setMaxDiagnosesNumber(-1);
+        //BackgroundSearcher s = new BackgroundSearcher(start, null);
 
-        search.run(search.getMaxHittingSets());
+        search.start();
         //s.doBackgroundSearch();
 
         Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getDiagnoses();
@@ -90,7 +90,7 @@ public class SimpleQueryTest {
         //query = diagProvider.getBestQuery(diagnoses);
         //QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, theory);
         //QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
-        //Set<OWLLogicalAxiom> r = q.search(mnz,query.partition);
+        //Set<OWLLogicalAxiom> r = q.start(mnz,query.partition);
 
         //theory.addEntailedTest(query.getQueryAxioms());
     }
@@ -127,7 +127,7 @@ public class SimpleQueryTest {
         theory.setIncludeTrivialEntailments(true);
         // theory.setIncludeOntAxioms(true);
 
-        /*DiagProvider diagProvider = new DiagProvider(search, false, 9);
+        /*DiagProvider diagProvider = new DiagProvider(start, false, 9);
           LinkedList<AxiomSet<OWLLogicalAxiom>> diagnoses = diagProvider.getDiagnoses(9);
           Partition<OWLLogicalAxiom> query = diagProvider.getBestQuery(diagnoses);
         theory.addNonEntailedTest(query.partition);
@@ -135,7 +135,7 @@ public class SimpleQueryTest {
         query = diagProvider.getBestQuery(diagnoses);
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, theory);*/
         QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
-        //Set<OWLLogicalAxiom> r = q.search(mnz, query.partition);
+        //Set<OWLLogicalAxiom> r = q.start(mnz, query.partition);
 
         //theory.addEntailedTest(query.getQueryAxioms());
     }
@@ -166,8 +166,8 @@ public class SimpleQueryTest {
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         search.setSearchable(theory);
 
-
-        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
+        search.setMaxDiagnosesNumber(9);
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.start();
         TreeSet<AxiomSet<OWLLogicalAxiom>> result = new TreeSet<AxiomSet<OWLLogicalAxiom>>(res);
         for (AxiomSet<OWLLogicalAxiom> hs : result) {
             TreeSet<AxiomSet<OWLLogicalAxiom>> ts = new TreeSet<AxiomSet<OWLLogicalAxiom>>();

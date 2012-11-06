@@ -8,13 +8,17 @@
 
 package at.ainf.diagnosis.tree;
 
+import _dev.TimeLog;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.*;
+import at.ainf.diagnosis.storage.AxiomRenderer;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.storage.StorageListener;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.logging.aop.ProfiledVar;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
@@ -25,7 +29,6 @@ import javax.swing.event.ChangeListener;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static _dev.TimeLog.start;
 import static _dev.TimeLog.stop;
 
 /**
@@ -47,7 +50,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     private Node<Id> root = null;
 
-    // ICONFLICTSEARCHER: is the search algorithm for conflicts (e.g. QuickXplain)
+    // ICONFLICTSEARCHER: is the start algorithm for conflicts (e.g. QuickXplain)
     private Searcher<Id> searcher;
     private int prunedHS;
 
@@ -152,21 +155,21 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         return theory;
     }
 
-    public Set<T> run() throws
+    public Set<T> start() throws
             SolverException, NoConflictException, InconsistentTheoryException {
         reset();
-        if (getMaxHittingSets() <= 0)
-            return run(-1);
-        else
-            return run(getMaxHittingSets());
+        return searchDiagnoses();
     }
 
-    public Set<T> continueSearch() throws
+    public Set<T> resume() throws
             SolverException, NoConflictException, InconsistentTheoryException {
-        return run(-1);
+        if (this.root == null)
+            throw new RuntimeException("Nothing to resume!");
+        return searchDiagnoses();
     }
 
     public void reset() {
+        //setMaxDiagnosesNumber(-1);
         resetStorage();
         getSearchStrategy().getOpenNodes().clear();
         this.root = null;
@@ -180,10 +183,11 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     @Profiled(tag = "time_calcdiagnoses")
     @ProfiledVar(tag = "calcdiagnoses", isCollection = true)
-    public Set<T> run(int numberOfDiags) throws SolverException, NoConflictException, InconsistentTheoryException {
+    protected Set<T> searchDiagnoses() throws SolverException, NoConflictException, InconsistentTheoryException {
+        int numberOfDiags  = getMaxDiagnosesNumber();
 
-        start("Overall runPostprocessor");
-        start("Diagnosis", "diagnosis");
+        TimeLog.start("Overall runPostprocessor");
+        TimeLog.start("Diagnosis", "diagnosis");
         try {
             theory.registerTestCases();
             // verify if background theory is consistent
@@ -218,7 +222,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 return getDiagnoses();
             }
 
-            setMaxHittingSets(numberOfDiags);
+            setMaxDiagnosesNumber(numberOfDiags);
             processOpenNodes();
 
         } finally {
@@ -245,7 +249,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             expandLeafNodes(idNode);
         }
     }*/
-    //protected abstract void finalizeSearch(TreeSearch<T, Id> search);
+    //protected abstract void finalizeSearch(TreeSearch<T, Id> start);
 
     private void processOpenNodes() throws SolverException, NoConflictException, InconsistentTheoryException {
         if (getRoot() == null)
@@ -254,14 +258,14 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             throw new NoConflictException("There are no open nodes!");
         // while List of openNodes is not empty
 
-        while (!openNodesIsEmpty() && (maxHittingSets <= 0 || (getDiagnoses().size() < getMaxHittingSets()))) {
+        while (!openNodesIsEmpty() && (maxHittingSets <= 0 || (getDiagnoses().size() < getMaxDiagnosesNumber()))) {
             Node<Id> node = getSearchStrategy().getNode();
             if (axiomRenderer != null)
                 logMessage(getDepth(node), " now processing node with uplink : ", node.getArcLabel());
             processNode(node);
         }
         if (logger.isInfoEnabled())
-            logger.info("Finished search with " + getSizeOpenNodes() + " open nodes. Pruned " + this.prunedHS + " diagnoses on the last iteration.");
+            logger.info("Finished start with " + getSizeOpenNodes() + " open nodes. Pruned " + this.prunedHS + " diagnoses on the last iteration.");
     }
 
     private void logMessage(int depth, String message, Set<Id> axioms) {
@@ -324,7 +328,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                 hs.setValid(valid);
                 addHittingSet(hs);
                 notifySearchListeners();
-                start("Diagnosis", "diagnosis");
+                TimeLog.start("Diagnosis", "diagnosis");
                 if (logger.isInfoEnabled()) {
                     logger.info("Found conflicts: " + getConflicts().size() + " and diagnoses " + getDiagnoses().size());
                     logger.info("Pruned " + this.prunedHS + " diagnoses");
@@ -550,13 +554,11 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         return false;
     }
 
-    public void setMaxHittingSets(int maxDiagnoses) {
+    public void setMaxDiagnosesNumber(int maxDiagnoses) {
         this.maxHittingSets = maxDiagnoses;
     }
 
-    // operations for openNodes:
-
-    public int getMaxHittingSets() {
+    public int getMaxDiagnosesNumber() {
         return this.maxHittingSets;
     }
 
