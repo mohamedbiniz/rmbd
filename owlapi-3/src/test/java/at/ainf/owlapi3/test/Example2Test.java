@@ -76,7 +76,8 @@ public class Example2Test extends AbstractExample {
         // these diagnoses are minimal because of test cases
         // making D2 invalid diagnosis
         D6(new Axiom[]{Axiom.AX3, Axiom.AX2}),
-        D7(new Axiom[]{Axiom.AX3, Axiom.AX5});
+        D7(new Axiom[]{Axiom.AX3, Axiom.AX5}),
+        D8(new Axiom[]{Axiom.AX1, Axiom.AX4});
 
         private TreeSet<Axiom> set = new TreeSet<Axiom>();
 
@@ -201,7 +202,7 @@ public class Example2Test extends AbstractExample {
         Query.X1.addToDx(new Diag[]{Diag.D1, Diag.D2, Diag.D4});
         Query.X2.addToDx(new Diag[]{Diag.D3, Diag.D4});
         Query.X3.addToDx(new Diag[]{Diag.D1, Diag.D3, Diag.D4});
-        Query.X4.addToDx(new Diag[]{Diag.D2, Diag.D3, Diag.D4});
+        Query.X4.addToDx(new Diag[]{Diag.D2, Diag.D3, Diag.D4, Diag.D8 });
         Query.X5.addToDx(new Diag[]{Diag.D2});
         Query.X6.addToDx(new Diag[]{Diag.D1, Diag.D2});
         Query.X7.addToDx(new Diag[]{Diag.D4});
@@ -283,7 +284,7 @@ public class Example2Test extends AbstractExample {
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setSearchable(theory);
-            search.setMaxDiagnosesNumber(0);
+            //search.setMaxDiagnosesNumber(0);
 
             search.start();
 
@@ -329,7 +330,7 @@ public class Example2Test extends AbstractExample {
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setSearchable(theory);
-            search.setMaxDiagnosesNumber(0);
+            search.setMaxDiagnosesNumber(-1);
 
             theory.getKnowledgeBase().addNonEntailedTest(query.getAxioms());
             search.start();
@@ -351,6 +352,36 @@ public class Example2Test extends AbstractExample {
     }
 
     @Test
+    public void testQuery4Entailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+        if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+        theory = new OWLTheory(reasonerFactory, ontology, bax);
+        search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+
+        search.setSearchable(theory);
+        search.setMaxDiagnosesNumber(-1);
+
+
+        theory.getKnowledgeBase().addEntailedTest(Query.X4.getAxioms());
+        search.start();
+        Collection<Diag> res = new TreeSet<Diag>();
+        for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
+            res.add(Diag.getDiagnosis(col));
+        }
+        TreeSet<Diag> dxPlus0;
+        logger.info(res.toString());
+        dxPlus0 = new TreeSet<Diag>();
+        dxPlus0.addAll(Query.X4.getDx());
+        dxPlus0.addAll(Query.X4.getD_0());
+        assertTrue(dxPlus0.equals(res));
+
+    }
+
+    @Test
     public void testQuery5NotEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
@@ -362,7 +393,7 @@ public class Example2Test extends AbstractExample {
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
         search.setSearchable(theory);
-        search.setMaxDiagnosesNumber(0);
+        search.setMaxDiagnosesNumber(-1);
 
 
         theory.getKnowledgeBase().addNonEntailedTest(Query.X5.getAxioms());
