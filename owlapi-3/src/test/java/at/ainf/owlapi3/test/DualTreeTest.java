@@ -232,6 +232,47 @@ public class DualTreeTest {//extends BasePerformanceTests {
         return theory;
     }
 
+    @Test
+    public void testKoalaQuerySession() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
+        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+        OWLTheory th = createTheory(OWLManager.createOWLOntologyManager(), "ontologies/koala.owl", false);
+        search.setSearchable(th);
+        search.setAxiomRenderer(new MyOWLRendererParser(null));
+
+        MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
+        th.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("Marsupials DisjointWith Person")));
+        th.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("Koala SubClassOf Marsupials")));
+        th.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("hasDegree Domain Person")));
+
+        search.setMaxDiagnosesNumber(9);
+        search.start();
+
+
+
+
+        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+        searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
+        OWLTheory thDual = createTheory(OWLManager.createOWLOntologyManager(), "ontologies/koala.owl", true);
+        searchDual.setSearchable(thDual);
+        searchDual.setAxiomRenderer(new MyOWLRendererParser(null));
+
+        thDual.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("Marsupials DisjointWith Person")));
+        thDual.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("Koala SubClassOf Marsupials")));
+        thDual.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("hasDegree Domain Person")));
+
+        searchDual.setMaxDiagnosesNumber(9);
+        searchDual.start();
+
+        assertTrue(search.getDiagnoses().size()==searchDual.getDiagnoses().size());
+        assertTrue(search.getDiagnoses().containsAll(searchDual.getDiagnoses()));
+
+    }
+
     @Ignore
     @Test
     public void computeAllDiagnoses()
