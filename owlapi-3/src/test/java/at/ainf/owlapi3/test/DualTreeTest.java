@@ -232,7 +232,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         return theory;
     }
 
-
+    @Ignore
     @Test
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {

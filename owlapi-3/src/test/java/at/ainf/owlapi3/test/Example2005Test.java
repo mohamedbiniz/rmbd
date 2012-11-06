@@ -61,7 +61,7 @@ public class Example2005Test {
 
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
         SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
-        debugger.updateMaxHittingSets(0);
+        debugger.updateMaxHittingSets(-1);
 
         debugger.debug();
 

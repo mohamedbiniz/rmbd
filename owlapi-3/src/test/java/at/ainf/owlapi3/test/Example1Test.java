@@ -234,7 +234,7 @@ public class Example1Test extends AbstractExample {
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setSearchable(theory);
-            search.setMaxDiagnosesNumber(0);
+            search.setMaxDiagnosesNumber(-1);
 
             search.start();
 
@@ -271,7 +271,7 @@ public class Example1Test extends AbstractExample {
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setSearchable(theory);
-            search.setMaxDiagnosesNumber(0);
+            search.setMaxDiagnosesNumber(-1);
 
             theory.getKnowledgeBase().addNonEntailedTest(query.getAxioms());
             search.start();
