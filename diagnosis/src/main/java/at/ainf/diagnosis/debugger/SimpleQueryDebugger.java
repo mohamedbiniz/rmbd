@@ -51,8 +51,8 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         search.setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
         search.setSearcher(new QuickXplain<Id>());
         search.setSearchable(getTheory());
-        //search.setSearcher(new QuickXplain<Id>());
-        //search.setSearchable(getSearchable());
+        //start.setSearcher(new QuickXplain<Id>());
+        //start.setSearchable(getSearchable());
 
     }
 
@@ -141,13 +141,13 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     public void updateMaxHittingSets(int number) {
         maxDiags = number;
-        search.setMaxHittingSets(maxDiags);
+        search.setMaxDiagnosesNumber(maxDiags);
 
     }
 
     public boolean debug() {
         try {
-            search.run();
+            search.start();
         } catch (SolverException e) {
             return false;
         } catch (NoConflictException e) {
@@ -159,13 +159,10 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     }
 
-
-
-
-
     public boolean resume() {
         try {
-            search.run(maxDiags);
+            search.setMaxDiagnosesNumber(maxDiags);
+            search.resume();
         } catch (SolverException e) {
             return false;
         } catch (NoConflictException e) {

@@ -60,8 +60,8 @@ public class UniformCostSearchTest {
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         search.setSearchable(theory);
 
-
-        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
+        search.setMaxDiagnosesNumber(9);
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.start();
 
     }
 
@@ -86,8 +86,8 @@ public class UniformCostSearchTest {
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setSearchable(theory);
 
-
-        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.run(9);
+        search.setMaxDiagnosesNumber(9);
+        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.start();
 
     }
 
@@ -103,26 +103,26 @@ public class UniformCostSearchTest {
         createTh();
 
         search.setSearchable(theory);
-        search.setMaxHittingSets(0);
+        search.setMaxDiagnosesNumber(0);
 
-        search.run();
+        search.start();
         printDiagnoses(search.getDiagnoses() );
 
     }
 
     /*public void testEcai2010UniformCost() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        TreeSearch<OWLLogicalAxiom> search = new UniformCostSearch<OWLLogicalAxiom>(storage);
+        TreeSearch<OWLLogicalAxiom> start = new UniformCostSearch<OWLLogicalAxiom>(storage);
 
-        search.setConflictSearcher(new QuickXplain<OWLLogicalAxiom>());
+        start.setConflictSearcher(new QuickXplain<OWLLogicalAxiom>());
 
         createTh();
 
-        search.setSearchable(theory);
-        search.setMaxHittingSets(0);
+        start.setSearchable(theory);
+        start.setMaxDiagnosesNumber(0);
 
-        search.runPostprocessor();
-        printDiagnoses(search.getStorage().getHittingSets());
+        start.runPostprocessor();
+        printDiagnoses(start.getStorage().getHittingSets());
     }
 
     public String getFullDiagString(Collection<OWLLogicalAxiom> axioms, int num) {

@@ -2,11 +2,9 @@ package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
-import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
@@ -76,14 +74,16 @@ public class UpdateTreeTest {
         th.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("hasDegree Domain Person")));
         th.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("isHardWorking Domain Person")));
 
-        search.run(9);
+        search.setMaxDiagnosesNumber(9);
+        search.start();
 
         th.getKnowledgeBase().removeEntailedTest(Collections.singleton(parser.parse("Marsupials DisjointWith Person")));
         th.getKnowledgeBase().removeEntailedTest(Collections.singleton(parser.parse("Koala SubClassOf Marsupials")));
         th.getKnowledgeBase().removeEntailedTest(Collections.singleton(parser.parse("hasDegree Domain Person")));
         th.getKnowledgeBase().removeNonEntailedTest(Collections.singleton(parser.parse("isHardWorking Domain Person")));
 
-        search.run(9);
+        search.setMaxDiagnosesNumber(9);
+        search.start();
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
             logger.info(new CalculateDiagnoses().renderAxioms(hs));

@@ -53,11 +53,11 @@ public class TreeEvaluation {
             logger.info("Starting the tree creation test.");
         //SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
         List<TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable>> search = new ArrayList<TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable>>();
-        //search.add(new BreadthFirstSearch<IVecIntComparable>(storage));
-        //search.add(new DepthFirstSearch<IVecIntComparable>(storage));
-        //search.add(new DepthLimitedSearch<IVecIntComparable>(storage));
-        //search.add(new IterativeDeepening<IVecIntComparable>(storage));
-        //search.add(new MixedTreeSearch<IVecIntComparable>(storage));
+        //start.add(new BreadthFirstSearch<IVecIntComparable>(storage));
+        //start.add(new DepthFirstSearch<IVecIntComparable>(storage));
+        //start.add(new DepthLimitedSearch<IVecIntComparable>(storage));
+        //start.add(new IterativeDeepening<IVecIntComparable>(storage));
+        //start.add(new MixedTreeSearch<IVecIntComparable>(storage));
 
         for (TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable> sr : search)
             run(sr);
@@ -92,7 +92,7 @@ public class TreeEvaluation {
 
         //Storage.getStorage().setSearchable(th);
         // fails to create a root since th is sat
-        //search.runPostprocessor();
+        //start.runPostprocessor();
 
         //Storage.getStorage().resetStorage();
 
@@ -109,9 +109,9 @@ public class TreeEvaluation {
         diagnosis3.add(var);
 
         search.setSearchable(th);
-        //search.setMaxHittingSets(2);
+        //start.setMaxDiagnosesNumber(2);
         // succeeds to create a root since th is unsat
-        search.run();
+        search.start();
 
         Collection<AxiomSet<IVecIntComparable>> diagnoses = search.getDiagnoses();
         logger.debug("Diagnoses: " + diagnoses.toString());
@@ -178,10 +178,10 @@ public class TreeEvaluation {
         th.addClause(new int[]{1});
 
         search.setSearchable(th);
-        search.run();
+        search.start();
 
         assertEquals(6, search.getDiagnoses().size());
-        // search.getStorage().resetStorage();
+        // start.getStorage().resetStorage();
 
 
         th.getKnowledgeBase().addPositiveTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{2})));
@@ -215,7 +215,7 @@ public class TreeEvaluation {
         th.getKnowledgeBase().addNonEntailedTest(Collections.<IVecIntComparable>singleton(new VecIntComparable(new int[]{5})));
 
         search.setSearchable(th);
-        search.run();
+        search.start();
 
         assertEquals(search.getDiagnoses().size(), 1);
 
@@ -248,21 +248,21 @@ public class TreeEvaluation {
 
         // find 2 first diagnoses
         search.setSearchable(th);
-        search.setMaxHittingSets(2);
-        search.run();
+        search.setMaxDiagnosesNumber(2);
+        search.start();
         assertEquals(2, search.getDiagnoses().size());
 
         // find next 3 diagnoses
-        search.setMaxHittingSets(5);
-        search.run();
+        search.setMaxDiagnosesNumber(5);
+        search.start();
         assertEquals(5, search.getDiagnoses().size());
         // find next one diagnosis
-        search.setMaxHittingSets(0);
-        search.run();
+        search.setMaxDiagnosesNumber(0);
+        search.start();
         assertEquals(6, search.getDiagnoses().size());
 
         // reset strategies and find all 6 at once
-        search.run();
+        search.start();
         assertEquals(6, search.getDiagnoses().size());
     }
 

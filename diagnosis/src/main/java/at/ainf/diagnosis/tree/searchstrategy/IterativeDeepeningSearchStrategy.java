@@ -23,11 +23,11 @@ public class IterativeDeepeningSearchStrategy<Id> extends DepthLimitedSearchStra
         this.step = step;
     }
 
-    /*public Set<AxiomSet<Id>> run() throws SolverException, NoConflictException, InconsistentTheoryException {
+    /*public Set<AxiomSet<Id>> start() throws SolverException, NoConflictException, InconsistentTheoryException {
         int iterationDepth = this.startDepth;
         do {
             setLimit(iterationDepth);
-            super.run();
+            super.start();
             // resets List of openNodes
             clearOpenNodes();
             pushOpenNode(getRoot());

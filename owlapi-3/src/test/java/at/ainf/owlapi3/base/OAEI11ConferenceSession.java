@@ -141,7 +141,8 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         search30.setCostsEstimator(es30);
 
         try {
-            search30.run(30);
+            search30.setMaxDiagnosesNumber(30);
+            search30.start();
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

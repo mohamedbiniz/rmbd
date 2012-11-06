@@ -190,7 +190,7 @@ public class StatisticsDiagnosis {
         assertTrue(th.verifyRequirements());
         stop("Classified in ");
 
-        //debugger.setMaxHittingSets(number);
+        //debugger.setMaxDiagnosesNumber(number);
         debugger.updateMaxHittingSets(number);
         boolean ret = false;
         start();

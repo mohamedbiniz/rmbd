@@ -242,10 +242,10 @@ public class Example2Test extends AbstractExample {
         search.setCostsEstimator(es);
 
         search.setSearchable(theory);
-        search.setMaxHittingSets(0);
+        search.setMaxDiagnosesNumber(2);
 
         TreeSet<Diag> set = new TreeSet<Diag>();
-        for (AxiomSet<OWLLogicalAxiom> col : search.run(2)) {
+        for (AxiomSet<OWLLogicalAxiom> col : search.start()) {
             set.add(Diag.getDiagnosis(col));
         }
         TreeSet<Diag> expectedRes = new TreeSet<Diag>();
@@ -253,12 +253,14 @@ public class Example2Test extends AbstractExample {
         expectedRes.add(Diag.D4);
         assertTrue(set.equals(expectedRes));
         set = new TreeSet<Diag>();
-        for (AxiomSet<OWLLogicalAxiom> col : search.run(3)) {
+        search.setMaxDiagnosesNumber(3);
+        for (AxiomSet<OWLLogicalAxiom> col : search.start()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D1);
         assertTrue(set.equals(expectedRes));
-        for (AxiomSet<OWLLogicalAxiom> col : search.run(4)) {
+        search.setMaxDiagnosesNumber(4);
+        for (AxiomSet<OWLLogicalAxiom> col : search.start()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D3);
@@ -281,13 +283,14 @@ public class Example2Test extends AbstractExample {
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setSearchable(theory);
-            search.setMaxHittingSets(0);
+            search.setMaxDiagnosesNumber(0);
 
-            search.run();
+            search.start();
 
+            search.setMaxDiagnosesNumber(-1);
             theory.getKnowledgeBase().addEntailedTest(query.getAxioms());
             try {
-                search.run(-1);
+                search.start();
             }
             catch(NoConflictException e) {
             }
@@ -326,10 +329,10 @@ public class Example2Test extends AbstractExample {
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
             search.setSearchable(theory);
-            search.setMaxHittingSets(0);
+            search.setMaxDiagnosesNumber(0);
 
             theory.getKnowledgeBase().addNonEntailedTest(query.getAxioms());
-            search.run();
+            search.start();
             Collection<Diag> res = new TreeSet<Diag>();
             for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
                 res.add(Diag.getDiagnosis(col));
@@ -359,11 +362,11 @@ public class Example2Test extends AbstractExample {
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
         search.setSearchable(theory);
-        search.setMaxHittingSets(0);
+        search.setMaxDiagnosesNumber(0);
 
 
         theory.getKnowledgeBase().addNonEntailedTest(Query.X5.getAxioms());
-        search.run();
+        search.start();
         Collection<Diag> res = new TreeSet<Diag>();
         for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
             res.add(Diag.getDiagnosis(col));

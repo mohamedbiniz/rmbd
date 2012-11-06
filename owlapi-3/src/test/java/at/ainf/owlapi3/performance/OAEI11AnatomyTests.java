@@ -113,7 +113,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
-                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(start, theory, diags, e, type, message, allD, search2, t3);
 
                             session.setEntry(e);
                             session.setMessage(message);
@@ -205,7 +205,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             TableList e = new TableList();
                             out += "," + type + ",";
                             String message = "act," + file + "," + targetSource + "," + type + "," + dual + "," + background + "," + preprocessModulExtract;
-                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(start, theory, diags, e, type, message, allD, search2, t3);
 
                             session.setEntry(e);
                             session.setMessage(message);

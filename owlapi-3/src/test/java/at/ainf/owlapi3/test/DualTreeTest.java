@@ -1,22 +1,25 @@
 package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.tree.*;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.InvHsTreeSearch;
+import at.ainf.diagnosis.tree.SimpleCostsEstimator;
+import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.base.tools.TableList;
+import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
 import junit.framework.Assert;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Ignore;
@@ -33,8 +36,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType;
-import static org.junit.Assert.assertTrue;
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType.MINSCORE;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -141,7 +144,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         OWLTheory theoryNormal = createTheory(manager, ont, dual);
         searchNormal.setSearchable(theoryNormal);
         /*
-        searchNormal.run(runs);
+        searchNormal.start(runs);
 
         logger.info("First " + runs + " Diagnoses and corresponding conflicts before test case");
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getStorage().getDiagnoses())
@@ -164,7 +167,8 @@ public class DualTreeTest {//extends BasePerformanceTests {
         logger.info("All diagnoses and conflicts with test cases");
         theoryNormal.getKnowledgeBase().addEntailedTest(positiveTestcase);
         theoryNormal.getKnowledgeBase().addNonEntailedTest(negativeTestcase);
-        searchNormal.run(runs);
+        searchNormal.setMaxDiagnosesNumber(runs);
+        searchNormal.start();
         for (AxiomSet<OWLLogicalAxiom> hs : searchNormal.getDiagnoses())
             logger.info("HS " + new CalculateDiagnoses().renderAxioms(hs));
         for (AxiomSet<OWLLogicalAxiom> confl : searchNormal.getConflicts())
@@ -185,7 +189,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
         searchNormal.setSearchable(theoryNormal);
-        searchNormal.run();
+        searchNormal.start();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
         normal = System.currentTimeMillis() - normal;
 
@@ -197,7 +201,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, true);
         searchDual.setSearchable(theoryDual);
-        searchDual.run();
+        searchDual.start();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
         dual = System.currentTimeMillis() - dual;
 
@@ -269,12 +273,14 @@ public class DualTreeTest {//extends BasePerformanceTests {
         int conflictsCalc = 0;
         //QSS<OWLLogicalAxiom> qss = null;
         //if (type != null) qss = createQSSWithDefaultParam(type);
+
         session.setEntry(entry2);
         session.setMessage("");
         session.setScoringFunct(type);
         session.setTargetD(diagnosis);
         session.setTheory(theoryDual);
         session.setSearch(searchDual);
+
         session.simulateQuerySession();
         timeDual = System.currentTimeMillis() - timeDual;
         AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
@@ -352,7 +358,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
-        searchNormal.run();
+        searchNormal.start();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();

@@ -90,7 +90,7 @@ public class DiagnosisValidationTest {
         OWLTheory theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         search.setSearchable(theory);
-        search.setMaxHittingSets(0);
+        search.setMaxDiagnosesNumber(0);
 
         HashSet<OWLLogicalAxiom> tc = new HashSet<OWLLogicalAxiom>();
         tc.add(parser.parse("KoalaWithPhD SubClassOf Koala"));

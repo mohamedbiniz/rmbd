@@ -30,8 +30,8 @@ public class ChooseSearchType extends AbstractPanel implements ActionListener {
     protected void createUI(JComponent parent) {
 
         setBackgroundImage();
-        setInstructions("Now you have to specify which type of search do you want to use. " +
-                        "You can use breath first search or uniform cost search. If you use uniform cost search " +
+        setInstructions("Now you have to specify which type of start do you want to use. " +
+                        "You can use breath first start or uniform cost start. If you use uniform cost start " +
                         "the specified error probabilities for keywords are used to calculate " +
                         "the probability of each diagnosis to be the target diagnosis and the " +
                           "most probable target diagnosis is given first.");

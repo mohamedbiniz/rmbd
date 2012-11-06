@@ -8,7 +8,7 @@
 
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.DiagSearch;
+import at.ainf.diagnosis.Debugger;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
@@ -24,8 +24,7 @@ import javax.swing.event.ChangeListener;
  * Time: 14:15:23
  * To change this template use File | Settings | File Templates.
  */
-public interface TreeSearch<T extends AxiomSet<Id>, Id> extends DiagSearch<T,Id> {
-
+public interface TreeSearch<T extends AxiomSet<Id>, Id> extends Debugger<T,Id> {
 
     public Searcher<Id> getSearcher();
 
@@ -34,10 +33,6 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> extends DiagSearch<T,Id>
     public Searchable<Id> getSearchable();
 
     public void setSearchable(Searchable<Id> theory);
-
-    public int getMaxHittingSets();
-
-    public void setMaxHittingSets(int maxHittingSets);
 
     public CostsEstimator<Id> getCostsEstimator();
 

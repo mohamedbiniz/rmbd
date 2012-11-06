@@ -78,15 +78,15 @@ public class OntologyTests extends OntologySession {
            storage = new DualStorage<OWLLogicalAxiom>();
        else
            storage = new SimpleStorage<OWLLogicalAxiom>();
-       BreadthFirstSearch<OWLLogicalAxiom> search = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
+       BreadthFirstSearch<OWLLogicalAxiom> start = new BreadthFirstSearch<OWLLogicalAxiom>(storage);
        if (dual) {
-           search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
-           search.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
+           start.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
+           start.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
        } else
-           search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-       search.setSearchable(th);
+           start.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+       start.setSearchable(th);
 
-       return search;
+       return start;
    } */
 
 
@@ -139,7 +139,7 @@ public class OntologyTests extends OntologySession {
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
         TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
-        //((QuickXplain<OWLLogicalAxiom>)search.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
+        //((QuickXplain<OWLLogicalAxiom>)start.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
         CostsEstimator es = new SimpleCostsEstimator();
         search.setCostsEstimator(es);
@@ -220,7 +220,7 @@ public class OntologyTests extends OntologySession {
                             out += "," + type + ",";
                             String message = "act," + "," + o.trim() + "," + targetSource + "," + dual
                                     + "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
-                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(start, theory, diags, e, type, message, allD, search2, t3);
 
                             session.setEntry(e);
                             session.setMessage(message);
@@ -266,7 +266,7 @@ public class OntologyTests extends OntologySession {
 
 
                 try {
-                    search.run();
+                    search.start();
                 } catch (NoConflictException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
@@ -410,7 +410,7 @@ public class OntologyTests extends OntologySession {
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
-        searchNormal.run();
+        searchNormal.start();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
@@ -545,7 +545,7 @@ public class OntologyTests extends OntologySession {
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
-        searchNormal.run();
+        searchNormal.start();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
@@ -673,7 +673,7 @@ public class OntologyTests extends OntologySession {
                             String message = "act," + "," + o.trim() + "," + targetSource + "," +
                                     "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
                             logger.info("target diagnosis:" + targetDg.size() + " " + renderAxioms(targetDg));
-                            //out += simulateQuerySession(search, theory, diags, e, type, message, allD, search2, t3);
+                            //out += simulateQuerySession(start, theory, diags, e, type, message, allD, search2, t3);
 
                             session.setEntry(e);
                             session.setMessage(message);

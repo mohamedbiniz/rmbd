@@ -137,7 +137,8 @@ public class OntologyDiagnosisSearcher {
             publish(new Object());
             //notifyListeners();
             try {
-                search.run(number);
+                search.setMaxDiagnosesNumber(number);
+                search.start();
                 errorStatus = NO_ERROR;
             } catch (SolverException e) {
                 errorStatus = SOLVER_EXCEPTION;

@@ -85,9 +85,9 @@ public class
         //try {
 
         if (!QueryDebuggerPreference.getInstance().isCalcAllDiags()) {
-            getSearch().setMaxHittingSets(QueryDebuggerPreference.getInstance().getNumOfLeadingDiags());
+            getSearch().setMaxDiagnosesNumber(QueryDebuggerPreference.getInstance().getNumOfLeadingDiags());
         } else {
-            getSearch().setMaxHittingSets(-1);
+            getSearch().setMaxDiagnosesNumber(-1);
         }
         //getWS().getUniformCostSearch().setSearchable(getWS().getOwlTheory());
 

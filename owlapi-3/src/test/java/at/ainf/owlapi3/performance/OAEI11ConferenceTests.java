@@ -292,7 +292,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
             long start = System.currentTimeMillis();
             try {
-                searchDual.run(1);
+                searchDual.setMaxDiagnosesNumber(1);
+                searchDual.start();
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
@@ -306,7 +307,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             logger.info(",dual: " + dual + "," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 1 found " + time1+ ","
                     + conflicts1 + "," + extractionTime);
             try {
-                searchDual.run(9);
+                searchDual.setMaxDiagnosesNumber(9);
+                searchDual.start();
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
@@ -320,7 +322,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             logger.info(",dual: " + dual + "," + matcher + o1 + o2 + ","+matcher + "," + o1 + "," + o2 + ",diagnosis 9 found " + time9+ ","
                     + conflicts9 + "," + extractionTime);
             try {
-                searchDual.run(30);
+                searchDual.setMaxDiagnosesNumber(30);
+                searchDual.start();
             } catch (SolverException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (NoConflictException e) {
@@ -568,7 +571,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             search.setSearchable(theory);
 
             try {
-                search.run(9);
+                search.setMaxDiagnosesNumber(9);
+                search.start();
                 logger.info(file.getName() + " " + search.getDiagnoses().size());
             } catch (NoConflictException e) {
                 logger.info(file.getName() + " cons");

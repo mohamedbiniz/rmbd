@@ -329,7 +329,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         while (!querySessionEnd) {
             try {
                 Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
-                logger.trace("numOfQueries: " + num_of_queries + " search for diagnoses");
+                logger.trace("numOfQueries: " + num_of_queries + " start for diagnoses");
 
                 userBreak = false;
                 systemBreak = false;
@@ -391,10 +391,10 @@ public class SimulatedSession extends CalculateDiagnoses {
                 }
                 Partition<OWLLogicalAxiom> last = actPa;
 
-                logger.trace("numOfQueries: " + num_of_queries + " search for  query");
+                logger.trace("numOfQueries: " + num_of_queries + " start for  query");
 
                 long query = System.currentTimeMillis();
-                //actPa = getBestQuery(search, diagnoses);
+                //actPa = getBestQuery(start, diagnoses);
 
                 actPa = queryGenerator.generatePartition(diagnoses);
 
@@ -444,7 +444,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 if (isLogElRate()) {
 
                     try {
-                        search2.run();
+                        search2.start();
                     } catch (NoConflictException e) {
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
@@ -582,15 +582,17 @@ public class SimulatedSession extends CalculateDiagnoses {
         }
     }
 
-    protected Set<AxiomSet<OWLLogicalAxiom>> calcDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, Time diagTime) throws InconsistentTheoryException {
+    protected Set<AxiomSet<OWLLogicalAxiom>> calcDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>,
+            OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, Time diagTime) throws InconsistentTheoryException {
         try {
             long diag = System.currentTimeMillis();
-            //search.reset();
-            search.run(numberOfHittingSets);
+            //start.reset();
+            search.setMaxDiagnosesNumber(numberOfHittingSets);
+            search.start();
 
-            //daStr += search.getDiagnoses().size() + "/";
-            //diagnosesCalc += search.getDiagnoses().size();
-            //conflictsCalc += search.getConflicts().size();
+            //daStr += start.getDiagnoses().size() + "/";
+            //diagnosesCalc += start.getDiagnoses().size();
+            //conflictsCalc += start.getConflicts().size();
 
             diagnoses = search.getDiagnoses();
             diagTime.setTime(System.currentTimeMillis() - diag);
@@ -611,7 +613,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         int eliminatedInRemaining = getEliminationRate(secondsearch.getSearchable(), remainingAllDiags, answer, actPa);
         int eliminatedInRemainingSize = remainingAllDiags.size();
         int eliminatedInfull = getEliminationRate(t3, allDiagnoses, answer, actPa);
-        // deleteDiag(search.getSearchable(),remainingAllDiags,answer,actPa.partition);
+        // deleteDiag(start.getSearchable(),remainingAllDiags,answer,actPa.partition);
 
         AxiomSet<OWLLogicalAxiom> foundTarget;
         foundTarget = null;

@@ -35,11 +35,11 @@ public class WikiExamplesTest {
 
     @Test
     /**
-     * This testcase is a simple example how to search diagnoses
+     * This testcase is a simple example how to start diagnoses
      */
     public void searchKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        // We have to create a search object using Reiter's Treee
+        // We have to create a start object using Reiter's Treee
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
 
         // We also need to load the ontology / knowledge base to debug
@@ -58,21 +58,22 @@ public class WikiExamplesTest {
         // here we need to have a reasoner factory, our ontology, and the background theory (can be emtpy)
         OWLTheory theory = new OWLTheory(new Reasoner.ReasonerFactory(), ontology, bax);
 
-        // we want to use UniformCostSearch as our search strategy
+        // we want to use UniformCostSearch as our start strategy
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
-        // because we use Reiter's Tree nodes are conflicts which we search using QuickXplain
+        // because we use Reiter's Tree nodes are conflicts which we start using QuickXplain
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
-        // because we use UniformCostSearch we have to give a cost estimator to the search
+        // because we use UniformCostSearch we have to give a cost estimator to the start
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
-        // at last we combine theory with search and get our ready to use object
+        // at last we combine theory with start and get our ready to use object
         search.setSearchable(theory);
 
-        // here we run our search and want to get 9 diagnoses
+        // here we start our start and want to get 9 diagnoses
         try {
-            search.run(9);
+            search.setMaxDiagnosesNumber(9);
+            search.start();
         } catch (NoConflictException e) {
             // if the ontology would have no conflicts this exception would be thrown.
         }

@@ -119,7 +119,7 @@ public class TreeEvaluation {
         strategy.setSearchable(cth);
 
         try {
-            strategy.run();
+            strategy.start();
         } catch (NoConflictException e) {
             logger.error("There is no conflict!", e);
             fail();
@@ -167,7 +167,7 @@ public class TreeEvaluation {
         strategy.setSearchable(cth);
 
         try {
-            strategy.run();
+            strategy.start();
         } catch (NoConflictException e) {
             logger.error("There is no conflict!", e);
             fail();
@@ -252,12 +252,12 @@ public class TreeEvaluation {
         strategy.setSearcher(new QuickXplain<Constraint>());
 
         strategy.setSearchable(cth);
-        //strategy.setMaxHittingSets(1);
+        //strategy.setMaxDiagnosesNumber(1);
 
         long startTime = System.currentTimeMillis();
 
         try {
-            strategy.run();
+            strategy.start();
         } catch (NoConflictException e) {
             logger.error("There is no conflict!", e);
             fail();

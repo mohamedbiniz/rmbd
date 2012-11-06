@@ -56,7 +56,7 @@ public class QXDiagTest {
         search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
 
-        search.run();
+        search.start();
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
             logger.info(new CalculateDiagnoses().renderAxioms(hs));
@@ -73,7 +73,7 @@ public class QXDiagTest {
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
         searchNormal.setSearchable(theoryNormal);
-        searchNormal.run();
+        searchNormal.start();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
@@ -83,7 +83,7 @@ public class QXDiagTest {
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, true);
         searchDual.setSearchable(theoryDual);
-        searchDual.run();
+        searchDual.start();
         Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
 
       ////
@@ -146,7 +146,7 @@ public class QXDiagTest {
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
-        search.run();
+        search.start();
 
         boolean targetIsThere = false;
         for (AxiomSet<OWLLogicalAxiom> d : search.getDiagnoses()) {
@@ -181,7 +181,7 @@ public class QXDiagTest {
         search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
-        search.run();
+        search.start();
 
         boolean targetIsThere = false;
         for (AxiomSet<OWLLogicalAxiom> d : search.getDiagnoses()) {
@@ -221,7 +221,7 @@ public class QXDiagTest {
         OWLTheory th = createTheory(manager, "ontologies/koala.owl", false);
         search.setSearchable(th);
         search.setAxiomRenderer(new MyOWLRendererParser(null));
-        search.run();
+        search.start();
 
         OWLLogicalAxiom axiom = search.getDiagnoses().iterator().next().iterator().next();
         logger.info(axiom.toString());
@@ -231,7 +231,7 @@ public class QXDiagTest {
             logger.info(new CalculateDiagnoses().renderAxioms(hs));
 
         /*Searcher<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
-        Set<OWLLogicalAxiom> diagnosis = searcher.search(new OWLDiagnosisSearchableObject(th), th.getFaultyFormulas(), null);
+        Set<OWLLogicalAxiom> diagnosis = searcher.start(new OWLDiagnosisSearchableObject(th), th.getFaultyFormulas(), null);
 
         String logd = "Hitting set: {" + LogUtil.logCollection(diagnosis);
         logger.info(logd);*/

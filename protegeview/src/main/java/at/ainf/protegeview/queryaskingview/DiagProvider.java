@@ -34,14 +34,14 @@ public class DiagProvider {
         this.search = s;
         this.isQueryMinimizerActive = isQueryMinimizerActive;
         this.diagnos = number;
-        this.search.setMaxHittingSets(0);
+        this.search.setMaxDiagnosesNumber(0);
         calculateLead();
 
     }
     public void calculateLead() {
 
         diagList = new LinkedList<AxiomSet<OWLLogicalAxiom>>();
-        search.setMaxHittingSets(diagnos);
+        search.setMaxDiagnosesNumber(diagnos);
         BackgroundSearcher s = new BackgroundSearcher(search, null);
         s.doBackgroundSearch();
         Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getDiagnoses();
@@ -51,7 +51,7 @@ public class DiagProvider {
     }
 
     public Partition<OWLLogicalAxiom> getQuery() {
-        //  if (search.getStorage().getValidHittingSets().size() == 1)
+        //  if (start.getStorage().getValidHittingSets().size() == 1)
         //      throw new SingleDiagnosisLeftException("");
         if (diagList.size() == 0)
             return null;
