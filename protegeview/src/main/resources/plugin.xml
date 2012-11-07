@@ -293,7 +293,13 @@
         <category value="Debugger"/>
     </extension>
 
-
+    <!--<extension id="at.ainf.protegeview.gui.treegraphicview.GraphicTreeView"
+               point="org.protege.editor.core.application.ViewComponent" >
+        <label value="Graphic Tree View"/>
+        <class value="at.ainf.protegeview.gui.treegraphicview.GraphicTreeView"/>
+        <headerColor value="810000"/>
+        <category value="Debugger"/>
+    </extension>-->
 
 
 
