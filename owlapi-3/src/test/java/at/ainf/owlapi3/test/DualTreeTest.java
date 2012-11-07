@@ -232,7 +232,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         return theory;
     }
 
-    @Test
+    @Ignore @Test
     public void testKoalaQuerySession() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
         HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
