@@ -114,7 +114,7 @@ public class QuickXplainTest {
         boolean res = false;
         Collection<IVecIntComparable> fl = null;
         try {
-            fl = quick.search(theory, list, null);
+            fl = quick.search(theory, list, null).iterator().next();
         } catch (NoConflictException e) {
             res = true;
         }

@@ -108,7 +108,8 @@ public class TreeTest {
     public void testDiagnosisSearcher() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         OWLTheory th = new CalculateDiagnoses().getSimpleTheory(new CalculateDiagnoses().getOntologySimple("ontologies/ecai.simple.owl"), true);
         Searcher<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
-        Set<OWLLogicalAxiom> diagnosis = searcher.search(th, th.getKnowledgeBase().getFaultyFormulas(), null);
+        Set<OWLLogicalAxiom> diagnosis = searcher
+                .search(th, th.getKnowledgeBase().getFaultyFormulas(), null).iterator().next();
 
         String logd = "Hitting set: {" + logCollection(diagnosis);
         logger.info(logd);

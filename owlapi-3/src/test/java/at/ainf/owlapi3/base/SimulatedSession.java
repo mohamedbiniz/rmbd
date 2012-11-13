@@ -572,7 +572,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(actPa, theory);
         QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
         try {
-            actPa.partition = q.search(mnz, actPa.partition, null);
+            actPa.partition = q.search(mnz, actPa.partition, null).iterator().next();
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {

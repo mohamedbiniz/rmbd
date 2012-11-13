@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import static _dev.TimeLog.start;
@@ -72,7 +73,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     protected abstract void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException;
 
-    public Set<Id> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
+    public Set<Set<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException {
         Set<Id> conflictFormulas = null;
 
@@ -107,7 +108,9 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             }
             rollbackChanges(searchable, formulas, changes);
         }
-        return conflictFormulas;
+
+        return Collections.singleton(conflictFormulas);
+
     }
 
     public boolean isDual() {

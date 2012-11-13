@@ -411,7 +411,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             pathLabels = node.getPathLabels();
         }
 
-        quickConflict = getSearcher().search(getSearchable(), list, pathLabels);
+        quickConflict = getSearcher().search(getSearchable(), list, pathLabels).iterator().next();
 
         //if(!searcher.isDual()) {
         if (logger.isInfoEnabled())

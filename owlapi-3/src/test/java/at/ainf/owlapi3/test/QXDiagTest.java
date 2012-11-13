@@ -102,7 +102,7 @@ public class QXDiagTest {
         set.add(parser.parse("Quokka SubClassOf Marsupials"));
         ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getKnowledgeBase().getFaultyFormulas());
         Collections.sort(l);
-        Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th, l, set);
+        Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th, l, set).iterator().next();
 
         logger.info(new CalculateDiagnoses().renderAxioms(res));
 
@@ -116,7 +116,7 @@ public class QXDiagTest {
         set.add(parser.parse("Marsupials DisjointWith Person"));
         ArrayList<OWLLogicalAxiom> l = new ArrayList<OWLLogicalAxiom>(th.getKnowledgeBase().getFaultyFormulas());
         Collections.sort(l);
-        Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th,l,set);
+        Set<OWLLogicalAxiom> res = new DirectDiagnosis<OWLLogicalAxiom>().search(th,l,set).iterator().next();
 
         logger.info(new CalculateDiagnoses().renderAxioms(l) + "\n\n"+ new CalculateDiagnoses().renderAxioms(res));
 

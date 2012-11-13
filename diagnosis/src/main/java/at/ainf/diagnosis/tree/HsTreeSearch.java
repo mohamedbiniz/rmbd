@@ -61,7 +61,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
     public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
 
         for (T ax : getConflicts()) {
-            Set<Id> axioms = getSearcher().search(getSearchable(), ax, null);
+            Set<Id> axioms = getSearcher().search(getSearchable(), ax, null).iterator().next();
             if (!axioms.equals(ax)) {
                 AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());
                 updateTree(conflict);
