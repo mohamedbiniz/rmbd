@@ -69,7 +69,7 @@ public class PostProcessorTest {
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, theory);
         QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
         try {
-            query.partition = q.search(mnz, query.partition, null);
+            query.partition = q.search(mnz, query.partition, null).iterator().next();
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {

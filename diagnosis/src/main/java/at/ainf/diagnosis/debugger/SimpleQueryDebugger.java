@@ -81,7 +81,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         QueryMinimizer<Id> mnz = new QueryMinimizer<Id>(query, getTheory());
         QuickXplain<Id> q = new QuickXplain<Id>();
         try {
-            query.partition = q.search(mnz, query.partition, null);
+            query.partition = q.search(mnz, query.partition, null).iterator().next();
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {
