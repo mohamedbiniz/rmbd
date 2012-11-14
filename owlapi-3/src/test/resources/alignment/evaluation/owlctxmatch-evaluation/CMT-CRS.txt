@@ -1,0 +1,19 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CRS.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://CRS.owl
+
++ Review > review | 1.0
++ Review < review | 1.0
++ Document > document | 1.0
++ Document < document | 1.0
++ Person > person | 1.0
++ Person < person | 1.0
++ Conference > conference | 1.0
++ Conference < conference | 1.0
++ Reviewer > reviewer | 1.0
++ Reviewer < reviewer | 1.0
+- ConferenceChair > chair | 1.0
++ ConferenceChair < chair | 1.0
++ Chairman > chair | 1.0
++ Chairman < chair | 1.0

@@ -1,0 +1,23 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/EKAW.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/SIGKDD.owl
+sourceNamespace = http://EKAW.owl
+targetNamespace = http://SIGKDD.owl
+
++ Conference > Conference | 1.0
++ Conference < Conference | 1.0
+- Contributed_Talk > Author_of_paper | 1.0
+- Contributed_Talk < Author_of_paper | 1.0
+- Contributed_Talk > Author_of_paper_student | 1.0
+- Contributed_Talk < Author_of_paper_student | 1.0
++ Person > Person | 1.0
++ Person < Person | 1.0
++ Invited_Speaker > Invited_Speaker | 1.0
++ Invited_Speaker < Invited_Speaker | 1.0
++ Paper_Author > Author_of_paper | 1.0
++ Paper_Author < Author_of_paper | 1.0
++ Document > Document | 1.0
++ Document < Document | 1.0
++ Review > Review | 1.0
++ Review < Review | 1.0
++ Abstract > Abstract | 1.0
++ Abstract < Abstract | 1.0
