@@ -14,13 +14,7 @@ import java.util.Set;
  */
 public interface IReasoner<T> {
 
-    public boolean addFormularsToCache(Collection<T> formulas);
 
-    public void removeFormularsFromCache(Collection<T> formulas);
-
-    public void clearFormularCache();
-
-    public Set<T> getFormularCache();
 
 
     public boolean isConsistent();

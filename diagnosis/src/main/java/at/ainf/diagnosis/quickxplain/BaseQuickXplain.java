@@ -15,6 +15,7 @@
 package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -103,7 +104,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
             if (isDual()) {
                 //searchable.getReasonerKB().remove();
-                searchable.getReasoner().addFormularsToCache(conflictFormulas);
+                ((AbstractReasoner<Id>)searchable.getReasoner()).addFormularsToCache(conflictFormulas);
                 searchable.verifyRequirements();
             }
             rollbackChanges(searchable, formulas, changes);

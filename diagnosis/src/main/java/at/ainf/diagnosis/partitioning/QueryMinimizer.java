@@ -1,6 +1,7 @@
 package at.ainf.diagnosis.partitioning;
 
 import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.AbstractSearchableObject;
 import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
@@ -54,7 +55,7 @@ public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        return verifyQuery(getReasoner().getFormularCache());
+        return verifyQuery(((AbstractReasoner<Id>)getReasoner()).getFormularCache());
     }
 
 

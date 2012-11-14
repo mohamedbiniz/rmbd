@@ -81,21 +81,21 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        getReasoner().clearFormularCache();
+        ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getReasoner().addFormularsToCache(negate(test));
+            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getPositiveTests()) {
-            getReasoner().addFormularsToCache(test);
+            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(test);
         }
         for (Set<T> test : getKnowledgeBase().getEntailedTests()) {
-            getReasoner().addFormularsToCache(negate(test));
+            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getNonentailedTests()) {
-            getReasoner().addFormularsToCache(test);
+            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(test);
         }
         boolean res = verifyConsistency();
-        getReasoner().clearFormularCache();
+        ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
         return res;
     }
 
@@ -129,20 +129,20 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         List<T> kb = new LinkedList<T>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
-        getReasoner().clearFormularCache();
+        ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
         // positive test cases are in background theory
-        getReasoner().addFormularsToCache(getKnowledgeBase().getBackgroundFormulas());
-        getReasoner().addFormularsToCache(kb);
+        ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(getKnowledgeBase().getBackgroundFormulas());
+        ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(kb);
 
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            getReasoner().addFormularsToCache(test);
+            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(test);
             if (verifyRequirements()) {
-                getReasoner().clearFormularCache();
+                ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
                 return false;
             }
-            getReasoner().removeFormularsFromCache(test);
+            ((AbstractReasoner<T>)getReasoner()).removeFormularsFromCache(test);
         }
-        getReasoner().clearFormularCache();
+        ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
         return true;
     }
 
