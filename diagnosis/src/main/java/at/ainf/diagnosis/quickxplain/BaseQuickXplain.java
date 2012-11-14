@@ -14,12 +14,12 @@
  */
 package at.ainf.diagnosis.quickxplain;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +87,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             start("QX");
             conflictFormulas = quickXplain(searchable, formulas);
             //if (logger.isDebugEnabled())
-            //logger.debug("Within " + getIterations() + " iterations.");
+            //logger.start("Within " + getIterations() + " iterations.");
         } finally {
             //if (MEASURING) {
 

@@ -1,11 +1,12 @@
 package at.ainf.owlapi3.performance;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
-import at.ainf.owlapi3.base.CalculateDiagnoses;
-import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.base.OAEI11ConferenceSession;
+import at.ainf.owlapi3.model.OWLTheory;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
@@ -156,7 +157,7 @@ public class StatisticsDiagnosis {
         }
     }
 
-    private boolean test(File file, int number) throws URISyntaxException, SolverException, OWLException, InconsistentTheoryException {
+    private boolean test(File file, int number) throws URISyntaxException, SolverException, OWLException, InconsistentTheoryException, NoConflictException {
         if (new File(file + ".checked").exists())
             return false;
 
@@ -194,10 +195,10 @@ public class StatisticsDiagnosis {
         debugger.updateMaxHittingSets(number);
         boolean ret = false;
         start();
-        if (debugger.debug()) {
-            logger.info(file.getName() + " - with " + debugger.getConflictSets().size() + " minimal conflict(s) and " + debugger.getValidHittingSets().size() + " hitting set(s)");
-            logResult(debugger.getValidHittingSets(), "Hitting set cardinalities: ");
-            logResult(debugger.getConflictSets(), "Conflict set cardinalities: ");
+        if (!debugger.start().isEmpty()) {
+            logger.info(file.getName() + " - with " + debugger.getConflicts().size() + " minimal conflict(s) and " + debugger.getDiagnoses().size() + " hitting set(s)");
+            logResult(debugger.getDiagnoses(), "Hitting set cardinalities: ");
+            logResult(debugger.getConflicts(), "Conflict set cardinalities: ");
             ret = true;
         } else {
             //boolean success = file.renameTo(new File(file + ".checked"));

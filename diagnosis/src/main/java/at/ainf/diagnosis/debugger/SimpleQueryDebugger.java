@@ -1,18 +1,20 @@
 package at.ainf.diagnosis.debugger;
 
+import at.ainf.diagnosis.Debugger;
 import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.*;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -24,12 +26,12 @@ import java.util.TreeSet;
  * Time: 08:37
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
+public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
 
 
     protected Searchable<Id> theory;
 
-    protected TreeSearch<? extends AxiomSet<Id>, Id> search;
+    protected TreeSearch<AxiomSet<Id>, Id> search;
 
     private int maxDiags = 9;
 
@@ -46,7 +48,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
     public void init() {
         //SimpleStorage<Id> storage = new SimpleStorage<Id>();
         if (theory != null) getTheory().reset();
-        search = new HsTreeSearch<AxiomSet<Id>,Id>();
+        search = new HsTreeSearch<AxiomSet<Id>, Id>();
         search.setCostsEstimator(new SimpleCostsEstimator<Id>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
         search.setSearcher(new QuickXplain<Id>());
@@ -56,15 +58,11 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     }
 
-    public Set<? extends AxiomSet<Id>> getConflictSets() {
+    public Set<AxiomSet<Id>> getConflicts() {
         return search.getConflicts();
     }
 
-    public Set<? extends AxiomSet<Id>> getHittingSets() {
-        return search.getDiagnoses();
-    }
-
-    public Set<? extends AxiomSet<Id>> getValidHittingSets() {
+    public Set<AxiomSet<Id>> getDiagnoses() {
         return search.getDiagnoses();
     }
 
@@ -72,7 +70,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         this.theory = theory;
     }
 
-    public Searchable<Id> getTheory() {
+    private Searchable<Id> getTheory() {
         return theory;
     }
 
@@ -122,7 +120,7 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
         CKK<Id> ckk = new CKK<Id>(theory, func);
         ckk.setThreshold(acceptanceThreshold);
 
-        TreeSet<AxiomSet<Id>> set = new TreeSet<AxiomSet<Id>>(getValidHittingSets());
+        TreeSet<AxiomSet<Id>> set = new TreeSet<AxiomSet<Id>>(this.getDiagnoses());
 
         Partition<Id> best = null;
         try {
@@ -145,33 +143,25 @@ public class SimpleQueryDebugger<Id> implements QueryDebugger<Id> {
 
     }
 
-    public boolean debug() {
-        try {
-            search.start();
-        } catch (SolverException e) {
-            return false;
-        } catch (NoConflictException e) {
-            return false;
-        } catch (InconsistentTheoryException e) {
-            return false;
-        }
-        return true;
-
+    @Override
+    public Set<AxiomSet<Id>> start() throws SolverException, NoConflictException, InconsistentTheoryException {
+        return search.start();
     }
 
-    public boolean resume() {
-        try {
-            search.setMaxDiagnosesNumber(maxDiags);
-            search.resume();
-        } catch (SolverException e) {
-            return false;
-        } catch (NoConflictException e) {
-            return false;
-        } catch (InconsistentTheoryException e) {
-            return false;
-        }
-        return true;
+    @Override
+    public void setMaxDiagnosesNumber(int number) {
+        search.setMaxDiagnosesNumber(number);
+    }
 
+    @Override
+    public int getMaxDiagnosesNumber() {
+        return search.getMaxDiagnosesNumber();  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Set<AxiomSet<Id>> resume() throws SolverException, NoConflictException, InconsistentTheoryException {
+        search.setMaxDiagnosesNumber(maxDiags);
+        return search.resume();
     }
 
     //

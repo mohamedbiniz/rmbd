@@ -1,9 +1,9 @@
 package at.ainf.diagnosis.partitioning;
 
 import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
 import org.slf4j.Logger;
@@ -190,7 +190,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
                 hittingSets.add(copy);
             }
             if (logger.isDebugEnabled())
-                logger.debug("Partitions: " + getPartitionsCount() + " head: " + left.size() + " hsets:" + hittingSets.size());
+                logger.start("Partitions: " + getPartitionsCount() + " head: " + left.size() + " hsets:" + hittingSets.size());
             rightPart = findPartition(hittingSets, left, right);
             if (copy != null)
                 hittingSets.remove(copy);

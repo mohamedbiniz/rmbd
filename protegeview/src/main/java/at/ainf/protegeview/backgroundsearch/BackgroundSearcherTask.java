@@ -1,11 +1,11 @@
 package at.ainf.protegeview.backgroundsearch;
 
-import at.ainf.diagnosis.tree.OpenNodesListener;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.StorageItemAddedEvent;
 import at.ainf.diagnosis.storage.StorageItemListener;
+import at.ainf.diagnosis.tree.OpenNodesListener;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -29,7 +29,7 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
 
     /* public void updateNumOpenNodes(int n) {
         int numOfHittingSets = start.getStorage().getValidHittingSets().size();
-        int numOfConflictSets = start.getStorage().getConflictSets().size();
+        int numOfConflictSets = start.getStorage().getConflicts().size();
         int maxDiags = start.getMaxDiagnosesNumber();
         int numOfonodes=start.getOpenNodes().size();
         if (numOfonodes > maxOpeNodes) maxOpeNodes = numOfonodes;

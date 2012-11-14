@@ -1,9 +1,9 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.*;
 
@@ -125,7 +125,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
                         if (cnode.isClosed())
                         {
                             Set<Id> pathLabels = cnode.getPathLabels();
-                            for (T hs : getStorage().getHittingSets())
+                            for (T hs : getStorage().getDiagnoses())
                             {
                                 if (hs.containsAll(pathLabels)){
                                     Set<Id> axioms = new LinkedHashSet<Id>(hs);

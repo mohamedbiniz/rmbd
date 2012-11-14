@@ -1,15 +1,17 @@
 package at.ainf.owlapi3.test;
 
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.tree.*;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.SimpleCostsEstimator;
+import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.owlapi3.model.OWLTheory;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -122,7 +124,7 @@ public class UniformCostSearchTest {
         start.setMaxDiagnosesNumber(0);
 
         start.runPostprocessor();
-        printDiagnoses(start.getStorage().getHittingSets());
+        printDiagnoses(start.getStorage().getDiagnoses());
     }
 
     public String getFullDiagString(Collection<OWLLogicalAxiom> axioms, int num) {

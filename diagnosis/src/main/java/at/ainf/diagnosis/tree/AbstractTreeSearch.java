@@ -340,7 +340,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
                     getStorage().addNodeLabel(conflictSet);
                     // verify if there is a conflict that is a subset of the new conflict
                     Set<E> invalidConflicts = new LinkedHashSet<E>();
-                    for (E cs : getStorage().getConflictSets()) {
+                    for (E cs : getStorage().getConflicts()) {
                         if (cs.containsAll(conflictSet) && cs.size() > conflictSet.size())
                             invalidConflicts.add(cs);
                     }
@@ -489,7 +489,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         if (!getSearcher().isDual()) {
         // DAG: verify if there is a conflict that is a subset of the new conflict
         Set<T> invalidConflicts = new LinkedHashSet<T>();
-        for (T e : getStorage().getConflictSets()) {
+        for (T e : getStorage().getConflicts()) {
             if (e.containsAll(conflictSet) && e.size() > conflictSet.size())
                 invalidConflicts.add(e);
         }

@@ -1,15 +1,13 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.diagnosis.debugger.QueryDebugger;
+import at.ainf.diagnosis.Debugger;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.base.CalculateDiagnoses;
-import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -19,7 +17,6 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.assertTrue;
@@ -63,10 +60,10 @@ public class Example2005Test {
         SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
         debugger.updateMaxHittingSets(-1);
 
-        debugger.debug();
+        debugger.start();
 
-        Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getHittingSets();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> conflictset = debugger.getConflictSets();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getDiagnoses();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> conflictset = debugger.getConflicts();
 
         assertTrue(hittingset.size() == 3);
         assertTrue(hittingset.iterator().next().size() == 1);
@@ -97,15 +94,15 @@ public class Example2005Test {
 
         //start.setSearchable(theory);
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
-        QueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
-        debugger.updateMaxHittingSets(0);
+        Debugger<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
+        debugger.setMaxDiagnosesNumber(0);
 
-        debugger.getTheory().getKnowledgeBase().addPositiveTest(Collections.singleton(parser.parse("w Type not C")));
+        t.getKnowledgeBase().addPositiveTest(Collections.singleton(parser.parse("w Type not C")));
 
-        debugger.debug();
+        debugger.start();
 
-        Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getHittingSets();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> conflictset = debugger.getConflictSets();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getDiagnoses();
+        Set<? extends AxiomSet<OWLLogicalAxiom>> conflictset = debugger.getConflicts();
 
         assertTrue(hittingset.size() == 3);
         Iterator<? extends AxiomSet<OWLLogicalAxiom>> hsItr = hittingset.iterator();

@@ -1,9 +1,7 @@
 package at.ainf.diagnosis.debugger;
 
 import at.ainf.diagnosis.Searchable;
-
 import at.ainf.diagnosis.storage.AxiomSet;
-
 
 import java.util.Set;
 
@@ -16,9 +14,9 @@ import java.util.Set;
  */
 public interface QueryDebugger<Id> {
 
-    public Set<? extends AxiomSet<Id>> getConflictSets();
+    public Set<? extends AxiomSet<Id>> getConflicts();
 
-    public Set<? extends AxiomSet<Id>> getHittingSets();
+    public Set<? extends AxiomSet<Id>> getDiagnoses();
 
     public Set<? extends AxiomSet<Id>> getValidHittingSets();
 

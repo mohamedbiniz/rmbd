@@ -16,10 +16,10 @@ package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomRenderer;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             for (Id axiom : changes)
                 formulas.remove(axiom);
             //if (logger.isDebugEnabled())
-            //    logger.debug("Removing labels from the list: " + changes);
+            //    logger.start("Removing labels from the list: " + changes);
         }
         return formulas;
     }

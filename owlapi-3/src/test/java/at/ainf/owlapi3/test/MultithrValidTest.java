@@ -1,15 +1,15 @@
 package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.BruteForce;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
+import at.ainf.diagnosis.storage.Partition;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.Partition;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -45,7 +45,7 @@ public class MultithrValidTest {
     }*/
 
     @Test
-    public void testBruteForce2() throws OWLException, InconsistentTheoryException, SolverException {
+    public void testBruteForce2() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
 
         InputStream st = ClassLoader.getSystemResourceAsStream("ontologies/Univ.owl");
         OWLOntology ontology = manager.loadOntologyFromOntologyDocument(st);
@@ -64,11 +64,11 @@ public class MultithrValidTest {
         debugger.updateMaxHittingSets(9);
         theory.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("AI_Dept SubClassOf CS_Department")));
         theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("CS_Library SubClassOf EE_Department")));
-        assertEquals(true, debugger.debug());
+        assertEquals(false, debugger.start().isEmpty());
 
         long time = System.currentTimeMillis();
         Partitioning<OWLLogicalAxiom> algo = new BruteForce<OWLLogicalAxiom>(theory, new MinScoreQSS<OWLLogicalAxiom>());
-        Partition<OWLLogicalAxiom> part = algo.generatePartition(debugger.getValidHittingSets());
+        Partition<OWLLogicalAxiom> part = algo.generatePartition(debugger.getDiagnoses());
         time = System.currentTimeMillis() - time;
         logger.info(part.score + " dx:" + part.dx.size() + " dnx:" + part.dnx.size() + " dz:" + part.dz.size());
         logger.info("Partitioning time: " + time + " ms");
