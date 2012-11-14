@@ -32,6 +32,10 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
         return res;
     }
 
+    public ReasonerSat4j getReasoner() {
+        return (ReasonerSat4j) super.getReasoner();
+    }
+
     public boolean verifyConsistency() throws SolverException {
 
         LinkedHashSet<IVecIntComparable> backup = new LinkedHashSet<IVecIntComparable>();

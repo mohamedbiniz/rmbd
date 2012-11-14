@@ -272,6 +272,10 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     }
 
 
+    public ReasonerOWL getReasoner() {
+        return (ReasonerOWL) super.getReasoner();
+    }
+
     public boolean testDiagnosis(Collection<OWLLogicalAxiom> diag) throws SolverException {
         // clean up formula stack
         getReasoner().clearFormularCache();

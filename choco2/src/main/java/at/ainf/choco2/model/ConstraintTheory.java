@@ -10,6 +10,7 @@ package at.ainf.choco2.model;
 
 
 import at.ainf.diagnosis.model.AbstractSearchableObject;
+import at.ainf.diagnosis.model.IReasoner;
 import at.ainf.diagnosis.model.SolverException;
 import choco.Choco;
 import choco.cp.model.CPModel;
@@ -28,7 +29,9 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
         this(solver,new CPModel());
     }
 
-
+    public ReasonerConstraint getReasoner() {
+        return (ReasonerConstraint) super.getReasoner();
+    }
 
     @Override
     protected Constraint negate(Constraint formulas) {

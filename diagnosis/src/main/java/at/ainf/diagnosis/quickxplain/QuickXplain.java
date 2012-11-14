@@ -15,6 +15,7 @@
 package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
@@ -72,9 +73,9 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
         if (!c.verifyRequirements())
             throw new InconsistentTheoryException("Background theory or test cases are inconsistent! Finding conflicts is impossible!");
-        c.getReasoner().addFormularsToCache(u);
+        ((AbstractReasoner<Id>)c.getReasoner()).addFormularsToCache(u);
         final boolean isCons = c.verifyRequirements();
-        c.getReasoner().removeFormularsFromCache(u);
+        ((AbstractReasoner<Id>)c.getReasoner()).removeFormularsFromCache(u);
 
         if (isCons) {
             throw new NoConflictException("The theory is satisfiable!");
@@ -83,14 +84,14 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             return new TreeSet<Id>();
         }
         start("Conflict", "qx");
-        return qqXPlain(c, c.getReasoner().getFormularCache(), new FormulaList<Id>(u));
+        return qqXPlain(c, ((AbstractReasoner<Id>)c.getReasoner()).getFormularCache(), new FormulaList<Id>(u));
 
     }
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException {
         if (axiomRenderer!=null)
-            logger.info("B = {" + axiomRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(b.getReasoner().getFormularCache())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
+            logger.info("B = {" + axiomRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(((AbstractReasoner<Id>)b.getReasoner()).getFormularCache())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
         iterations++;
         if (d != null && d.size() != 0 && ! b.verifyRequirements())
             return null;
@@ -103,16 +104,16 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         FormulaList<Id> c1 = c.setBounds(0, k - 1);
         FormulaList<Id> c2 = c.setBounds(k, c.size() - 1);
 
-        boolean res = b.getReasoner().addFormularsToCache(c1);
+        boolean res = ((AbstractReasoner<Id>)b.getReasoner()).addFormularsToCache(c1);
         Set<Id> d2 = qqXPlain(b, c1, c2);
         if (axiomRenderer!=null)
             logger.info("D2 = {" + axiomRenderer.renderAxioms(d2) + "}");
-        if (res) b.getReasoner().removeFormularsFromCache(c1);
-        res = b.getReasoner().addFormularsToCache(d2);
+        if (res) ((AbstractReasoner<Id>)b.getReasoner()).removeFormularsFromCache(c1);
+        res = ((AbstractReasoner<Id>)b.getReasoner()).addFormularsToCache(d2);
         Set<Id> d1 = qqXPlain(b, d2, c1);
         if (axiomRenderer!=null)
             logger.info("D1 = {" + axiomRenderer.renderAxioms(d1) + "}");
-        if (res) b.getReasoner().removeFormularsFromCache(d2);
+        if (res) ((AbstractReasoner<Id>)b.getReasoner()).removeFormularsFromCache(d2);
 
         if (d2 != null)
             if (d1 == null)
