@@ -394,7 +394,7 @@ public class TreeTest {
     }
 
 
-    private Collection<OWLLogicalAxiom> getInferredAxioms(OWLTheory th, Set<OWLLogicalAxiom> hs) {
+    /*private Collection<OWLLogicalAxiom> getInferredAxioms(OWLTheory th, Set<OWLLogicalAxiom> hs) {
         th.removeAxioms(hs, th.getOntology());
         OWLReasoner solver = th.getSolver();
         //testConsistency(solver, true);
@@ -413,9 +413,9 @@ public class TreeTest {
 
         th.addAxioms(hs, th.getOntology());
         return axs;
-    }
+    }*/
 
-    private void getSubClasses(Collection<OWLLogicalAxiom> axs, OWLClass cl) {
+    /*private void getSubClasses(Collection<OWLLogicalAxiom> axs, OWLClass cl) {
         if (cl.isTopEntity() || cl.isBottomEntity())
             return;
         OWLReasoner solver = ((OWLTheory)debug.getTheory()).getSolver();
@@ -429,7 +429,7 @@ public class TreeTest {
                 getSubClasses(axs, sub);
             }
         }
-    }
+    }*/
 
     private Collection<Collection<OWLLogicalAxiom>> getDiagnosesEntailments(OWLTheory th,
                                                                             Collection<Set<OWLLogicalAxiom>> hittingSets)
