@@ -168,9 +168,9 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
             owlOntologyManager.applyChange(new AddOntologyAnnotation(dontology, anno));
             this.ontology = dontology;
             if (BUFFERED_SOLVER)
-                setSolver(reasonerFactory.createReasoner(this.ontology));
+                setSolver(reasonerFactory.createReasoner(getOntology()));
             else
-                setSolver(reasonerFactory.createNonBufferingReasoner(this.ontology));
+                setSolver(reasonerFactory.createNonBufferingReasoner(getOntology()));
         } catch (OWLOntologyCreationException e) {
             throw new OWLRuntimeException(e);
         }
@@ -500,7 +500,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
 
-        updateAxioms(ontology, getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        updateAxioms(getOntology(), getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
 
@@ -552,7 +552,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
 
-        updateAxioms(ontology, flatten(getKnowledgeBase().getPositiveTests()), flatten(getKnowledgeBase().getEntailedTests()),
+        updateAxioms(getOntology(), flatten(getKnowledgeBase().getPositiveTests()), flatten(getKnowledgeBase().getEntailedTests()),
                 getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
