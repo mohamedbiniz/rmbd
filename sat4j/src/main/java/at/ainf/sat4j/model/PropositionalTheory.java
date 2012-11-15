@@ -18,7 +18,7 @@ public class PropositionalTheory extends AbstractSearchableObject<IVecIntCompara
     private boolean createNew = false;
 
     public PropositionalTheory(ISolver solver) {
-        super(solver);
+        super();
         setReasoner(new ReasonerSat4j(solver));
     }
 
