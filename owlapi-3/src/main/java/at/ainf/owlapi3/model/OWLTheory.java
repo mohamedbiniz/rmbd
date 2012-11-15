@@ -681,7 +681,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     public final Set<OWLLogicalAxiom> getEntailments(Set<OWLLogicalAxiom> hittingSet) throws SolverException {
 
-        OWLReasoner reasoner = getSolver();
+
 
         Set<OWLLogicalAxiom> axioms = setminus(getKnowledgeBase().getFaultyFormulas(), hittingSet);
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
@@ -696,7 +696,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
             return null;
         }
 
-        Set<OWLLogicalAxiom> entailments = extractEntailments(reasoner, getOwlOntologyManager());
+        Set<OWLLogicalAxiom> entailments = extractEntailments(getOwlOntologyManager());
 
         getReasoner().clearFormularCache();
         getReasoner().addFormularsToCache(stack);
@@ -773,9 +773,11 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         this.includeReferencingThingAxioms = includeReferencingThingAxioms;
     }
 
-    protected Set<OWLLogicalAxiom> extractEntailments(OWLReasoner reasoner, OWLOntologyManager manager) {
+    protected Set<OWLLogicalAxiom> extractEntailments(OWLOntologyManager manager) {
         List<InferredAxiomGenerator<? extends OWLLogicalAxiom>> axiomGenerators =
                 new LinkedList<InferredAxiomGenerator<? extends OWLLogicalAxiom>>();
+
+        OWLReasoner reasoner = getSolver();
 
         if (isIncludeSubClassOfAxioms())
             axiomGenerators.add(new InferredSubClassAxiomGenerator());
