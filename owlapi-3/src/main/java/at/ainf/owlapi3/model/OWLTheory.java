@@ -371,7 +371,7 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     public boolean verifyConsistency() {
         start("Overall consistency check including management");
         updateAxioms(getOntology(), getReasoner().getFormularCache(), getKnowledgeBase().getBackgroundFormulas());
-        boolean consistent = doConsistencyTest(getSolver());
+        boolean consistent = doConsistencyTest();
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getFormularCache(), getOntology());
         stop();
@@ -380,7 +380,9 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         return consistent;
     }
 
-    protected boolean doConsistencyTest(OWLReasoner reasoner) {
+    protected boolean doConsistencyTest() {
+
+        OWLReasoner reasoner = getSolver();
         boolean consistent, coherent = true;
         //if (useCache)
         //    verifyCache(ontology.getLogicalAxioms());
