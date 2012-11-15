@@ -121,7 +121,7 @@ public class TreeTest {
         OWLTheory th = new CalculateDiagnoses().getSimpleTheory(new CalculateDiagnoses().getOntologySimple("ontologies/ecai.simple.owl"), false);
         debug.set_Theory(th);
         debug.reset();
-        OWLOntologyManager manager = th.getOntology().getOWLOntologyManager();
+        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
         // test only entailed test case
 
@@ -202,7 +202,7 @@ public class TreeTest {
         assertEquals(logc, logCollection(logger, "Conflicts", debug.getConflictSets()));
 
 
-        OWLDataFactory owlDataFactory = ((OWLTheory)debug.getTheory()).getOntology().getOWLOntologyManager().getOWLDataFactory();
+        OWLDataFactory owlDataFactory = OWLManager.createOWLOntologyManager().getOWLDataFactory();
         List<OWLLogicalAxiom> negTest = new LinkedList<OWLLogicalAxiom>();
         OWLSubClassOfAxiom ax = owlDataFactory.getOWLSubClassOfAxiom(owlDataFactory.getOWLClass(IRI.create(TEST_IRI + "B")),
                 owlDataFactory.getOWLClass(IRI.create(TEST_IRI + "M3")));
@@ -263,7 +263,7 @@ public class TreeTest {
         return negated;
     }
 
-    private void testEntailment(OWLTheory th, OWLReasoner solver, OWLLogicalAxiom ax, boolean res) {
+    /*private void testEntailment(OWLTheory th, OWLReasoner solver, OWLLogicalAxiom ax, boolean res) {
         OWLLogicalAxiom neg = th.negate(ax);
         th.getOwlOntologyManager().addAxiom(th.getOntology(), neg);
         solver.flush();
@@ -271,7 +271,7 @@ public class TreeTest {
         //if (res)
         //assertEquals(solver.getUnsatisfiableClasses().getSize(), 1);
         th.getOwlOntologyManager().removeAxiom(th.getOntology(), neg);
-    }
+    } */
 
     @Test
     public void testDebug1() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException {
