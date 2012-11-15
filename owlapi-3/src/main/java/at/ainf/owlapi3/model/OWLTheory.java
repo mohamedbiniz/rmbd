@@ -789,7 +789,14 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
             axiomGenerators.add(new InferredDisjointClassesAxiomGenerator());
         if (isIncludePropertyAssertAxioms())
             axiomGenerators.add(new InferredPropertyAssertionGenerator());
-        InferenceType[] infType = new InferenceType[]{InferenceType.CLASS_HIERARCHY, InferenceType.CLASS_ASSERTIONS,
+
+        getReasoner().setAxiomGenerators(axiomGenerators);
+        getReasoner().setIncludeOntologyAxioms(isIncludeOntologyAxioms());
+        getReasoner().setIncludeAxiomsReferencingThing(isIncludeReferencingThingAxioms());
+
+        return getReasoner().getEntailments();
+
+        /*InferenceType[] infType = new InferenceType[]{InferenceType.CLASS_HIERARCHY, InferenceType.CLASS_ASSERTIONS,
                 InferenceType.DISJOINT_CLASSES, InferenceType.DIFFERENT_INDIVIDUALS, InferenceType.SAME_INDIVIDUAL};
         if (!axiomGenerators.isEmpty())
             reasoner.precomputeInferences(infType);
@@ -811,7 +818,8 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
         if (isIncludeOntologyAxioms())
             entailments.addAll(getOntology().getLogicalAxioms());
-        return entailments;
+        return entailments;*/
+
     }
 
     //
