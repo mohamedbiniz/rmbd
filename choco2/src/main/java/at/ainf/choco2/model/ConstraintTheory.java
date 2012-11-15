@@ -39,7 +39,7 @@ public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
     }
 
     public ConstraintTheory(Solver solver, Model model) {
-        super(solver);
+        super();
         setReasoner(new ReasonerConstraint(model));
     }
 

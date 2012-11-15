@@ -153,10 +153,13 @@ public class AbstractExample {
 
     }
 
-    public static void createOntology() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
-        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+    public static OWLOntologyManager man;
 
-        ontology = manager.loadOntologyFromOntologyDocument(file);
+    public static void createOntology() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
+
+        man = OWLManager.createOWLOntologyManager();
+
+        ontology = man.loadOntologyFromOntologyDocument(file);
 
         bax = new LinkedHashSet<OWLLogicalAxiom>();
 
