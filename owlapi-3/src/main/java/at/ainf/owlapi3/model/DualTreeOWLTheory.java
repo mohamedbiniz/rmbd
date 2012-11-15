@@ -31,8 +31,13 @@ public class DualTreeOWLTheory extends OWLTheory {
         Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getKnowledgeBase().getFaultyFormulas());
         axiomSet.removeAll(getReasoner().getFormularCache());
         updateAxioms(getOntology(), axiomSet, getKnowledgeBase().getBackgroundFormulas());
-
+        LinkedHashSet<OWLLogicalAxiom> formularCacheBackup = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getFormularCache());
+        getReasoner().clearFormularCache();
+        getReasoner().addFormularsToCache(axiomSet);
+        getReasoner().addFormularsToCache(getKnowledgeBase().getBackgroundFormulas());
         boolean consistent = !doConsistencyTest();
+        getReasoner().clearFormularCache();
+        getReasoner().addFormularsToCache(formularCacheBackup);
 
         if (logger.isTraceEnabled())
             logger.trace(ontology.getOntologyID() + " is consistent: " + consistent);
