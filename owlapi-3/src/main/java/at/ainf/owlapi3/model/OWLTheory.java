@@ -371,7 +371,11 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
     public boolean verifyConsistency() {
         start("Overall consistency check including management");
         updateAxioms(getOntology(), getReasoner().getFormularCache(), getKnowledgeBase().getBackgroundFormulas());
+        LinkedHashSet<OWLLogicalAxiom> formularsToAdd = new LinkedHashSet<OWLLogicalAxiom>(getKnowledgeBase().getBackgroundFormulas());
+        formularsToAdd.removeAll(getReasoner().getFormularCache());
+        getReasoner().addFormularsToCache(formularsToAdd);
         boolean consistent = doConsistencyTest();
+        getReasoner().removeFormularsFromCache(formularsToAdd);
         //removeAxioms(getBackgroundFormulas(), getOntology());
         //removeAxioms(getFormularCache(), getOntology());
         stop();
@@ -382,22 +386,22 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
 
     protected boolean doConsistencyTest() {
 
-        OWLReasoner reasoner = getSolver();
+        //OWLReasoner reasoner = getSolver();
         boolean consistent, coherent = true;
         //if (useCache)
         //    verifyCache(ontology.getLogicalAxioms());
         start("Reasoner sync ");
-        if (BUFFERED_SOLVER) reasoner.flush();
+        //if (BUFFERED_SOLVER) reasoner.flush();
         stop();
         start("Consistency test");
         incrementConsistencyChecks();
         long timeCons = System.currentTimeMillis();
-        consistent = reasoner.isConsistent();
+        consistent = getReasoner().isConsistent();
         addConsistencyTime(System.currentTimeMillis() - timeCons);
         stop();
         start("Coherency test");
         if (!isReduceToUnsat() && consistent) {
-            coherent = checkCoherency(reasoner);
+            coherent = getReasoner().isCoherent();
         }
         stop();
         consistent = consistent && coherent;
@@ -410,21 +414,21 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         return consistent;
     }
 
-    private boolean checkCoherency(OWLReasoner reasoner) {
+    /*private boolean checkCoherency(OWLReasoner reasoner) {
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         return reasoner.getBottomClassNode().isSingleton();
-    }
+    }*/
 
     private boolean checkTestsConsistency() {
-        OWLReasoner solver = getSolver();
+        //OWLReasoner solver = getSolver();
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNegativeTests()) {
-            if (!solver.isEntailed(test)) {
+            if (!getReasoner().isEntailed(test)) {
                 return true;
             }
         }
 
         for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getNonentailedTests()) {
-            if (test != null && solver.isEntailed(test)) {
+            if (test != null && getReasoner().isEntailed(test)) {
                 return true;
             }
         }
