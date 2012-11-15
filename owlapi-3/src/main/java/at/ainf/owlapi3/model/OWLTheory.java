@@ -167,10 +167,10 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
             OWLAnnotation anno = owlOntologyManager.getOWLDataFactory().getOWLAnnotation(owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(iri), lit);
             owlOntologyManager.applyChange(new AddOntologyAnnotation(dontology, anno));
             this.ontology = dontology;
-            if (BUFFERED_SOLVER)
+            /*if (BUFFERED_SOLVER)
                 setSolver(reasonerFactory.createReasoner(getOntology()));
             else
-                setSolver(reasonerFactory.createNonBufferingReasoner(getOntology()));
+                setSolver(reasonerFactory.createNonBufferingReasoner(getOntology()));*/
         } catch (OWLOntologyCreationException e) {
             throw new OWLRuntimeException(e);
         }
@@ -441,12 +441,6 @@ public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
         }
         return false;
     }
-
-    public OWLReasoner getSolver() {
-        return (OWLReasoner) super.getSolver();
-
-    }
-
 
     public boolean isEntailed(Set<OWLLogicalAxiom> test) {
         start("Consistency + entailment");

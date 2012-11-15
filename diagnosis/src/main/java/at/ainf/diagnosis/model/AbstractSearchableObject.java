@@ -23,28 +23,14 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
 
 
 
-    private Object solver;
+
 
     private IKnowledgeBase<T> knowledgeBase;
 
     private IReasoner<T> reasoner;
 
     public AbstractSearchableObject() {
-        this(null);
-    }
-
-
-    public AbstractSearchableObject(Object solver) {
-        this.solver = solver;
         setKnowledgeBase(new KnowledgeBase<T>());
-    }
-
-    public Object getSolver() {
-        return this.solver;
-    }
-
-    public void setSolver(Object solver) {
-        this.solver = solver;
     }
 
     public IReasoner<T> getReasoner() {
