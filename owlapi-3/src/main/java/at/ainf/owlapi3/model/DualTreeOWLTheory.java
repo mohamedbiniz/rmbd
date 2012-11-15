@@ -32,7 +32,7 @@ public class DualTreeOWLTheory extends OWLTheory {
         axiomSet.removeAll(getReasoner().getFormularCache());
         updateAxioms(getOntology(), axiomSet, getKnowledgeBase().getBackgroundFormulas());
 
-        boolean consistent = !doConsistencyTest(getSolver());
+        boolean consistent = !doConsistencyTest();
 
         if (logger.isTraceEnabled())
             logger.trace(ontology.getOntologyID() + " is consistent: " + consistent);
