@@ -1,0 +1,18 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/PCS.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/EKAW.owl
+sourceNamespace = http://PCS.owl
+targetNamespace = http://EKAW.owl
+
+< Accepted_paper = Paper | 0.9
+> CommitteeMember = SC_Member | 0.6699999999999999
+- Conference = Proceedings_Publisher | 0.628
+> ConferenceMember = SC_Member | 0.7046153846153846
++ DOCUMENT = Document | 0.8833333333333333
++ Paper = Paper | 1.0
++ PERSON = Person | 0.6896551724137931
+< Rejected_paper = Paper | 0.9
+- Report = Paper | 1.0
+> Review = Negative_Review | 0.7333333333333334
+> Review = Neutral_Review | 0.7333333333333334
+> Review = Positive_Review | 0.7333333333333334
+- System = Organisation | 1.0

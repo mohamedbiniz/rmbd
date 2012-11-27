@@ -1,0 +1,1181 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<rdf:RDF
+    xmlns="http://CONFTOOL.owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:daml="http://www.daml.org/2001/03/daml+oil#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <owl:Ontology rdf:about="http://CONFTOOL-CRS.owl"/>
+  <owl:Class rdf:about="http://CRS.owl#session">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#pc_meeting"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CRS.owl#event"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#conference"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Event">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CRS.owl#event"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Country"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Organization"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#City"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Contribution"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Social_event">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#has_title"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Event"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Administrative_event"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#location"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#defaultChoice"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#document">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#event"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#person"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#program"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Scholar">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#studyAt"/>
+        </owl:onProperty>
+        <owl:allValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#University"/>
+        </owl:allValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >price category - scholar</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#University"/>
+        </owl:someValuesFrom>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#studyAt"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Member_PC">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#expertOn"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#reviewes"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Contribution"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Reviewer</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#expertOn"/>
+        </owl:onProperty>
+        <owl:allValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+        </owl:allValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Contribution"/>
+        </owl:allValuesFrom>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#reviewes"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Administrator">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Participant">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CRS.owl#participant"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Contribution">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:FunctionalProperty rdf:about="http://CONFTOOL.owl#abstract"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#contactEmail"/>
+        </owl:onProperty>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasKeyword"/>
+        </owl:onProperty>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Organization"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#City"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Event"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+        </owl:someValuesFrom>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#dealsWith"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Country"/>
+    </owl:disjointWith>
+    <rdfs:comment xml:lang="en">confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:allValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+        </owl:allValuesFrom>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#dealsWith"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasTitle"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#program">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#person"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CRS.owl#document"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#event"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Tutorial">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Workshop"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Conference"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Trip">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Social_event"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Reception"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Banquet"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#City">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Event"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Organization"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Contribution"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Member">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Participant"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Camera_Ready_event">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Administrative_event"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Submission_event"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Reviewing_results_event"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Registration_of_participants_event"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Reviewing_event"/>
+    </owl:disjointWith>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Final upload of accepted contributions</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Working_event">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#hasTopic"/>
+        </owl:onProperty>
+        <owl:allValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+        </owl:allValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Social_event"/>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Event"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#defaultChoice"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#has_title"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CRS.owl#event"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#location"/>
+        </owl:onProperty>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Administrative_event"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#hasTopic"/>
+        </owl:onProperty>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Chair_PC">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Author">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#writes"/>
+        </owl:onProperty>
+        <owl:allValuesFrom rdf:resource="http://CONFTOOL.owl#Contribution"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#writes"/>
+        </owl:onProperty>
+        <owl:someValuesFrom rdf:resource="http://CONFTOOL.owl#Contribution"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Conference">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CRS.owl#conference"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Workshop"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Working_event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Tutorial"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Reviewing_results_event">
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Camera_Ready_event"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Submission_event"/>
+    </owl:disjointWith>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Registration_of_participants_event"/>
+    </owl:disjointWith>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Results of the reviewing procedures, accessable to authors</rdfs:comment>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Reviewing_event"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Administrative_event"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#author">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CRS.owl#person"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Registration_of_participants_event">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Reviewing_event"/>
+    </owl:disjointWith>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Registration of new ConfTool users</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Submission_event"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Reviewing_results_event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Camera_Ready_event"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Administrative_event"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Reviewing_event">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Submission_event"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Registration_of_participants_event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Reviewing_results_event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Camera_Ready_event"/>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Administrative_event"/>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Reviewing procedure for submitted contributions</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Organization">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Country"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#City"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Topic"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Event"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#article">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#abstract"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf rdf:resource="http://CRS.owl#document"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#review"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Assistant">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Science_Worker">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >price category - science worker</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Topic">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#City"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Organization"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Country"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Regular">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Participant"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Submission_event">
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Reviewing_results_event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Reviewing_event"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Submission of contributions</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Administrative_event"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Camera_Ready_event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Registration_of_participants_event"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#reviewer">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CRS.owl#person"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#person">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith rdf:resource="http://CRS.owl#program"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#event"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CRS.owl#document"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#chair">
+    <rdfs:subClassOf rdf:resource="http://CRS.owl#person"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Volunteer">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Student">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Participant"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#abstract">
+    <owl:disjointWith rdf:resource="http://CRS.owl#article"/>
+    <rdfs:subClassOf rdf:resource="http://CRS.owl#document"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#review"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Short_paper">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Paper"/>
+    </owl:disjointWith>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Poster"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#pc_meeting">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://CRS.owl#event"/>
+    </rdfs:subClassOf>
+    <owl:disjointWith rdf:resource="http://CRS.owl#session"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CRS.owl#conference"/>
+    </owl:disjointWith>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Paper">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Poster"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Short_paper"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#event">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Working_event"/>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Event"/>
+    <owl:disjointWith rdf:resource="http://CRS.owl#person"/>
+    <owl:disjointWith rdf:resource="http://CRS.owl#program"/>
+    <owl:disjointWith rdf:resource="http://CRS.owl#document"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#conference">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Conference"/>
+    <owl:disjointWith rdf:resource="http://CRS.owl#pc_meeting"/>
+    <owl:disjointWith rdf:resource="http://CRS.owl#session"/>
+    <rdfs:subClassOf rdf:resource="http://CRS.owl#event"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Banquet">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Social_event"/>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Reception"/>
+    </owl:disjointWith>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Trip"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Workshop">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Working_event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Tutorial"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Conference"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Administrative_event">
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Working_event"/>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Social_event"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Company">
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#University"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Organization"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#review">
+    <owl:disjointWith rdf:resource="http://CRS.owl#article"/>
+    <rdfs:subClassOf rdf:resource="http://CRS.owl#document"/>
+    <owl:disjointWith rdf:resource="http://CRS.owl#abstract"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Person">
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Topic"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasStreet"/>
+        </owl:onProperty>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+        <owl:onProperty>
+          <owl:FunctionalProperty rdf:about="http://CONFTOOL.owl#hasFirstName"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:cardinality>
+        <owl:onProperty>
+          <owl:FunctionalProperty rdf:about="http://CONFTOOL.owl#hasSurname"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#employedBy"/>
+        </owl:onProperty>
+        <owl:allValuesFrom rdf:resource="http://CONFTOOL.owl#Organization"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith>
+      <owl:Class rdf:about="http://CONFTOOL.owl#Country"/>
+    </owl:disjointWith>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://CONFTOOL.owl#City"/>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#hasCity"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom rdf:resource="http://CONFTOOL.owl#Organization"/>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#employedBy"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#City"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasEmail"/>
+        </owl:onProperty>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Organization"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdfs:subClassOf rdf:resource="http://CRS.owl#person"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#int"
+        >1</owl:minCardinality>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasPostalCode"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:someValuesFrom>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Country"/>
+        </owl:someValuesFrom>
+        <owl:onProperty>
+          <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#hasCountry"/>
+        </owl:onProperty>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Country">
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Topic"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Person"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Organization"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Event"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#University">
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Company"/>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Organization"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Poster">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Short_paper"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Paper"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CONFTOOL.owl#Reception">
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Trip"/>
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Social_event"/>
+    <owl:disjointWith rdf:resource="http://CONFTOOL.owl#Banquet"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://CRS.owl#participant">
+    <rdfs:subClassOf rdf:resource="http://CONFTOOL.owl#Participant"/>
+    <rdfs:subClassOf rdf:resource="http://CRS.owl#person"/>
+  </owl:Class>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#writes_article">
+    <rdfs:range rdf:resource="http://CRS.owl#article"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#author"/>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://CRS.owl#article_written_by"/>
+    </owl:inverseOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#hasCountry">
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Country"/>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Organization"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#part_of_article">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+    <rdfs:range rdf:resource="http://CRS.owl#article"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#abstract"/>
+    <owl:inverseOf>
+      <owl:FunctionalProperty rdf:about="http://CRS.owl#has_abstract"/>
+    </owl:inverseOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#creates_program">
+    <rdfs:range rdf:resource="http://CRS.owl#program"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#chair"/>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://CRS.owl#program_created_by"/>
+    </owl:inverseOf>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#employedBy">
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Organization"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Person"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#review_written_by">
+    <rdfs:domain rdf:resource="http://CRS.owl#review"/>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://CRS.owl#writes_review"/>
+    </owl:inverseOf>
+    <rdfs:range rdf:resource="http://CRS.owl#reviewer"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#has_session">
+    <rdfs:domain rdf:resource="http://CRS.owl#program"/>
+    <rdfs:range rdf:resource="http://CRS.owl#session"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#hasTopic">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Topic"/>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Working_event"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#assigns_article_to_conference">
+    <rdfs:range rdf:resource="http://CRS.owl#article"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#author"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#program_created_by">
+    <owl:inverseOf rdf:resource="http://CRS.owl#creates_program"/>
+    <rdfs:range rdf:resource="http://CRS.owl#chair"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#program"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#writtenBy">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Author"/>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#writes"/>
+    </owl:inverseOf>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#expertOn">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Member_PC"/>
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Topic"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#hasCity">
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Organization"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#City"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#submits_to_conference">
+    <rdfs:range rdf:resource="http://CRS.owl#conference"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#participant"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#has_reviewer">
+    <rdfs:domain rdf:resource="http://CRS.owl#article"/>
+    <rdfs:range rdf:resource="http://CRS.owl#reviewer"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#writes_review">
+    <owl:inverseOf rdf:resource="http://CRS.owl#review_written_by"/>
+    <rdfs:range rdf:resource="http://CRS.owl#review"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#reviewer"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#studyAt">
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#University"/>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Scholar"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#reviewes">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Member_PC"/>
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Contribution"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#dealsWith">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Topic"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#has_author">
+    <rdfs:domain rdf:resource="http://CRS.owl#article"/>
+    <rdfs:range rdf:resource="http://CRS.owl#author"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#writes">
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <owl:inverseOf rdf:resource="http://CONFTOOL.owl#writtenBy"/>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Author"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CONFTOOL.owl#hasAdministrativeEvent">
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Administrative_event"/>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Working_event"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#assigns_reviewers_to_article">
+    <rdfs:range rdf:resource="http://CRS.owl#reviewer"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#chair"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#has_program">
+    <rdfs:range rdf:resource="http://CRS.owl#program"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#conference"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://CRS.owl#article_written_by">
+    <rdfs:range rdf:resource="http://CRS.owl#author"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#article"/>
+    <owl:inverseOf rdf:resource="http://CRS.owl#writes_article"/>
+  </owl:ObjectProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasPhone">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Person"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#maxChoice">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool
+</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#positiveInteger"/>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Social_event"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasFax">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Person"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasKeyword">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasHomePage">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Person"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasVAT">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Social_event"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >value added tax
+</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#remark">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Contribution"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#minChoice">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool
+</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#positiveInteger"/>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Social_event"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#starts_on">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Event"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasPostalCode">
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Organization"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#ends_on">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Event"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#location">
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Social_event"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >where the event is being held</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasStreet">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Person"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Organization"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#contactEmail">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#defaultChoice">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#positiveInteger"/>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Social_event"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasTitle">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#has_title">
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Social_event"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CRS.owl#has_startdate">
+    <rdfs:domain rdf:resource="http://CRS.owl#event"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://CONFTOOL.owl#hasEmail">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Person"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:TransitiveProperty rdf:about="http://CONFTOOL.owl#follows">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Administrative_event"/>
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Administrative_event"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </owl:TransitiveProperty>
+  <owl:SymmetricProperty rdf:about="http://CONFTOOL.owl#parallel_with">
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Administrative_event"/>
+    <rdfs:range rdf:resource="http://CONFTOOL.owl#Administrative_event"/>
+    <owl:inverseOf rdf:resource="http://CONFTOOL.owl#parallel_with"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </owl:SymmetricProperty>
+  <owl:FunctionalProperty rdf:about="http://CRS.owl#has_abstract">
+    <owl:inverseOf rdf:resource="http://CRS.owl#part_of_article"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:range rdf:resource="http://CRS.owl#abstract"/>
+    <rdfs:domain rdf:resource="http://CRS.owl#article"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:about="http://CONFTOOL.owl#earlyRegistration">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Participant"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:about="http://CRS.owl#has_enddate">
+    <rdfs:domain rdf:resource="http://CRS.owl#event"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:about="http://CONFTOOL.owl#hasFirstName">
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Person"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >involved middle name</rdfs:comment>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:about="http://CONFTOOL.owl#hasSurname">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Person"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:about="http://CONFTOOL.owl#has_short_title">
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://CONFTOOL.owl#Social_event"/>
+          <owl:Class rdf:about="http://CONFTOOL.owl#Working_event"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+  <owl:FunctionalProperty rdf:about="http://CONFTOOL.owl#abstract">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >confTool</rdfs:comment>
+    <rdfs:domain rdf:resource="http://CONFTOOL.owl#Contribution"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#DatatypeProperty"/>
+  </owl:FunctionalProperty>
+</rdf:RDF>

@@ -1,0 +1,1 @@
+http://CONFTOOL.owl#Organization SubClassOf http://EKAW.owl#Academic_Institution, http://EKAW.owl#Location EquivalentTo http://CONFTOOL.owl#Contribution, http://CONFTOOL.owl#Event SubClassOf http://EKAW.owl#Scientific_Event

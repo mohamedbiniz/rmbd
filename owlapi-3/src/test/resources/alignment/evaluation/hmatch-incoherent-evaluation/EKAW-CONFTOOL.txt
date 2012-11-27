@@ -1,0 +1,19 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/EKAW.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/CONFTOOL.owl
+sourceNamespace = http://EKAW.owl
+targetNamespace = http://CONFTOOL.owl
+
+< Academic_Institution = Organization | 0.72
++ Conference = Conference | 0.7222222222222222
++ Conference_Banquet = Banquet | 0.6857142857142857
++ Conference_Trip = Trip | 0.6857142857142857
++ Event = Event | 0.921875
+- Location = Contribution | 0.8
++ Organisation = Organization | 0.7857142857142857
++ Person = Person | 0.6794871794871795
++ Research_Topic = Topic | 0.8
+< Scientific_Event = Event | 0.7793103448275862
++ Social_Event = Social_event | 0.8
++ Tutorial = Tutorial | 0.7
++ University = University | 1.0
++ Workshop = Workshop | 0.7222222222222222
