@@ -103,11 +103,12 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             */
             //}
 
-            if (isDual()) {
+            /*if (isDual()) {
                 //searchable.getReasonerKB().remove();
                 ((AbstractReasoner<Id>)searchable.getReasoner()).addFormularsToCache(conflictFormulas);
                 searchable.verifyRequirements();
-            }
+            }*/
+            postProcessFormulas(conflictFormulas,searchable);
             rollbackChanges(searchable, formulas, changes);
         }
 
@@ -115,9 +116,13 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     }
 
-    public boolean isDual() {
-        return false;
+    public void postProcessFormulas(AxiomSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
+
     }
+
+    //public boolean isDual() {
+    //    return false;
+    //}
 
     /*
     public void logStatistics() {

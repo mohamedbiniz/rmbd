@@ -2,6 +2,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.splitstrategy.SimpleSplitStrategy;
 import at.ainf.diagnosis.tree.splitstrategy.SplitStrategy;
 
@@ -212,7 +213,7 @@ public class MultiNode<Id> extends SimpleNode<Id> {
         Set<Id> hs =  new LinkedHashSet<Id>(set);
         //edited, eventually without "if"
         if(hs.remove(e))
-            return AxiomSetFactory.createConflictSet(set.getMeasure(), hs, set.getEntailments());
+            return new AxiomSetImpl<Id>(set.getMeasure(), hs, set.getEntailments());
         else return set;
     }
 
@@ -227,7 +228,7 @@ public class MultiNode<Id> extends SimpleNode<Id> {
     }
     private AxiomSet<Id> copy(AxiomSet<Id> set) {
         Set<Id> cs =  new LinkedHashSet<Id>(set);
-        return AxiomSetFactory.createConflictSet(set.getMeasure(), cs, set.getEntailments());
+        return new AxiomSetImpl<Id>(set.getMeasure(), cs, set.getEntailments());
     }
 
     private Set<AxiomSet<Id>> copy2(Set<AxiomSet<Id>> set) {

@@ -151,9 +151,11 @@ public class BaseSearchableObject<T> implements Searchable<T> {
     }
 
 
-    protected T negate(T formula) {
+    /*protected T negate(T formula) {
         throw new RuntimeException("Unimplemented method");
     }
+    */
+
 
     public Set<T> negate(Set<T> cnf) {
         throw new RuntimeException("Negation of CNFs is not implemented yet.");

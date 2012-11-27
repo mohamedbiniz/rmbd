@@ -21,6 +21,7 @@ import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomRenderer;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,11 +85,11 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             throw new NoConflictException("The theory is satisfiable!");
         }
         if (u.isEmpty()) {
-            return AxiomSetFactory.createConflictSet(new BigDecimal(0), new TreeSet<Id>(), new TreeSet<Id>());
+            return new AxiomSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>());
         }
         start("Conflict", "qx");
         Set<Id> ids = qqXPlain(c, ((AbstractReasoner<Id>) c.getReasoner()).getFormularCache(), new FormulaList<Id>(u));
-        return AxiomSetFactory.createConflictSet(new BigDecimal(0), ids, new TreeSet<Id>());
+        return new AxiomSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
     }
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)

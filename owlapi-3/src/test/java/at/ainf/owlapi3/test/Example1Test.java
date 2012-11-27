@@ -222,6 +222,7 @@ public class Example1Test extends AbstractExample {
     @Test
     public void testQueryEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        theory = null;
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
         for (Query query : new Query[]{Query.X2}) {
 

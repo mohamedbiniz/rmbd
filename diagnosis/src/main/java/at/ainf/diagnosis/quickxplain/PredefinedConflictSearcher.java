@@ -60,8 +60,9 @@ public class PredefinedConflictSearcher<Id> implements Searcher<Id> {
         return conflictSets;
     }
 
-    @Override
-    public boolean isDual() {
-        return false;
-    }
+    //public boolean isDual() {
+    //    return false;
+    //}
+
+
 }

@@ -4,6 +4,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.*;
@@ -68,7 +69,7 @@ public class HsDagSearch<T extends AxiomSet<Id>,Id> extends HsTreeSearch<T,Id> i
         for (T ax : getConflicts()) {
             Set<Id> axioms = getSearcher().search(getSearchable(), ax, null).iterator().next();
             if (!axioms.equals(ax)) {
-                AxiomSet<Id> conflict = AxiomSetFactory.createConflictSet(ax.getMeasure(), axioms, ax.getEntailments());
+                AxiomSet<Id> conflict = new AxiomSetImpl<Id>(ax.getMeasure(), axioms, ax.getEntailments());
                 updateTree(conflict);
                 ax.updateAxioms(conflict);
             }
