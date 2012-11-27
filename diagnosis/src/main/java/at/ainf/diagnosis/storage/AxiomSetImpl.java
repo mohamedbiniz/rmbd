@@ -51,15 +51,12 @@ public class AxiomSetImpl<Id> implements AxiomSet<Id>, Comparable<AxiomSet<Id>> 
         return name;
     }
 
-    public TypeOfSet getType() {
-        return typeOfSet;
-    }
+    private static int axCnt = 0;
 
-    private TypeOfSet typeOfSet;
+    public AxiomSetImpl (BigDecimal measure, Set<Id> axioms, Set<Id> entailments) {
+        //this.typeOfSet = type;
 
-    protected AxiomSetImpl(TypeOfSet type, String name, BigDecimal measure, Set<Id> axioms, Set<Id> entailments) {
-        this.typeOfSet = type;
-        this.name = name;
+        this.name = "AxiomSet_" + axCnt++;
         setMeasure(measure);
         this.axioms = Collections.unmodifiableSet(axioms);
         this.entailments = Collections.unmodifiableSet(entailments);

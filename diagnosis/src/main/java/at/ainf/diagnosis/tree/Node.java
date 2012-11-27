@@ -11,6 +11,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 
 import java.util.*;
 
@@ -223,13 +224,13 @@ public class Node<Id> {
 
     protected AxiomSet<Id> copy(AxiomSet<Id> set) {
         Set<Id> hs =  new LinkedHashSet<Id>(set);
-        return AxiomSetFactory.createConflictSet(set.getMeasure(), hs, set.getEntailments());
+        return new AxiomSetImpl<Id>(set.getMeasure(), hs, set.getEntailments());
     }
 
     protected AxiomSet<Id> removeElement(Id e, AxiomSet<Id> set) {
         Set<Id> hs =  new LinkedHashSet<Id>(set);
         hs.remove(e);
-        return AxiomSetFactory.createConflictSet(set.getMeasure(), hs, set.getEntailments());
+        return new AxiomSetImpl<Id>(set.getMeasure(), hs, set.getEntailments());
     }
 
     protected Set<AxiomSet<Id>> removeElement(Id e, Set<AxiomSet<Id>> set) {
