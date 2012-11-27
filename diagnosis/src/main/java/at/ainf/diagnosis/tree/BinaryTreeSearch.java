@@ -28,6 +28,7 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
     }
 
 
+
     public void createRoot() throws NoConflictException,
             SolverException, InconsistentTheoryException {
         // if there is already a root
@@ -71,6 +72,15 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
                 removeHittingSet(invalidHittingSet);
             }
         }
+    }
+
+    @Override
+    protected boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
+
+        if (getSearchable().getKnowledgeBase().hasTests())
+            return getSearchable().testDiagnosis(diagnosis);
+
+        return true;
     }
 
     private boolean isConnectedToRoot(Node<Id> node) {

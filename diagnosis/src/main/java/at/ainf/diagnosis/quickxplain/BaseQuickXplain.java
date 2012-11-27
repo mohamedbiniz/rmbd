@@ -120,9 +120,9 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     }
 
-    public boolean isDual() {
-        return false;
-    }
+    //public boolean isDual() {
+    //    return false;
+    //}
 
     /*
     public void logStatistics() {

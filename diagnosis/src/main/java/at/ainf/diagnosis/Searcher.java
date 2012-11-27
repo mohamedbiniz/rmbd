@@ -46,7 +46,7 @@ public interface Searcher<F> {
     public Set<AxiomSet<F>> search(Searchable<F> searchable, final Collection<F> formulas, Set<F> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException;
 
-    public boolean isDual();
+    //public boolean isDual();
 
     /**
      * Saves statistics of calculations.

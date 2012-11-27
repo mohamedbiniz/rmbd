@@ -43,9 +43,8 @@ public class DirectDiagnosis<Id> extends QuickXplain<Id> {
         searchable.verifyRequirements();
     }
 
-    @Override
-    public boolean isDual() {
-        return true;
-    }
+    //public boolean isDual() {
+    //    return true;
+    //}
 
 }
