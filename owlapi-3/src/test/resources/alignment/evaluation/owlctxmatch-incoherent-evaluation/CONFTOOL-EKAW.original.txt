@@ -1,0 +1,76 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/EKAW.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://EKAW.owl
+
++ Social_event > Social_Event | 1.0
++ Social_event < Social_Event | 1.0
++ Event > Event | 1.0
++ Event < Event | 1.0
++ Tutorial > Tutorial | 1.0
++ Tutorial < Tutorial | 1.0
++ Workshop > Workshop | 1.0
++ Workshop < Workshop | 1.0
++ Conference > Conference | 1.0
++ Conference < Conference | 1.0
++ Person > Person | 1.0
++ Person < Person | 1.0
++ Person > Proceedings_Publisher | 1.0
+- Person < Proceedings_Publisher | 1.0
++ Organization > Organisation | 1.0
++ Organization < Organisation | 1.0
++ Chair_PC > PC_Chair | 1.0
++ Chair_PC < PC_Chair | 1.0
+- Chair_PC > Proceedings_Publisher | 1.0
+- Chair_PC < Proceedings_Publisher | 1.0
+
+- Assistant > Proceedings_Publisher | 1.0
+- Assistant < Proceedings_Publisher | 1.0
++ Participant > Late-Registered_Participant | 1.0
+
+- Participant < Late-Registered_Participant | 1.0
+- Participant > Proceedings_Publisher | 1.0
+- Participant < Proceedings_Publisher | 1.0
++ Member > Late-Registered_Participant | 1.0
+
+- Member < Late-Registered_Participant | 1.0
++ Member > SC_Member | 1.0
+- Member < SC_Member | 1.0
+- Member > Proceedings_Publisher | 1.0
+- Member < Proceedings_Publisher | 1.0
+
+- Regular > Late-Registered_Participant | 1.0
+- Regular < Late-Registered_Participant | 1.0
+- Regular > Proceedings_Publisher | 1.0
+- Regular < Proceedings_Publisher | 1.0
+- Scholar > Student | 1.0
+- Scholar < Student | 1.0
+
+- Scholar > Proceedings_Publisher | 1.0
+- Scholar < Proceedings_Publisher | 1.0
+
+- Student > Late-Registered_Participant | 1.0
+- Student < Late-Registered_Participant | 1.0
++ Student > Student | 1.0
++ Student < Student | 1.0
+
+- Student > Proceedings_Publisher | 1.0
+- Student < Proceedings_Publisher | 1.0
+- Volunteer > Proceedings_Publisher | 1.0
+- Volunteer < Proceedings_Publisher | 1.0
+- Administrator > Proceedings_Publisher | 1.0
+- Administrator < Proceedings_Publisher | 1.0
+
+- Author > Proceedings_Publisher | 1.0
+- Author < Proceedings_Publisher | 1.0
+- Member_PC > SC_Member | 1.0
+- Member_PC < SC_Member | 1.0
++ Member_PC > PC_Member | 1.0
++ Member_PC < PC_Member | 1.0
+
+- Member_PC > Proceedings_Publisher | 1.0
+- Member_PC < Proceedings_Publisher | 1.0
+- Science_Worker > Proceedings_Publisher | 1.0
+- Science_Worker < Proceedings_Publisher | 1.0
++ University > University | 1.0
++ University < University | 1.0

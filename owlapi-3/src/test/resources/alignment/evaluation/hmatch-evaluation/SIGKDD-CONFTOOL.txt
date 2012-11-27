@@ -1,0 +1,7 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/SIGKDD.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/CONFTOOL.owl
+sourceNamespace = http://SIGKDD.owl
+targetNamespace = http://CONFTOOL.owl
+
++ Conference = Conference | 1.0
++ Person = Person | 0.6756756756756757

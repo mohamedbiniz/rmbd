@@ -1,0 +1,15 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/PCS.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://PCS.owl
+
++ Document = DOCUMENT | 0.58669776
++ ExternalReviewer = External_Reviewer | 0.5485438
+- Person = Electronic_proceeding | 0.40706545
++ ConferenceMember = ConferenceMember | 0.5676992
++ Administrator = Administrator | 0.35
++ Author = Author | 0.4775659
++ Conference = Conference | 0.5112994
++ Paper = Paper | 0.46892747
+< ProgramCommitteeMember = CommitteeMember | 0.42059514
++ Review = Review | 0.46809575

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.protege.editor.core:application:4.2.0.b_284">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/protege/editor/core/application/4.2.0.b_284/application-4.2.0.b_284.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/protege/editor/core/application/4.2.0.b_284/application-4.2.0.b_284-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/protege/editor/core/application/4.2.0.b_284/application-4.2.0.b_284-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
