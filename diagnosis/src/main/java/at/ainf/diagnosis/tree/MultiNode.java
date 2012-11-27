@@ -2,6 +2,7 @@ package at.ainf.diagnosis.tree;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,17 +14,16 @@ import java.util.Set;
  */
 public class MultiNode<Id> extends Node<Id> {
 
-   private ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
+    private ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
     private boolean calculateConflict=false;
 
-    public MultiNode(LinkedHashSet<Set<Id>> conflict) {
+    public MultiNode(Set<Set<Id>> conflict) {
         super(conflict);
     }
 
-    public MultiNode(Set<Id> conflict) {
-
+   /* public MultiNode(Set<Id> conflict) {
         super(conflict);
-    }
+    } */
 
     public MultiNode(Node<Id> parent, Id arcLabel) {
         super(parent,arcLabel);

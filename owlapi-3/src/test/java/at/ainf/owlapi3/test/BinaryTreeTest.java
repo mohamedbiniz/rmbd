@@ -137,7 +137,7 @@ public class BinaryTreeTest {
            System.out.println();
         }
 
-        // Koala normally has 10 diagnoses so we should have found enough
+
         assertTrue(result.size() == 5);
 
 

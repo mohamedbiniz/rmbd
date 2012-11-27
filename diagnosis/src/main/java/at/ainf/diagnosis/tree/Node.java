@@ -47,25 +47,23 @@ public class Node<Id> {
     // constructor for root
 
     //NEU
-    public Node(LinkedHashSet<Set<Id>> conflict) {
-        this.parent = null;
-        // arcLabel = -1
-        this.arcLabel = null;
-        this.conflict = conflict;
-        this.root = true;
-    }
-
-    public Node(Set<Id> conflict) {
+    public Node(Set<Set<Id>> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
 
-        LinkedHashSet<Set<Id>> set = new LinkedHashSet<Set<Id>>();
-        set.add(conflict);
-
-        this.conflict = set;
         this.root = true;
+
+        if (conflict.iterator().next() instanceof Set)
+            this.conflict = conflict;
+        else {
+            LinkedHashSet<Set<Id>> set = new LinkedHashSet<Set<Id>>();
+            set.add((Set<Id>)conflict);
+            this.conflict = set;
+        }
     }
+
+
 
     public Node(Node<Id> parent, Id arcLabel) {
         parent.addChild(this);

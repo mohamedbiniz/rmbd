@@ -35,7 +35,7 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
         if (getRoot() != null) return;
         Set<Set<Id>> conflict = calculateConflict(null);
         //muss später verändert werden, damit es für mehrere Konflikte funktioniert
-        MultiNode<Id> node = new MultiNode<Id>((LinkedHashSet<Set<Id>>) conflict);
+        MultiNode<Id> node = new MultiNode<Id>(conflict);
 
 
         setRoot(node);
