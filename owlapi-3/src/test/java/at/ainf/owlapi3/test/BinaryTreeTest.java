@@ -79,25 +79,25 @@ public class BinaryTreeTest {
         axioms.add(1);
         axioms.add(2);
         axioms.add(3);
-       conflicts.add(AxiomSetFactory.createConflictSet(new BigDecimal("1"),axioms, Collections.<Integer>emptySet()));
+       conflicts.add(new AxiomSetImpl<Integer>(new BigDecimal("1"),axioms, Collections.<Integer>emptySet()));
 
 
         LinkedHashSet<Integer> axioms2 = new LinkedHashSet<Integer>();
         axioms2.add(3);
         axioms2.add(4);
         axioms2.add(2);
-        conflicts.add(AxiomSetFactory.createConflictSet(new BigDecimal("1"),axioms2, Collections.<Integer>emptySet()));
+        conflicts.add(new AxiomSetImpl<Integer>(new BigDecimal("1"),axioms2, Collections.<Integer>emptySet()));
 
         LinkedHashSet<Integer> axioms3 = new LinkedHashSet<Integer>();
         axioms3.add(5);
-        conflicts.add(AxiomSetFactory.createConflictSet(new BigDecimal("1"),axioms3, Collections.<Integer>emptySet()));
+        conflicts.add(new AxiomSetImpl<Integer>(new BigDecimal("1"),axioms3, Collections.<Integer>emptySet()));
 
         LinkedHashSet<Integer> axioms4 = new LinkedHashSet<Integer>();
         axioms4.add(4);
         axioms4.add(2);
         axioms4.add(7);
         axioms4.add(1);
-        conflicts.add(AxiomSetFactory.createConflictSet(new BigDecimal("1"),axioms4, Collections.<Integer>emptySet()));
+        conflicts.add(new AxiomSetImpl<Integer>(new BigDecimal("1"),axioms4, Collections.<Integer>emptySet()));
 
 
         // We have to create a Theory object which holds the information about the ontology and specified testcases

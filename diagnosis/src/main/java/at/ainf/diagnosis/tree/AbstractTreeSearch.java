@@ -13,10 +13,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomRenderer;
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetFactory;
-import at.ainf.diagnosis.storage.StorageListener;
+import at.ainf.diagnosis.storage.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.logging.aop.ProfiledVar;
@@ -111,7 +108,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         Set<Id> labels = node.getPathLabels();
         Set<Id> entailments = calculateEntailmentsForHittingSet(labels, valid);
         BigDecimal measure = getSearchStrategy().getDiagnosisMeasure(node);
-        T hs = (T) AxiomSetFactory.createHittingSet(measure, labels, entailments);
+        T hs = (T) new AxiomSetImpl<Id>(measure, labels, entailments);
         hs.setNode(node);
         return hs;
     }
