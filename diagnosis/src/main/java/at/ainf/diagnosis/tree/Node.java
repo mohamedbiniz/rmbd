@@ -9,6 +9,10 @@
 package at.ainf.diagnosis.tree;
 
 
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
+
 import java.util.*;
 
 /**
@@ -37,7 +41,7 @@ public class Node<Id> {
     protected Id arcLabel;
 
     // CONFLICT: if the node is not calculated or closed conflict = null
-    protected Set<Set<Id>> conflict = null;
+    protected Set<AxiomSet<Id>> conflict = null;
 
     protected final boolean root;
 
@@ -47,24 +51,25 @@ public class Node<Id> {
     // constructor for root
 
     //NEU
-    public Node(LinkedHashSet<Set<Id>> conflict) {
+    public Node(Set<AxiomSet<Id>> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
-        this.conflict = conflict;
+
         this.root = true;
+        this.conflict = conflict;
     }
 
-    public Node(Set<Id> conflict) {
+    public Node(AxiomSet<Id> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
 
-        LinkedHashSet<Set<Id>> set = new LinkedHashSet<Set<Id>>();
-        set.add(conflict);
-
-        this.conflict = set;
         this.root = true;
+
+        Set<AxiomSet<Id>> set = new LinkedHashSet<AxiomSet<Id>>();
+        set.add(conflict);
+        this.conflict = set;
     }
 
     public Node(Node<Id> parent, Id arcLabel) {
@@ -170,12 +175,12 @@ public class Node<Id> {
         return arcLabel;
     }
 
-    public Set<Set<Id>> getAxiomSet() {
+    public Set<AxiomSet<Id>> getAxiomSet() {
 
         return conflict;
     }
 
-    public void setAxiomSet(LinkedHashSet<Set<Id>> conflict) {
+    public void setAxiomSet(Set<AxiomSet<Id>> conflict) {
         /*
         for (Node<Id> child : children) {
             child.setClosed();
@@ -187,9 +192,9 @@ public class Node<Id> {
 
     }
 
-    public void setAxiomSet(Set<Id> conflict) {
+    public void setAxiomSet(AxiomSet<Id> conflict) {
 
-        Set<Set<Id>> set = new LinkedHashSet<Set<Id>>();
+        Set<AxiomSet<Id>> set = new LinkedHashSet<AxiomSet<Id>>();
         set.add(conflict);
         this.conflict=set;
     }
@@ -216,18 +221,34 @@ public class Node<Id> {
         this.closed = false;
     }
 
-    protected Set<Id> copy(Set<Id> set) {
-        Set<Id> hs = new LinkedHashSet<Id>();
-        for (Id hset : set)
-            hs.add(hset);
+
+    protected AxiomSet<Id> copy(AxiomSet<Id> set) {
+        Set<Id> hs =  new LinkedHashSet<Id>(set);
+        return new AxiomSetImpl<Id>(set.getMeasure(), hs, set.getEntailments());
+    }
+
+    protected AxiomSet<Id> removeElement(Id e, AxiomSet<Id> set) {
+        Set<Id> hs =  new LinkedHashSet<Id>(set);
+        hs.remove(e);
+        return new AxiomSetImpl<Id>(set.getMeasure(), hs, set.getEntailments());
+    }
+
+    protected Set<AxiomSet<Id>> removeElement(Id e, Set<AxiomSet<Id>> set) {
+        Set<AxiomSet<Id>> hs = new LinkedHashSet<AxiomSet<Id>>();
+        for (AxiomSet<Id> hset : set) {
+            hs.add(removeElement(e, hset));
+            if(hset.size()<=0)
+                hs.remove(hset);
+        }
         return hs;
     }
 
-    protected Set<Set<Id>> copy2(Set<Set<Id>> set) {
-        Set<Set<Id>> hs = new LinkedHashSet<Set<Id>>();
-        for (Set<Id> hset : set)
+    protected Set<AxiomSet<Id>> copy2(Set<AxiomSet<Id>> set) {
+        Set<AxiomSet<Id>> hs = new LinkedHashSet<AxiomSet<Id>>();
+        for (AxiomSet<Id> hset : set)
             hs.add(copy(hset));
         return hs;
     }
+
 
 }

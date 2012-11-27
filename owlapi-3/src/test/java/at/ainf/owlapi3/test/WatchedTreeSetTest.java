@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.test;
 
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -44,7 +45,7 @@ public class WatchedTreeSetTest {
         set.add(axiom);
 
         //return new AxiomSetImpl<OWLLogicalAxiom>(AxiomSet.TypeOfSet.HITTING_SET,name, measure,set, Collections.<OWLLogicalAxiom>emptySet());
-        return AxiomSetFactory.createHittingSet(BigDecimal.valueOf(measure), set, Collections.<OWLLogicalAxiom>emptySet() );
+        return new AxiomSetImpl<OWLLogicalAxiom>(BigDecimal.valueOf(measure), set, Collections.<OWLLogicalAxiom>emptySet() );
     }
 
     @Test

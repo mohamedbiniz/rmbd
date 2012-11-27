@@ -2,6 +2,7 @@ package at.ainf.diagnosis.model;
 
 import java.util.HashSet;
 import java.util.Set;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,9 +14,11 @@ import java.util.Set;
 public class SimpleSetReasoner<T> extends AbstractReasoner<T> {
 
     private Set<T> model = new HashSet<T>();
-    private final Set<Set<T>> conflicts;
+    private final Set<AxiomSet<T>> conflicts;
 
-    public SimpleSetReasoner(Set<Set<T>> conflicts){
+
+
+    public SimpleSetReasoner(Set<AxiomSet<T>> conflicts){
         this.conflicts = conflicts;
 
     }

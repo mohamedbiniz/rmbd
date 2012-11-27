@@ -184,16 +184,16 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
             // test the right branch
             left.add(rt);
             double together = lt.measure + rt.measure;
-            Measurable copy = null;
+            Measurable removeElement = null;
             if (!hittingSets.isEmpty()) {
-                copy = lt.copy(together);
-                hittingSets.add(copy);
+                removeElement = lt.removeElement(together);
+                hittingSets.add(removeElement);
             }
             if (logger.isDebugEnabled())
                 logger.start("Partitions: " + getPartitionsCount() + " head: " + left.size() + " hsets:" + hittingSets.size());
             rightPart = findPartition(hittingSets, left, right);
-            if (copy != null)
-                hittingSets.remove(copy);
+            if (removeElement != null)
+                hittingSets.remove(removeElement);
             left.remove(rt);
             hittingSets.add(rt);
         //}

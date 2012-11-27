@@ -108,7 +108,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
 
         if (node.getNode() == null || node.getNode().getParent() == null)
             return null;
-        Collection<OWLLogicalAxiom> c = node.getNode().getParent().getAxiomSet();
+        Collection<OWLLogicalAxiom> c = node.getNode().getParent().getAxiomSet().iterator().next();
         if (conflictSetMap == null) {
             return new DiagnosesTreeNode("Conflict Set");
         }

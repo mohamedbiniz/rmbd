@@ -250,12 +250,12 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
 
     private OWLNegateAxiom vis = null;
 
-    public OWLLogicalAxiom negate(OWLLogicalAxiom ax) {
+    /*public OWLLogicalAxiom negate(OWLLogicalAxiom ax) {
         if (getNegationVisitor() == null)
             vis = new OWLNegateAxiom(getOwlOntologyManager().getOWLDataFactory());
         OWLLogicalAxiom negated = (OWLLogicalAxiom) ax.accept(getNegationVisitor());
         return negated;
-    }
+    }*/
 
     public void registerTestCases() throws SolverException, InconsistentTheoryException {
         Set<OWLLogicalAxiom> tests = new HashSet<OWLLogicalAxiom>();

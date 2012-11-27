@@ -22,13 +22,13 @@ public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStra
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
-    public Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+    public Node<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         return new Node<Id>(conflict);
     }
 
 
 
-    public BigDecimal getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
+    public BigDecimal getConflictMeasure(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return BigDecimal.valueOf(1d / conflict.size());
     }
 

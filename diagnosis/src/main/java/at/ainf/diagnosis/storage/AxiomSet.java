@@ -18,7 +18,7 @@ public interface AxiomSet<Id> extends Set<Id>, Comparable<AxiomSet<Id>>, Watched
 
     Object getNode();
 
-    public enum TypeOfSet { HITTING_SET, CONFLICT_SET, OTHER };
+    //public enum TypeOfSet { HITTING_SET, CONFLICT_SET, OTHER };
 
     public <T extends AxiomSet<Id>> void setListener(StorageListener<T, Id> listener);
 

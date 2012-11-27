@@ -1,8 +1,10 @@
 package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.util.Collection;
 import java.util.Set;
@@ -36,8 +38,13 @@ public class DirectDiagnosis<Id> extends QuickXplain<Id> {
     }
 
     @Override
-    public boolean isDual() {
-        return true;
+    public void postProcessFormulas(AxiomSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
+        ((AbstractReasoner<Id>)searchable.getReasoner()).addFormularsToCache(formulas);
+        searchable.verifyRequirements();
     }
+
+    //public boolean isDual() {
+    //    return true;
+    //}
 
 }
