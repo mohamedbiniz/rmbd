@@ -1,8 +1,9 @@
 package at.ainf.diagnosis.tree;
 
+import at.ainf.diagnosis.storage.AxiomSet;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,7 +18,7 @@ public class MultiNode<Id> extends Node<Id> {
     private ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
     private boolean calculateConflict=false;
 
-    public MultiNode(Set<Set<Id>> conflict) {
+    public MultiNode(Set<AxiomSet<Id>> conflict) {
         super(conflict);
     }
 
@@ -79,18 +80,19 @@ public class MultiNode<Id> extends Node<Id> {
     }
 
 
-    private Set<Set<Id>> ignore(Id e, Set<Set<Id>>conflicts){
+    private Set<AxiomSet<Id>> ignore(Id e, Set<AxiomSet<Id>>conflicts){
 
 
 
-        Set<Set<Id>> newConflicts=copy2(conflicts);
+        Set<AxiomSet<Id>> newConflicts= removeElement(e, conflicts);
 
-        for(Set<Id >c:newConflicts){
+
+       /* for(AxiomSet<Id >c:newConflicts){
             c.remove(e);
 
             if(c.size()<=0)
                 newConflicts.remove(c);
-        }
+        }       */
 
         System.out.println("Ignore size:" + newConflicts.iterator().next().size());
 
@@ -99,11 +101,11 @@ public class MultiNode<Id> extends Node<Id> {
         else return null;
     }
 
-    private Set<Set<Id>> addToHS(Id e, Set<Set<Id>>conflicts){
+    private Set<AxiomSet<Id>> addToHS(Id e, Set<AxiomSet<Id>>conflicts){
 
 
 
-        Set<Set<Id>> newConflicts=copy2(conflicts);
+        Set<AxiomSet<Id>> newConflicts= copy2(conflicts);
 
 
         Set<Set<Id>> eraseSet=new LinkedHashSet<Set<Id>>();
@@ -133,7 +135,7 @@ public class MultiNode<Id> extends Node<Id> {
             if (c.size()==1 && !foundElement) {
                 Id e=c.iterator().next();
                 MultiNode node1=new MultiNode(this,e);
-                node1.setAxiomSet((LinkedHashSet<Set<Id>>)addToHS(e,conflict));
+                node1.setAxiomSet(addToHS(e,conflict));
                 newNodes.add(node1);
                 //tree.addNode(newConflicts);
                 //Edge edge= new Edge();
@@ -154,10 +156,10 @@ public class MultiNode<Id> extends Node<Id> {
 
         Id e=chooseSplitElement();
         MultiNode node1=new MultiNode(this,e);
-        node1.setAxiomSet((LinkedHashSet<Set<Id>>)addToHS(e,conflict));
+        node1.setAxiomSet(addToHS(e,conflict));
 
         MultiNode node2=new MultiNode(this,null);
-        node2.setAxiomSet((LinkedHashSet<Set<Id>>)ignore(e,conflict));
+        node2.setAxiomSet(ignore(e,conflict));
 
         newNodes.add(node1);
         newNodes.add(node2);
@@ -179,7 +181,7 @@ public class MultiNode<Id> extends Node<Id> {
             Set<Id> c=conflict.iterator().next();
             Id e=c.iterator().next();
             MultiNode node1=new MultiNode(this,e);
-            node1.setAxiomSet((LinkedHashSet<Set<Id>>)addToHS(e,conflict));
+            node1.setAxiomSet(addToHS(e,conflict));
             newNodes.add(node1);
 
             // tree.addNode(newNode1)
@@ -187,7 +189,7 @@ public class MultiNode<Id> extends Node<Id> {
 
             if(!(c.size()==1)){
                 MultiNode node2=new MultiNode(this,null);
-                node2.setAxiomSet((LinkedHashSet<Set<Id>>)ignore(e,conflict));
+                node2.setAxiomSet(ignore(e,conflict));
                 newNodes.add(node2);
                 //  tree.addNode(newNode2)
                 // tree.addEdge(conflicts,newNode2,null)

@@ -19,6 +19,7 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     private long calls = 0;
     */
-    protected abstract Set<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
+    protected abstract AxiomSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException;
 
     protected abstract int getIterations();
@@ -74,9 +75,9 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     protected abstract void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException;
 
-    public Set<Set<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
+    public Set<AxiomSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException {
-        Set<Id> conflictFormulas = null;
+        AxiomSet<Id> conflictFormulas = null;
 
         if (changes != null)
             formulas = applyChanges(searchable, formulas, changes);
@@ -110,7 +111,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             rollbackChanges(searchable, formulas, changes);
         }
 
-        return Collections.singleton(conflictFormulas);
+        return Collections.<AxiomSet<Id>>singleton(conflictFormulas);
 
     }
 

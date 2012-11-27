@@ -4,6 +4,8 @@ import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.quickxplain.PredefinedConflictSearcher;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.BinaryTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -23,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -69,31 +73,31 @@ public class BinaryTreeTest {
 
         // because we use Reiter's Tree nodes are conflicts which we start using QuickXplain
 
-        Set<Set<Integer>> conflicts = new LinkedHashSet<Set<Integer>>();
+        Set<AxiomSet<Integer>> conflicts = new LinkedHashSet<AxiomSet<Integer>>();
 
-       Set<Integer> set1= new LinkedHashSet<Integer>();
-        set1.add(1);
-        set1.add(2);
-        set1.add(3);
-        conflicts.add(set1);
+        LinkedHashSet<Integer> axioms = new LinkedHashSet<Integer>();
+        axioms.add(1);
+        axioms.add(2);
+        axioms.add(3);
+       conflicts.add(AxiomSetFactory.createConflictSet(new BigDecimal("1"),axioms, Collections.<Integer>emptySet()));
 
 
-        Set<Integer> set2= new LinkedHashSet<Integer>();
-        set2.add(3);
-        set2.add(4);
-        set2.add(2);
-        conflicts.add(set2);
+        LinkedHashSet<Integer> axioms2 = new LinkedHashSet<Integer>();
+        axioms2.add(3);
+        axioms2.add(4);
+        axioms2.add(2);
+        conflicts.add(AxiomSetFactory.createConflictSet(new BigDecimal("1"),axioms2, Collections.<Integer>emptySet()));
 
-        Set<Integer> set3= new LinkedHashSet<Integer>();
-        set3.add(5);
-        conflicts.add(set3);
+        LinkedHashSet<Integer> axioms3 = new LinkedHashSet<Integer>();
+        axioms3.add(5);
+        conflicts.add(AxiomSetFactory.createConflictSet(new BigDecimal("1"),axioms3, Collections.<Integer>emptySet()));
 
-        Set<Integer> set4= new LinkedHashSet<Integer>();
-        set4.add(4);
-        set4.add(2);
-        set4.add(7);
-        set4.add(1);
-        conflicts.add(set4);
+        LinkedHashSet<Integer> axioms4 = new LinkedHashSet<Integer>();
+        axioms4.add(4);
+        axioms4.add(2);
+        axioms4.add(7);
+        axioms4.add(1);
+        conflicts.add(AxiomSetFactory.createConflictSet(new BigDecimal("1"),axioms4, Collections.<Integer>emptySet()));
 
 
         // We have to create a Theory object which holds the information about the ontology and specified testcases

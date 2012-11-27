@@ -40,7 +40,7 @@ public class HsDagSearch<T extends AxiomSet<Id>,Id> extends HsTreeSearch<T,Id> i
     }
 
 
-    protected Set<Set<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+    protected Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
         return calculateConflict(node);
     }
 
