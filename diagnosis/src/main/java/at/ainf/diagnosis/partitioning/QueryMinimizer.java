@@ -2,7 +2,7 @@ package at.ainf.diagnosis.partitioning;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.model.AbstractSearchableObject;
+import at.ainf.diagnosis.model.BaseSearchableObject;
 import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
@@ -17,7 +17,7 @@ import java.util.Set;
  * Time: 18:46
  * To change this template use File | Settings | File Templates.
  */
-public class QueryMinimizer<Id> extends AbstractSearchableObject<Id> {
+public class QueryMinimizer<Id> extends BaseSearchableObject<Id> {
 
     private Partition<Id> partition;
     private Searchable<Id> theory;

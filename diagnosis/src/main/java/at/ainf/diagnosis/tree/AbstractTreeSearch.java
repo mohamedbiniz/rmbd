@@ -8,7 +8,7 @@
 
 package at.ainf.diagnosis.tree;
 
-import _dev.TimeLog;
+import  _dev.TimeLog;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -38,7 +38,7 @@ import static _dev.TimeLog.stop;
  * Time: 08:04:41
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements TreeSearch<T, Id> {
+public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements TreeSearch<T, Id> {
 
     private int maxHittingSets = Integer.MAX_VALUE;
 
@@ -103,6 +103,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         if (entailments==null) entailments = Collections.emptySet();
         BigDecimal measure =  getSearchStrategy().getConflictMeasure(quickConflict, getCostsEstimator());
         T hs = (T) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments);
+        //Conflictset wird einem Node zugeordnet;sollte aber Menge von Conflictsets sein
         hs.setNode(node);
         return hs;
     }
@@ -226,6 +227,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             processOpenNodes();
 
         } finally {
+              //NUR ZU TESTZWECKEN IF SPÄTER LÖSCHEN!!!
+            if(theory!=null)
             theory.unregisterTestCases();
             getSearchStrategy().finalizeSearch((TreeSearch<AxiomSet<Id>, Id>) this);
             stop("diagnosis");
@@ -308,10 +311,17 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         // if(axiomRenderer!=null) loggerDual.info("arc: " + axiomRenderer.renderAxiom(node.getArcLabel()));
         if (!prune) {
             try {
-                if (!canReuseConflict(node))
-                    calculateConflict(node);
-                if (!node.isClosed() && node.getAxiomSet() != null)
+                if (!canReuseConflict(node) )
+                    //EDITED von CalculateConflict
+                    calculateNode(node);
+                if (!node.isClosed() && isValidConflict(node.getAxiomSet())) {
                     getSearchStrategy().expand(node);
+                   //If child isn't empty, add to open Nodes
+                   /* for(Node<Id> child:node.getChildren()){
+                        if(child.getAxiomSet()!=null)
+                            getSearchStrategy().pushOpenNode(child);
+                    } */
+                }
             } catch (NoConflictException e) {
                 // if(!getSearcher().isDual()) {
                 node.setClosed();
@@ -363,8 +373,9 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
-        Set<Id> conflict = calculateConflict(null);
-        Node<Id> node = getSearchStrategy().createRootNode(conflict, getCostsEstimator(), getSearchable().getKnowledgeBase().getFaultyFormulas());
+        Set<Set<Id>> conflict = calculateConflict(null);
+        //NEW
+        Node<Id> node = getSearchStrategy().createRootNode(conflict.iterator().next(), getCostsEstimator(), getSearchable().getKnowledgeBase().getFaultyFormulas());
         setRoot(node);
     }
 
@@ -384,10 +395,15 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }
     }
      */
-    public Set<Id> calculateConflict(Node<Id> node) throws
+    public Set<Set<Id>> calculateConflict(Node<Id> node) throws
             SolverException, NoConflictException, InconsistentTheoryException {
         // if conflict was already calculated
-        Set<Id> quickConflict;
+        //edited
+
+
+        System.out.println("Berechne neuen Konflikt");
+
+        Set<Set<Id>> quickConflict;
         List<Id> list = new ArrayList<Id>(getSearchable().getKnowledgeBase().getFaultyFormulas());
         Collections.sort(list, new Comparator<Id>() {
             public int compare(Id o1, Id o2) {
@@ -406,18 +422,19 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             if (node.getAxiomSet() != null) {
                 if (logger.isDebugEnabled())
                     logger.debug("The conflict is already calculated: " + node.getAxiomSet());
+                //EDITED
                 return node.getAxiomSet();
             }
             pathLabels = node.getPathLabels();
         }
 
-        quickConflict = getSearcher().search(getSearchable(), list, pathLabels).iterator().next();
+        quickConflict = getSearcher().search(getSearchable(), list, pathLabels);
 
         //if(!searcher.isDual()) {
         if (logger.isInfoEnabled())
             logger.info("Found conflict: " + quickConflict);
 
-        T conflictSet = createConflictSet(node, quickConflict);
+        T conflictSet = createConflictSet(node, quickConflict.iterator().next());
 
         proveValidnessConflict(conflictSet);
 
@@ -427,15 +444,18 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
             logMessage(getDepth(node), "pathlabels: ", pathLabels);
 
 
-            pruneConflictSets(node, conflictSet);
+          pruneConflictSets(node, conflictSet);
 
         addNodeLabel(conflictSet);
         notifySearchListeners();
 
-        // current node should ge a conflict only if a path from
+        // current node should get a conflict only if a path from
         // this node to root does not include closed nodes
-        if (node != null && !hasClosedParent(node.getParent()))
-            node.setAxiomSet(quickConflict);
+        if (node != null && !hasClosedParent(node.getParent())){
+
+            node.setAxiomSet(new LinkedHashSet<Set<Id>>(quickConflict));
+
+        }
         return quickConflict;
         /*}
         else {
@@ -453,6 +473,11 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
         }*/
     }
+
+    protected abstract Set<Set<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException, InconsistentTheoryException;
+
+
+
 
     /*public Set<T> getConflicts() {
         return getStorage().getConflicts();
@@ -477,6 +502,13 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         Set<T> hs = new LinkedHashSet<T>();
         for (T hset : set)
             hs.add(hset);
+        return hs;
+    }
+
+    protected Set<Set<T>> copy2(Set<Set<T>> set) {
+        Set<Set<T>> hs = new LinkedHashSet<Set<T>>();
+        for (Set<T> hset : set)
+            hs.add(copy(hset));
         return hs;
     }
 
@@ -517,7 +549,8 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public boolean canReuseConflict(Node<Id> node) {
         // check if this is a root
-        if (node.isRoot() || node.getAxiomSet() != null) return false;
+        //EDITED MultiNodes don't reuse Conflicts
+        if (node.isRoot() || node.getAxiomSet() != null || (node instanceof  MultiNode )) return false;
         Collection<Id> pathLabels = node.getPathLabels();
         for (AxiomSet<Id> localConflict : getConflicts()) {
             if (localConflict.isValid() && !intersectsWith(pathLabels, localConflict)) {
@@ -619,6 +652,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         }
     };
 
+       //Leere Attribute
     public void resetStorage() {
         for (T hs : this.getHittingSets())
             hs.setListener(null);
@@ -646,10 +680,14 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
         hittingSet.setListener(this.hittingSetListener);
 
         Set<T> del = new HashSet<T>();
+
+        //Prüfe ob ein HS Superset des neuen HS ist
         for (T set : hittingSets) {
             if (set.containsAll(hittingSet))
                 del.add(set);
         }
+
+        //Wenn ja, entferne es
         if (!del.isEmpty())
             for (T ids : del) {
                 removeHittingSet(ids);
@@ -657,7 +695,7 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
 
 
-
+      //Füge neues HS hinzu
         return hittingSets.add(hittingSet);
     }
 
@@ -680,6 +718,17 @@ public abstract class AbstractTreeSearch<T extends AxiomSet<Id>, Id> implements 
 
     public Set<T> getHittingSets() {
         return Collections.unmodifiableSet(hittingSets);
+    }
+
+    private boolean isValidConflict(Set<Set<Id>> set){
+
+        if(set==null || set.isEmpty()) return false;
+
+        for(Set<Id>c:set){
+            if(c==null||c.isEmpty()) return false;
+        }
+
+        return true;
     }
 
 }

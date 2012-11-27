@@ -12,24 +12,13 @@ import java.util.*;
  * Time: 18:52
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractSearchableObject<T> implements Searchable<T> {
-
-
-
-
-
-
-
-
-
-
-
+public class BaseSearchableObject<T> implements Searchable<T> {
 
     private IKnowledgeBase<T> knowledgeBase;
 
     private IReasoner<T> reasoner;
 
-    public AbstractSearchableObject() {
+    public BaseSearchableObject() {
         setKnowledgeBase(new KnowledgeBase<T>());
     }
 
@@ -132,8 +121,6 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         return true;
     }
 
-
-
     public Set<T> getEntailments(Set<T> hittingSet) throws SolverException {
         throw new RuntimeException("This theory does not support computation of entailments!");
     }
@@ -158,8 +145,10 @@ public abstract class AbstractSearchableObject<T> implements Searchable<T> {
         throw new RuntimeException("Unimplemented method");
     }
 
-
-
+    @Override
+    public boolean verifyConsistency() throws SolverException {
+        return getReasoner().isConsistent();
+    }
 
 
     protected T negate(T formula) {

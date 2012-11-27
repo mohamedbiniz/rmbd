@@ -39,6 +39,11 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
         return getValidAxiomSets(copy(getNodeLabels()));
     }
 
+
+    protected Set<Set<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+        return calculateConflict(node);
+    }
+
     public void pruneConflictSets(Node<Id> idNode, T conflictSet) throws SolverException, InconsistentTheoryException {
 
         // DAG: verify if there is a conflict that is a subset of the new conflict
@@ -104,7 +109,8 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
         if (node == null || node.getAxiomSet() == null)
             return Collections.emptySet();
         if (node.getAxiomSet().containsAll(axSet)) {
-            Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet());
+            //EDITED
+            Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet().iterator().next());
             //if (!getSearcher().isDual())
             invalidAxioms.removeAll(axSet);
 
