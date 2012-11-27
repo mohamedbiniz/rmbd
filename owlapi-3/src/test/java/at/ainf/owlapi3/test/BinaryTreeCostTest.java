@@ -10,6 +10,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -37,7 +38,7 @@ public class BinaryTreeCostTest {
 
     private static Logger logger = LoggerFactory.getLogger(TreeTest.class.getName());
 
-    @Test
+    @Ignore @Test
     /**
      * This testcase is a simple example how to start diagnoses
      */
