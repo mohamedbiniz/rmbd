@@ -2,14 +2,13 @@ package at.ainf.diagnosis.tree.searchstrategy;
 
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.Node;
+import at.ainf.diagnosis.tree.SimpleNode;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,8 +21,8 @@ public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStra
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
-    public Node<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
-        return new Node<Id>(conflict);
+    public SimpleNode<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+        return new SimpleNode<Id>(conflict);
     }
 
 

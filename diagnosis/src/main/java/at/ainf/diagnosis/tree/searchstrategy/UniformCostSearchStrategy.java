@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -24,7 +24,7 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
     public Node<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
-        CostNode<Id> node = new CostNode<Id>(conflict);
+        CostNode<Id> node = new CostSimpleNode<Id>(conflict);
         node.setCostsEstimator(costsEstimator);
         node.setNodePathCosts(node.getRootNodeCosts(act));
         return node;

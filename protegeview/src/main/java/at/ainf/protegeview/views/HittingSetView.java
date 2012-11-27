@@ -44,7 +44,7 @@ public class HittingSetView extends AbstractProtegeResultView implements Hitting
                 if (list.getSelectedValue() instanceof ResultsListSection) {
                     /*ResultsListSection section = ((ResultsListSection) list.getSelectedValue());
                     AxiomSet<OWLLogicalAxiom> hs = (AxiomSet<OWLLogicalAxiom>) section
-                            .getAxiomSet();
+                            .getAxiomSets();
                     DebugManager.getInstance().setTreeNode(hs);
                     DebugManager.getInstance().notifyTreeNodeChanged();*/
                     return;

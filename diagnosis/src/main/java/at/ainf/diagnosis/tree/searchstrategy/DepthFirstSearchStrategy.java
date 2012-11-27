@@ -1,6 +1,7 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
 import at.ainf.diagnosis.tree.Node;
+import at.ainf.diagnosis.tree.SimpleNode;
 
 import java.util.List;
 

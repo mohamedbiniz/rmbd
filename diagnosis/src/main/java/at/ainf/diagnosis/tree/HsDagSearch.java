@@ -40,7 +40,7 @@ public class HsDagSearch<T extends AxiomSet<Id>,Id> extends HsTreeSearch<T,Id> i
     }
 
 
-    protected Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+    protected Set<AxiomSet<Id>> calculateNode(SimpleNode<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
         return calculateConflict(node);
     }
 
@@ -107,12 +107,12 @@ public class HsDagSearch<T extends AxiomSet<Id>,Id> extends HsTreeSearch<T,Id> i
         }
     }
 
-    public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
-        if (node == null || node.getAxiomSet() == null)
+    public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, SimpleNode<Id> node) throws SolverException, InconsistentTheoryException {
+        if (node == null || node.getAxiomSets() == null)
             return Collections.emptySet();
-        if (node.getAxiomSet().containsAll(axSet)) {
+        if (node.getAxiomSets().containsAll(axSet)) {
             //EDITED
-            Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet().iterator().next());
+            Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSets().iterator().next());
             //if (!getSearcher().isDual())
             invalidAxioms.removeAll(axSet);
 

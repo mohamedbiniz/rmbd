@@ -96,7 +96,7 @@ public class TcaeFrameSection extends AbstractOWLClassAxiomFrameSection<OWLLogic
                 public void runPostprocessor() {
                     if (getOWLModelManager().getReasoner().isSatisfiable(getRootObject())) {
                     	OWLClass thing = getOWLModelManager().getOWLDataFactory().getOWLThing();
-                        for (Node<OWLClass> inferredSuperClasses : getOWLModelManager().getReasoner().getSuperClasses(getRootObject(), true)) {
+                        for (SimpleNode<OWLClass> inferredSuperClasses : getOWLModelManager().getReasoner().getSuperClasses(getRootObject(), true)) {
                             for (OWLClassExpression inferredSuperClass : inferredSuperClasses) {
                                 if (!added.contains(inferredSuperClass) && !thing.equals(inferredSuperClass)) {
                                     addRow(new OWLSubClassAxiomFrameSectionRow(getOWLEditorKit(),

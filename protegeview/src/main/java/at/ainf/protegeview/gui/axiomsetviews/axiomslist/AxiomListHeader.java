@@ -34,7 +34,7 @@ public class AxiomListHeader {
 
     /*public Color getColor() {
 
-        BigDecimal alphaVal = BigDecimal.valueOf(255).multiply(getAxiomSet().getMeasure());
+        BigDecimal alphaVal = BigDecimal.valueOf(255).multiply(getAxiomSets().getMeasure());
         double valRounded = Double.parseDouble(alphaVal.round(new MathContext(4)).toPlainString());
 
         return new Color(255,0,0,(int) valRounded);

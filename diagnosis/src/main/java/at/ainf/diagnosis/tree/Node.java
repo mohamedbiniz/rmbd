@@ -1,253 +1,57 @@
-/*
- * Copyright (c) 2009 Kostyantyn Shchekotykhin
- *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v3.0
- * http://www.gnu.org/licenses/gpl.txt
- */
-
 package at.ainf.diagnosis.tree;
 
-
 import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
- * Created by IntelliJ IDEA.
- * User: student99
- * Date: 03.08.2009
- * Time: 14:04:13
+ * Created with IntelliJ IDEA.
+ * User: chicco
+ * Date: 27.11.12
+ * Time: 13:43
  * To change this template use File | Settings | File Templates.
  */
-public class Node<Id> {
-    // one node has exactly 3 parameters
+public interface Node<Id> {
+    boolean addChild(SimpleNode<Id> node);
 
-    // NODE_CLOSED: is a constant for the conflict if node is closed
-    //public final Set<Id> NODE_CLOSED = null;
+    boolean removeChild(Node<Id> node);
 
-    //public final Set<Id> NOT_CALCULATED = null;
-    // ARC_OF_ROOT: is a constant for the arcLabel if node is root
-    //private final Id ARC_OF_ROOT = null;
+    void removeChildren();
 
-    // PARENT: if node is the root parent = null
-    protected Node<Id> parent;
+    Set<Node<Id>> getChildren();
 
-    protected final Set<Node<Id>> children = new LinkedHashSet<Node<Id>>();
+    ArrayList<Node<Id>> expandNode();
 
-    // ARCLABEL: if node is the root arcLabel = -1
-    protected Id arcLabel;
+    ArrayList<Node<Id>> expandNode(boolean bool);
 
-    // CONFLICT: if the node is not calculated or closed conflict = null
-    protected Set<AxiomSet<Id>> conflict = null;
+    Set<Id> getPathLabels();
 
-    protected final boolean root;
+    boolean isClosed();
 
+    void setClosed();
 
+    boolean isRoot();
 
+    void removeParent();
 
-    // constructor for root
+    SimpleNode<Id> getParent();
 
-    //NEU
-    public Node(Set<AxiomSet<Id>> conflict) {
-        this.parent = null;
-        // arcLabel = -1
-        this.arcLabel = null;
+    Id getArcLabel();
 
-        this.root = true;
-        this.conflict = conflict;
-    }
+    Set<AxiomSet<Id>> getAxiomSets();
 
-    public Node(AxiomSet<Id> conflict) {
-        this.parent = null;
-        // arcLabel = -1
-        this.arcLabel = null;
+    AxiomSet<Id> getAxiomSet();
 
-        this.root = true;
+    void setAxiomSet(Set<AxiomSet<Id>> conflict);
 
-        Set<AxiomSet<Id>> set = new LinkedHashSet<AxiomSet<Id>>();
-        set.add(conflict);
-        this.conflict = set;
-    }
+    void setAxiomSet(AxiomSet<Id> conflict);
 
-    public Node(Node<Id> parent, Id arcLabel) {
-        parent.addChild(this);
-        this.arcLabel = arcLabel;
-        this.root = false;
-        //this.conflict = NOT_CALCULATED;
-    }
+    int getLevel();
 
-    public boolean addChild(Node<Id> node) {
-        node.parent = this;
-        return this.children.add(node);
-    }
+    void removeArcLabel();
 
-    public boolean removeChild(Node<Id> node) {
-        node.removeParent();
-        return this.children.remove(node);
-    }
+    void removeAxioms();
 
-    public void removeChildren() {
-        for (Node<Id> child : children) {
-            child.removeParent();
-        }
-        this.children.clear();
-    }
-
-    public Set<Node<Id>> getChildren() {
-        return Collections.unmodifiableSet(children);
-    }
-
-    public ArrayList<Node<Id>> expandNode() {
-        ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
-
-        //NEU
-        for (Id arcLabel : conflict.iterator().next()) {
-            if (!hasChild(getChildren(), arcLabel)) {
-                Node<Id> node = new Node<Id>(this, arcLabel);
-                newNodes.add(node);
-            }
-        }
-        return newNodes;
-    }
-
-    public ArrayList<Node<Id>> expandNode(boolean bool) {
-        ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
-
-        //NEU
-        for (Id arcLabel : conflict.iterator().next()) {
-            if (!hasChild(getChildren(), arcLabel)) {
-                Node<Id> node = new Node<Id>(this, arcLabel);
-                newNodes.add(node);
-            }
-        }
-        return newNodes;
-    }
-
-
-    protected boolean hasChild(Set<Node<Id>> children, Id arcLabel) {
-        for (Node<Id> child : children) {
-            if (child.getArcLabel().equals(arcLabel))
-                return true;
-        }
-        return false;
-    }
-
-    // setter and getter
-
-    public Set<Id> getPathLabels() {
-        Set<Id> pathLabels = new TreeSet<Id>();
-        Node<Id> node = this;
-        // steps from this node to root and adds the arcLables of each node
-        while (node.parent != null) {
-            if (node.getArcLabel() != null)
-                pathLabels.add(node.getArcLabel());
-            node = node.getParent();
-        }
-        return pathLabels;
-    }
-
-    protected boolean closed = false;
-
-    public boolean isClosed() {
-        return this.closed;
-    }
-
-    public void setClosed() {
-        this.closed = true;
-    }
-
-    public boolean isRoot() {
-        return this.root;
-    }
-
-    public void removeParent(){
-        this.parent = null;
-    }
-
-    public Node<Id> getParent() {
-        return parent;
-    }
-
-    public Id getArcLabel() {
-        return arcLabel;
-    }
-
-    public Set<AxiomSet<Id>> getAxiomSet() {
-
-        return conflict;
-    }
-
-    public void setAxiomSet(Set<AxiomSet<Id>> conflict) {
-        /*
-        for (Node<Id> child : children) {
-            child.setClosed();
-        }
-        */
-        //children.clear();
-
-            this.conflict = conflict;
-
-    }
-
-    public void setAxiomSet(AxiomSet<Id> conflict) {
-
-        Set<AxiomSet<Id>> set = new LinkedHashSet<AxiomSet<Id>>();
-        set.add(conflict);
-        this.conflict=set;
-    }
-
-    public int getLevel() {
-        int level = 0;
-        Node<Id> node = this;
-        while (node.parent != null) {
-            level++;
-            node = node.getParent();
-        }
-        return level;
-    }
-
-    public void removeArcLabel() {
-        this.arcLabel = null;
-    }
-
-    public void removeAxioms() {
-        this.conflict = null;
-    }
-
-    public void setOpen() {
-        this.closed = false;
-    }
-
-
-    protected AxiomSet<Id> copy(AxiomSet<Id> set) {
-        Set<Id> hs =  new LinkedHashSet<Id>(set);
-        return AxiomSetFactory.createConflictSet(set.getMeasure(), hs, set.getEntailments());
-    }
-
-    protected AxiomSet<Id> removeElement(Id e, AxiomSet<Id> set) {
-        Set<Id> hs =  new LinkedHashSet<Id>(set);
-        hs.remove(e);
-        return AxiomSetFactory.createConflictSet(set.getMeasure(), hs, set.getEntailments());
-    }
-
-    protected Set<AxiomSet<Id>> removeElement(Id e, Set<AxiomSet<Id>> set) {
-        Set<AxiomSet<Id>> hs = new LinkedHashSet<AxiomSet<Id>>();
-        for (AxiomSet<Id> hset : set) {
-            hs.add(removeElement(e, hset));
-            if(hset.size()<=0)
-                hs.remove(hset);
-        }
-        return hs;
-    }
-
-    protected Set<AxiomSet<Id>> copy2(Set<AxiomSet<Id>> set) {
-        Set<AxiomSet<Id>> hs = new LinkedHashSet<AxiomSet<Id>>();
-        for (AxiomSet<Id> hset : set)
-            hs.add(copy(hset));
-        return hs;
-    }
-
-
+    void setOpen();
 }

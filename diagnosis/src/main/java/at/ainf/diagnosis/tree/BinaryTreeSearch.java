@@ -33,15 +33,14 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
         // if there is already a root
         if (getRoot() != null) return;
         Set<AxiomSet<Id>> conflict = calculateConflict(null);
-        //muss später verändert werden, damit es für mehrere Konflikte funktioniert
-        MultiNode<Id> node = new MultiNode<Id>(conflict);
 
+        MultiNode<Id> node = new MultiNode<Id>(conflict);
 
         setRoot(node);
     }
 
     public Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException,InconsistentTheoryException{
-      if(node.getAxiomSet()==null || node.getAxiomSet().isEmpty())
+      if(node.getAxiomSets()==null || node.getAxiomSets().isEmpty())
         return calculateConflict(node);
 
        else return null;
@@ -58,80 +57,7 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
     public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
 
 
-
-        for (T invalidHittingSet : invalidHittingSets) {
-            MultiNode<Id> node = (MultiNode<Id>) invalidHittingSet.getNode();
-            if (node.isRoot())
-                throw new IllegalStateException("Impossible source of a hitting set");
-
-            if (isConnectedToRoot(node)) {
-                node.setOpen();
-                node.setCalculateConflict(true);
-                getSearchStrategy().pushOpenNode(node);
-                removeHittingSet(invalidHittingSet);
-            }
-        }
     }
-
-    private boolean isConnectedToRoot(Node<Id> node) {
-        if (node == null) return false;
-        return node.isRoot() || isConnectedToRoot(node.getParent());
-    }
-
-    private void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
-        Node<Id> root = getRoot();
-        if (getRoot() == null) {
-            return;
-        }
-        LinkedList<Node<Id>> children = new LinkedList<Node<Id>>();
-        children.add(root);
-        while (!children.isEmpty()) {
-            Node<Id> node = children.removeFirst();
-            Set<Node<Id>> nodeChildren = updateNode(conflictSet, node);
-            children.addAll(nodeChildren);
-        }
-    }
-
-    public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
-        if (node == null || node.getAxiomSet() == null)
-            return Collections.emptySet();
-        if (node.getAxiomSet().containsAll(axSet)) {
-            //EDITED
-            Set<Id> invalidAxioms = new LinkedHashSet<Id>(node.getAxiomSet().iterator().next());
-            //if (!getSearcher().isDual())
-            invalidAxioms.removeAll(axSet);
-
-            for (Id invalidAxiom : invalidAxioms) {
-                Node<Id> invalidChild = findInvalidChild(node, invalidAxiom);
-                node.removeChild(invalidChild);
-            }
-
-            node.setAxiomSet(axSet);
-        }
-        return node.getChildren();
-    }
-
-    private Node<Id> findInvalidChild(Node<Id> node, Id invalidAxiom) {
-        for (Node<Id> idNode : node.getChildren()) {
-            if (idNode.getArcLabel().equals(invalidAxiom)) {
-                removeChildren(idNode);
-                return idNode;
-            }
-        }
-        throw new IllegalStateException("Invalid child does not exists!");
-    }
-
-    private void removeChildren(Node<Id> idNode) {
-        if (!getSearchStrategy().getOpenNodes().remove(idNode)) {
-            for (Node<Id> node : idNode.getChildren()) {
-                removeChildren(node);
-            }
-        }
-    }
-
-
-
-
 
 /*  public Set<Set<Id>> computeDiagnoses() throws NoConflictException,SolverException,InconsistentTheoryException{
 
@@ -142,10 +68,10 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
      return computeDiagnoses(getRoot());
  }
 
- public Set<Set<Id>> computeDiagnoses(Node<Id> node){
+ public Set<Set<Id>> computeDiagnoses(SimpleNode<Id> node){
 
      Set<Set<Id>> diagnoses =new LinkedHashSet<Set<Id>>();
-     Set<Set<Id>> conflicts=node.getAxiomSet();
+     Set<Set<Id>> conflicts=node.getAxiomSets();
 
      if(conflicts.size()==0){
       diagnoses.add(node.getPathLabels());
@@ -201,7 +127,7 @@ private Set<Set<Id>>  addToHS(Id e, Set<Set<Id>>conflicts){
      for (Set<Id> conflict:conflicts){
          if (conflict.size()==1 && !foundElement) {
              Id e=conflict.iterator().next();
-             Node node =new Node(addToHS(e,conflicts));
+             SimpleNode node =new SimpleNode(addToHS(e,conflicts));
              //tree.addNode(newConflicts);
              //Edge edge= new Edge();
              //edge.from=conflicts;
@@ -218,8 +144,8 @@ private Set<Set<Id>>  addToHS(Id e, Set<Set<Id>>conflicts){
 
  public void splitRule(Set<Set<Id>> conflicts){
      Id e=chooseSplitElement(conflicts);
-    Node node1=new Node(addToHS(e,conflicts));
-    Node node2=new Node(ignore(e,conflicts));
+    SimpleNode node1=new SimpleNode(addToHS(e,conflicts));
+    SimpleNode node2=new SimpleNode(ignore(e,conflicts));
      //tree.addNode(node1)
      //tree.addNode(node2)
      //tree.addEdge(conflicts,node1,e)
@@ -237,12 +163,12 @@ private Set<Set<Id>>  addToHS(Id e, Set<Set<Id>>conflicts){
          foundElement=true;
          Set<Id> conflict=conflicts.iterator().next();
          Id e=conflict.iterator().next();
-         Node node1=new Node(addToHS(e,conflicts));
+         SimpleNode node1=new SimpleNode(addToHS(e,conflicts));
         // tree.addNode(newNode1)
          //tree.addEdge(conflicts,newNode1,e)
 
          if(!(conflict.size()==1)){
-             Node node2=new Node(ignore(e,conflicts));
+             SimpleNode node2=new SimpleNode(ignore(e,conflicts));
            //  tree.addNode(newNode2)
             // tree.addEdge(conflicts,newNode2,null)
             // openNodes.add(newNode2)
@@ -251,7 +177,7 @@ private Set<Set<Id>>  addToHS(Id e, Set<Set<Id>>conflicts){
      return foundElement;
  }
 
- protected Set<Set<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+ protected Set<Set<Id>> calculateNode(SimpleNode<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
      return calculateConflict(node);
  }
 

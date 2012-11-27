@@ -81,21 +81,21 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         this.costsEstimator = costsEstimator;
     }
 
-    //abstract public Node<Id> getNode();
+    //abstract public SimpleNode<Id> getNode();
 
-    // public abstract Collection<Node<Id>> getOpenNodes();
+    // public abstract Collection<SimpleNode<Id>> getOpenNodes();
 
-    // public abstract Node<Id> popOpenNodes();
+    // public abstract SimpleNode<Id> popOpenNodes();
 
-    // public abstract void pushOpenNode(Node<Id> node);
+    // public abstract void pushOpenNode(SimpleNode<Id> node);
 
-    //abstract public void addNodes(ArrayList<Node<Id>> nodeList);
+    //abstract public void addNodes(ArrayList<SimpleNode<Id>> nodeList);
 
-    // public abstract void expand(Node<Id> node);
+    // public abstract void expand(SimpleNode<Id> node);
 
-    //protected abstract T createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException;
+    //protected abstract T createConflictSet(SimpleNode<Id> node, Set<Id> quickConflict) throws SolverException;
 
-    //protected abstract T createHittingSet(Node<Id> labels, boolean valid) throws SolverException;
+    //protected abstract T createHittingSet(SimpleNode<Id> labels, boolean valid) throws SolverException;
 
     protected T createConflictSet(Node<Id> node, AxiomSet<Id> quickConflict) throws SolverException {
         Set<Id> entailments = Collections.emptySet();
@@ -124,7 +124,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
 
     // protected abstract double getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costEst);
 
-    // protected abstract double getDiagnosisMeasure(Node<Id> node);
+    // protected abstract double getDiagnosisMeasure(SimpleNode<Id> node);
 
     public void addOpenNodesListener(OpenNodesListener l) {
         oNodesLsteners.add(l);
@@ -214,7 +214,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
                 }
                 updateTree(invalidHittingSets);
             }
-            if (getRoot() == null || getRoot().getAxiomSet() == null) {
+            if (getRoot() == null || getRoot().getAxiomSets() == null) {
                 this.root = null;
                 createRoot();
             }
@@ -242,14 +242,14 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
     protected abstract void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException;
 
     /*
-    protected void expandLeafNodes(Node<Id> node) {
+    protected void expandLeafNodes(SimpleNode<Id> node) {
         if (node.getChildren().isEmpty() && !node.isClosed()) {
-            ArrayList<Node<Id>> nodeList = node.expandNode();
+            ArrayList<SimpleNode<Id>> nodeList = node.expandNode();
             nodeList.removeAll(getOpenNodes());
             addNodes(nodeList);
             return;
         }
-        for (Node<Id> idNode : node.getChildren()) {
+        for (SimpleNode<Id> idNode : node.getChildren()) {
             expandLeafNodes(idNode);
         }
     }*/
@@ -315,11 +315,11 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
                 if (!canReuseConflict(node) )
                     //EDITED von CalculateConflict
                     calculateNode(node);
-                if (!node.isClosed() && isValidConflict(node.getAxiomSet())) {
+                if (!node.isClosed() && isValidConflict(node.getAxiomSets())) {
                     getSearchStrategy().expand(node);
                    //If child isn't empty, add to open Nodes
-                   /* for(Node<Id> child:node.getChildren()){
-                        if(child.getAxiomSet()!=null)
+                   /* for(SimpleNode<Id> child:node.getChildren()){
+                        if(child.getAxiomSets()!=null)
                             getSearchStrategy().pushOpenNode(child);
                     } */
                 }
@@ -380,7 +380,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         setRoot(node);
     }
 
-    //protected abstract Node<Id> createRootNode(Set<Id> conflict,CostsEstimator<Id> costsEstimator, Collection<Id> act);
+    //protected abstract SimpleNode<Id> createRootNode(Set<Id> conflict,CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
     /*
     protected void proveValidnessConflict(T conflictSet) throws SolverException {
@@ -420,11 +420,11 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         if (node != null) {
             if (logger.isDebugEnabled())
                 logger.debug("Calculating a conflict for the node: " + node);
-            if (node.getAxiomSet() != null) {
+            if (node.getAxiomSets() != null) {
                 if (logger.isDebugEnabled())
-                    logger.debug("The conflict is already calculated: " + node.getAxiomSet());
+                    logger.debug("The conflict is already calculated: " + node.getAxiomSets());
                 //EDITED
-                return node.getAxiomSet();
+                return node.getAxiomSets();
             }
             pathLabels = node.getPathLabels();
         }
@@ -477,9 +477,6 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
 
     protected abstract Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException, InconsistentTheoryException;
 
-
-
-
     /*public Set<T> getConflicts() {
         return getStorage().getConflicts();
     }
@@ -518,7 +515,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
     protected abstract void proveValidnessConflict(T conflictSet) throws SolverException;
 
     /*
-    protected void pruneConflictSets(Node<Id> node, T conflictSet) throws SolverException, InconsistentTheoryException {
+    protected void pruneConflictSets(SimpleNode<Id> node, T conflictSet) throws SolverException, InconsistentTheoryException {
         if (!getSearcher().isDual()) {
         // DAG: verify if there is a conflict that is a subset of the new conflict
         Set<T> invalidConflicts = new LinkedHashSet<T>();
@@ -551,7 +548,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
     public boolean canReuseConflict(Node<Id> node) {
         // check if this is a root
         //EDITED MultiNodes don't reuse Conflicts
-        if (node.isRoot() || node.getAxiomSet() != null || (node instanceof  MultiNode )) return false;
+        if (node.isRoot() || node.getAxiomSets() != null || (node instanceof  MultiNode )) return false;
         Collection<Id> pathLabels = node.getPathLabels();
         for (AxiomSet<Id> localConflict : getConflicts()) {
             if (localConflict.isValid() && !intersectsWith(pathLabels, localConflict)) {
