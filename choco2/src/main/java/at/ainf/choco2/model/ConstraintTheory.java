@@ -31,8 +31,7 @@ public class ConstraintTheory extends BaseSearchableObject<Constraint> {
         return (ReasonerConstraint) super.getReasoner();
     }
 
-    @Override
-    protected Constraint negate(Constraint formulas) {
+    private Constraint negate(Constraint formulas) {
         return Choco.not(formulas);
     }
 

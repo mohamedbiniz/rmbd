@@ -22,8 +22,7 @@ public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable>
         setReasoner(new ReasonerSat4j(solver));
     }
 
-    @Override
-    protected IVecIntComparable negate(IVecIntComparable formula) {
+    private IVecIntComparable negate(IVecIntComparable formula) {
         IVecIntComparable res = new VecIntComparable();
         for (IteratorInt iter = formula.iterator(); iter.hasNext(); ) {
             int val = iter.next() * -1;

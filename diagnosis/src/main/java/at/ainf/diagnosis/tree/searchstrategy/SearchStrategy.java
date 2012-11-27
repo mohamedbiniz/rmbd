@@ -27,9 +27,9 @@ public interface SearchStrategy<Id> {
 
     public void addNodes(List<Node<Id>> nodeList);
 
-    public Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act);
+    public Node<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
-    public BigDecimal getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator);
+    public BigDecimal getConflictMeasure(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator);
 
     public BigDecimal getDiagnosisMeasure(Node<Id> node);
 

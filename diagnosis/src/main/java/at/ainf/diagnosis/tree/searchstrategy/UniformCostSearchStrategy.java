@@ -23,7 +23,7 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
 
-    public Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+    public Node<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         CostNode<Id> node = new CostNode<Id>(conflict);
         node.setCostsEstimator(costsEstimator);
         node.setNodePathCosts(node.getRootNodeCosts(act));
@@ -39,7 +39,7 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
 
-    public BigDecimal getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
+    public BigDecimal getConflictMeasure(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return costsEstimator.getAxiomSetCosts(conflict);
     }
 
