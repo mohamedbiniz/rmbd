@@ -40,6 +40,8 @@ public class CostNode<T> extends Node<T> implements Comparable<CostNode<T>> {
     }
 
     public CostNode(Set<T> conflict) {
+
+
         super(conflict);
         name = "CostNode" + counter++;
 
@@ -48,7 +50,8 @@ public class CostNode<T> extends Node<T> implements Comparable<CostNode<T>> {
 
     public ArrayList<Node<T>> expandNode() {
         ArrayList<Node<T>> newNodes = new ArrayList<Node<T>>();
-        for (T arcLabel : getAxiomSet()) {
+        //EDITED
+        for (T arcLabel : getAxiomSet().iterator().next()) {
             CostNode<T> node = new CostNode<T>(this, arcLabel);
             newNodes.add(node);
             CostNode<T> parent = (CostNode<T>) node.getParent();

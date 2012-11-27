@@ -7,6 +7,7 @@ import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStra
     public Node<Id> createRootNode(Set<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         return new Node<Id>(conflict);
     }
+
+
 
     public BigDecimal getConflictMeasure(Set<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return BigDecimal.valueOf(1d / conflict.size());

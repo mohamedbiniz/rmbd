@@ -29,24 +29,41 @@ public class Node<Id> {
     //private final Id ARC_OF_ROOT = null;
 
     // PARENT: if node is the root parent = null
-    private Node<Id> parent;
+    protected Node<Id> parent;
 
-    private final Set<Node<Id>> children = new LinkedHashSet<Node<Id>>();
+    protected final Set<Node<Id>> children = new LinkedHashSet<Node<Id>>();
 
     // ARCLABEL: if node is the root arcLabel = -1
-    private Id arcLabel;
+    protected Id arcLabel;
 
     // CONFLICT: if the node is not calculated or closed conflict = null
-    private Set<Id> conflict = null;
+    protected Set<Set<Id>> conflict = null;
 
-    private final boolean root;
+    protected final boolean root;
+
+
+
 
     // constructor for root
-    public Node(Set<Id> conflict) {
+
+    //NEU
+    public Node(LinkedHashSet<Set<Id>> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
         this.conflict = conflict;
+        this.root = true;
+    }
+
+    public Node(Set<Id> conflict) {
+        this.parent = null;
+        // arcLabel = -1
+        this.arcLabel = null;
+
+        LinkedHashSet<Set<Id>> set = new LinkedHashSet<Set<Id>>();
+        set.add(conflict);
+
+        this.conflict = set;
         this.root = true;
     }
 
@@ -80,7 +97,9 @@ public class Node<Id> {
 
     public ArrayList<Node<Id>> expandNode() {
         ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
-        for (Id arcLabel : this.conflict) {
+
+        //NEU
+        for (Id arcLabel : conflict.iterator().next()) {
             if (!hasChild(getChildren(), arcLabel)) {
                 Node<Id> node = new Node<Id>(this, arcLabel);
                 newNodes.add(node);
@@ -89,7 +108,21 @@ public class Node<Id> {
         return newNodes;
     }
 
-    private boolean hasChild(Set<Node<Id>> children, Id arcLabel) {
+    public ArrayList<Node<Id>> expandNode(boolean bool) {
+        ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
+
+        //NEU
+        for (Id arcLabel : conflict.iterator().next()) {
+            if (!hasChild(getChildren(), arcLabel)) {
+                Node<Id> node = new Node<Id>(this, arcLabel);
+                newNodes.add(node);
+            }
+        }
+        return newNodes;
+    }
+
+
+    protected boolean hasChild(Set<Node<Id>> children, Id arcLabel) {
         for (Node<Id> child : children) {
             if (child.getArcLabel().equals(arcLabel))
                 return true;
@@ -111,7 +144,7 @@ public class Node<Id> {
         return pathLabels;
     }
 
-    private boolean closed = false;
+    protected boolean closed = false;
 
     public boolean isClosed() {
         return this.closed;
@@ -137,18 +170,28 @@ public class Node<Id> {
         return arcLabel;
     }
 
-    public Set<Id> getAxiomSet() {
+    public Set<Set<Id>> getAxiomSet() {
+
         return conflict;
     }
 
-    public void setAxiomSet(Set<Id> conflict) {
+    public void setAxiomSet(LinkedHashSet<Set<Id>> conflict) {
         /*
         for (Node<Id> child : children) {
             child.setClosed();
         }
         */
         //children.clear();
-        this.conflict = conflict;
+
+            this.conflict = conflict;
+
+    }
+
+    public void setAxiomSet(Set<Id> conflict) {
+
+        Set<Set<Id>> set = new LinkedHashSet<Set<Id>>();
+        set.add(conflict);
+        this.conflict=set;
     }
 
     public int getLevel() {
@@ -172,4 +215,19 @@ public class Node<Id> {
     public void setOpen() {
         this.closed = false;
     }
+
+    protected Set<Id> copy(Set<Id> set) {
+        Set<Id> hs = new LinkedHashSet<Id>();
+        for (Id hset : set)
+            hs.add(hset);
+        return hs;
+    }
+
+    protected Set<Set<Id>> copy2(Set<Set<Id>> set) {
+        Set<Set<Id>> hs = new LinkedHashSet<Set<Id>>();
+        for (Set<Id> hset : set)
+            hs.add(copy(hset));
+        return hs;
+    }
+
 }

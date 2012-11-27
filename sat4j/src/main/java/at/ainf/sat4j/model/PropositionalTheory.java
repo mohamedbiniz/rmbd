@@ -13,7 +13,7 @@ import org.sat4j.specs.*;
 
 import java.util.*;
 
-public class PropositionalTheory extends AbstractSearchableObject<IVecIntComparable> {
+public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable> {
 
     private boolean createNew = false;
 

@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
-import at.ainf.diagnosis.tree.*;
+import  at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.storage.AxiomSet;
 
 import static at.ainf.diagnosis.tree.Rounding.*;
@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
-
+import java.util.*;
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -29,6 +29,8 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
         node.setNodePathCosts(node.getRootNodeCosts(act));
         return node;
     }
+
+
 
 
     public void expand(Node<Id> node) {

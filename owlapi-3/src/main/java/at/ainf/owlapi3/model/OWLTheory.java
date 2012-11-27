@@ -5,8 +5,6 @@ import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import at.ainf.diagnosis.storage.AxiomSet;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.InferenceType;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.util.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
@@ -28,7 +26,7 @@ import static _dev.TimeLog.stop;
  * Time: 14:21:13
  * To change this template use File | Settings | File Templates.
  */
-public class OWLTheory extends AbstractSearchableObject<OWLLogicalAxiom> {
+public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
 
     private static Logger logger = LoggerFactory.getLogger(OWLTheory.class.getName());
 

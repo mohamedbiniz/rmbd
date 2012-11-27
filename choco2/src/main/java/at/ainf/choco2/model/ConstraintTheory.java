@@ -9,12 +9,10 @@
 package at.ainf.choco2.model;
 
 
-import at.ainf.diagnosis.model.AbstractSearchableObject;
-import at.ainf.diagnosis.model.IReasoner;
+import at.ainf.diagnosis.model.BaseSearchableObject;
 import at.ainf.diagnosis.model.SolverException;
 import choco.Choco;
 import choco.cp.model.CPModel;
-import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
 import choco.kernel.model.constraints.Constraint;
 import choco.kernel.solver.Solver;
@@ -22,7 +20,7 @@ import choco.kernel.solver.Solver;
 import java.util.Collection;
 
 
-public class ConstraintTheory extends AbstractSearchableObject<Constraint> {
+public class ConstraintTheory extends BaseSearchableObject<Constraint> {
 
 
     public ConstraintTheory(Solver solver) {
