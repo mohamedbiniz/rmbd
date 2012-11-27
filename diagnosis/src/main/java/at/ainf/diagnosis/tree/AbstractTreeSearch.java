@@ -444,7 +444,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
             logMessage(getDepth(node), "pathlabels: ", pathLabels);
 
 
-          pruneConflictSets(node, conflictSet);
+        pruneConflictSets(node, conflictSet);
 
         addNodeLabel(conflictSet);
         notifySearchListeners();

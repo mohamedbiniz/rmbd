@@ -285,7 +285,7 @@ public class Example2Test extends AbstractExample {
         assertTrue(count==2);
         set = new TreeSet<Diag>();
         search.setMaxDiagnosesNumber(3);
-        for (AxiomSet<OWLLogicalAxiom> col : search.start()) {
+        for (AxiomSet<OWLLogicalAxiom> col : search.resume()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D1);
@@ -299,7 +299,7 @@ public class Example2Test extends AbstractExample {
 
         assertTrue(count==3);
         search.setMaxDiagnosesNumber(4);
-        for (AxiomSet<OWLLogicalAxiom> col : search.start()) {
+        for (AxiomSet<OWLLogicalAxiom> col : search.resume()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D3);
