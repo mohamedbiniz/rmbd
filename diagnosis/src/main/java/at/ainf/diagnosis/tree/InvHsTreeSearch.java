@@ -36,6 +36,20 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
 
     }
 
+    protected Set<Id> calculateEntailmentsForConflictSet(AxiomSet<Id> quickConflict) throws SolverException {
+        Set<Id> entailments = Collections.emptySet();
+        if (getSearchable().supportEntailments())
+            entailments = getSearchable().getEntailments(quickConflict);
+        if (entailments==null)
+            entailments = Collections.emptySet();
+        return entailments;
+    }
+
+    protected Set<Id> calculateEntailmentsForHittingSet(Set<Id> labels, boolean valid) throws SolverException {
+
+        return Collections.emptySet();
+    }
+
     public void updateTree(List<T> invalidAxiomSets) throws SolverException, InconsistentTheoryException, NoConflictException {
         if (invalidAxiomSets.isEmpty()) {
             return;
