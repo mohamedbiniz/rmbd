@@ -3,7 +3,6 @@ package at.ainf.diagnosis.tree;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.*;
@@ -33,7 +32,7 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
-        Set<Set<Id>> conflict = calculateConflict(null);
+        Set<AxiomSet<Id>> conflict = calculateConflict(null);
         //muss später verändert werden, damit es für mehrere Konflikte funktioniert
         MultiNode<Id> node = new MultiNode<Id>(conflict);
 
@@ -41,7 +40,7 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
         setRoot(node);
     }
 
-    public Set<Set<Id>>  calculateNode(Node<Id> node) throws NoConflictException,SolverException,InconsistentTheoryException{
+    public Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException,InconsistentTheoryException{
       if(node.getAxiomSet()==null || node.getAxiomSet().isEmpty())
         return calculateConflict(node);
 

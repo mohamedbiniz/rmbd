@@ -19,10 +19,13 @@ import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomRenderer;
+import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -67,7 +70,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
      *
      */
     
-    public Set<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
+    public AxiomSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException {
         iterations = 0;
 
@@ -81,11 +84,11 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             throw new NoConflictException("The theory is satisfiable!");
         }
         if (u.isEmpty()) {
-            return new TreeSet<Id>();
+            return AxiomSetFactory.createConflictSet(new BigDecimal(0), new TreeSet<Id>(), new TreeSet<Id>());
         }
         start("Conflict", "qx");
-        return qqXPlain(c, ((AbstractReasoner<Id>)c.getReasoner()).getFormularCache(), new FormulaList<Id>(u));
-
+        Set<Id> ids = qqXPlain(c, ((AbstractReasoner<Id>) c.getReasoner()).getFormularCache(), new FormulaList<Id>(u));
+        return AxiomSetFactory.createConflictSet(new BigDecimal(0), ids, new TreeSet<Id>());
     }
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)

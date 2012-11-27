@@ -8,7 +8,7 @@
 
 package at.ainf.diagnosis.tree;
 
-import  _dev.TimeLog;
+import   _dev.TimeLog;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -97,15 +97,16 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
 
     //protected abstract T createHittingSet(Node<Id> labels, boolean valid) throws SolverException;
 
-    protected T createConflictSet(Node<Id> node, Set<Id> quickConflict) throws SolverException {
+    protected T createConflictSet(Node<Id> node, AxiomSet<Id> quickConflict) throws SolverException {
         Set<Id> entailments = Collections.emptySet();
         if (getSearchable().supportEntailments() && getSearcher().isDual()) entailments = getSearchable().getEntailments(quickConflict);
         if (entailments==null) entailments = Collections.emptySet();
         BigDecimal measure =  getSearchStrategy().getConflictMeasure(quickConflict, getCostsEstimator());
-        T hs = (T) AxiomSetFactory.createConflictSet(measure, quickConflict, entailments);
-        //Conflictset wird einem Node zugeordnet;sollte aber Menge von Conflictsets sein
-        hs.setNode(node);
-        return hs;
+        quickConflict.setEntailments(entailments);
+        quickConflict.setMeasure(measure);
+        quickConflict.setNode(node);
+
+        return (T)quickConflict;
     }
 
     protected T createHittingSet(Node<Id> node, boolean valid) throws SolverException {
@@ -373,7 +374,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
-        Set<Set<Id>> conflict = calculateConflict(null);
+        Set<AxiomSet<Id>> conflict = calculateConflict(null);
         //NEW
         Node<Id> node = getSearchStrategy().createRootNode(conflict.iterator().next(), getCostsEstimator(), getSearchable().getKnowledgeBase().getFaultyFormulas());
         setRoot(node);
@@ -395,7 +396,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         }
     }
      */
-    public Set<Set<Id>> calculateConflict(Node<Id> node) throws
+    public Set<AxiomSet<Id>> calculateConflict(Node<Id> node) throws
             SolverException, NoConflictException, InconsistentTheoryException {
         // if conflict was already calculated
         //edited
@@ -403,7 +404,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
 
         System.out.println("Berechne neuen Konflikt");
 
-        Set<Set<Id>> quickConflict;
+        Set<AxiomSet<Id>> quickConflict;
         List<Id> list = new ArrayList<Id>(getSearchable().getKnowledgeBase().getFaultyFormulas());
         Collections.sort(list, new Comparator<Id>() {
             public int compare(Id o1, Id o2) {
@@ -453,7 +454,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         // this node to root does not include closed nodes
         if (node != null && !hasClosedParent(node.getParent())){
 
-            node.setAxiomSet(new LinkedHashSet<Set<Id>>(quickConflict));
+            node.setAxiomSet(new LinkedHashSet<AxiomSet<Id>>(quickConflict));
 
         }
         return quickConflict;
@@ -474,7 +475,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         }*/
     }
 
-    protected abstract Set<Set<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException, InconsistentTheoryException;
+    protected abstract Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException, InconsistentTheoryException;
 
 
 
@@ -720,7 +721,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         return Collections.unmodifiableSet(hittingSets);
     }
 
-    private boolean isValidConflict(Set<Set<Id>> set){
+    private boolean isValidConflict(Set<AxiomSet<Id>> set){
 
         if(set==null || set.isEmpty()) return false;
 

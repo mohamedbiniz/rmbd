@@ -1,5 +1,7 @@
 package at.ainf.diagnosis.tree;
 
+import at.ainf.diagnosis.storage.AxiomSet;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,9 +41,7 @@ public class CostNode<T> extends Node<T> implements Comparable<CostNode<T>> {
 
     }
 
-    public CostNode(Set<T> conflict) {
-
-
+    public CostNode(AxiomSet<T> conflict) {
         super(conflict);
         name = "CostNode" + counter++;
 

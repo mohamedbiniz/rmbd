@@ -62,7 +62,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
             getSearchStrategy().addNodes(root.expandNode());
         }
         else
-            root.setAxiomSet((LinkedHashSet<Id>)null);
+            root.setAxiomSet((AxiomSet<Id>)null);
 
     }
 
@@ -147,7 +147,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
         return node.getChildren();
     }
 
-    protected Set<Set<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+    protected Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
         return calculateConflict(node);
     }
 

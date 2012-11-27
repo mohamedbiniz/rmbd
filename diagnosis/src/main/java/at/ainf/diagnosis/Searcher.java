@@ -16,6 +16,7 @@ package at.ainf.diagnosis;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.Collection;
@@ -42,7 +43,7 @@ public interface Searcher<F> {
      * @throws NoConflictException is thrown if formulas are consistent
      * @throws SolverException     is thrown if any solver related problems occur.
      */
-    public Set<Set<F>> search(Searchable<F> searchable, final Collection<F> formulas, Set<F> changes)
+    public Set<AxiomSet<F>> search(Searchable<F> searchable, final Collection<F> formulas, Set<F> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException;
 
     public boolean isDual();
