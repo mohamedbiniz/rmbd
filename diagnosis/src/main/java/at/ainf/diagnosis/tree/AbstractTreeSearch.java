@@ -13,10 +13,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomRenderer;
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetFactory;
-import at.ainf.diagnosis.storage.StorageListener;
+import at.ainf.diagnosis.storage.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.logging.aop.ProfiledVar;
@@ -98,9 +95,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
     //protected abstract T createHittingSet(SimpleNode<Id> labels, boolean valid) throws SolverException;
 
     protected T createConflictSet(Node<Id> node, AxiomSet<Id> quickConflict) throws SolverException {
-        Set<Id> entailments = Collections.emptySet();
-        if (getSearchable().supportEntailments() && getSearcher().isDual()) entailments = getSearchable().getEntailments(quickConflict);
-        if (entailments==null) entailments = Collections.emptySet();
+        Set<Id> entailments = calculateEntailmentsForConflictSet(quickConflict);
         BigDecimal measure =  getSearchStrategy().getConflictMeasure(quickConflict, getCostsEstimator());
         quickConflict.setEntailments(entailments);
         quickConflict.setMeasure(measure);
@@ -111,13 +106,32 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
 
     protected T createHittingSet(Node<Id> node, boolean valid) throws SolverException {
         Set<Id> labels = node.getPathLabels();
-        Set<Id> entailments = Collections.emptySet();
-        if (getSearchable().supportEntailments() && valid && !getSearcher().isDual())
-            entailments = getSearchable().getEntailments(labels);
+        Set<Id> entailments = calculateEntailmentsForHittingSet(labels, valid);
         BigDecimal measure = getSearchStrategy().getDiagnosisMeasure(node);
-        T hs = (T) AxiomSetFactory.createHittingSet(measure, labels, entailments);
+        T hs = (T) new AxiomSetImpl<Id>(measure, labels, entailments);
         hs.setNode(node);
         return hs;
+    }
+
+    protected Set<Id> calculateEntailmentsForConflictSet(AxiomSet<Id> quickConflict) throws SolverException {
+        /*Set<Id> entailments = Collections.emptySet();
+        if (getSearchable().supportEntailments() && getSearcher().isDual())
+            entailments = getSearchable().getEntailments(quickConflict);
+        if (entailments==null)
+            entailments = Collections.emptySet();
+        return entailments; */
+        return Collections.emptySet();
+    }
+
+    protected Set<Id> calculateEntailmentsForHittingSet(Set<Id> labels, boolean valid) throws SolverException {
+        /*Set<Id> entailments = Collections.emptySet();
+        if (getSearchable().supportEntailments() && valid && !getSearcher().isDual())
+            entailments = getSearchable().getEntailments(labels);
+        return entailments;*/
+        Set<Id> entailments = Collections.emptySet();
+        if (getSearchable().supportEntailments() && valid)
+            entailments = getSearchable().getEntailments(labels);
+        return entailments;
     }
 
     protected List<OpenNodesListener> oNodesLsteners = new LinkedList<OpenNodesListener>();
@@ -297,14 +311,15 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         else
             return getDepth(node.getParent()) + 1;
     }
-    
-    protected boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
+
+    protected abstract boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException;
+
+    /*protected boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
         if (!getSearcher().isDual()) {
             if (getSearchable().getKnowledgeBase().hasTests())
                 return getSearchable().testDiagnosis(diagnosis);
         }
-        return true;
-    }
+        return true; } */
 
     protected void processNode(Node<Id> node) throws SolverException, InconsistentTheoryException {
         boolean prune = pruneHittingSet(node);
@@ -402,7 +417,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         //edited
 
 
-        System.out.println("Berechne neuen Konflikt");
+        //System.out.println("Berechne neuen Konflikt");
 
         Set<AxiomSet<Id>> quickConflict;
         List<Id> list = new ArrayList<Id>(getSearchable().getKnowledgeBase().getFaultyFormulas());

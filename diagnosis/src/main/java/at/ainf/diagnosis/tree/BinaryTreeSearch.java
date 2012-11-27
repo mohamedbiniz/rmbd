@@ -27,6 +27,14 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
 
     }
 
+    public boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
+
+        if (getSearchable().getKnowledgeBase().hasTests())
+            return getSearchable().testDiagnosis(diagnosis);
+
+        return true;
+
+    }
 
     public void createRoot() throws NoConflictException,
             SolverException, InconsistentTheoryException {

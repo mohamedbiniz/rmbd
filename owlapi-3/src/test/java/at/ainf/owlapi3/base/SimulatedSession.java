@@ -11,6 +11,7 @@ import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.AxiomSetFactory;
+import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.Rounding;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -188,7 +189,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         boolean answer;
         Searchable<OWLLogicalAxiom> theory = search.getSearchable();
 
-        AxiomSet<OWLLogicalAxiom> target = AxiomSetFactory.createHittingSet(BigDecimal.valueOf(0.5), t, new LinkedHashSet<OWLLogicalAxiom>());
+        AxiomSet<OWLLogicalAxiom> target = new AxiomSetImpl<OWLLogicalAxiom>(BigDecimal.valueOf(0.5), t, new LinkedHashSet<OWLLogicalAxiom>());
         if (theory.diagnosisEntails(target, actualQuery.partition)) {
             answer = true;
             assertTrue(!actualQuery.dnx.contains(target));

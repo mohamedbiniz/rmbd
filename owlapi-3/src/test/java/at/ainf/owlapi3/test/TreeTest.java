@@ -206,8 +206,8 @@ public class TreeTest {
         List<OWLLogicalAxiom> negTest = new LinkedList<OWLLogicalAxiom>();
         OWLSubClassOfAxiom ax = owlDataFactory.getOWLSubClassOfAxiom(owlDataFactory.getOWLClass(IRI.create(TEST_IRI + "B")),
                 owlDataFactory.getOWLClass(IRI.create(TEST_IRI + "M3")));
-        OWLLogicalAxiom negate = owlTheory.negate(ax);
-        negTest.add(negate);
+        //OWLLogicalAxiom negate = owlTheory.negate(ax);
+        //negTest.add(negate);
 
 
         debug.reset();
@@ -263,7 +263,7 @@ public class TreeTest {
         return negated;
     }
 
-    private void testEntailment(OWLTheory th, OWLReasoner solver, OWLLogicalAxiom ax, boolean res) {
+    /*private void testEntailment(OWLTheory th, OWLReasoner solver, OWLLogicalAxiom ax, boolean res) {
         OWLLogicalAxiom neg = th.negate(ax);
         th.getOwlOntologyManager().addAxiom(th.getOntology(), neg);
         solver.flush();
@@ -271,7 +271,7 @@ public class TreeTest {
         //if (res)
         //assertEquals(solver.getUnsatisfiableClasses().getSize(), 1);
         th.getOwlOntologyManager().removeAxiom(th.getOntology(), neg);
-    }
+    }*/
 
     @Test
     public void testDebug1() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException, NoConflictException {
@@ -445,7 +445,7 @@ public class TreeTest {
         return entailments;
     }
 
-    private Collection<Collection<OWLLogicalAxiom>> createTestCases(Collection<OWLLogicalAxiom> ent, OWLTheory theory) {
+   /* private Collection<Collection<OWLLogicalAxiom>> createTestCases(Collection<OWLLogicalAxiom> ent, OWLTheory theory) {
         Collection<Collection<OWLLogicalAxiom>> tests = new LinkedList<Collection<OWLLogicalAxiom>>();
         for (OWLLogicalAxiom ax : ent) {
             Collection<OWLLogicalAxiom> test = new LinkedList<OWLLogicalAxiom>();
@@ -453,6 +453,6 @@ public class TreeTest {
             tests.add(test);
         }
         return tests;
-    }
+    }*/
 
 }
