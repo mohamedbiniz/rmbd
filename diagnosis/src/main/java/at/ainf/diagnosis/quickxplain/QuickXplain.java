@@ -84,11 +84,11 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             throw new NoConflictException("The theory is satisfiable!");
         }
         if (u.isEmpty()) {
-            return AxiomSetFactory.createConflictSet(new BigDecimal(0), new TreeSet<Id>(), new TreeSet<Id>());
+            return AxiomSetFactory.createConflictSet(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>());
         }
         start("Conflict", "qx");
         Set<Id> ids = qqXPlain(c, ((AbstractReasoner<Id>) c.getReasoner()).getFormularCache(), new FormulaList<Id>(u));
-        return AxiomSetFactory.createConflictSet(new BigDecimal(0), ids, new TreeSet<Id>());
+        return AxiomSetFactory.createConflictSet(new BigDecimal(1), ids, new TreeSet<Id>());
     }
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)

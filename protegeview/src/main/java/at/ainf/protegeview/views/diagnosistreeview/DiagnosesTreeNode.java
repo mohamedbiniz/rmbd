@@ -56,7 +56,7 @@ public class DiagnosesTreeNode extends DefaultMutableTreeNode {
             String result = "";
             ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 
-            for (OWLLogicalAxiom axiom : node.getParent().getAxiomSet()) {
+            for (OWLLogicalAxiom axiom : node.getParent().getAxiomSet().iterator().next()) {
               result = result + renderer.render(axiom) + "\n";
             }
 
