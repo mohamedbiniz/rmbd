@@ -130,16 +130,16 @@ public class BinaryTreeTest {
         // here we save the result in a new list
         Set<AxiomSet<Integer>> result = new LinkedHashSet<AxiomSet<Integer>>(search.getDiagnoses());
 
-        System.out.println("Number of hitting sets: " + result.size());
-        System.out.println("Hitting sets:");
-
-        for(AxiomSet<Integer> axs:result){
-
-            for(int i:axs){
-                System.out.print(i);
-            }
-           System.out.println();
-        }
+        //System.out.println("Number of hitting sets: " + result.size());
+        //System.out.println("Hitting sets:");
+        //
+        //for(AxiomSet<Integer> axs:result){
+        //
+        //    for(int i:axs){
+        //        System.out.print(i);
+        //    }
+        //   System.out.println();
+        //}
 
 
         assertTrue(result.size() == 5);

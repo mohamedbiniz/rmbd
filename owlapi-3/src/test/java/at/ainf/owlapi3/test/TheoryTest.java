@@ -33,14 +33,14 @@ public class TheoryTest {
 
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-    public List<OWLLogicalAxiom> negateFormulas(Set<OWLLogicalAxiom> ntest, OWLTheory th) {
+    /*public List<OWLLogicalAxiom> negateFormulas(Set<OWLLogicalAxiom> ntest, OWLTheory th) {
         List<OWLLogicalAxiom> negated = new LinkedList<OWLLogicalAxiom>();
         for (OWLLogicalAxiom test : ntest)
             negated.add(th.negate(test));
         return negated;
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testTheory() throws OWLOntologyCreationException, URISyntaxException, SolverException,
             OWLOntologyChangeException, OWLOntologyStorageException, IOException, InconsistentTheoryException {
 
@@ -71,7 +71,7 @@ public class TheoryTest {
         File ont = new File(outPath);
         ont.createNewFile();
         manager.saveOntology(neg, new FileOutputStream(ont));
-    }
+    }*/
 
     private OWLClass createClass(OWLDataFactory dataFactory, String str) {
         return dataFactory.getOWLClass(IRI.create(str));

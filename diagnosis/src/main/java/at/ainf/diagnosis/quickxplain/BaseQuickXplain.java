@@ -103,15 +103,20 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             */
             //}
 
-            if (isDual()) {
+            /*if (isDual()) {
                 //searchable.getReasonerKB().remove();
                 ((AbstractReasoner<Id>)searchable.getReasoner()).addFormularsToCache(conflictFormulas);
                 searchable.verifyRequirements();
-            }
+            }*/
+            postProcessFormulas(conflictFormulas,searchable);
             rollbackChanges(searchable, formulas, changes);
         }
 
         return Collections.<AxiomSet<Id>>singleton(conflictFormulas);
+
+    }
+
+    public void postProcessFormulas(AxiomSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
 
     }
 

@@ -35,13 +35,13 @@ public class MultiNode<Id> extends Node<Id> {
          newNodes = new ArrayList<Node<Id>>();
 
 
-        System.out.println("HS-Länge:"+ getPathLabels().size());
+        //System.out.println("HS-Länge:"+ getPathLabels().size());
 
 
-        System.out.println("Anzahl Konflikte:"+conflict.size());
-        System.out.println(conflict.iterator().next().size());
+        //System.out.println("Anzahl Konflikte:"+conflict.size());
+        //System.out.println(conflict.iterator().next().size());
 
-        System.out.println("Expand!");
+        //System.out.println("Expand!");
 
         if( !unitRule() ){
 
@@ -94,7 +94,7 @@ public class MultiNode<Id> extends Node<Id> {
                 newConflicts.remove(c);
         }       */
 
-        System.out.println("Ignore size:" + newConflicts.iterator().next().size());
+        //System.out.println("Ignore size:" + newConflicts.iterator().next().size());
 
         if(newConflicts.size()>0)
         return newConflicts;

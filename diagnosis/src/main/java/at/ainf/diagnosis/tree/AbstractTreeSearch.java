@@ -402,7 +402,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
         //edited
 
 
-        System.out.println("Berechne neuen Konflikt");
+        //System.out.println("Berechne neuen Konflikt");
 
         Set<AxiomSet<Id>> quickConflict;
         List<Id> list = new ArrayList<Id>(getSearchable().getKnowledgeBase().getFaultyFormulas());
