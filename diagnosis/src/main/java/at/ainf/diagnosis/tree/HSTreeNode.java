@@ -273,7 +273,9 @@ public class HSTreeNode<Id> implements Node<Id> {
     public int compareTo(Node<Id> o) {
         if (this == o || this.equals(o))
             return 0;
-        return Integer.valueOf(getPathLabels().size()).compareTo(o.getPathLabels().size());
+        if (getNodePathCosts().compareTo(o.getNodePathCosts()) == 0)
+            return Integer.valueOf(getPathLabels().size()).compareTo(o.getPathLabels().size());
+        return -1 * getNodePathCosts().compareTo(o.getNodePathCosts());
     }
 
     public String toString() {
