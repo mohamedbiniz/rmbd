@@ -9,8 +9,8 @@ import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetImpl;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.Rounding;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -140,18 +140,18 @@ public class SimulatedSession extends CalculateDiagnoses {
     }
 
     protected <E extends OWLObject> void prinths
-            (Collection<AxiomSet<E>> c) {
-        for (AxiomSet<E> hs : c) {
+            (Collection<FormulaSet<E>> c) {
+        for (FormulaSet<E> hs : c) {
             logger.info(hs.getName());
             print(hs);
         }
     }
 
-    protected int getEliminationRate(Searchable<OWLLogicalAxiom> theory, Set<AxiomSet<OWLLogicalAxiom>> d,
+    protected int getEliminationRate(Searchable<OWLLogicalAxiom> theory, Set<FormulaSet<OWLLogicalAxiom>> d,
                                    boolean a, Partition<OWLLogicalAxiom> partition)
             throws SolverException {
         int deleted = 0;
-        for (AxiomSet<OWLLogicalAxiom> diagnosis : d) {
+        for (FormulaSet<OWLLogicalAxiom> diagnosis : d) {
             if (a && !((OWLTheory) theory).diagnosisConsistentWithoutEntailedTc(diagnosis, partition.partition))
                 deleted++;
             else if (!a && ((OWLTheory) theory).diagnosisEntailsWithoutEntailedTC(diagnosis, partition.partition))
@@ -161,8 +161,8 @@ public class SimulatedSession extends CalculateDiagnoses {
 
     }
 
-    protected boolean isInWindow(Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
-        for (AxiomSet<OWLLogicalAxiom> ps : diagnoses)
+    protected boolean isInWindow(Set<OWLLogicalAxiom> targetDiag, Set<FormulaSet<OWLLogicalAxiom>> diagnoses) {
+        for (FormulaSet<OWLLogicalAxiom> ps : diagnoses)
             if (targetDiag.containsAll(ps)) {
                 if (logger.isDebugEnabled())
                     logger.debug("Target diagnosis is in window " + ps.getName());
@@ -171,7 +171,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         return false;
     }
 
-    protected <E extends AxiomSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, Set<OWLLogicalAxiom> item) {
+    protected <E extends FormulaSet<OWLLogicalAxiom>> E containsItem(Collection<E> col, Set<OWLLogicalAxiom> item) {
         for (E o : col) {
             if (item.containsAll(o)) {
                 if (logger.isTraceEnabled())
@@ -183,12 +183,12 @@ public class SimulatedSession extends CalculateDiagnoses {
     }
 
     protected boolean generateQueryAnswer
-            (TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
+            (TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
              Partition<OWLLogicalAxiom> actualQuery, Set<OWLLogicalAxiom> t) throws NoDecisionPossibleException {
         boolean answer;
         Searchable<OWLLogicalAxiom> theory = search.getSearchable();
 
-        AxiomSet<OWLLogicalAxiom> target = new AxiomSetImpl<OWLLogicalAxiom>(BigDecimal.valueOf(0.5), t, new LinkedHashSet<OWLLogicalAxiom>());
+        FormulaSet<OWLLogicalAxiom> target = new FormulaSetImpl<OWLLogicalAxiom>(BigDecimal.valueOf(0.5), t, new LinkedHashSet<OWLLogicalAxiom>());
         if (theory.diagnosisEntails(target, actualQuery.partition)) {
             answer = true;
             assertTrue(!actualQuery.dnx.contains(target));
@@ -213,25 +213,25 @@ public class SimulatedSession extends CalculateDiagnoses {
         this.entry = entryLoc;
     }
 
-    private Set<AxiomSet<OWLLogicalAxiom>> allDiags;
+    private Set<FormulaSet<OWLLogicalAxiom>> allDiags;
 
-    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2;
+    private TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2;
 
     private OWLTheory theory3;
 
-    public Set<AxiomSet<OWLLogicalAxiom>> getAllDiags() {
+    public Set<FormulaSet<OWLLogicalAxiom>> getAllDiags() {
         return allDiags;
     }
 
-    public void setAllDiags(Set<AxiomSet<OWLLogicalAxiom>> allDiags) {
+    public void setAllDiags(Set<FormulaSet<OWLLogicalAxiom>> allDiags) {
         this.allDiags = allDiags;
     }
 
-    public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch2() {
+    public TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch2() {
         return search2;
     }
 
-    public void setSearch2(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2) {
+    public void setSearch2(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2) {
         this.search2 = search2;
     }
 
@@ -283,15 +283,15 @@ public class SimulatedSession extends CalculateDiagnoses {
         this.targetD = targetD;
     }
 
-    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    private TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
     private OWLTheory theory;
 
-    public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
+    public TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
         return search;
     }
 
-    public void setSearch(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
+    public void setSearch(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
         this.search = search;
     }
 
@@ -309,7 +309,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         //userBreak=false;
         Partition<OWLLogicalAxiom> actPa = null;
 
-        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = null;
+        Set<FormulaSet<OWLLogicalAxiom>> diagnoses = null;
         int num_of_queries = 0;
 
         boolean userBreak = false;
@@ -328,7 +328,7 @@ public class SimulatedSession extends CalculateDiagnoses {
 
         while (!querySessionEnd) {
             try {
-                Collection<AxiomSet<OWLLogicalAxiom>> lastD = diagnoses;
+                Collection<FormulaSet<OWLLogicalAxiom>> lastD = diagnoses;
                 logger.trace("numOfQueries: " + num_of_queries + " start for diagnoses");
 
                 userBreak = false;
@@ -360,9 +360,9 @@ public class SimulatedSession extends CalculateDiagnoses {
                 logDiagnoses(getSearch(), diagnoses, num_of_queries);
 
                 // cast should be corrected
-                Iterator<AxiomSet<OWLLogicalAxiom>> descendSet = (new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
-                AxiomSet<OWLLogicalAxiom> d = descendSet.next();
-                AxiomSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
+                Iterator<FormulaSet<OWLLogicalAxiom>> descendSet = (new TreeSet<FormulaSet<OWLLogicalAxiom>>(diagnoses)).descendingIterator();
+                FormulaSet<OWLLogicalAxiom> d = descendSet.next();
+                FormulaSet<OWLLogicalAxiom> d1 = (descendSet.hasNext()) ? descendSet.next() : null;
 
                 boolean isTargetDiagFirst = d.equals(getTargetD());
                 BigDecimal dp = d.getMeasure();
@@ -438,7 +438,7 @@ public class SimulatedSession extends CalculateDiagnoses {
 
                 // fine all dz diagnoses
                 // TODO do we need this fine?
-                for (AxiomSet<OWLLogicalAxiom> ph : actPa.dz) {
+                for (FormulaSet<OWLLogicalAxiom> ph : actPa.dz) {
                     ph.setMeasure(new BigDecimal("0.5").multiply(ph.getMeasure()));
                 }
                 if (isLogElRate()) {
@@ -488,7 +488,7 @@ public class SimulatedSession extends CalculateDiagnoses {
             //TreeSet<ProbabilisticHittingSet> diags = new TreeSet<ProbabilisticHittingSet>(diagnoses);
             targetDiagnosisIsInWind = isInWindow(getTargetD(), diagnoses);
             if (diagnoses.size() >= 1 && getTargetD().
-                    containsAll((new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses)).last())) {
+                    containsAll((new TreeSet<FormulaSet<OWLLogicalAxiom>>(diagnoses)).last())) {
                 targetDiagnosisIsMostProbable = true;
                 targetDiagnosisIsInWind = true;
             }
@@ -540,11 +540,11 @@ public class SimulatedSession extends CalculateDiagnoses {
         return msg1;
     }
 
-    protected void logTraceDiagnoses(Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, AxiomSet<OWLLogicalAxiom> d, boolean targetDiagFirst) {
+    protected void logTraceDiagnoses(Set<OWLLogicalAxiom> targetDiag, Set<FormulaSet<OWLLogicalAxiom>> diagnoses, FormulaSet<OWLLogicalAxiom> d, boolean targetDiagFirst) {
         if (logger.isInfoEnabled()) {
-            AxiomSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
+            FormulaSet<OWLLogicalAxiom> o = containsItem(diagnoses, targetDiag);
             BigDecimal diagProbabilities = new BigDecimal("0");
-            for (AxiomSet<OWLLogicalAxiom> tempd : diagnoses)
+            for (FormulaSet<OWLLogicalAxiom> tempd : diagnoses)
                 diagProbabilities = diagProbabilities.add(tempd.getMeasure());
             logger.trace("diagnoses: " + diagnoses.size() +
                     " (" + diagProbabilities + ") first diagnosis: " + d +
@@ -553,7 +553,7 @@ public class SimulatedSession extends CalculateDiagnoses {
         }
     }
 
-    protected void logDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, int num_of_queries) {
+    protected void logDiagnoses(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<FormulaSet<OWLLogicalAxiom>> diagnoses, int num_of_queries) {
         if (traceDiagnosesAndQueries) {
             String diag1 = "";
             for (Set<OWLLogicalAxiom> diagnosis : diagnoses)
@@ -582,8 +582,8 @@ public class SimulatedSession extends CalculateDiagnoses {
         }
     }
 
-    protected Set<AxiomSet<OWLLogicalAxiom>> calcDiagnoses(TreeSearch<AxiomSet<OWLLogicalAxiom>,
-            OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, Time diagTime) throws InconsistentTheoryException {
+    protected Set<FormulaSet<OWLLogicalAxiom>> calcDiagnoses(TreeSearch<FormulaSet<OWLLogicalAxiom>,
+            OWLLogicalAxiom> search, Set<FormulaSet<OWLLogicalAxiom>> diagnoses, Time diagTime) throws InconsistentTheoryException {
         try {
             long diag = System.currentTimeMillis();
             //start.reset();
@@ -597,17 +597,17 @@ public class SimulatedSession extends CalculateDiagnoses {
             diagnoses = search.getDiagnoses();
             diagTime.setTime(System.currentTimeMillis() - diag);
         } catch (SolverException e) {
-            diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+            diagnoses = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
 
         } catch (NoConflictException e) {
-            diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+            diagnoses = new TreeSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
         }
         return diagnoses;
     }
 
-    protected void logEliminationRateHelp(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<OWLLogicalAxiom> targetDiag, Set<AxiomSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3, Partition<OWLLogicalAxiom> actPa, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, boolean answer) throws SolverException, InconsistentTheoryException {
-        Set<AxiomSet<OWLLogicalAxiom>> remainingAllDiags;
+    protected void logEliminationRateHelp(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<OWLLogicalAxiom> targetDiag, Set<FormulaSet<OWLLogicalAxiom>> allDiagnoses, TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> secondsearch, OWLTheory t3, Partition<OWLLogicalAxiom> actPa, Set<FormulaSet<OWLLogicalAxiom>> diagnoses, boolean answer) throws SolverException, InconsistentTheoryException {
+        Set<FormulaSet<OWLLogicalAxiom>> remainingAllDiags;
         remainingAllDiags = secondsearch.getDiagnoses();
         int eliminatedInLeading = getEliminationRate(search.getSearchable(), diagnoses, answer, actPa);
         int eliminatedInRemaining = getEliminationRate(secondsearch.getSearchable(), remainingAllDiags, answer, actPa);
@@ -615,13 +615,13 @@ public class SimulatedSession extends CalculateDiagnoses {
         int eliminatedInfull = getEliminationRate(t3, allDiagnoses, answer, actPa);
         // deleteDiag(start.getSearchable(),remainingAllDiags,answer,actPa.partition);
 
-        AxiomSet<OWLLogicalAxiom> foundTarget;
+        FormulaSet<OWLLogicalAxiom> foundTarget;
         foundTarget = null;
-        for (AxiomSet<OWLLogicalAxiom> axiom : allDiagnoses)
-            if (targetDiag.containsAll(axiom)) {
+        for (FormulaSet<OWLLogicalAxiom> formula : allDiagnoses)
+            if (targetDiag.containsAll(formula)) {
                 if (foundTarget != null)
                     logger.info("");
-                foundTarget = axiom;
+                foundTarget = formula;
             }
 
         logger.info("elimination rates: in all diags ;" + eliminatedInfull + "/" + allDiagnoses.size() +

@@ -1,6 +1,6 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.protegeview.views.ResultsListSection;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
@@ -24,13 +24,13 @@ public class DebugManager {
 
 
 
-    private Set<? extends AxiomSet<OWLLogicalAxiom>> validHittingSets;
+    private Set<? extends FormulaSet<OWLLogicalAxiom>> validHittingSets;
 
-    private Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets = null;
+    private Set<? extends FormulaSet<OWLLogicalAxiom>> conflictSets = null;
 
     private OWLLogicalAxiom axiom;
 
-    private AxiomSet<OWLLogicalAxiom> treeNode;
+    private FormulaSet<OWLLogicalAxiom> treeNode;
 
     private Set<ResultsListSection> entSets = null;
 
@@ -45,19 +45,19 @@ public class DebugManager {
         notifyAxiomChanged();
     }
 
-    public Set<? extends AxiomSet<OWLLogicalAxiom>> getValidHittingSets() {
+    public Set<? extends FormulaSet<OWLLogicalAxiom>> getValidHittingSets() {
         return validHittingSets;
     }
 
-    public <E extends AxiomSet<OWLLogicalAxiom>> void setValidHittingSets(Set<E> validHittingSets) {
+    public <E extends FormulaSet<OWLLogicalAxiom>> void setValidHittingSets(Set<E> validHittingSets) {
         this.validHittingSets = validHittingSets;
     }
 
-    public Set<? extends AxiomSet<OWLLogicalAxiom>> getConflictSets() {
+    public Set<? extends FormulaSet<OWLLogicalAxiom>> getConflictSets() {
         return conflictSets;
     }
 
-    public <E extends AxiomSet<OWLLogicalAxiom>> void setConflictSets(Set<E> conflictSets) {
+    public <E extends FormulaSet<OWLLogicalAxiom>> void setConflictSets(Set<E> conflictSets) {
         this.conflictSets = conflictSets;
     }
 
@@ -77,11 +77,11 @@ public class DebugManager {
         this.entSets = entSets;
     }
 
-    public AxiomSet<OWLLogicalAxiom> getTreeNode() {
+    public FormulaSet<OWLLogicalAxiom> getTreeNode() {
         return treeNode;
     }
 
-    public void setTreeNode(AxiomSet<OWLLogicalAxiom> treeNode) {
+    public void setTreeNode(FormulaSet<OWLLogicalAxiom> treeNode) {
         this.treeNode = treeNode;
     }
 

@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Debugger;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
@@ -62,12 +62,12 @@ public class Example2005Test {
 
         debugger.start();
 
-        Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getDiagnoses();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> conflictset = debugger.getConflicts();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> hittingset = debugger.getDiagnoses();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> conflictset = debugger.getConflicts();
 
         assertTrue(hittingset.size() == 3);
         assertTrue(hittingset.iterator().next().size() == 1);
-        Iterator<? extends AxiomSet<OWLLogicalAxiom>> hittingSetItr = hittingset.iterator();
+        Iterator<? extends FormulaSet<OWLLogicalAxiom>> hittingSetItr = hittingset.iterator();
         assertTrue(MyOWLRendererParser.render(hittingSetItr.next().iterator().next()).equals("A3 SubClassOf A4 and A5"));
         assertTrue(MyOWLRendererParser.render(hittingSetItr.next().iterator().next()).equals("A4 SubClassOf C and (s only F)"));
         assertTrue(MyOWLRendererParser.render(hittingSetItr.next().iterator().next()).equals("A5 SubClassOf s some (not (F))"));
@@ -94,18 +94,18 @@ public class Example2005Test {
 
         //start.setSearchable(theory);
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
-        Debugger<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
+        Debugger<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
         debugger.setMaxDiagnosesNumber(0);
 
         t.getKnowledgeBase().addPositiveTest(Collections.singleton(parser.parse("w Type not C")));
 
         debugger.start();
 
-        Set<? extends AxiomSet<OWLLogicalAxiom>> hittingset = debugger.getDiagnoses();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> conflictset = debugger.getConflicts();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> hittingset = debugger.getDiagnoses();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> conflictset = debugger.getConflicts();
 
         assertTrue(hittingset.size() == 3);
-        Iterator<? extends AxiomSet<OWLLogicalAxiom>> hsItr = hittingset.iterator();
+        Iterator<? extends FormulaSet<OWLLogicalAxiom>> hsItr = hittingset.iterator();
         Set<OWLLogicalAxiom> hs = hsItr.next();
         assertTrue(hs.size() == 2);
         for (OWLLogicalAxiom a : hs) {

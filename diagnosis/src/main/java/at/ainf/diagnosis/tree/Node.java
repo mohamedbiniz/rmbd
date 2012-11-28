@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -41,13 +41,13 @@ public interface Node<Id> extends Comparable<Node<Id>>{
 
     Id getArcLabel();
 
-    Set<AxiomSet<Id>> getAxiomSets();
+    Set<FormulaSet<Id>> getAxiomSets();
 
-    AxiomSet<Id> getAxiomSet();
+    FormulaSet<Id> getAxiomSet();
 
-    void setAxiomSet(Set<AxiomSet<Id>> conflict);
+    void setAxiomSet(Set<FormulaSet<Id>> conflict);
 
-    void setAxiomSet(AxiomSet<Id> conflict);
+    void setAxiomSet(FormulaSet<Id> conflict);
 
     int getLevel();
 

@@ -12,8 +12,8 @@ import at.ainf.diagnosis.Debugger;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
-import at.ainf.diagnosis.storage.AxiomRenderer;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaRenderer;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import javax.swing.event.ChangeListener;
 
@@ -24,7 +24,7 @@ import javax.swing.event.ChangeListener;
  * Time: 14:15:23
  * To change this template use File | Settings | File Templates.
  */
-public interface TreeSearch<T extends AxiomSet<Id>, Id> extends Debugger<T,Id> {
+public interface TreeSearch<T extends FormulaSet<Id>, Id> extends Debugger<T,Id> {
 
     public Searcher<Id> getSearcher();
 
@@ -42,7 +42,7 @@ public interface TreeSearch<T extends AxiomSet<Id>, Id> extends Debugger<T,Id> {
 
     public void setSearchStrategy(SearchStrategy<Id> searchStrategy);
 
-    public void setAxiomRenderer(AxiomRenderer<Id> renderer);
+    public void setFormulaRenderer(FormulaRenderer<Id> renderer);
 
     public void addSearchListener(ChangeListener listener);
 

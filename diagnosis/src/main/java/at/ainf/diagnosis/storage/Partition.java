@@ -12,9 +12,9 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class Partition<T> {
-    public Set<AxiomSet<T>> dx = new LinkedHashSet<AxiomSet<T>>();
-    public Set<AxiomSet<T>> dnx = new LinkedHashSet<AxiomSet<T>>();
-    public Set<AxiomSet<T>> dz = new LinkedHashSet<AxiomSet<T>>();
+    public Set<FormulaSet<T>> dx = new LinkedHashSet<FormulaSet<T>>();
+    public Set<FormulaSet<T>> dnx = new LinkedHashSet<FormulaSet<T>>();
+    public Set<FormulaSet<T>> dz = new LinkedHashSet<FormulaSet<T>>();
 
     public Set<T> partition;
     public BigDecimal score = BigDecimal.valueOf(Double.MAX_VALUE);

@@ -1,7 +1,7 @@
 package at.ainf.diagnosis.model;
 
 import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.*;
 
@@ -133,15 +133,15 @@ public class BaseSearchableObject<T> implements Searchable<T> {
         throw new RuntimeException("Unimplemented method");
     }
 
-    public boolean diagnosisEntails(AxiomSet<T> hs, Set<T> ent) {
+    public boolean diagnosisEntails(FormulaSet<T> hs, Set<T> ent) {
         throw new RuntimeException("Unimplemented method");
     }
 
-    public boolean diagnosisConsistent(AxiomSet<T> hs, Set<T> ent) {
+    public boolean diagnosisConsistent(FormulaSet<T> hs, Set<T> ent) {
         throw new RuntimeException("Unimplemented method");
     }
 
-    public void doBayesUpdate(Set<? extends AxiomSet<T>> hittingSets) {
+    public void doBayesUpdate(Set<? extends FormulaSet<T>> hittingSets) {
         throw new RuntimeException("Unimplemented method");
     }
 

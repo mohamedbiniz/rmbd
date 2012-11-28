@@ -4,7 +4,7 @@ import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.SimpleNode;
 import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -21,13 +21,13 @@ public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStra
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
-    public SimpleNode<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+    public SimpleNode<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         return new SimpleNode<Id>(conflict);
     }
 
 
 
-    public BigDecimal getConflictMeasure(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator) {
+    public BigDecimal getConflictMeasure(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return BigDecimal.valueOf(1d / conflict.size());
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStra
         this.openNodes.push(node);
     }
 
-    public void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
+    public void finalizeSearch(TreeSearch<FormulaSet<Id>, Id> search) {
         // nothing to do here
     }
 

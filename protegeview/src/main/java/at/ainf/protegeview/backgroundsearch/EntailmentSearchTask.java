@@ -7,7 +7,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
@@ -30,15 +30,15 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
 
     private boolean isQueryMinimizerActive;
 
-    private List<AxiomSet<OWLLogicalAxiom>> diags;
+    private List<FormulaSet<OWLLogicalAxiom>> diags;
 
     private Scoring<OWLLogicalAxiom> func;
 
-    TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
-    EntailmentSearchTask(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
+    EntailmentSearchTask(TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
                          JTextArea area,
-                         List<AxiomSet<OWLLogicalAxiom>> diags,
+                         List<FormulaSet<OWLLogicalAxiom>> diags,
                          boolean isQueryMinimizerActive,
                          Scoring<OWLLogicalAxiom> scoringFunc) {
         this.area = area;
@@ -53,7 +53,7 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
         CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getSearchable(), func);
         ckk.setThreshold(QueryDebuggerPreference.getInstance().getPartitioningThres());
 
-        TreeSet<AxiomSet<OWLLogicalAxiom>> set = new TreeSet<AxiomSet<OWLLogicalAxiom>>(diags);
+        TreeSet<FormulaSet<OWLLogicalAxiom>> set = new TreeSet<FormulaSet<OWLLogicalAxiom>>(diags);
 
         Partition<OWLLogicalAxiom> best = null;
         publish("Calculating Entailments ...");
@@ -87,18 +87,18 @@ public class EntailmentSearchTask extends SwingWorker<Partition<OWLLogicalAxiom>
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        for (AxiomSet<OWLLogicalAxiom> hs : query.dx) {
+        for (FormulaSet<OWLLogicalAxiom> hs : query.dx) {
             if (!hs.getEntailments().containsAll(query.partition) && !search.getSearchable().diagnosisEntails(hs, query.partition))
                 throw new IllegalStateException("DX diagnosis is not entailing a query");
         }
 
 
-        for (AxiomSet<OWLLogicalAxiom> hs : query.dnx) {
+        for (FormulaSet<OWLLogicalAxiom> hs : query.dnx) {
             if (search.getSearchable().diagnosisConsistent(hs, query.partition))
                 throw new IllegalStateException("DNX diagnosis might entail a query");
         }
 
-        for (AxiomSet<OWLLogicalAxiom> hs : query.dz) {
+        for (FormulaSet<OWLLogicalAxiom> hs : query.dz) {
             if (search.getSearchable().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
                 throw new IllegalStateException("DZ diagnosis entails a query");
             if (!search.getSearchable().diagnosisConsistent(hs, query.partition))

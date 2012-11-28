@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.base;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -63,9 +63,9 @@ public class OAEI08Session extends SimulatedSession {
         return sum / cnt;
     }
 
-    public AxiomSet<OWLLogicalAxiom> getDgTarget(Set<AxiomSet<OWLLogicalAxiom>> diagnoses, final CostsEstimator<OWLLogicalAxiom> estimator) {
-        Comparator<AxiomSet<OWLLogicalAxiom>> c = new Comparator<AxiomSet<OWLLogicalAxiom>>() {
-            public int compare(AxiomSet<OWLLogicalAxiom> o1, AxiomSet<OWLLogicalAxiom> o2) {
+    public FormulaSet<OWLLogicalAxiom> getDgTarget(Set<FormulaSet<OWLLogicalAxiom>> diagnoses, final CostsEstimator<OWLLogicalAxiom> estimator) {
+        Comparator<FormulaSet<OWLLogicalAxiom>> c = new Comparator<FormulaSet<OWLLogicalAxiom>>() {
+            public int compare(FormulaSet<OWLLogicalAxiom> o1, FormulaSet<OWLLogicalAxiom> o2) {
                 int numOfOntologyAxiomsO1 = 0;
                 int numOfMatchingAxiomO1 = 0;
                 for (OWLLogicalAxiom axiom : o1) {

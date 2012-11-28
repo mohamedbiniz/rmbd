@@ -3,7 +3,7 @@ package at.ainf.diagnosis.tree.searchstrategy;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -26,9 +26,9 @@ public interface SearchStrategy<Id> {
 
     public void addNodes(List<Node<Id>> nodeList);
 
-    public Node<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act);
+    public Node<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
-    public BigDecimal getConflictMeasure(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator);
+    public BigDecimal getConflictMeasure(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator);
 
     public BigDecimal getDiagnosisMeasure(Node<Id> node);
 
@@ -38,6 +38,6 @@ public interface SearchStrategy<Id> {
 
     public void pushOpenNode(Node<Id> node);
 
-    public void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search);
+    public void finalizeSearch(TreeSearch<FormulaSet<Id>, Id> search);
 
 }

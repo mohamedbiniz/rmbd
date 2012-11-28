@@ -2,7 +2,7 @@ package at.ainf.diagnosis.partitioning;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 
 import java.util.Set;
@@ -15,9 +15,9 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public interface Partitioning<T> {
-    <E extends AxiomSet<T>> Partition<T> generatePartition(Set<E> hittingSets) throws SolverException, InconsistentTheoryException;
+    <E extends FormulaSet<T>> Partition<T> generatePartition(Set<E> hittingSets) throws SolverException, InconsistentTheoryException;
 
-    <E extends AxiomSet<T>> Partition<T> nextPartition(Partition<T> partition) throws SolverException, InconsistentTheoryException;
+    <E extends FormulaSet<T>> Partition<T> nextPartition(Partition<T> partition) throws SolverException, InconsistentTheoryException;
 
     public double getThreshold();
 

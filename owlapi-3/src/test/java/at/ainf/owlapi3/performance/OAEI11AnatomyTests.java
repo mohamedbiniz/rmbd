@@ -2,7 +2,7 @@ package at.ainf.owlapi3.performance;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.owlapi3.base.OAEI11AnatomySession;
 import at.ainf.owlapi3.base.SimulatedSession;
@@ -70,7 +70,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
@@ -103,7 +103,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
 
                             search.setCostsEstimator(es);
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+                            Set<FormulaSet<OWLLogicalAxiom>> allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.reset();
 
 
@@ -166,7 +166,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
 
                             LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                             Set<OWLLogicalAxiom> r = new LinkedHashSet<OWLLogicalAxiom>();
@@ -195,7 +195,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
 
                             search.setCostsEstimator(es);
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+                            Set<FormulaSet<OWLLogicalAxiom>> allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.reset();
 
 

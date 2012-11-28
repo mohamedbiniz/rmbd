@@ -8,7 +8,7 @@ import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
@@ -26,12 +26,12 @@ import java.util.TreeSet;
  * Time: 08:37
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
+public class SimpleQueryDebugger<Id> implements Debugger<FormulaSet<Id>, Id> {
 
 
     protected Searchable<Id> theory;
 
-    protected TreeSearch<AxiomSet<Id>, Id> search;
+    protected TreeSearch<FormulaSet<Id>, Id> search;
 
     private int maxDiags = 9;
 
@@ -48,7 +48,7 @@ public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
     public void init() {
         //SimpleStorage<Id> storage = new SimpleStorage<Id>();
         if (theory != null) getTheory().reset();
-        search = new HsTreeSearch<AxiomSet<Id>, Id>();
+        search = new HsTreeSearch<FormulaSet<Id>, Id>();
         search.setCostsEstimator(new SimpleCostsEstimator<Id>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<Id>());
         search.setSearcher(new QuickXplain<Id>());
@@ -58,11 +58,11 @@ public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
 
     }
 
-    public Set<AxiomSet<Id>> getConflicts() {
+    public Set<FormulaSet<Id>> getConflicts() {
         return search.getConflicts();
     }
 
-    public Set<AxiomSet<Id>> getDiagnoses() {
+    public Set<FormulaSet<Id>> getDiagnoses() {
         return search.getDiagnoses();
     }
 
@@ -88,14 +88,14 @@ public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        for (AxiomSet<Id> hs : query.dx) {
+        for (FormulaSet<Id> hs : query.dx) {
             if (!hs.getEntailments().containsAll(query.partition) && !search.getSearchable().diagnosisEntails(hs, query.partition))
                 throw new IllegalStateException("DX diagnosis is not entailing a query");
         }
 
 
         for (
-                AxiomSet<Id> hs
+                FormulaSet<Id> hs
                 : query.dnx)
 
         {
@@ -104,7 +104,7 @@ public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
         }
 
         for (
-                AxiomSet<Id> hs
+                FormulaSet<Id> hs
                 : query.dz)
 
         {
@@ -120,7 +120,7 @@ public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
         CKK<Id> ckk = new CKK<Id>(theory, func);
         ckk.setThreshold(acceptanceThreshold);
 
-        TreeSet<AxiomSet<Id>> set = new TreeSet<AxiomSet<Id>>(this.getDiagnoses());
+        TreeSet<FormulaSet<Id>> set = new TreeSet<FormulaSet<Id>>(this.getDiagnoses());
 
         Partition<Id> best = null;
         try {
@@ -144,7 +144,7 @@ public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
     }
 
     @Override
-    public Set<AxiomSet<Id>> start() throws SolverException, NoConflictException, InconsistentTheoryException {
+    public Set<FormulaSet<Id>> start() throws SolverException, NoConflictException, InconsistentTheoryException {
         return search.start();
     }
 
@@ -159,7 +159,7 @@ public class SimpleQueryDebugger<Id> implements Debugger<AxiomSet<Id>, Id> {
     }
 
     @Override
-    public Set<AxiomSet<Id>> resume() throws SolverException, NoConflictException, InconsistentTheoryException {
+    public Set<FormulaSet<Id>> resume() throws SolverException, NoConflictException, InconsistentTheoryException {
         search.setMaxDiagnosesNumber(maxDiags);
         return search.resume();
     }

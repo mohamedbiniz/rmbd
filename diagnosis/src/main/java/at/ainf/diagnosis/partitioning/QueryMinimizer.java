@@ -5,7 +5,7 @@ import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.BaseSearchableObject;
 import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 
 import java.util.Set;
@@ -38,15 +38,15 @@ public class QueryMinimizer<Id> extends BaseSearchableObject<Id> {
     }
 
     private Boolean verifyQuery(Set<Id> query) {
-        for (AxiomSet<Id> hs : partition.dx) {
+        for (FormulaSet<Id> hs : partition.dx) {
             if (!getTheory().diagnosisEntails(hs, query))
                 return true;
         }
-        for (AxiomSet<Id> hs : partition.dnx) {
+        for (FormulaSet<Id> hs : partition.dnx) {
             if (getTheory().diagnosisConsistent(hs, query))
                 return true;
         }
-        for (AxiomSet<Id> hs : partition.dz) {
+        for (FormulaSet<Id> hs : partition.dz) {
             if (getTheory().diagnosisEntails(hs, query) || !getTheory().diagnosisConsistent(hs, query))
                 return true;
 

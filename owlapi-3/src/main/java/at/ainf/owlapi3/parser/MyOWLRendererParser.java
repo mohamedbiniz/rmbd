@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.parser;
 
-import at.ainf.diagnosis.storage.AxiomRenderer;
+import at.ainf.diagnosis.storage.FormulaRenderer;
 import org.semanticweb.owlapi.expression.ParserException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -15,7 +15,7 @@ import java.util.Collection;
  * Time: 14:59
  * To change this template use File | Settings | File Templates.
  */
-public class MyOWLRendererParser implements AxiomRenderer<OWLLogicalAxiom> {
+public class MyOWLRendererParser implements FormulaRenderer<OWLLogicalAxiom> {
 
     private static ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
 

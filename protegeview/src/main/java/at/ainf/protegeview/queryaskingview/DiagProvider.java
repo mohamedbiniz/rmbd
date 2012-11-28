@@ -1,6 +1,6 @@
 package at.ainf.protegeview.queryaskingview;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.backgroundsearch.BackgroundSearcher;
@@ -20,15 +20,15 @@ public class DiagProvider {
 
     private boolean isQueryMinimizerActive = true;
 
-    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = null;
+    private TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = null;
 
     private int diagnos = 9;
 
 
 
-    private LinkedList<AxiomSet<OWLLogicalAxiom>> diagList = null;
+    private LinkedList<FormulaSet<OWLLogicalAxiom>> diagList = null;
 
-    public DiagProvider(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> s,
+    public DiagProvider(TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> s,
                         boolean isQueryMinimizerActive,
                         int number) {
         this.search = s;
@@ -40,14 +40,14 @@ public class DiagProvider {
     }
     public void calculateLead() {
 
-        diagList = new LinkedList<AxiomSet<OWLLogicalAxiom>>();
+        diagList = new LinkedList<FormulaSet<OWLLogicalAxiom>>();
         search.setMaxDiagnosesNumber(diagnos);
         BackgroundSearcher s = new BackgroundSearcher(search, null);
         s.doBackgroundSearch();
-        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getDiagnoses();
+        Collection<? extends FormulaSet<OWLLogicalAxiom>> res = search.getDiagnoses();
 
-        for (AxiomSet<OWLLogicalAxiom> axiomSet : res)
-            diagList.add(axiomSet);
+        for (FormulaSet<OWLLogicalAxiom> formulaSet : res)
+            diagList.add(formulaSet);
     }
 
     public Partition<OWLLogicalAxiom> getQuery() {

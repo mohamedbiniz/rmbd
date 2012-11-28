@@ -4,7 +4,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class SearchCreator {
 
-    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    private TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
     private OWLOntology ontology;
 
@@ -45,7 +45,7 @@ public class SearchCreator {
         readConfiguration();
     }
 
-    public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
+    public TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
         if (search == null)
             createSearch();
 
@@ -132,12 +132,12 @@ public class SearchCreator {
     private void createSearch() {
         OWLTheory theory = null;
         if (config.treeType == SearchConfiguration.TreeType.REITER ) {
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
             theory = createTheory(false);
         }
         else if (config.treeType == SearchConfiguration.TreeType.DUAL ) {
-            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            search = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             theory = createTheory(true);
         }

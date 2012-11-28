@@ -17,7 +17,7 @@ import at.ainf.sat4j.model.VecIntComparable;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.junit.Test;
 import org.sat4j.minisat.SolverFactory;
@@ -53,19 +53,19 @@ public class TreeEvaluation {
         if (logger.isInfoEnabled())
             logger.info("Starting the tree creation test.");
         //SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
-        List<TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable>> search = new ArrayList<TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable>>();
+        List<TreeSearch<FormulaSet<IVecIntComparable>, IVecIntComparable>> search = new ArrayList<TreeSearch<FormulaSet<IVecIntComparable>, IVecIntComparable>>();
         //start.add(new BreadthFirstSearch<IVecIntComparable>(storage));
         //start.add(new DepthFirstSearch<IVecIntComparable>(storage));
         //start.add(new DepthLimitedSearch<IVecIntComparable>(storage));
         //start.add(new IterativeDeepening<IVecIntComparable>(storage));
         //start.add(new MixedTreeSearch<IVecIntComparable>(storage));
 
-        for (TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable> sr : search)
+        for (TreeSearch<FormulaSet<IVecIntComparable>, IVecIntComparable> sr : search)
             run(sr);
 
     }
 
-    private void run(TreeSearch<AxiomSet<IVecIntComparable>, IVecIntComparable> search) throws SolverException, ContradictionException, NoConflictException, InconsistentTheoryException {
+    private void run(TreeSearch<FormulaSet<IVecIntComparable>, IVecIntComparable> search) throws SolverException, ContradictionException, NoConflictException, InconsistentTheoryException {
         search.setSearcher(new QuickXplain<IVecIntComparable>());
 
         int[] clause = new int[]{5, 6};
@@ -114,7 +114,7 @@ public class TreeEvaluation {
         // succeeds to create a root since th is unsat
         search.start();
 
-        Collection<AxiomSet<IVecIntComparable>> diagnoses = search.getDiagnoses();
+        Collection<FormulaSet<IVecIntComparable>> diagnoses = search.getDiagnoses();
         logger.debug("Diagnoses: " + diagnoses.toString());
         assertTrue(searchDub(diagnoses));
         assertTrue(diagnoses.size() == 4);
@@ -123,7 +123,7 @@ public class TreeEvaluation {
         assertTrue(contains(diagnoses,diagnosis3));
         assertTrue(contains(diagnoses,diagnosis4));
 
-        Collection<AxiomSet<IVecIntComparable>> conflicts = search.getConflicts();
+        Collection<FormulaSet<IVecIntComparable>> conflicts = search.getConflicts();
         logger.debug("Conflict: " + conflicts.toString());
         assertTrue(searchDub(conflicts));
         assertTrue(conflicts.size() == 2);
@@ -157,7 +157,7 @@ public class TreeEvaluation {
     @Test
     public void testTests() throws SolverException, NoConflictException, InconsistentTheoryException {
         //SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
-        HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>();
+        HsTreeSearch<FormulaSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<FormulaSet<IVecIntComparable>,IVecIntComparable>();
         search.setCostsEstimator(new SimpleCostsEstimator<IVecIntComparable>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<IVecIntComparable>());
         search.setSearcher(new QuickXplain<IVecIntComparable>());
@@ -230,7 +230,7 @@ public class TreeEvaluation {
     @Test
     public void testStopAndGo() throws SolverException, NoConflictException, InconsistentTheoryException {
         //SimpleStorage<IVecIntComparable> storage = new SimpleStorage<IVecIntComparable>();
-        HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<AxiomSet<IVecIntComparable>,IVecIntComparable>();
+        HsTreeSearch<FormulaSet<IVecIntComparable>,IVecIntComparable> search = new HsTreeSearch<FormulaSet<IVecIntComparable>,IVecIntComparable>();
         search.setCostsEstimator(new SimpleCostsEstimator<IVecIntComparable>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<IVecIntComparable>());
         search.setSearcher(new QuickXplain<IVecIntComparable>());

@@ -9,7 +9,7 @@
 package at.ainf.diagnosis.tree;
 
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -40,18 +40,18 @@ public class SimpleNode<Id> implements Node<Id> {
     protected Id arcLabel;
 
     // CONFLICT: if the node is not calculated or closed conflict = null
-    protected Set<AxiomSet<Id>> conflict = null;
+    protected Set<FormulaSet<Id>> conflict = null;
 
     protected final boolean root;
 
     private BigDecimal nodePathCosts = BigDecimal.ZERO;
 
-    private CostsEstimator<Id> costsEstimator;
+    private CostsEstimator<Id> costsEstimator = new SimpleCostsEstimator<Id>();
 
     // constructor for root
 
     //NEU
-    public SimpleNode(Set<AxiomSet<Id>> conflict) {
+    public SimpleNode(Set<FormulaSet<Id>> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
@@ -60,14 +60,14 @@ public class SimpleNode<Id> implements Node<Id> {
         this.conflict = conflict;
     }
 
-    public SimpleNode(AxiomSet<Id> conflict) {
+    public SimpleNode(FormulaSet<Id> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
 
         this.root = true;
 
-        Set<AxiomSet<Id>> set = new LinkedHashSet<AxiomSet<Id>>();
+        Set<FormulaSet<Id>> set = new LinkedHashSet<FormulaSet<Id>>();
         set.add(conflict);
         this.conflict = set;
     }
@@ -189,17 +189,17 @@ public class SimpleNode<Id> implements Node<Id> {
     }
 
     @Override
-    public Set<AxiomSet<Id>> getAxiomSets() {
+    public Set<FormulaSet<Id>> getAxiomSets() {
         return conflict;
     }
 
     @Override
-    public AxiomSet<Id> getAxiomSet() {
+    public FormulaSet<Id> getAxiomSet() {
         return conflict.iterator().next();
     }
 
     @Override
-    public void setAxiomSet(Set<AxiomSet<Id>> conflict) {
+    public void setAxiomSet(Set<FormulaSet<Id>> conflict) {
         /*
         for (SimpleNode<Id> child : children) {
             child.setClosed();
@@ -212,9 +212,9 @@ public class SimpleNode<Id> implements Node<Id> {
     }
 
     @Override
-    public void setAxiomSet(AxiomSet<Id> conflict) {
+    public void setAxiomSet(FormulaSet<Id> conflict) {
 
-        Set<AxiomSet<Id>> set = new LinkedHashSet<AxiomSet<Id>>();
+        Set<FormulaSet<Id>> set = new LinkedHashSet<FormulaSet<Id>>();
         set.add(conflict);
         this.conflict = set;
     }

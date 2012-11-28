@@ -1,7 +1,7 @@
 package at.ainf.diagnosis.tree;
 
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -11,19 +11,22 @@ import java.util.Set;
  * Time: 00:22
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleCostsEstimator<Id> implements CostsEstimator<Id> {
+public class SimpleCostsEstimator<Id> extends AbstractCostEstimator<Id> implements CostsEstimator<Id> {
 
-    public BigDecimal getAxiomSetCosts(Set<Id> labelSet) {
+    public SimpleCostsEstimator() {
+        super(new LinkedHashSet<Id>());
+    }
+
+    public SimpleCostsEstimator(Set<Id> faultyFormulas) {
+        super(faultyFormulas);
+    }
+
+    public BigDecimal getFormulaSetCosts(Set<Id> formulas) {
         return new BigDecimal("0.1");
     }
 
     public BigDecimal getAxiomCosts(Id label) {
         return new BigDecimal("0.1");
-    }
-
-    @Override
-    public BigDecimal getFormulasCosts(Collection<Id> activeFormulars) {
-        return BigDecimal.ONE;
     }
 
 }

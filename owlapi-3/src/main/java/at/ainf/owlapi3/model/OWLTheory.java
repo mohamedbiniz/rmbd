@@ -2,7 +2,7 @@ package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.model.*;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -95,8 +95,8 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         this.includeTrivialEntailments = includeTrivialEntailments;
     }
 
-    public void doBayesUpdate(Set<? extends AxiomSet<OWLLogicalAxiom>> hittingSets) {
-        for (AxiomSet<OWLLogicalAxiom> hs : hittingSets) {
+    public void doBayesUpdate(Set<? extends FormulaSet<OWLLogicalAxiom>> hittingSets) {
+        for (FormulaSet<OWLLogicalAxiom> hs : hittingSets) {
             Set<OWLLogicalAxiom> positive = new LinkedHashSet<OWLLogicalAxiom>();
             
             for (int i = 0; i < getKnowledgeBase().getTestsSize(); i++) {
@@ -505,7 +505,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return vis;
     }
 
-    public boolean diagnosisEntailsWithoutEntailedTC(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
+    public boolean diagnosisEntailsWithoutEntailedTC(FormulaSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
@@ -522,7 +522,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     }
 
     // A
-    public boolean diagnosisConsistent(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
+    public boolean diagnosisConsistent(FormulaSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
@@ -557,7 +557,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     }
 
     //B
-    public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
+    public boolean diagnosisEntails(FormulaSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
@@ -581,7 +581,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return ax;
     }
 
-    public boolean diagnosisEntails(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
+    public boolean diagnosisEntails(FormulaSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
@@ -615,7 +615,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return res;
     }
 
-    public boolean diagnosisConsistentWithoutEntailedTc(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
+    public boolean diagnosisConsistentWithoutEntailedTc(FormulaSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
@@ -648,7 +648,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return true;
     }
 
-    public boolean diagnosisConsistent(AxiomSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
+    public boolean diagnosisConsistent(FormulaSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
         // cleanup stack
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();

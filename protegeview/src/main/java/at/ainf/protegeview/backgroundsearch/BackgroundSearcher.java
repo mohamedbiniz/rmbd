@@ -1,6 +1,6 @@
 package at.ainf.protegeview.backgroundsearch;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -21,11 +21,11 @@ import java.util.concurrent.ExecutionException;
  */
 public class BackgroundSearcher {
 
-    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
+    private TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
 
     private Frame parent;
 
-    public BackgroundSearcher(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Frame parent) {
+    public BackgroundSearcher(TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Frame parent) {
         this.trSearch = search;
         this.parent = parent;
     }

@@ -1,10 +1,10 @@
 package at.ainf.protegeview.views.diagnosistreeview;
 
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.OWLModelManager;
@@ -80,7 +80,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
 
     private HashMap<Collection<OWLLogicalAxiom>,Entry> conflictSetMap;
 
-    public void setConflictSets(Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets, OWLWorkspace owlworkspace) {
+    public void setConflictSets(Set<? extends FormulaSet<OWLLogicalAxiom>> conflictSets, OWLWorkspace owlworkspace) {
         WorkspaceTab workspace = (WorkspaceTab) owlworkspace.getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
 
         CostsEstimator<OWLLogicalAxiom> es = null;
@@ -97,7 +97,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
         for (Set<OWLLogicalAxiom> conflictSet : conflictSets) {
             conflictSetMap.put(conflictSet,new Entry(number));
             if (es != null)
-                conflictSetMap.get(conflictSet).probability = es.getAxiomSetCosts(conflictSet).doubleValue();
+                conflictSetMap.get(conflictSet).probability = es.getFormulaSetCosts(conflictSet).doubleValue();
             number++;
         }
 
@@ -126,7 +126,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
     }
 
 
-    public void setHittingSets(Set<? extends AxiomSet<OWLLogicalAxiom>> hs) {
+    public void setHittingSets(Set<? extends FormulaSet<OWLLogicalAxiom>> hs) {
 
         /*axiomsByEntityMap.clear();
         usageCount = 0;
@@ -150,7 +150,7 @@ public class DiagnosesTreeModel extends DefaultTreeModel  {
         }
 
         for (Object hittingSet : hs) {
-            Node<OWLLogicalAxiom> node = (Node<OWLLogicalAxiom>) ((AxiomSetImpl<OWLLogicalAxiom>) hittingSet).getNode();
+            Node<OWLLogicalAxiom> node = (Node<OWLLogicalAxiom>) ((FormulaSetImpl<OWLLogicalAxiom>) hittingSet).getNode();
             Node<OWLLogicalAxiom> parent = node.getParent();
 
             while (parent != null) {

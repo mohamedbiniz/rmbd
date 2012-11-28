@@ -1,8 +1,8 @@
 package at.ainf.protegeview.views;
 
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.protegeview.debugmanager.HittingSetsChangedEvent;
@@ -64,14 +64,14 @@ public class HittingSetView extends AbstractProtegeResultView implements Hitting
 
     }
 
-    protected void updateListModel(Set<? extends AxiomSet<OWLLogicalAxiom>> validHs) {
+    protected void updateListModel(Set<? extends FormulaSet<OWLLogicalAxiom>> validHs) {
         WorkspaceTab workspace = (WorkspaceTab) getOWLWorkspace().getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
          if(validHs == null) {
             ((DefaultListModel)list.getModel()).clear();
               return;
         }
-        TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = new TreeSet<AxiomSet<OWLLogicalAxiom>>(validHs);
-        Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
+        TreeSet<? extends FormulaSet<OWLLogicalAxiom>> hsTree = new TreeSet<FormulaSet<OWLLogicalAxiom>>(validHs);
+        Set<? extends FormulaSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
         //workspace.addAxiomToResultsList( (DefaultListModel)list.getModel(), "Diagnosis", hsReverse);
         CostsEstimator<OWLLogicalAxiom> es = null;
         if (workspace.getSearch().getSearchStrategy() instanceof UniformCostSearchStrategy) {

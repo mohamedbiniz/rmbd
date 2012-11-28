@@ -1,6 +1,6 @@
 package at.ainf.protegeview.views.diagnosistreeview;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import org.protege.editor.owl.OWLEditorKit;
@@ -62,7 +62,7 @@ public class DiagnosesTree extends OWLLinkedObjectTree {
         });
     }
 
-    public void hittingSets(Set<? extends AxiomSet<OWLLogicalAxiom>> hs) {
+    public void hittingSets(Set<? extends FormulaSet<OWLLogicalAxiom>> hs) {
         //final DiagnosesTreeModel model = new DiagnosesTreeModel(owlEditorKit);
         model.setHittingSets(hs);
         for (int i = getRowCount() -1; i > 0; i--)

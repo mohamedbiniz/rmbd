@@ -20,28 +20,31 @@ import java.util.*;
  */
 public class OWLAxiomCostsEstimator extends AbstractCostEstimator<OWLLogicalAxiom> implements CostsEstimator<OWLLogicalAxiom> {
 
-    protected Map<OWLLogicalAxiom,BigDecimal> axiomProb;
-    
+    protected Map<OWLLogicalAxiom, BigDecimal> axiomProb;
+
     protected BigDecimal STATIC_COSTS = new BigDecimal("0.001");
-    
-    protected OWLTheory theory;
-    
-    public OWLAxiomCostsEstimator(OWLTheory t, String file) throws IOException {
-        Map<String, BigDecimal> axioms = new LinkedHashMap<String, BigDecimal>();
-        Set<String> targetDiag = new LinkedHashSet<String>();
-        if (file!=null)
-            readData(file, axioms, targetDiag);
-        axiomProb = getAx(t.getOriginalOntology().getLogicalAxioms(),axioms);
-        theory = t;
+
+    public OWLAxiomCostsEstimator(Set<OWLLogicalAxiom> faultyFormulas){
+        super(faultyFormulas);
     }
 
-    public OWLAxiomCostsEstimator(OWLTheory theory, Map<OWLLogicalAxiom, BigDecimal> probMap) {
-        this.theory = theory;
+    public OWLAxiomCostsEstimator(OWLTheory t, String file) throws IOException {
+        this(t.getKnowledgeBase().getFaultyFormulas());
+        Map<String, BigDecimal> axioms = new LinkedHashMap<String, BigDecimal>();
+        Set<String> targetDiag = new LinkedHashSet<String>();
+        if (file != null)
+            readData(file, axioms, targetDiag);
+        axiomProb = getAx(t.getOriginalOntology().getLogicalAxioms(), axioms);
+
+    }
+
+    public OWLAxiomCostsEstimator(OWLTheory t, Map<OWLLogicalAxiom, BigDecimal> probMap) {
+        this(t.getKnowledgeBase().getFaultyFormulas());
         axiomProb = probMap;
     }
 
-    protected Map<OWLLogicalAxiom,BigDecimal> getAx(Set<OWLLogicalAxiom> logicalAxioms, Map<String,BigDecimal> axioms) {
-        Map<OWLLogicalAxiom,BigDecimal> res=new LinkedHashMap<OWLLogicalAxiom, BigDecimal>();
+    protected Map<OWLLogicalAxiom, BigDecimal> getAx(Set<OWLLogicalAxiom> logicalAxioms, Map<String, BigDecimal> axioms) {
+        Map<OWLLogicalAxiom, BigDecimal> res = new LinkedHashMap<OWLLogicalAxiom, BigDecimal>();
         for (String targetAxiom : axioms.keySet()) {
             for (OWLLogicalAxiom axiom : logicalAxioms) {
                 if (axiom.toString().contains(targetAxiom.trim()))
@@ -105,25 +108,27 @@ public class OWLAxiomCostsEstimator extends AbstractCostEstimator<OWLLogicalAxio
     private String createAxiom(String sourceNamespace, String source, String targetNamespace, String target) {
         return "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
     }
-    
-    public BigDecimal getAxiomSetCosts(Set<OWLLogicalAxiom> labelSet) {
+
+    /*
+    public BigDecimal getFormulaSetCosts(Set<OWLLogicalAxiom> formulas) {
 
         BigDecimal probability = BigDecimal.ONE;
-        for (OWLLogicalAxiom axiom : labelSet) {
-            probability = probability.multiply(getAxiomCosts(axiom));
-        }
+        if (formulas != null)
+            for (OWLLogicalAxiom axiom : formulas) {
+                probability = probability.multiply(getAxiomCosts(axiom));
+            }
         Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(theory.getKnowledgeBase().getFaultyFormulas());
-        activeFormulas.removeAll(labelSet);
+        activeFormulas.removeAll(formulas);
         for (OWLLogicalAxiom axiom : activeFormulas) {
-                probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
+            probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
         }
         return probability;
     }
+    */
 
-    
     public BigDecimal getAxiomCosts(OWLLogicalAxiom label) {
         if (axiomProb.get(label) != null) {
-            if (BigDecimal.valueOf(0.99).subtract(axiomProb.get(label)).compareTo(BigDecimal.ZERO)<=0)
+            if (BigDecimal.valueOf(0.99).subtract(axiomProb.get(label)).compareTo(BigDecimal.ZERO) <= 0)
                 return BigDecimal.valueOf(0.99);
             else
                 return axiomProb.get(label);
@@ -137,11 +142,10 @@ public class OWLAxiomCostsEstimator extends AbstractCostEstimator<OWLLogicalAxio
             }
             else
                 return p; */
-            }
-        else
+        } else
             return STATIC_COSTS;
 
     }
-    
-    
+
+
 }

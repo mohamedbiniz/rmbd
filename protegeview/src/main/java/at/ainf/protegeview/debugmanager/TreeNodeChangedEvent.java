@@ -1,6 +1,6 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import java.util.EventObject;
 
@@ -13,15 +13,15 @@ import java.util.EventObject;
  */
 public class TreeNodeChangedEvent extends EventObject {
 
-    private AxiomSet<OWLLogicalAxiom> treenode;
+    private FormulaSet<OWLLogicalAxiom> treenode;
 
-    public TreeNodeChangedEvent(Object source, AxiomSet<OWLLogicalAxiom> treenode) {
+    public TreeNodeChangedEvent(Object source, FormulaSet<OWLLogicalAxiom> treenode) {
         super(source);
 
         this.treenode = treenode;
     }
 
-    public AxiomSet<OWLLogicalAxiom> getTreenode(){
+    public FormulaSet<OWLLogicalAxiom> getTreenode(){
         return treenode;
     }
 }

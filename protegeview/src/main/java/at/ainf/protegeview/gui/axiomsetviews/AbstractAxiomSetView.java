@@ -1,10 +1,8 @@
 package at.ainf.protegeview.gui.axiomsetviews;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.protegeview.gui.AbstractListQueryViewComponent;
-import at.ainf.protegeview.gui.AbstractQueryViewComponent;
 import at.ainf.protegeview.gui.axiomsetviews.axiomslist.SimpleAxiomList;
-import org.protege.editor.core.ui.util.ComponentFactory;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -25,9 +23,9 @@ public abstract class AbstractAxiomSetView extends AbstractListQueryViewComponen
         return (SimpleAxiomList) super.getList();
     }
 
-    protected void updateList(Set<AxiomSet<OWLLogicalAxiom>> setOfAxiomSets) {
+    protected void updateList(Set<FormulaSet<OWLLogicalAxiom>> setOfFormulaSets) {
         OWLOntology ontology = getOWLEditorKit().getModelManager().getActiveOntology();
-        getList().updateList(setOfAxiomSets,ontology,getHeaderPrefix(),isIncludeMeasure());
+        getList().updateList(setOfFormulaSets,ontology,getHeaderPrefix(),isIncludeMeasure());
     }
 
     @Override

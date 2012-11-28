@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     private Searchable<Id> theory;
 
-    private Set<? extends AxiomSet<Id>> hittingSets;
+    private Set<? extends FormulaSet<Id>> hittingSets;
 
     private int partitionsCount = 0;
 
@@ -50,7 +50,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
 
     }
 
-    protected <E extends AxiomSet<Id>> String toString(Set<E> hittingSets) {
+    protected <E extends FormulaSet<Id>> String toString(Set<E> hittingSets) {
         StringBuilder res = new StringBuilder();
         for (E hittingSet : hittingSets) {
             res.append(hittingSet.toString()).append(" ");
@@ -64,7 +64,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return numOfHittingSets;
     }
 
-    public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
+    public <E extends FormulaSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
 
         numOfHittingSets = hittingSets.size();
@@ -84,7 +84,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
     }
 
 
-    public <E extends AxiomSet<Id>> Partition<Id> nextPartition (Partition<Id> lastPartition) throws SolverException, InconsistentTheoryException {
+    public <E extends FormulaSet<Id>> Partition<Id> nextPartition (Partition<Id> lastPartition) throws SolverException, InconsistentTheoryException {
         getPartitions().remove(lastPartition);
         Partition<Id> partition = getPartitions().get(0);
         if (!partition.isVerified) verifyPartition(partition);
@@ -94,7 +94,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return partition;
     }
 
-    protected <E extends AxiomSet<Id>> Set<E> preprocess(Set<E> hittingSets) throws SolverException {
+    protected <E extends FormulaSet<Id>> Set<E> preprocess(Set<E> hittingSets) throws SolverException {
         ensureCapacity((int) Math.pow(2, hittingSets.size()));
         if (getScoringFunction() == null)
             throw new IllegalStateException("Scoring function is not set!");
@@ -112,13 +112,13 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return new TreeSet<E>(hs);
     }
 
-    protected <E extends AxiomSet<Id>> void restoreEntailments(Set<E> hittingSets) {
+    protected <E extends FormulaSet<Id>> void restoreEntailments(Set<E> hittingSets) {
         for (E hs : hittingSets)
             hs.restoreEntailments();
     }
 
 
-    protected <E extends AxiomSet<Id>> void removeCommonEntailments(Set<E> hittingSets) throws SolverException {
+    protected <E extends FormulaSet<Id>> void removeCommonEntailments(Set<E> hittingSets) throws SolverException {
         Set<Id> ent = getCommonEntailments(hittingSets);
         if (!ent.isEmpty())
             for (E hs : hittingSets) {
@@ -149,7 +149,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         if (ent == null || ent.isEmpty())
             return false;
         // partition the rest of diagnoses
-        for (AxiomSet<Id> hs : getHittingSets()) {
+        for (FormulaSet<Id> hs : getHittingSets()) {
             if (!partition.dx.contains(hs)) {
                 if (hs.getEntailments().containsAll(ent))
                     partition.dx.add(hs);
@@ -164,9 +164,9 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return true;
     }
 
-    protected <E extends AxiomSet<Id>> Set<Id> getCommonEntailments(Set<E> dx) throws SolverException {
+    protected <E extends FormulaSet<Id>> Set<Id> getCommonEntailments(Set<E> dx) throws SolverException {
         Set<Id> intersection = null;
-        for (AxiomSet<Id> hs : dx) {
+        for (FormulaSet<Id> hs : dx) {
             if (intersection == null)
                 intersection = new LinkedHashSet<Id>(hs.getEntailments());
             else
@@ -177,7 +177,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return intersection;
     }
 
-    protected <E extends AxiomSet<Id>> Partition<Id> findPartition(Set<E> hittingSets, Set<E> head)
+    protected <E extends FormulaSet<Id>> Partition<Id> findPartition(Set<E> hittingSets, Set<E> head)
             throws SolverException, InconsistentTheoryException {
 
         //if (this.bestPartition != null && this.bestPartition.score < this.threshold)
@@ -235,8 +235,8 @@ public class BruteForce<Id> implements Partitioning<Id> {
         this.partitionsCount++;
     }
 
-    protected <E extends AxiomSet<Id>> AxiomSet<Id> getOriginalHittingSet(E el) {
-        for (AxiomSet<Id> elem : getHittingSets()) {
+    protected <E extends FormulaSet<Id>> FormulaSet<Id> getOriginalHittingSet(E el) {
+        for (FormulaSet<Id> elem : getHittingSets()) {
             if (el.compareTo(elem) == 0)
                 return elem;
         }
@@ -252,11 +252,11 @@ public class BruteForce<Id> implements Partitioning<Id> {
         return this.scoring;
     }
 
-    public Set<? extends AxiomSet<Id>> getHittingSets() {
+    public Set<? extends FormulaSet<Id>> getHittingSets() {
         return hittingSets;
     }
 
-    protected void setHittingSets(Set<? extends AxiomSet<Id>> hittingSets) {
+    protected void setHittingSets(Set<? extends FormulaSet<Id>> hittingSets) {
         this.hittingSets = hittingSets;
     }
 

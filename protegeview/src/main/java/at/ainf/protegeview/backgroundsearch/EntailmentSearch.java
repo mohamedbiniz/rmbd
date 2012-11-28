@@ -2,8 +2,8 @@ package at.ainf.protegeview.backgroundsearch;
 
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
-import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -25,9 +25,9 @@ import java.util.concurrent.ExecutionException;
 public class EntailmentSearch {
 
 
-    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
+    private TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> trSearch;
 
-    private List<AxiomSet<OWLLogicalAxiom>> diags;
+    private List<FormulaSet<OWLLogicalAxiom>> diags;
 
     private Scoring<OWLLogicalAxiom> func;
 
@@ -35,8 +35,8 @@ public class EntailmentSearch {
 
 
     public EntailmentSearch(
-            TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
-            List<AxiomSet<OWLLogicalAxiom>> diags, boolean isQueryMinimizerActive) {
+            TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search,
+            List<FormulaSet<OWLLogicalAxiom>> diags, boolean isQueryMinimizerActive) {
         this.trSearch = search;
         this.diags = diags;
         String fun = QueryDebuggerPreference.getInstance().getScoringFunction();

@@ -8,7 +8,7 @@ import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.GreedySearch;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
@@ -93,7 +93,7 @@ public class PartitioningTest {
         assertEquals(4, debugger.getDiagnoses().size());
 
         int i = 8;
-        for (AxiomSet<OWLLogicalAxiom> hs : debugger.getDiagnoses()) {
+        for (FormulaSet<OWLLogicalAxiom> hs : debugger.getDiagnoses()) {
             hs.setMeasure(new BigDecimal(Integer.toString(i--)).divide(new BigDecimal("100")));
         }
 

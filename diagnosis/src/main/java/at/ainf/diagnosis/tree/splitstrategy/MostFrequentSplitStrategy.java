@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.tree.splitstrategy;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.Set;
 
@@ -18,14 +18,14 @@ public class MostFrequentSplitStrategy<Id> implements SplitStrategy<Id> {
      * @param conflicts
      * @return
      */
-    public Id getSplitElement(Set<AxiomSet<Id>> conflicts) {
+    public Id getSplitElement(Set<FormulaSet<Id>> conflicts) {
 
         //Result element
         Id result=null;
         //Number of occurrences of result element
         int maxCount=0;
 
-        for(AxiomSet<Id> c: conflicts){
+        for(FormulaSet<Id> c: conflicts){
 
             for(Id el : c){
                    if(count(el,conflicts)>maxCount){
@@ -46,11 +46,11 @@ public class MostFrequentSplitStrategy<Id> implements SplitStrategy<Id> {
      * @param conflicts
      * @return
      */
-    private int count(Id element, Set<AxiomSet<Id>> conflicts){
+    private int count(Id element, Set<FormulaSet<Id>> conflicts){
 
         int cnt=0;
 
-        for(AxiomSet ax:conflicts){
+        for(FormulaSet ax:conflicts){
            if(ax.contains(element))
                cnt++;
         }

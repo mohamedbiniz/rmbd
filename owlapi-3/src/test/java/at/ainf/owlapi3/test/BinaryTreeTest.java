@@ -2,8 +2,8 @@ package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.quickxplain.PredefinedConflictSearcher;
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetImpl;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.BinaryTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -43,7 +43,7 @@ public class BinaryTreeTest {
     public void searchKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         // We have to create a start object using Reiter's Treee
-        BinaryTreeSearch<AxiomSet<Integer>,Integer> search = new BinaryTreeSearch<AxiomSet<Integer>,Integer>();
+        BinaryTreeSearch<FormulaSet<Integer>,Integer> search = new BinaryTreeSearch<FormulaSet<Integer>,Integer>();
 
         // We also need to load the ontology / knowledge base to start
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream("ontologies/koala.owl");
@@ -66,31 +66,31 @@ public class BinaryTreeTest {
 
         // because we use Reiter's Tree nodes are conflicts which we start using QuickXplain
 
-        Set<AxiomSet<Integer>> conflicts = new LinkedHashSet<AxiomSet<Integer>>();
+        Set<FormulaSet<Integer>> conflicts = new LinkedHashSet<FormulaSet<Integer>>();
 
         LinkedHashSet<Integer> axioms = new LinkedHashSet<Integer>();
         axioms.add(1);
         axioms.add(2);
         axioms.add(3);
-       conflicts.add(new AxiomSetImpl<Integer>(new BigDecimal("1"),axioms, Collections.<Integer>emptySet()));
+       conflicts.add(new FormulaSetImpl<Integer>(new BigDecimal("1"),axioms, Collections.<Integer>emptySet()));
 
 
         LinkedHashSet<Integer> axioms2 = new LinkedHashSet<Integer>();
         axioms2.add(3);
         axioms2.add(4);
         axioms2.add(2);
-        conflicts.add(new AxiomSetImpl<Integer>(new BigDecimal("1"),axioms2, Collections.<Integer>emptySet()));
+        conflicts.add(new FormulaSetImpl<Integer>(new BigDecimal("1"),axioms2, Collections.<Integer>emptySet()));
 
         LinkedHashSet<Integer> axioms3 = new LinkedHashSet<Integer>();
         axioms3.add(5);
-        conflicts.add(new AxiomSetImpl<Integer>(new BigDecimal("1"),axioms3, Collections.<Integer>emptySet()));
+        conflicts.add(new FormulaSetImpl<Integer>(new BigDecimal("1"),axioms3, Collections.<Integer>emptySet()));
 
         LinkedHashSet<Integer> axioms4 = new LinkedHashSet<Integer>();
         axioms4.add(4);
         axioms4.add(2);
         axioms4.add(7);
         axioms4.add(1);
-        conflicts.add(new AxiomSetImpl<Integer>(new BigDecimal("1"),axioms4, Collections.<Integer>emptySet()));
+        conflicts.add(new FormulaSetImpl<Integer>(new BigDecimal("1"),axioms4, Collections.<Integer>emptySet()));
 
 
         // We have to create a Theory object which holds the information about the ontology and specified testcases
@@ -120,7 +120,7 @@ public class BinaryTreeTest {
         }
 
         // here we save the result in a new list
-        Set<AxiomSet<Integer>> result = new LinkedHashSet<AxiomSet<Integer>>(search.getDiagnoses());
+        Set<FormulaSet<Integer>> result = new LinkedHashSet<FormulaSet<Integer>>(search.getDiagnoses());
 
         //System.out.println("Number of hitting sets: " + result.size());
         //System.out.println("Hitting sets:");

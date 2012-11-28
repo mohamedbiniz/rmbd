@@ -1,7 +1,6 @@
 package at.ainf.protegeview.gui.axiomsetviews.axiomslist;
 
-import at.ainf.diagnosis.storage.AxiomSet;
-import org.protege.editor.core.ui.list.MListSectionHeader;
+import at.ainf.diagnosis.storage.FormulaSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.math.MathContext;
@@ -15,21 +14,21 @@ import java.math.MathContext;
 */
 public class AxiomListHeader {
 
-    private AxiomSet<OWLLogicalAxiom> axiomSet;
+    private FormulaSet<OWLLogicalAxiom> formulaSet;
 
     private String headerPref;
 
     private boolean isIncludeMeasure;
 
-    public AxiomListHeader(AxiomSet<OWLLogicalAxiom> axiomSet, String headerPref, boolean isIncludeMeasure) {
-        this.axiomSet = axiomSet;
+    public AxiomListHeader(FormulaSet<OWLLogicalAxiom> formulaSet, String headerPref, boolean isIncludeMeasure) {
+        this.formulaSet = formulaSet;
         this.headerPref = headerPref;
         this.isIncludeMeasure = isIncludeMeasure;
 
     }
 
-    public AxiomSet<OWLLogicalAxiom> getAxiomSet() {
-        return axiomSet;
+    public FormulaSet<OWLLogicalAxiom> getFormulaSet() {
+        return formulaSet;
     }
 
     /*public Color getColor() {
@@ -41,8 +40,8 @@ public class AxiomListHeader {
     }*/
 
     public String toString() {
-        String roundedMeas = getAxiomSet().getMeasure().round(new MathContext(6)).toEngineeringString();
-        String r = headerPref + "(Size: " + getAxiomSet().size();
+        String roundedMeas = getFormulaSet().getMeasure().round(new MathContext(6)).toEngineeringString();
+        String r = headerPref + "(Size: " + getFormulaSet().size();
         if (isIncludeMeasure)
             r += ", Measure: " + roundedMeas;
         return r + ")";

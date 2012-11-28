@@ -2,7 +2,7 @@ package at.ainf.owlapi3.base;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.base.tools.OAEI11ConferenceRdfMatchingParser;
@@ -97,7 +97,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
 
 
 
-    protected Set<AxiomSet<OWLLogicalAxiom>> getRandomDiagSet(File file, String directory ) throws SolverException, InconsistentTheoryException {
+    protected Set<FormulaSet<OWLLogicalAxiom>> getRandomDiagSet(File file, String directory ) throws SolverException, InconsistentTheoryException {
         String matchingsDir = "oaei11conference/matchings/";
         String mapd = matchingsDir + directory;
 
@@ -116,7 +116,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         OWLOntology ontology = new OWLIncoherencyExtractor(
                 new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
         OWLTheory theory = getExtendTheory(ontology, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
 
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
         OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
@@ -135,7 +135,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         search.reset();
 
         OWLTheory th30 = getExtendTheory(ontology, true);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getUniformCostSearch(th30, true);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getUniformCostSearch(th30, true);
         th30.getKnowledgeBase().addBackgroundFormulas(bx);
         OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
@@ -146,7 +146,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search30.getDiagnoses());
+        Set<FormulaSet<OWLLogicalAxiom>> diagnoses = new TreeSet<FormulaSet<OWLLogicalAxiom>>(search30.getDiagnoses());
 
         search30.reset();
 
@@ -156,16 +156,16 @@ public class OAEI11ConferenceSession extends SimulatedSession {
 
 
 
-    protected int chooseRandomNum(Set<AxiomSet<OWLLogicalAxiom>> diagnoses, Random random) {
+    protected int chooseRandomNum(Set<FormulaSet<OWLLogicalAxiom>> diagnoses, Random random) {
 
         return random.nextInt(diagnoses.size());
     }
 
-    protected Set<OWLLogicalAxiom> chooseRandomDiag(Set<AxiomSet<OWLLogicalAxiom>> diagnoses,File file, int random) {
+    protected Set<OWLLogicalAxiom> chooseRandomDiag(Set<FormulaSet<OWLLogicalAxiom>> diagnoses,File file, int random) {
         Set<OWLLogicalAxiom> targetDg = null;
 
         logger.info(file.getName() + ",diagnosis selected as target," + random);
-        targetDg = new LinkedHashSet<OWLLogicalAxiom>((AxiomSet<OWLLogicalAxiom>) diagnoses.toArray()[random]);
+        targetDg = new LinkedHashSet<OWLLogicalAxiom>((FormulaSet<OWLLogicalAxiom>) diagnoses.toArray()[random]);
         logger.info(file.getName() + ",target diagnosis axioms," + renderAxioms(targetDg));
 
 

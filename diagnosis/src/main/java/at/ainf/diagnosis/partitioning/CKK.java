@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
     private static Logger logger = LoggerFactory.getLogger(CKK.class.getName());
 
-    private class Differencing<E extends AxiomSet<Id>> {
+    private class Differencing<E extends FormulaSet<Id>> {
         private Set<E> left = new LinkedHashSet<E>();
         private Set<E> right = new LinkedHashSet<E>();
         private Set<E> tail = new LinkedHashSet<E>();
@@ -101,7 +101,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         bestdiff = new BigDecimal(Double.MAX_VALUE);
     }
 
-    public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
+    public <E extends FormulaSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
 
         numOfHittingSets = hittingSets.size();
@@ -148,7 +148,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         });
     }
 
-    public <E extends AxiomSet<Id>> Partition<Id> nextPartition(Partition<Id> partition) throws SolverException, InconsistentTheoryException {
+    public <E extends FormulaSet<Id>> Partition<Id> nextPartition(Partition<Id> partition) throws SolverException, InconsistentTheoryException {
         if (partition != null) {
             getPartitions().remove(partition);
             partition = null;
@@ -194,9 +194,9 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         partition.difference = left.subtract(right).add(none.divide(new BigDecimal(2))).abs();
     }
 
-    private BigDecimal sumProbabilities(Set<AxiomSet<Id>> partition) {
+    private BigDecimal sumProbabilities(Set<FormulaSet<Id>> partition) {
         BigDecimal sum = new BigDecimal(0);
-        for (AxiomSet<Id> ids : partition) {
+        for (FormulaSet<Id> ids : partition) {
             sum = sum.add(ids.getMeasure());
         }
         return sum;
@@ -221,7 +221,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
             return true;
         Set<Id> ent = partition.partition;
         // partition the rest of diagnoses
-        for (AxiomSet<Id> hs : getHittingSets()) {
+        for (FormulaSet<Id> hs : getHittingSets()) {
             if (!partition.dx.contains(hs)) {
                 if (hs.getEntailments().containsAll(ent)) {
                     partition.dx.add(hs);
@@ -241,7 +241,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         return true;
     }
 
-    protected <E extends AxiomSet<Id>> void findPartition(Differencing<E> diff)
+    protected <E extends FormulaSet<Id>> void findPartition(Differencing<E> diff)
             throws SolverException, InconsistentTheoryException {
         // diff == null
         if (diff.tail.isEmpty()) {

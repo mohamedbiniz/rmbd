@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -9,7 +10,6 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -46,7 +46,7 @@ public class SimpleQueryTest {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
@@ -82,7 +82,7 @@ public class SimpleQueryTest {
         search.start();
         //s.doBackgroundSearch();
 
-        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.getDiagnoses();
+        Collection<? extends FormulaSet<OWLLogicalAxiom>> res = search.getDiagnoses();
         logger.info(((Integer)res.size()).toString());
         //Partition<OWLLogicalAxiom> query = diagProvider.getBestQuery(diagnoses);
         //theory.addNonEntailedTest(query.partition);
@@ -101,7 +101,7 @@ public class SimpleQueryTest {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
@@ -146,7 +146,7 @@ public class SimpleQueryTest {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
@@ -167,13 +167,13 @@ public class SimpleQueryTest {
         search.setSearchable(theory);
 
         search.setMaxDiagnosesNumber(9);
-        Collection<? extends AxiomSet<OWLLogicalAxiom>> res = search.start();
-        TreeSet<AxiomSet<OWLLogicalAxiom>> result = new TreeSet<AxiomSet<OWLLogicalAxiom>>(res);
-        for (AxiomSet<OWLLogicalAxiom> hs : result) {
-            TreeSet<AxiomSet<OWLLogicalAxiom>> ts = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        Collection<? extends FormulaSet<OWLLogicalAxiom>> res = search.start();
+        TreeSet<FormulaSet<OWLLogicalAxiom>> result = new TreeSet<FormulaSet<OWLLogicalAxiom>>(res);
+        for (FormulaSet<OWLLogicalAxiom> hs : result) {
+            TreeSet<FormulaSet<OWLLogicalAxiom>> ts = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
             ts.add(hs);
             assertTrue(ts.contains(hs));
-            for (AxiomSet<OWLLogicalAxiom> hs1 : result) {
+            for (FormulaSet<OWLLogicalAxiom> hs1 : result) {
 
                 if (hs.getName().equals(hs1.getName())) {
                     assertTrue(hs.equals(hs1));

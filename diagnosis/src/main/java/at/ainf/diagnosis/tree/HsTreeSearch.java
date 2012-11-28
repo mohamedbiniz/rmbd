@@ -1,10 +1,10 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.storage.AxiomSetImpl;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.*;
 
@@ -15,7 +15,7 @@ import java.util.*;
  * Time: 11:31
  * To change this template use File | Settings | File Templates.
  */
-public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id>{
+public class HsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id>{
 
 
     public void proveValidnessConflict(T conflictSet) throws SolverException {
@@ -40,7 +40,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
     }
 
 
-    protected Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+    protected Set<FormulaSet<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
         return calculateConflict(node);
     }
 
@@ -54,14 +54,14 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
         for (T ax : getConflicts()) {
             Set<Id> axioms = getSearcher().search(getSearchable(), ax, null).iterator().next();
             if (!axioms.equals(ax)) {
-                AxiomSet<Id> conflict = new AxiomSetImpl<Id>(ax.getMeasure(), axioms, ax.getEntailments());
+                FormulaSet<Id> conflict = new FormulaSetImpl<Id>(ax.getMeasure(), axioms, ax.getEntailments());
                 updateTree(conflict);
                 ax.updateAxioms(conflict);
             }
         }
     }
 
-    private void updateTree(AxiomSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
+    private void updateTree(FormulaSet<Id> conflictSet) throws SolverException, InconsistentTheoryException {
         Node<Id> root = getRoot();
         if (getRoot() == null) {
             return;
@@ -75,7 +75,7 @@ public class HsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<
         }
     }
 
-    public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
+    public Set<Node<Id>> updateNode(FormulaSet<Id> axSet, Node<Id> node) throws SolverException, InconsistentTheoryException {
         if (node == null || node.getAxiomSets() == null)
             return Collections.emptySet();
         if (node.getAxiomSets().containsAll(axSet)) {

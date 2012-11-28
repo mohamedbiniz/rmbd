@@ -3,7 +3,7 @@ package at.ainf.diagnosis.partitioning.scoring;
 import static at.ainf.diagnosis.tree.Rounding.*;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +46,9 @@ public class MinScoreQSS<T> extends AbstractQSS<T> {
         return sc;
     }
 
-    private BigDecimal sum(Set<? extends AxiomSet> dx) {
+    private BigDecimal sum(Set<? extends FormulaSet> dx) {
         BigDecimal sum = new BigDecimal("0");
-        for (AxiomSet hs : dx)
+        for (FormulaSet hs : dx)
             sum = sum.add(hs.getMeasure());
         return sum;
     }
@@ -57,9 +57,9 @@ public class MinScoreQSS<T> extends AbstractQSS<T> {
         return "Entropy";
     }
 
-    public void normalize(Set<? extends AxiomSet<T>> hittingSets) {
+    public void normalize(Set<? extends FormulaSet<T>> hittingSets) {
         BigDecimal sum = sum(hittingSets);
-        for (AxiomSet<T> hs : hittingSets) {
+        for (FormulaSet<T> hs : hittingSets) {
             BigDecimal value = hs.getMeasure().divide(sum,PRECISION,ROUNDING_MODE);
             hs.setMeasure(value);
         }

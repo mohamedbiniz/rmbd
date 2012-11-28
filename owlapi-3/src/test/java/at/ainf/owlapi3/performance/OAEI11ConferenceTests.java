@@ -4,7 +4,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
@@ -145,7 +145,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
 
                 Random random = new Random(12311);
-                Set<AxiomSet<OWLLogicalAxiom>> targetDgSet = getRandomDiagSet(file, map.get(file));
+                Set<FormulaSet<OWLLogicalAxiom>> targetDgSet = getRandomDiagSet(file, map.get(file));
                 int randomNr = chooseRandomNum(targetDgSet,random);
                 Set<OWLLogicalAxiom> targetDg = chooseRandomDiag(targetDgSet,file,randomNr);
 
@@ -170,7 +170,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                             new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
                     preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                     OWLTheory theory = getExtendTheory(ontology, true);
-                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
+                    TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
 
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                     OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
@@ -253,15 +253,15 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             ontoBackground.addAll(getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms()));
             ontoBackground.addAll(getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms()));
 
-            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual;
+            TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual;
             if (dual) {
-                searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+                searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
                 searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
                 searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
                 searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
             }
             else {
-                searchDual = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+                searchDual = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
                 searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
                 searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
                 searchDual.setSearcher(new QuickXplain<OWLLogicalAxiom>());
@@ -341,7 +341,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             int numC = searchDual.getConflicts().size();
 
             Set<Integer> sizes = new LinkedHashSet<Integer>();
-            for (AxiomSet<OWLLogicalAxiom> diagnosis : searchDual.getDiagnoses())
+            for (FormulaSet<OWLLogicalAxiom> diagnosis : searchDual.getDiagnoses())
                 sizes.add(diagnosis.size());
             int minCardSize = Collections.min(sizes);
             int numOfMinCardDiags = 0;
@@ -550,7 +550,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
             OWLOntology extracted = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
 
-            TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
             search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
             DualTreeOWLTheory theory = null;

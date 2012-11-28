@@ -1,7 +1,7 @@
 package at.ainf.diagnosis;
 
 import at.ainf.diagnosis.model.*;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.Collection;
 import java.util.Set;
@@ -19,7 +19,7 @@ public interface Searchable<E> {
 
     // manager
 
-    public void doBayesUpdate(Set<? extends AxiomSet<E>> hittingSets);
+    public void doBayesUpdate(Set<? extends FormulaSet<E>> hittingSets);
 
 
 
@@ -37,9 +37,9 @@ public interface Searchable<E> {
 
     // split method in O \ D to manager and verifyCons here
 
-    boolean diagnosisEntails(AxiomSet<E> hs, Set<E> ent);
+    boolean diagnosisEntails(FormulaSet<E> hs, Set<E> ent);
 
-    boolean diagnosisConsistent(AxiomSet<E> hs, Set<E> ent);
+    boolean diagnosisConsistent(FormulaSet<E> hs, Set<E> ent);
 
     // here the two methods should be unified
 

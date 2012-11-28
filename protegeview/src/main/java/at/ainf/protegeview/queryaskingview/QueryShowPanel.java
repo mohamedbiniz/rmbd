@@ -1,7 +1,7 @@
 package at.ainf.protegeview.queryaskingview;
 
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.protegeview.controlpanel.QueryDebuggerPreference;
 import at.ainf.protegeview.debugmanager.DebugManager;
@@ -349,9 +349,9 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
 
         // diagProvider.calculateLead();
 
-        Collection<AxiomSet<OWLLogicalAxiom>> diag = new HashSet<AxiomSet<OWLLogicalAxiom>>();
+        Collection<FormulaSet<OWLLogicalAxiom>> diag = new HashSet<FormulaSet<OWLLogicalAxiom>>();
 
-        for (AxiomSet<OWLLogicalAxiom> q : workspace.getSearch().getDiagnoses()) {
+        for (FormulaSet<OWLLogicalAxiom> q : workspace.getSearch().getDiagnoses()) {
             diag.add(q);
         }
 
@@ -371,9 +371,9 @@ public class QueryShowPanel extends JPanel implements ResetReqListener {
 
         //diagProvider.calculateLead();
 
-        Collection<AxiomSet<OWLLogicalAxiom>> diag = new HashSet<AxiomSet<OWLLogicalAxiom>>();
+        Collection<FormulaSet<OWLLogicalAxiom>> diag = new HashSet<FormulaSet<OWLLogicalAxiom>>();
 
-        for (AxiomSet<OWLLogicalAxiom> q : workspace.getSearch().getDiagnoses()) {
+        for (FormulaSet<OWLLogicalAxiom> q : workspace.getSearch().getDiagnoses()) {
             diag.add(q);
         }
 

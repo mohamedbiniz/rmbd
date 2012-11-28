@@ -1,10 +1,10 @@
 package at.ainf.protegeview.views;
 
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.debugmanager.*;
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.diagnosis.storage.AxiomSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import javax.swing.*;
@@ -37,7 +37,7 @@ public class ConflictSetView extends AbstractProtegeResultView implements Confli
         updateListModel(e.getConflictSets());
     }
 
-    protected void updateListModel(Set<? extends AxiomSet<OWLLogicalAxiom>> confl) {
+    protected void updateListModel(Set<? extends FormulaSet<OWLLogicalAxiom>> confl) {
         WorkspaceTab workspace = (WorkspaceTab) getOWLWorkspace().getWorkspaceTab("at.ainf.protegeview.WorkspaceTab");
          if(confl == null) {
             ((DefaultListModel)list.getModel()).clear();

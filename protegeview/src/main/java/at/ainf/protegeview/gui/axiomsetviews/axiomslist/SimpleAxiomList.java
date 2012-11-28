@@ -1,15 +1,11 @@
 package at.ainf.protegeview.gui.axiomsetviews.axiomslist;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.protegeview.gui.AbstractAxiomList;
-import org.protege.editor.core.ui.list.MList;
 import org.protege.editor.owl.OWLEditorKit;
-import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
-import org.protege.editor.owl.ui.renderer.LinkedObjectComponentMediator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +25,11 @@ public class SimpleAxiomList extends AbstractAxiomList {
         setCellRenderer(new AxiomListItemRenderer(editorKit,headerColor));
     }
 
-    public void updateList(Set<AxiomSet<OWLLogicalAxiom>> setOfAxiomSets, OWLOntology ontology, String headerPref, boolean isIncludeMeasure) {
+    public void updateList(Set<FormulaSet<OWLLogicalAxiom>> setOfFormulaSets, OWLOntology ontology, String headerPref, boolean isIncludeMeasure) {
         List<Object> items = new ArrayList<Object>();
-        for (AxiomSet<OWLLogicalAxiom> axiomSet : setOfAxiomSets) {
-            items.add(new AxiomListHeader(axiomSet,headerPref,isIncludeMeasure));
-            for (OWLLogicalAxiom axiom : axiomSet) {
+        for (FormulaSet<OWLLogicalAxiom> formulaSet : setOfFormulaSets) {
+            items.add(new AxiomListHeader(formulaSet,headerPref,isIncludeMeasure));
+            for (OWLLogicalAxiom axiom : formulaSet) {
                 items.add(new AxiomListItem(axiom,ontology));
             }
             items.add(" ");
