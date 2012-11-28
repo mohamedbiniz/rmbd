@@ -11,6 +11,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.storage.AxiomSet;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -43,8 +44,9 @@ public class SimpleNode<Id> implements Node<Id> {
 
     protected final boolean root;
 
+    private BigDecimal nodePathCosts = BigDecimal.ZERO;
 
-
+    private CostsEstimator<Id> costsEstimator;
 
     // constructor for root
 
@@ -172,7 +174,7 @@ public class SimpleNode<Id> implements Node<Id> {
     }
 
     @Override
-    public void removeParent(){
+    public void removeParent() {
         this.parent = null;
     }
 
@@ -205,7 +207,7 @@ public class SimpleNode<Id> implements Node<Id> {
         */
         //children.clear();
 
-            this.conflict = conflict;
+        this.conflict = conflict;
 
     }
 
@@ -214,7 +216,7 @@ public class SimpleNode<Id> implements Node<Id> {
 
         Set<AxiomSet<Id>> set = new LinkedHashSet<AxiomSet<Id>>();
         set.add(conflict);
-        this.conflict=set;
+        this.conflict = set;
     }
 
     @Override
@@ -229,11 +231,6 @@ public class SimpleNode<Id> implements Node<Id> {
     }
 
     @Override
-    public void removeArcLabel() {
-        this.arcLabel = null;
-    }
-
-    @Override
     public void removeAxioms() {
         this.conflict = null;
     }
@@ -243,9 +240,34 @@ public class SimpleNode<Id> implements Node<Id> {
         this.closed = false;
     }
 
+    @Override
+    public BigDecimal getNodePathCosts() {
+        return nodePathCosts;
+    }
 
+    @Override
+    public void setNodePathCosts(BigDecimal nodePathCosts) {
+        this.nodePathCosts = nodePathCosts;
+    }
 
+    @Override
+    public CostsEstimator<Id> getCostsEstimator() {
+        return costsEstimator;
+    }
 
+    @Override
+    public void setCostsEstimator(CostsEstimator<Id> costsEstimator) {
+        this.costsEstimator = costsEstimator;
+    }
 
+    @Override
+    public int compareTo(Node<Id> o) {
+        if (this == o || this.equals(o))
+            return 0;
+        return Integer.valueOf(getPathLabels().size()).compareTo(o.getPathLabels().size());
+    }
 
+    public String toString() {
+        return (isRoot()) ? "Root" : getArcLabel().toString();
+    }
 }

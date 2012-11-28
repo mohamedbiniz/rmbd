@@ -4,6 +4,7 @@ import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;

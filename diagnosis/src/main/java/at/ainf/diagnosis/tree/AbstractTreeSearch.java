@@ -563,7 +563,7 @@ public abstract class   AbstractTreeSearch<T extends AxiomSet<Id>, Id> implement
     public boolean canReuseConflict(Node<Id> node) {
         // check if this is a root
         //EDITED MultiNodes don't reuse Conflicts
-        if (node.isRoot() || node.getAxiomSets() != null || (node instanceof  MultiNode )) return false;
+        if (node.isRoot() || node.getAxiomSets() != null || (node instanceof MultiNode)) return false;
         Collection<Id> pathLabels = node.getPathLabels();
         for (AxiomSet<Id> localConflict : getConflicts()) {
             if (localConflict.isValid() && !intersectsWith(pathLabels, localConflict)) {

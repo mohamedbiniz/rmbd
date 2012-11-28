@@ -3,7 +3,6 @@ package at.ainf.diagnosis.tree;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 

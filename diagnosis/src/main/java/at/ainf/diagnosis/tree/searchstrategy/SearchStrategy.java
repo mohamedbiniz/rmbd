@@ -2,7 +2,6 @@ package at.ainf.diagnosis.tree.searchstrategy;
 
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.Node;
-import at.ainf.diagnosis.tree.SimpleNode;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.storage.AxiomSet;
 

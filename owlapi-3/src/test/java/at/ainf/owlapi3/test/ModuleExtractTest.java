@@ -3,6 +3,7 @@ package at.ainf.owlapi3.test;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;

@@ -1,14 +1,16 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
-import  at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.tree.*;
 
-import static at.ainf.diagnosis.tree.Rounding.*;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+
+import static at.ainf.diagnosis.tree.Rounding.PRECISION;
+import static at.ainf.diagnosis.tree.Rounding.ROUNDING_MODE;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,9 +26,9 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
     public Node<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
-        CostNode<Id> node = new CostSimpleNode<Id>(conflict);
+        Node<Id> node = new CostSimpleNode<Id>(conflict);
         node.setCostsEstimator(costsEstimator);
-        node.setNodePathCosts(node.getRootNodeCosts(act));
+        node.setNodePathCosts(node.getCostsEstimator().getFormulasCosts(act));
         return node;
     }
 
@@ -44,7 +46,7 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
     }
 
     public BigDecimal getDiagnosisMeasure(Node<Id> node) {
-        return ((CostNode<Id>) node).getNodePathCosts();
+        return node.getNodePathCosts();
     }
 
     public void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
