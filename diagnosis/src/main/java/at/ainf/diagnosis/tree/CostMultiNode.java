@@ -12,7 +12,7 @@ import java.util.Set;
  * Time: 15:05
  * To change this template use File | Settings | File Templates.
  */
-public class CostMultiNode<Id> extends MultiNode<Id> implements Node<Id> {
+public class CostMultiNode<Id> extends MultiNode<Id> {
 
     public CostMultiNode(Set<FormulaSet<Id>> conflict) {
         super(conflict);
@@ -23,7 +23,7 @@ public class CostMultiNode<Id> extends MultiNode<Id> implements Node<Id> {
         ArrayList<Node<Id>> newNodes = super.expandNode();
 
         for (Node<Id> node : newNodes) {
-            node.setNodePathCosts(node.getCostsEstimator().getFormulaSetCosts(node.getPathLabels()));
+            //node.setNodePathCosts(node.getCostsEstimator().getFormulaSetCosts(node.getPathLabels()));
             node.setCostsEstimator(getCostsEstimator());
         }
         return newNodes;

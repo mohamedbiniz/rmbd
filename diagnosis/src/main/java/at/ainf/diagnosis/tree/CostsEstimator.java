@@ -15,7 +15,5 @@ public interface CostsEstimator<Id> {
 
     BigDecimal getFormulaSetCosts(Set<Id> correctFormulas);
 
-    BigDecimal getAxiomCosts(Id label);
-
-    public void computeNodePathCosts(Node<Id> node);
+    BigDecimal getFormulaCosts(Id label);
 }

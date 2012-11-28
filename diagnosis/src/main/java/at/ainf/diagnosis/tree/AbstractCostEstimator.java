@@ -24,30 +24,18 @@ public abstract class AbstractCostEstimator<T> implements CostsEstimator<T> {
         return faultyFormulas;
     }
 
-    @Override
-    public void computeNodePathCosts(Node<T> node){
-        Node<T> parent = node.getParent();
-        T axiom = node.getArcLabel();
-        BigDecimal fProb = getAxiomCosts(axiom);
-        BigDecimal t = BigDecimal.ONE.subtract(fProb);
-        t = parent.getNodePathCosts().divide(t);
-        BigDecimal nodePathCosts = t.multiply(fProb);
-        node.setNodePathCosts(nodePathCosts);
-        node.setCostsEstimator(this);
-    }
-
 
     @Override
     public BigDecimal getFormulaSetCosts(Set<T> formulas) {
         BigDecimal probability = BigDecimal.ONE;
         if (formulas != null)
             for (T axiom : formulas) {
-                probability = probability.multiply(getAxiomCosts(axiom));
+                probability = probability.multiply(getFormulaCosts(axiom));
             }
         Collection<T> activeFormulas = new ArrayList<T>(faultyFormulas);
         activeFormulas.removeAll(formulas);
         for (T axiom : activeFormulas) {
-            probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
+            probability = probability.multiply(BigDecimal.ONE.subtract(getFormulaCosts(axiom)));
         }
         return probability;
     }
