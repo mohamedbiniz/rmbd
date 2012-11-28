@@ -2,6 +2,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.storage.AxiomSet;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -12,7 +13,8 @@ import java.util.Set;
  * Time: 13:43
  * To change this template use File | Settings | File Templates.
  */
-public interface Node<Id> {
+public interface Node<Id> extends Comparable<Node<Id>>{
+
     boolean addChild(SimpleNode<Id> node);
 
     boolean removeChild(Node<Id> node);
@@ -49,9 +51,15 @@ public interface Node<Id> {
 
     int getLevel();
 
-    void removeArcLabel();
-
     void removeAxioms();
 
     void setOpen();
+
+    BigDecimal getNodePathCosts();
+
+    void setNodePathCosts(BigDecimal nodePathCosts);
+
+    CostsEstimator<Id> getCostsEstimator();
+
+    void setCostsEstimator(CostsEstimator<Id> costsEstimator);
 }

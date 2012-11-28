@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.costestimation;
 
+import at.ainf.diagnosis.tree.AbstractCostEstimator;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -17,7 +18,7 @@ import java.util.*;
  * Time: 11:05
  * To change this template use File | Settings | File Templates.
  */
-public class OWLAxiomCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
+public class OWLAxiomCostsEstimator extends AbstractCostEstimator<OWLLogicalAxiom> implements CostsEstimator<OWLLogicalAxiom> {
 
     protected Map<OWLLogicalAxiom,BigDecimal> axiomProb;
     

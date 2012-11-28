@@ -1,17 +1,19 @@
 package at.ainf.owlapi3.costestimation;
 
-import static at.ainf.diagnosis.tree.Rounding.*;
-
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.BigFunctions;
-import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.tree.AbstractCostEstimator;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.math.BigDecimal;
 import java.util.*;
+
+import static at.ainf.diagnosis.tree.Rounding.PRECISION;
+import static at.ainf.diagnosis.tree.Rounding.ROUNDING_MODE;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,7 +22,8 @@ import java.util.*;
  * Time: 14:14
  * To change this template use File | Settings | File Templates.
  */
-public class OWLAxiomKeywordCostsEstimator implements CostsEstimator<OWLLogicalAxiom> {
+public class OWLAxiomKeywordCostsEstimator extends AbstractCostEstimator<OWLLogicalAxiom>
+        implements CostsEstimator<OWLLogicalAxiom> {
 
     private Searchable<OWLLogicalAxiom> searchable;
 

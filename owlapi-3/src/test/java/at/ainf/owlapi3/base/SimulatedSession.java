@@ -10,7 +10,6 @@ import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.storage.AxiomSetImpl;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.Rounding;

@@ -9,6 +9,7 @@
 package at.ainf.sat4j.tree;
 
 import at.ainf.diagnosis.tree.*;
+import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.sat4j.model.IVecIntComparable;
 import at.ainf.sat4j.model.PropositionalTheory;
