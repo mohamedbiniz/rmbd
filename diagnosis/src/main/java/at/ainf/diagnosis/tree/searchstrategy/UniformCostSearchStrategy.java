@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
 
 import java.math.BigDecimal;
@@ -25,10 +25,10 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
 
-    public Node<Id> createRootNode(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+    public Node<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         Node<Id> node = new CostSimpleNode<Id>(conflict);
         node.setCostsEstimator(costsEstimator);
-        node.setNodePathCosts(node.getCostsEstimator().getFormulasCosts(act));
+        node.setNodePathCosts(node.getCostsEstimator().getFormulaSetCosts(node.getPathLabels()));
         return node;
     }
 
@@ -41,31 +41,31 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
 
-    public BigDecimal getConflictMeasure(AxiomSet<Id> conflict, CostsEstimator<Id> costsEstimator) {
-        return costsEstimator.getAxiomSetCosts(conflict);
+    public BigDecimal getConflictMeasure(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator) {
+        return costsEstimator.getFormulaSetCosts(conflict);
     }
 
     public BigDecimal getDiagnosisMeasure(Node<Id> node) {
         return node.getNodePathCosts();
     }
 
-    public void finalizeSearch(TreeSearch<AxiomSet<Id>, Id> search) {
+    public void finalizeSearch(TreeSearch<FormulaSet<Id>, Id> search) {
         search.getSearchable().doBayesUpdate(search.getDiagnoses());
         normalizeValidHittingSets(search);
     }
 
-    protected void normalizeValidHittingSets(TreeSearch<AxiomSet<Id>, Id> search) {
-        Set<AxiomSet<Id>> hittingSets = search.getDiagnoses();
+    protected void normalizeValidHittingSets(TreeSearch<FormulaSet<Id>, Id> search) {
+        Set<FormulaSet<Id>> hittingSets = search.getDiagnoses();
         BigDecimal sum = new BigDecimal("0");
 
-        for (AxiomSet<Id> hittingSet : hittingSets) {
+        for (FormulaSet<Id> hittingSet : hittingSets) {
             sum = sum.add(hittingSet.getMeasure());
         }
 
         if (sum.compareTo(BigDecimal.ZERO)==0 && hittingSets.size() != 0)
             throw new IllegalStateException("Sum of probabilities of all diagnoses is 0!");
 
-        for (AxiomSet<Id> hittingSet : hittingSets) {
+        for (FormulaSet<Id> hittingSet : hittingSets) {
                 // the decimal expansion is inf we need round
                 hittingSet.setMeasure(hittingSet.getMeasure().divide(sum,PRECISION, ROUNDING_MODE));
         }

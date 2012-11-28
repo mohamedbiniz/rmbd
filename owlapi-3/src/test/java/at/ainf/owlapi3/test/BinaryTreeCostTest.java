@@ -3,9 +3,8 @@ package at.ainf.owlapi3.test;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.BinaryTreeSearch;
-import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
@@ -45,7 +44,7 @@ public class BinaryTreeCostTest {
     public void searchKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         // We have to create a start object using Reiter's Treee
-        BinaryTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
 
         // We also need to load the ontology / knowledge base to start
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream("ontologies/koala.owl");
@@ -84,7 +83,7 @@ public class BinaryTreeCostTest {
         }
 
         // here we save the result in a new list
-        Set<AxiomSet<OWLLogicalAxiom>> result = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+        Set<FormulaSet<OWLLogicalAxiom>> result = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
         // Koala normally has 10 diagnoses so we should have found enough
         assertTrue(result.size() == 9);

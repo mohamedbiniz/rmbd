@@ -16,10 +16,9 @@ package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     private long calls = 0;
     */
-    protected abstract AxiomSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
+    protected abstract FormulaSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException;
 
     protected abstract int getIterations();
@@ -75,9 +74,9 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     protected abstract void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException;
 
-    public Set<AxiomSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
+    public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException {
-        AxiomSet<Id> conflictFormulas = null;
+        FormulaSet<Id> conflictFormulas = null;
 
         if (changes != null)
             formulas = applyChanges(searchable, formulas, changes);
@@ -112,11 +111,11 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             rollbackChanges(searchable, formulas, changes);
         }
 
-        return Collections.<AxiomSet<Id>>singleton(conflictFormulas);
+        return Collections.<FormulaSet<Id>>singleton(conflictFormulas);
 
     }
 
-    public void postProcessFormulas(AxiomSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
+    public void postProcessFormulas(FormulaSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
 
     }
 

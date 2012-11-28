@@ -1,7 +1,7 @@
 package at.ainf.protegeview.debugmanager;
 
 import at.ainf.diagnosis.storage.Partition;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLObject;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
@@ -64,7 +64,7 @@ public class LogToolsImp {
         result += "Query: ;score = ;" + query.score + ";" + getRenderingSet(query.partition) + ";";
         result += "%DX: ;size=;" + query.dx.size() + ";";
         double sum = 0.0;
-        for (AxiomSet hs : query.dx) {
+        for (FormulaSet hs : query.dx) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure().doubleValue();
         }
@@ -72,7 +72,7 @@ public class LogToolsImp {
 
         result += "%DNX: ;size=;" + query.dnx.size() + ";";
         sum = 0.0;
-        for (AxiomSet hs : query.dnx) {
+        for (FormulaSet hs : query.dnx) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure().doubleValue();
         }
@@ -80,7 +80,7 @@ public class LogToolsImp {
 
         result += "%D0: ;size=;" + query.dz.size() + ";";
         sum = 0.0;
-        for (AxiomSet hs : query.dz) {
+        for (FormulaSet hs : query.dz) {
             result += getHsRendering(hs) + " ";
             sum += hs.getMeasure().doubleValue();
         }
@@ -92,7 +92,7 @@ public class LogToolsImp {
     public String getHsRendering(Object o) {
         String result = "";
 
-        AxiomSet<OWLLogicalAxiom> hs = (AxiomSet<OWLLogicalAxiom>) o;
+        FormulaSet<OWLLogicalAxiom> hs = (FormulaSet<OWLLogicalAxiom>) o;
         result += "p=;" + hs.getMeasure() + ";";
         for (OWLLogicalAxiom axiom : hs)
             result += rend.render(axiom) + ";";

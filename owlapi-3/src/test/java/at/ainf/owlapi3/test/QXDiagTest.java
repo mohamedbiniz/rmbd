@@ -12,7 +12,7 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -49,13 +49,13 @@ public class QXDiagTest {
     @Test
     public void testFasterDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "ontologies/koala.owl", true);
         search.setSearchable(th);
-        search.setAxiomRenderer(new MyOWLRendererParser(null));
+        search.setFormulaRenderer(new MyOWLRendererParser(null));
 
         search.start();
 
@@ -68,24 +68,24 @@ public class QXDiagTest {
 
         String ont = "koala.owl";
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
         searchNormal.setSearchable(theoryNormal);
         searchNormal.start();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, true);
         searchDual.setSearchable(theoryDual);
         searchDual.start();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
 
       ////
 
@@ -141,16 +141,16 @@ public class QXDiagTest {
         target.add(parser.parse("hasAdvisor InverseOf advisorOf"));
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         search.setSearchable(th);
-        search.setAxiomRenderer(new MyOWLRendererParser(null));
+        search.setFormulaRenderer(new MyOWLRendererParser(null));
         search.start();
 
         boolean targetIsThere = false;
-        for (AxiomSet<OWLLogicalAxiom> d : search.getDiagnoses()) {
+        for (FormulaSet<OWLLogicalAxiom> d : search.getDiagnoses()) {
             if (target.equals(d)) targetIsThere = true;
         }
         assertTrue(targetIsThere);
@@ -176,16 +176,16 @@ public class QXDiagTest {
 
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
-        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         search.setSearchable(th);
-        search.setAxiomRenderer(new MyOWLRendererParser(null));
+        search.setFormulaRenderer(new MyOWLRendererParser(null));
         search.start();
 
         boolean targetIsThere = false;
-        for (AxiomSet<OWLLogicalAxiom> d : search.getDiagnoses()) {
+        for (FormulaSet<OWLLogicalAxiom> d : search.getDiagnoses()) {
             if (target.equals(d)) targetIsThere = true;
         }
         assertTrue(targetIsThere);
@@ -215,13 +215,13 @@ public class QXDiagTest {
     @Test
     public void testConflictDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "ontologies/koala.owl", false);
         search.setSearchable(th);
-        search.setAxiomRenderer(new MyOWLRendererParser(null));
+        search.setFormulaRenderer(new MyOWLRendererParser(null));
         search.start();
 
         OWLLogicalAxiom axiom = search.getDiagnoses().iterator().next().iterator().next();

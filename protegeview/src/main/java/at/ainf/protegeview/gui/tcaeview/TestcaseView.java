@@ -1,17 +1,9 @@
 package at.ainf.protegeview.gui.tcaeview;
 
-import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.protegeview.gui.AbstractListQueryViewComponent;
-import at.ainf.protegeview.gui.AbstractQueryViewComponent;
-import at.ainf.protegeview.gui.axiomsetviews.axiomslist.SimpleAxiomList;
-import org.protege.editor.core.ui.util.ComponentFactory;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
-import java.awt.*;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.

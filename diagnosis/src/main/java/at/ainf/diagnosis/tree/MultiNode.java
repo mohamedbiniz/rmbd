@@ -1,7 +1,7 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetImpl;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.splitstrategy.SimpleSplitStrategy;
 import at.ainf.diagnosis.tree.splitstrategy.SplitStrategy;
 
@@ -21,7 +21,7 @@ public class MultiNode<Id> extends SimpleNode<Id> {
     private ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
     private SplitStrategy<Id> splitStrategy= new SimpleSplitStrategy<Id>();
 
-    public MultiNode(Set<AxiomSet<Id>> conflict) {
+    public MultiNode(Set<FormulaSet<Id>> conflict) {
         super(conflict);
     }
 
@@ -35,7 +35,7 @@ public class MultiNode<Id> extends SimpleNode<Id> {
 
 
     @Override
-    public AxiomSet<Id> getAxiomSet() {
+    public FormulaSet<Id> getAxiomSet() {
         if (getAxiomSets().size() > 1)
             throw new UnsupportedOperationException("The multinode contains a set of axiom sets!");
         return super.getAxiomSet();
@@ -83,9 +83,9 @@ public class MultiNode<Id> extends SimpleNode<Id> {
     }
 
 
-    private Set<AxiomSet<Id>> ignore(Id e, Set<AxiomSet<Id>>conflicts){
+    private Set<FormulaSet<Id>> ignore(Id e, Set<FormulaSet<Id>>conflicts){
 
-        Set<AxiomSet<Id>> newConflicts= removeElement(e, conflicts);
+        Set<FormulaSet<Id>> newConflicts= removeElement(e, conflicts);
 
        /* for(AxiomSet<Id >c:newConflicts){
             c.remove(e);
@@ -102,9 +102,9 @@ public class MultiNode<Id> extends SimpleNode<Id> {
     }
 
 
-    private Set<AxiomSet<Id>> addToHS(Id e, Set<AxiomSet<Id>>conflicts){
+    private Set<FormulaSet<Id>> addToHS(Id e, Set<FormulaSet<Id>>conflicts){
 
-        Set<AxiomSet<Id>> newConflicts= copy2(conflicts);
+        Set<FormulaSet<Id>> newConflicts= copy2(conflicts);
         Set<Set<Id>> eraseSet=new LinkedHashSet<Set<Id>>();
 
         for(Set<Id> c : newConflicts){
@@ -208,34 +208,34 @@ public class MultiNode<Id> extends SimpleNode<Id> {
     }
 
 
-    private AxiomSet<Id> removeElement(Id e, AxiomSet<Id> set) {
+    private FormulaSet<Id> removeElement(Id e, FormulaSet<Id> set) {
         Set<Id> hs =  new LinkedHashSet<Id>(set);
         //edited, eventually without "if"
         if(hs.remove(e))
-            return new AxiomSetImpl<Id>(set.getMeasure(), hs, set.getEntailments());
+            return new FormulaSetImpl<Id>(set.getMeasure(), hs, set.getEntailments());
         else return set;
     }
 
-    private Set<AxiomSet<Id>> removeElement(Id e, Set<AxiomSet<Id>> set) {
-        Set<AxiomSet<Id>> hs = new LinkedHashSet<AxiomSet<Id>>();
-        for (AxiomSet<Id> hset : set) {
+    private Set<FormulaSet<Id>> removeElement(Id e, Set<FormulaSet<Id>> set) {
+        Set<FormulaSet<Id>> hs = new LinkedHashSet<FormulaSet<Id>>();
+        for (FormulaSet<Id> hset : set) {
             hs.add(removeElement(e, hset));
             if(hset.size()<=0)
                 hs.remove(hset);
         }
         return hs;
     }
-    private AxiomSet<Id> copy(AxiomSet<Id> set) {
+    private FormulaSet<Id> copy(FormulaSet<Id> set) {
         Set<Id> cs =  new LinkedHashSet<Id>(set);
-        return new AxiomSetImpl<Id>(set.getMeasure(), cs, set.getEntailments());
+        return new FormulaSetImpl<Id>(set.getMeasure(), cs, set.getEntailments());
     }
 
-    private Set<AxiomSet<Id>> copy2(Set<AxiomSet<Id>> set) {
-        Set<AxiomSet<Id>> css = new LinkedHashSet<AxiomSet<Id>>();
-        for (AxiomSet<Id> cs : set)
+    private Set<FormulaSet<Id>> copy2(Set<FormulaSet<Id>> set) {
+        Set<FormulaSet<Id>> cses = new LinkedHashSet<FormulaSet<Id>>();
+        for (FormulaSet<Id> cs : set)
             //hier vielleicht copy(cs)  oder nicht
-            css.add(cs);
-        return css;
+            cses.add(cs);
+        return cses;
     }
 
 

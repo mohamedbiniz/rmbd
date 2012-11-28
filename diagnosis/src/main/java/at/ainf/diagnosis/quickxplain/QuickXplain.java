@@ -18,10 +18,9 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomRenderer;
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetFactory;
-import at.ainf.diagnosis.storage.AxiomSetImpl;
+import at.ainf.diagnosis.storage.FormulaRenderer;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
     private static Logger logger = LoggerFactory.getLogger(QuickXplain.class.getName());
 
-    private AxiomRenderer<Id> axiomRenderer;
+    private FormulaRenderer<Id> formulaRenderer;
 
     public QuickXplain() {
     }
@@ -71,7 +70,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
      *
      */
     
-    public AxiomSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
+    public FormulaSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException {
         iterations = 0;
 
@@ -85,17 +84,17 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             throw new NoConflictException("The theory is satisfiable!");
         }
         if (u.isEmpty()) {
-            return new AxiomSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>());
+            return new FormulaSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>());
         }
         start("Conflict", "qx");
         Set<Id> ids = qqXPlain(c, ((AbstractReasoner<Id>) c.getReasoner()).getFormularCache(), new FormulaList<Id>(u));
-        return new AxiomSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
+        return new FormulaSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
     }
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException {
-        if (axiomRenderer!=null)
-            logger.info("B = {" + axiomRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + axiomRenderer.renderAxioms(((AbstractReasoner<Id>)b.getReasoner()).getFormularCache())+"}, \n Delta = {" + axiomRenderer.renderAxioms(d) + "}, \n OD = {" + axiomRenderer.renderAxioms(c) + "}");
+        if (formulaRenderer !=null)
+            logger.info("B = {" + formulaRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas()) + "}, \n D={" + formulaRenderer.renderAxioms(((AbstractReasoner<Id>)b.getReasoner()).getFormularCache())+"}, \n Delta = {" + formulaRenderer.renderAxioms(d) + "}, \n OD = {" + formulaRenderer.renderAxioms(c) + "}");
         iterations++;
         if (d != null && d.size() != 0 && ! b.verifyRequirements())
             return null;
@@ -110,13 +109,13 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
         boolean res = ((AbstractReasoner<Id>)b.getReasoner()).addFormularsToCache(c1);
         Set<Id> d2 = qqXPlain(b, c1, c2);
-        if (axiomRenderer!=null)
-            logger.info("D2 = {" + axiomRenderer.renderAxioms(d2) + "}");
+        if (formulaRenderer !=null)
+            logger.info("D2 = {" + formulaRenderer.renderAxioms(d2) + "}");
         if (res) ((AbstractReasoner<Id>)b.getReasoner()).removeFormularsFromCache(c1);
         res = ((AbstractReasoner<Id>)b.getReasoner()).addFormularsToCache(d2);
         Set<Id> d1 = qqXPlain(b, d2, c1);
-        if (axiomRenderer!=null)
-            logger.info("D1 = {" + axiomRenderer.renderAxioms(d1) + "}");
+        if (formulaRenderer !=null)
+            logger.info("D1 = {" + formulaRenderer.renderAxioms(d1) + "}");
         if (res) ((AbstractReasoner<Id>)b.getReasoner()).removeFormularsFromCache(d2);
 
         if (d2 != null)
@@ -124,13 +123,13 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
                 return d2;
             else
                 d1.addAll(d2);
-        if (axiomRenderer!=null)
-            logger.info("return D = {" + axiomRenderer.renderAxioms(d1) + "}");
+        if (formulaRenderer !=null)
+            logger.info("return D = {" + formulaRenderer.renderAxioms(d1) + "}");
         return d1;
     }
 
-    public void setAxiomRenderer(AxiomRenderer<Id> axiomRenderer) {
-        this.axiomRenderer = axiomRenderer;
+    public void setFormulaRenderer(FormulaRenderer<Id> formulaRenderer) {
+        this.formulaRenderer = formulaRenderer;
     }
 
     public int getIterations() {

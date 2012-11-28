@@ -2,7 +2,7 @@ package at.ainf.owlapi3.costestimation;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.partitioning.BigFunctions;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.AbstractCostEstimator;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
@@ -25,33 +25,31 @@ import static at.ainf.diagnosis.tree.Rounding.ROUNDING_MODE;
 public class OWLAxiomKeywordCostsEstimator extends AbstractCostEstimator<OWLLogicalAxiom>
         implements CostsEstimator<OWLLogicalAxiom> {
 
-    private Searchable<OWLLogicalAxiom> searchable;
-
     public final static ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
-                ManchesterOWLSyntax.ONLY,
-                ManchesterOWLSyntax.MIN,
-                ManchesterOWLSyntax.MAX,
-                ManchesterOWLSyntax.EXACTLY,
-                ManchesterOWLSyntax.AND,
-                ManchesterOWLSyntax.OR,
-                ManchesterOWLSyntax.NOT,
-                ManchesterOWLSyntax.VALUE,
-                ManchesterOWLSyntax.INVERSE,
-                ManchesterOWLSyntax.SUBCLASS_OF,
-                ManchesterOWLSyntax.EQUIVALENT_TO,
-                ManchesterOWLSyntax.DISJOINT_CLASSES,
-                ManchesterOWLSyntax.DISJOINT_WITH,
-                ManchesterOWLSyntax.FUNCTIONAL,
-                ManchesterOWLSyntax.INVERSE_OF,
-                ManchesterOWLSyntax.SUB_PROPERTY_OF,
-                ManchesterOWLSyntax.SAME_AS,
-                ManchesterOWLSyntax.DIFFERENT_FROM,
-                ManchesterOWLSyntax.RANGE,
-                ManchesterOWLSyntax.DOMAIN,
-                ManchesterOWLSyntax.TYPE,
-                ManchesterOWLSyntax.TRANSITIVE,
-                ManchesterOWLSyntax.SYMMETRIC
-        };
+            ManchesterOWLSyntax.ONLY,
+            ManchesterOWLSyntax.MIN,
+            ManchesterOWLSyntax.MAX,
+            ManchesterOWLSyntax.EXACTLY,
+            ManchesterOWLSyntax.AND,
+            ManchesterOWLSyntax.OR,
+            ManchesterOWLSyntax.NOT,
+            ManchesterOWLSyntax.VALUE,
+            ManchesterOWLSyntax.INVERSE,
+            ManchesterOWLSyntax.SUBCLASS_OF,
+            ManchesterOWLSyntax.EQUIVALENT_TO,
+            ManchesterOWLSyntax.DISJOINT_CLASSES,
+            ManchesterOWLSyntax.DISJOINT_WITH,
+            ManchesterOWLSyntax.FUNCTIONAL,
+            ManchesterOWLSyntax.INVERSE_OF,
+            ManchesterOWLSyntax.SUB_PROPERTY_OF,
+            ManchesterOWLSyntax.SAME_AS,
+            ManchesterOWLSyntax.DIFFERENT_FROM,
+            ManchesterOWLSyntax.RANGE,
+            ManchesterOWLSyntax.DOMAIN,
+            ManchesterOWLSyntax.TYPE,
+            ManchesterOWLSyntax.TRANSITIVE,
+            ManchesterOWLSyntax.SYMMETRIC
+    };
 
 
     public static int getMaxLengthKeyword() {
@@ -63,10 +61,14 @@ public class OWLAxiomKeywordCostsEstimator extends AbstractCostEstimator<OWLLogi
         return max;
     }
 
-    public OWLAxiomKeywordCostsEstimator(Searchable<OWLLogicalAxiom> t) {
+    public OWLAxiomKeywordCostsEstimator(Set<OWLLogicalAxiom> t) {
+        super(t);
         this.keywordProbabilities = createKeywordProbs();
-        this.searchable = t;
         updateAxiomProbabilities();
+    }
+
+    public OWLAxiomKeywordCostsEstimator(Searchable<OWLLogicalAxiom> t) {
+        this(t.getKnowledgeBase().getFaultyFormulas());
     }
 
     public void updateKeywordProb(Map<ManchesterOWLSyntax, BigDecimal> keywordProbabilities) {
@@ -88,25 +90,92 @@ public class OWLAxiomKeywordCostsEstimator extends AbstractCostEstimator<OWLLogi
         return map;
     }
 
-    public BigDecimal getAxiomSetCosts(Set<OWLLogicalAxiom> labelSet) {
-            BigDecimal probability = BigDecimal.ONE;
-            for (OWLLogicalAxiom axiom : labelSet) {
+    /*
+    public BigDecimal getFormulaSetCosts(Set<OWLLogicalAxiom> formulas) {
+        BigDecimal probability = BigDecimal.ONE;
+        if (formulas != null)
+            for (OWLLogicalAxiom axiom : formulas) {
                 probability = probability.multiply(getAxiomCosts(axiom));
             }
-            Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(searchable.getKnowledgeBase().getFaultyFormulas());
-            activeFormulas.removeAll(labelSet);
-            for (OWLLogicalAxiom axiom : activeFormulas) {
-                probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
-            }
-            return probability;
+        Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(searchable.getKnowledgeBase().getFaultyFormulas());
+        activeFormulas.removeAll(formulas);
+        for (OWLLogicalAxiom axiom : activeFormulas) {
+            probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
         }
+        return probability;
+    }
+    */
 
-        public BigDecimal getAxiomCosts(OWLLogicalAxiom axiom) {
-            BigDecimal p = axiomsProbabilities.get(axiom);
-            if (p != null)
-                return p;
+    public BigDecimal getAxiomCosts(OWLLogicalAxiom axiom) {
+        BigDecimal p = axiomsProbabilities.get(axiom);
+        if (p != null)
+            return p;
 
-            ManchesterOWLSyntaxOWLObjectRendererImpl impl = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        ManchesterOWLSyntaxOWLObjectRendererImpl impl = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        String renderedAxiom = impl.render(axiom); // String renderedAxiom = modelManager.getRendering(axiom);
+        BigDecimal result = BigDecimal.ONE;
+
+        for (ManchesterOWLSyntax keyword : this.keywordProbabilities.keySet()) {
+            int occurrence = getNumOccurrences(keyword, renderedAxiom);
+            BigDecimal probability = getProbability(keyword);
+
+            BigDecimal temp = BigDecimal.ONE.subtract(probability);
+            temp = BigFunctions.intPower(temp, occurrence, temp.scale());
+            result = result.multiply(temp);
+        }
+        result = BigDecimal.ONE.subtract(result);
+        // no keyword is known
+        if (result.compareTo(new BigDecimal("0.0")) == 0)
+            result = new BigDecimal("0.000000000000000000000000000000000000000000001");
+
+        return result;
+    }
+
+    private Map<OWLLogicalAxiom, BigDecimal> axiomsProbabilities = null;
+    private Map<ManchesterOWLSyntax, BigDecimal> keywordProbabilities;
+
+    public void setKeywordProbabilities(Map<ManchesterOWLSyntax, BigDecimal> keywordProbabilities,
+                                        Set<FormulaSet<OWLLogicalAxiom>> formulaSets) {
+
+
+        this.keywordProbabilities = keywordProbabilities;
+        updateAxiomProbabilities();
+        updateDiagnosisProbabilities(formulaSets);
+
+    }
+
+    public Map<ManchesterOWLSyntax, BigDecimal> getKeywordProbabilities() {
+        return keywordProbabilities;
+    }
+
+    private void updateDiagnosisProbabilities(Set<FormulaSet<OWLLogicalAxiom>> formulaSets) {
+
+        if (formulaSets == null)
+            return;
+        if (!formulaSets.isEmpty()) {
+            for (FormulaSet<OWLLogicalAxiom> formulaSet : formulaSets) {
+                BigDecimal probability = getFormulaSetCosts(formulaSet);
+
+                formulaSet.setMeasure(probability);
+                //axiomSet.setUserAssignedProbability(probability);
+            }
+            BigDecimal sum = BigDecimal.ZERO;
+
+            for (FormulaSet<OWLLogicalAxiom> formulaSet : formulaSets) {
+                sum = sum.add(formulaSet.getMeasure());
+            }
+            for (FormulaSet<OWLLogicalAxiom> formulaSet : formulaSets) {
+                formulaSet.setMeasure(formulaSet.getMeasure().divide(sum, PRECISION, ROUNDING_MODE));
+            }
+        }
+    }
+
+    private void updateAxiomProbabilities() {
+        Map<OWLLogicalAxiom, BigDecimal> axiomsProbs = new HashMap<OWLLogicalAxiom, BigDecimal>();
+        ManchesterOWLSyntaxOWLObjectRendererImpl impl = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        Collection<OWLLogicalAxiom> activeFormulas = getFaultyFormulas();
+        BigDecimal sum = BigDecimal.ZERO;
+        for (OWLLogicalAxiom axiom : activeFormulas) {
             String renderedAxiom = impl.render(axiom); // String renderedAxiom = modelManager.getRendering(axiom);
             BigDecimal result = BigDecimal.ONE;
 
@@ -114,109 +183,44 @@ public class OWLAxiomKeywordCostsEstimator extends AbstractCostEstimator<OWLLogi
                 int occurrence = getNumOccurrences(keyword, renderedAxiom);
                 BigDecimal probability = getProbability(keyword);
 
-                BigDecimal temp = BigDecimal.ONE.subtract(probability);
-                temp = BigFunctions.intPower(temp,occurrence,temp.scale());
-                result = result.multiply(temp);
+                BigDecimal t = BigDecimal.ONE.subtract(probability);
+                t = BigFunctions.intPower(t, occurrence, t.scale());
+                result = result.multiply(t);
             }
             result = BigDecimal.ONE.subtract(result);
             // no keyword is known
-            if(result.compareTo(new BigDecimal("0.0"))==0)
+            if (result.compareTo(new BigDecimal("0.0")) == 0)
                 result = new BigDecimal("0.000000000000000000000000000000000000000000001");
-
-            return result;
+            axiomsProbs.put(axiom, result);
+            sum = sum.add(BigDecimal.ONE.subtract(result));
         }
-
-        private Map<OWLLogicalAxiom, BigDecimal> axiomsProbabilities = null;
-        private Map<ManchesterOWLSyntax, BigDecimal> keywordProbabilities;
-
-        public void setKeywordProbabilities(Map<ManchesterOWLSyntax, BigDecimal> keywordProbabilities,
-                                            Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
+        /*if (normalize_axioms) {
+            for (Id axiom : axiomsProbs.keySet())
+                axiomsProbs.put(axiom, axiomsProbs.get(axiom) / sum);
+        }*/
 
 
-            this.keywordProbabilities = keywordProbabilities;
-            updateAxiomProbabilities();
-            updateDiagnosisProbabilities(axiomSets);
-
-        }
-
-    public Map<ManchesterOWLSyntax, BigDecimal> getKeywordProbabilities() {
-        return keywordProbabilities;
+        this.axiomsProbabilities = Collections.unmodifiableMap(axiomsProbs);
     }
 
-    private void updateDiagnosisProbabilities(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
+    private BigDecimal getProbability(ManchesterOWLSyntax keyword) {
+        return keywordProbabilities.get(keyword);
+    }
 
-            if (axiomSets == null)
-                return;
-            if (!axiomSets.isEmpty()) {
-                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
-                    BigDecimal probability = getAxiomSetCosts(axiomSet);
+    private int getNumOccurrences(ManchesterOWLSyntax keyword, String str) {
+        int cnt = 0;
+        int last = 0;
 
-                    axiomSet.setMeasure(probability);
-                    //axiomSet.setUserAssignedProbability(probability);
-                }
-                BigDecimal sum = BigDecimal.ZERO;
-
-                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
-                    sum = sum.add(axiomSet.getMeasure());
-                }
-                for (AxiomSet<OWLLogicalAxiom> axiomSet : axiomSets) {
-                    axiomSet.setMeasure(axiomSet.getMeasure().divide(sum,PRECISION,ROUNDING_MODE));
-                }
-            }
+        if (keyword == null) {
+            System.out.println();
+        }
+        last = str.indexOf(keyword.toString());
+        while (last > -1) {
+            cnt++;
+            last = str.indexOf(keyword.toString(), last + 1);
         }
 
-        private void updateAxiomProbabilities() {
-            Map<OWLLogicalAxiom, BigDecimal> axiomsProbs = new HashMap<OWLLogicalAxiom, BigDecimal>();
-            ManchesterOWLSyntaxOWLObjectRendererImpl impl = new ManchesterOWLSyntaxOWLObjectRendererImpl();
-            Collection<OWLLogicalAxiom> activeFormulas = searchable.getKnowledgeBase().getFaultyFormulas();
-            BigDecimal sum = BigDecimal.ZERO;
-            for (OWLLogicalAxiom axiom : activeFormulas) {
-                String renderedAxiom = impl.render(axiom); // String renderedAxiom = modelManager.getRendering(axiom);
-                BigDecimal result = BigDecimal.ONE;
+        return cnt;
 
-                for (ManchesterOWLSyntax keyword : this.keywordProbabilities.keySet()) {
-                    int occurrence = getNumOccurrences(keyword, renderedAxiom);
-                    BigDecimal probability = getProbability(keyword);
-
-                    BigDecimal t = BigDecimal.ONE.subtract(probability);
-                    t = BigFunctions.intPower(t,occurrence,t.scale());
-                    result = result.multiply(t);
-                }
-                result = BigDecimal.ONE.subtract(result);
-                // no keyword is known
-                if(result.compareTo(new BigDecimal("0.0"))==0)
-                    result = new BigDecimal("0.000000000000000000000000000000000000000000001");
-                axiomsProbs.put(axiom, result);
-                sum = sum.add(BigDecimal.ONE.subtract(result));
-            }
-            /*if (normalize_axioms) {
-                for (Id axiom : axiomsProbs.keySet())
-                    axiomsProbs.put(axiom, axiomsProbs.get(axiom) / sum);
-            }*/
-
-
-            this.axiomsProbabilities = Collections.unmodifiableMap(axiomsProbs);
-        }
-
-        private BigDecimal getProbability(ManchesterOWLSyntax keyword) {
-            return keywordProbabilities.get(keyword);
-        }
-
-        private int getNumOccurrences(ManchesterOWLSyntax keyword, String str) {
-            int cnt = 0;
-            int last = 0;
-
-            if (keyword == null) {
-                System.out.println();
-            }
-            last = str.indexOf(keyword.toString());
-            while (last > -1) {
-                cnt++;
-                last = str.indexOf(keyword.toString(), last + 1);
-            }
-
-            return cnt;
-
-        }
-
+    }
 }

@@ -1,14 +1,11 @@
 package at.ainf.protegeview.gui.backgroundview;
 
-import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.protegeview.gui.AbstractAxiomList;
-import at.ainf.protegeview.gui.axiomsetviews.axiomslist.AxiomListHeader;
 import at.ainf.protegeview.gui.axiomsetviews.axiomslist.AxiomListItem;
 import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

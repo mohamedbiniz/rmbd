@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.Collection;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class DirectDiagnosis<Id> extends QuickXplain<Id> {
     }
 
     @Override
-    public void postProcessFormulas(AxiomSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
+    public void postProcessFormulas(FormulaSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
         ((AbstractReasoner<Id>)searchable.getReasoner()).addFormularsToCache(formulas);
         searchable.verifyRequirements();
     }

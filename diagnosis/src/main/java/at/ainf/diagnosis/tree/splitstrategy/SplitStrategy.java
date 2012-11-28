@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.tree.splitstrategy;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.Set;
 
@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public interface SplitStrategy<Id> {
 
-    public Id getSplitElement(Set<AxiomSet<Id>> conflicts);
+    public Id getSplitElement(Set<FormulaSet<Id>> conflicts);
 
 
 }

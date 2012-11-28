@@ -2,7 +2,7 @@ package at.ainf.diagnosis.partitioning.scoring;
 
 import at.ainf.diagnosis.partitioning.BigFunctions;
 import at.ainf.diagnosis.partitioning.Partitioning;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 
 import java.math.BigDecimal;
@@ -102,9 +102,9 @@ public abstract class AbstractQSS<T> implements QSS<T> {
 
     }
 
-    protected BigDecimal getSumProb(Set<AxiomSet<T>> set) {
+    protected BigDecimal getSumProb(Set<FormulaSet<T>> set) {
         BigDecimal pr = new BigDecimal("0");
-        for (AxiomSet<T> diagnosis : set)
+        for (FormulaSet<T> diagnosis : set)
             pr = pr.add(diagnosis.getMeasure());
 
         return pr;

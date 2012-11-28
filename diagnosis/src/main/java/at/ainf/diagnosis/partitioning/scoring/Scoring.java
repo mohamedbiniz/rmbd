@@ -3,7 +3,7 @@ package at.ainf.diagnosis.partitioning.scoring;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 
 import java.math.BigDecimal;
@@ -24,5 +24,5 @@ public interface Scoring<T> {
 
     BigDecimal getScore(Partition<?> part);
 
-    void normalize(Set<? extends AxiomSet<T>> hittingSets);
+    void normalize(Set<? extends FormulaSet<T>> hittingSets);
 }

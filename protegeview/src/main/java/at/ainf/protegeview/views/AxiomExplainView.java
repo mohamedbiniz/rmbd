@@ -1,10 +1,10 @@
 package at.ainf.protegeview.views;
 
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.protegeview.debugmanager.*;
 import at.ainf.protegeview.WorkspaceTab;
-import at.ainf.diagnosis.storage.AxiomSet;
 import org.protege.editor.core.ui.util.ComponentFactory;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -64,7 +64,7 @@ public class AxiomExplainView extends AbstractOWLViewComponent implements AxiomC
     }
 
     public void processAxiom (OWLLogicalAxiom axiom) {
-        Set<? extends AxiomSet<OWLLogicalAxiom>> conflSetAxxx = getConflictSets(axiom);
+        Set<? extends FormulaSet<OWLLogicalAxiom>> conflSetAxxx = getConflictSets(axiom);
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         if (axiom != null) {
             setHeaderText (renderer.render(axiom));
@@ -80,10 +80,10 @@ public class AxiomExplainView extends AbstractOWLViewComponent implements AxiomC
         list.addAxiomToResultsList(null,"Conflict Set ", conflSetAxxx, null);
     }
 
-    public Set<AxiomSet<OWLLogicalAxiom>> getConflictSets(OWLLogicalAxiom axiom) {
-        Set<AxiomSet<OWLLogicalAxiom>> conflicts = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
+    public Set<FormulaSet<OWLLogicalAxiom>> getConflictSets(OWLLogicalAxiom axiom) {
+        Set<FormulaSet<OWLLogicalAxiom>> conflicts = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>();
 
-        for (AxiomSet<OWLLogicalAxiom> conflict : getWS().getSearch().getConflicts()) {
+        for (FormulaSet<OWLLogicalAxiom> conflict : getWS().getSearch().getConflicts()) {
             for (OWLLogicalAxiom ax : conflict) {
                 if (ax.equals(axiom)) {
                     conflicts.add(conflict);

@@ -3,13 +3,13 @@ package at.ainf.protegeview.controller;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.protegeview.model.configuration.ConfigFileManager;
 import at.ainf.protegeview.model.configuration.SearchConfiguration;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -64,14 +64,14 @@ public class OWLControllerImpl  {
         return null;
     }
 
-    private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> createSearch(Searcher<OWLLogicalAxiom> searcher, OWLTheory theory) {
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = null;
+    private TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> createSearch(Searcher<OWLLogicalAxiom> searcher, OWLTheory theory) {
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = null;
 
         if (config.treeType == SearchConfiguration.TreeType.REITER ) {
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         }
         else {
-            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            search = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         }
 
         if (config.searchType == SearchConfiguration.SearchType.BREATHFIRST) {

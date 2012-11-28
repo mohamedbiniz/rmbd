@@ -1,12 +1,11 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.diagnosis.storage.AxiomSetImpl;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.diagnosis.storage.AxiomSetFactory;
 import at.ainf.diagnosis.watchedset.WatchedTreeSet;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -40,12 +39,12 @@ public class WatchedTreeSetTest {
 
     private OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-    private AxiomSet<OWLLogicalAxiom> createSet(String name, double measure, OWLLogicalAxiom axiom) {
+    private FormulaSet<OWLLogicalAxiom> createSet(String name, double measure, OWLLogicalAxiom axiom) {
         Set<OWLLogicalAxiom> set = new HashSet<OWLLogicalAxiom>();
         set.add(axiom);
 
         //return new AxiomSetImpl<OWLLogicalAxiom>(AxiomSet.TypeOfSet.HITTING_SET,name, measure,set, Collections.<OWLLogicalAxiom>emptySet());
-        return new AxiomSetImpl<OWLLogicalAxiom>(BigDecimal.valueOf(measure), set, Collections.<OWLLogicalAxiom>emptySet() );
+        return new FormulaSetImpl<OWLLogicalAxiom>(BigDecimal.valueOf(measure), set, Collections.<OWLLogicalAxiom>emptySet() );
     }
 
     @Test
@@ -54,19 +53,19 @@ public class WatchedTreeSetTest {
         OWLTheory theory = new CalculateDiagnoses().getSimpleTheory(new CalculateDiagnoses().getOntologySimple("ontologies/koala.owl"), false);
         ArrayList<OWLLogicalAxiom> list = new ArrayList<OWLLogicalAxiom>(theory.getKnowledgeBase().getFaultyFormulas());
         Collections.sort(list);
-        WatchedTreeSet<AxiomSet<OWLLogicalAxiom>,BigDecimal> set = new WatchedTreeSet<AxiomSet<OWLLogicalAxiom>, BigDecimal>();
+        WatchedTreeSet<FormulaSet<OWLLogicalAxiom>,BigDecimal> set = new WatchedTreeSet<FormulaSet<OWLLogicalAxiom>, BigDecimal>();
 
-        AxiomSet<OWLLogicalAxiom> modAxiomSet = null;
+        FormulaSet<OWLLogicalAxiom> modFormulaSet = null;
         for (int i = 1; i < 10; i++) {
-            AxiomSet<OWLLogicalAxiom> s = createSet("set_" + i, i/10.0, list.get(i));
+            FormulaSet<OWLLogicalAxiom> s = createSet("set_" + i, i/10.0, list.get(i));
             set.add(s);
             if (i == 6)
-                modAxiomSet = s;
+                modFormulaSet = s;
 
         }
 
-        modAxiomSet.setMeasure(new BigDecimal("0.35"));
-        boolean removed = set.remove(modAxiomSet);
+        modFormulaSet.setMeasure(new BigDecimal("0.35"));
+        boolean removed = set.remove(modFormulaSet);
 
         assert (removed);
 

@@ -2,7 +2,7 @@ package at.ainf.owlapi3.performance;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.base.OAEI08Session;
@@ -64,7 +64,7 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
 
 
@@ -76,7 +76,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                             OWLTheory theory2 = getExtendTheory(ontology, dual);
                             OWLTheory t3 = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -122,10 +122,10 @@ public class OAEI08Tests extends OAEI08Session {
                                     logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 }
 
-                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                Set<FormulaSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
+                                FormulaSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
@@ -174,7 +174,7 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
                             if (background_add) {
                                 OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
@@ -192,7 +192,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                             OWLTheory theory2 = getExtendTheory(ontology, dual);
                             OWLTheory t3 = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -224,7 +224,7 @@ public class OAEI08Tests extends OAEI08Session {
 //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //                            }
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+                            Set<FormulaSet<OWLLogicalAxiom>> allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.reset();
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
@@ -239,10 +239,10 @@ public class OAEI08Tests extends OAEI08Session {
                                     logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 }
 
-                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                Set<FormulaSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
+                                FormulaSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
@@ -296,7 +296,7 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, false);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
 
 
@@ -331,10 +331,10 @@ public class OAEI08Tests extends OAEI08Session {
 
                                 Collections.unmodifiableSet(search.getDiagnoses());
 
-                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                Set<FormulaSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
+                                FormulaSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
@@ -379,7 +379,7 @@ public class OAEI08Tests extends OAEI08Session {
         OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = getExtendTheory(ontology, false);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
         //OWLOntology ontology1 = new OAEI08OntologyCreator(o.split("-")[0].trim()).getOntology();
         //OWLOntology ontology2 = new OAEI08OntologyCreator(o.split("-")[1].trim()).getOntology();
 
@@ -411,9 +411,9 @@ public class OAEI08Tests extends OAEI08Session {
                 //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
-            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
+            Set<FormulaSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
             search.reset();
-            AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
+            FormulaSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
             targetDg = new LinkedHashSet<OWLLogicalAxiom>();
             for (OWLLogicalAxiom axiom : targD)
                 targetDg.add(axiom);
@@ -433,7 +433,7 @@ public class OAEI08Tests extends OAEI08Session {
                 //logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
-            Set<AxiomSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
+            Set<FormulaSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
             Assert.assertTrue(diagnoses.contains(targetDg));
             search.reset();
         }
@@ -464,7 +464,7 @@ public class OAEI08Tests extends OAEI08Session {
                             OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                             //ProbabilityTableModel mo = new ProbabilityTableModel();
 
 
@@ -476,7 +476,7 @@ public class OAEI08Tests extends OAEI08Session {
 
                             OWLTheory theory2 = getExtendTheory(ontology, dual);
                             OWLTheory t3 = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search2 = getUniformCostSearch(theory2, dual);
                             search2.setCostsEstimator(new OWLAxiomCostsEstimator(theory2, path));
 
 
@@ -507,7 +507,7 @@ public class OAEI08Tests extends OAEI08Session {
                                 logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                             }
 
-                            Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+                            Set<FormulaSet<OWLLogicalAxiom>> allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
                             search.reset();
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
@@ -522,10 +522,10 @@ public class OAEI08Tests extends OAEI08Session {
                                     logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 }
 
-                                Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                Set<FormulaSet<OWLLogicalAxiom>> diagnoses =
                                         Collections.unmodifiableSet(search.getDiagnoses());
                                 search.reset();
-                                AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
+                                FormulaSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                 targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                 for (OWLLogicalAxiom axiom : targD)
                                     targetDg.add(axiom);
@@ -570,7 +570,7 @@ public class OAEI08Tests extends OAEI08Session {
                     OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
                     OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
                     OWLTheory theory = getExtendTheory(ontology, false);
-                    TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
+                    TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
                     //ProbabilityTableModel mo = new ProbabilityTableModel();
                     HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                     OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -595,13 +595,13 @@ public class OAEI08Tests extends OAEI08Session {
                     time = System.nanoTime() - time;
                     String t = getStringTime(time / 1000000);
 
-                    Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                    Set<FormulaSet<OWLLogicalAxiom>> diagnoses =
                             Collections.unmodifiableSet(search.getDiagnoses());
                     //logger.info(m + " " + o + " background: " + background + " diagnoses: " + diagnoses.size());
 
                     int n = 0;
-                    Set<AxiomSet<OWLLogicalAxiom>> set = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
-                    for (AxiomSet<OWLLogicalAxiom> d : diagnoses)
+                    Set<FormulaSet<OWLLogicalAxiom>> set = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>();
+                    for (FormulaSet<OWLLogicalAxiom> d : diagnoses)
                         if (targetDg.containsAll(d)) set.add(d);
                     n = set.size();
                     int cs = search.getConflicts().size();
@@ -634,7 +634,7 @@ public class OAEI08Tests extends OAEI08Session {
                                 + ".txt").getPath();
 
                         OWLTheory theory = getExtendTheory(ontology, dual);
-                        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+                        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                         OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(theory, path);
                         search.setCostsEstimator(es);
 
@@ -671,8 +671,8 @@ public class OAEI08Tests extends OAEI08Session {
         OWLOntology ontology = getOntologyOAEI08(m.trim(), o.trim());
         Set<OWLLogicalAxiom> targetDg;
         OWLTheory theory = getExtendTheory(ontology, false);
-        Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
+        Set<FormulaSet<OWLLogicalAxiom>> allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>();
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
         String path = ClassLoader.getSystemResource("alignment/evaluation/"
                 + m.trim()
                 + "-incoherent-evaluation/"
@@ -686,7 +686,7 @@ public class OAEI08Tests extends OAEI08Session {
 
         search.start();
 
-        allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+        allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
         search.reset();
 
         search.setMaxDiagnosesNumber(9);
@@ -698,22 +698,22 @@ public class OAEI08Tests extends OAEI08Session {
         testcase.add(parser.parse("conference SubClassOf Conference_Session"));
 
         theory.getKnowledgeBase().addNonEntailedTest(testcase);
-        Set<AxiomSet<OWLLogicalAxiom>> toRemove = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>();
-        for (AxiomSet<OWLLogicalAxiom> axiomSet : allD)
-            if (!theory.testDiagnosis(axiomSet))
-                toRemove.add(axiomSet);
+        Set<FormulaSet<OWLLogicalAxiom>> toRemove = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>();
+        for (FormulaSet<OWLLogicalAxiom> formulaSet : allD)
+            if (!theory.testDiagnosis(formulaSet))
+                toRemove.add(formulaSet);
         allD.removeAll(toRemove);
         //deleteDiag(theory,allDiags,false,testcase);
 
         search.setMaxDiagnosesNumber(9);
         search.start();
-        Set<AxiomSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
+        Set<FormulaSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
         /*for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
             if(!theory.testDiagnosis(diagnosis))
                 logger.info("prob");
         }*/
 
-        for (AxiomSet<OWLLogicalAxiom> diagnosis : diagnoses) {
+        for (FormulaSet<OWLLogicalAxiom> diagnosis : diagnoses) {
             Assert.assertTrue(allD.contains(diagnosis));
         }
 
@@ -746,7 +746,7 @@ public class OAEI08Tests extends OAEI08Session {
                                         new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
                                 Set<OWLLogicalAxiom> targetDg;
                                 OWLTheory theory = getExtendTheory(ontology, dual);
-                                TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+                                TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
                                 if (background) {
                                     OWLOntology ontology1 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[0].trim() + ".owl");
                                     OWLOntology ontology2 = getOntologySimple(ClassLoader.getSystemResource("alignment").getPath(), o.split("-")[1].trim() + ".owl");
@@ -789,7 +789,7 @@ public class OAEI08Tests extends OAEI08Session {
                                 //                                logger.error(e);//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                 //                            }
 
-                                Set<AxiomSet<OWLLogicalAxiom>> allD = new LinkedHashSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+                                Set<FormulaSet<OWLLogicalAxiom>> allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
                                 search.reset();
 
                                 if (targetSource == SimulatedSession.TargetSource.FROM_30_DIAGS) {
@@ -804,10 +804,10 @@ public class OAEI08Tests extends OAEI08Session {
                                         logger.error(e.toString());//.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                                     }
 
-                                    Set<AxiomSet<OWLLogicalAxiom>> diagnoses =
+                                    Set<FormulaSet<OWLLogicalAxiom>> diagnoses =
                                             Collections.unmodifiableSet(search.getDiagnoses());
                                     search.reset();
-                                    AxiomSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
+                                    FormulaSet<OWLLogicalAxiom> targD = getDgTarget(diagnoses, es);
                                     targetDg = new LinkedHashSet<OWLLogicalAxiom>();
                                     for (OWLLogicalAxiom axiom : targD)
                                         targetDg.add(axiom);

@@ -2,7 +2,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import java.util.*;
  * Time: 17:01
  * To change this template use File | Settings | File Templates.
  */
-public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id> {
+public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id> {
 
 
     @Override
@@ -40,14 +40,14 @@ public class BinaryTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSea
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
-        Set<AxiomSet<Id>> conflict = calculateConflict(null);
+        Set<FormulaSet<Id>> conflict = calculateConflict(null);
 
         MultiNode<Id> node = new MultiNode<Id>(conflict);
 
         setRoot(node);
     }
 
-    public Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException,InconsistentTheoryException{
+    public Set<FormulaSet<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException,InconsistentTheoryException{
       if(node.getAxiomSets()==null || node.getAxiomSets().isEmpty())
         return calculateConflict(node);
 

@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class CostMultiNode<Id> extends MultiNode<Id> implements Node<Id> {
 
-    public CostMultiNode(Set<AxiomSet<Id>> conflict) {
+    public CostMultiNode(Set<FormulaSet<Id>> conflict) {
         super(conflict);
     }
 
@@ -23,7 +23,7 @@ public class CostMultiNode<Id> extends MultiNode<Id> implements Node<Id> {
         ArrayList<Node<Id>> newNodes = super.expandNode();
 
         for (Node<Id> node : newNodes) {
-
+            node.setNodePathCosts(node.getCostsEstimator().getFormulaSetCosts(node.getPathLabels()));
             node.setCostsEstimator(getCostsEstimator());
         }
         return newNodes;

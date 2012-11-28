@@ -4,7 +4,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -107,13 +107,13 @@ public class CalculateDiagnoses {
         return result;
     }
 
-    public TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getUniformCostSearch(OWLTheory theory, boolean dual) {
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
+    public TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> getUniformCostSearch(OWLTheory theory, boolean dual) {
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
         if (dual) {
-            search = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            search = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             search.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         } else {
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         }
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
@@ -122,21 +122,21 @@ public class CalculateDiagnoses {
         return search;
     }
 
-    public TreeSet<AxiomSet<OWLLogicalAxiom>> getDiagnoses(String file, int num) {
+    public TreeSet<FormulaSet<OWLLogicalAxiom>> getDiagnoses(String file, int num) {
 
         OWLOntology ontology = getOntologySimple(file);
         ontology = extractModules(ontology);
 
         OWLTheory theory = getExtendTheory(ontology, false);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
         setAxiomKeywordCostsEstimator(search);
 
         runSearch(search, num);
-        return new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+        return new TreeSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
     }
 
-    protected void runSearch(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, int num) {
+    protected void runSearch(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, int num) {
         try {
             search.setMaxDiagnosesNumber(num);
             search.start();
@@ -154,7 +154,7 @@ public class CalculateDiagnoses {
 
     }
 
-    private void setAxiomKeywordCostsEstimator(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
+    private void setAxiomKeywordCostsEstimator(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
         HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(search.getSearchable());
         es.updateKeywordProb(map);

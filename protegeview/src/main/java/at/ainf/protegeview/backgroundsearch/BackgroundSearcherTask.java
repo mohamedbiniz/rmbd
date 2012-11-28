@@ -2,7 +2,7 @@ package at.ainf.protegeview.backgroundsearch;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.StorageItemAddedEvent;
 import at.ainf.diagnosis.storage.StorageItemListener;
 import at.ainf.diagnosis.tree.OpenNodesListener;
@@ -95,9 +95,9 @@ public class BackgroundSearcherTask extends SwingWorker<BackgroundSearcherTask.R
 
     }
 
-    TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
-    BackgroundSearcherTask(TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, JTextArea area, JProgressBar progressBar) {
+    BackgroundSearcherTask(TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, JTextArea area, JProgressBar progressBar) {
         this.area = area;
         this.search = search;
         this.progressBar = progressBar;

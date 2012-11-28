@@ -1,7 +1,7 @@
 package at.ainf.protegeview.views;
 
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.storage.AxiomSet;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.renderer.LinkedObjectComponent;
@@ -119,7 +119,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
                 //NumberFormat nf = NumberFormat.getNumberInstance();
                 double p = -1;
                 if (es != null)
-                    p = ((AxiomSet<OWLLogicalAxiom>)axiomsConf).getMeasure().doubleValue(); // p = es.getAxiomSetCosts(axiomsConf);
+                    p = ((FormulaSet<OWLLogicalAxiom>)axiomsConf).getMeasure().doubleValue(); // p = es.getFormulaSetCosts(axiomsConf);
                 num++;
                 if (es != null) {
                     model.addElement(new ResultsListSection(name,num,p,axiomsConf));
@@ -131,7 +131,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
             else if (name.equals("Conflict Set ")) {
                 double p = -1;
                 if (es != null)
-                    p = es.getAxiomSetCosts(axiomsConf).doubleValue();
+                    p = es.getFormulaSetCosts(axiomsConf).doubleValue();
                 num++;
                 if (es != null) {
                     model.addElement(new ResultsListSection(name,num,p,axiomsConf));
@@ -143,7 +143,7 @@ public class ResultsList extends BaseResultsList implements LinkedObjectComponen
             else if (name.equals("Entailments of Diagnosis")) {
                 double p = -1;
                 if (es != null)
-                    p = es.getAxiomSetCosts(axiomsConf).doubleValue();
+                    p = es.getFormulaSetCosts(axiomsConf).doubleValue();
 
                 num++;
                 if (es != null) {

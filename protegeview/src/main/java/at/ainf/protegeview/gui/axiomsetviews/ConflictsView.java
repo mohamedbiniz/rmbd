@@ -1,6 +1,6 @@
 package at.ainf.protegeview.gui.axiomsetviews;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 import at.ainf.protegeview.model.configuration.SearchCreator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -21,8 +21,8 @@ public class ConflictsView extends AbstractAxiomSetView {
     @Override
     public void stateChanged(ChangeEvent e) {
         SearchCreator searchCreator = ((OntologyDiagnosisSearcher) e.getSource()).getSearchCreator();
-        Set<AxiomSet<OWLLogicalAxiom>> setOfAxiomSets = searchCreator.getSearch().getConflicts();
-        updateList(setOfAxiomSets);
+        Set<FormulaSet<OWLLogicalAxiom>> setOfFormulaSets = searchCreator.getSearch().getConflicts();
+        updateList(setOfFormulaSets);
 
     }
 

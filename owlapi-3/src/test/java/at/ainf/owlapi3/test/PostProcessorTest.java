@@ -5,6 +5,7 @@ import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -16,7 +17,6 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.diagnosis.storage.Partition;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Test;
@@ -64,7 +64,7 @@ public class PostProcessorTest {
         return theory;
     }
 
-    private void minimizePartitionAx(Partition<OWLLogicalAxiom> query, TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Searchable<OWLLogicalAxiom> theory) {
+    private void minimizePartitionAx(Partition<OWLLogicalAxiom> query, TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Searchable<OWLLogicalAxiom> theory) {
         if (query.partition == null) return;
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, theory);
         QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
@@ -78,14 +78,14 @@ public class PostProcessorTest {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        for (AxiomSet<OWLLogicalAxiom> hs : query.dx) {
+        for (FormulaSet<OWLLogicalAxiom> hs : query.dx) {
             if (!hs.getEntailments().containsAll(query.partition) && !search.getSearchable().diagnosisEntails(hs, query.partition))
                 throw new IllegalStateException("DX diagnosis is not entailing a query");
         }
 
 
         for (
-                AxiomSet<OWLLogicalAxiom> hs
+                FormulaSet<OWLLogicalAxiom> hs
                 : query.dnx)
 
         {
@@ -94,7 +94,7 @@ public class PostProcessorTest {
         }
 
         for (
-                AxiomSet<OWLLogicalAxiom> hs
+                FormulaSet<OWLLogicalAxiom> hs
                 : query.dz)
 
         {
@@ -114,12 +114,12 @@ public class PostProcessorTest {
     @Test
     public void simplePostprocessorTest() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "ontologies/Univ.owl", false);
         search.setSearchable(th);
-        search.setAxiomRenderer(new MyOWLRendererParser(null));
+        search.setFormulaRenderer(new MyOWLRendererParser(null));
         HashMap<ManchesterOWLSyntax, BigDecimal> map = new CalculateDiagnoses().getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(th);
         es.updateKeywordProb(map);
@@ -129,7 +129,7 @@ public class PostProcessorTest {
         ckk.setThreshold(0.01);
 
         search.setMaxDiagnosesNumber(9);
-        Set<? extends AxiomSet<OWLLogicalAxiom>> diagnoses = search.start();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> diagnoses = search.start();
 
         Partition<OWLLogicalAxiom> best=null;
         try {

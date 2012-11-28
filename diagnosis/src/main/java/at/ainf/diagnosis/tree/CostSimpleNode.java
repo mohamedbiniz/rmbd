@@ -1,8 +1,7 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -19,11 +18,11 @@ public class CostSimpleNode<T> extends SimpleNode<T> implements Node<T> {
         super(parent, arcLabel);
     }
 
-    public CostSimpleNode(AxiomSet<T> conflict) {
+    public CostSimpleNode(FormulaSet<T> conflict) {
         super(conflict);
     }
 
-    public CostSimpleNode(Set<AxiomSet<T>> conflict) {
+    public CostSimpleNode(Set<FormulaSet<T>> conflict) {
         super(conflict);
     }
 
@@ -34,14 +33,7 @@ public class CostSimpleNode<T> extends SimpleNode<T> implements Node<T> {
         for (T arcLabel : getAxiomSets().iterator().next()) {
             CostSimpleNode<T> node = new CostSimpleNode<T>(this, arcLabel);
             newNodes.add(node);
-            Node<T> parent = node.getParent();
-            T axiom = node.getArcLabel();
-            BigDecimal fProb = getCostsEstimator().getAxiomCosts(axiom);
-            BigDecimal t = BigDecimal.ONE.subtract(fProb);
-            t = parent.getNodePathCosts().divide(t);
-            BigDecimal nodePathCosts = t.multiply(fProb);
-            node.setNodePathCosts(nodePathCosts);
-            node.setCostsEstimator(getCostsEstimator());
+            getCostsEstimator().computeNodePathCosts(node);
         }
         return newNodes;
     }

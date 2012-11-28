@@ -4,7 +4,7 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.scoring.Scoring;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +27,10 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
 
 
     private class Measurable {
-        private AxiomSet<Id> hs;
+        private FormulaSet<Id> hs;
         private double measure;
 
-        public Measurable(AxiomSet<Id> hs, double measure) {
+        public Measurable(FormulaSet<Id> hs, double measure) {
             this.hs = hs;
             this.measure = measure;
         }
@@ -70,7 +70,7 @@ public class GreedySearch<Id> extends BruteForce<Id> implements Partitioning<Id>
     }
 
 
-    public <E extends AxiomSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
+    public <E extends FormulaSet<Id>> Partition<Id> generatePartition(Set<E> hittingSets)
             throws SolverException, InconsistentTheoryException {
         numOfHittingSets = hittingSets.size();
         if (getScoringFunction() == null)

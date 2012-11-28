@@ -8,11 +8,7 @@
 
 package at.ainf.diagnosis.model;
 
-import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.storage.AxiomSet;
-
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 

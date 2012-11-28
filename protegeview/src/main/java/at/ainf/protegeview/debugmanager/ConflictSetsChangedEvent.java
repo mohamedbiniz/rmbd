@@ -1,6 +1,6 @@
 package at.ainf.protegeview.debugmanager;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
 import java.util.EventObject;
@@ -15,15 +15,15 @@ import java.util.Set;
  */
 public class ConflictSetsChangedEvent extends EventObject {
 
-    private Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets;
+    private Set<? extends FormulaSet<OWLLogicalAxiom>> conflictSets;
 
-    public ConflictSetsChangedEvent(Object source, Set<? extends AxiomSet<OWLLogicalAxiom>> conflictSets) {
+    public ConflictSetsChangedEvent(Object source, Set<? extends FormulaSet<OWLLogicalAxiom>> conflictSets) {
         super(source);
 
         this.conflictSets = conflictSets;
     }
 
-    public Set<? extends AxiomSet<OWLLogicalAxiom>> getConflictSets(){
+    public Set<? extends FormulaSet<OWLLogicalAxiom>> getConflictSets(){
         return conflictSets;
     }
 

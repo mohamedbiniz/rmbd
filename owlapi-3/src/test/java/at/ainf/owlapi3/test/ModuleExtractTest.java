@@ -10,7 +10,7 @@ import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -109,7 +109,7 @@ public class ModuleExtractTest {
         String ont = "oaei11/human.owl";
 
         manager = OWLManager.createOWLOntologyManager();
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
@@ -118,7 +118,7 @@ public class ModuleExtractTest {
         searchNormal.setSearchable(theoryNormal);
         searchNormal.start();
 
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
 
     }
@@ -139,7 +139,7 @@ public class ModuleExtractTest {
 
 
                 manager = OWLManager.createOWLOntologyManager();
-                TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+                TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
                 searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
                 searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
                 searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
@@ -152,10 +152,10 @@ public class ModuleExtractTest {
                 long stop1 = System.currentTimeMillis();
                 searchNormal.start();
                 stop1A[i] = System.currentTimeMillis() - stop1;
-                Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
+                Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
                 manager = OWLManager.createOWLOntologyManager();
-            TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
             searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
                 searchDual.setSearcher(new QuickXplain<OWLLogicalAxiom>());
@@ -165,7 +165,7 @@ public class ModuleExtractTest {
                 long stop2 = System.currentTimeMillis();
                 searchDual.start();
                 stop2a[i] = System.currentTimeMillis() - stop2 ;
-                Set<? extends AxiomSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
+                Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = searchDual.getDiagnoses();
 
                 logger.info(ont + ",hs," + searchNormal.getDiagnoses().size()
                     + ",cs," + searchNormal.getConflicts().size());

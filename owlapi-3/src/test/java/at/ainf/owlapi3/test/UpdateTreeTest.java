@@ -3,7 +3,7 @@ package at.ainf.owlapi3.test;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -60,13 +60,13 @@ public class UpdateTreeTest {
     @Test
     public void updateTest() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory th = createTheory(manager, "ontologies/koala.owl", false);
         search.setSearchable(th);
-        search.setAxiomRenderer(new MyOWLRendererParser(null));
+        search.setFormulaRenderer(new MyOWLRendererParser(null));
 
         MyOWLRendererParser parser = new MyOWLRendererParser(th.getOriginalOntology());
         th.getKnowledgeBase().addEntailedTest(Collections.singleton(parser.parse("Marsupials DisjointWith Person")));

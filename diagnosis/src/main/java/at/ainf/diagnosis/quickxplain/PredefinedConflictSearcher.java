@@ -16,18 +16,15 @@ package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomRenderer;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static _dev.TimeLog.start;
 
@@ -40,18 +37,18 @@ public class PredefinedConflictSearcher<Id> implements Searcher<Id> {
     private static Logger logger = LoggerFactory.getLogger(PredefinedConflictSearcher.class.getName());
     private boolean isUsed=false;
 
-    public Set<AxiomSet<Id>> getConflictSets() {
+    public Set<FormulaSet<Id>> getConflictSets() {
         return conflictSets;
     }
 
-    private Set<AxiomSet<Id>> conflictSets;
+    private Set<FormulaSet<Id>> conflictSets;
 
-    public PredefinedConflictSearcher(Set<AxiomSet<Id>> conflictSets) {
+    public PredefinedConflictSearcher(Set<FormulaSet<Id>> conflictSets) {
         this.conflictSets = conflictSets;
     }
 
     @Override
-    public Set<AxiomSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes) throws NoConflictException, SolverException, InconsistentTheoryException {
+    public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes) throws NoConflictException, SolverException, InconsistentTheoryException {
 
         if(isUsed) throw new NoConflictException("No conflicts available!");
 

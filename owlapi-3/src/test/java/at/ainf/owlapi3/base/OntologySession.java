@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.base;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.owlapi3.base.distribution.ExtremeDistribution;
 import at.ainf.owlapi3.base.distribution.ModerateDistribution;
@@ -31,18 +31,18 @@ public class OntologySession extends SimulatedSession {
         return rnd;
     }
 
-    public AxiomSet<OWLLogicalAxiom> chooseTargetDiagnosis
+    public FormulaSet<OWLLogicalAxiom> chooseTargetDiagnosis
             (OntologyTests.DiagProbab
-                     diagProbab, TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses) {
+                     diagProbab, TreeSet<FormulaSet<OWLLogicalAxiom>> diagnoses) {
 
 
         BigDecimal sum = new BigDecimal("0");
-        TreeSet<AxiomSet<OWLLogicalAxiom>> res;
-        TreeSet<AxiomSet<OWLLogicalAxiom>> good = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        TreeSet<AxiomSet<OWLLogicalAxiom>> avg = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        TreeSet<AxiomSet<OWLLogicalAxiom>> bad = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+        TreeSet<FormulaSet<OWLLogicalAxiom>> res;
+        TreeSet<FormulaSet<OWLLogicalAxiom>> good = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
+        TreeSet<FormulaSet<OWLLogicalAxiom>> avg = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
+        TreeSet<FormulaSet<OWLLogicalAxiom>> bad = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
 
-        for (AxiomSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
+        for (FormulaSet<OWLLogicalAxiom> hs : diagnoses.descendingSet()) {
             if (sum.compareTo(BigDecimal.valueOf(0.33)) <= 0) {
                 good.add(hs);
             } else if (sum.compareTo(BigDecimal.valueOf(0.33)) >= 0 && sum.compareTo(BigDecimal.valueOf(0.66)) <= 0) {
@@ -93,8 +93,8 @@ public class OntologySession extends SimulatedSession {
 
 
         int i = 1;
-        AxiomSet<OWLLogicalAxiom> next = null;
-        for (Iterator<AxiomSet<OWLLogicalAxiom>> it = res.descendingIterator(); it.hasNext(); i++) {
+        FormulaSet<OWLLogicalAxiom> next = null;
+        for (Iterator<FormulaSet<OWLLogicalAxiom>> it = res.descendingIterator(); it.hasNext(); i++) {
             next = it.next();
             if (i == number)
                 break;
@@ -103,9 +103,9 @@ public class OntologySession extends SimulatedSession {
         return next;
     }
 
-    private Set<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(Set<AxiomSet<OWLLogicalAxiom>> axiomSets) {
-        TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        for (AxiomSet<OWLLogicalAxiom> hs : axiomSets)
+    private Set<FormulaSet<OWLLogicalAxiom>> sortDiagnoses(Set<FormulaSet<OWLLogicalAxiom>> formulaSets) {
+        TreeSet<FormulaSet<OWLLogicalAxiom>> phs = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
+        for (FormulaSet<OWLLogicalAxiom> hs : formulaSets)
             phs.add(hs);
         return Collections.unmodifiableSet(phs);
     }
@@ -121,9 +121,9 @@ public class OntologySession extends SimulatedSession {
         keywordList.addAll(cp);
     }
 
-    protected Set<AxiomSet<OWLLogicalAxiom>> chooseUserProbab
+    protected Set<FormulaSet<OWLLogicalAxiom>> chooseUserProbab
             (OntologyTests.UsersProbab
-                     usersProbab, TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<AxiomSet<OWLLogicalAxiom>> diagnoses, ExtremeDistribution extremeDistribution, ModerateDistribution moderateDistribution) {
+                     usersProbab, TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, Set<FormulaSet<OWLLogicalAxiom>> diagnoses, ExtremeDistribution extremeDistribution, ModerateDistribution moderateDistribution) {
         Map<ManchesterOWLSyntax, BigDecimal> keywordProbs = new HashMap<ManchesterOWLSyntax, BigDecimal>();
         //ProbabilityTableModel m = new ProbabilityTableModel();
         ArrayList<ManchesterOWLSyntax> keywordList = new ArrayList<ManchesterOWLSyntax>(EnumSet.copyOf(getProbabMap().keySet()));
@@ -197,8 +197,8 @@ public class OntologySession extends SimulatedSession {
 
     }
 
-    protected AxiomSet<OWLLogicalAxiom> getMostProbable(Set<AxiomSet<OWLLogicalAxiom>> diagnoses) {
-        TreeSet<AxiomSet<OWLLogicalAxiom>> ts = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+    protected FormulaSet<OWLLogicalAxiom> getMostProbable(Set<FormulaSet<OWLLogicalAxiom>> diagnoses) {
+        TreeSet<FormulaSet<OWLLogicalAxiom>> ts = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
         ts.addAll(diagnoses);
         return ts.last();
     }

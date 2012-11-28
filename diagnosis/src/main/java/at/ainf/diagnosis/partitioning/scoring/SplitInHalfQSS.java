@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.partitioning.scoring;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.Rounding;
 
 import java.math.BigDecimal;
@@ -19,10 +19,10 @@ public class SplitInHalfQSS<T> extends MinScoreQSS<T> {
         return "Split";
     }
 
-    public void normalize(Set<? extends AxiomSet<T>> hittingSets) {
+    public void normalize(Set<? extends FormulaSet<T>> hittingSets) {
         BigDecimal size = new BigDecimal(Integer.toString(hittingSets.size()));
         if (size.compareTo(BigDecimal.ONE)>0)
-            for (AxiomSet<T> hs : hittingSets) {
+            for (FormulaSet<T> hs : hittingSets) {
                 hs.setMeasure(BigDecimal.ONE.divide(size, Rounding.PRECISION,Rounding.ROUNDING_MODE));
             }
     }

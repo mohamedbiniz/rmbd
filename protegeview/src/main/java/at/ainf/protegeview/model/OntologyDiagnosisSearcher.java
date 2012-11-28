@@ -8,7 +8,7 @@ import at.ainf.diagnosis.partitioning.QueryMinimizer;
 import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
@@ -117,13 +117,13 @@ public class OntologyDiagnosisSearcher {
 
     public class SearchThrea extends SwingWorker<Object,Object> implements ChangeListener {
 
-        private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+        private TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
         private int number;
 
         private ErrorHandler errorHandler;
 
-        public SearchThrea(TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, int number, ErrorHandler errorHandler) {
+        public SearchThrea(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, int number, ErrorHandler errorHandler) {
             this.number = number;
             this.errorHandler = errorHandler;
             this.search = search;
@@ -365,7 +365,7 @@ public class OntologyDiagnosisSearcher {
 
     public class QueryGenerationThread extends SwingWorker<Object,Object> {
 
-        private TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+        private TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
         private SearchConfiguration searchConfig;
 
@@ -397,18 +397,18 @@ public class OntologyDiagnosisSearcher {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
-            for (AxiomSet<OWLLogicalAxiom> hs : query.dx) {
+            for (FormulaSet<OWLLogicalAxiom> hs : query.dx) {
                 if (!hs.getEntailments().containsAll(query.partition) && !search.getSearchable().diagnosisEntails(hs, query.partition))
                     throw new IllegalStateException("DX diagnosis is not entailing a query");
             }
 
 
-            for (AxiomSet<OWLLogicalAxiom> hs : query.dnx) {
+            for (FormulaSet<OWLLogicalAxiom> hs : query.dnx) {
                 if (search.getSearchable().diagnosisConsistent(hs, query.partition))
                     throw new IllegalStateException("DNX diagnosis might entail a query");
             }
 
-            for (AxiomSet<OWLLogicalAxiom> hs : query.dz) {
+            for (FormulaSet<OWLLogicalAxiom> hs : query.dz) {
                 if (search.getSearchable().diagnosisEntails(hs, query.partition) || hs.getEntailments().containsAll(query.partition))
                     throw new IllegalStateException("DZ diagnosis entails a query");
                 if (!search.getSearchable().diagnosisConsistent(hs, query.partition))
@@ -451,7 +451,7 @@ public class OntologyDiagnosisSearcher {
             CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getSearchable(), qss);
             ckk.setThreshold(searchConfig.entailmentCalThres);
 
-            TreeSet<AxiomSet<OWLLogicalAxiom>> set = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.getDiagnoses());
+            TreeSet<FormulaSet<OWLLogicalAxiom>> set = new TreeSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
             if (set.isEmpty()) {
                 errorStatus = NO_QUERY;

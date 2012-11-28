@@ -2,7 +2,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import java.util.*;
  * Time: 11:31
  * To change this template use File | Settings | File Templates.
  */
-public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id>{
+public class InvHsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id>{
 
 
 
@@ -36,7 +36,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
 
     }
 
-    protected Set<Id> calculateEntailmentsForConflictSet(AxiomSet<Id> quickConflict) throws SolverException {
+    protected Set<Id> calculateEntailmentsForConflictSet(FormulaSet<Id> quickConflict) throws SolverException {
         Set<Id> entailments = Collections.emptySet();
         if (getSearchable().supportEntailments())
             entailments = getSearchable().getEntailments(quickConflict);
@@ -76,7 +76,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
             getSearchStrategy().addNodes(root.expandNode());
         }
         else
-            root.setAxiomSet((AxiomSet<Id>)null);
+            root.setAxiomSet((FormulaSet<Id>)null);
 
     }
 
@@ -106,7 +106,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
         return getValidAxiomSets(copy(getHittingSets()));
     }
 
-    public Set<Node<Id>> updateNode(AxiomSet<Id> axSet, SimpleNode<Id> node) throws SolverException, InconsistentTheoryException {
+    public Set<Node<Id>> updateNode(FormulaSet<Id> axSet, SimpleNode<Id> node) throws SolverException, InconsistentTheoryException {
         if (node == null || node.getAxiomSets() == null)
             return Collections.emptySet();
         if (node.getAxiomSets().containsAll(axSet)) {
@@ -161,7 +161,7 @@ public class InvHsTreeSearch<T extends AxiomSet<Id>,Id> extends AbstractTreeSear
         return node.getChildren();
     }
 
-    protected Set<AxiomSet<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+    protected Set<FormulaSet<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
         return calculateConflict(node);
     }
 

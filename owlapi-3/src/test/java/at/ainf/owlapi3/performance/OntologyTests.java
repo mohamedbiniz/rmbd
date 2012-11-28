@@ -140,7 +140,7 @@ public class OntologyTests extends OntologySession {
         theory.setIncludeClassAssertionAxioms(true);
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
         //((QuickXplain<OWLLogicalAxiom>)start.getSearcher()).setAxiomRenderer(new MyOWLRendererParser(null));
 
         CostsEstimator es = new SimpleCostsEstimator();
@@ -188,7 +188,7 @@ public class OntologyTests extends OntologySession {
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
                 String out = "STAT, " + o;
-                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl", -1);
+                TreeSet<FormulaSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl", -1);
                 for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : DiagProbab.values()) {
                         for (int i = 0; i < 20; i++) {
@@ -202,7 +202,7 @@ public class OntologyTests extends OntologySession {
                         preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                         Set<OWLLogicalAxiom> targetDg;
                         OWLTheory theory = getExtendTheory(ontology, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
 
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
@@ -256,14 +256,14 @@ public class OntologyTests extends OntologySession {
                 OWLOntology extracted1 = new OWLIncoherencyExtractor(
                         new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("queryontologies", name));
                 OWLTheory theory1 = getExtendTheory(extracted1, false);
-                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = getUniformCostSearch(theory1, false);
+                TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = getUniformCostSearch(theory1, false);
 
                 OWLAxiomKeywordCostsEstimator es1 = new OWLAxiomKeywordCostsEstimator(theory1);
 
                 search3.setCostsEstimator(es1);
                 search3.reset();
 
-                TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = search3;
+                TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = search3;
 
 
 
@@ -272,7 +272,7 @@ public class OntologyTests extends OntologySession {
                 } catch (NoConflictException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
-                Set<AxiomSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
+                Set<FormulaSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
                 ModerateDistribution moderateDistribution = new ModerateDistribution();
                 ExtremeDistribution extremeDistribution = new ExtremeDistribution();
                 search.reset();
@@ -286,16 +286,16 @@ public class OntologyTests extends OntologySession {
                             OWLOntology extracted = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("queryontologies", name));
                             OWLTheory theory = getExtendTheory(extracted, dual);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = getUniformCostSearch(theory, dual);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = getUniformCostSearch(theory, dual);
 
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
 
                             search1.setCostsEstimator(es);
                             search1.reset();
 
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2 = search1;
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2 = search1;
                             diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
-                            AxiomSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<AxiomSet<OWLLogicalAxiom>>(diagnoses));
+                            FormulaSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<FormulaSet<OWLLogicalAxiom>>(diagnoses));
 
 
 
@@ -326,8 +326,8 @@ public class OntologyTests extends OntologySession {
     }
 
 
-    protected long computeDual(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual, OWLTheory theoryDual,
-                               AxiomSet<OWLLogicalAxiom> diagnosis, List<Double> queries, QSSType type) {
+    protected long computeDual(TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual, OWLTheory theoryDual,
+                               FormulaSet<OWLLogicalAxiom> diagnosis, List<Double> queries, QSSType type) {
         SimulatedSession session = new SimulatedSession();
         TableList entry2 = new TableList();
         long timeDual = System.currentTimeMillis();
@@ -344,7 +344,7 @@ public class OntologyTests extends OntologySession {
         session.setSearch(searchDual);
         session.simulateQuerySession();
         timeDual = System.currentTimeMillis() - timeDual;
-        AxiomSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
+        FormulaSet<OWLLogicalAxiom> diag2 = getMostProbable(searchDual.getDiagnoses());
         boolean foundCorrectD2 = diag2.equals(diagnosis);
         boolean hasNegativeTestcases = searchDual.getSearchable().getKnowledgeBase().getNonentailedTests().size() > 0;
 
@@ -362,8 +362,8 @@ public class OntologyTests extends OntologySession {
         return timeDual;
     }
 
-    protected long computeHS(TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal,
-                             OWLTheory theoryNormal, AxiomSet<OWLLogicalAxiom> diagnoses,
+    protected long computeHS(TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal,
+                             OWLTheory theoryNormal, FormulaSet<OWLLogicalAxiom> diagnoses,
                              List<Double> queries, QSSType type) {
         SimulatedSession session = new SimulatedSession();
         TableList entry = new TableList();
@@ -379,7 +379,7 @@ public class OntologyTests extends OntologySession {
         session.setSearch(searchNormal);
         session.simulateQuerySession();
         timeNormal = System.currentTimeMillis() - timeNormal;
-        AxiomSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
+        FormulaSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
         boolean foundCorrectD = diag.equals(diagnoses);
         boolean hasNegativeTestcases = searchNormal.getSearchable().getKnowledgeBase().getNonentailedTests().size() > 0;
         theoryNormal.getKnowledgeBase().clearTestCases();
@@ -402,7 +402,7 @@ public class OntologyTests extends OntologySession {
         long t = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = getSimpleTheory(getOntologySimple("ontologies", "koala.owl"), false);
@@ -413,10 +413,10 @@ public class OntologyTests extends OntologySession {
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
         searchNormal.start();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = getSimpleTheory(getOntologySimple("ontologies", "koala.owl"), true);
@@ -448,7 +448,7 @@ public class OntologyTests extends OntologySession {
             dtimes.put(type, new DurationStat());
             nqueries1.put(type, new LinkedList<Double>());
             dqueries1.put(type, new LinkedList<Double>());
-            for (AxiomSet<OWLLogicalAxiom> diagnosis : resultNormal) {
+            for (FormulaSet<OWLLogicalAxiom> diagnosis : resultNormal) {
                 logger.info("iteration " + ++count + " from " + resultNormal.size());
                 long timeNormal, timeDual;
                 if (count % 2 != 0) {
@@ -538,7 +538,7 @@ public class OntologyTests extends OntologySession {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         SimulatedSession session = new SimulatedSession();
 
-        HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = getSimpleTheory(getOntologySimple(path, ont), false);
@@ -548,10 +548,10 @@ public class OntologyTests extends OntologySession {
         es.updateKeywordProb(map);
         searchNormal.setCostsEstimator(es);
         searchNormal.start();
-        Set<? extends AxiomSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = getSimpleTheory(getOntologySimple(path, ont), true);
@@ -564,7 +564,7 @@ public class OntologyTests extends OntologySession {
         theoryNormal.getKnowledgeBase().clearTestCases();
         searchNormal.reset();
 
-        for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
+        for (FormulaSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
             session.setEntry(entry);
             session.setScoringFunct(null);
@@ -578,7 +578,7 @@ public class OntologyTests extends OntologySession {
             assert(entry.getMeanWin() == 1);
         }
 
-        for (AxiomSet<OWLLogicalAxiom> diagnoses : resultNormal) {
+        for (FormulaSet<OWLLogicalAxiom> diagnoses : resultNormal) {
             TableList entry = new TableList();
 
             session.setEntry(entry);
@@ -639,7 +639,7 @@ public class OntologyTests extends OntologySession {
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
             for (String o : norm) {
                 String out = "STAT, " + o;
-                TreeSet<AxiomSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl", -1);
+                TreeSet<FormulaSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl", -1);
                 for (QSSType type : qssTypes) {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.GOOD}) {
                         for (int i = 0; i < 1500; i++) {
@@ -653,7 +653,7 @@ public class OntologyTests extends OntologySession {
                             preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                             Set<OWLLogicalAxiom> targetDg;
                             OWLTheory theory = getExtendTheory(ontology, true);
-                            TreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
+                            TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
 
                             HashMap<ManchesterOWLSyntax, BigDecimal> map = getProbabMap();
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);

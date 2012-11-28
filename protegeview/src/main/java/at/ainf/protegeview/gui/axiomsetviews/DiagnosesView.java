@@ -1,9 +1,7 @@
 package at.ainf.protegeview.gui.axiomsetviews;
 
-import at.ainf.diagnosis.storage.AxiomSet;
-import at.ainf.protegeview.gui.buttons.ResetButton;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.protegeview.gui.buttons.StartButton;
-import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 import at.ainf.protegeview.model.configuration.SearchCreator;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
@@ -44,8 +42,8 @@ public class DiagnosesView extends AbstractAxiomSetView {
 
     private void updateView() {
         SearchCreator searchCreator = getEditorKitHook().getActiveOntologyDiagnosisSearcher().getSearchCreator();
-        Set<AxiomSet<OWLLogicalAxiom>> setOfAxiomSets = searchCreator.getSearch().getDiagnoses();
-        updateList(setOfAxiomSets);
+        Set<FormulaSet<OWLLogicalAxiom>> setOfFormulaSets = searchCreator.getSearch().getDiagnoses();
+        updateList(setOfFormulaSets);
     }
 
     @Override

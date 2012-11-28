@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -9,7 +10,6 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -77,7 +77,7 @@ public class OrderProbabTest {
             map.put(ManchesterOWLSyntax.EQUIVALENT_TO, BigDecimal.valueOf(r.nextDouble() / 2));
             map.put(ManchesterOWLSyntax.SUBCLASS_OF, BigDecimal.valueOf(r.nextDouble() / 2));
 
-            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+            HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
@@ -90,16 +90,16 @@ public class OrderProbabTest {
             ((OWLAxiomKeywordCostsEstimator)search.getCostsEstimator()).setKeywordProbabilities(map, null);
 
             search.setMaxDiagnosesNumber(9);
-            Collection<? extends AxiomSet<OWLLogicalAxiom>> res = new TreeSet<AxiomSet<OWLLogicalAxiom>>(search.start());
-            TreeSet<AxiomSet<OWLLogicalAxiom>> result = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
+            Collection<? extends FormulaSet<OWLLogicalAxiom>> res = new TreeSet<FormulaSet<OWLLogicalAxiom>>(search.start());
+            TreeSet<FormulaSet<OWLLogicalAxiom>> result = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
             BigDecimal measure = new BigDecimal("0.0");
-            for (AxiomSet<OWLLogicalAxiom> hs : res) {
+            for (FormulaSet<OWLLogicalAxiom> hs : res) {
                 assertTrue(measure.compareTo(hs.getMeasure()) < 0);
-                measure = ((AxiomSet<OWLLogicalAxiom>) hs).getMeasure();
-                result.add((AxiomSet<OWLLogicalAxiom>) hs);
+                measure = ((FormulaSet<OWLLogicalAxiom>) hs).getMeasure();
+                result.add((FormulaSet<OWLLogicalAxiom>) hs);
             }
 
-            TreeSet<AxiomSet<OWLLogicalAxiom>> copyResult = new TreeSet<AxiomSet<OWLLogicalAxiom>>(result);
+            TreeSet<FormulaSet<OWLLogicalAxiom>> copyResult = new TreeSet<FormulaSet<OWLLogicalAxiom>>(result);
 
             map.put(ManchesterOWLSyntax.SOME, map.get(ManchesterOWLSyntax.SOME).add(new BigDecimal("0.01")));
             map.put(ManchesterOWLSyntax.ONLY, map.get(ManchesterOWLSyntax.ONLY).add(new BigDecimal("0.01")));
@@ -112,11 +112,11 @@ public class OrderProbabTest {
             result = sortDiagnoses(result);
             copyResult = sortDiagnoses(copyResult);
 
-            Iterator<AxiomSet<OWLLogicalAxiom>> iterRes = result.iterator();
-            Iterator<AxiomSet<OWLLogicalAxiom>> iterCopy = copyResult.iterator();
+            Iterator<FormulaSet<OWLLogicalAxiom>> iterRes = result.iterator();
+            Iterator<FormulaSet<OWLLogicalAxiom>> iterCopy = copyResult.iterator();
             while (iterRes.hasNext()) {
-                AxiomSet<OWLLogicalAxiom> hsResult = iterRes.next();
-                AxiomSet<OWLLogicalAxiom> hsResultCopy = iterCopy.next();
+                FormulaSet<OWLLogicalAxiom> hsResult = iterRes.next();
+                FormulaSet<OWLLogicalAxiom> hsResultCopy = iterCopy.next();
 
                 assertTrue(hsResult.equals(hsResultCopy));
                 BigDecimal d = hsResult.getMeasure().subtract(hsResultCopy.getMeasure()).abs();
@@ -128,9 +128,9 @@ public class OrderProbabTest {
 
     }
 
-    private TreeSet<AxiomSet<OWLLogicalAxiom>> sortDiagnoses(TreeSet<AxiomSet<OWLLogicalAxiom>> axiomSets) {
-        TreeSet<AxiomSet<OWLLogicalAxiom>> phs = new TreeSet<AxiomSet<OWLLogicalAxiom>>();
-        for (AxiomSet<OWLLogicalAxiom> hs : axiomSets)
+    private TreeSet<FormulaSet<OWLLogicalAxiom>> sortDiagnoses(TreeSet<FormulaSet<OWLLogicalAxiom>> formulaSets) {
+        TreeSet<FormulaSet<OWLLogicalAxiom>> phs = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
+        for (FormulaSet<OWLLogicalAxiom> hs : formulaSets)
             phs.add(hs);
         return (phs);
     }

@@ -1,9 +1,9 @@
 package at.ainf.diagnosis;
 
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
 
 import java.util.Set;
 
@@ -14,7 +14,7 @@ import java.util.Set;
  * Time: 10:06
  * To change this template use File | Settings | File Templates.
  */
-public interface Debugger<T extends AxiomSet<Id>, Id> {
+public interface Debugger<T extends FormulaSet<Id>, Id> {
 
     public static int ALL_DIAGNOSES = -1;
 

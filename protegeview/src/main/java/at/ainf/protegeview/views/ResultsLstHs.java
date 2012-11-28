@@ -1,6 +1,6 @@
 package at.ainf.protegeview.views;
 
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.protegeview.debugmanager.DebugManager;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
@@ -87,7 +87,7 @@ public class ResultsLstHs extends ResultsList {
             buttons.add(new ShowHSTreeButton(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                    ResultsListSection section = (ResultsListSection)((ShowHSTreeButton)e.getSource()).getRowObject();
-                    AxiomSet<OWLLogicalAxiom> node = (AxiomSet<OWLLogicalAxiom>) section
+                    FormulaSet<OWLLogicalAxiom> node = (FormulaSet<OWLLogicalAxiom>) section
                             .getAxiomSet();
                     DebugManager.getInstance().setTreeNode(node);
                     DebugManager.getInstance().notifyTreeNodeChanged();

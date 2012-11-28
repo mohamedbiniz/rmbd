@@ -8,7 +8,7 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
-import at.ainf.diagnosis.storage.AxiomSet;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.backgroundsearch.BackgroundSearcher;
@@ -55,7 +55,7 @@ public class
 
     private boolean init = true;
 
-    private TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
+    private TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
 
     private Searchable<OWLLogicalAxiom> theory;
 
@@ -100,10 +100,10 @@ public class
         //getWS().getUniformCostSearch().runPostprocessor();
         switch (searcher.doBackgroundSearch()) {
             case FINISHED:
-                Collection<? extends AxiomSet<OWLLogicalAxiom>> hittingsets = getSearch().getDiagnoses();
-                TreeSet<? extends AxiomSet<OWLLogicalAxiom>> hsTree = new TreeSet<AxiomSet<OWLLogicalAxiom>>(hittingsets);
-                Set<? extends AxiomSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
-                Collection<? extends AxiomSet<OWLLogicalAxiom>> conflSets = getSearch().getConflicts();
+                Collection<? extends FormulaSet<OWLLogicalAxiom>> hittingsets = getSearch().getDiagnoses();
+                TreeSet<? extends FormulaSet<OWLLogicalAxiom>> hsTree = new TreeSet<FormulaSet<OWLLogicalAxiom>>(hittingsets);
+                Set<? extends FormulaSet<OWLLogicalAxiom>> hsReverse = hsTree.descendingSet();
+                Collection<? extends FormulaSet<OWLLogicalAxiom>> conflSets = getSearch().getConflicts();
                 // addAxiomToResultsList(getConflictSetListModel(), "Conflict Set ", conflSets);
                 //addAxiomToResultsList(getHittingSetListModel(), "Diagnosis", hsReverse);
 
@@ -494,12 +494,12 @@ public class
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
         if (QueryDebuggerPreference.getInstance().getSearchCommand().equals("BestFirst")) {
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
 
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         } else if (QueryDebuggerPreference.getInstance().getSearchCommand().equals("BreadthFirst")) {
             //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
-            search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
 
             search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         }
@@ -641,7 +641,7 @@ public class
         return theory;
     }
 
-    public TreeSearch<? extends AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
+    public TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
         return search;
     }
 

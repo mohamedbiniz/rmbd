@@ -1,17 +1,12 @@
 package at.ainf.protegeview.gui.queryview;
 
-import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.protegeview.gui.AbstractListQueryViewComponent;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
-import at.ainf.protegeview.model.configuration.SearchCreator;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import java.awt.*;
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.

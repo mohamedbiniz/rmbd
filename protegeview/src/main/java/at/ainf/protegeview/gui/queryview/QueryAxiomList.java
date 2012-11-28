@@ -1,26 +1,19 @@
 package at.ainf.protegeview.gui.queryview;
 
-import at.ainf.diagnosis.storage.AxiomSet;
 import at.ainf.protegeview.gui.AbstractAxiomList;
-import at.ainf.protegeview.gui.axiomsetviews.axiomslist.AxiomListHeader;
 import at.ainf.protegeview.gui.axiomsetviews.axiomslist.AxiomListItem;
-import at.ainf.protegeview.gui.axiomsetviews.axiomslist.BasicAxiomListItemRenderer;
 import at.ainf.protegeview.model.EditorKitHook;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
 import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.explanation.ExplanationManager;
-import org.protege.editor.owl.ui.frame.OWLFrameSectionRow;
-import org.protege.editor.owl.ui.framelist.ExplainButton;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -9,7 +10,6 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.AxiomSet;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -226,7 +226,7 @@ public class Example1Test extends AbstractExample {
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
         for (Query query : new Query[]{Query.X2}) {
 
-            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+            HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
@@ -263,7 +263,7 @@ public class Example1Test extends AbstractExample {
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
         for (Query query : Query.values()) {
 
-            HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+            HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
