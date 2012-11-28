@@ -1,8 +1,8 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
 import at.ainf.diagnosis.tree.CostsEstimator;
+import at.ainf.diagnosis.tree.HSTreeNode;
 import at.ainf.diagnosis.tree.Node;
-import at.ainf.diagnosis.tree.SimpleNode;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.storage.FormulaSet;
 
@@ -21,8 +21,8 @@ public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStra
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
-    public SimpleNode<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
-        return new SimpleNode<Id>(conflict);
+    public HSTreeNode<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+        return new HSTreeNode<Id>(conflict);
     }
 
 

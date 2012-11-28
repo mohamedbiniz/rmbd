@@ -563,7 +563,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
     public boolean canReuseConflict(Node<Id> node) {
         // check if this is a root
         //EDITED MultiNodes don't reuse Conflicts
-        if (node.isRoot() || node.getAxiomSets() != null || (node instanceof MultiNode)) return false;
+        if (node.isRoot() || node.getAxiomSets() != null || (node instanceof BHSTreeNode)) return false;
         Collection<Id> pathLabels = node.getPathLabels();
         for (FormulaSet<Id> localConflict : getConflicts()) {
             if (localConflict.isValid() && !intersectsWith(pathLabels, localConflict)) {

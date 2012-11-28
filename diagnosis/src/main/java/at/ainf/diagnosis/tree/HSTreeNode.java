@@ -21,7 +21,7 @@ import java.util.*;
  * Time: 14:04:13
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleNode<Id> implements Node<Id> {
+public class HSTreeNode<Id> implements Node<Id> {
     // one node has exactly 3 parameters
 
     // NODE_CLOSED: is a constant for the conflict if node is closed
@@ -32,7 +32,7 @@ public class SimpleNode<Id> implements Node<Id> {
     //private final Id ARC_OF_ROOT = null;
 
     // PARENT: if node is the root parent = null
-    protected SimpleNode<Id> parent;
+    protected HSTreeNode<Id> parent;
 
     protected final Set<Node<Id>> children = new LinkedHashSet<Node<Id>>();
 
@@ -51,7 +51,7 @@ public class SimpleNode<Id> implements Node<Id> {
     // constructor for root
 
     //NEU
-    public SimpleNode(Set<FormulaSet<Id>> conflict) {
+    public HSTreeNode(Set<FormulaSet<Id>> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
@@ -60,7 +60,7 @@ public class SimpleNode<Id> implements Node<Id> {
         this.conflict = conflict;
     }
 
-    public SimpleNode(FormulaSet<Id> conflict) {
+    public HSTreeNode(FormulaSet<Id> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
@@ -72,7 +72,7 @@ public class SimpleNode<Id> implements Node<Id> {
         this.conflict = set;
     }
 
-    public SimpleNode(Node<Id> parent, Id arcLabel) {
+    public HSTreeNode(Node<Id> parent, Id arcLabel) {
         parent.addChild(this);
         this.arcLabel = arcLabel;
         this.root = false;
@@ -80,7 +80,7 @@ public class SimpleNode<Id> implements Node<Id> {
     }
 
     @Override
-    public boolean addChild(SimpleNode<Id> node) {
+    public boolean addChild(HSTreeNode<Id> node) {
         node.parent = this;
         return this.children.add(node);
     }
@@ -111,7 +111,7 @@ public class SimpleNode<Id> implements Node<Id> {
         //NEU
         for (Id arcLabel : conflict.iterator().next()) {
             if (!hasChild(getChildren(), arcLabel)) {
-                Node<Id> node = new SimpleNode<Id>(this, arcLabel);
+                Node<Id> node = new HSTreeNode<Id>(this, arcLabel);
                 newNodes.add(node);
             }
         }
@@ -125,7 +125,8 @@ public class SimpleNode<Id> implements Node<Id> {
         //NEU
         for (Id arcLabel : conflict.iterator().next()) {
             if (!hasChild(getChildren(), arcLabel)) {
-                Node<Id> node = new SimpleNode<Id>(this, arcLabel);
+                Node<Id> node = new HSTreeNode<Id>(this, arcLabel);
+                node.setCostsEstimator(getCostsEstimator());
                 newNodes.add(node);
             }
         }
@@ -146,7 +147,7 @@ public class SimpleNode<Id> implements Node<Id> {
     @Override
     public Set<Id> getPathLabels() {
         Set<Id> pathLabels = new TreeSet<Id>();
-        SimpleNode<Id> node = this;
+        HSTreeNode<Id> node = this;
         // steps from this node to root and adds the arcLables of each node
         while (node.parent != null) {
             if (node.getArcLabel() != null)
@@ -179,7 +180,7 @@ public class SimpleNode<Id> implements Node<Id> {
     }
 
     @Override
-    public SimpleNode<Id> getParent() {
+    public HSTreeNode<Id> getParent() {
         return parent;
     }
 
@@ -222,7 +223,7 @@ public class SimpleNode<Id> implements Node<Id> {
     @Override
     public int getLevel() {
         int level = 0;
-        SimpleNode<Id> node = this;
+        HSTreeNode<Id> node = this;
         while (node.parent != null) {
             level++;
             node = node.getParent();

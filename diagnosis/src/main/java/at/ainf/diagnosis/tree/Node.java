@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public interface Node<Id> extends Comparable<Node<Id>>{
 
-    boolean addChild(SimpleNode<Id> node);
+    boolean addChild(HSTreeNode<Id> node);
 
     boolean removeChild(Node<Id> node);
 
@@ -37,7 +37,7 @@ public interface Node<Id> extends Comparable<Node<Id>>{
 
     void removeParent();
 
-    SimpleNode<Id> getParent();
+    HSTreeNode<Id> getParent();
 
     Id getArcLabel();
 

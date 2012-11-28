@@ -16,12 +16,12 @@ import java.util.Set;
  * Time: 15:05
  * To change this template use File | Settings | File Templates.
  */
-public class MultiNode<Id> extends SimpleNode<Id> {
+public class BHSTreeNode<Id> extends HSTreeNode<Id> {
 
     private ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
     private SplitStrategy<Id> splitStrategy= new SimpleSplitStrategy<Id>();
 
-    public MultiNode(Set<FormulaSet<Id>> conflict) {
+    public BHSTreeNode(Set<FormulaSet<Id>> conflict) {
         super(conflict);
     }
 
@@ -29,7 +29,7 @@ public class MultiNode<Id> extends SimpleNode<Id> {
         super(conflict);
     } */
 
-    public MultiNode(Node<Id> parent, Id arcLabel) {
+    public BHSTreeNode(Node<Id> parent, Id arcLabel) {
         super(parent,arcLabel);
     }
 
@@ -129,7 +129,7 @@ public class MultiNode<Id> extends SimpleNode<Id> {
         for (Set<Id> c:conflict){
             if (c.size()==1 && !foundElement) {
                 Id e=c.iterator().next();
-                MultiNode node1=new MultiNode(this,e);
+                BHSTreeNode node1=new BHSTreeNode(this,e);
                 node1.setAxiomSet(addToHS(e,conflict));
                 newNodes.add(node1);
                 //tree.addNode(newConflicts);
@@ -150,10 +150,10 @@ public class MultiNode<Id> extends SimpleNode<Id> {
     public void splitRule(){
 
         Id e=chooseSplitElement();
-        MultiNode node1=new MultiNode(this,e);
+        BHSTreeNode node1=new BHSTreeNode(this,e);
         node1.setAxiomSet(addToHS(e,conflict));
 
-        MultiNode node2=new MultiNode(this,null);
+        BHSTreeNode node2=new BHSTreeNode(this,null);
         node2.setAxiomSet(ignore(e,conflict));
 
         newNodes.add(node1);
@@ -175,14 +175,14 @@ public class MultiNode<Id> extends SimpleNode<Id> {
             foundElement=true;
             Set<Id> c=conflict.iterator().next();
             Id e=c.iterator().next();
-            MultiNode node1=new MultiNode(this,e);
+            BHSTreeNode node1=new BHSTreeNode(this,e);
             node1.setAxiomSet(addToHS(e,conflict));
             newNodes.add(node1);
 
             // tree.addNode(newNode1)
             //tree.addEdge(conflicts,newNode1,e)
             if(!(c.size()==1)){
-                MultiNode node2=new MultiNode(this,null);
+                BHSTreeNode node2=new BHSTreeNode(this,null);
                 node2.setAxiomSet(ignore(e,conflict));
                 newNodes.add(node2);
                 //  tree.addNode(newNode2)
