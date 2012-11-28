@@ -42,7 +42,7 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
         if (getRoot() != null) return;
         Set<FormulaSet<Id>> conflict = calculateConflict(null);
 
-        MultiNode<Id> node = new MultiNode<Id>(conflict);
+        BHSTreeNode<Id> node = new BHSTreeNode<Id>(conflict);
 
         setRoot(node);
     }

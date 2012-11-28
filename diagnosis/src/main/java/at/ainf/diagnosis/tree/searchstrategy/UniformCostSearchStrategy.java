@@ -26,19 +26,14 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
     public Node<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
-        Node<Id> node = new CostSimpleNode<Id>(conflict);
+        Node<Id> node = new HSTreeNode<Id>(conflict);
         node.setCostsEstimator(costsEstimator);
         return node;
     }
 
-
-
-
     public void expand(Node<Id> node) {
         addNodes(node.expandNode());
     }
-
-
 
     public BigDecimal getConflictMeasure(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator) {
         return costsEstimator.getFormulaSetCosts(conflict);

@@ -106,7 +106,7 @@ public class InvHsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSe
         return getValidAxiomSets(copy(getHittingSets()));
     }
 
-    public Set<Node<Id>> updateNode(FormulaSet<Id> axSet, SimpleNode<Id> node) throws SolverException, InconsistentTheoryException {
+    public Set<Node<Id>> updateNode(FormulaSet<Id> axSet, HSTreeNode<Id> node) throws SolverException, InconsistentTheoryException {
         if (node == null || node.getAxiomSets() == null)
             return Collections.emptySet();
         if (node.getAxiomSets().containsAll(axSet)) {
