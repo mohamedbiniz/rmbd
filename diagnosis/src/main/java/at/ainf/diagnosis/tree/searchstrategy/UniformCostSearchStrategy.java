@@ -28,7 +28,6 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
     public Node<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         Node<Id> node = new CostSimpleNode<Id>(conflict);
         node.setCostsEstimator(costsEstimator);
-        node.setNodePathCosts(node.getCostsEstimator().getFormulaSetCosts(node.getPathLabels()));
         return node;
     }
 

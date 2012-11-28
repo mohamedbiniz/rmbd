@@ -423,8 +423,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         List<Id> list = new ArrayList<Id>(getSearchable().getKnowledgeBase().getFaultyFormulas());
         Collections.sort(list, new Comparator<Id>() {
             public int compare(Id o1, Id o2) {
-                BigDecimal nodeCosts = getCostsEstimator().getAxiomCosts(o1);
-                int value = -1 * nodeCosts.compareTo(getCostsEstimator().getAxiomCosts(o2));
+                BigDecimal nodeCosts = getCostsEstimator().getFormulaCosts(o1);
+                int value = -1 * nodeCosts.compareTo(getCostsEstimator().getFormulaCosts(o2));
                 if (value == 0)
                     return ((Comparable)o1).compareTo(o2);
                 return value;

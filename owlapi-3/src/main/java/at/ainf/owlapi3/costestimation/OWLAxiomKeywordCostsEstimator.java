@@ -95,18 +95,18 @@ public class OWLAxiomKeywordCostsEstimator extends AbstractCostEstimator<OWLLogi
         BigDecimal probability = BigDecimal.ONE;
         if (formulas != null)
             for (OWLLogicalAxiom axiom : formulas) {
-                probability = probability.multiply(getAxiomCosts(axiom));
+                probability = probability.multiply(getFormulaCosts(axiom));
             }
         Collection<OWLLogicalAxiom> activeFormulas = new ArrayList<OWLLogicalAxiom>(searchable.getKnowledgeBase().getFaultyFormulas());
         activeFormulas.removeAll(formulas);
         for (OWLLogicalAxiom axiom : activeFormulas) {
-            probability = probability.multiply(BigDecimal.ONE.subtract(getAxiomCosts(axiom)));
+            probability = probability.multiply(BigDecimal.ONE.subtract(getFormulaCosts(axiom)));
         }
         return probability;
     }
     */
 
-    public BigDecimal getAxiomCosts(OWLLogicalAxiom axiom) {
+    public BigDecimal getFormulaCosts(OWLLogicalAxiom axiom) {
         BigDecimal p = axiomsProbabilities.get(axiom);
         if (p != null)
             return p;

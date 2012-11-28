@@ -57,7 +57,7 @@ public interface Node<Id> extends Comparable<Node<Id>>{
 
     BigDecimal getNodePathCosts();
 
-    void setNodePathCosts(BigDecimal nodePathCosts);
+    //void setNodePathCosts(BigDecimal nodePathCosts);
 
     CostsEstimator<Id> getCostsEstimator();
 

@@ -55,7 +55,7 @@ public class ResultsListSectionItem implements MListItem {
 
     public String getTooltip() {
         if (estimator != null) {
-            return "axiom error probability: " + estimator.getAxiomCosts(axiom);
+            return "axiom error probability: " + estimator.getFormulaCosts(axiom);
         } else {
             return null;
         }

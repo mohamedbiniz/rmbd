@@ -12,7 +12,7 @@ import java.util.Set;
  * Time: 17:05
  * To change this template use File | Settings | File Templates.
  */
-public class CostSimpleNode<T> extends SimpleNode<T> implements Node<T> {
+public class CostSimpleNode<T> extends SimpleNode<T> {
 
     public CostSimpleNode(SimpleNode<T> parent, T arcLabel) {
         super(parent, arcLabel);
@@ -32,8 +32,8 @@ public class CostSimpleNode<T> extends SimpleNode<T> implements Node<T> {
         //EDITED
         for (T arcLabel : getAxiomSets().iterator().next()) {
             CostSimpleNode<T> node = new CostSimpleNode<T>(this, arcLabel);
+            node.setCostsEstimator(getCostsEstimator());
             newNodes.add(node);
-            getCostsEstimator().computeNodePathCosts(node);
         }
         return newNodes;
     }

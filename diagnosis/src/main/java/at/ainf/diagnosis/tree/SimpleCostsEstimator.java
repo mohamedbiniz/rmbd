@@ -25,7 +25,7 @@ public class SimpleCostsEstimator<Id> extends AbstractCostEstimator<Id> implemen
         return new BigDecimal("0.1");
     }
 
-    public BigDecimal getAxiomCosts(Id label) {
+    public BigDecimal getFormulaCosts(Id label) {
         return new BigDecimal("0.1");
     }
 

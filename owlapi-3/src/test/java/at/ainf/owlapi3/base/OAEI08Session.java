@@ -69,7 +69,7 @@ public class OAEI08Session extends SimulatedSession {
                 int numOfOntologyAxiomsO1 = 0;
                 int numOfMatchingAxiomO1 = 0;
                 for (OWLLogicalAxiom axiom : o1) {
-                    if (estimator.getAxiomCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
+                    if (estimator.getFormulaCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
                         numOfMatchingAxiomO1++;
                     else
                         numOfOntologyAxiomsO1++;
@@ -79,7 +79,7 @@ public class OAEI08Session extends SimulatedSession {
                 int numOfOntologyAxiomsO2 = 0;
                 int numOfMatchingAxiomO2 = 0;
                 for (OWLLogicalAxiom axiom : o2) {
-                    if (estimator.getAxiomCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
+                    if (estimator.getFormulaCosts(axiom).compareTo(new BigDecimal("0.001")) != 0)
                         numOfMatchingAxiomO2++;
                     else
                         numOfOntologyAxiomsO2++;

@@ -44,7 +44,7 @@ public class SimpleNode<Id> implements Node<Id> {
 
     protected final boolean root;
 
-    private BigDecimal nodePathCosts = BigDecimal.ZERO;
+    private BigDecimal nodePathCosts = null;
 
     private CostsEstimator<Id> costsEstimator = new SimpleCostsEstimator<Id>();
 
@@ -242,12 +242,20 @@ public class SimpleNode<Id> implements Node<Id> {
 
     @Override
     public BigDecimal getNodePathCosts() {
+        if (nodePathCosts == null) {
+            BigDecimal cost;
+            if (isRoot()) {
+                cost = getCostsEstimator().getFormulaSetCosts(Collections.<Id>emptySet());
+            }   else {
+                Id axiom = getArcLabel();
+                BigDecimal fProb = getCostsEstimator().getFormulaCosts(axiom);
+                cost = BigDecimal.ONE.subtract(fProb);
+                cost = parent.getNodePathCosts().divide(cost);
+                cost = cost.multiply(fProb);
+            }
+            this.nodePathCosts = cost;
+        }
         return nodePathCosts;
-    }
-
-    @Override
-    public void setNodePathCosts(BigDecimal nodePathCosts) {
-        this.nodePathCosts = nodePathCosts;
     }
 
     @Override
