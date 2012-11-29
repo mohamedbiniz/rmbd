@@ -14,6 +14,9 @@ import at.ainf.diagnosis.storage.FormulaSet;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static at.ainf.diagnosis.tree.Rounding.PRECISION;
+import static at.ainf.diagnosis.tree.Rounding.ROUNDING_MODE;
+
 /**
  * Created by IntelliJ IDEA.
  * User: student99
@@ -251,7 +254,7 @@ public class HSTreeNode<Id> implements Node<Id> {
                 Id axiom = getArcLabel();
                 BigDecimal fProb = getCostsEstimator().getFormulaCosts(axiom);
                 cost = BigDecimal.ONE.subtract(fProb);
-                cost = parent.getNodePathCosts().divide(cost);
+                cost = parent.getNodePathCosts().divide(cost,PRECISION,ROUNDING_MODE);
                 cost = cost.multiply(fProb);
             }
             this.nodePathCosts = cost;
