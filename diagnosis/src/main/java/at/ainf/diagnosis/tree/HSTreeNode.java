@@ -59,6 +59,7 @@ public class HSTreeNode<Id> implements Node<Id> {
         // arcLabel = -1
         this.arcLabel = null;
 
+
         this.root = true;
         this.conflict = conflict;
     }
