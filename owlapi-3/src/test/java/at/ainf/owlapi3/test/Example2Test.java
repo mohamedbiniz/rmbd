@@ -237,13 +237,13 @@ public class Example2Test extends AbstractExample {
         resumeDiagnosis(search, new UniformCostSearchStrategy<OWLLogicalAxiom>());
     }
 
-   /* @Test
+    @Test
     public void testResumeBHS() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
 
         resumeDiagnosis(search, new UniformCostSearchStrategy<OWLLogicalAxiom>());
-    } */
+    }
 
     private void resumeDiagnosis(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, SearchStrategy<OWLLogicalAxiom> owlLogicalAxiomUniformCostSearchStrategy) throws InconsistentTheoryException, SolverException, NoConflictException {
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
@@ -266,9 +266,10 @@ public class Example2Test extends AbstractExample {
             set.add(Diag.getDiagnosis(col));
         }
         TreeSet<Diag> expectedRes = new TreeSet<Diag>();
-        expectedRes.add(Diag.D2);
+
+       expectedRes.add(Diag.D2);
         expectedRes.add(Diag.D4);
-        /*expectedRes.add(Diag.D1);
+      /*  expectedRes.add(Diag.D1);
         expectedRes.add(Diag.D3);
         expectedRes.add(Diag.D5);
         expectedRes.add(Diag.D6);

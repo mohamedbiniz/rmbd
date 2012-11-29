@@ -43,6 +43,7 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
         Set<FormulaSet<Id>> conflict = calculateConflict(null);
 
         BHSTreeNode<Id> node = new BHSTreeNode<Id>(conflict);
+        node.setCostsEstimator(getCostsEstimator());
 
         setRoot(node);
     }
