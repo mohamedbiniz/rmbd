@@ -83,7 +83,7 @@ public class KoalaResumTest {
 
         try {
             search.setMaxDiagnosesNumber(3);
-            search.start();
+            search.resume();
         } catch (NoConflictException e) {
 
         }
@@ -95,7 +95,7 @@ public class KoalaResumTest {
         assertTrue(renderAxiom(getAxiom(result,0,1)).equals("isHardWorking Domain Person"));
         assertTrue(renderAxiom(getAxiom(result,1,0)).equals("Koala SubClassOf Marsupials"));
         assertTrue(renderAxiom(getAxiom(result,1,1)).equals("Quokka SubClassOf isHardWorking value true"));
-        assertTrue(renderAxiom(getAxiom(result,2,0)).equals("hasDegree Domain Person"));
+        assertTrue(renderAxiom(getAxiom(result,2,0)).equals("Koala SubClassOf Marsupials"));
         assertTrue(renderAxiom(getAxiom(result,2,1)).equals("isHardWorking Domain Person"));
 
     }
