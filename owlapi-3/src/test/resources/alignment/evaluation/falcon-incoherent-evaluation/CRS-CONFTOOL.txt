@@ -1,0 +1,12 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/CRS.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://CRS.owl
+
++ Conference = conference | 0.9960824008115206
++ Person = person | 0.9926094056406111
++ Author = author | 0.9913401720307188
++ Participant = participant | 0.9903056488067199
++ Event = event | 0.9800279316532562
+< Chair_PC = chair | 0.8195505775880425
+- Reviewing_event = review | 0.7687331297853108
