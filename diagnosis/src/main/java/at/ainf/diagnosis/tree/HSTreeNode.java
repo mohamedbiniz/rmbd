@@ -49,7 +49,7 @@ public class HSTreeNode<Id> implements Node<Id> {
 
     private BigDecimal nodePathCosts = null;
 
-    private CostsEstimator<Id> costsEstimator = new SimpleCostsEstimator<Id>();
+    protected CostsEstimator<Id> costsEstimator= new SimpleCostsEstimator<Id>();
 
     // constructor for root
 
@@ -115,6 +115,7 @@ public class HSTreeNode<Id> implements Node<Id> {
         for (Id arcLabel : conflict.iterator().next()) {
             if (!hasChild(getChildren(), arcLabel)) {
                 Node<Id> node = new HSTreeNode<Id>(this, arcLabel);
+                node.setCostsEstimator(this.costsEstimator);
                 newNodes.add(node);
             }
         }

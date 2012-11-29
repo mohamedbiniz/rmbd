@@ -237,13 +237,13 @@ public class Example2Test extends AbstractExample {
         resumeDiagnosis(search, new UniformCostSearchStrategy<OWLLogicalAxiom>());
     }
 
-    @Test
+   /* @Test
     public void testResumeBHS() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
         BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
 
-        resumeDiagnosis(search, new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-    }
+        resumeDiagnosis(search, new UniformCostSearchStrategy<OWLLogicalAxiom>());
+    } */
 
     private void resumeDiagnosis(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search, SearchStrategy<OWLLogicalAxiom> owlLogicalAxiomUniformCostSearchStrategy) throws InconsistentTheoryException, SolverException, NoConflictException {
         HashMap<Query, Boolean> result = new HashMap<Query, Boolean>();
@@ -268,21 +268,22 @@ public class Example2Test extends AbstractExample {
         TreeSet<Diag> expectedRes = new TreeSet<Diag>();
         expectedRes.add(Diag.D2);
         expectedRes.add(Diag.D4);
-        expectedRes.add(Diag.D1);
+        /*expectedRes.add(Diag.D1);
         expectedRes.add(Diag.D3);
         expectedRes.add(Diag.D5);
         expectedRes.add(Diag.D6);
         expectedRes.add(Diag.D7);
-        expectedRes.add(Diag.D8);
+        expectedRes.add(Diag.D8); */
         //EDITED
 
-        int count=0;
+        /*int count=0;
         for(Diag d : expectedRes){
                  if(set.contains(d))
                      count++;
-        }
+        }  */
 
-        assertTrue(count==2);
+        assertTrue(set.equals(expectedRes));
+
         set = new TreeSet<Diag>();
         search.setMaxDiagnosesNumber(3);
         for (FormulaSet<OWLLogicalAxiom> col : search.resume()) {
@@ -290,27 +291,27 @@ public class Example2Test extends AbstractExample {
         }
         expectedRes.add(Diag.D1);
 
-         count=0;
+        /* count=0;
         for(Diag d : expectedRes){
             if(set.contains(d))
                 count++;
-        }
+        }    */
 
 
-        assertTrue(count==3);
+        assertTrue(set.equals(expectedRes));
         search.setMaxDiagnosesNumber(4);
         for (FormulaSet<OWLLogicalAxiom> col : search.resume()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D3);
 
-        count=0;
+        /*count=0;
         for(Diag d : expectedRes){
             if(set.contains(d))
                 count++;
-        }
+        }  */
 
-        assertTrue(count==4);
+        assertTrue(set.equals(expectedRes));
     }
 
     @Test
