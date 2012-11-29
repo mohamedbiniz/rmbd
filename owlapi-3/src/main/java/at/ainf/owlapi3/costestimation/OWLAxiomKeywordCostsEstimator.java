@@ -107,6 +107,11 @@ public class OWLAxiomKeywordCostsEstimator extends AbstractCostEstimator<OWLLogi
     */
 
     public BigDecimal getFormulaCosts(OWLLogicalAxiom axiom) {
+
+        //NEU bei null wird 1 zurückgegeben
+        if(axiom==null)
+            return new BigDecimal(0.5);
+
         BigDecimal p = axiomsProbabilities.get(axiom);
         if (p != null)
             return p;

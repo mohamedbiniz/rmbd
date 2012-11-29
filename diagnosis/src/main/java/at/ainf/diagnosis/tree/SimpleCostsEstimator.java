@@ -22,11 +22,11 @@ public class SimpleCostsEstimator<Id> extends AbstractCostEstimator<Id> implemen
     }
 
     public BigDecimal getFormulaSetCosts(Set<Id> formulas) {
-        return new BigDecimal("0.1");
+        return new BigDecimal("0.2");
     }
 
     public BigDecimal getFormulaCosts(Id label) {
-        return new BigDecimal("0.1");
+        return new BigDecimal("0.2");
     }
 
 }

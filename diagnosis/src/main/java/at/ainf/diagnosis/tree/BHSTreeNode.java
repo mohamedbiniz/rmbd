@@ -131,6 +131,8 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
                 Id e=c.iterator().next();
                 BHSTreeNode node1=new BHSTreeNode(this,e);
                 node1.setAxiomSet(addToHS(e,conflict));
+                node1.setCostsEstimator(this.costsEstimator);
+
                 newNodes.add(node1);
                 //tree.addNode(newConflicts);
                 //Edge edge= new Edge();
@@ -152,9 +154,11 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
         Id e=chooseSplitElement();
         BHSTreeNode node1=new BHSTreeNode(this,e);
         node1.setAxiomSet(addToHS(e,conflict));
+        node1.setCostsEstimator(this.costsEstimator);
 
         BHSTreeNode node2=new BHSTreeNode(this,null);
         node2.setAxiomSet(ignore(e,conflict));
+        node2.setCostsEstimator(this.costsEstimator);
 
         newNodes.add(node1);
         newNodes.add(node2);
@@ -177,6 +181,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
             Id e=c.iterator().next();
             BHSTreeNode node1=new BHSTreeNode(this,e);
             node1.setAxiomSet(addToHS(e,conflict));
+            node1.setCostsEstimator(this.costsEstimator);
             newNodes.add(node1);
 
             // tree.addNode(newNode1)
@@ -184,6 +189,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
             if(!(c.size()==1)){
                 BHSTreeNode node2=new BHSTreeNode(this,null);
                 node2.setAxiomSet(ignore(e,conflict));
+                node2.setCostsEstimator(this.costsEstimator);
                 newNodes.add(node2);
                 //  tree.addNode(newNode2)
                 // tree.addEdge(conflicts,newNode2,null)
