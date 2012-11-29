@@ -37,7 +37,7 @@ public class BinaryTreeCostTest {
 
     private static Logger logger = LoggerFactory.getLogger(TreeTest.class.getName());
 
-    @Ignore @Test
+    @Test
     /**
      * This testcase is a simple example how to start diagnoses
      */

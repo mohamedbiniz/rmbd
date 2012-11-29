@@ -22,7 +22,8 @@ public class OWLAxiomCostsEstimator extends AbstractCostEstimator<OWLLogicalAxio
 
     protected Map<OWLLogicalAxiom, BigDecimal> axiomProb;
 
-    protected BigDecimal STATIC_COSTS = new BigDecimal("0.001");
+    //Neu war früher 0.001
+    protected BigDecimal STATIC_COSTS = new BigDecimal("0.5");
 
     public OWLAxiomCostsEstimator(Set<OWLLogicalAxiom> faultyFormulas){
         super(faultyFormulas);
