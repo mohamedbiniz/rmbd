@@ -11,6 +11,7 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -45,7 +46,6 @@ public class OrderProbabTest {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);
     } */
-
 
     @Test
     public void probabTest() throws OWLException, InconsistentTheoryException, SolverException, NoConflictException {
@@ -94,7 +94,7 @@ public class OrderProbabTest {
             TreeSet<FormulaSet<OWLLogicalAxiom>> result = new TreeSet<FormulaSet<OWLLogicalAxiom>>();
             BigDecimal measure = new BigDecimal("0.0");
             for (FormulaSet<OWLLogicalAxiom> hs : res) {
-                assertTrue(measure.compareTo(hs.getMeasure()) < 0);
+                assertTrue(measure.compareTo(hs.getMeasure()) <= 0);
                 measure = ((FormulaSet<OWLLogicalAxiom>) hs).getMeasure();
                 result.add((FormulaSet<OWLLogicalAxiom>) hs);
             }
