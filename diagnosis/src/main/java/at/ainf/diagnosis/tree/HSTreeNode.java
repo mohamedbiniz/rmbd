@@ -46,7 +46,7 @@ public class HSTreeNode<Id> implements Node<Id> {
 
     private BigDecimal nodePathCosts = null;
 
-    protected CostsEstimator<Id> costsEstimator;
+    protected CostsEstimator<Id> costsEstimator= new SimpleCostsEstimator<Id>();
 
     // constructor for root
 
