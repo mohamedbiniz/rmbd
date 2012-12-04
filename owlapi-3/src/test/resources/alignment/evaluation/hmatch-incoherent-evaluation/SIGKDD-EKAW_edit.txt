@@ -1,0 +1,1 @@
+http://SIGKDD.owl#Location SubClassOf http://EKAW.owl#Main_office, http://SIGKDD.owl#Review SubClassOf http://EKAW.owl#Negative_Review, http://SIGKDD.owl#Review SubClassOf http://EKAW.owl#Neutral_Review, http://SIGKDD.owl#Review SubClassOf http://EKAW.owl#Positive_Review 

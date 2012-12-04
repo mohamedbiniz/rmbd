@@ -1,0 +1,17 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/CRS.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://CRS.owl
+
+< AssociatedChair = chair | 0.7333333333333334
++ Author = author | 0.75
+- AuthorNotReviewer = reviewer | 0.7
++ Chairman = chair | 0.75
+< ConferenceChair = chair | 0.7333333333333334
++ Document = document | 0.875
+< ExternalReviewer = reviewer | 0.7333333333333334
++ Person = person | 0.8055555555555556
+< ProgramCommitteeChair = chair | 0.65
++ Review = review | 0.8333333333333333
++ Reviewer = reviewer | 0.8
+< User = person | 0.6272727272727273

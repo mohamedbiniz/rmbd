@@ -1,0 +1,1 @@
+http://CMT.owl#Document EquivalentTo http://CONFTOOL.owl#Topic, http://CMT.owl#Person EquivalentTo http://CONFTOOL.owl#Topic, http://CMT.owl#User EquivalentTo http://CONFTOOL.owl#Topic

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>rmbd</artifactId>
+        <groupId>at.ainf</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>at.ainf</groupId>
+    <artifactId>owlapi-3</artifactId>
+    <name>OWLAPI adapter</name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.2</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.7.0/aspectjweaver-1.7.0.jar
+                    </argLine>
+                    <useSystemClassLoader>true</useSystemClassLoader>
+                    <skipTests>false</skipTests>
+                    <enableAssertions>false</enableAssertions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.5</version>
+                <extensions>true</extensions>
+
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>at.ainf.owlapi3;singleton:=true</Bundle-SymbolicName>
+                        <Bundle-Name>OWLAPI3 Module</Bundle-Name>
+                        <Bundle-Version>1.0</Bundle-Version>
+                        <Private-Package>at.ainf.owlapi3.*</Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <finalName>
+                        at.ainf.owlapi3
+                    </finalName>
+                    <archive>
+                    <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>at.ainf</groupId>
+            <artifactId>diagnosis</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.semanticweb</groupId>
+            <artifactId>HermiT</artifactId>
+            <version>20121119</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.semanticweb.owl</groupId>
+            <artifactId>owlapi</artifactId>
+            <!--<version>3.2.5_svn_1944</version>-->
+            <version>3.3</version>
+        </dependency>
+
+    </dependencies>
+</project>

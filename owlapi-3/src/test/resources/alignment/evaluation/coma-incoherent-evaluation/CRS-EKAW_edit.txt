@@ -1,0 +1,1 @@
+http://CRS.owl#conference EquivalentTo http://EKAW.owl#Conference_Session, http://CRS.owl#program EquivalentTo http://EKAW.owl#Programme_Brochure, http://CRS.owl#chair SubClassOf http://EKAW.owl#PC_Chair, http://CRS.owl#person EquivalentTo http://EKAW.owl#Organisation
