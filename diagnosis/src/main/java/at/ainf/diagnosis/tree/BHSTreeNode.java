@@ -244,5 +244,69 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
         return cses;
     }
 
+    //Update rules
+
+    public void updateNode(Set<Id> delete){
+
+         //Remove deleted elements from all conflicts
+        for(Id id:delete){
+            conflict=ignore(id,conflict);
+        }
+
+        Id splitElement= this.getLeftChild().getArcLabel();
+
+        //Rule 1
+        for(FormulaSet<Id> set: conflict){
+
+            if(set.contains(splitElement)){
+                if(set.size()==1){
+                    //remove right Subtree
+                   Node<Id> rightChild=getRightChild();
+                    removeChild(rightChild);
+                }
+                return;
+            }
+        }
+
+        //no set Contains splitElement => remove left Subtree
+           Node<Id> leftChild=getLeftChild();
+            removeChild(leftChild);
+
+        Node<Id> rightChild=getRightChild();
+        for(Node<Id> node :rightChild.getChildren()){
+            rightChild.removeChild(node);
+            this.addChild((HSTreeNode)node);
+
+        }
+        this.removeChild(rightChild);
+
+        //Update all Succesors
+
+        for(Node<Id> node:getChildren()){
+            ((BHSTreeNode)node).updateNode(delete);
+        }
+
+    }
+
+    private Node<Id> getLeftChild(){
+        for(Node<Id> node : getChildren()){
+            if(node.getArcLabel()!=null)
+                return node;
+
+        }
+        return null;
+    }
+
+    private Node<Id> getRightChild(){
+        for(Node<Id> node : getChildren()){
+            if(node.getArcLabel()==null)
+                return node;
+
+        }
+        return null;
+    }
+
+
+
 
 }
