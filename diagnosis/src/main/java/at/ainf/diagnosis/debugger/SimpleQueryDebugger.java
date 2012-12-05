@@ -31,7 +31,7 @@ import java.util.TreeSet;
  * Time: 08:37
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleQueryDebugger<Id> implements Debugger<FormulaSet<Id>, Id> {
+public class SimpleQueryDebugger<Id> {
 
     public enum Mode {HS_TREE, INV_HS_TREE, HS_TREE_QUERY}
 
@@ -196,22 +196,18 @@ public class SimpleQueryDebugger<Id> implements Debugger<FormulaSet<Id>, Id> {
 
     }
 
-    @Override
     public Set<FormulaSet<Id>> start() throws SolverException, NoConflictException, InconsistentTheoryException {
         return search.start();
     }
 
-    @Override
     public void setMaxDiagnosesNumber(int number) {
         search.setMaxDiagnosesNumber(number);
     }
 
-    @Override
     public int getMaxDiagnosesNumber() {
         return search.getMaxDiagnosesNumber();  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
     public Set<FormulaSet<Id>> resume() throws SolverException, NoConflictException, InconsistentTheoryException {
         search.setMaxDiagnosesNumber(maxDiags);
         return search.resume();
