@@ -267,7 +267,7 @@ public class Example1Test extends AbstractExample {
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-            if (theory != null) ontology.getOWLOntologyManager().removeOntology(theory.getOntology());
+            //if (theory != null) ontology.getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
