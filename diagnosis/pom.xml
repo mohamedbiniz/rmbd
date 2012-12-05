@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>at.ainf</groupId>
     <artifactId>diagnosis</artifactId>
-    <version>1.0</version>
+    <version>${versNumberForRelease}</version>
     <packaging>jar</packaging>
     <name>Diagnosis module</name>
 
@@ -65,6 +65,37 @@
                     <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>deploy</phase>
+                        <goals><goal>jar-no-fork</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>deploy</phase>
+                        <goals><goal>jar</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- explicitly define maven-deploy-plugin after other to force exec order -->
+                <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>deploy</phase>
+                        <goals><goal>deploy</goal></goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
