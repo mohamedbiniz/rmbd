@@ -366,7 +366,7 @@ public class
 
                 createOWLTheory();
             }
-            OWLOntologyManager manager = (((OWLTheory)getOwlTheory()).getOntology()).getOWLOntologyManager();
+            OWLOntologyManager manager = getOWLModelManager().getActiveOntology().getOWLOntologyManager();
 
 
 
@@ -410,7 +410,7 @@ public class
 
                 createOWLTheory();
             }
-            OWLOntologyManager manager = (((OWLTheory)getOwlTheory()).getOntology()).getOWLOntologyManager();
+            OWLOntologyManager manager = getOWLModelManager().getActiveOntology().getOWLOntologyManager();
             OWLOntology on = null;
 
             try {
@@ -553,10 +553,10 @@ public class
         }
         //OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
-        if (theory != null) {
+        /*if (theory != null) {
             ((OWLTheory)theory).getOntology().getOWLOntologyManager().removeOntology(((OWLTheory)theory).getOntology());
             getOWLModelManager().removeOntology(((OWLTheory)theory).getOntology());
-        }
+        }*/
 
 
         try {
