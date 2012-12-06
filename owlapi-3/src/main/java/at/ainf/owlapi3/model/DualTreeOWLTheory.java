@@ -30,7 +30,7 @@ public class DualTreeOWLTheory extends OWLTheory {
         OWLOntology ontology = getOriginalOntology();
         Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getKnowledgeBase().getFaultyFormulas());
         axiomSet.removeAll(getReasoner().getFormularCache());
-        updateAxioms(axiomSet, getKnowledgeBase().getBackgroundFormulas());
+        //updateAxioms(axiomSet, getKnowledgeBase().getBackgroundFormulas());
         LinkedHashSet<OWLLogicalAxiom> formularCacheBackup = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getFormularCache());
         getReasoner().clearFormularCache();
         getReasoner().addFormularsToCache(axiomSet);
