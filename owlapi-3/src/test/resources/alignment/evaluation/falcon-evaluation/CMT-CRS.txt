@@ -1,0 +1,13 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/CRS.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://CRS.owl
+
++ Document = document | 0.9991998652428424
++ Person = person | 0.9990585065976139
++ Reviewer = reviewer | 0.9983758477882747
++ Author = author | 0.9982785631214306
++ Conference = conference | 0.9975958135753186
++ Review = review | 0.995787872887592
++ PaperAbstract = abstract | 0.750307254501372
+- ProgramCommittee = program | 0.7188686509013498

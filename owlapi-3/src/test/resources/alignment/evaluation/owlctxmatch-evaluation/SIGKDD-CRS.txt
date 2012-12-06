@@ -1,0 +1,17 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/SIGKDD.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CRS.owl
+sourceNamespace = http://SIGKDD.owl
+targetNamespace = http://CRS.owl
+
++ Author > author | 1.0
++ Author < author | 1.0
++ Person > person | 1.0
++ Person < person | 1.0
++ Document > document | 1.0
++ Document < document | 1.0
++ Conference > conference | 1.0
++ Conference < conference | 1.0
++ Abstract > abstract | 1.0
++ Abstract < abstract | 1.0
++ Review > review | 1.0
++ Review < review | 1.0
