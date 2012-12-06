@@ -24,7 +24,7 @@ public interface Debugger<T extends FormulaSet<Id>, Id> {
 
     public Set<T> start() throws SolverException, NoConflictException, InconsistentTheoryException;
 
-    public Set<T> resume() throws SolverException, NoConflictException, InconsistentTheoryException;
+    //public Set<T> resume() throws SolverException, NoConflictException, InconsistentTheoryException;
 
     public void reset();
 

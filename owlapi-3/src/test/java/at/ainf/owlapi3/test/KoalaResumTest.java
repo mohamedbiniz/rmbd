@@ -87,7 +87,7 @@ public class  KoalaResumTest {
 
         try {
             search.setMaxDiagnosesNumber(3);
-            search.resume();
+            search.start();
         } catch (NoConflictException e) {
 
         }

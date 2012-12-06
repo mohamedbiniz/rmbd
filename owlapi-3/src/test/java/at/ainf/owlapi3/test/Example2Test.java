@@ -252,7 +252,7 @@ public class Example2Test extends AbstractExample {
 
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
-        if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+        //if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
         theory = new OWLTheory(reasonerFactory, ontology, bax);
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
         es.updateKeywordProb(map);
@@ -287,7 +287,7 @@ public class Example2Test extends AbstractExample {
 
         set = new TreeSet<Diag>();
         search.setMaxDiagnosesNumber(3);
-        for (FormulaSet<OWLLogicalAxiom> col : search.resume()) {
+        for (FormulaSet<OWLLogicalAxiom> col : search.start()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D1);
@@ -301,7 +301,7 @@ public class Example2Test extends AbstractExample {
 
         assertTrue(set.equals(expectedRes));
         search.setMaxDiagnosesNumber(4);
-        for (FormulaSet<OWLLogicalAxiom> col : search.resume()) {
+        for (FormulaSet<OWLLogicalAxiom> col : search.start()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D3);
@@ -326,7 +326,7 @@ public class Example2Test extends AbstractExample {
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-            if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+            //if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
@@ -372,7 +372,7 @@ public class Example2Test extends AbstractExample {
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-            if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+            //if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
@@ -405,7 +405,7 @@ public class Example2Test extends AbstractExample {
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-        if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+        //if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
         theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
@@ -435,7 +435,7 @@ public class Example2Test extends AbstractExample {
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-        if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+        //if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
         theory = new OWLTheory(reasonerFactory, ontology, bax);
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
