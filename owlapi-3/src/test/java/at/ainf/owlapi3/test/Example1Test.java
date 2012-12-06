@@ -240,6 +240,8 @@ public class Example1Test extends AbstractExample {
             search.start();
 
             theory.getKnowledgeBase().addEntailedTest(query.getAxioms());
+
+            search.reset();
             search.start();
             Collection<Diagnosis> res = new TreeSet<Diagnosis>();
             for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {

@@ -466,16 +466,16 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         start("Consistency + entailment");
         //setFormularCach(getOntology(), getFormularCache());
         //OWLReasoner solver = getSolver();
-        LinkedHashSet<OWLLogicalAxiom> backupCachedFormulars = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getReasonedFormulars());
-        getReasoner().clearFormularCache();
+        //  LinkedHashSet<OWLLogicalAxiom> backupCachedFormulars = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getReasonedFormulars());
+        //  getReasoner().clearFormularCache();
         //getReasoner().addFormularsToCache(formularCache);
         //if (BUFFERED_SOLVER) solver.flush();
         if (!getReasoner().isConsistent())
             return false;
         //solver.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         boolean res = getReasoner().isEntailed(test);
-        getReasoner().clearFormularCache();
-        getReasoner().addFormularsToCache(backupCachedFormulars);
+        //  getReasoner().clearFormularCache();
+        //  getReasoner().addFormularsToCache(backupCachedFormulars);
         //removeAxioms(getFormularCache(), getOntology());
         //if (BUFFERED_SOLVER) solver.flush();
         stop();

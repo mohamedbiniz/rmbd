@@ -287,7 +287,7 @@ public class Example2Test extends AbstractExample {
 
         set = new TreeSet<Diag>();
         search.setMaxDiagnosesNumber(3);
-        for (FormulaSet<OWLLogicalAxiom> col : search.resume()) {
+        for (FormulaSet<OWLLogicalAxiom> col : search.start()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D1);
@@ -301,7 +301,7 @@ public class Example2Test extends AbstractExample {
 
         assertTrue(set.equals(expectedRes));
         search.setMaxDiagnosesNumber(4);
-        for (FormulaSet<OWLLogicalAxiom> col : search.resume()) {
+        for (FormulaSet<OWLLogicalAxiom> col : search.start()) {
             set.add(Diag.getDiagnosis(col));
         }
         expectedRes.add(Diag.D3);

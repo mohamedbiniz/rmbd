@@ -210,7 +210,7 @@ public class SimpleQueryDebugger<Id> {
 
     public Set<FormulaSet<Id>> resume() throws SolverException, NoConflictException, InconsistentTheoryException {
         search.setMaxDiagnosesNumber(maxDiags);
-        return search.resume();
+        return search.start();
     }
 
     //
