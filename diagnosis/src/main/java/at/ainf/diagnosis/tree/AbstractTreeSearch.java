@@ -174,16 +174,16 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
     public Set<T> start() throws
             SolverException, NoConflictException, InconsistentTheoryException {
-        reset();
+        // reset();
         return searchDiagnoses();
     }
 
-    public Set<T> resume() throws
+    /*public Set<T> resume() throws
             SolverException, NoConflictException, InconsistentTheoryException {
         if (this.root == null)
             throw new RuntimeException("Nothing to resume!");
         return searchDiagnoses();
-    }
+    }*/
 
     public void reset() {
         //setMaxDiagnosesNumber(-1);

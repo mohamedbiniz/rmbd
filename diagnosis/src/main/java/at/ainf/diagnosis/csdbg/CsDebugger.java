@@ -32,17 +32,12 @@ public class CsDebugger<T extends FormulaSet<Id>, Id> extends AbstractDebugger<T
 
     @Override
     public Set<T> start() throws SolverException, NoConflictException, InconsistentTheoryException {
-        return null;  // wird aufgerufen wenn man neu startet dh baum/was auch immer wird gelöscht
-    }
-
-    @Override
-    public Set<T> resume() throws SolverException, NoConflictException, InconsistentTheoryException {
-        return null;  // wird aufgerufen, wenn man weitere diagnosen möchte, vl mitten drin unterbrochen
+        return null;  //
     }
 
     @Override
     public void reset() {
-        // makes reset
+
     }
 
     @Override
