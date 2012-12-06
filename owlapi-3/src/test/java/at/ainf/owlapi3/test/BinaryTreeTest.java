@@ -4,7 +4,9 @@ import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.quickxplain.PredefinedConflictSearcher;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.FormulaSetImpl;
+import at.ainf.diagnosis.tree.BHSTreeNode;
 import at.ainf.diagnosis.tree.BinaryTreeSearch;
+import at.ainf.diagnosis.tree.HSTreeNode;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.DepthFirstSearchStrategy;
@@ -122,20 +124,56 @@ public class BinaryTreeTest {
         // here we save the result in a new list
         Set<FormulaSet<Integer>> result = new LinkedHashSet<FormulaSet<Integer>>(search.getDiagnoses());
 
-        //System.out.println("Number of hitting sets: " + result.size());
-        //System.out.println("Hitting sets:");
-        //
-        //for(AxiomSet<Integer> axs:result){
-        //
-        //    for(int i:axs){
-        //        System.out.print(i);
-        //    }
-        //   System.out.println();
-        //}
+        System.out.println("Number of hitting sets: " + result.size());
+        System.out.println("Hitting sets:");
+
+        for(FormulaSet<Integer> axs:result){
+
+            for(int i:axs){
+                System.out.print(i);
+            }
+           System.out.println();
+        }
 
         assertTrue(result.size() == 5);
+
+
+        //führe update durch
+
+  Set<Integer> delete = new LinkedHashSet<Integer>();
+        delete.add(1);
+
+        ((BHSTreeNode)search.getRoot()).updateNode(delete);
+
+        //New testcase
+        //OWLLogicalAxiom testcase = new MyOWLRendererParser(ontology).parse("KoalaWithPhD EquivalentTo Koala and (hasDegree value PhD)");
+
+
+        Set<Set<Integer>>  result2 = ((BHSTreeNode)search.getRoot()).getHittingSets();
+
+        for(Set<Integer> axs:result2){
+
+            for(int i:axs){
+                System.out.print(i);
+            }
+            System.out.println();
+        }
+
+        System.out.println();System.out.println();
+        Set<HSTreeNode>  result3 = ((BHSTreeNode)search.getRoot()).getLeaves();
+
+        for(HSTreeNode axs:result3){
+
+            for(int i:(Set<Integer>)((BHSTreeNode)axs).getIgnoredElements()){
+                System.out.print(i);
+            }
+            System.out.println();
+        }
+
     }
 
-
-
 }
+
+
+
+
