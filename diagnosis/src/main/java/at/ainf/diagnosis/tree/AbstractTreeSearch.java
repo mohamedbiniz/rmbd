@@ -101,6 +101,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         quickConflict.setMeasure(measure);
         quickConflict.setNode(node);
 
+
+
         return (T)quickConflict;
     }
 
@@ -415,8 +417,9 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
             SolverException, NoConflictException, InconsistentTheoryException {
         // if conflict was already calculated
         //edited
-
-
+       /* if(getRoot()!=null)
+            System.out.println("Number of Nodes:"+((HSTreeNode)getRoot()).countNodes());
+             */
         //System.out.println("Berechne neuen Konflikt");
 
         Set<FormulaSet<Id>> quickConflict;
@@ -446,6 +449,12 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
 
         quickConflict = getSearcher().search(getSearchable(), list, pathLabels);
 
+        /*if(node instanceof BHSTreeNode){
+            for(FormulaSet<Id> set: quickConflict){
+                   ((BHSTreeNode) node).updateConflict(set);
+            }
+        } */
+
         //if(!searcher.isDual()) {
         if (logger.isInfoEnabled())
             logger.info("Found conflict: " + quickConflict);
@@ -470,6 +479,21 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         if (node != null && !hasClosedParent(node.getParent())){
 
             node.setAxiomSet(new LinkedHashSet<FormulaSet<Id>>(quickConflict));
+
+        }
+
+        if(this instanceof BinaryTreeSearch && node!=null){
+
+         for(FormulaSet<Id> conflict: quickConflict) {
+            for(HSTreeNode<Id> leave: (Set<HSTreeNode>)((HSTreeNode)getRoot()).getLeaves()) {
+                if(!leave.isClosed() && !intersectsWith(conflict,leave.getPathLabels())) {
+                    //SEHR UNSCHÖN später ausbessern
+                    if(leave.getConflicts()!=null)
+                    leave.getConflicts().add(((BHSTreeNode)leave).updateConflict(conflict));
+                    else leave.setAxiomSet((FormulaSet<Id>)((BHSTreeNode)leave).updateConflict(conflict));
+                }
+            }
+        }
 
         }
         return quickConflict;

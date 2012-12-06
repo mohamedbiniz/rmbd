@@ -458,4 +458,147 @@ public class Example2Test extends AbstractExample {
 
     }
 
+
+    @Test
+    public void testAllQueryEntailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        HashMap<Query, Boolean> result =
+                new HashMap<Query, Boolean>();
+        for (Query query : Query.values()) {
+
+            BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
+            search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+            if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+            theory = new OWLTheory(reasonerFactory, ontology, bax);
+            search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+
+            search.setSearchable(theory);
+            //search.setMaxDiagnosesNumber(0);
+
+            search.start();
+
+            search.setMaxDiagnosesNumber(-1);
+            theory.getKnowledgeBase().addEntailedTest(query.getAxioms());
+            try {
+                search.start();
+            }
+            catch(NoConflictException e) {
+            }
+            Collection<Diag> res = new TreeSet<Diag>();
+            for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
+                res.add(Diag.getDiagnosis(col));
+            }
+            TreeSet<Diag> d_xPlus0;
+            d_xPlus0 = new TreeSet<Diag>();
+            d_xPlus0.addAll(query.getDx());
+            d_xPlus0.addAll(query.getD_0());
+
+            //assertTrue(query.getDx().equals(res));
+            result.put(query, d_xPlus0.equals(res));
+
+            theory.getKnowledgeBase().removeEntailedTest(query.getAxioms());
+        }
+        for (Query query : result.keySet())
+            logger.info(query + " " + result.get(query));
+
+    }
+
+    @Test
+    public void testSomeQueryNotEntailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        HashMap<Query, Boolean> result =
+                new HashMap<Query, Boolean>();
+        for (Query query : new Query[]{Query.X5, Query.X4, Query.X2, Query.X7}) {
+
+            BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+            search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
+            search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+            if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+            theory = new OWLTheory(reasonerFactory, ontology, bax);
+            search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+
+            search.setSearchable(theory);
+            search.setMaxDiagnosesNumber(-1);
+
+            theory.getKnowledgeBase().addNonEntailedTest(query.getAxioms());
+            search.start();
+            Collection<Diag> res = new TreeSet<Diag>();
+            for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
+                res.add(Diag.getDiagnosis(col));
+            }
+            TreeSet<Diag> d_nxPlus0;
+            d_nxPlus0 = new TreeSet<Diag>();
+            d_nxPlus0.addAll(query.getD_nx());
+            d_nxPlus0.addAll(query.getD_0());
+            result.put(query, d_nxPlus0.equals(res));
+            assertTrue(d_nxPlus0.equals(res));
+            theory.getKnowledgeBase().removeNonEntailedTest(query.getAxioms());
+        }
+        for (Query query : result.keySet())
+            logger.info(query + " " + result.get(query));
+
+    }
+
+    @Test
+    public void testQuery4Entailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+        if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+        theory = new OWLTheory(reasonerFactory, ontology, bax);
+        search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+
+        search.setSearchable(theory);
+        search.setMaxDiagnosesNumber(-1);
+
+
+        theory.getKnowledgeBase().addEntailedTest(Query.X4.getAxioms());
+        search.start();
+        Collection<Diag> res = new TreeSet<Diag>();
+        for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
+            res.add(Diag.getDiagnosis(col));
+        }
+        TreeSet<Diag> dxPlus0;
+        logger.info(res.toString());
+        dxPlus0 = new TreeSet<Diag>();
+        dxPlus0.addAll(Query.X4.getDx());
+        dxPlus0.addAll(Query.X4.getD_0());
+        assertTrue(dxPlus0.equals(res));
+
+    }
+
+    @Test
+    public void testQuery5NotEntailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
+        //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
+        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+        if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+        theory = new OWLTheory(reasonerFactory, ontology, bax);
+        search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+
+        search.setSearchable(theory);
+        search.setMaxDiagnosesNumber(-1);
+
+
+        theory.getKnowledgeBase().addNonEntailedTest(Query.X5.getAxioms());
+        search.start();
+        Collection<Diag> res = new TreeSet<Diag>();
+        for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
+            res.add(Diag.getDiagnosis(col));
+        }
+        TreeSet<Diag> d_nxPlus0;
+        logger.info(res.toString());
+        d_nxPlus0 = new TreeSet<Diag>();
+        d_nxPlus0.addAll(Query.X5.getD_nx());
+        d_nxPlus0.addAll(Query.X5.getD_0());
+        assertTrue(d_nxPlus0.equals(res));
+
+    }
 }
