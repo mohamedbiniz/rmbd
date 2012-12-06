@@ -377,7 +377,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
 
     public boolean verifyConsistency() {
         start("Overall consistency check including management");
-        updateAxioms(getReasoner().getFormularCache(), getKnowledgeBase().getBackgroundFormulas());
+        //updateAxioms(getReasoner().getFormularCache(), getKnowledgeBase().getBackgroundFormulas());
         LinkedHashSet<OWLLogicalAxiom> formularsToAdd = new LinkedHashSet<OWLLogicalAxiom>(getKnowledgeBase().getBackgroundFormulas());
         formularsToAdd.removeAll(getReasoner().getFormularCache());
         getReasoner().addFormularsToCache(formularsToAdd);
