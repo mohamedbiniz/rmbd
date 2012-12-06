@@ -240,6 +240,8 @@ public class Example1Test extends AbstractExample {
             search.start();
 
             theory.getKnowledgeBase().addEntailedTest(query.getAxioms());
+
+            search.reset();
             search.start();
             Collection<Diagnosis> res = new TreeSet<Diagnosis>();
             for (Collection<OWLLogicalAxiom> col : search.getDiagnoses()) {
@@ -267,7 +269,7 @@ public class Example1Test extends AbstractExample {
             search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-            if (theory != null) ontology.getOWLOntologyManager().removeOntology(theory.getOntology());
+            //if (theory != null) ontology.getOWLOntologyManager().removeOntology(theory.getOntology());
             theory = new OWLTheory(reasonerFactory, ontology, bax);
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 

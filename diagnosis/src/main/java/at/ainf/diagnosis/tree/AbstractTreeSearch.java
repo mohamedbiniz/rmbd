@@ -9,6 +9,7 @@
 package at.ainf.diagnosis.tree;
 
 import   _dev.TimeLog;
+import at.ainf.diagnosis.AbstractDebugger;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -35,7 +36,7 @@ import static _dev.TimeLog.stop;
  * Time: 08:04:41
  * To change this template use File | Settings | File Templates.
  */
-public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> implements TreeSearch<T, Id> {
+public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends AbstractDebugger<T, Id> implements TreeSearch<T, Id> {
 
     private int maxHittingSets = Integer.MAX_VALUE;
 
@@ -61,7 +62,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         this.searchStrategy = searchStrategy;
     }
 
-    private FormulaRenderer<Id> formulaRenderer;
+
 
 
     /*public void setLogic(TreeLogic<T,Id> treeLog) {
@@ -175,16 +176,16 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
 
     public Set<T> start() throws
             SolverException, NoConflictException, InconsistentTheoryException {
-        reset();
+        // reset();
         return searchDiagnoses();
     }
 
-    public Set<T> resume() throws
+    /*public Set<T> resume() throws
             SolverException, NoConflictException, InconsistentTheoryException {
         if (this.root == null)
             throw new RuntimeException("Nothing to resume!");
         return searchDiagnoses();
-    }
+    }*/
 
     public void reset() {
         //setMaxDiagnosesNumber(-1);
@@ -306,14 +307,6 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         loggerDual.info(prefix + message + formulaRenderer.renderAxiom(axioms));
     }
 
-    private int getDepth(Node<Id> node) {
-        if (node == null) return -1;
-        if (node.getParent() == null)
-            return 0;
-        else
-            return getDepth(node.getParent()) + 1;
-    }
-
     protected abstract boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException;
 
     /*protected boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
@@ -395,6 +388,14 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         //NEW
         Node<Id> node = getSearchStrategy().createRootNode(conflict.iterator().next(), getCostsEstimator(), getSearchable().getKnowledgeBase().getFaultyFormulas());
         setRoot(node);
+    }
+
+    protected int getDepth(Node<Id> node) {
+        if (node == null) return -1;
+        if (node.getParent() == null)
+            return 0;
+        else
+            return getDepth(node.getParent()) + 1;
     }
 
     //protected abstract SimpleNode<Id> createRootNode(Set<Id> conflict,CostsEstimator<Id> costsEstimator, Collection<Id> act);
