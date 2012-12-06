@@ -152,7 +152,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         }
     }
 
-    Set<OWLLogicalAxiom> formularCache = new LinkedHashSet<OWLLogicalAxiom>();
+    // Set<OWLLogicalAxiom> formularCache = new LinkedHashSet<OWLLogicalAxiom>();
 
     private void init(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
             throws InconsistentTheoryException, SolverException {
@@ -442,13 +442,13 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return false;
     }
 
-    public boolean isEntailed(Set<OWLLogicalAxiom> test) {
+    public boolean isEntailed(Set<OWLLogicalAxiom> test, Set<OWLLogicalAxiom> cache) {
         start("Consistency + entailment");
         //setFormularCach(getOntology(), getFormularCache());
         //OWLReasoner solver = getSolver();
         LinkedHashSet<OWLLogicalAxiom> backupCachedFormulars = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getReasonedFormulars());
         getReasoner().clearFormularCache();
-        getReasoner().addFormularsToCache(formularCache);
+        getReasoner().addFormularsToCache(cache);
         //if (BUFFERED_SOLVER) solver.flush();
         if (!getReasoner().isConsistent())
             return false;
@@ -462,10 +462,31 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return res;
     }
 
-    public void setFormularCach(Set<OWLLogicalAxiom>... axioms) {
-        formularCache.clear();
+    public boolean isEntailed(Set<OWLLogicalAxiom> test) {
+        start("Consistency + entailment");
+        //setFormularCach(getOntology(), getFormularCache());
+        //OWLReasoner solver = getSolver();
+        LinkedHashSet<OWLLogicalAxiom> backupCachedFormulars = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getReasonedFormulars());
+        getReasoner().clearFormularCache();
+        //getReasoner().addFormularsToCache(formularCache);
+        //if (BUFFERED_SOLVER) solver.flush();
+        if (!getReasoner().isConsistent())
+            return false;
+        //solver.precomputeInferences(InferenceType.CLASS_HIERARCHY);
+        boolean res = getReasoner().isEntailed(test);
+        getReasoner().clearFormularCache();
+        getReasoner().addFormularsToCache(backupCachedFormulars);
+        //removeAxioms(getFormularCache(), getOntology());
+        //if (BUFFERED_SOLVER) solver.flush();
+        stop();
+        return res;
+    }
+
+    public Set<OWLLogicalAxiom> setFormularCach(Set<OWLLogicalAxiom>... axioms) {
+        LinkedHashSet<OWLLogicalAxiom> formularCache = new LinkedHashSet<OWLLogicalAxiom>();
         for (Set<OWLLogicalAxiom> axiomset : axioms)
             formularCache.addAll(axiomset);
+        return formularCache;
     }
 
 
@@ -528,9 +549,9 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
 
-        setFormularCach(getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        Set<OWLLogicalAxiom> cache = setFormularCach(getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
-        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
+        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent),cache);
 
         // restore the state of the theory prior to the test
         getReasoner().clearFormularCache();
@@ -545,10 +566,10 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
 
-        setFormularCach(flatten(getKnowledgeBase().getPositiveTests()), flatten(getKnowledgeBase().getEntailedTests()),
+        Set<OWLLogicalAxiom> cache = setFormularCach(flatten(getKnowledgeBase().getPositiveTests()), flatten(getKnowledgeBase().getEntailedTests()),
                 getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
-        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
+        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent),cache);
 
         // restore the state of the theory prior to the test
         getReasoner().clearFormularCache();
