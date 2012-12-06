@@ -482,14 +482,6 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return res;
     }
 
-    public Set<OWLLogicalAxiom> setFormularCach(Set<OWLLogicalAxiom>... axioms) {
-        LinkedHashSet<OWLLogicalAxiom> formularCache = new LinkedHashSet<OWLLogicalAxiom>();
-        for (Set<OWLLogicalAxiom> axiomset : axioms)
-            formularCache.addAll(axiomset);
-        return formularCache;
-    }
-
-
     public void addAxioms(Set<OWLLogicalAxiom> axioms, OWLOntology ontology) {
         getOwlOntologyManager().addAxioms(ontology, axioms);
         //for (OWLLogicalAxiom ax : axioms) {
@@ -549,7 +541,9 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
 
-        Set<OWLLogicalAxiom> cache = setFormularCach(getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        Set<OWLLogicalAxiom> cache = new LinkedHashSet<OWLLogicalAxiom>();
+        cache.addAll(getKnowledgeBase().getBackgroundFormulas());
+        cache.addAll(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent),cache);
 
@@ -566,8 +560,11 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         Collection<OWLLogicalAxiom> stack = getReasoner().getFormularCache();
         getReasoner().clearFormularCache();
 
-        Set<OWLLogicalAxiom> cache = setFormularCach(flatten(getKnowledgeBase().getPositiveTests()), flatten(getKnowledgeBase().getEntailedTests()),
-                getKnowledgeBase().getBackgroundFormulas(), setminus(getKnowledgeBase().getFaultyFormulas(), hs));
+        Set<OWLLogicalAxiom> cache = new LinkedHashSet<OWLLogicalAxiom>();
+        cache.addAll(flatten(getKnowledgeBase().getPositiveTests()));
+        cache.addAll(flatten(getKnowledgeBase().getEntailedTests()));
+        cache.addAll(getKnowledgeBase().getBackgroundFormulas());
+        cache.addAll(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
         boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent),cache);
 
