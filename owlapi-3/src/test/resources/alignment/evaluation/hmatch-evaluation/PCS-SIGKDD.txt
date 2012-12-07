@@ -1,0 +1,15 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/PCS.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/SIGKDD.owl
+sourceNamespace = http://PCS.owl
+targetNamespace = http://SIGKDD.owl
+
+< Accepted_paper = Paper | 0.8166666666666667
++ Author = Author | 0.75
++ Conference = Conference | 1.0
++ DOCUMENT = Document | 0.9285714285714286
++ Paper = Paper | 0.9285714285714286
++ PERSON = Person | 0.7592592592592593
+< Rejected_paper = Paper | 0.8166666666666667
+- Report = Paper | 1.0
++ Review = Review | 1.0
+- System = Document | 0.64

@@ -1,0 +1,18 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/SIGKDD.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://SIGKDD.owl
+
+- Member = Registration_SIGKDD_Member | 0.31899565
+- Member = Registration_SIGMOD_Member | 0.31899565
++ Person = Person | 0.5134439
++ Paper = Paper | 0.4326522
+- Student = Registration_Student | 0.36257628
+- Topic = Document | 0.18089199
+- Poster = Listener | 0.22874857
++ Author = Author | 0.39047694
++ Chair_PC = Program_Chair | 0.23364922
+- Event = Fee | 0.49628603
+- Administrator = Organizator | 0.24339479
+- Science_Worker = Speaker | 0.22894327
++ Conference = Conference | 0.35
