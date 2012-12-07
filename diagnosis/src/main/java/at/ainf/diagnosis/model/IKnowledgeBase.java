@@ -83,9 +83,9 @@ public interface IKnowledgeBase<Id> {
 
     public Set<Id> getKnowledgeBase();
 
-    public void removeFormular(Collection<Id> formular);
+    public void removeFormulas(Collection<Id> formulas);
 
-    public void addFormular(Collection<Id> formular);
+    public void addFormulas(Collection<Id> formulas);
 
     public void clearTestCases();
 

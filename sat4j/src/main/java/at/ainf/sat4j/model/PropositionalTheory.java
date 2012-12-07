@@ -52,7 +52,7 @@ public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable>
 
     public IVecIntComparable addClause(int[] vector) {
         VecIntComparable anInt = new VecIntComparable(vector);
-        getKnowledgeBase().addFormular(Collections.<IVecIntComparable>singleton(anInt));
+        getKnowledgeBase().addFormulas(Collections.<IVecIntComparable>singleton(anInt));
         return anInt;
     }
 

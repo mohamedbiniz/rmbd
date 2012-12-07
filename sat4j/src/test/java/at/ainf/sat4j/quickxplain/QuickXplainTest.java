@@ -9,7 +9,9 @@
 package at.ainf.sat4j.quickxplain;
 
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.sat4j.model.IVecIntComparable;
 import at.ainf.sat4j.model.PropositionalTheory;
 import at.ainf.sat4j.model.VecIntComparable;
@@ -39,6 +41,16 @@ public class QuickXplainTest {
     public void testNew() throws SolverException, InconsistentTheoryException {
         Searcher<IVecIntComparable> quick = new QuickXplain<IVecIntComparable>();
         for (int i = 0; i < 1000; i++) {
+            runQuick(quick);
+        }
+    }
+
+
+    @Test
+    public void testMulti() throws SolverException, InconsistentTheoryException {
+        final int iterations = 1;
+        Searcher<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+        for (int i = 0; i < iterations; i++) {
             runQuick(quick);
         }
     }
@@ -91,6 +103,7 @@ public class QuickXplainTest {
         assertFalse(fl.contains(fm5));
         assertTrue(fl.containsAll(test));
 
+        //theory.getKnowledgeBase().removeFormulas(list);
         list.clear();
 
         IVecIntComparable fm6 = theory.addClause(new int[]{6, -7});
@@ -114,7 +127,11 @@ public class QuickXplainTest {
         boolean res = false;
         Collection<IVecIntComparable> fl = null;
         try {
-            fl = quick.search(theory, list, null).iterator().next();
+            Set<FormulaSet<IVecIntComparable>> conflict = quick.search(theory, list);
+            if (conflict != null && !conflict.isEmpty())
+                fl = conflict.iterator().next();
+            else
+                res = true;
         } catch (NoConflictException e) {
             res = true;
         }

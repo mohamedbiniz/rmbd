@@ -30,12 +30,12 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         return Collections.unmodifiableSet(knowledgeBase);
     }
 
-    public void addFormular(Collection<T> formular) {
-        knowledgeBase.addAll(formular);
+    public void addFormulas(Collection<T> formulas) {
+        knowledgeBase.addAll(formulas);
     }
 
-    public void removeFormular(Collection<T> formular) {
-        knowledgeBase.removeAll(formular);
+    public void removeFormulas(Collection<T> formulas) {
+        knowledgeBase.removeAll(formulas);
     }
 
     public int getTestsSize() {
