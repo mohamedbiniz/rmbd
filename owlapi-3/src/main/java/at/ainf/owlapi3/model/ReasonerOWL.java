@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
+import at.ainf.diagnosis.model.IReasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -25,6 +26,8 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
     private static final OWLClass TOP_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
 
+    private static int cnt = 0;
+
     private OWLOntology ontology;
 
     private OWLReasoner reasoner;
@@ -35,15 +38,20 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
     private boolean includeOntologyAxioms;
 
+    private OWLReasonerFactory reasonerFactory;
+
+    private int num = cnt++;
+
     public ReasonerOWL(OWLOntologyManager owlOntologyManager, OWLReasonerFactory reasonerFactory) {
         try {
 
             OWLOntology dontology = owlOntologyManager.createOntology();
-            OWLLiteral lit = owlOntologyManager.getOWLDataFactory().getOWLLiteral("Test Reasoner Ontology ");
+            OWLLiteral lit = owlOntologyManager.getOWLDataFactory().getOWLLiteral("Test Reasoner Ontology " + num);
             IRI iri = OWLRDFVocabulary.RDFS_COMMENT.getIRI();
             OWLAnnotation anno = owlOntologyManager.getOWLDataFactory().getOWLAnnotation(owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(iri), lit);
             owlOntologyManager.applyChange(new AddOntologyAnnotation(dontology, anno));
             this.ontology = dontology;
+            this.reasonerFactory = reasonerFactory;
 
             reasoner = reasonerFactory.createReasoner(this.ontology);
         } catch (OWLOntologyCreationException e) {
@@ -68,6 +76,11 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
     public boolean isEntailed(Set<OWLLogicalAxiom> test) {
         sync();
         return reasoner.isEntailed(test);
+    }
+
+    @Override
+    public ReasonerOWL newInstance() {
+        return new ReasonerOWL(ontology.getOWLOntologyManager(),reasonerFactory);
     }
 
     @Override
@@ -121,6 +134,10 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
     public Set<OWLClass> getUnsatisfiableEntities() {
         return reasoner.getUnsatisfiableClasses().getEntities();
+    }
+
+    public String toString() {
+        return "reasoner " + num;
     }
 
 }
