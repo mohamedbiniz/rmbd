@@ -65,7 +65,8 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
         reasonedFormulars.clear();
         reasonedFormulars.addAll(getFormularCache());
 
-        updateReasonerModel(axiomsToAdd,axiomsToRemove);
+        if (!axiomsToAdd.isEmpty() || !axiomsToRemove.isEmpty())
+            updateReasonerModel(axiomsToAdd,axiomsToRemove);
 
     }
 

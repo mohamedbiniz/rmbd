@@ -3,6 +3,7 @@ package at.ainf.diagnosis.model;
 import java.util.HashSet;
 import java.util.Set;
 import at.ainf.diagnosis.storage.FormulaSet;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,6 +42,11 @@ public class SimpleSetReasoner<T> extends AbstractReasoner<T> {
     @Override
     public boolean isEntailed(Set<T> test) {
         return this.model.containsAll(test);
+    }
+
+    @Override
+    public SimpleSetReasoner<T> newInstance() {
+        throw new IllegalStateException("This reasoner can not give a new instance");
     }
 
     @Override
