@@ -119,7 +119,7 @@ public class SimpleQueryDebugger<Id> {
         QueryMinimizer<Id> mnz = new QueryMinimizer<Id>(query, get_Theory());
         QuickXplain<Id> q = new QuickXplain<Id>();
         try {
-            query.partition = q.search(mnz, query.partition, null).iterator().next();
+            query.partition = q.search(mnz, query.partition).iterator().next();
         } catch (NoConflictException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {

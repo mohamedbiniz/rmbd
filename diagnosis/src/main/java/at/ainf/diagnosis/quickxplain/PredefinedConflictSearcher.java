@@ -57,6 +57,11 @@ public class PredefinedConflictSearcher<Id> implements Searcher<Id> {
         return conflictSets;
     }
 
+    @Override
+    public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas) throws NoConflictException, SolverException, InconsistentTheoryException {
+        return search(searchable, formulas, null);
+    }
+
     //public boolean isDual() {
     //    return false;
     //}

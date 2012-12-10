@@ -66,7 +66,7 @@ public class HsDagSearch<T extends FormulaSet<Id>,Id> extends HsTreeSearch<T,Id>
     public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
 
         for (T ax : getConflicts()) {
-            Set<Id> axioms = getSearcher().search(getSearchable(), ax, null).iterator().next();
+            Set<Id> axioms = getSearcher().search(getSearchable(), ax).iterator().next();
             if (!axioms.equals(ax)) {
                 FormulaSet<Id> conflict = new FormulaSetImpl<Id>(ax.getMeasure(), axioms, ax.getEntailments());
                 updateTree(conflict);

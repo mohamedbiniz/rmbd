@@ -48,7 +48,7 @@ public class ConstraintTheory extends BaseSearchableObject<Constraint> {
 
 
     public void addConstraints(Collection<Constraint> cnts) {
-        getKnowledgeBase().addFormular(cnts);
+        getKnowledgeBase().addFormulas(cnts);
     }
 
 

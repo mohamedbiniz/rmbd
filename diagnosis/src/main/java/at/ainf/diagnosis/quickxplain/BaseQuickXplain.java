@@ -74,6 +74,11 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     protected abstract void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException;
 
+    public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas)
+            throws NoConflictException, SolverException, InconsistentTheoryException {
+        return search(searchable, formulas, null);
+    }
+
     public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException {
         FormulaSet<Id> conflictFormulas = null;

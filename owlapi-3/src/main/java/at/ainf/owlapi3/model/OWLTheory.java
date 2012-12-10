@@ -176,7 +176,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         }*/
 
         Set<OWLLogicalAxiom> logicalAxioms = ontology.getLogicalAxioms();
-        getKnowledgeBase().addFormular(logicalAxioms);
+        getKnowledgeBase().addFormulas(logicalAxioms);
         //getKnowledgeBase().addFaultyFormulas(setminus(logicalAxioms, backgroundAxioms));
         this.original = ontology;
 

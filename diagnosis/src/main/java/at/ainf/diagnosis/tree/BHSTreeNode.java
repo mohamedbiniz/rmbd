@@ -2,6 +2,7 @@ package at.ainf.diagnosis.tree;
 
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.FormulaSetImpl;
+import at.ainf.diagnosis.tree.splitstrategy.MostFrequentSplitStrategy;
 import at.ainf.diagnosis.tree.splitstrategy.SimpleSplitStrategy;
 import at.ainf.diagnosis.tree.splitstrategy.SplitStrategy;
 
@@ -19,7 +20,7 @@ import java.util.Set;
 public class BHSTreeNode<Id> extends HSTreeNode<Id> {
 
     private ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
-    private SplitStrategy<Id> splitStrategy= new SimpleSplitStrategy<Id>();
+    private SplitStrategy<Id> splitStrategy= new MostFrequentSplitStrategy<Id>();
 
     public BHSTreeNode(Set<FormulaSet<Id>> conflict) {
         super(conflict);
@@ -45,16 +46,17 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
 
          newNodes = new ArrayList<Node<Id>>();
 
-        System.out.println("HS-Länge:"+ getPathLabels().size());
+     /*   System.out.println("HS-Länge:"+ getPathLabels().size());
         System.out.println("Anzahl Konflikte:"+conflict.size());
         System.out.println(conflict.iterator().next().size());
-        System.out.println("Expand!");
+        System.out.println("Expand!");*/
 
         if( !unitRule() ){
-            if(!lastConflictRule()){
-                subSetRule();
+           // if(!lastConflictRule2()){
+            if(getArcLabel()==null)
+               subSetRule();
                 splitRule();
-            }
+            //}
         }
 
       /*  for(SimpleNode<Id> n:newNodes){
@@ -94,7 +96,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
                 newConflicts.remove(c);
         }       */
 
-        System.out.println("Ignore size:" + newConflicts.iterator().next().size());
+        //System.out.println("Ignore size:" + newConflicts.iterator().next().size());
 
         if(newConflicts.size()>0)
         return newConflicts;
@@ -242,6 +244,116 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
             //hier vielleicht copy(cs)  oder nicht
             cses.add(cs);
         return cses;
+    }
+
+    //Update rules
+
+    public void updateNode(Set<Id> delete){
+
+         //Remove deleted elements from all conflicts
+        for(Id id:delete){
+            conflict=ignore(id,conflict);
+        }
+
+        Id splitElement= this.getLeftChild().getArcLabel();
+
+        //Rule 1
+        for(FormulaSet<Id> set: conflict){
+
+            if(set.contains(splitElement)){
+                if(set.size()==1){
+                    //remove right Subtree
+                   Node<Id> rightChild=getRightChild();
+                    removeChild(rightChild);
+                }
+                return;
+            }
+        }
+
+        //no set Contains splitElement => remove left Subtree
+           Node<Id> leftChild=getLeftChild();
+            removeChild(leftChild);
+
+        Node<Id> rightChild=getRightChild();
+        for(Node<Id> node :rightChild.getChildren()){
+            rightChild.removeChild(node);
+            this.addChild((HSTreeNode)node);
+
+        }
+        this.removeChild(rightChild);
+
+        //Update all Succesors
+
+        for(Node<Id> node:getChildren()){
+            ((BHSTreeNode)node).updateNode(delete);
+        }
+
+    }
+
+    private Node<Id> getLeftChild(){
+        for(Node<Id> node : getChildren()){
+            if(node.getArcLabel()!=null)
+                return node;
+
+        }
+        return null;
+    }
+
+    private Node<Id> getRightChild(){
+        for(Node<Id> node : getChildren()){
+            if(node.getArcLabel()==null)
+                return node;
+
+        }
+        return null;
+    }
+
+    public Set<Id> getIgnoredElements(){
+
+        Set<Id> result = new LinkedHashSet<Id>();
+
+        if(this.getArcLabel()==null&&this.getParent()!=null){
+            result.add((Id)((BHSTreeNode)getParent()).getLeftChild().getArcLabel());
+    }
+
+        if(getParent()!=null)
+        result.addAll(((BHSTreeNode)getParent()).getIgnoredElements());
+        return result;
+
+    }
+
+    public FormulaSet<Id> updateConflict(FormulaSet<Id> conflict){
+
+        FormulaSet<Id> result=conflict;
+
+
+        for(Id id : getIgnoredElements()){
+           if(conflict.contains(id))
+            result=removeElement(id,conflict);
+        }
+          return result;
+    }
+
+    public boolean lastConflictRule2(){
+
+        boolean foundElement=false;
+
+        if(conflict.size()==1){
+
+
+            foundElement=true;
+            Set<Id> c=conflict.iterator().next();
+
+            for(Id e:c){
+            //Id e=c.iterator().next();
+            BHSTreeNode node1=new BHSTreeNode(this,e);
+            node1.setAxiomSet(addToHS(e,conflict));
+            node1.setCostsEstimator(this.costsEstimator);
+            newNodes.add(node1);
+
+            }
+        }
+        return foundElement;
     }
 
 
