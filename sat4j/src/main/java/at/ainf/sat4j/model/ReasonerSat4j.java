@@ -1,6 +1,8 @@
 package at.ainf.sat4j.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
+import at.ainf.diagnosis.model.IReasoner;
+import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
@@ -55,6 +57,11 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
         } catch (TimeoutException e) {
             return false;
         }
+    }
+
+    @Override
+    public ReasonerSat4j newInstance() {
+        return new ReasonerSat4j(SolverFactory.newDefault());
     }
 
 }

@@ -190,7 +190,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
     }
     public void testResultsEqualTime(AbstractTreeSearch referenceSearch, boolean dualMode) throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-        String ont = "Transportation-SDA.owl";
+        String ont = "koala.owl";
 
         long normal = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();

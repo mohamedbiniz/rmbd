@@ -18,6 +18,7 @@ import at.ainf.sat4j.model.VecIntComparable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ISolver;
@@ -46,6 +47,7 @@ public class QuickXplainTest {
     }
 
 
+    @Ignore
     @Test
     public void testMulti() throws SolverException, InconsistentTheoryException {
         final int iterations = 1;
