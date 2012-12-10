@@ -91,6 +91,8 @@ public class HSTreeNode<Id> implements Node<Id> {
 
     @Override
     public boolean removeChild(Node<Id> node) {
+
+        if(node!=null)
         node.removeParent();
         return this.children.remove(node);
     }
@@ -285,5 +287,45 @@ public class HSTreeNode<Id> implements Node<Id> {
 
     public String toString() {
         return (isRoot()) ? "Root" : getArcLabel().toString();
+    }
+
+      public Set<HSTreeNode> getLeaves(){
+
+          Set<HSTreeNode> result = new LinkedHashSet<HSTreeNode>();
+
+          if(getChildren().isEmpty())
+              result.add(this);
+
+          else{
+              for(Node<Id> child:getChildren()){
+                  result.addAll(((HSTreeNode) child).getLeaves());
+              }
+          }
+           return result;
+
+      }
+
+    public Set<Set<Id>> getHittingSets(){
+
+        Set<Set<Id>> result = new LinkedHashSet<Set<Id>>();
+
+        for(Node<Id> node:getLeaves()){
+                result.add(node.getPathLabels());
+        }
+        return result;
+    }
+
+    public Set<FormulaSet<Id>> getConflicts(){
+        return conflict;
+    }
+
+    public int countNodes(){
+
+        int result=1;
+
+        for(Node node:getChildren()){
+            result+=((HSTreeNode)node).countNodes();
+        }
+        return result;
     }
 }

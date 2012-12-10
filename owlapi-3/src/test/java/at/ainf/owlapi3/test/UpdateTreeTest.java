@@ -75,6 +75,7 @@ public class UpdateTreeTest {
         th.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("isHardWorking Domain Person")));
 
         search.setMaxDiagnosesNumber(9);
+        //search.reset();
         search.start();
 
         th.getKnowledgeBase().removeEntailedTest(Collections.singleton(parser.parse("Marsupials DisjointWith Person")));
@@ -83,6 +84,7 @@ public class UpdateTreeTest {
         th.getKnowledgeBase().removeNonEntailedTest(Collections.singleton(parser.parse("isHardWorking Domain Person")));
 
         search.setMaxDiagnosesNumber(9);
+        search.reset();
         search.start();
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())

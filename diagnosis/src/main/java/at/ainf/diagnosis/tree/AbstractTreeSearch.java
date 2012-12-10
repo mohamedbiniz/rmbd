@@ -9,6 +9,7 @@
 package at.ainf.diagnosis.tree;
 
 import   _dev.TimeLog;
+import at.ainf.diagnosis.AbstractDebugger;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -35,7 +36,7 @@ import static _dev.TimeLog.stop;
  * Time: 08:04:41
  * To change this template use File | Settings | File Templates.
  */
-public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> implements TreeSearch<T, Id> {
+public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends AbstractDebugger<T, Id> implements TreeSearch<T, Id> {
 
     private int maxHittingSets = Integer.MAX_VALUE;
 
@@ -61,7 +62,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         this.searchStrategy = searchStrategy;
     }
 
-    private FormulaRenderer<Id> formulaRenderer;
+
 
 
     /*public void setLogic(TreeLogic<T,Id> treeLog) {
@@ -100,6 +101,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         quickConflict.setEntailments(entailments);
         quickConflict.setMeasure(measure);
         quickConflict.setNode(node);
+
+
 
         return (T)quickConflict;
     }
@@ -173,16 +176,16 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
 
     public Set<T> start() throws
             SolverException, NoConflictException, InconsistentTheoryException {
-        reset();
+        // reset();
         return searchDiagnoses();
     }
 
-    public Set<T> resume() throws
+    /*public Set<T> resume() throws
             SolverException, NoConflictException, InconsistentTheoryException {
         if (this.root == null)
             throw new RuntimeException("Nothing to resume!");
         return searchDiagnoses();
-    }
+    }*/
 
     public void reset() {
         //setMaxDiagnosesNumber(-1);
@@ -304,14 +307,6 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         loggerDual.info(prefix + message + formulaRenderer.renderAxiom(axioms));
     }
 
-    private int getDepth(Node<Id> node) {
-        if (node == null) return -1;
-        if (node.getParent() == null)
-            return 0;
-        else
-            return getDepth(node.getParent()) + 1;
-    }
-
     protected abstract boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException;
 
     /*protected boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException {
@@ -395,6 +390,14 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         setRoot(node);
     }
 
+    protected int getDepth(Node<Id> node) {
+        if (node == null) return -1;
+        if (node.getParent() == null)
+            return 0;
+        else
+            return getDepth(node.getParent()) + 1;
+    }
+
     //protected abstract SimpleNode<Id> createRootNode(Set<Id> conflict,CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
     /*
@@ -415,8 +418,9 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
             SolverException, NoConflictException, InconsistentTheoryException {
         // if conflict was already calculated
         //edited
-
-
+       /* if(getRoot()!=null)
+            System.out.println("Number of Nodes:"+((HSTreeNode)getRoot()).countNodes());
+             */
         //System.out.println("Berechne neuen Konflikt");
 
         Set<FormulaSet<Id>> quickConflict;
@@ -446,6 +450,12 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
 
         quickConflict = getSearcher().search(getSearchable(), list, pathLabels);
 
+        /*if(node instanceof BHSTreeNode){
+            for(FormulaSet<Id> set: quickConflict){
+                   ((BHSTreeNode) node).updateConflict(set);
+            }
+        } */
+
         //if(!searcher.isDual()) {
         if (logger.isInfoEnabled())
             logger.info("Found conflict: " + quickConflict);
@@ -470,6 +480,21 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> impleme
         if (node != null && !hasClosedParent(node.getParent())){
 
             node.setAxiomSet(new LinkedHashSet<FormulaSet<Id>>(quickConflict));
+
+        }
+
+        if(this instanceof BinaryTreeSearch && node!=null){
+
+         for(FormulaSet<Id> conflict: quickConflict) {
+            for(HSTreeNode<Id> leave: (Set<HSTreeNode>)((HSTreeNode)getRoot()).getLeaves()) {
+                if(!leave.isClosed() && !intersectsWith(conflict,leave.getPathLabels())) {
+                    //SEHR UNSCHÖN später ausbessern
+                    if(leave.getConflicts()!=null)
+                    leave.getConflicts().add(((BHSTreeNode)leave).updateConflict(conflict));
+                    else leave.setAxiomSet((FormulaSet<Id>)((BHSTreeNode)leave).updateConflict(conflict));
+                }
+            }
+        }
 
         }
         return quickConflict;

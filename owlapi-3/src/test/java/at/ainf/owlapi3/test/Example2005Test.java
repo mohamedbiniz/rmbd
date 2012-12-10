@@ -94,7 +94,7 @@ public class Example2005Test {
 
         //start.setSearchable(theory);
         OWLTheory t = new OWLTheory(new Reasoner.ReasonerFactory(),ontology,bax);
-        Debugger<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
+        SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(t);
         debugger.setMaxDiagnosesNumber(0);
 
         t.getKnowledgeBase().addPositiveTest(Collections.singleton(parser.parse("w Type not C")));

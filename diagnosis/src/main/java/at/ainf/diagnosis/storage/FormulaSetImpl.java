@@ -179,6 +179,9 @@ public class FormulaSetImpl<Id> implements FormulaSet<Id>, Comparable<FormulaSet
                 ", measure=" + measure;
         if (entailments != null)
             str += ", entailments=" + this.tempEntailments.size() + "/" + entailments.size();
+        for (Id o : this) {
+          str += o.toString();
+        }
         str += '}';
         return str;
     }

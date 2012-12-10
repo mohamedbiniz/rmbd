@@ -65,8 +65,24 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
 
     public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
 
+        //construct Set of Elements that must be deleted
+        Set<Id> delete = new LinkedHashSet<Id>();
 
+        for (FormulaSet<Id> ax : getRoot().getAxiomSets()) {
+            Set<Id> axioms = getSearcher().search(getSearchable(), (T)ax, null).iterator().next();
+
+            //identify invalid elements
+            for(Id id:ax){
+                if(!axioms.contains(id))
+                    delete.add(id);
+            }
+
+        }
+          ((BHSTreeNode)getRoot()).updateNode(delete);
     }
+
+
+
 
 /*  public Set<Set<Id>> computeDiagnoses() throws NoConflictException,SolverException,InconsistentTheoryException{
 
