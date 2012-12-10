@@ -19,6 +19,8 @@ public interface Node<Id> extends Comparable<Node<Id>>{
 
     boolean removeChild(Node<Id> node);
 
+
+
     void removeChildren();
 
     Set<Node<Id>> getChildren();
