@@ -38,12 +38,27 @@ public interface Searcher<F> {
      * @param searchable the theory that contains formulas of the background theory as well
      *                   as strategies, which must contain all formulas.
      * @param formulas   subset of formulas saved in the theory that might contain minimal conflicts.
-     * @param changes
+     * @param localChanges changes in the knowledge base that should be applied prior to execution of QuickXplain
+     *                     and rolled-back after execution
      * @return a collection of formulas, which correspond to a minimal conflict.
      * @throws NoConflictException is thrown if formulas are consistent
      * @throws SolverException     is thrown if any solver related problems occur.
      */
-    public Set<FormulaSet<F>> search(Searchable<F> searchable, final Collection<F> formulas, Set<F> changes)
+    public Set<FormulaSet<F>> search(Searchable<F> searchable, final Collection<F> formulas, Set<F> localChanges)
+            throws NoConflictException, SolverException, InconsistentTheoryException;
+
+    /**
+     * Calculates a minimal conflict if any.
+     *
+     *
+     * @param searchable the theory that contains formulas of the background theory as well
+     *                   as strategies, which must contain all formulas.
+     * @param formulas   subset of formulas saved in the theory that might contain minimal conflicts.
+     * @return a collection of formulas, which correspond to a minimal conflict.
+     * @throws NoConflictException is thrown if formulas are consistent
+     * @throws SolverException     is thrown if any solver related problems occur.
+     */
+    public Set<FormulaSet<F>> search(Searchable<F> searchable, final Collection<F> formulas)
             throws NoConflictException, SolverException, InconsistentTheoryException;
 
     //public boolean isDual();

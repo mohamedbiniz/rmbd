@@ -4,6 +4,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.tree.BinaryTreeSearch;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertTrue;
  * Time: 12:07
  * To change this template use File | Settings | File Templates.
  */
-public class KoalaResumTest {
+public class  KoalaResumTest {
 
     private OWLLogicalAxiom getAxiom(Set<FormulaSet<OWLLogicalAxiom>> result, int hs, int axiom) {
         return ((OWLLogicalAxiom)((FormulaSet<OWLLogicalAxiom>)result.toArray()[hs]).toArray()[axiom]);
@@ -48,7 +49,7 @@ public class KoalaResumTest {
     @Test
     public void searchKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream("ontologies/koala.owl");
         OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
@@ -79,6 +80,9 @@ public class KoalaResumTest {
         assertTrue(renderAxiom(getAxiom(result,2,1)).equals("Quokka SubClassOf isHardWorking value true"));
 
         OWLLogicalAxiom testcase = new MyOWLRendererParser(ontology).parse("Marsupials DisjointWith Person");
+
+        //New testcase
+        //OWLLogicalAxiom testcase = new MyOWLRendererParser(ontology).parse("KoalaWithPhD EquivalentTo Koala and (hasDegree value PhD)");
         theory.getKnowledgeBase().addEntailedTest(Collections.singleton(testcase));
 
         try {
