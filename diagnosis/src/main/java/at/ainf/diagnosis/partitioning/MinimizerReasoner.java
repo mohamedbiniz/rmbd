@@ -1,6 +1,7 @@
 package at.ainf.diagnosis.partitioning;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
+import at.ainf.diagnosis.model.IReasoner;
 
 import java.util.Set;
 
@@ -21,6 +22,11 @@ public class MinimizerReasoner<T> extends AbstractReasoner<T> {
     @Override
     public boolean isConsistent() {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public MinimizerReasoner<T> newInstance() {
+        throw new IllegalStateException("This reasoner can not give a new instance");
     }
 
 }
