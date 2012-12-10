@@ -488,6 +488,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
          for(FormulaSet<Id> conflict: quickConflict) {
             for(HSTreeNode<Id> leave: (Set<HSTreeNode>)((HSTreeNode)getRoot()).getLeaves()) {
                 if(!leave.isClosed() && !intersectsWith(conflict,leave.getPathLabels())) {
+                    ((BHSTreeNode<Id>)leave).addNewConflict(conflict);
                     //SEHR UNSCHÖN später ausbessern
                     if(leave.getConflicts()!=null)
                     leave.getConflicts().add(((BHSTreeNode)leave).updateConflict(conflict));

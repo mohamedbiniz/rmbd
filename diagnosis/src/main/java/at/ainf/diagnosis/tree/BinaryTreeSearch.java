@@ -68,7 +68,13 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
         //construct Set of Elements that must be deleted
         Set<Id> delete = new LinkedHashSet<Id>();
 
-        for (FormulaSet<Id> ax : getRoot().getAxiomSets()) {
+
+          //updateNode(((BHSTreeNode)getRoot()),delete);
+    }
+
+    public void updateNode(BHSTreeNode<Id> node,Set<Id> delete)  throws SolverException, InconsistentTheoryException, NoConflictException{
+
+        for (FormulaSet<Id> ax : node.getNewConflicts()) {
             Set<Id> axioms = getSearcher().search(getSearchable(), (T)ax, null).iterator().next();
 
             //identify invalid elements
@@ -78,10 +84,14 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
             }
 
         }
-          ((BHSTreeNode)getRoot()).updateNode(delete);
+              node.updateNode(delete);
+
+
+        for(Node<Id> child:node.getChildren()){
+            updateNode((BHSTreeNode<Id>)child,delete);
+        }
+
     }
-
-
 
 
 /*  public Set<Set<Id>> computeDiagnoses() throws NoConflictException,SolverException,InconsistentTheoryException{

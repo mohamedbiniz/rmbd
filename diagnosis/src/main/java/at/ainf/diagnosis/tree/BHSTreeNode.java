@@ -21,6 +21,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
 
     private ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
     private SplitStrategy<Id> splitStrategy= new MostFrequentSplitStrategy<Id>();
+    private Set<FormulaSet<Id>> newConflicts = new LinkedHashSet<FormulaSet<Id>>();
 
     public BHSTreeNode(Set<FormulaSet<Id>> conflict) {
         super(conflict);
@@ -275,18 +276,21 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
             removeChild(leftChild);
 
         Node<Id> rightChild=getRightChild();
+        Set<Node<Id>> removeChild= new LinkedHashSet<Node<Id>>();
+
         for(Node<Id> node :rightChild.getChildren()){
-            rightChild.removeChild(node);
+            removeChild.add(node);
             this.addChild((HSTreeNode)node);
 
         }
         this.removeChild(rightChild);
+        rightChild.getChildren().removeAll(removeChild);
 
         //Update all Succesors
 
-        for(Node<Id> node:getChildren()){
+        /*for(Node<Id> node:getChildren()){
             ((BHSTreeNode)node).updateNode(delete);
-        }
+        } */
 
     }
 
@@ -355,6 +359,16 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
         }
         return foundElement;
     }
+
+    public Set<FormulaSet<Id>> getNewConflicts(){
+        return newConflicts;
+    }
+
+    public void addNewConflict(FormulaSet<Id> set){
+        newConflicts.add(set);
+    }
+
+
 
 
 }
