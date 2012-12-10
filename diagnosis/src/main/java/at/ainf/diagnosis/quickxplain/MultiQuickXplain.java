@@ -148,6 +148,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             if(foundAxiom == null) this.pool.shutdown();
             else{
                 this.pool.shutdown();
+
             }
             formulaSet = fqx.get();
             if (formulaSet != null)
