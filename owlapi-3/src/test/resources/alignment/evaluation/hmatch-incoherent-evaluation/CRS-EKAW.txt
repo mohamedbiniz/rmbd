@@ -1,0 +1,27 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CRS.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/EKAW.owl
+sourceNamespace = http://CRS.owl
+targetNamespace = http://EKAW.owl
+
++ abstract = Abstract | 0.75
+> article = Conference_Paper | 0.6533333333333333
+> article = Demo_Paper | 0.6533333333333333
+> article = Industrial_Paper | 0.6533333333333333
+> article = Poster_Paper | 0.6533333333333333
+> article = Regular_Paper | 0.6533333333333333
+> article = Workshop_Paper | 0.6533333333333333
++ author = Paper_Author | 0.9
+> chair = Demo_Chair | 0.7333333333333334
++ conference = Conference | 1.0
++ document = Document | 0.9310344827586207
++ event = Event | 0.8095238095238095
+> participant = Early-Registered_Participant | 0.7333333333333334
+> participant = Late-Registered_Participant | 0.7333333333333334
+- pc_meeting = Conference | 0.8200000000000001
++ person = Person | 0.8409090909090908
+- program = Document | 0.8
+> review = Negative_Review | 0.7333333333333334
+> review = Neutral_Review | 0.7333333333333334
+> review = Positive_Review | 0.7333333333333334
+- reviewer = Paper_Author | 0.8200000000000001
+- session = Conference | 0.9

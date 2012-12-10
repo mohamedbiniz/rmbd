@@ -1,0 +1,19 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/EKAW.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/SIGKDD.owl
+sourceNamespace = http://EKAW.owl
+targetNamespace = http://SIGKDD.owl
+
++ Conference = Conference | 0.35
+? SC_Member = Program_Committee_member | 0.32848224
++ Abstract = Abstract | 0.4220147
++ PC_Chair = Program_Chair | 0.3203392
++ Review = Review | 0.4132959
++ Student = Registration_Student | 0.34321028
+- Proceedings = Place | 0.13125
+- Agency_Staff_Member = Registration_SIGKDD_Member | 0.24375159
+- Agency_Staff_Member = Registration_SIGMOD_Member | 0.24375159
++ Person = Person | 0.35
++ Document = Document | 0.49985456
+- Tutorial_Chair = General_Chair | 0.32573393
++ Paper = Paper | 0.39641052
++ Invited_Speaker = Invited_Speaker | 0.35
