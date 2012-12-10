@@ -38,7 +38,7 @@ public class QuickXplainTest {
         }
     }*/
 
-    @Test
+    @Ignore @Test
     public void testNew() throws SolverException, InconsistentTheoryException {
         Searcher<IVecIntComparable> quick = new QuickXplain<IVecIntComparable>();
         for (int i = 0; i < 1000; i++) {

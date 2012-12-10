@@ -459,7 +459,6 @@ public class Example2Test extends AbstractExample {
 
     }
 
-    @Ignore
     @Test
     public void testAllQueryEntailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
