@@ -15,7 +15,7 @@ import java.util.*;
 
 public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable> {
 
-    private boolean createNew = false;
+    //private boolean createNew = false;
 
     public PropositionalTheory(ISolver solver) {
         super();
@@ -37,15 +37,15 @@ public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable>
 
     public boolean verifyConsistency() throws SolverException {
 
-        LinkedHashSet<IVecIntComparable> backup = new LinkedHashSet<IVecIntComparable>();
-        backup.addAll(getReasoner().getFormularCache());
+        //LinkedHashSet<IVecIntComparable> backup = new LinkedHashSet<IVecIntComparable>();
+        //backup.addAll(getReasoner().getFormulasCache());
 
-        getReasoner().addFormularsToCache(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
         boolean result = getReasoner().isConsistent();
 
 
-        getReasoner().clearFormularCache();
-        getReasoner().addFormularsToCache(backup);
+        //getReasoner().clearFormulasCache();
+        //getReasoner().addFormulasToCache(backup);
 
         return result;
     }

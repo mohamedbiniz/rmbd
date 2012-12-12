@@ -55,7 +55,7 @@ public class QueryMinimizer<Id> extends BaseSearchableObject<Id> {
     }
 
     public boolean verifyConsistency() throws SolverException {
-        return verifyQuery(((AbstractReasoner<Id>)getReasoner()).getFormularCache());
+        return verifyQuery(((AbstractReasoner<Id>)getReasoner()).getFormulasCache());
     }
 
 

@@ -66,7 +66,7 @@ public class PropositionalTheoryTest {
             IVecIntComparable fl = th.addClause(lclause);
             list.add(fl);
         }
-        th.getReasoner().addFormularsToCache(list);
+        th.getReasoner().addFormulasToCache(list);
         addTheories(--numberOfTheories, from, th);
     }
 
@@ -84,6 +84,6 @@ public class PropositionalTheoryTest {
         clause = new int[]{2};
         list.add(th.addClause(clause));
 
-        th.getReasoner().addFormularsToCache(list);
+        th.getReasoner().addFormulasToCache(list);
     }
 }

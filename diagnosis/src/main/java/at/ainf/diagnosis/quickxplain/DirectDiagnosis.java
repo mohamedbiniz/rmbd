@@ -39,7 +39,7 @@ public class DirectDiagnosis<Id> extends QuickXplain<Id> {
 
     @Override
     public void postProcessFormulas(FormulaSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
-        ((AbstractReasoner<Id>)searchable.getReasoner()).addFormularsToCache(formulas);
+        ((AbstractReasoner<Id>)searchable.getReasoner()).addFormulasToCache(formulas);
         searchable.verifyRequirements();
     }
 

@@ -11,65 +11,89 @@ import java.util.*;
  */
 public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
-    private final LinkedHashSet<T> reasonedFormularsCache = new LinkedHashSet<T>();
+    protected final Set<T> formulasCache = new HashSet<T>();
 
-    protected Set<T> reasonedFormulars = new LinkedHashSet<T>();
+    protected Set<T> reasonerFormulas = new LinkedHashSet<T>();
 
+    private Set<T> backgroundFormulas = null;
 
-    public boolean addFormularsToCache(Collection<T> formulas) {
-        if (formulas == null)
-            return false;
-
-        this.reasonedFormularsCache.addAll(formulas);
-        return true;
+    public Set<T> getBackgroundFormulas() {
+        return backgroundFormulas;
     }
 
-    public void removeFormularsFromCache(Collection<T> formulas) {
-        this.reasonedFormularsCache.removeAll(formulas);
+    public void setBackgroundFormulas(Set<T> backgroundFormulas) {
+        this.backgroundFormulas = backgroundFormulas;
     }
 
-    public void clearFormularCache() {
-        reasonedFormularsCache.clear();
+    public boolean addFormulasToCache(Collection<T> formulas) {
+        if (formulas != null){
+            setSync(false);
+            return this.formulasCache.addAll(formulas);
+        }
+        return false;
     }
 
-    public Set<T> getFormularCache() {
-        return Collections.unmodifiableSet(this.reasonedFormularsCache);
+    public boolean removeFormulasFromCache(Collection<T> formulas) {
+        setSync(false);
+        return this.formulasCache.removeAll(formulas);
+    }
+
+    public void clearFormulasCache() {
+        setSync(false);
+        if (backgroundFormulas != null)
+            this.formulasCache.retainAll(this.backgroundFormulas);
+        else
+            formulasCache.clear();
+    }
+
+    public Set<T> getFormulasCache() {
+        return Collections.unmodifiableSet(this.formulasCache);
     }
 
 
-    public void setReasonedFormulars(Set<T> reasonedFormulars) {
-        this.reasonedFormulars = reasonedFormulars;
+    protected void setReasonerFormulas(Set<T> reasonerFormulas) {
+        this.reasonerFormulas = reasonerFormulas;
     }
 
-    public Set<T> getReasonedFormulars() {
-        return Collections.unmodifiableSet(reasonedFormulars);
+    protected Set<T> getReasonerFormulas() {
+        return Collections.unmodifiableSet(reasonerFormulas);
     }
 
 
     protected abstract void updateReasonerModel(Set<T> axiomsToAdd, Set<T> axiomsToRemove);
 
     public void sync() {
+        if (isSync())
+            return;
         Set<T> axiomsToAdd = new HashSet<T>();
         Set<T> axiomsToRemove = new HashSet<T>();
 
-        for (T axiom : getFormularCache()) {
-            if (!getReasonedFormulars().contains(axiom))
+        for (T axiom : getFormulasCache()) {
+            if (!getReasonerFormulas().contains(axiom))
                 axiomsToAdd.add(axiom);
         }
-
-        for (T axiom : getReasonedFormulars()) {
-            if (!getFormularCache().contains(axiom))
+        for (T axiom : getReasonerFormulas()) {
+            if (!getFormulasCache().contains(axiom))
                 axiomsToRemove.add(axiom);
         }
 
-        reasonedFormulars.clear();
-        reasonedFormulars.addAll(getFormularCache());
+        reasonerFormulas.clear();
+        reasonerFormulas.addAll(getFormulasCache());
 
         if (!axiomsToAdd.isEmpty() || !axiomsToRemove.isEmpty())
-            updateReasonerModel(axiomsToAdd,axiomsToRemove);
-
+            updateReasonerModel(axiomsToAdd, axiomsToRemove);
+        setSync(true);
     }
 
+    private boolean sync = false;
+
+    private boolean isSync(){
+        return this.sync;
+    }
+
+    public void setSync(boolean sync) {
+        this.sync = sync;
+    }
 
     public boolean isEntailed(Set<T> test) {
 
@@ -85,5 +109,6 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
         throw new RuntimeException("This theory does not support coherency checks");
     }
+
 
 }
