@@ -55,7 +55,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
      * min threads to 1 and has queue of the size 10
      */
     public MultiQuickXplain() {
-        this(1, 2, 10);
+        this(2, 10, 10);
     }
 
     public MultiQuickXplain(int minThreads, int maxThreads, int maxConflicts){
@@ -107,6 +107,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             try {
                 while (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
                 }
+                System.out.println(pool.getLargestPoolSize() + " : " + pool.getCompletedTaskCount());
             } catch (InterruptedException e) {
                 throw new SolverException("Computation of conflicts was interrupted!");
             }
@@ -144,12 +145,17 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         Future<FormulaSet<Id>> fqx = getThreadsPool().submit(qxThread);
         FormulaSet<Id> formulaSet = null;
         try {
+
             Id foundAxiom = listener.getFoundAxiom();
             if(foundAxiom == null) this.pool.shutdown();
             else{
-                this.pool.shutdown();
-
+                //this.pool.shutdown();
+                Searchable<Id> ct = c.copy();
+                Set<Id> cu = new LinkedHashSet<Id>(u);
+                cu.remove(foundAxiom);
+                quickXplain(ct, cu);
             }
+
             formulaSet = fqx.get();
             if (formulaSet != null)
                 results.add(formulaSet);

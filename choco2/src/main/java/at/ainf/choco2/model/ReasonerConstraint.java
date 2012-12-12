@@ -1,7 +1,6 @@
 package at.ainf.choco2.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.model.IReasoner;
 import choco.cp.model.CPModel;
 import choco.cp.solver.CPSolver;
 import choco.kernel.model.Model;
@@ -27,7 +26,7 @@ public class ReasonerConstraint extends AbstractReasoner<Constraint> {
 
     public ReasonerConstraint(Model model) {
         this.model = model;
-        setReasonedFormulars(getConstraintsInModel());
+        setReasonerFormulas(getConstraintsInModel());
     }
 
     @Override

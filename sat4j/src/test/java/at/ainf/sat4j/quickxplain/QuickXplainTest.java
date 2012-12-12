@@ -38,7 +38,7 @@ public class QuickXplainTest {
         }
     }*/
 
-    @Ignore @Test
+    @Test
     public void testNew() throws SolverException, InconsistentTheoryException {
         Searcher<IVecIntComparable> quick = new QuickXplain<IVecIntComparable>();
         for (int i = 0; i < 1000; i++) {
@@ -47,14 +47,14 @@ public class QuickXplainTest {
     }
 
 
-    @Ignore
     @Test
-    public void testMulti() throws SolverException, InconsistentTheoryException {
+    public void testMulti() throws SolverException, InconsistentTheoryException, NoConflictException {
         final int iterations = 1;
         Searcher<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
         for (int i = 0; i < iterations; i++) {
             runQuick(quick);
         }
+        run2Quick(quick);
     }
 
     public void runQuick(Searcher<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException {
@@ -121,6 +121,42 @@ public class QuickXplainTest {
         list.remove(fm5);
         assertTrue(fl.size() == 3);
         assertTrue(fl.containsAll(list));
+    }
+
+
+    public void run2Quick(Searcher<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException, NoConflictException {
+
+        int[] fm10 = new int[]{10};
+
+
+        ISolver reasoner = SolverFactory.newDefault();
+        reasoner.setExpectedNumberOfClauses(20);
+        reasoner.newVar(10);
+        PropositionalTheory theory = new PropositionalTheory(reasoner);
+        theory.getKnowledgeBase().addBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(fm10)));
+
+        List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
+        check(quick, theory, list, true);
+
+        List<int[]> vec = new ArrayList<int[]>();
+
+        vec.add(new int[]{-1, -2, -3, 4});
+        vec.add(new int[]{1});
+        vec.add(new int[]{2});
+        vec.add(new int[]{3});
+        vec.add(new int[]{-4});
+        vec.add(new int[]{5});
+        vec.add(new int[]{6, -7});
+        vec.add(new int[]{6, 7});
+        vec.add(new int[]{-6});
+
+        Collection<IVecIntComparable> test = new LinkedList<IVecIntComparable>();
+        for (int[] e : vec)
+            test.add(theory.addClause(e));
+        list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
+
+        Set<FormulaSet<IVecIntComparable>> conflict = quick.search(theory, list);
+        assertEquals(conflict.size(),2);
     }
 
     private Collection<IVecIntComparable> check(Searcher<IVecIntComparable> quick, PropositionalTheory theory,

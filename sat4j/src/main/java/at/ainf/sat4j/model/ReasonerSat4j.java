@@ -1,12 +1,13 @@
 package at.ainf.sat4j.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.model.IReasoner;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -26,8 +27,8 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
 
     @Override
     protected void updateReasonerModel(Set<IVecIntComparable> axiomsToAdd, Set<IVecIntComparable> axiomsToRemove) {
-        solver.reset();
-        for (IVecIntComparable stat : getReasonedFormulars()) {
+        //solver.reset();
+        for (IVecIntComparable stat : getReasonerFormulas()) {
             try {
                 solver.addClause(stat);
             } catch (ContradictionException e) {
@@ -36,9 +37,18 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
         }
     }
 
+    public boolean removeFormulasFromCache(Collection<IVecIntComparable> formulas) {
+        setSync(false);
+        boolean res = false;
+        for (IVecIntComparable next : formulas) {
+            res |= formulasCache.remove(next);
+        }
+        return res;
+    }
+
     protected int getNumOfLiterals() {
         int numOfLiterals = 0;
-        for (IVecIntComparable formular : getFormularCache())
+        for (IVecIntComparable formular : getFormulasCache())
             numOfLiterals += formular.size();
         return numOfLiterals;
 
@@ -49,7 +59,7 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
         try {
             solver.reset();
             solver.newVar(getNumOfLiterals());
-            solver.setExpectedNumberOfClauses(getFormularCache().size());
+            solver.setExpectedNumberOfClauses(getFormulasCache().size());
             sync();
 
             return solver.isSatisfiable();

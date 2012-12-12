@@ -14,9 +14,6 @@ import java.util.Set;
  */
 public interface IReasoner<T> {
 
-
-
-
     public boolean isConsistent();
 
     public boolean isCoherent();
@@ -27,4 +24,5 @@ public interface IReasoner<T> {
 
     public IReasoner<T> newInstance();
 
+    void setBackgroundFormulas(Set<T> backgroundFormulas);
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 class QXAxiomListener<Id> {
     Id axiom = null;
-    boolean satisfiable = false;
+    boolean released = false;
     final ReentrantLock lock;
     private final Condition addedAxiom;
 
@@ -21,27 +21,33 @@ class QXAxiomListener<Id> {
         this.addedAxiom = lock.newCondition();
     }
 
-    public void setSatisfiable() {
+    public void release() {
         this.lock.lock();
-        this.satisfiable = true;
-        addedAxiom.signal();
-        lock.unlock();
+        try {
+            this.released = true;
+            addedAxiom.signal();
+        } finally {
+            this.lock.unlock();
+        }
     }
 
     public void setFoundAxiom(Id axiom) {
         if (this.axiom != null)
             return;
         this.lock.lock();
-        this.axiom = axiom;
-        addedAxiom.signal();
-        this.lock.unlock();
+        try {
+            this.axiom = axiom;
+            addedAxiom.signal();
+        } finally {
+            this.lock.unlock();
+        }
     }
 
     public Id getFoundAxiom() throws InterruptedException {
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
-            while (!satisfiable && this.axiom == null)
+            while (!released && this.axiom == null)
                 addedAxiom.await();
             return this.axiom;
         } finally {

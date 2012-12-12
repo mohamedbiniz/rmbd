@@ -214,8 +214,8 @@ public class DualTreeTest {//extends BasePerformanceTests {
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = referenceSearch.getDiagnoses();
         dual = System.currentTimeMillis() - dual;
 
-        logger.info("normal " + new CalculateDiagnoses().getStringTime(normal) + " subsets: " + theoryNormal.getCache().size());
-        logger.info("dual " + new CalculateDiagnoses().getStringTime(dual) + " subsets: " + theoryDual.getCache().size());
+        logger.info("normal " + new CalculateDiagnoses().getStringTime(normal));
+        logger.info("dual " + new CalculateDiagnoses().getStringTime(dual));
 
         assert (resultNormal.equals(resultDual));
 
@@ -341,8 +341,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
                 + entry2.getMeanWin() + " num of query " + entry2.getMeanQuery() +
                 " time " + new CalculateDiagnoses().getStringTime(timeDual) + " found correct diag " + foundCorrectD2 +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
-                " has negative tests " + hasNegativeTestcases + " diagnoses in storage " + daStr +
-                " cached subsets " + theoryDual.getCache().size()
+                " has negative tests " + hasNegativeTestcases + " diagnoses in storage " + daStr
         );
         Assert.assertTrue(foundCorrectD2);
         theoryDual.getKnowledgeBase().clearTestCases();
@@ -385,8 +384,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
                 new CalculateDiagnoses().getStringTime(timeNormal) + " found correct diag " + foundCorrectD +
                 " diagnoses: " + diagnosesCalc + " conflict  " + conflictsCalc +
-                " has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr +
-                " cached subsets " + theoryNormal.getCache().size()
+                " has negative testst " + hasNegativeTestcases + " diagnoses in storage " + daStr
         );
         Assert.assertTrue(foundCorrectD);
         queries.add(entry.getMeanQuery());
@@ -403,7 +401,6 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ontology, false);
         searchNormal.setSearchable(theoryNormal);
-        theoryNormal.useCache(useSubsets, threshold);
         HashMap<ManchesterOWLSyntax, BigDecimal> map = new CalculateDiagnoses().getProbabMap();
         OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theoryNormal);
         es.updateKeywordProb(map);
@@ -416,7 +413,6 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ontology, true);
-        theoryDual.useCache(useSubsets, threshold);
         searchDual.setSearchable(theoryDual);
         //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>, OWLLogicalAxiom>());
         map = new CalculateDiagnoses().getProbabMap();

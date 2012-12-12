@@ -56,68 +56,84 @@ public class BaseSearchableObject<T> implements Searchable<T> {
 
     public boolean areTestsConsistent() throws SolverException {
         // clear stack
-        ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
+        ((AbstractReasoner<T>) getReasoner()).clearFormulasCache();
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(negate(test));
+            ((AbstractReasoner<T>) getReasoner()).addFormulasToCache(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getPositiveTests()) {
-            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(test);
+            ((AbstractReasoner<T>) getReasoner()).addFormulasToCache(test);
         }
         for (Set<T> test : getKnowledgeBase().getEntailedTests()) {
-            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(negate(test));
+            ((AbstractReasoner<T>) getReasoner()).addFormulasToCache(negate(test));
         }
         for (Set<T> test : getKnowledgeBase().getNonentailedTests()) {
-            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(test);
+            ((AbstractReasoner<T>) getReasoner()).addFormulasToCache(test);
         }
         boolean res = verifyConsistency();
-        ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
+        //((AbstractReasoner<T>) getReasoner()).clearFormulasCache();
         return res;
     }
 
-    public void registerTestCases() throws SolverException, InconsistentTheoryException {
+    private boolean registered = false;
 
-        for (Set<T> test : getKnowledgeBase().getEntailedTests())
-            getKnowledgeBase().addNegativeTest(negate(test));
-        for (Set<T> test : getKnowledgeBase().getNonentailedTests())
-            getKnowledgeBase().addPositiveTest(negate(test));
-
-
-
-        for (Set<T> testCase : getKnowledgeBase().getPositiveTests())
-            getKnowledgeBase().addBackgroundFormulas(testCase);
-
+    public boolean hasRegisteredTests() {
+        return registered;
     }
 
-    public void unregisterTestCases() throws SolverException {
-        for (Set<T> test : getKnowledgeBase().getEntailedTests())
-            for (T negatedTest : negate(test))
-                getKnowledgeBase().removeNegativeTest(Collections.singleton(negatedTest));
-        for (Set<T> test : getKnowledgeBase().getNonentailedTests())
-            for (T negatedTest : negate(test))
-                getKnowledgeBase().removePositiveTest(Collections.singleton(negatedTest));
+    public final void registerTestCases() throws SolverException, InconsistentTheoryException {
+        Set<T> tests = new HashSet<T>();
         for (Set<T> testCase : getKnowledgeBase().getPositiveTests())
-            getKnowledgeBase().removeBackgroundFormulas(testCase);
+            tests.addAll(testCase);
+        for (Set<T> testCase : getKnowledgeBase().getEntailedTests())
+            tests.addAll(testCase);
 
+        getKnowledgeBase().addBackgroundFormulas(tests);
+        getReasoner().setBackgroundFormulas(getKnowledgeBase().getBackgroundFormulas());
+        this.registered = true;
+    }
+
+    public final void unregisterTestCases() throws SolverException {
+        Set<T> tests = new HashSet<T>();
+        for (Set<T> testCase : getKnowledgeBase().getPositiveTests())
+            tests.addAll(testCase);
+        for (Set<T> testCase : getKnowledgeBase().getEntailedTests())
+            tests.addAll(testCase);
+
+        getKnowledgeBase().removeBackgroundFormulas(tests);
+        getReasoner().setBackgroundFormulas(getKnowledgeBase().getBackgroundFormulas());
+        this.registered = false;
+    }
+
+    protected BaseSearchableObject<T> getNewInstance() {
+        return new BaseSearchableObject<T>();
+    }
+
+    @Override
+    public Searchable<T> copy() {
+        BaseSearchableObject<T> cp = getNewInstance();
+        cp.setKnowledgeBase(getKnowledgeBase());
+        cp.setReasoner(getReasoner().newInstance());
+        return cp;
     }
 
     public boolean testDiagnosis(Collection<T> diag) throws SolverException {
         List<T> kb = new LinkedList<T>(getKnowledgeBase().getFaultyFormulas());
         // apply diagnosis
         kb.removeAll(diag);
-        ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
+        //((AbstractReasoner<T>) getReasoner()).clearFormulasCache();
         // positive test cases are in background theory
-        ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(getKnowledgeBase().getBackgroundFormulas());
-        ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(kb);
+        //((AbstractReasoner<T>) getReasoner()).addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
+        ((AbstractReasoner<T>) getReasoner()).addFormulasToCache(kb);
 
         for (Set<T> test : getKnowledgeBase().getNegativeTests()) {
-            ((AbstractReasoner<T>)getReasoner()).addFormularsToCache(test);
+            ((AbstractReasoner<T>) getReasoner()).addFormulasToCache(test);
             if (verifyRequirements()) {
-                ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
+                ((AbstractReasoner<T>) getReasoner()).clearFormulasCache();
                 return false;
             }
-            ((AbstractReasoner<T>)getReasoner()).removeFormularsFromCache(test);
+            ((AbstractReasoner<T>) getReasoner()).removeFormulasFromCache(test);
         }
-        ((AbstractReasoner<T>)getReasoner()).clearFormularCache();
+        ((AbstractReasoner<T>) getReasoner()).clearFormulasCache();
         return true;
     }
 
