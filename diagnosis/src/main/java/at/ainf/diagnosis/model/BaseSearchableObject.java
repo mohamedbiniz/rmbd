@@ -112,7 +112,9 @@ public class BaseSearchableObject<T> implements Searchable<T> {
     public Searchable<T> copy() {
         BaseSearchableObject<T> cp = getNewInstance();
         cp.setKnowledgeBase(getKnowledgeBase());
-        cp.setReasoner(getReasoner().newInstance());
+        IReasoner<T> nreasoner = getReasoner().newInstance();
+        cp.setReasoner(nreasoner);
+        ((AbstractReasoner<T>) getReasoner()).addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
         return cp;
     }
 

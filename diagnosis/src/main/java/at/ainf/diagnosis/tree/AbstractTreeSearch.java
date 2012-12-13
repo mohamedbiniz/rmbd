@@ -450,6 +450,9 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
         quickConflict = getSearcher().search(getSearchable(), list, pathLabels);
 
+        if (quickConflict.isEmpty())
+            throw new NoConflictException("Theory is consistent");
+
         /*if(node instanceof BHSTreeNode){
             for(FormulaSet<Id> set: quickConflict){
                    ((BHSTreeNode) node).updateConflict(set);

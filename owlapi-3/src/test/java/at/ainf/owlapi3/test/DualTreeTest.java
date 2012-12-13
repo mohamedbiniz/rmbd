@@ -4,6 +4,7 @@ import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
+import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
@@ -34,6 +35,7 @@ import java.util.*;
 
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType;
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType.MINSCORE;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -188,6 +190,20 @@ public class DualTreeTest {//extends BasePerformanceTests {
         testResultsEqualTime(binary, false);
 
     }
+
+    @Test
+    public void testResultsMultiThreadedTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        binary.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+        binary.setSearcher(new MultiQuickXplain<OWLLogicalAxiom>());
+
+        testResultsEqualTime(binary, false);
+
+    }
+
+
     public void testResultsEqualTime(AbstractTreeSearch referenceSearch, boolean dualMode) throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ont = "koala.owl";
@@ -217,7 +233,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         logger.info("normal " + new CalculateDiagnoses().getStringTime(normal));
         logger.info("dual " + new CalculateDiagnoses().getStringTime(dual));
 
-        assert (resultNormal.equals(resultDual));
+        assertEquals(resultNormal, resultDual);
 
     }
 

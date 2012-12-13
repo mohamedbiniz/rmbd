@@ -34,7 +34,8 @@ class FormulaList<Id> implements Collection<Id> {
     private final int lower;
 
     protected FormulaList(Collection<Id> formulas) {
-        this.formulas = Collections.unmodifiableList(new ArrayList<Id>(formulas));
+        ArrayList<Id> list = new ArrayList<Id>(formulas);
+        this.formulas = Collections.unmodifiableList(list);
         this.lower = 0;
         this.upper = formulas.size() - 1;
     }
