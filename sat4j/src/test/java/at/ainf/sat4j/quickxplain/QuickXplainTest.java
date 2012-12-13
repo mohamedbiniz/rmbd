@@ -54,8 +54,8 @@ public class QuickXplainTest {
         for (int i = 0; i < iterations; i++) {
             runQuick(quick);
         }
-        run2Quick(quick);
     }
+
 
     public void runQuick(Searcher<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException {
 
@@ -123,11 +123,12 @@ public class QuickXplainTest {
         assertTrue(fl.containsAll(list));
     }
 
+    @Test
+    public void run2Quick() throws SolverException, InconsistentTheoryException, NoConflictException {
 
-    public void run2Quick(Searcher<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException, NoConflictException {
+        Searcher<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
 
         int[] fm10 = new int[]{10};
-
 
         ISolver reasoner = SolverFactory.newDefault();
         reasoner.setExpectedNumberOfClauses(20);
@@ -146,9 +147,20 @@ public class QuickXplainTest {
         vec.add(new int[]{3});
         vec.add(new int[]{-4});
         vec.add(new int[]{5});
+
         vec.add(new int[]{6, -7});
         vec.add(new int[]{6, 7});
         vec.add(new int[]{-6});
+
+        vec.add(new int[]{16, -17});
+        vec.add(new int[]{16, 17});
+        vec.add(new int[]{-16});
+
+        vec.add(new int[]{8, 9});
+        vec.add(new int[]{-8, 10});
+        vec.add(new int[]{-9, 11});
+        vec.add(new int[]{-10, -11});
+        vec.add(new int[]{-11});
 
         Collection<IVecIntComparable> test = new LinkedList<IVecIntComparable>();
         for (int[] e : vec)
@@ -156,7 +168,7 @@ public class QuickXplainTest {
         list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
 
         Set<FormulaSet<IVecIntComparable>> conflict = quick.search(theory, list);
-        assertEquals(conflict.size(),2);
+        assertEquals(conflict.size(),3);
     }
 
     private Collection<IVecIntComparable> check(Searcher<IVecIntComparable> quick, PropositionalTheory theory,

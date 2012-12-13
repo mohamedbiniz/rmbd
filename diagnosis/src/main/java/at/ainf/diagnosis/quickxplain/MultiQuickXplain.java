@@ -23,10 +23,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.EventListener;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 
 import static _dev.TimeLog.start;
@@ -107,7 +104,8 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             try {
                 while (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
                 }
-                System.out.println(pool.getLargestPoolSize() + " : " + pool.getCompletedTaskCount());
+                if (logger.isInfoEnabled())
+                    logger.info("Pool terminated: " + pool.getLargestPoolSize() + " / " + pool.getCompletedTaskCount());
             } catch (InterruptedException e) {
                 throw new SolverException("Computation of conflicts was interrupted!");
             }
@@ -145,10 +143,13 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         Future<FormulaSet<Id>> fqx = getThreadsPool().submit(qxThread);
         FormulaSet<Id> formulaSet = null;
         try {
-
             Id foundAxiom = listener.getFoundAxiom();
             if(foundAxiom == null) this.pool.shutdown();
             else{
+                if (logger.isInfoEnabled())
+                    logger.info("Found axiom " + foundAxiom + " and starting a new task. Active "
+                            + pool.getActiveCount() + " complete " + pool.getCompletedTaskCount()
+                            + " threads " + pool.getLargestPoolSize());
                 //this.pool.shutdown();
                 Searchable<Id> ct = c.copy();
                 Set<Id> cu = new LinkedHashSet<Id>(u);

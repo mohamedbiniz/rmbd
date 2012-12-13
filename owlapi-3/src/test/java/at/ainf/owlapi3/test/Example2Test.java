@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.test;
 
+import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.BinaryTreeSearch;
 import at.ainf.diagnosis.tree.HsTreeSearch;
@@ -77,9 +78,9 @@ public class Example2Test extends AbstractExample {
         D2(new Axiom[]{Axiom.AX3}),
         D3(new Axiom[]{Axiom.AX4, Axiom.AX5}),
         D4(new Axiom[]{Axiom.AX4, Axiom.AX2}),
-        D5(new Axiom[]{Axiom.AX4, Axiom.AX3}),
         // these diagnoses are minimal because of test cases
         // making D2 invalid diagnosis
+        D5(new Axiom[]{Axiom.AX4, Axiom.AX3}),
         D6(new Axiom[]{Axiom.AX3, Axiom.AX2}),
         D7(new Axiom[]{Axiom.AX3, Axiom.AX5}),
         D8(new Axiom[]{Axiom.AX1, Axiom.AX4});
@@ -600,5 +601,51 @@ public class Example2Test extends AbstractExample {
         d_nxPlus0.addAll(Query.X5.getD_0());
         assertTrue(d_nxPlus0.equals(res));
 
+    }
+
+    @Test
+    public void allMultiThread() throws InconsistentTheoryException, SolverException, NoConflictException {
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
+        MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
+        search.setSearcher(searcher);
+        searcher.setFormulaRenderer(parser);
+
+        //if (theory != null) theory.getOntology().getOWLOntologyManager().removeOntology(theory.getOntology());
+        theory = new OWLTheory(reasonerFactory, ontology, bax);
+        OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+        es.updateKeywordProb(map);
+        search.setCostsEstimator(es);
+
+        search.setSearchable(theory);
+        search.setMaxDiagnosesNumber(-1);
+
+        TreeSet<Diag> set = new TreeSet<Diag>();
+        for (FormulaSet<OWLLogicalAxiom> col : search.start()) {
+            set.add(Diag.getDiagnosis(col));
+        }
+        TreeSet<Diag> expectedRes = new TreeSet<Diag>();
+
+        expectedRes.add(Diag.D2);
+        expectedRes.add(Diag.D4);
+        expectedRes.add(Diag.D1);
+        expectedRes.add(Diag.D3);
+        /*
+        expectedRes.add(Diag.D5);
+        expectedRes.add(Diag.D6);
+        expectedRes.add(Diag.D7);
+        expectedRes.add(Diag.D8);
+
+        //EDITED
+
+        /*int count=0;
+        for(Diag d : expectedRes){
+                 if(set.contains(d))
+                     count++;
+        }  */
+
+        assertTrue(set.equals(expectedRes));
     }
 }
