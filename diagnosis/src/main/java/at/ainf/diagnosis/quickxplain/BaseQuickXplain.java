@@ -16,6 +16,8 @@ package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.model.AbstractReasoner;
+import at.ainf.diagnosis.model.IReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaSet;
@@ -38,7 +40,7 @@ import static _dev.TimeLog.stop;
 public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseQuickXplain.class.getName());
-
+    private AbstractReasoner<Id> reasoner;
     /*
     private long minTime = 10000000;
 
@@ -53,10 +55,6 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     protected abstract int getIterations();
 
-    public BaseQuickXplain() {
-
-    }
-
     /**
      * @param sp sp
      * @return int
@@ -68,11 +66,26 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
         return -1;
     }
 
-    protected abstract Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
-            throws InconsistentTheoryException, SolverException;
+    protected void setReasoner(IReasoner<Id> reasoner) {
+        this.reasoner = (AbstractReasoner<Id>)reasoner;
+    }
 
-    protected abstract void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
-            throws InconsistentTheoryException, SolverException;
+    protected Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
+            throws InconsistentTheoryException, SolverException{
+
+        getReasoner().setBackgroundAxioms(c.getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().lock();
+        c.getKnowledgeBase().lock();
+
+        return formulas;
+    }
+
+    protected void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
+            throws InconsistentTheoryException, SolverException{
+        c.getKnowledgeBase().unlock();
+        getReasoner().unlock();
+        getReasoner().getBackgroundAxioms().clear();
+    }
 
     public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas)
             throws NoConflictException, SolverException, InconsistentTheoryException {
@@ -82,9 +95,8 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException {
         FormulaSet<Id> conflictFormulas = null;
-
-        if (changes != null)
-            formulas = applyChanges(searchable, formulas, changes);
+        setReasoner(searchable.getReasoner());
+        formulas = applyChanges(searchable, formulas, changes);
 
         long time = 0;
         try {
@@ -116,8 +128,12 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             rollbackChanges(searchable, formulas, changes);
         }
 
-        return Collections.<FormulaSet<Id>>singleton(conflictFormulas);
+        return Collections.singleton(conflictFormulas);
 
+    }
+
+    protected AbstractReasoner<Id> getReasoner() {
+        return reasoner;
     }
 
     public void postProcessFormulas(FormulaSet<Id> formulas, Searchable<Id> searchable) throws SolverException {

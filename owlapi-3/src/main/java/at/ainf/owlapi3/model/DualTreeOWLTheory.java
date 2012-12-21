@@ -27,20 +27,20 @@ public class DualTreeOWLTheory extends OWLTheory {
     }
 
     public boolean verifyRequirements() {
-        OWLOntology ontology = getOriginalOntology();
-        Set<OWLLogicalAxiom> axiomSet = new LinkedHashSet<OWLLogicalAxiom> (getKnowledgeBase().getFaultyFormulas());
-        axiomSet.removeAll(getReasoner().getFormulasCache());
+        //OWLOntology ontology = getOriginalOntology();
+        Set<OWLLogicalAxiom> faultyFormulas = new LinkedHashSet<OWLLogicalAxiom> (getKnowledgeBase().getFaultyFormulas());
+        faultyFormulas.removeAll(getReasoner().getFormulasCache());
         //setFormularCach(axiomSet, getKnowledgeBase().getBackgroundFormulas());
         LinkedHashSet<OWLLogicalAxiom> formularCacheBackup = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getFormulasCache());
         getReasoner().clearFormulasCache();
-        getReasoner().addFormulasToCache(axiomSet);
-        getReasoner().addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
+        getReasoner().addFormulasToCache(faultyFormulas);
+        //getReasoner().addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
         boolean consistent = !doConsistencyTest();
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(formularCacheBackup);
 
         if (logger.isTraceEnabled())
-            logger.trace(ontology.getOntologyID() + " is consistent: " + consistent);
+            logger.trace("Ontology is consistent: " + consistent);
         return consistent;
     }
 

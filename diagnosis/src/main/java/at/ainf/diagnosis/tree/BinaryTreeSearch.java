@@ -93,8 +93,28 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
 
     }
 
+    @Override
+    public Set<FormulaSet<Id>> calculateConflict(Node<Id> node) throws SolverException, NoConflictException, InconsistentTheoryException {
 
-/*  public Set<Set<Id>> computeDiagnoses() throws NoConflictException,SolverException,InconsistentTheoryException{
+        Set<FormulaSet<Id>> quickConflict = super.calculateConflict(node);
+
+        if (node != null)
+        for(FormulaSet<Id> conflict: quickConflict) {
+            for(HSTreeNode<Id> leave: (Set<HSTreeNode>)((HSTreeNode)getRoot()).getLeaves()) {
+                if(!leave.isClosed() && !intersectsWith(conflict,leave.getPathLabels())) {
+                    ((BHSTreeNode<Id>)leave).addNewConflict(conflict);
+                    //SEHR UNSCHÖN später ausbessern
+                    if(leave.getConflicts()!=null)
+                        leave.getConflicts().add(((BHSTreeNode)leave).updateConflict(conflict));
+                    else leave.setAxiomSet((FormulaSet<Id>)((BHSTreeNode)leave).updateConflict(conflict));
+                }
+            }
+        }
+
+        return quickConflict;
+    }
+
+    /*  public Set<Set<Id>> computeDiagnoses() throws NoConflictException,SolverException,InconsistentTheoryException{
 
      createRoot();
 

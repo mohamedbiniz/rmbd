@@ -15,6 +15,8 @@
 package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.model.AbstractReasoner;
+import at.ainf.diagnosis.model.IReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaRenderer;
@@ -64,6 +66,8 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
     @Override
     protected Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException {
+        formulas = super.applyChanges(c, formulas, changes);
+
         if (changes != null) {
             for (Id axiom : changes)
                 formulas.remove(axiom);
@@ -75,7 +79,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     @Override
     protected void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes) throws InconsistentTheoryException, SolverException {
-        // nothing to rollback here;
+        super.rollbackChanges(c, formulas, changes);
     }
 
     /**
@@ -87,7 +91,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
     public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes)
             throws NoConflictException, SolverException, InconsistentTheoryException {
         FormulaSet<Id> conflictFormulas = null;
-
+        setReasoner(searchable.getReasoner());
         if (changes != null)
             formulas = applyChanges(searchable, formulas, changes);
 
@@ -174,10 +178,6 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     public ThreadPoolExecutor getThreadsPool() {
         return pool;
-    }
-
-    public Set<Id> getDefaultLocalChanges() {
-        return defaultLocalChanges;
     }
 
     private class QXThread implements Callable<FormulaSet<Id>> {

@@ -95,6 +95,11 @@ public interface IKnowledgeBase<Id> {
 
     public boolean hasBackgroundTheory();
 
+    public boolean isLocked();
+
+    public void lock();
+
+    public void unlock();
 
     //---------------------------------------------------
 

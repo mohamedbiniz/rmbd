@@ -88,19 +88,20 @@ public class BaseSearchableObject<T> implements Searchable<T> {
             tests.addAll(testCase);
 
         getKnowledgeBase().addBackgroundFormulas(tests);
-        getReasoner().setBackgroundFormulas(getKnowledgeBase().getBackgroundFormulas());
         this.registered = true;
+        getKnowledgeBase().lock();
     }
 
     public final void unregisterTestCases() throws SolverException {
+
         Set<T> tests = new HashSet<T>();
         for (Set<T> testCase : getKnowledgeBase().getPositiveTests())
             tests.addAll(testCase);
         for (Set<T> testCase : getKnowledgeBase().getEntailedTests())
             tests.addAll(testCase);
 
+        getKnowledgeBase().unlock();
         getKnowledgeBase().removeBackgroundFormulas(tests);
-        getReasoner().setBackgroundFormulas(getKnowledgeBase().getBackgroundFormulas());
         this.registered = false;
     }
 
