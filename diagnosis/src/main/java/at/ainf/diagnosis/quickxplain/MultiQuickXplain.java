@@ -15,8 +15,6 @@
 package at.ainf.diagnosis.quickxplain;
 
 import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.model.IReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaRenderer;
@@ -141,7 +139,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         QXThread qxThread = new QXThread();
         qxThread.c = c;
         qxThread.u = u;
-        QXAxiomListener<Id> listener = new QXAxiomListener<Id>(true);
+        QXSingleAxiomListener<Id> listener = new QXSingleAxiomListener<Id>(true);
 
         qxThread.qx.setAxiomListener(listener);
         Future<FormulaSet<Id>> fqx = getThreadsPool().submit(qxThread);

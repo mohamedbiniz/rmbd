@@ -149,7 +149,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         return iterations;
     }
 
-    void setAxiomListener(QXAxiomListener<Id> axiomListener) {
+    void setAxiomListener(QXSingleAxiomListener<Id> axiomListener) {
         this.axiomListener = axiomListener;
     }
 
