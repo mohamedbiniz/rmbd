@@ -38,7 +38,6 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
     }
 
     public boolean removeFormulasFromCache(Collection<IVecIntComparable> formulas) {
-        setSync(false);
         boolean res = false;
         for (IVecIntComparable next : formulas) {
             res |= formulasCache.remove(next);

@@ -51,6 +51,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
     @Override
     protected Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException {
+        formulas = super.applyChanges(c, formulas, changes);
         if (changes != null) {
             for (Id axiom : changes)
                 formulas.remove(axiom);
@@ -62,7 +63,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
     @Override
     protected void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes) throws InconsistentTheoryException, SolverException {
-        // nothing to rollback here;
+        super.rollbackChanges(c,formulas,changes);
     }
 
     /**
@@ -151,4 +152,6 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
     void setAxiomListener(QXAxiomListener<Id> axiomListener) {
         this.axiomListener = axiomListener;
     }
+
+
 }

@@ -15,35 +15,46 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
     protected Set<T> reasonerFormulas = new LinkedHashSet<T>();
 
-    private Set<T> backgroundFormulas = null;
+    private Set<T> backgroundAxioms = Collections.emptySet();
 
-    public Set<T> getBackgroundFormulas() {
-        return backgroundFormulas;
+    private boolean locked = false;
+
+    public void lock() {
+        this.locked = true;
     }
 
-    public void setBackgroundFormulas(Set<T> backgroundFormulas) {
-        this.backgroundFormulas = backgroundFormulas;
+    public void unlock() {
+        this.locked = false;
+    }
+
+    public Set<T> getBackgroundAxioms() {
+        if (locked)
+            return Collections.unmodifiableSet(backgroundAxioms);
+        return backgroundAxioms;
+    }
+
+    public void setBackgroundAxioms(Set<T> backgroundAxioms) {
+        if (locked)
+            throw new UnsupportedOperationException("Background knowledge is locked!");
+        this.backgroundAxioms = new LinkedHashSet<T>(backgroundAxioms);
+        clearFormulasCache();
     }
 
     public boolean addFormulasToCache(Collection<T> formulas) {
         if (formulas != null){
-            setSync(false);
             return this.formulasCache.addAll(formulas);
         }
         return false;
     }
 
     public boolean removeFormulasFromCache(Collection<T> formulas) {
-        setSync(false);
         return this.formulasCache.removeAll(formulas);
     }
 
     public void clearFormulasCache() {
-        setSync(false);
-        if (backgroundFormulas != null)
-            this.formulasCache.retainAll(this.backgroundFormulas);
-        else
-            formulasCache.clear();
+        formulasCache.clear();
+        if (locked)
+            formulasCache.addAll(getBackgroundAxioms());
     }
 
     public Set<T> getFormulasCache() {
@@ -63,8 +74,6 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
     protected abstract void updateReasonerModel(Set<T> axiomsToAdd, Set<T> axiomsToRemove);
 
     public void sync() {
-        if (isSync())
-            return;
         Set<T> axiomsToAdd = new HashSet<T>();
         Set<T> axiomsToRemove = new HashSet<T>();
 
@@ -82,17 +91,6 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
         if (!axiomsToAdd.isEmpty() || !axiomsToRemove.isEmpty())
             updateReasonerModel(axiomsToAdd, axiomsToRemove);
-        setSync(true);
-    }
-
-    private boolean sync = false;
-
-    private boolean isSync(){
-        return this.sync;
-    }
-
-    public void setSync(boolean sync) {
-        this.sync = sync;
     }
 
     public boolean isEntailed(Set<T> test) {
@@ -109,6 +107,4 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
         throw new RuntimeException("This theory does not support coherency checks");
     }
-
-
 }

@@ -12,8 +12,6 @@ import java.util.*;
 
 public class KnowledgeBase<T> implements IKnowledgeBase<T> {
 
-
-
     protected final Set<T> knowledgeBase = new LinkedHashSet<T>();
 
     protected Set<T> backgroundFormulas = new LinkedHashSet<T>();
@@ -26,15 +24,35 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     private List<Set<T>> tests = new LinkedList<Set<T>>();
     private Map<Set<T>, Boolean> typeOfTest = new HashMap<Set<T>, Boolean>();
 
+    private short locked = 0;
+
+    public boolean isLocked() {
+        return locked == 0;
+    }
+
+    public void lock() {
+        this.locked++;
+    }
+
+    public void unlock() {
+        if (this.locked > 0)
+            this.locked--;
+    }
+
+
     public Set<T> getKnowledgeBase() {
         return Collections.unmodifiableSet(knowledgeBase);
     }
 
     public void addFormulas(Collection<T> formulas) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         knowledgeBase.addAll(formulas);
     }
 
     public void removeFormulas(Collection<T> formulas) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         knowledgeBase.removeAll(formulas);
     }
 
@@ -43,10 +61,14 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     }
 
     public Set<T> getTest(int i) {
+        if (locked > 0)
+            return Collections.unmodifiableSet(tests.get(i));
         return tests.get(i);
     }
 
     public List<Set<T>> getTests(int from, int to) {
+        if (locked > 0)
+            return Collections.unmodifiableList(tests.subList(from, to));
         return tests.subList(from, to);
     }
 
@@ -54,18 +76,24 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         return typeOfTest.get(testcase);
     }
 
+    /*
     private Set<T> getTestSet(T test) {
         LinkedHashSet<T> testSet = new LinkedHashSet<T>();
         testSet.add(test);
         return testSet;
     }
+    */
 
     protected void addToTestList(Set<T> test, boolean type) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         tests.add(test);
-        typeOfTest.put(test,  type);
+        typeOfTest.put(test, type);
     }
 
     public boolean addPositiveTest(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         boolean val = this.positiveTests.add(test);
         /*if (val && !areTestsConsistent()) {
             this.positiveTests.remove(test);
@@ -73,12 +101,14 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         }*/
 
         //if (val)
-            addToTestList(test, true);
+        addToTestList(test, true);
 
         return val;
     }
 
     public boolean addNegativeTest(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         boolean val = this.negativeTests.add(test);
         /*if (val && !areTestsConsistent()) {
             this.negativeTests.remove(test);
@@ -86,12 +116,15 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         } */
 
         //if (val)
-            addToTestList(test, false);
+        addToTestList(test, false);
 
         return val;
     }
 
     public boolean addEntailedTest(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
+
         boolean val = this.entailed.add(test);
         /*if (val && !areTestsConsistent()) {
             this.entailed.remove(test);
@@ -99,12 +132,15 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         } */
 
         //if (val)
-            addToTestList(test, true);
+        addToTestList(test, true);
 
         return val;
     }
 
     public boolean addNonEntailedTest(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
+
         boolean val = this.nonentailed.add(test);
         /*if (val && !areTestsConsistent()) {
             this.nonentailed.remove(test);
@@ -112,33 +148,43 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         } */
 
         //if (val)
-            addToTestList(test, false);
+        addToTestList(test, false);
 
         return val;
     }
 
     protected void removeFromTestList(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         tests.remove(test);
         typeOfTest.remove(test);
 
     }
 
     public boolean removeNonEntailedTest(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         removeFromTestList(test);
         return this.nonentailed.remove(test);
     }
 
     public boolean removeEntailedTest(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         removeFromTestList(test);
         return this.entailed.remove(test);
     }
 
     public void removePositiveTest(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         removeFromTestList(test);
         this.positiveTests.remove(test);
     }
 
     public void removeNegativeTest(Set<T> test) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         removeFromTestList(test);
         this.negativeTests.remove(test);
     }
@@ -173,6 +219,9 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     }
 
     public void clearTestCases() {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
+
         this.positiveTests.clear();
         this.negativeTests.clear();
         this.entailed.clear();
@@ -184,10 +233,14 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     }
 
     public void setEmptyBackgroundFormulas() {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         this.backgroundFormulas = new LinkedHashSet<T>();
     }
 
     public void setBackgroundFormulas(Collection<T> fs) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         this.backgroundFormulas = new LinkedHashSet<T>(fs);
         /*if (!verifyRequirements()) {
             this.backgroundFormulas.clear();
@@ -197,11 +250,15 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     }
 
     public void removeBackgroundFormulas(Set<T> tests) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         this.backgroundFormulas.removeAll(tests);
 
     }
 
     public void addBackgroundFormulas(Set<T> formulas) {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
         this.backgroundFormulas.addAll(formulas);
         //this.faultyFormulas.removeAll(formulas);
     }
@@ -209,20 +266,4 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
     public Set<T> getBackgroundFormulas() {
         return Collections.unmodifiableSet(this.backgroundFormulas);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

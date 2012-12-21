@@ -51,7 +51,6 @@ public interface Searchable<E> {
 
     public IReasoner<E> getReasoner();
 
-
     public void registerTestCases() throws SolverException, InconsistentTheoryException;
 
     public void unregisterTestCases() throws SolverException;

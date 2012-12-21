@@ -23,6 +23,4 @@ public interface IReasoner<T> {
     public boolean isEntailed(Set<T> test);
 
     public IReasoner<T> newInstance();
-
-    void setBackgroundFormulas(Set<T> backgroundFormulas);
 }
