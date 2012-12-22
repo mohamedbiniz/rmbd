@@ -22,6 +22,11 @@ public class BaseSearchableObject<T> implements Searchable<T> {
         setKnowledgeBase(new KnowledgeBase<T>());
     }
 
+    public BaseSearchableObject(IKnowledgeBase<T> knowledgeBase, AbstractReasoner<T> reasoner) {
+        setKnowledgeBase(knowledgeBase);
+        setReasoner(reasoner);
+    }
+
     public IReasoner<T> getReasoner() {
         return reasoner;
     }
@@ -105,18 +110,20 @@ public class BaseSearchableObject<T> implements Searchable<T> {
         this.registered = false;
     }
 
-    protected BaseSearchableObject<T> getNewInstance() {
-        return new BaseSearchableObject<T>();
+    protected BaseSearchableObject<T> getNewInstance(IKnowledgeBase<T> knowledgeBase, AbstractReasoner<T> reasoner)
+            throws SolverException, InconsistentTheoryException {
+        return new BaseSearchableObject<T>(knowledgeBase, reasoner);
     }
 
     @Override
-    public Searchable<T> copy() {
-        BaseSearchableObject<T> cp = getNewInstance();
-        cp.setKnowledgeBase(getKnowledgeBase());
-        IReasoner<T> nreasoner = getReasoner().newInstance();
-        cp.setReasoner(nreasoner);
-        ((AbstractReasoner<T>) getReasoner()).addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
-        return cp;
+    public Searchable<T> copy() throws SolverException, InconsistentTheoryException {
+        AbstractReasoner<T> reasoner = (AbstractReasoner<T>) getReasoner().newInstance();
+        reasoner.addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
+        return getNewInstance(getKnowledgeBase(), reasoner);
+        //cp.setKnowledgeBase();
+
+        //cp.setReasoner(reasoner);
+        //return cp;
     }
 
     public boolean testDiagnosis(Collection<T> diag) throws SolverException {

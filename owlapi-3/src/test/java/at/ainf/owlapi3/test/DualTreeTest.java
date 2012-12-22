@@ -5,6 +5,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
+import at.ainf.diagnosis.quickxplain.QXSingleAxiomListener;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
@@ -197,7 +198,9 @@ public class DualTreeTest {//extends BasePerformanceTests {
         BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
         binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         binary.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-        binary.setSearcher(new MultiQuickXplain<OWLLogicalAxiom>());
+        MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
+        searcher.setAxiomListener(new QXSingleAxiomListener<OWLLogicalAxiom>(true));
+        binary.setSearcher(searcher);
 
         testResultsEqualTime(binary, false);
 

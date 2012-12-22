@@ -50,6 +50,17 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     private long calls = 0;
     */
+
+    private QXAxiomListener<Id> axiomListener = null;
+
+    protected QXAxiomListener<Id> getAxiomListener() {
+        return this.axiomListener;
+    }
+
+    public void setAxiomListener(QXAxiomListener<Id> axiomListener) {
+        this.axiomListener = axiomListener;
+    }
+
     protected abstract FormulaSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException;
 

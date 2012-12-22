@@ -13,4 +13,6 @@ public interface QXAxiomListener<Id> {
     void setFoundAxiom(Id axiom);
 
     Id getFoundAxiom() throws InterruptedException;
+
+    QXAxiomListener<Id> newInstance();
 }
