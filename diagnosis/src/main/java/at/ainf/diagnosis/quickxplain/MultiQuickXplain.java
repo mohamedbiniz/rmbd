@@ -139,7 +139,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         QXThread qxThread = new QXThread();
         qxThread.c = c;
         qxThread.u = u;
-        QXSingleAxiomListener<Id> listener = new QXSingleAxiomListener<Id>(true);
+        QXAxiomListener<Id> listener = getAxiomListener().newInstance();
 
         qxThread.qx.setAxiomListener(listener);
         Future<FormulaSet<Id>> fqx = getThreadsPool().submit(qxThread);
@@ -185,6 +185,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
 
         @Override
         public FormulaSet<Id> call() {
+            qx.setReasoner(c.getReasoner());
             try {
                 return qx.quickXplain(c, u);
             } catch (NoConflictException e) {

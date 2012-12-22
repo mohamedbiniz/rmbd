@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
+import at.ainf.diagnosis.quickxplain.QXSingleAxiomListener;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.BinaryTreeSearch;
 import at.ainf.diagnosis.tree.HsTreeSearch;
@@ -610,6 +611,7 @@ public class Example2Test extends AbstractExample {
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
         MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
+        searcher.setAxiomListener(new QXSingleAxiomListener<OWLLogicalAxiom>(true));
         search.setSearcher(searcher);
         searcher.setFormulaRenderer(parser);
 

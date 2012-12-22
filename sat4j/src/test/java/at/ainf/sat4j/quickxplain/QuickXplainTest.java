@@ -9,15 +9,17 @@
 package at.ainf.sat4j.quickxplain;
 
 import at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
+import at.ainf.diagnosis.quickxplain.QXAxiomSetListener;
+import at.ainf.diagnosis.quickxplain.QXSingleAxiomListener;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.sat4j.model.IVecIntComparable;
 import at.ainf.sat4j.model.PropositionalTheory;
 import at.ainf.sat4j.model.VecIntComparable;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sat4j.minisat.SolverFactory;
@@ -50,7 +52,8 @@ public class QuickXplainTest {
     @Test
     public void testMulti() throws SolverException, InconsistentTheoryException, NoConflictException {
         final int iterations = 1;
-        Searcher<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+        MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+        quick.setAxiomListener(new QXSingleAxiomListener<IVecIntComparable>(true));
         for (int i = 0; i < iterations; i++) {
             runQuick(quick);
         }
@@ -124,10 +127,30 @@ public class QuickXplainTest {
     }
 
     @Test
-    public void run2Quick() throws SolverException, InconsistentTheoryException, NoConflictException {
+    public void run2SingleQuick() throws SolverException, InconsistentTheoryException, NoConflictException {
+        Set<FormulaSet<IVecIntComparable>> conflict = Collections.emptySet();
+        for (int i = 0; i < 100; i++) {
+            MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+            quick.setAxiomListener(new QXSingleAxiomListener<IVecIntComparable>(true));
 
-        Searcher<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+            conflict = computeMultipleConflicts(quick);
+        }
+        assertEquals(conflict.size(), 5);
+    }
 
+    @Test
+    @Ignore
+    public void run2SetQuick() throws SolverException, InconsistentTheoryException, NoConflictException {
+
+        MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+        quick.setAxiomListener(new QXAxiomSetListener<IVecIntComparable>(true));
+
+
+        Set<FormulaSet<IVecIntComparable>> conflict = computeMultipleConflicts(quick);
+        assertEquals(conflict.size(), 3);
+    }
+
+    private Set<FormulaSet<IVecIntComparable>> computeMultipleConflicts(MultiQuickXplain<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException, NoConflictException {
         int[] fm10 = new int[]{10};
 
         ISolver reasoner = SolverFactory.newDefault();
@@ -156,23 +179,24 @@ public class QuickXplainTest {
         vec.add(new int[]{16, 17});
         vec.add(new int[]{-16});
 
-        vec.add(new int[]{8, 9});
-        vec.add(new int[]{-8, 10});
+        vec.add(new int[]{9});
         vec.add(new int[]{-9, 11});
         vec.add(new int[]{-10, -11});
         vec.add(new int[]{-11});
+
+        vec.add(new int[]{6, 11});
+        vec.add(new int[]{-10, -11});
 
         Collection<IVecIntComparable> test = new LinkedList<IVecIntComparable>();
         for (int[] e : vec)
             test.add(theory.addClause(e));
         list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
 
-        Set<FormulaSet<IVecIntComparable>> conflict = quick.search(theory, list);
-        assertEquals(conflict.size(),3);
+        return quick.search(theory, list);
     }
 
     private Collection<IVecIntComparable> check(Searcher<IVecIntComparable> quick, PropositionalTheory theory,
-                                      List<IVecIntComparable> list, boolean value) throws SolverException,
+                                                List<IVecIntComparable> list, boolean value) throws SolverException,
             InconsistentTheoryException {
         boolean res = false;
         Collection<IVecIntComparable> fl = null;
@@ -190,5 +214,6 @@ public class QuickXplainTest {
             assertNotNull(fl);
         return fl;
     }
+
 
 }

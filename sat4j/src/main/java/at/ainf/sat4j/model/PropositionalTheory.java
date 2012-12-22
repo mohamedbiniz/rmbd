@@ -22,6 +22,18 @@ public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable>
         setReasoner(new ReasonerSat4j(solver));
     }
 
+    public PropositionalTheory(IKnowledgeBase<IVecIntComparable> knowledgeBase,
+                               AbstractReasoner<IVecIntComparable> reasoner) {
+        super(knowledgeBase,reasoner);
+    }
+
+    @Override
+    protected BaseSearchableObject<IVecIntComparable> getNewInstance(IKnowledgeBase<IVecIntComparable> knowledgeBase,
+                                                                     AbstractReasoner<IVecIntComparable> reasoner)
+            throws SolverException, InconsistentTheoryException {
+        return new PropositionalTheory(knowledgeBase, reasoner);
+    }
+
     private IVecIntComparable negate(IVecIntComparable formula) {
         IVecIntComparable res = new VecIntComparable();
         for (IteratorInt iter = formula.iterator(); iter.hasNext(); ) {

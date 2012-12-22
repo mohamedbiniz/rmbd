@@ -7,7 +7,6 @@ import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -20,6 +19,7 @@ import java.util.Set;
 public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
 
     private ISolver solver;
+    private boolean contradiction;
 
     public ReasonerSat4j(ISolver solv) {
         this.solver = solv;
@@ -28,11 +28,14 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
     @Override
     protected void updateReasonerModel(Set<IVecIntComparable> axiomsToAdd, Set<IVecIntComparable> axiomsToRemove) {
         //solver.reset();
+        setContradiction(false);
         for (IVecIntComparable stat : getReasonerFormulas()) {
             try {
                 solver.addClause(stat);
             } catch (ContradictionException e) {
-                e.printStackTrace();
+                setContradiction(true);
+                //e.printStackTrace();
+                return;
             }
         }
     }
@@ -55,13 +58,14 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
 
     @Override
     public boolean isConsistent() {
+
         try {
             solver.reset();
             solver.newVar(getNumOfLiterals());
             solver.setExpectedNumberOfClauses(getFormulasCache().size());
             sync();
 
-            return solver.isSatisfiable();
+            return !hasContradiction() && solver.isSatisfiable();
 
         } catch (TimeoutException e) {
             return false;
@@ -73,4 +77,11 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
         return new ReasonerSat4j(SolverFactory.newDefault());
     }
 
+    public void setContradiction(boolean contradictionException) {
+        this.contradiction = contradictionException;
+    }
+
+    public boolean hasContradiction() {
+        return contradiction;
+    }
 }

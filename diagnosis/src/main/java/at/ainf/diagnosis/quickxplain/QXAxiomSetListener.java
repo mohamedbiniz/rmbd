@@ -11,13 +11,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * Time: 17:39
  * To change this template use File | Settings | File Templates.
  */
-class QXAxiomSetListener<Id> {
+public class QXAxiomSetListener<Id> implements QXAxiomListener<Id> {
     private LinkedList<Id> axioms = new LinkedList<Id>();
     private boolean released = false;
     private final ReentrantLock lock;
     private final Condition addedAxiom;
 
-    QXAxiomSetListener(boolean fairLock) {
+    public QXAxiomSetListener(boolean fairLock) {
         this.lock = new ReentrantLock(fairLock);
         this.addedAxiom = lock.newCondition();
     }
@@ -55,5 +55,10 @@ class QXAxiomSetListener<Id> {
             lock.unlock();
         }
         return axiom;
+    }
+
+    @Override
+    public QXAxiomListener<Id> newInstance() {
+        return new QXAxiomSetListener<Id>(this.lock.isFair());
     }
 }

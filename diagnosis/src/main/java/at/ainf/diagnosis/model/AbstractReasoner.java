@@ -77,6 +77,11 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
         Set<T> axiomsToAdd = new HashSet<T>();
         Set<T> axiomsToRemove = new HashSet<T>();
 
+        //axiomsToAdd.removeAll(axiomsToRemove);
+        //axiomsToRemove.removeAll(getFormulasCache());
+        //System.out.println(Thread.currentThread().getId() + " : " + toString());
+        //synchronized (this){
+
         for (T axiom : getFormulasCache()) {
             if (!getReasonerFormulas().contains(axiom))
                 axiomsToAdd.add(axiom);
@@ -88,7 +93,7 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
         reasonerFormulas.clear();
         reasonerFormulas.addAll(getFormulasCache());
-
+        //}
         if (!axiomsToAdd.isEmpty() || !axiomsToRemove.isEmpty())
             updateReasonerModel(axiomsToAdd, axiomsToRemove);
     }

@@ -9,8 +9,7 @@
 package at.ainf.choco2.model;
 
 
-import at.ainf.diagnosis.model.BaseSearchableObject;
-import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.model.*;
 import choco.Choco;
 import choco.cp.model.CPModel;
 import choco.kernel.model.Model;
@@ -25,6 +24,17 @@ public class ConstraintTheory extends BaseSearchableObject<Constraint> {
 
     public ConstraintTheory(Solver solver) {
         this(solver,new CPModel());
+    }
+
+    public ConstraintTheory(IKnowledgeBase<Constraint> knowledgeBase, AbstractReasoner<Constraint> reasoner) {
+        super(knowledgeBase, reasoner);
+    }
+
+    @Override
+    protected BaseSearchableObject<Constraint> getNewInstance(IKnowledgeBase<Constraint> knowledgeBase,
+                                                              AbstractReasoner<Constraint> reasoner)
+            throws SolverException, InconsistentTheoryException {
+        return new ConstraintTheory(knowledgeBase, reasoner);
     }
 
     public ReasonerConstraint getReasoner() {

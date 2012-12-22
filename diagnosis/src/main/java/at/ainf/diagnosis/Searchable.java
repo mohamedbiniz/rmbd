@@ -55,5 +55,5 @@ public interface Searchable<E> {
 
     public void unregisterTestCases() throws SolverException;
 
-    public Searchable<E> copy();
+    public Searchable<E> copy() throws SolverException, InconsistentTheoryException;
 }

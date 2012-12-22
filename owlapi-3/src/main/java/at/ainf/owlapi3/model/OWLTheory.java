@@ -1,8 +1,8 @@
 package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.model.*;
-import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -39,6 +39,11 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     private boolean includeTrivialEntailments = true;
     private final boolean BUFFERED_SOLVER = true;
     private boolean REDUCE_TO_UNSAT = false;
+
+    @Override
+    protected BaseSearchableObject<OWLLogicalAxiom> getNewInstance(IKnowledgeBase<OWLLogicalAxiom> knowledgeBase, AbstractReasoner<OWLLogicalAxiom> reasoner) throws SolverException, InconsistentTheoryException {
+        return new OWLTheory(this.originalReasonerFactory, this.origOntology, knowledgeBase.getBackgroundFormulas());
+    }
 
     public void setIncludeTrivialEntailments(boolean includeTrivialEntailments) {
         this.includeTrivialEntailments = includeTrivialEntailments;
