@@ -10,9 +10,11 @@ package at.ainf.diagnosis.quickxplain;
 public interface QXAxiomListener<Id> {
     void release();
 
-    void setFoundAxiom(Id axiom);
-
     Id getFoundAxiom() throws InterruptedException;
 
+    void setFoundAxiom(Id axiom);
+
     QXAxiomListener<Id> newInstance();
+
+    boolean isReleased();
 }

@@ -147,7 +147,7 @@ public class QuickXplainTest {
 
 
         Set<FormulaSet<IVecIntComparable>> conflict = computeMultipleConflicts(quick);
-        assertEquals(conflict.size(), 3);
+        assertEquals(conflict.size(), 6);
     }
 
     private Set<FormulaSet<IVecIntComparable>> computeMultipleConflicts(MultiQuickXplain<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException, NoConflictException {
