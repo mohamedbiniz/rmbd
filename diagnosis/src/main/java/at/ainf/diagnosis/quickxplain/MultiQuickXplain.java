@@ -17,13 +17,13 @@ package at.ainf.diagnosis.quickxplain;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.FormulaRenderer;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -40,14 +40,11 @@ import static _dev.TimeLog.stop;
 public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     private static Logger logger = LoggerFactory.getLogger(MultiQuickXplain.class.getName());
-    private final Set<FormulaSet<Id>> results = new LinkedHashSet<FormulaSet<Id>>();
     private final int minThreads;
     private final int maxThreads;
     private final int maxConflicts;
-    private int iterations = 0;
-
+    private final Set<FormulaSet<Id>> results = new LinkedHashSet<FormulaSet<Id>>();
     private ThreadPoolExecutor pool;
-
     private int count = 0;
     private ReadWriteLock resultsLock = new ReentrantReadWriteLock(true);
 
@@ -100,14 +97,14 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         long time = 0;
         try {
             start("QX");
-            iterations = 0;
+            resetIterations();
             this.pool = new ThreadPoolExecutor(minThreads, maxThreads, 1,
                     TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(maxConflicts, true));
             this.results.clear();
             quickXplain(searchable, formulas);
 
             try {
-                while (!pool.awaitTermination(10, TimeUnit.SECONDS)) {
+                while (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
                 }
                 if (logger.isInfoEnabled())
                     logger.info("Pool terminated: " + pool.getLargestPoolSize() + " / " + pool.getCompletedTaskCount());
@@ -135,49 +132,76 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             throws NoConflictException, SolverException, InconsistentTheoryException {
 
         incCount();
-
-        QXThread qxThread = new QXThread();
-        qxThread.c = c;
-        qxThread.u = u;
-        QXAxiomListener<Id> listener = getAxiomListener().newInstance();
-
-        qxThread.qx.setAxiomListener(listener);
-        Future<FormulaSet<Id>> fqx = getThreadsPool().submit(qxThread);
         FormulaSet<Id> formulaSet = null;
+
         try {
-            while (!listener.isReleased()) {
+            if (results.size() >= getMaxConflictSetCount()) {
+                if (!this.pool.isShutdown())
+                    this.pool.shutdownNow();
+                return formulaSet;
+            }
+
+            QXThread qxThread = new QXThread();
+            qxThread.c = c;
+            qxThread.u = u;
+            QXAxiomListener<Id> listener = getAxiomListener().newInstance();
+
+            qxThread.qx.setAxiomListener(listener);
+            Future<FormulaSet<Id>> fqx = getThreadsPool().submit(qxThread);
+
+            while (!listener.isReleased() || listener.hasAxioms()) {
                 Id foundAxiom = listener.getFoundAxiom();
                 if (foundAxiom != null) {
                     if (logger.isInfoEnabled())
-                        logger.info("Found axiom " + foundAxiom + " and starting a new task. Active "
-                                + pool.getActiveCount() + " complete " + pool.getCompletedTaskCount()
-                                + " threads " + pool.getLargestPoolSize());
+                        logger.info("Level " + getCount() + " - found axiom " + foundAxiom);
 
-                    Searchable<Id> ct = c.copy();
-                    Set<Id> cu = new LinkedHashSet<Id>(u);
+                    Set<Id> cu = new HashSet<Id>(u);
                     cu.remove(foundAxiom);
-                    if (!containsConflict(cu))
+                    if (!containsConflict(cu)) {
+                        if (logger.isInfoEnabled())
+                            logger.info("Starting a new task. Active "
+                                    + pool.getActiveCount() + " complete " + pool.getCompletedTaskCount()
+                                    + " threads " + pool.getLargestPoolSize());
+                        Searchable<Id> ct = c.copy();
                         quickXplain(ct, cu);
+
+                        if (results.size() >= getMaxConflictSetCount()){
+                            if (!this.pool.isShutdown())
+                                this.pool.shutdownNow();
+                            break;
+                        }
+                    } else if (logger.isInfoEnabled())
+                        logger.info("Duplicate conflict possible. The branch is ignored!");
                 }
             }
 
-            formulaSet = fqx.get();
+            fqx.get();
             if (formulaSet != null)
                 addConflict(formulaSet);
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (ExecutionException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } finally {
+            if (decCount() == 0)
+                this.pool.shutdown();
         }
-        if ( decCount() == 0 )
-            this.pool.shutdown();
         return formulaSet;
+    }
+
+    public int getMaxConflictSetCount() {
+        return this.maxConflicts;
+    }
+
+    private int getCount() {
+        return this.count;
     }
 
     private void addConflict(FormulaSet<Id> formulaSet) {
         resultsLock.writeLock().lock();
         try {
-            results.add(formulaSet);
+            if (formulaSet != null)
+                results.add(formulaSet);
         } finally {
             resultsLock.writeLock().unlock();
         }
@@ -188,14 +212,13 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         resultsLock.readLock().lock();
         try {
             for (FormulaSet<Id> ids : getResults()) {
-
+                if (cu.containsAll(ids))
+                    return true;
             }
+            return false;
         } finally {
             resultsLock.readLock().unlock();
         }
-
-
-        return false;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public Set<FormulaSet<Id>> getResults() {
@@ -204,16 +227,6 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     public ThreadPoolExecutor getThreadsPool() {
         return pool;
-    }
-
-
-
-    public int getIterations() {
-        return iterations;
-    }
-
-    public int getCount() {
-       return count;
     }
 
     public int decCount() {
@@ -233,7 +246,9 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         public FormulaSet<Id> call() {
             qx.setReasoner(c.getReasoner());
             try {
-                return qx.quickXplain(c, u);
+                FormulaSet<Id> ids = qx.quickXplain(c, u);
+                addConflict(ids);
+                return ids;
             } catch (NoConflictException e) {
                 return null;
             } catch (SolverException e) {

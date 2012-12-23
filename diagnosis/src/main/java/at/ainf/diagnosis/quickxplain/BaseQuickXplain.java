@@ -54,6 +54,7 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     */
 
     private QXAxiomListener<Id> axiomListener = null;
+    private int iterations;
 
     protected QXAxiomListener<Id> getAxiomListener() {
         return this.axiomListener;
@@ -66,7 +67,17 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
     protected abstract FormulaSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException;
 
-    protected abstract int getIterations();
+    public int getIterations() {
+        return this.iterations;
+    }
+
+    protected void resetIterations() {
+        this.iterations = 0;
+    }
+
+    protected void incIterations(){
+        ++this.iterations;
+    }
 
     /**
      * @param sp sp

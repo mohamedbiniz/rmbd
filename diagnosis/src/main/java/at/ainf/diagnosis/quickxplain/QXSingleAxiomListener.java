@@ -21,19 +21,21 @@ public class QXSingleAxiomListener<Id> extends AbstractAxiomListener<Id> {
     public Id getFoundAxiom() throws InterruptedException {
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
+        Id localAxiom = this.axiom;
         try {
-            while (!isReleased() && this.axiom == null)
+            while (!isReleased() && localAxiom == null)
                 addedAxiom.await();
         } finally {
             lock.unlock();
         }
         release();
-        return this.axiom;
+        this.axiom = null;
+        return localAxiom;
     }
 
     @Override
     public void setFoundAxiom(Id axiom) {
-        if (this.axiom != null)
+        if (isReleased() || this.axiom != null)
             return;
         this.lock.lock();
         try {
@@ -47,5 +49,10 @@ public class QXSingleAxiomListener<Id> extends AbstractAxiomListener<Id> {
     @Override
     public QXAxiomListener<Id> newInstance() {
         return new QXSingleAxiomListener<Id>(this.lock.isFair());
+    }
+
+    @Override
+    public boolean hasAxioms() {
+        return this.axiom != null;
     }
 }

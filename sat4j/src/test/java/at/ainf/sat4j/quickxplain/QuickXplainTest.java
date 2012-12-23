@@ -139,15 +139,23 @@ public class QuickXplainTest {
     }
 
     @Test
-    @Ignore
     public void run2SetQuick() throws SolverException, InconsistentTheoryException, NoConflictException {
 
         MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
         quick.setAxiomListener(new QXAxiomSetListener<IVecIntComparable>(true));
 
-
         Set<FormulaSet<IVecIntComparable>> conflict = computeMultipleConflicts(quick);
         assertEquals(conflict.size(), 6);
+    }
+
+    @Test
+    public void run2SetTerminateQuick() throws SolverException, InconsistentTheoryException, NoConflictException {
+
+        MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>(2,2,3);
+        quick.setAxiomListener(new QXAxiomSetListener<IVecIntComparable>(true));
+
+        Set<FormulaSet<IVecIntComparable>> conflict = computeMultipleConflicts(quick);
+        assertEquals(conflict.size(), 3);
     }
 
     private Set<FormulaSet<IVecIntComparable>> computeMultipleConflicts(MultiQuickXplain<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException, NoConflictException {
@@ -171,10 +179,6 @@ public class QuickXplainTest {
         vec.add(new int[]{-4});
         vec.add(new int[]{5});
 
-        vec.add(new int[]{6, -7});
-        vec.add(new int[]{6, 7});
-        vec.add(new int[]{-6});
-
         vec.add(new int[]{16, -17});
         vec.add(new int[]{16, 17});
         vec.add(new int[]{-16});
@@ -184,8 +188,12 @@ public class QuickXplainTest {
         vec.add(new int[]{-10, -11});
         vec.add(new int[]{-11});
 
-        vec.add(new int[]{6, 11});
-        vec.add(new int[]{-10, -11});
+        vec.add(new int[]{6, -7});
+        vec.add(new int[]{6, 7});
+        vec.add(new int[]{-6});
+
+        vec.add(new int[]{6, 12});
+        vec.add(new int[]{-10, -12});
 
         Collection<IVecIntComparable> test = new LinkedList<IVecIntComparable>();
         for (int[] e : vec)
