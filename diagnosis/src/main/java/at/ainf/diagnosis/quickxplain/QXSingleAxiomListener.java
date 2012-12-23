@@ -21,14 +21,15 @@ public class QXSingleAxiomListener<Id> extends AbstractAxiomListener<Id> {
     public Id getFoundAxiom() throws InterruptedException {
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
-        Id localAxiom = this.axiom;
+
         try {
-            while (!isReleased() && localAxiom == null)
+            while (!isReleased() && this.axiom == null)
                 addedAxiom.await();
         } finally {
             lock.unlock();
         }
         release();
+        Id localAxiom = this.axiom;
         this.axiom = null;
         return localAxiom;
     }
