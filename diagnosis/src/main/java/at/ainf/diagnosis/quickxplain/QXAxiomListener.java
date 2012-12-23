@@ -17,4 +17,6 @@ public interface QXAxiomListener<Id> {
     QXAxiomListener<Id> newInstance();
 
     boolean isReleased();
+
+    public boolean hasAxioms();
 }

@@ -38,8 +38,6 @@ import static _dev.TimeLog.start;
  */
 public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
-    private int iterations = 0;
-
     private static Logger logger = LoggerFactory.getLogger(QuickXplain.class.getName());
 
     public QuickXplain() {
@@ -71,7 +69,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
     public FormulaSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException {
-        iterations = 0;
+        resetIterations();
         try {
             if (!c.verifyRequirements())
                 throw new InconsistentTheoryException("Background theory or test cases are inconsistent! Finding conflicts is impossible!");
@@ -88,6 +86,9 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             start("Conflict", "qx");
             Set<Id> ids = qqXPlain(c, getReasoner().getFormulasCache(), new FormulaList<Id>(u));
             return new FormulaSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
+        } catch (InterruptedException e) {
+            logger.info(e.getMessage());
+            return null;
         } finally {
             if (getAxiomListener() != null)
                 getAxiomListener().release();
@@ -95,13 +96,17 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
     }
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
-            throws SolverException {
+            throws SolverException, InterruptedException {
         if (formulaRenderer != null)
             logger.info("B = {" + formulaRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas())
                     + "}, \n D={" + formulaRenderer.renderAxioms(getReasoner().getFormulasCache())
                     + "}, \n Delta = {" + formulaRenderer.renderAxioms(d) + "}, \n OD = {" + formulaRenderer.renderAxioms(c) + "}");
-        iterations++;
-        if (d != null && d.size() != 0 && !b.verifyRequirements())
+        incIterations();
+
+        if (Thread.interrupted())
+            throw new InterruptedException("QuickXPlain thread is interrupted");
+
+        if ((d != null && d.size() != 0 && !b.verifyRequirements()))
             return null;
 
         if (c.size() == 1) {
@@ -135,9 +140,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         return d1;
     }
 
-    public int getIterations() {
-        return iterations;
-    }
+
 
 
 
