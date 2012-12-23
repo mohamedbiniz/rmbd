@@ -34,7 +34,7 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
                 solver.addClause(stat);
             } catch (ContradictionException e) {
                 setContradiction(true);
-                //e.printStackTrace();
+                e.printStackTrace();
                 return;
             }
         }

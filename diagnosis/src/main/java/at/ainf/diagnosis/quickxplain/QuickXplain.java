@@ -42,8 +42,6 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
     private static Logger logger = LoggerFactory.getLogger(QuickXplain.class.getName());
 
-    private FormulaRenderer<Id> formulaRenderer;
-
     public QuickXplain() {
     }
 
@@ -90,7 +88,6 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             start("Conflict", "qx");
             Set<Id> ids = qqXPlain(c, getReasoner().getFormulasCache(), new FormulaList<Id>(u));
             return new FormulaSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
-
         } finally {
             if (getAxiomListener() != null)
                 getAxiomListener().release();
@@ -102,8 +99,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         if (formulaRenderer != null)
             logger.info("B = {" + formulaRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas())
                     + "}, \n D={" + formulaRenderer.renderAxioms(getReasoner().getFormulasCache())
-                    + "}, \n Delta = {" + formulaRenderer.renderAxioms(d) + "}, \n OD = {"
-                    + formulaRenderer.renderAxioms(c) + "}");
+                    + "}, \n Delta = {" + formulaRenderer.renderAxioms(d) + "}, \n OD = {" + formulaRenderer.renderAxioms(c) + "}");
         iterations++;
         if (d != null && d.size() != 0 && !b.verifyRequirements())
             return null;
@@ -137,10 +133,6 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         if (formulaRenderer != null)
             logger.info("return D = {" + formulaRenderer.renderAxioms(d1) + "}");
         return d1;
-    }
-
-    public void setFormulaRenderer(FormulaRenderer<Id> formulaRenderer) {
-        this.formulaRenderer = formulaRenderer;
     }
 
     public int getIterations() {

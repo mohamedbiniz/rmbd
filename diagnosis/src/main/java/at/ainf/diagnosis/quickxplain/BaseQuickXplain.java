@@ -20,6 +20,7 @@ import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.IReasoner;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.FormulaRenderer;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ import static _dev.TimeLog.stop;
 public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseQuickXplain.class.getName());
+    protected FormulaRenderer<Id> formulaRenderer;
     private AbstractReasoner<Id> reasoner;
     /*
     private long minTime = 10000000;
@@ -149,6 +151,10 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
 
     public void postProcessFormulas(FormulaSet<Id> formulas, Searchable<Id> searchable) throws SolverException {
 
+    }
+
+    public void setFormulaRenderer(FormulaRenderer<Id> formulaRenderer) {
+        this.formulaRenderer = formulaRenderer;
     }
 
     //public boolean isDual() {

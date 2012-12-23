@@ -10,28 +10,25 @@ import java.util.concurrent.locks.ReentrantLock;
  * Time: 17:39
  * To change this template use File | Settings | File Templates.
  */
-public class QXSingleAxiomListener<Id> implements QXAxiomListener<Id> {
-    Id axiom = null;
-    boolean released = false;
-    final ReentrantLock lock;
-    private final Condition addedAxiom;
+public class QXSingleAxiomListener<Id> extends AbstractAxiomListener<Id> {
+    private Id axiom = null;
 
     public QXSingleAxiomListener(boolean fairLock) {
-        this.lock = new ReentrantLock(fairLock);
-        this.addedAxiom = lock.newCondition();
+        super(fairLock);
     }
 
-
-
     @Override
-    public void release() {
-        this.lock.lock();
+    public Id getFoundAxiom() throws InterruptedException {
+        final ReentrantLock lock = this.lock;
+        lock.lockInterruptibly();
         try {
-            this.released = true;
-            addedAxiom.signal();
+            while (!isReleased() && this.axiom == null)
+                addedAxiom.await();
         } finally {
-            this.lock.unlock();
+            lock.unlock();
         }
+        release();
+        return this.axiom;
     }
 
     @Override
@@ -45,19 +42,6 @@ public class QXSingleAxiomListener<Id> implements QXAxiomListener<Id> {
         } finally {
             this.lock.unlock();
         }
-    }
-
-    @Override
-    public Id getFoundAxiom() throws InterruptedException {
-        final ReentrantLock lock = this.lock;
-        lock.lockInterruptibly();
-        try {
-            while (!released && this.axiom == null)
-                addedAxiom.await();
-        } finally {
-            lock.unlock();
-        }
-        return this.axiom;
     }
 
     @Override
