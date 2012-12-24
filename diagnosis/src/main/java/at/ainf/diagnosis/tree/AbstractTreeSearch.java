@@ -481,9 +481,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         // current node should get a conflict only if a path from
         // this node to root does not include closed nodes
         if (node != null && !hasClosedParent(node.getParent())){
-
             node.setAxiomSet(new LinkedHashSet<FormulaSet<Id>>(quickConflict));
-
         }
         return quickConflict;
         /*}

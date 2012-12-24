@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.model;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.owlapi3.debugging.OWLNegateAxiom;
@@ -436,6 +437,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return res;
     }
 
+    /*
     public void addAxioms(Set<OWLLogicalAxiom> axioms, OWLOntology ontology) {
         getOwlOntologyManager().addAxioms(ontology, axioms);
         //for (OWLLogicalAxiom ax : axioms) {
@@ -450,6 +452,8 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         //}
 
     }
+
+    */
 
     protected OWLNegateAxiom getNegationVisitor() {
         return vis;

@@ -98,16 +98,16 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
             throws InconsistentTheoryException, SolverException{
 
         getReasoner().setBackgroundAxioms(c.getKnowledgeBase().getBackgroundFormulas());
-        getReasoner().lock();
-        c.getKnowledgeBase().lock();
+        getReasoner().modificationsLock();
+        c.getKnowledgeBase().modificationsLock();
 
         return formulas;
     }
 
     protected void rollbackChanges(Searchable<Id> c, Collection<Id> formulas, Set<Id> changes)
             throws InconsistentTheoryException, SolverException{
-        c.getKnowledgeBase().unlock();
-        getReasoner().unlock();
+        c.getKnowledgeBase().modificationsUnlock();
+        getReasoner().modificationsUnlock();
         getReasoner().getBackgroundAxioms().clear();
     }
 

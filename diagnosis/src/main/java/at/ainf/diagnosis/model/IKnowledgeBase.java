@@ -97,9 +97,9 @@ public interface IKnowledgeBase<Id> {
 
     public boolean isLocked();
 
-    public void lock();
+    public void modificationsLock();
 
-    public void unlock();
+    public void modificationsUnlock();
 
     //---------------------------------------------------
 

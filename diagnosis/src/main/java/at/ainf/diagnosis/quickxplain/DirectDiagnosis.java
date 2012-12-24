@@ -30,8 +30,8 @@ public class DirectDiagnosis<Id> extends QuickXplain<Id> {
             for (Id axiom : changes)
                 formulas.remove(axiom);
         }
-        getReasoner().lock();
-        c.getKnowledgeBase().lock();
+        getReasoner().modificationsLock();
+        c.getKnowledgeBase().modificationsLock();
 
         return formulas;
     }

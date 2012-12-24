@@ -5,7 +5,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
-import at.ainf.diagnosis.quickxplain.QXSingleAxiomListener;
+import at.ainf.diagnosis.quickxplain.QXAxiomSetListener;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
@@ -69,13 +69,13 @@ public class DualTreeTest {//extends BasePerformanceTests {
         List<String> ntestCases = new LinkedList<String>();
         ntestCases.add("w Type (not C)");
         ptestCases.add("w Type B");
-       // ptestCases.add("w Type E");
-        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
-        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        // ptestCases.add("w Type E");
+        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
 
         runComparison(ont, 2, ptestCases, ntestCases, binary);
 
-       // runComparison(ont, 2, ptestCases, ntestCases, searchDual);
+        // runComparison(ont, 2, ptestCases, ntestCases, searchDual);
 
         //ntestCases.add("v Type D");
         //runComparison(ont, 2, ptestCases, ntestCases);
@@ -97,7 +97,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         //searchDual.setLogic(new DualTreeLogic<AxiomSet<OWLLogicalAxiom>,OWLLogicalAxiom>());
 
-        ((QuickXplain<OWLLogicalAxiom>)dualSearcher).setFormulaRenderer(new MyOWLRendererParser(null));
+        ((QuickXplain<OWLLogicalAxiom>) dualSearcher).setFormulaRenderer(new MyOWLRendererParser(null));
 
         computeQueryExample(ont, runs, true, dualSearcher, searchDual, ptestCases, ntestCases);
 
@@ -105,7 +105,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         Searcher<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
 
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
@@ -140,7 +140,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
     private void computeQueryExample(String ont, int runs, boolean dual, Searcher<OWLLogicalAxiom> searcher,
                                      TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal,
-                                     List<String> ptestCases,  List<String> ntestCases)
+                                     List<String> ptestCases, List<String> ntestCases)
             throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
 
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -163,10 +163,18 @@ public class DualTreeTest {//extends BasePerformanceTests {
         HashSet<OWLLogicalAxiom> negativeTestcase = new HashSet<OWLLogicalAxiom>();
 
         MyOWLRendererParser parser = new MyOWLRendererParser(theoryNormal.getOriginalOntology());
-        for (String testcase : ptestCases)
-            positiveTestcase.add(parser.parse(testcase));
-        for (String testcase : ntestCases)
-            negativeTestcase.add(parser.parse(testcase));
+        for (String testcase : ptestCases) {
+            OWLLogicalAxiom parse = parser.parse(testcase);
+            if (parse == null)
+                throw new NullPointerException("Parser returned null!");
+            positiveTestcase.add(parse);
+        }
+        for (String testcase : ntestCases) {
+            OWLLogicalAxiom parse = parser.parse(testcase);
+            if (parse == null)
+                throw new NullPointerException("Parser returned null!");
+            negativeTestcase.add(parse);
+        }
 
         logger.info("All diagnoses and conflicts with test cases");
         theoryNormal.getKnowledgeBase().addEntailedTest(positiveTestcase);
@@ -183,7 +191,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
     @Test
     public void testResultsEqualTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         binary.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         binary.setSearcher(new QuickXplain<OWLLogicalAxiom>());
@@ -194,20 +202,23 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
     @Test
     public void testResultsMultiThreadedTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+        // test 40 times to check if concurrent modification exception occurs
+        for (int i = 0; i < 40; i++) {
+            BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+            binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+            binary.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+            MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
+            searcher.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
+            binary.setSearcher(searcher);
 
-        BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
-        binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
-        binary.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-        MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
-        searcher.setAxiomListener(new QXSingleAxiomListener<OWLLogicalAxiom>(true));
-        binary.setSearcher(searcher);
-
-        testResultsEqualTime(binary, false);
+            testResultsEqualTime(binary, false);
+        }
 
     }
 
 
-    public void testResultsEqualTime(AbstractTreeSearch referenceSearch, boolean dualMode) throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
+    public void testResultsEqualTime(AbstractTreeSearch referenceSearch, boolean dualMode)
+            throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
         String ont = "koala.owl";
 
@@ -260,9 +271,10 @@ public class DualTreeTest {//extends BasePerformanceTests {
         return theory;
     }
 
-    @Ignore @Test
+    @Ignore
+    @Test
     public void testKoalaQuerySession() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
@@ -279,9 +291,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         search.start();
 
 
-
-
-        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchDual.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         searchDual.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
@@ -296,7 +306,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         searchDual.setMaxDiagnosesNumber(9);
         searchDual.start();
 
-        assertTrue(search.getDiagnoses().size()==searchDual.getDiagnoses().size());
+        assertTrue(search.getDiagnoses().size() == searchDual.getDiagnoses().size());
         assertTrue(search.getDiagnoses().containsAll(searchDual.getDiagnoses()));
 
     }
@@ -306,16 +316,16 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
 
-            String ont = "koala.owl";
-            if (TEST_CACHING) {
-                for (int i = 10; i <= 10; i = i + 5) {
-                    logger.info("Running diagnosis compare " + ont + " (" + i + ")");
-                    compareAllDiagnoses(ont, true, i);
-                }
+        String ont = "example2005.owl";
+        if (TEST_CACHING) {
+            for (int i = 10; i <= 10; i = i + 5) {
+                logger.info("Running diagnosis compare " + ont + " (" + i + ")");
+                compareAllDiagnoses(ont, true, i);
             }
-            logger.info("Running diagnosis compare " + ont + " without caching");
-            compareAllDiagnoses(ont, false, 0);
-        
+        }
+        logger.info("Running diagnosis compare " + ont + " without caching");
+        compareAllDiagnoses(ont, false, 0);
+
     }
 
     protected static boolean userBrk = true;
@@ -331,8 +341,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
     }
 
 
-
-    protected long computeDual(TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual, OWLTheory theoryDual,
+    protected long computeDual(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual, OWLTheory theoryDual,
                                FormulaSet<OWLLogicalAxiom> diagnosis, List<Double> queries, QSSType type) {
         SimulatedSession session = new SimulatedSession();
         TableList entry2 = new TableList();
@@ -375,7 +384,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         return ts.last();
     }
 
-    protected long computeHS(TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal,
+    protected long computeHS(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal,
                              OWLTheory theoryNormal, FormulaSet<OWLLogicalAxiom> diagnoses,
                              List<Double> queries, QSSType type) {
         SimulatedSession session = new SimulatedSession();
@@ -415,7 +424,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         userBrk = true;
         SIGMA = new BigDecimal("85");
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ontology, false);
@@ -428,7 +437,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
 
         manager = OWLManager.createOWLOntologyManager();
-        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         searchDual.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         searchDual.setSearcher(new DirectDiagnosis<OWLLogicalAxiom>());
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ontology, true);

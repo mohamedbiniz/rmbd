@@ -165,7 +165,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
                         Searchable<Id> ct = c.copy();
                         quickXplain(ct, cu);
 
-                        if (results.size() >= getMaxConflictSetCount()){
+                        if (results.size() >= getMaxConflictSetCount()) {
                             if (!this.pool.isShutdown())
                                 this.pool.shutdownNow();
                             break;
