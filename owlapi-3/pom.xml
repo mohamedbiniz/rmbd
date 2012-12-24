@@ -62,7 +62,7 @@
                         at.ainf.owlapi3
                     </finalName>
                     <archive>
-                    <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
                 </configuration>
             </plugin>
@@ -72,7 +72,9 @@
                     <execution>
                         <id>attach-sources</id>
                         <phase>deploy</phase>
-                        <goals><goal>jar-no-fork</goal></goals>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -84,7 +86,9 @@
                     <execution>
                         <id>attach-javadocs</id>
                         <phase>deploy</phase>
-                        <goals><goal>jar</goal></goals>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -97,7 +101,9 @@
                     <execution>
                         <id>deploy</id>
                         <phase>deploy</phase>
-                        <goals><goal>deploy</goal></goals>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -120,10 +126,24 @@
         </dependency>
 
         <dependency>
-            <groupId>org.semanticweb.owl</groupId>
-            <artifactId>owlapi</artifactId>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-api</artifactId>
             <!--<version>3.2.5_svn_1944</version>-->
-            <version>3.3</version>
+            <version>3.4.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-impl</artifactId>
+            <!--<version>3.2.5_svn_1944</version>-->
+            <version>3.4.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-tools</artifactId>
+            <!--<version>3.2.5_svn_1944</version>-->
+            <version>3.4.2</version>
         </dependency>
 
     </dependencies>

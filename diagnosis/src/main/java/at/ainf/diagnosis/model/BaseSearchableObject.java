@@ -94,7 +94,7 @@ public class BaseSearchableObject<T> implements Searchable<T> {
 
         getKnowledgeBase().addBackgroundFormulas(tests);
         this.registered = true;
-        getKnowledgeBase().lock();
+        getKnowledgeBase().modificationsLock();
     }
 
     public final void unregisterTestCases() throws SolverException {
@@ -105,7 +105,7 @@ public class BaseSearchableObject<T> implements Searchable<T> {
         for (Set<T> testCase : getKnowledgeBase().getEntailedTests())
             tests.addAll(testCase);
 
-        getKnowledgeBase().unlock();
+        getKnowledgeBase().modificationsUnlock();
         getKnowledgeBase().removeBackgroundFormulas(tests);
         this.registered = false;
     }

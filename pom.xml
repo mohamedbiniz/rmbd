@@ -113,6 +113,7 @@
                     <artifactId>maven-source-plugin</artifactId>
                     <version>2.1.2</version>
                 </plugin>
+                <!--
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
@@ -121,6 +122,7 @@
                         <outputEncoding>UTF-8</outputEncoding>
                     </configuration>
                 </plugin>
+                -->
                 <plugin>
                     <groupId>org.riedelcastro</groupId>
                     <artifactId>gcupload-maven-plugin</artifactId>
@@ -157,6 +159,15 @@
             <id>vknow-public</id>
             <name>VKnow (custom + maven2)</name>
             <url>http://scs-iwas.uni-klu.ac.at/nexus/content/groups/public/</url>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>SourceForge</id>
+            <name>SourceForge.net public repository</name>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
             <releases>
                 <updatePolicy>daily</updatePolicy>
                 <checksumPolicy>warn</checksumPolicy>

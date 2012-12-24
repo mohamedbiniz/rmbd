@@ -19,11 +19,11 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
 
     private boolean locked = false;
 
-    public void lock() {
+    public void modificationsLock() {
         this.locked = true;
     }
 
-    public void unlock() {
+    public void modificationsUnlock() {
         this.locked = false;
     }
 

@@ -30,11 +30,11 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         return locked == 0;
     }
 
-    public void lock() {
+    public void modificationsLock() {
         this.locked++;
     }
 
-    public void unlock() {
+    public void modificationsUnlock() {
         if (this.locked > 0)
             this.locked--;
     }
