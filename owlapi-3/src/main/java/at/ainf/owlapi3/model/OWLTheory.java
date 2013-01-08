@@ -43,7 +43,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
 
     @Override
     protected BaseSearchableObject<OWLLogicalAxiom> getNewInstance(IKnowledgeBase<OWLLogicalAxiom> knowledgeBase, AbstractReasoner<OWLLogicalAxiom> reasoner) throws SolverException, InconsistentTheoryException {
-        return new OWLTheory(this.originalReasonerFactory, this.origOntology, knowledgeBase.getBackgroundFormulas());
+        return new OWLTheory(this.originalReasonerFactories, this.origOntology, knowledgeBase.getBackgroundFormulas());
     }
 
     public void setIncludeTrivialEntailments(boolean includeTrivialEntailments) {
@@ -89,7 +89,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     }
 
 
-    private OWLReasonerFactory originalReasonerFactory;
+    private List<OWLReasonerFactory> originalReasonerFactories;
 
     private OWLOntology origOntology;
 
@@ -99,7 +99,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     public void reset() {
 
         try {
-            init(originalReasonerFactory, origOntology, origBackgroundAxioms);
+            init(originalReasonerFactories, origOntology, origBackgroundAxioms);
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {
@@ -109,11 +109,14 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
 
     // Set<OWLLogicalAxiom> formularCache = new LinkedHashSet<OWLLogicalAxiom>();
 
-    private void init(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
+    private void init(List<OWLReasonerFactory> reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
             throws InconsistentTheoryException, SolverException {
         OWLOntologyManager man = ontology.getOWLOntologyManager();
         setOwlOntologyManager(man);
-        setReasoner(new ReasonerOWL(man, reasonerFactory));
+        if (reasonerFactory.size() == 1)
+            setReasoner(new ReasonerOWL(man, reasonerFactory.get(0)));
+        else
+            setReasoner(new MultipleReasonersOWL(man,reasonerFactory));
 
         //try {
             //OWLOntology dontology = owlOntologyManager.createOntology();
@@ -180,12 +183,15 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
 
     public OWLTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
             throws InconsistentTheoryException, SolverException {
-        this.originalReasonerFactory = reasonerFactory;
+        this(Collections.singletonList(reasonerFactory),ontology,backgroundAxioms);
+    }
+
+    public OWLTheory(List<OWLReasonerFactory> reasonerFactories, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
+            throws InconsistentTheoryException, SolverException {
+        this.originalReasonerFactories = reasonerFactories;
         this.origOntology = ontology;
         this.origBackgroundAxioms = backgroundAxioms;
-
-        init(reasonerFactory, ontology, backgroundAxioms);
-
+        init(reasonerFactories, ontology, backgroundAxioms);
     }
 
 

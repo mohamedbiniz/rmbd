@@ -34,7 +34,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class WikiExamplesTest {
 
-    private static Logger logger = LoggerFactory.getLogger(TreeTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(WikiExamplesTest.class.getName());
 
     @Test
     /**
