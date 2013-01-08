@@ -13,6 +13,7 @@ import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaSet;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -46,6 +47,7 @@ public class QXDiagTest {
         PropertyConfigurator.configure(conf);
     }*/
 
+    @Ignore
     @Test
     public void testFasterDiagnosisSearch() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -63,6 +65,7 @@ public class QXDiagTest {
             logger.info(new CalculateDiagnoses().renderAxioms(hs));
     }
 
+    @Ignore
     @Test
     public void testResultsEqual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
@@ -157,6 +160,7 @@ public class QXDiagTest {
 
     }
 
+    @Ignore
     @Test
     public void testUnivDual() throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
         HashSet<OWLLogicalAxiom> positiveTestcase = new HashSet<OWLLogicalAxiom>();

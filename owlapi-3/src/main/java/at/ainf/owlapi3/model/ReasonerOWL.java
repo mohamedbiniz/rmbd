@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
+import at.ainf.diagnosis.model.IReasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -26,34 +27,42 @@ import static _dev.TimeLog.stop;
  */
 public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
-    private static final OWLClass TOP_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
+
+    protected static final OWLClass TOP_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
+
     private static int cnt = 0;
-    private OWLOntology ontology;
+
+    protected OWLOntology ontology;
+
     private OWLReasoner reasoner;
     private List<InferredAxiomGenerator<? extends OWLLogicalAxiom>> axiomGenerators;
     private boolean includeAxiomsReferencingThing;
     private boolean includeOntologyAxioms;
     private OWLReasonerFactory reasonerFactory;
 
-    private int num = cnt++;
+    protected int num = cnt++;
     private final OWLOntologyManager owlOntologyManager;
 
     private static ReentrantLock syncLock = new ReentrantLock(true);
 
     public ReasonerOWL(OWLOntologyManager owlOntologyManager, OWLReasonerFactory reasonerFactory) {
+        this(owlOntologyManager);
+
+        this.reasonerFactory = reasonerFactory;
+        reasoner = reasonerFactory.createReasoner(this.ontology);
+    }
+
+    protected ReasonerOWL(OWLOntologyManager owlOntologyManager) {
         try {
             this.owlOntologyManager = owlOntologyManager;
 
             OWLOntology dontology = owlOntologyManager.createOntology();
             OWLLiteral lit = owlOntologyManager.getOWLDataFactory().getOWLLiteral("Test Reasoner Ontology " + num);
             IRI iri = OWLRDFVocabulary.RDFS_COMMENT.getIRI();
-            OWLAnnotation anno = owlOntologyManager.getOWLDataFactory().getOWLAnnotation(
-                    owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(iri), lit);
+            OWLAnnotation anno = owlOntologyManager.getOWLDataFactory().getOWLAnnotation(owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(iri), lit);
             owlOntologyManager.applyChange(new AddOntologyAnnotation(dontology, anno));
             this.ontology = dontology;
-            this.reasonerFactory = reasonerFactory;
 
-            reasoner = reasonerFactory.createReasoner(this.ontology);
         } catch (OWLOntologyCreationException e) {
             throw new OWLRuntimeException(e);
         }
@@ -89,23 +98,29 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         sync();
         InferenceType[] infType = new InferenceType[]{InferenceType.CLASS_HIERARCHY, InferenceType.CLASS_ASSERTIONS,
                 InferenceType.DISJOINT_CLASSES, InferenceType.DIFFERENT_INDIVIDUALS, InferenceType.SAME_INDIVIDUAL};
-        if (!axiomGenerators.isEmpty())
+        if (!getAxiomGenerators().isEmpty())
             reasoner.precomputeInferences(infType);
 
         Set<OWLLogicalAxiom> entailments = new LinkedHashSet<OWLLogicalAxiom>();
-        for (InferredAxiomGenerator<? extends OWLLogicalAxiom> axiomGenerator : axiomGenerators) {
-            for (OWLLogicalAxiom ax : axiomGenerator.createAxioms(getOWLOntologyManager(), reasoner)) {
-                if (!ontology.containsAxiom(ax) || includeOntologyAxioms)
-                    if (!ax.getClassesInSignature().contains(TOP_CLASS) || includeAxiomsReferencingThing) {
+        for (InferredAxiomGenerator<? extends OWLLogicalAxiom> axiomGenerator : getAxiomGenerators()) {
+            for (OWLLogicalAxiom ax : axiomGenerator.createAxioms(ontology.getOWLOntologyManager(), reasoner)) {
+                if (!ontology.containsAxiom(ax) || isIncludeOntologyAxioms())
+                    if (!ax.getClassesInSignature().contains(TOP_CLASS) || isIncludeAxiomsReferencingThing()) {
                         entailments.add(ax);
                     }
 
             }
         }
 
-        if (includeOntologyAxioms)
+        if (isIncludeOntologyAxioms())
             entailments.addAll(ontology.getLogicalAxioms());
         return entailments;
+    }
+
+    protected void doReasonerFlush() {
+        start("Reasoner sync ");
+        reasoner.flush();
+        stop();
     }
 
     @Override
@@ -113,14 +128,10 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         syncLock.lock();
         try {
             if (!axiomsToAdd.isEmpty())
-                getOWLOntologyManager().addAxioms(ontology, axiomsToAdd);
+                ontology.getOWLOntologyManager().addAxioms(ontology, axiomsToAdd);
             if (!axiomsToRemove.isEmpty())
-                getOWLOntologyManager().removeAxioms(ontology, axiomsToRemove);
-            start("Reasoner sync ");
-            //synchronized (ontology.getOWLOntologyManager().getClass()){
-            reasoner.flush();
-            //}
-            stop();
+                ontology.getOWLOntologyManager().removeAxioms(ontology, axiomsToRemove);
+            doReasonerFlush();
         } finally {
             syncLock.unlock();
         }
@@ -137,6 +148,18 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
     public void setIncludeAxiomsReferencingThing(boolean incAxiomsReferencingThing) {
         includeAxiomsReferencingThing = incAxiomsReferencingThing;
 
+    }
+
+    public boolean isIncludeAxiomsReferencingThing() {
+        return includeAxiomsReferencingThing;
+    }
+
+    public boolean isIncludeOntologyAxioms() {
+        return includeOntologyAxioms;
+    }
+
+    public List<InferredAxiomGenerator<? extends OWLLogicalAxiom>> getAxiomGenerators() {
+        return axiomGenerators;
     }
 
     public Set<OWLClass> getUnsatisfiableEntities() {

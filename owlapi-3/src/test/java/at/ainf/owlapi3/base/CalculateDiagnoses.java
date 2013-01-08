@@ -95,7 +95,7 @@ public class CalculateDiagnoses {
         return String.format("%d , (%d h %d m %d s %d ms)", millis, hours, minutes, seconds, milliseconds);
     }
 
-    public String renderAxioms(Collection<OWLLogicalAxiom> axioms) {
+    public static String renderAxioms(Collection<OWLLogicalAxiom> axioms) {
         ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
         String result = "";
 
