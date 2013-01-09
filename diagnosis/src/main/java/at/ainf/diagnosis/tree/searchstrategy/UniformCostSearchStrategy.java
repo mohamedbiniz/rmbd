@@ -4,10 +4,7 @@ import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 
 import static at.ainf.diagnosis.tree.Rounding.PRECISION;
 import static at.ainf.diagnosis.tree.Rounding.ROUNDING_MODE;
@@ -25,7 +22,7 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
 
 
 
-    public Node<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+    public Node<Id> createRootNode(LinkedHashSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         Node<Id> node = new HSTreeNode<Id>(conflict);
         node.setCostsEstimator(costsEstimator);
         return node;
@@ -60,8 +57,8 @@ public class UniformCostSearchStrategy<Id> implements SearchStrategy<Id> {
             throw new IllegalStateException("Sum of probabilities of all diagnoses is 0!");
 
         for (FormulaSet<Id> hittingSet : hittingSets) {
-                // the decimal expansion is inf we need round
-                hittingSet.setMeasure(hittingSet.getMeasure().divide(sum,PRECISION, ROUNDING_MODE));
+            // the decimal expansion is inf we need round
+            hittingSet.setMeasure(hittingSet.getMeasure().divide(sum,PRECISION, ROUNDING_MODE));
         }
     }
 

@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public interface SplitStrategy<Id> {
 
-    public Id getSplitElement(Set<FormulaSet<Id>> conflicts);
+    public Id getSplitElement(Set<Set<Id>> conflicts);
 
 
 }

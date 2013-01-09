@@ -40,19 +40,22 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
-        Set<FormulaSet<Id>> conflict = calculateConflict(null);
+        Set<Set<Id>> conflict = calculateConflict(null);
 
-        BHSTreeNode<Id> node = new BHSTreeNode<Id>(conflict);
+        //convert to linked HashSet
+        LinkedHashSet conflictH = new LinkedHashSet(conflict);
+
+        BHSTreeNode<Id> node = new BHSTreeNode<Id>(conflictH);
         node.setCostsEstimator(getCostsEstimator());
 
         setRoot(node);
     }
 
-    public Set<FormulaSet<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException,InconsistentTheoryException{
-      if(node.getAxiomSets()==null || node.getAxiomSets().isEmpty())
-        return calculateConflict(node);
+    public Set<Set<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException,InconsistentTheoryException{
+        if(node.getAxiomSets()==null || node.getAxiomSets().isEmpty())
+            return calculateConflict(node);
 
-       else return null;
+        else return null;
     }
 
     public Set<T> getDiagnoses() {
@@ -69,12 +72,12 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
         Set<Id> delete = new LinkedHashSet<Id>();
 
 
-          //updateNode(((BHSTreeNode)getRoot()),delete);
+        //updateNode(((BHSTreeNode)getRoot()),delete);
     }
 
     public void updateNode(BHSTreeNode<Id> node,Set<Id> delete)  throws SolverException, InconsistentTheoryException, NoConflictException{
 
-        for (FormulaSet<Id> ax : node.getNewConflicts()) {
+        for (Set<Id> ax : node.getNewConflicts()) {
             Set<Id> axioms = getSearcher().search(getSearchable(), (T)ax, null).iterator().next();
 
             //identify invalid elements
@@ -84,7 +87,7 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
             }
 
         }
-              node.updateNode(delete);
+        node.updateNode(delete);
 
 
         for(Node<Id> child:node.getChildren()){
@@ -94,22 +97,26 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
     }
 
     @Override
-    public Set<FormulaSet<Id>> calculateConflict(Node<Id> node) throws SolverException, NoConflictException, InconsistentTheoryException {
+    public Set<Set<Id>> calculateConflict(Node<Id> node) throws SolverException, NoConflictException, InconsistentTheoryException {
 
-        Set<FormulaSet<Id>> quickConflict = super.calculateConflict(node);
+        Set<Set<Id>> quickConflict = super.calculateConflict(node);
 
         if (node != null)
-        for(FormulaSet<Id> conflict: quickConflict) {
-            for(HSTreeNode<Id> leave: (Set<HSTreeNode>)((HSTreeNode)getRoot()).getLeaves()) {
-                if(!leave.isClosed() && !intersectsWith(conflict,leave.getPathLabels())) {
-                    ((BHSTreeNode<Id>)leave).addNewConflict(conflict);
-                    //SEHR UNSCHÖN später ausbessern
-                    if(leave.getConflicts()!=null)
-                        leave.getConflicts().add(((BHSTreeNode)leave).updateConflict(conflict));
-                    else leave.setAxiomSet((FormulaSet<Id>)((BHSTreeNode)leave).updateConflict(conflict));
+            for(Set<Id> conflictS: quickConflict) {
+
+                LinkedHashSet<Id> conflict = new LinkedHashSet<Id>(conflictS);
+
+               // for(HSTreeNode<Id> leaf: (Set<HSTreeNode>)((HSTreeNode)getRoot()).getLeaves()) {
+                for(Node<Id> leaf: getSearchStrategy().getOpenNodes()) {
+                    if(!leaf.isClosed() && !intersectsWith(conflict,leaf.getPathLabels())) {
+                        ((BHSTreeNode<Id>)leaf).addNewConflict(conflict);
+                        //SEHR UNSCHÖN später ausbessern
+                        if(((HSTreeNode<Id>)leaf).getConflicts()!=null)
+                            ((HSTreeNode<Id>)leaf).getConflicts().add(((BHSTreeNode)leaf).updateConflict(conflict));
+                        else leaf.setAxiomSet((LinkedHashSet<Id>)((BHSTreeNode)leaf).updateConflict(conflict));
+                    }
                 }
             }
-        }
 
         return quickConflict;
     }

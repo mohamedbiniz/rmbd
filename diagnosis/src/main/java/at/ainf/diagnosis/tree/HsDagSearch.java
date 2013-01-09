@@ -40,7 +40,7 @@ public class HsDagSearch<T extends FormulaSet<Id>,Id> extends HsTreeSearch<T,Id>
     }
 
 
-    protected Set<FormulaSet<Id>> calculateNode(HSTreeNode<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+    protected Set<Set<Id>> calculateNode(HSTreeNode<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
         return calculateConflict(node);
     }
 
@@ -121,7 +121,7 @@ public class HsDagSearch<T extends FormulaSet<Id>,Id> extends HsTreeSearch<T,Id>
                 node.removeChild(invalidChild);
             }
 
-            node.setAxiomSet(axSet);
+            node.setAxiomSet(new LinkedHashSet<Id>(axSet));
         }
         return node.getChildren();
     }

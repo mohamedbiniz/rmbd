@@ -7,6 +7,7 @@ import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public interface SearchStrategy<Id> {
 
     public void addNodes(List<Node<Id>> nodeList);
 
-    public Node<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act);
+    public Node<Id> createRootNode(LinkedHashSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act);
 
     public BigDecimal getConflictMeasure(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator);
 

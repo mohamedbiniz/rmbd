@@ -8,10 +8,10 @@
 
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.Debugger;
+import  at.ainf.diagnosis.Debugger;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
-import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
+import at.ainf.diagnosis.tree.searchstrategy.*;
 import at.ainf.diagnosis.storage.FormulaRenderer;
 import at.ainf.diagnosis.storage.FormulaSet;
 

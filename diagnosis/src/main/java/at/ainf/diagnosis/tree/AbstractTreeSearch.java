@@ -8,7 +8,7 @@
 
 package at.ainf.diagnosis.tree;
 
-import   _dev.TimeLog;
+import    _dev.TimeLog;
 import at.ainf.diagnosis.AbstractDebugger;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
@@ -16,7 +16,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
+import at.ainf.diagnosis.tree.searchstrategy.*;
 import at.ainf.logging.aop.ProfiledVar;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
@@ -317,6 +317,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         return true; } */
 
     protected void processNode(Node<Id> node) throws SolverException, InconsistentTheoryException {
+
+
         boolean prune = pruneHittingSet(node);
 
         // if(axiomRenderer!=null) loggerDual.info("arc: " + axiomRenderer.renderAxiom(node.getArcLabel()));
@@ -384,9 +386,9 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
-        Set<FormulaSet<Id>> conflict = calculateConflict(null);
+        Set<Set<Id>> conflict = calculateConflict(null);
         //NEW
-        Node<Id> node = getSearchStrategy().createRootNode(conflict.iterator().next(), getCostsEstimator(), getSearchable().getKnowledgeBase().getFaultyFormulas());
+        Node<Id> node = getSearchStrategy().createRootNode(new LinkedHashSet(conflict.iterator().next()), getCostsEstimator(), getSearchable().getKnowledgeBase().getFaultyFormulas());
         setRoot(node);
     }
 
@@ -414,7 +416,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         }
     }
      */
-    public Set<FormulaSet<Id>> calculateConflict(Node<Id> node) throws
+    public Set<Set<Id>> calculateConflict(Node<Id> node) throws
             SolverException, NoConflictException, InconsistentTheoryException {
         // if conflict was already calculated
         //edited
@@ -481,9 +483,17 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         // current node should get a conflict only if a path from
         // this node to root does not include closed nodes
         if (node != null && !hasClosedParent(node.getParent())){
-            node.setAxiomSet(new LinkedHashSet<FormulaSet<Id>>(quickConflict));
+            node.setAxiomSet(new LinkedHashSet<Set<Id>>(quickConflict));
         }
-        return quickConflict;
+
+        Set<Set<Id>> quickConflictRes = new LinkedHashSet<Set<Id>>();
+
+        for(FormulaSet<Id> fs:quickConflict){
+                  quickConflictRes.add(new LinkedHashSet<Id>(fs));
+        }
+
+
+        return quickConflictRes;
         /*}
         else {
                 Set<Id> diagnosis = quickConflict;
@@ -501,7 +511,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         }*/
     }
 
-    protected abstract Set<FormulaSet<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException, InconsistentTheoryException;
+    protected abstract Set<Set<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException, InconsistentTheoryException;
 
     /*public Set<T> getConflicts() {
         return getStorage().getConflicts();
@@ -578,7 +588,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         Collection<Id> pathLabels = node.getPathLabels();
         for (FormulaSet<Id> localConflict : getConflicts()) {
             if (localConflict.isValid() && !intersectsWith(pathLabels, localConflict)) {
-                node.setAxiomSet(localConflict);
+                node.setAxiomSet(new LinkedHashSet<Id>(localConflict));
                 if (logger.isDebugEnabled())
                     logger.debug("Reusing conflict: " + localConflict);
                 if (formulaRenderer != null) logMessage(getDepth(node), "reusing conflict ", localConflict);
@@ -744,7 +754,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         return Collections.unmodifiableSet(hittingSets);
     }
 
-    private boolean isValidConflict(Set<FormulaSet<Id>> set){
+    private boolean isValidConflict(Set<Set<Id>> set){
 
         if(set==null || set.isEmpty()) return false;
 
