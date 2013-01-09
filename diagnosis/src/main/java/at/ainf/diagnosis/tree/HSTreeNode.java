@@ -43,7 +43,7 @@ public class HSTreeNode<Id> implements Node<Id> {
     protected Id arcLabel;
 
     // CONFLICT: if the node is not calculated or closed conflict = null
-    protected Set<FormulaSet<Id>> conflict = null;
+    protected Set<Set<Id>> conflict = null;
 
     protected final boolean root;
 
@@ -54,7 +54,7 @@ public class HSTreeNode<Id> implements Node<Id> {
     // constructor for root
 
     //NEU
-    public HSTreeNode(Set<FormulaSet<Id>> conflict) {
+    public HSTreeNode(Set<Set<Id>> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
@@ -64,14 +64,14 @@ public class HSTreeNode<Id> implements Node<Id> {
         this.conflict = conflict;
     }
 
-    public HSTreeNode(FormulaSet<Id> conflict) {
+    public HSTreeNode(LinkedHashSet<Id> conflict) {
         this.parent = null;
         // arcLabel = -1
         this.arcLabel = null;
 
         this.root = true;
 
-        Set<FormulaSet<Id>> set = new LinkedHashSet<FormulaSet<Id>>();
+        Set<Set<Id>> set = new LinkedHashSet<Set<Id>>();
         set.add(conflict);
         this.conflict = set;
     }
@@ -93,7 +93,7 @@ public class HSTreeNode<Id> implements Node<Id> {
     public boolean removeChild(Node<Id> node) {
 
         if(node!=null)
-        node.removeParent();
+            node.removeParent();
         return this.children.remove(node);
     }
 
@@ -197,17 +197,17 @@ public class HSTreeNode<Id> implements Node<Id> {
     }
 
     @Override
-    public Set<FormulaSet<Id>> getAxiomSets() {
+    public Set<Set<Id>> getAxiomSets() {
         return conflict;
     }
 
     @Override
-    public FormulaSet<Id> getAxiomSet() {
+    public Set<Id> getAxiomSet() {
         return conflict.iterator().next();
     }
 
     @Override
-    public void setAxiomSet(Set<FormulaSet<Id>> conflict) {
+    public void setAxiomSet(Set<Set<Id>> conflict) {
         /*
         for (SimpleNode<Id> child : children) {
             child.setClosed();
@@ -220,9 +220,9 @@ public class HSTreeNode<Id> implements Node<Id> {
     }
 
     @Override
-    public void setAxiomSet(FormulaSet<Id> conflict) {
+    public void setAxiomSet(LinkedHashSet<Id> conflict) {
 
-        Set<FormulaSet<Id>> set = new LinkedHashSet<FormulaSet<Id>>();
+        Set<Set<Id>> set = new LinkedHashSet<Set<Id>>();
         set.add(conflict);
         this.conflict = set;
     }
@@ -289,33 +289,33 @@ public class HSTreeNode<Id> implements Node<Id> {
         return (isRoot()) ? "Root" : getArcLabel().toString();
     }
 
-      public Set<HSTreeNode> getLeaves(){
+    public Set<HSTreeNode> getLeaves(){
 
-          Set<HSTreeNode> result = new LinkedHashSet<HSTreeNode>();
+        Set<HSTreeNode> result = new LinkedHashSet<HSTreeNode>();
 
-          if(getChildren().isEmpty())
-              result.add(this);
+        if(getChildren().isEmpty())
+            result.add(this);
 
-          else{
-              for(Node<Id> child:getChildren()){
-                  result.addAll(((HSTreeNode) child).getLeaves());
-              }
-          }
-           return result;
+        else{
+            for(Node<Id> child:getChildren()){
+                result.addAll(((HSTreeNode) child).getLeaves());
+            }
+        }
+        return result;
 
-      }
+    }
 
     public Set<Set<Id>> getHittingSets(){
 
         Set<Set<Id>> result = new LinkedHashSet<Set<Id>>();
 
         for(Node<Id> node:getLeaves()){
-                result.add(node.getPathLabels());
+            result.add(node.getPathLabels());
         }
         return result;
     }
 
-    public Set<FormulaSet<Id>> getConflicts(){
+    public Set<Set<Id>> getConflicts(){
         return conflict;
     }
 

@@ -18,7 +18,7 @@ public class SimpleSplitStrategy<Id> implements SplitStrategy<Id> {
     /**
      * Returns the first element from the set of conflicts
      */
-    public Id getSplitElement(Set<FormulaSet<Id>> conflicts) {
+    public Id getSplitElement(Set<Set<Id>> conflicts) {
         return conflicts.iterator().next().iterator().next();
     }
 }

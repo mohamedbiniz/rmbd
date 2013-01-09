@@ -18,20 +18,20 @@ public class MostFrequentSplitStrategy<Id> implements SplitStrategy<Id> {
      * @param conflicts
      * @return
      */
-    public Id getSplitElement(Set<FormulaSet<Id>> conflicts) {
+    public Id getSplitElement(Set<Set<Id>> conflicts) {
 
         //Result element
         Id result=null;
         //Number of occurrences of result element
         int maxCount=0;
 
-        for(FormulaSet<Id> c: conflicts){
+        for(Set<Id> c: conflicts){
 
             for(Id el : c){
-                   if(count(el,conflicts)>maxCount){
-                       result=el;
-                       maxCount=count(el,conflicts);
-                   }
+                if(count(el,conflicts)>maxCount){
+                    result=el;
+                    maxCount=count(el,conflicts);
+                }
             }
 
         }
@@ -46,13 +46,13 @@ public class MostFrequentSplitStrategy<Id> implements SplitStrategy<Id> {
      * @param conflicts
      * @return
      */
-    private int count(Id element, Set<FormulaSet<Id>> conflicts){
+    private int count(Id element, Set<Set<Id>> conflicts){
 
         int cnt=0;
 
-        for(FormulaSet ax:conflicts){
-           if(ax.contains(element))
-               cnt++;
+        for(Set ax:conflicts){
+            if(ax.contains(element))
+                cnt++;
         }
 
         return cnt;

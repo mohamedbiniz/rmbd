@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static _dev.TimeLog.start;
@@ -36,6 +37,8 @@ public class PredefinedConflictSearcher<Id> implements Searcher<Id> {
 
     private static Logger logger = LoggerFactory.getLogger(PredefinedConflictSearcher.class.getName());
     private boolean isUsed=false;
+    private int count=1;
+    private boolean isBHS=true;
 
     public Set<FormulaSet<Id>> getConflictSets() {
         return conflictSets;
@@ -50,11 +53,40 @@ public class PredefinedConflictSearcher<Id> implements Searcher<Id> {
     @Override
     public Set<FormulaSet<Id>> search(Searchable<Id> searchable, Collection<Id> formulas, Set<Id> changes) throws NoConflictException, SolverException, InconsistentTheoryException {
 
-        if(isUsed) throw new NoConflictException("No conflicts available!");
 
-        isUsed=true ;
 
-        return conflictSets;
+        if(conflictSets.isEmpty()) throw new NoConflictException("No conflicts available!");
+
+        Set<FormulaSet<Id>> result = new LinkedHashSet<FormulaSet<Id>>();
+
+        int i=0;
+
+
+
+        for(FormulaSet<Id> conflict:conflictSets){
+
+            if(i==count) break;
+
+            if(i<count && !intersectsWith(conflict,changes)){
+                result.add(conflict);
+                i++;
+
+
+            }
+
+
+
+        }
+
+        //if(isBHS){
+        for(FormulaSet<Id> delete : result){
+            conflictSets.remove(delete);
+        }
+        //}
+
+        if(result.isEmpty()  ) throw new NoConflictException("No conflicts available!");
+
+        return result;
     }
 
     @Override
@@ -66,5 +98,29 @@ public class PredefinedConflictSearcher<Id> implements Searcher<Id> {
     //    return false;
     //}
 
+    public void setCount(int cnt){
+        this.count=cnt;
+    }
+
+    public void setIsBHS(boolean isBHS){
+        this.isBHS=isBHS;
+    }
+
+
+    private boolean intersectsWith(Collection<Id> pathLabels, Collection<Id> localConflict) {
+
+        if(pathLabels==null || localConflict==null)
+            return false;
+
+        for (Id label : pathLabels) {
+            //if (localConflict.contains(label))
+            //    return true;
+            for (Id axiom : localConflict) {
+                if (axiom.equals(label))
+                    return true;
+            }
+        }
+        return false;
+    }
 
 }

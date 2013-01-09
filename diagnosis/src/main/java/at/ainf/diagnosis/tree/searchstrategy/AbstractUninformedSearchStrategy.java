@@ -1,14 +1,17 @@
 package at.ainf.diagnosis.tree.searchstrategy;
 
-import at.ainf.diagnosis.tree.CostsEstimator;
+import  at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.HSTreeNode;
+import at.ainf.diagnosis.tree.BHSTreeNode;
 import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,8 +24,12 @@ public abstract class AbstractUninformedSearchStrategy<Id> implements SearchStra
 
     private final LinkedList<Node<Id>> openNodes = new LinkedList<Node<Id>>();
 
-    public HSTreeNode<Id> createRootNode(FormulaSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+    public HSTreeNode<Id> createRootNode(LinkedHashSet<Id> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
         return new HSTreeNode<Id>(conflict);
+    }
+
+    public BHSTreeNode<Id> createRootNode(Set<Set<Id>> conflict, CostsEstimator<Id> costsEstimator, Collection<Id> act) {
+        return new BHSTreeNode<Id>(conflict);
     }
 
 

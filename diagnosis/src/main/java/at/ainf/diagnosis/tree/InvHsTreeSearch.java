@@ -1,6 +1,6 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.model.InconsistentTheoryException;
+import  at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -68,15 +68,16 @@ public class InvHsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSe
         }
         root.removeChildren();
         if (!cs.isEmpty()) {
-            root.setAxiomSet(Collections.max(cs, new Comparator<T>() {
+            //UNBEDINGT AUSBESSERN
+           /** root.setAxiomSet(Collections.max(cs, new Comparator<T>() {
                 public int compare(T o1, T o2) {
                     return o1.compareTo(o2);
                 }
-            }));
+            }));       **/
             getSearchStrategy().addNodes(root.expandNode());
         }
         else
-            root.setAxiomSet((FormulaSet<Id>)null);
+            root.setAxiomSet((LinkedHashSet<Id>)null);
 
     }
 
@@ -156,12 +157,12 @@ public class InvHsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSe
                 }
                 node.removeAxioms();
             } else
-                node.setAxiomSet(axSet);
+                node.setAxiomSet(new LinkedHashSet<Id>(axSet));
         }
         return node.getChildren();
     }
 
-    protected Set<FormulaSet<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
+    protected Set<Set<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
         return calculateConflict(node);
     }
 

@@ -4,6 +4,7 @@ import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -18,6 +19,8 @@ public interface Node<Id> extends Comparable<Node<Id>>{
     boolean addChild(HSTreeNode<Id> node);
 
     boolean removeChild(Node<Id> node);
+
+
 
     void removeChildren();
 
@@ -41,13 +44,13 @@ public interface Node<Id> extends Comparable<Node<Id>>{
 
     Id getArcLabel();
 
-    Set<FormulaSet<Id>> getAxiomSets();
+    Set<Set<Id>> getAxiomSets();
 
-    FormulaSet<Id> getAxiomSet();
+    Set<Id> getAxiomSet();
 
-    void setAxiomSet(Set<FormulaSet<Id>> conflict);
+    void setAxiomSet(Set<Set<Id>> conflict);
 
-    void setAxiomSet(FormulaSet<Id> conflict);
+    void setAxiomSet(LinkedHashSet<Id> conflict);
 
     int getLevel();
 
