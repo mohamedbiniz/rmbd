@@ -10,6 +10,7 @@ import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
@@ -67,6 +68,7 @@ public class MultipleReasonersTest {
         return new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
     }
 
+    @Ignore
     @Test
     public void multipleReasonersTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
