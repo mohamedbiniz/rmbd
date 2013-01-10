@@ -53,11 +53,11 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
         System.out.println("Expand!");*/
 
         if( !unitRule() ){
-            if(!lastConflictRule2()){
+           // if(!lastConflictRule2()){
                 if(getArcLabel()==null)
                     subSetRule();
                 splitRule();
-            }
+          //  }
         }
 
         /*  for(SimpleNode<Id> n:newNodes){
