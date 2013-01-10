@@ -118,7 +118,7 @@ public class OntologyTests extends OntologySession {
 
         session.setNumberOfHittingSets(2);
         QSSType type = QSSType.MINSCORE;
-        boolean dual = true;
+        boolean dual = false;
         String name = "koala.owl";
         //String name = "dualpaper.owl";
 

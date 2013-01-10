@@ -68,9 +68,7 @@ public class LvExample {
         long time = 0;
         try {
             search.setMaxDiagnosesNumber(9);
-            time = System.currentTimeMillis();
             search.start();
-            time = System.currentTimeMillis() - time;
         } catch (NoConflictException e) {
             logger.info("no conflict found ");
         }
@@ -78,20 +76,21 @@ public class LvExample {
         for (FormulaSet<OWLLogicalAxiom> conflict : search.getConflicts())
             logger.info("conflict " + CalculateDiagnoses.renderAxioms(conflict));
         for (FormulaSet<OWLLogicalAxiom> diagnosis : search.getDiagnoses())
-            logger.info("diagnosis " + CalculateDiagnoses.renderAxioms(diagnosis) + ", " + diagnosis.getMeasure()
-            + ", " + search.getCostsEstimator().getFormulaSetCosts(diagnosis));
+            logger.info("diagnosis " + CalculateDiagnoses.renderAxioms(diagnosis) + ", " + diagnosis.getMeasure());
 
-        String axiom = "kandFuerEngMaster EquivalentTo anerk or engOk or oecBakk";
-        logger.info("entropy of " + axiom + " " + search.getCostsEstimator().getFormulaCosts(parser.parse(axiom)));
+        theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(parser.parse("qui Type oecBakk")));
 
-        axiom = "qui Type oecBakk";
-        logger.info("entropy of " + axiom + " " + search.getCostsEstimator().getFormulaCosts(parser.parse(axiom)));
-        axiom = "qui Type anerk";
-        logger.info("entropy of " + axiom + " " + search.getCostsEstimator().getFormulaCosts(parser.parse(axiom)));
-        axiom = "qui Type kandFuerEngMaster";
-        logger.info("entropy of " + axiom + " " + search.getCostsEstimator().getFormulaCosts(parser.parse(axiom)));
-        axiom = "qui Type engOk";
-        logger.info("entropy of " + axiom + " " + search.getCostsEstimator().getFormulaCosts(parser.parse(axiom)));
+        try {
+            search.start();
+        } catch (NoConflictException e) {
+            logger.info("no conflict found ");
+        }
+
+        for (FormulaSet<OWLLogicalAxiom> conflict : search.getConflicts())
+            logger.info("conflict " + CalculateDiagnoses.renderAxioms(conflict));
+        for (FormulaSet<OWLLogicalAxiom> diagnosis : search.getDiagnoses())
+            logger.info("diagnosis " + CalculateDiagnoses.renderAxioms(diagnosis) + ", " + diagnosis.getMeasure());
+
 
 
     }

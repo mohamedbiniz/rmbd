@@ -190,7 +190,7 @@ public class CalculateDiagnoses {
     }
 
     protected void configureEntailments(OWLTheory theory) {
-        theory.activateReduceToUns();
+        //theory.activateReduceToUns();
         theory.setIncludeTrivialEntailments(false);
         theory.setIncludeSubClassOfAxioms(false);
         theory.setIncludeClassAssertionAxioms(false);

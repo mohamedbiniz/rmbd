@@ -189,7 +189,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
 
 
-    @Test
+    @Ignore @Test
     public void testResultsEqualTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
