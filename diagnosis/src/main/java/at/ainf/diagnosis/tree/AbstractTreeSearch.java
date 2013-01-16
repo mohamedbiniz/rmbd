@@ -572,9 +572,12 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
 */
     protected boolean hasClosedParent(Node<Id> node) {
+
+          if(node==null)return true;
         if (node.isRoot())
             return node.isClosed();
         return node.getParent()==null || node.isClosed() || hasClosedParent(node.getParent());
+
     }
 
   /*

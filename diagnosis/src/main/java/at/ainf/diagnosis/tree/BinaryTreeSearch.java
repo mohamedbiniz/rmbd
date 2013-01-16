@@ -4,6 +4,8 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.splitstrategy.MostFrequentSplitStrategy;
+import at.ainf.diagnosis.tree.splitstrategy.SplitStrategy;
 
 import java.util.*;
 
@@ -15,6 +17,9 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSearch<T,Id> implements TreeSearch<T,Id> {
+
+
+    private SplitStrategy<Id> splitStrategy = new MostFrequentSplitStrategy<Id>();
 
 
     @Override
@@ -46,6 +51,7 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
         LinkedHashSet conflictH = new LinkedHashSet(conflict);
 
         BHSTreeNode<Id> node = new BHSTreeNode<Id>(conflictH);
+        node.setSplitStrategy(this.splitStrategy);
         node.setCostsEstimator(getCostsEstimator());
 
         setRoot(node);
@@ -72,13 +78,13 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
         Set<Id> delete = new LinkedHashSet<Id>();
 
 
-        //updateNode(((BHSTreeNode)getRoot()),delete);
+        updateNode(((BHSTreeNode)getRoot()),delete);
     }
 
     public void updateNode(BHSTreeNode<Id> node,Set<Id> delete)  throws SolverException, InconsistentTheoryException, NoConflictException{
 
         for (Set<Id> ax : node.getNewConflicts()) {
-            Set<Id> axioms = getSearcher().search(getSearchable(), (T)ax, null).iterator().next();
+            Set<Id> axioms = getSearcher().search(getSearchable(), ax).iterator().next();
 
             //identify invalid elements
             for(Id id:ax){
@@ -87,14 +93,30 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
             }
 
         }
-        node.updateNode(delete);
+        Set<Node<Id>> removeNode=node.updateNode(delete);
+
+        for(Node<Id> n:removeNode){
+          removeChildren(n);
+        }
 
 
+        if(node.getChildren().isEmpty())
+            getSearchStrategy().pushOpenNode(node);
+        else
         for(Node<Id> child:node.getChildren()){
             updateNode((BHSTreeNode<Id>)child,delete);
         }
 
     }
+
+    private void removeChildren(Node<Id> idNode) {
+        if (idNode!=null&&!getSearchStrategy().getOpenNodes().remove(idNode)) {
+            for (Node<Id> node : idNode.getChildren()) {
+                removeChildren(node);
+            }
+        }
+    }
+
 
     @Override
     public Set<Set<Id>> calculateConflict(Node<Id> node) throws SolverException, NoConflictException, InconsistentTheoryException {
@@ -119,6 +141,12 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
             }
 
         return quickConflict;
+    }
+
+
+    public void setSplitStrategy(SplitStrategy<Id> ss){
+        this.splitStrategy=ss ;
+
     }
 
     /*  public Set<Set<Id>> computeDiagnoses() throws NoConflictException,SolverException,InconsistentTheoryException{

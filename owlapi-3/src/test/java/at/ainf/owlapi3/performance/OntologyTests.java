@@ -1,11 +1,12 @@
 package at.ainf.owlapi3.performance;
 
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.tree.CostsEstimator;
-import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.logging.SimulatedCalculationTest;
 import at.ainf.logging.aop.ProfVarLogWatch;
@@ -13,16 +14,13 @@ import at.ainf.logging.aop.ProfiledVar;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.base.OntologySession;
 import at.ainf.owlapi3.base.SimulatedSession;
-import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
-import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.owlapi3.parser.MyOWLRendererParser;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.*;
 import at.ainf.owlapi3.base.distribution.ExtremeDistribution;
 import at.ainf.owlapi3.base.distribution.ModerateDistribution;
 import at.ainf.owlapi3.base.tools.TableList;
+import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
+import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -33,16 +31,16 @@ import org.junit.Test;
 import org.perf4j.aop.Profiled;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
-
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -186,16 +184,19 @@ public class OntologyTests extends OntologySession {
 
 
         for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
-            for (String o : norm) {
-                String out = "STAT, " + o;
-                TreeSet<FormulaSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+o+".owl", -1);
-                for (QSSType type : qssTypes) {
+            for (String ontologyName : norm) {
+                String out = "STAT, " + ontologyName;
+                int MAX_RUNS = 20;
+                TreeSet<FormulaSet<OWLLogicalAxiom>> diagnoses = new CalculateDiagnoses().getDiagnoses("ontologies/"+ontologyName+".owl", -1);
+                QSSType type = QSSType.MINSCORE;
+                //for (QSSType type : QSSType.values()}) {
                     for (DiagProbab diagProbab : DiagProbab.values()) {
-                        for (int i = 0; i < 20; i++) {
+
+                        for (int i = 0; i < MAX_RUNS; i++) {
 
 
-                        OWLOntology ontology = getOntologySimple("queryontologies", o + ".owl");
-                        //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
+                        OWLOntology ontology = getOntologySimple("queryontologies", ontologyName + ".owl");
+                        //OWLOntology ontology = createOwlOntology2(m.trim(), ontologyName.trim());
                         long preprocessModulExtract = System.currentTimeMillis();
                         ontology = new OWLIncoherencyExtractor(
                                 new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(ontology);
@@ -220,7 +221,7 @@ public class OntologyTests extends OntologySession {
 
                             TableList e = new TableList();
                             out += "," + type + ",";
-                            String message = "act," + "," + o.trim() + "," + targetSource + "," + dual
+                            String message = "act," + "," + ontologyName.trim() + "," + targetSource + "," + dual
                                     + "," + type + "," + preprocessModulExtract + "," + diagProbab + "," + i;
                             //out += simulateQuerySession(start, theory, diags, e, type, message, allD, search2, t3);
 
@@ -232,15 +233,16 @@ public class OntologyTests extends OntologySession {
                             session.setSearch(search);
                             out += session.simulateQuerySession();
 
-                            //logger.info(out);
+                            logger.info(out);
                         }
                     }
-                }
+                //}
             }
         }
     }
 
 
+    //Das kopieren und statt dual meines verwenden
     @Test
     public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
 

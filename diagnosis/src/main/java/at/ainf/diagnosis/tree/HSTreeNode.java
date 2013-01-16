@@ -9,8 +9,6 @@
 package at.ainf.diagnosis.tree;
 
 
-import at.ainf.diagnosis.storage.FormulaSet;
-
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -327,5 +325,13 @@ public class HSTreeNode<Id> implements Node<Id> {
             result+=((HSTreeNode)node).countNodes();
         }
         return result;
+    }
+
+    public boolean isConnectedToRoot(){
+
+        if(this.parent.isRoot())  return true;
+        else if(this.parent==null) return false;
+        else return this.parent.isConnectedToRoot();
+
     }
 }

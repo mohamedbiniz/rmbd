@@ -141,6 +141,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
                 BHSTreeNode node1=new BHSTreeNode(this,e);
                 node1.setAxiomSet(addToHS(e,conflict));
                 node1.setCostsEstimator(this.costsEstimator);
+                node1.setSplitStrategy(this.splitStrategy);
 
                 newNodes.add(node1);
                 //tree.addNode(newConflicts);
@@ -164,10 +165,12 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
         BHSTreeNode node1=new BHSTreeNode(this,e);
         node1.setAxiomSet(addToHS(e,conflict));
         node1.setCostsEstimator(this.costsEstimator);
+        node1.setSplitStrategy(this.splitStrategy);
 
         BHSTreeNode node2=new BHSTreeNode(this,null);
         node2.setAxiomSet(ignore(e,conflict));
         node2.setCostsEstimator(this.costsEstimator);
+        node2.setSplitStrategy(this.splitStrategy);
 
         newNodes.add(node1);
         newNodes.add(node2);
@@ -191,6 +194,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
             BHSTreeNode node1=new BHSTreeNode(this,e);
             node1.setAxiomSet(addToHS(e,conflict));
             node1.setCostsEstimator(this.costsEstimator);
+            node1.setSplitStrategy(this.splitStrategy);
             newNodes.add(node1);
 
             // tree.addNode(newNode1)
@@ -199,6 +203,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
                 BHSTreeNode node2=new BHSTreeNode(this,null);
                 node2.setAxiomSet(ignore(e,conflict));
                 node2.setCostsEstimator(this.costsEstimator);
+                node2.setSplitStrategy(this.splitStrategy);
                 newNodes.add(node2);
                 //  tree.addNode(newNode2)
                 // tree.addEdge(conflicts,newNode2,null)
@@ -274,11 +279,13 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
 
 
     //Update rules
-
-    public void updateNode(Set<Id> delete){
-
+    public Set<Node<Id>> updateNode(Set<Id> delete){
 
 
+       Set<Node<Id>> removedNode = new LinkedHashSet<Node<Id>>();
+
+        //Checks if the splitElement is still in the conflicts
+        boolean containsSplitelement=false;
         //Remove deleted elements from all conflicts
         for(Id id:delete){
             conflict=ignore(id,conflict);
@@ -289,7 +296,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
         if(this.getLeftChild()!=null)
             splitElement= this.getLeftChild().getArcLabel();
 
-        //Rule 1
+        //Rule 1: If a Unit Conflict Exists, remove right Child
         //Unschön
         if(conflict!=null && splitElement!=null){
             for(Set<Id> set: conflict){
@@ -299,14 +306,21 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
                         //remove right Subtree
                         Node<Id> rightChild=getRightChild();
                         removeChild(rightChild);
+                        removedNode.add(rightChild);
+                        //return war vorher nach der klammer?
+                        return removedNode;
                     }
-                    return;
+                  containsSplitelement=true;
                 }
             }
         }
+
+
         //no set Contains splitElement => remove left Subtree
+        if(!containsSplitelement){
         Node<Id> leftChild=getLeftChild();
         removeChild(leftChild);
+        removedNode.add(leftChild);
 
         Node<Id> rightChild=getRightChild();
         Set<Node<Id>> removeChild= new LinkedHashSet<Node<Id>>();
@@ -315,21 +329,27 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
         if(rightChild!=null){
             for(Node<Id> node :rightChild.getChildren()){
                 removeChild.add(node);
-                this.addChild((HSTreeNode)node);
-
             }
         }
-        this.removeChild(rightChild);
 
-        for(Node<Id> child: removeChild)
+            for(Node<Id> node:removeChild){
+                rightChild.removeChild(node);
+                this.addChild((HSTreeNode)node);
+            }
+
+        this.removeChild(rightChild);
+            removedNode.add(rightChild);
+        }
+      /*  for(Node<Id> child: removeChild)
             rightChild.removeChild(child);
 
+        }  */
         //Update all Succesors
 
         /*for(Node<Id> node:getChildren()){
             ((BHSTreeNode)node).updateNode(delete);
         } */
-
+     return removedNode;
     }
 
     private Node<Id> getLeftChild(){
@@ -394,6 +414,7 @@ public class BHSTreeNode<Id> extends HSTreeNode<Id> {
                 BHSTreeNode node1=new BHSTreeNode(this,e);
                 node1.setAxiomSet(addToHS(e,conflict));
                 node1.setCostsEstimator(this.costsEstimator);
+                node1.setSplitStrategy(this.splitStrategy);
                 newNodes.add(node1);
 
             }

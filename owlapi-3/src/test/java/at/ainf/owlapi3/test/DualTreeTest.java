@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.test;
 
-import   at.ainf.diagnosis.Searcher;
+import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
@@ -10,8 +10,9 @@ import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.tree.searchstrategy.*;
-
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
+import at.ainf.diagnosis.tree.splitstrategy.MostProbableSplitStrategy;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.base.tools.TableList;
@@ -189,7 +190,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
 
 
-    @Ignore @Test
+     @Test
     public void testResultsEqualTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
@@ -205,7 +206,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
     }
 
-    @Ignore
+ @Ignore
     @Test
     public void testResultsMultiThreadedLocks() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
         // test 40 times to check if concurrent modification exception occurs
@@ -270,7 +271,10 @@ public class DualTreeTest {//extends BasePerformanceTests {
         manager = OWLManager.createOWLOntologyManager();
         //TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> referenceSearch = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, dualMode);
+        MostProbableSplitStrategy<OWLLogicalAxiom> split = new MostProbableSplitStrategy<OWLLogicalAxiom>();
+        split.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theoryDual));
         referenceSearch.setSearchable(theoryDual);
+        ((BinaryTreeSearch)referenceSearch).setSplitStrategy(split);
 
         referenceSearch.start();
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = referenceSearch.getDiagnoses();
