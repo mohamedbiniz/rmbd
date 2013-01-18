@@ -26,13 +26,13 @@ public class MostProbableSplitStrategy<Id> implements SplitStrategy<Id> {
         Id result=null;
 
         //Number of occurrences of result element
-        BigDecimal maxCost= new BigDecimal(Integer.MAX_VALUE);
+        BigDecimal maxCost= new BigDecimal("0");
 
         for(Set<Id> c: conflicts){
 
             for(Id el : c){
 
-                if(costsEstimator.getFormulaCosts(el).compareTo(maxCost)<0){
+                if(costsEstimator.getFormulaCosts(el).compareTo(maxCost)>0){
                     result=el;
                     maxCost=costsEstimator.getFormulaCosts(el);
                 }

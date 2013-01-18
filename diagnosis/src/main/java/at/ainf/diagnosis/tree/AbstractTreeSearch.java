@@ -48,6 +48,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
     private Node<Id> root = null;
 
+    private long ninthDiagnosisTime;
+
     // ICONFLICTSEARCHER: is the start algorithm for conflicts (e.g. QuickXplain)
     private Searcher<Id> searcher;
     private int prunedHS;
@@ -377,6 +379,12 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
                     }
 
                 }*/
+
+                //messe Zeit, falls neunte Diagnose erreicht wurde
+                if(hittingSets.size()==9){
+                   ninthDiagnosisTime=System.currentTimeMillis();
+                }
+
             }
         } else
             this.prunedHS++;
@@ -766,6 +774,11 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         }
 
         return true;
+    }
+
+
+    public long getNinthDiagnosisTime(){
+        return ninthDiagnosisTime;
     }
 
 }
