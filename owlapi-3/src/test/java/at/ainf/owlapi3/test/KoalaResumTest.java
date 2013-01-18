@@ -19,7 +19,6 @@ import at.ainf.owlapi3.model.OWLTheory;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.perf4j.aop.Profiled;
 import org.semanticweb.HermiT.Reasoner;
@@ -162,16 +161,12 @@ long hsTime=hsEnd-hsStart;
     }
 
 
-    @Ignore
+
    @Test
     public void doSimpleQuerySessionHS()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
-     try {
-         Thread.sleep(10000);
-     } catch (InterruptedException e) {
-         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-     }
+
 
         SimulatedSession session = new SimulatedSession();
 
@@ -253,16 +248,12 @@ long hsTime=hsEnd-hsStart;
 
 
 
-    @Ignore
+
     @Test
     public void doSimpleQuerySessionBHS()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+
 
         SimulatedSession session = new SimulatedSession();
 

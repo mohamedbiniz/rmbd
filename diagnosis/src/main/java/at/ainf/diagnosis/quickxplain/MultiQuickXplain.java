@@ -22,10 +22,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -175,7 +172,19 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
                 }
             }
 
+
+            //Nur zum Probieren
+            boolean success=false;
+            while(!success){
+            success=true;
+
+            try{
             fqx.get();
+            }catch(ConcurrentModificationException cm)
+            {success=false;
+            }
+            }
+
             if (formulaSet != null)
                 addConflict(formulaSet);
         } catch (InterruptedException e) {

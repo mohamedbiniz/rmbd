@@ -149,6 +149,11 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
 
     }
 
+    public SplitStrategy<Id> getSplitStrategy(){
+        return this.splitStrategy ;
+
+    }
+
     /*  public Set<Set<Id>> computeDiagnoses() throws NoConflictException,SolverException,InconsistentTheoryException{
 
      createRoot();
