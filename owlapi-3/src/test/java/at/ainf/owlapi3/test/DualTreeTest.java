@@ -53,18 +53,17 @@ public class DualTreeTest {//extends BasePerformanceTests {
     private static Logger logger = LoggerFactory.getLogger(DualTreeTest.class.getName());
 
 
-
     String[] ontologies = {"Univ.owl"}; //, "Univ2.owl"};
-    String[] jwsOntologies =  {"CHEM-A.owl","koala.owl","buggy-sweet-jpl.owl","miniTambis.owl","univ.owl","Economy-SDA.owl","Transportation-SDA.owl"};
+    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"};
     static Set<SplitStrategy<OWLLogicalAxiom>> splitStrategies = new LinkedHashSet<SplitStrategy<OWLLogicalAxiom>>();
-   static  Set<Searcher<OWLLogicalAxiom>> searchers = new LinkedHashSet<Searcher<OWLLogicalAxiom>>();
+    static Set<Searcher<OWLLogicalAxiom>> searchers = new LinkedHashSet<Searcher<OWLLogicalAxiom>>();
 
 
     private static final boolean TEST_CACHING = false;
 
     @BeforeClass
     public static void setUp() {
-       /* String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
+        /* String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);*/
         splitStrategies.add(new SimpleSplitStrategy<OWLLogicalAxiom>());
         splitStrategies.add(new MostFrequentSplitStrategy<OWLLogicalAxiom>());
@@ -73,7 +72,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
         searchers.add(new QuickXplain<OWLLogicalAxiom>());
 
-         MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
+        MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
         mult.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
         searchers.add(mult);
 
@@ -84,45 +83,49 @@ public class DualTreeTest {//extends BasePerformanceTests {
     @Test
     public void testAllVariants() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsBinary= new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
+        Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsBinary = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
 
         BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
 
 
-
-   for(Searcher<OWLLogicalAxiom> searcher:searchers){
+        for (Searcher<OWLLogicalAxiom> searcher : searchers) {
 
             binary.setSearcher(searcher);
-           binary.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+            binary.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
-            for(SplitStrategy<OWLLogicalAxiom> split:splitStrategies){
+            for (SplitStrategy<OWLLogicalAxiom> split : splitStrategies) {
                 binary.setSplitStrategy(split);
 
-                for(String ont:ontologies){
-                    boolean success=false;
-                     while(!success){
-                    try{
-                   resultsBinary.add(testBHSTree(binary,false,ont));
-                    }
-                    catch(ConcurrentModificationException cm){
+                for (String ont : ontologies) {
+                    boolean success = false;
 
-                    }   ;
-                         success=true;
-                     }
+                    while (!success) {
+                        success = true;
+                        success = getResults(resultsBinary, binary, ont);
+
+                    }
                 }
             }
 
         }
 
-        Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsNormal=new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
+        Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsNormal = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
 
-        for(String ont:ontologies){
-           resultsNormal.add(testHSTree(ont));
+        for (String ont : ontologies) {
+            resultsNormal.add(testHSTree(ont));
         }
 
     }
 
+    private boolean getResults(Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsBinary, BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary, String ont) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
+        try {
+            resultsBinary.add(testBHSTree(binary, false, ont));
+        } catch (Exception cm) {
+            return false;
+        }
+        return true;
+    }
 
 
     @Ignore
@@ -253,15 +256,15 @@ public class DualTreeTest {//extends BasePerformanceTests {
     }
 
 
-     @Ignore
-     @Test
+    @Ignore
+    @Test
     public void testResultsEqualTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
         binary.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-      // MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
-       // searcher.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
+        // MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
+        // searcher.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
         QuickXplain<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
         binary.setSearcher(searcher);
 
@@ -269,9 +272,6 @@ public class DualTreeTest {//extends BasePerformanceTests {
         runTimeComparison(binary, false, "Economy-SDA.owl");
 
     }
-
-
-
 
 
     @Ignore
@@ -295,15 +295,15 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public void runTimeComparison(BinaryTreeSearch referenceSearch, boolean dualMode, String ont)
             throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-       /** try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }           **/
+        /** try {
+         Thread.sleep(10000);
+         } catch (InterruptedException e) {
+         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+         }           **/
 
-      Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal=testHSTree(ont);
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = testHSTree(ont);
 
-       Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = testBHSTree(referenceSearch,dualMode,ont);
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = testBHSTree(referenceSearch, dualMode, ont);
 
 
         assertEquals(resultNormal, resultDual);
@@ -314,39 +314,39 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public Set testHSTree(String ont) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
 
         logger.info("Normal HS Tree Search");
-        logger.info("Ontology: " +ont);
+        logger.info("Ontology: " + ont);
 
-    long normal = System.currentTimeMillis();
+        long normal = System.currentTimeMillis();
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-    TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
-    searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
-    searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-    searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-    OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
-    searchNormal.setSearchable(theoryNormal);
+        TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchNormal = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+        searchNormal.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+        searchNormal.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+        searchNormal.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+        OWLTheory theoryNormal = createTheory(manager, "ontologies/" + ont, false);
+        searchNormal.setSearchable(theoryNormal);
 
-            searchNormal.start();
+        searchNormal.start();
 
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = searchNormal.getDiagnoses();
-    normal = System.currentTimeMillis() - normal;
+        normal = System.currentTimeMillis() - normal;
 
         System.out.println("normal " + new CalculateDiagnoses().getStringTime(normal));
-        logger.info("Time needed for first nine Diagnosis: "+ ((AbstractTreeSearch)searchNormal).getNinthDiagnosisTime());
-    logger.info("Total time: " + new CalculateDiagnoses().getStringTime(normal));
+        logger.info("Time needed for first nine Diagnosis: " + ((AbstractTreeSearch) searchNormal).getNinthDiagnosisTime());
+        logger.info("Total time: " + new CalculateDiagnoses().getStringTime(normal));
         return resultNormal;
-}
+    }
 
-    public Set testBHSTree(BinaryTreeSearch referenceSearch,boolean dualMode,String ont) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
+    public Set testBHSTree(BinaryTreeSearch referenceSearch, boolean dualMode, String ont) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
 
         logger.info("Binary Tree Search");
 
-        if(referenceSearch.getSearcher() instanceof MultiQuickXplain)
-           logger.info("Multi-threaded");
+        if (referenceSearch.getSearcher() instanceof MultiQuickXplain)
+            logger.info("Multi-threaded");
 
-      else  logger.info("Single-threaded");
+        else logger.info("Single-threaded");
 
-        logger.info(((BinaryTreeSearch)referenceSearch).getSplitStrategy().getClass().getName());
-        logger.info("Ontology: " +ont);
+        logger.info(((BinaryTreeSearch) referenceSearch).getSplitStrategy().getClass().getName());
+        logger.info("Ontology: " + ont);
 
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
 
@@ -354,15 +354,15 @@ public class DualTreeTest {//extends BasePerformanceTests {
         manager = OWLManager.createOWLOntologyManager();
         //TreeSearch<? extends FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> referenceSearch = new InvHsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         OWLTheory theoryDual = createTheory(manager, "ontologies/" + ont, dualMode);
-       // MostProbableSplitStrategy<OWLLogicalAxiom> split = new MostProbableSplitStrategy<OWLLogicalAxiom>();
+        // MostProbableSplitStrategy<OWLLogicalAxiom> split = new MostProbableSplitStrategy<OWLLogicalAxiom>();
         //split.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theoryDual));
 
 
         referenceSearch.setSearchable(theoryDual);
         //((BinaryTreeSearch)referenceSearch).setSplitStrategy(split);
 
-        if(referenceSearch.getSplitStrategy()instanceof MostProbableSplitStrategy){
-            ((MostProbableSplitStrategy) referenceSearch.getSplitStrategy()).setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theoryDual) );
+        if (referenceSearch.getSplitStrategy() instanceof MostProbableSplitStrategy) {
+            ((MostProbableSplitStrategy) referenceSearch.getSplitStrategy()).setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theoryDual));
         }
 
         referenceSearch.start();
@@ -371,14 +371,11 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
 
         logger.info("Total time " + new CalculateDiagnoses().getStringTime(dual));
-        logger.info("Time needed for first nine Diagnosis: "+ referenceSearch.getNinthDiagnosisTime());
+        logger.info("Time needed for first nine Diagnosis: " + referenceSearch.getNinthDiagnosisTime());
         System.out.println("Binary " + new CalculateDiagnoses().getStringTime(dual));
 
         return resultDual;
     }
-
-
-
 
 
     public OWLTheory createTheory(OWLOntologyManager manager, String path, boolean dual) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
@@ -626,6 +623,12 @@ public class DualTreeTest {//extends BasePerformanceTests {
                 " Queries max " + Collections.max(dqueries) +
                 " min " + Collections.min(dqueries) +
                 " avg2 " + avg(dqueries));
+    }
+
+
+    public void printData(OWLTheory theory) {
+        logger.info("Consistency count: "+theory.getConsistencyCount());
+        logger.info("Consistency time: "+theory.getConsistencyTime());
     }
 
 }

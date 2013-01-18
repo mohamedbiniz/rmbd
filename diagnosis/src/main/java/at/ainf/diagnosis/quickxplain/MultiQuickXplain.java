@@ -98,7 +98,8 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             this.pool = new ThreadPoolExecutor(minThreads, maxThreads, 1,
                     TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(maxConflicts, true));
             this.results.clear();
-            quickXplain(searchable, formulas);
+            Searchable<Id> ct = searchable.copy();
+            quickXplain(ct, formulas);
 
             try {
                 while (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
@@ -173,17 +174,13 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             }
 
 
-            //Nur zum Probieren
-            boolean success=false;
-            while(!success){
-            success=true;
 
-            try{
+
+
+
             fqx.get();
-            }catch(ConcurrentModificationException cm)
-            {success=false;
-            }
-            }
+
+
 
             if (formulaSet != null)
                 addConflict(formulaSet);
