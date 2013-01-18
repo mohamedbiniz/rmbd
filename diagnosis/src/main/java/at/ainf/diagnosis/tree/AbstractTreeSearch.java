@@ -50,6 +50,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
     private long ninthDiagnosisTime;
 
+    private long avgConflictTime=0;
+
     // ICONFLICTSEARCHER: is the start algorithm for conflicts (e.g. QuickXplain)
     private Searcher<Id> searcher;
     private int prunedHS;
@@ -458,7 +460,14 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
             pathLabels = node.getPathLabels();
         }
 
+        //Measure time to compute Conflict
+         long conflictStart=System.currentTimeMillis();
         quickConflict = getSearcher().search(getSearchable(), list, pathLabels);
+        long conflictEnd=System.currentTimeMillis();
+        long conflictTime=conflictEnd-conflictStart;
+
+
+
 
         if (quickConflict.isEmpty())
             throw new NoConflictException("Theory is consistent");

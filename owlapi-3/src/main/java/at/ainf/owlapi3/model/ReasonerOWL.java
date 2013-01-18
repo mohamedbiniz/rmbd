@@ -1,7 +1,6 @@
 package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.model.IReasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -13,6 +12,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static _dev.TimeLog.start;
@@ -43,7 +43,7 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
     protected int num = cnt++;
     private final OWLOntologyManager owlOntologyManager;
 
-    private static ReentrantLock syncLock = new ReentrantLock(true);
+    private static Lock syncLock = new ReentrantLock(true);
 
     public ReasonerOWL(OWLOntologyManager owlOntologyManager, OWLReasonerFactory reasonerFactory) {
         this(owlOntologyManager);
