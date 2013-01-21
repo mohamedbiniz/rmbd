@@ -1,0 +1,1 @@
+http://CONFTOOL.owl#Country EquivalentTo http://CMT.owl#SubjectArea, http://CONFTOOL.owl#Person EquivalentTo http://CMT.owl#SubjectArea, http://CONFTOOL.owl#Scholar EquivalentTo http://CMT.owl#SubjectArea, http://CONFTOOL.owl#Student EquivalentTo http://CMT.owl#SubjectArea 

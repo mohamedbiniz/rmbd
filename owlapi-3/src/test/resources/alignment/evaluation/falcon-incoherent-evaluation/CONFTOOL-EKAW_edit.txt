@@ -1,0 +1,1 @@
+http://CONFTOOL.owl#Member SubClassOf http://EKAW.owl#SC_Member, http://CONFTOOL.owl#Poster EquivalentTo http://EKAW.owl#Poster_Paper, http://CONFTOOL.owl#Regular EquivalentTo http://EKAW.owl#Regular_Paper, http://CONFTOOL.owl#Reviewing_event EquivalentTo http://EKAW.owl#Review, http://CONFTOOL.owl#Camera_Ready_event EquivalentTo http://EKAW.owl#Camera_Ready_Paper

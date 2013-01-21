@@ -1,0 +1,25 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/PCS.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CONFTOOL.owl
+sourceNamespace = http://PCS.owl
+targetNamespace = http://CONFTOOL.owl
+
++ Conference > Conference | 1.0
++ Conference < Conference | 1.0
++ PERSON > Person | 1.0
++ PERSON < Person | 1.0
+- Secondary_Reviewer > Member | 1.0
++ Secondary_Reviewer < Member | 1.0
+- CommitteeMember > Member | 1.0
++ CommitteeMember < Member | 1.0
+- ConferenceMember > Member | 1.0
++ ConferenceMember < Member | 1.0
+- Primary_Reviewer > Member | 1.0
++ Primary_Reviewer < Member | 1.0
+- Author > Member | 1.0
++ Author < Member | 1.0
++ Administrator > Administrator | 1.0
++ Administrator < Administrator | 1.0
++ Author > Author | 1.0
++ Author < Author | 1.0
++ Paper > Paper | 1.0
++ Paper < Paper | 1.0

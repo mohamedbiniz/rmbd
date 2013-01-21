@@ -1,0 +1,55 @@
+c1 : int [1,
+ 3]; 
+c2 : int (1,2,3);
+
+/* comment miltiline */
+c3 : real [1.4, 3.33];
+
+// single line comment
+c5: boolean;
+c6: string ('s1','s2', 's3');
+
+[name0, c] c2 > 1 or (c5 = true and c6='s2');
+
+[name1, c] c1 = 1 -> c2 > 2 or (c5 = false and c6='s1');
+
+[name2, u] (c1 = 1) -> (c2 > 2 && c6 = 's2') || c2 > 1;
+
+[name3, u] true -> c2 > 2;
+
+
+/*
+Notation:
+It is preferred to start you knowledge base with variables' declarations.
+
+    1) Variables declaration:
+        identifier : int (value1, value2) - enumeration of integers;
+        identifier : int [min, max] - interval of integers
+        identifier : real [min, max] - interval of real. Note, real has a 
+                                        very limited support in choco. You might get some
+                                        UnsupportedOperationException exceptions while using it.
+        identifier : string (value1, value2) - enumeration of strings.
+        identifier : boolean - boolean variable.
+        
+        Boolean and string variables are automatically converted into the integer enumerations.
+        
+    2) Constraints:
+        each constraint should start with metadata declaration [identifier, c|u], where:
+            identifier is a unique name of the constraint
+            c - constraint should be added to the list of changeable constrains
+            u - constraint belongs to the background knowledge that will be available to the solver,
+                 but cannot be manipulated by the diagnosis component.
+                 
+    Important!: the background constraints should be consistent, otherwise the diagnosis component 
+    will return empty conflicts.
+    
+        Constraints consist of relation expressions between a variable and a value or two variables.
+        Relations without variables are not allowed. The following relations are available:
+             = | ==, >, >=, <, <=, != | <>
+        The constraints can be composed from more than one relation expression by expressing those as
+        operands of the following boolean functions given in the priority order (highest to lowest):
+            and | &&, or | ||, ->
+            
+        Parentness should be expressed with brackets:
+             (parent boolean_function(child1 boolean_function child2)).
+*/
