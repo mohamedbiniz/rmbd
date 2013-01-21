@@ -88,7 +88,7 @@ public class UpdateTreeTest {
         search.start();
 
         for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
-            logger.info(new CalculateDiagnoses().renderAxioms(hs));
+            logger.info(CalculateDiagnoses.renderAxioms(hs));
     }
 
 }

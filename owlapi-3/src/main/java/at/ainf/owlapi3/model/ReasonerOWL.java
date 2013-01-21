@@ -43,8 +43,6 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
     protected int num = cnt++;
     private final OWLOntologyManager owlOntologyManager;
 
-    private static Lock syncLock = new ReentrantLock(true);
-
     public ReasonerOWL(OWLOntologyManager owlOntologyManager, OWLReasonerFactory reasonerFactory) {
         this(owlOntologyManager);
 
@@ -125,7 +123,8 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
     @Override
     protected void updateReasonerModel(Set<OWLLogicalAxiom> axiomsToAdd, Set<OWLLogicalAxiom> axiomsToRemove) {
-        syncLock.lock();
+        if (lock != null)
+            lock.lock();
         try {
             if (!axiomsToAdd.isEmpty())
                 ontology.getOWLOntologyManager().addAxioms(ontology, axiomsToAdd);
@@ -133,7 +132,8 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
                 ontology.getOWLOntologyManager().removeAxioms(ontology, axiomsToRemove);
             doReasonerFlush();
         } finally {
-            syncLock.unlock();
+            if (lock != null)
+                lock.unlock();
         }
     }
 

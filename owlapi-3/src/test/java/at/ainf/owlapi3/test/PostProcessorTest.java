@@ -139,7 +139,7 @@ public class PostProcessorTest {
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        logger.info("Partition " + new CalculateDiagnoses().renderAxioms(best.partition));
+        logger.info("Partition " + CalculateDiagnoses.renderAxioms(best.partition));
 
     }
 

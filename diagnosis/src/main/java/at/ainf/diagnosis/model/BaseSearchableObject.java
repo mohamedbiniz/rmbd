@@ -4,6 +4,8 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,6 +19,8 @@ public class BaseSearchableObject<T> implements Searchable<T> {
     private IKnowledgeBase<T> knowledgeBase;
 
     private IReasoner<T> reasoner;
+
+    private Lock lock = new ReentrantLock(true);
 
     public BaseSearchableObject() {
         setKnowledgeBase(new KnowledgeBase<T>());
@@ -117,13 +121,27 @@ public class BaseSearchableObject<T> implements Searchable<T> {
 
     @Override
     public Searchable<T> copy() throws SolverException, InconsistentTheoryException {
-        AbstractReasoner<T> reasoner = (AbstractReasoner<T>) getReasoner().newInstance();
-        reasoner.addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
-        return getNewInstance(getKnowledgeBase(), reasoner);
-        //cp.setKnowledgeBase();
+        if (isMultiThreading())
+            lock.lock();
+        try {
+            AbstractReasoner<T> reasoner = (AbstractReasoner<T>) getReasoner().newInstance();
+            reasoner.setLock(lock);
+            reasoner.addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
+            BaseSearchableObject<T> newInstance = getNewInstance(getKnowledgeBase(), reasoner);
+            newInstance.setLock(lock);
+            return newInstance;
+            //cp.setKnowledgeBase();
 
-        //cp.setReasoner(reasoner);
-        //return cp;
+            //cp.setReasoner(reasoner);
+            //return cp;
+        } finally {
+            if (isMultiThreading())
+                lock.unlock();
+        }
+    }
+
+    public boolean isMultiThreading() {
+        return lock!=null;
     }
 
     public boolean testDiagnosis(Collection<T> diag) throws SolverException {
@@ -192,4 +210,9 @@ public class BaseSearchableObject<T> implements Searchable<T> {
         */
     }
 
+    public void setLock(Lock lock) {
+        this.lock = lock;
+        AbstractReasoner rs = (AbstractReasoner) getReasoner();
+        rs.setLock(this.lock);
+    }
 }

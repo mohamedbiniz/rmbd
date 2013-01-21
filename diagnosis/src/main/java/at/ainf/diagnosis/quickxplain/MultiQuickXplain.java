@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static _dev.TimeLog.start;
@@ -98,8 +99,9 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             this.pool = new ThreadPoolExecutor(minThreads, maxThreads, 1,
                     TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(maxConflicts, true));
             this.results.clear();
-            Searchable<Id> ct = searchable.copy();
-            quickXplain(ct, formulas);
+            if (searchable.isMultiThreading())
+                searchable.setLock(new ReentrantLock());
+            quickXplain(searchable, formulas);
 
             try {
                 while (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
@@ -160,6 +162,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
                             logger.info("Starting a new task. Active "
                                     + pool.getActiveCount() + " complete " + pool.getCompletedTaskCount()
                                     + " threads " + pool.getLargestPoolSize());
+
                         Searchable<Id> ct = c.copy();
                         quickXplain(ct, cu);
 
@@ -172,16 +175,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
                         logger.info("Duplicate conflict possible. The branch is ignored!");
                 }
             }
-
-
-
-
-
-
             fqx.get();
-
-
-
             if (formulaSet != null)
                 addConflict(formulaSet);
         } catch (InterruptedException e) {

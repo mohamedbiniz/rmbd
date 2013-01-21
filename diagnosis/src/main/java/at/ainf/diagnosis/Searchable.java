@@ -1,10 +1,14 @@
 package at.ainf.diagnosis;
 
-import at.ainf.diagnosis.model.*;
+import at.ainf.diagnosis.model.IKnowledgeBase;
+import at.ainf.diagnosis.model.IReasoner;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaSet;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created by IntelliJ IDEA.
@@ -56,4 +60,8 @@ public interface Searchable<E> {
     public void unregisterTestCases() throws SolverException;
 
     public Searchable<E> copy() throws SolverException, InconsistentTheoryException;
+
+    boolean isMultiThreading();
+
+    void setLock(Lock lock);
 }

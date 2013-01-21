@@ -1,6 +1,7 @@
 package at.ainf.diagnosis.model;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,6 +15,7 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
     protected final Set<T> formulasCache = new HashSet<T>();
 
     protected Set<T> reasonerFormulas = new LinkedHashSet<T>();
+    protected Lock lock = null;
 
     private Set<T> backgroundAxioms = Collections.emptySet();
 
@@ -111,5 +113,9 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
     public boolean isCoherent() {
 
         throw new RuntimeException("This theory does not support coherency checks");
+    }
+
+    public void setLock(Lock lock) {
+        this.lock = lock;
     }
 }
