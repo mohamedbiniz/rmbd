@@ -1,13 +1,16 @@
 package at.ainf.owlapi3.performance;
 
+import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
+import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
+import at.ainf.diagnosis.tree.splitstrategy.*;
 import at.ainf.logging.SimulatedCalculationTest;
 import at.ainf.logging.aop.ProfVarLogWatch;
 import at.ainf.logging.aop.ProfiledVar;
@@ -26,6 +29,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import junit.framework.Assert;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.perf4j.aop.Profiled;
@@ -89,22 +93,30 @@ public class OntologyTests extends OntologySession {
        return start;
    } */
 
+    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"};
+    static Set<SplitStrategy<OWLLogicalAxiom>> splitStrategies = new LinkedHashSet<SplitStrategy<OWLLogicalAxiom>>();
+    static Set<Searcher<OWLLogicalAxiom>> searchers = new LinkedHashSet<Searcher<OWLLogicalAxiom>>();
+
+    @BeforeClass
+    public static void setUp() {
+        /* String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
+        PropertyConfigurator.configure(conf);*/
+        splitStrategies.add(new SimpleSplitStrategy<OWLLogicalAxiom>());
+        splitStrategies.add(new MostFrequentSplitStrategy<OWLLogicalAxiom>());
+        splitStrategies.add(new GreatestConflictSplitStrategy<OWLLogicalAxiom>());
+        splitStrategies.add(new MostProbableSplitStrategy<OWLLogicalAxiom>());
+
+        searchers.add(new QuickXplain<OWLLogicalAxiom>());
+
+        /*
+        MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
+        mult.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
+        searchers.add(mult);   */
 
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+     @Ignore
     @Test
     public void doSimpleQuerySession()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
@@ -243,6 +255,7 @@ public class OntologyTests extends OntologySession {
 
 
     //Das kopieren und statt dual meines verwenden
+    @Ignore
     @Test
     public void testNormalCasesDual() throws SolverException, InconsistentTheoryException, IOException {
 
@@ -285,10 +298,14 @@ public class OntologyTests extends OntologySession {
                     for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD}) {
                         for (int run = 7; run < MAX_RUNS; run++) {
 
+
+
                             OWLOntology extracted = new OWLIncoherencyExtractor(
                                     new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("queryontologies", name));
-                            OWLTheory theory = getExtendTheory(extracted, dual);
+                            OWLTheory theory = getExtendTheory(extracted, false);
+
                             TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = getUniformCostSearch(theory, dual);
+
 
                             OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
 
@@ -315,6 +332,230 @@ public class OntologyTests extends OntologySession {
                             session.setSearch(search2);
                             out += session.simulateQuerySession();
 
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+    }
+
+    @Test
+    public void testNormalCasesHS() throws SolverException, InconsistentTheoryException, IOException {
+
+        SimulatedSession session = new SimulatedSession();
+
+        session.setShowElRates(false);
+        int MAX_RUNS = 7+15;
+        getRandom().setSeed(121);
+
+        for (String name : jwsOntologies) {
+
+
+                OWLOntology extracted1 = new OWLIncoherencyExtractor(
+                        new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("ontologies", name));
+                OWLTheory theory1 = getExtendTheory(extracted1, false);
+                TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = getUniformCostSearch(theory1, false);
+
+                OWLAxiomKeywordCostsEstimator es1 = new OWLAxiomKeywordCostsEstimator(theory1);
+
+                search3.setCostsEstimator(es1);
+                search3.reset();
+
+                TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = search3;
+
+
+
+                try {
+                    search.start();
+                } catch (NoConflictException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                Set<FormulaSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
+                ModerateDistribution moderateDistribution = new ModerateDistribution();
+                ExtremeDistribution extremeDistribution = new ExtremeDistribution();
+                search.reset();
+
+                String out = "";
+
+
+
+                for (UsersProbab usersProbab : new UsersProbab[]{UsersProbab.MODERATE,UsersProbab.EXTREME,UsersProbab.UNIFORM}) {
+                    for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD,DiagProbab.AVERAGE,DiagProbab.GOOD}) {
+
+                                 for (int run = 7; run < MAX_RUNS; run++) {
+
+                                     logger.info("------------HS Tree Search------------");
+
+
+
+                            OWLOntology extracted = new OWLIncoherencyExtractor(
+                                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("ontologies", name));
+                            OWLTheory theory = getExtendTheory(extracted, false);
+                            //TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = getUniformCostSearch(theory, dual);
+
+                            //Create BinaryTreeSearch
+                            HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+                            search1.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+                            search1.setSearchable(theory);
+                            search1.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+                            search1.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
+
+                            OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+
+                            search1.setCostsEstimator(es);
+                            search1.reset();
+
+
+
+                                     if (search.getSearcher() instanceof MultiQuickXplain)
+                                         logger.info("Multi-threaded");
+
+                                     else logger.info("Single-threaded");
+
+                                    // logger.info(((BinaryTreeSearch) search1).getSplitStrategy().getClass().getName());
+                                     logger.info("Ontology: " + name);
+
+
+
+
+                                     TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2 = search1;
+                            diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
+                            FormulaSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<FormulaSet<OWLLogicalAxiom>>(diagnoses));
+
+                            TableList e = new TableList();
+                            String message = "act," + name + "," + false + "," + usersProbab + ","
+                                    + diagProbab + "," + run  ;
+
+                            session.setEntry(e);
+                            session.setScoringFunct(QSSType.MINSCORE);
+                            session.setTargetD(targetDiag);
+                            session.setMessage(message);
+                            session.setTheory((OWLTheory) search2.getSearchable());
+                            session.setSearch(search2);
+                            out += session.simulateQuerySession();
+
+                        }
+                    }
+                }
+            }
+           }
+
+
+
+
+
+
+
+
+
+    @Test
+    public void testNormalCasesBinary() throws SolverException, InconsistentTheoryException, IOException {
+
+        SimulatedSession session = new SimulatedSession();
+
+        session.setShowElRates(false);
+        int MAX_RUNS = 7+15;
+        getRandom().setSeed(121);
+
+        for (String name : jwsOntologies) {
+
+
+            OWLOntology extracted1 = new OWLIncoherencyExtractor(
+                    new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("ontologies", name));
+            OWLTheory theory1 = getExtendTheory(extracted1, false);
+            TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search3 = getUniformCostSearch(theory1, false);
+
+            OWLAxiomKeywordCostsEstimator es1 = new OWLAxiomKeywordCostsEstimator(theory1);
+
+            search3.setCostsEstimator(es1);
+            search3.reset();
+
+            TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = search3;
+
+
+
+            try {
+                search.start();
+            } catch (NoConflictException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            Set<FormulaSet<OWLLogicalAxiom>> diagnoses = Collections.unmodifiableSet(search.getDiagnoses());
+            ModerateDistribution moderateDistribution = new ModerateDistribution();
+            ExtremeDistribution extremeDistribution = new ExtremeDistribution();
+            search.reset();
+
+            String out = "";
+
+
+
+            for (UsersProbab usersProbab : new UsersProbab[]{UsersProbab.MODERATE,UsersProbab.EXTREME,UsersProbab.UNIFORM}) {
+                for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD,DiagProbab.AVERAGE,DiagProbab.GOOD}) {
+                    for(Searcher<OWLLogicalAxiom> searcher:searchers)   {
+                        for (SplitStrategy<OWLLogicalAxiom> split : splitStrategies) {
+                            for (int run = 7; run < MAX_RUNS; run++) {
+
+
+                                logger.info("-----------------------------Binary Tree Search-----------------------------");
+
+                                OWLOntology extracted = new OWLIncoherencyExtractor(
+                                        new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("ontologies", name));
+                                OWLTheory theory = getExtendTheory(extracted, false);
+                                //TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = getUniformCostSearch(theory, dual);
+
+                                //Create BinaryTreeSearch
+                                BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search1 = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+                                search1.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+                                search1.setSearchable(theory);
+                                search1.setSearcher(searcher);
+                                search1.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+                                search1.setSplitStrategy(split);
+
+                                if (split instanceof MostProbableSplitStrategy) {
+                                    ((MostProbableSplitStrategy) split).setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+                                }
+
+
+                                OWLAxiomKeywordCostsEstimator es = new OWLAxiomKeywordCostsEstimator(theory);
+
+                                search1.setCostsEstimator(es);
+                                search1.reset();
+
+                                logger.info("-----------------------------Binary Tree Search-----------------------------");
+
+                                if (search.getSearcher() instanceof MultiQuickXplain)
+                                    logger.info("Multi-threaded");
+
+                                else logger.info("Single-threaded");
+
+                                logger.info(((BinaryTreeSearch) search1).getSplitStrategy().getClass().getName());
+                                logger.info("Ontology: " + name);
+
+
+
+
+                                TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search2 = search1;
+                                diagnoses = chooseUserProbab(usersProbab, search2, diagnoses,extremeDistribution,moderateDistribution);
+                                FormulaSet<OWLLogicalAxiom> targetDiag = chooseTargetDiagnosis(diagProbab, new TreeSet<FormulaSet<OWLLogicalAxiom>>(diagnoses));
+
+                                TableList e = new TableList();
+                                String message = "act," + name + "," + false + "," + usersProbab + ","
+                                        + diagProbab + "," + run  ;
+
+                                session.setEntry(e);
+                                session.setScoringFunct(QSSType.MINSCORE);
+                                session.setTargetD(targetDiag);
+                                session.setMessage(message);
+                                session.setTheory((OWLTheory) search2.getSearchable());
+                                session.setSearch(search2);
+                                out += session.simulateQuerySession();
+
+                            }
                         }
                     }
                 }
@@ -396,7 +637,7 @@ public class OntologyTests extends OntologySession {
         return timeNormal;
     }
 
-
+    @Ignore
     @Test
     public void testCompareDiagnosisMethods() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         long t = System.currentTimeMillis();
@@ -606,7 +847,7 @@ public class OntologyTests extends OntologySession {
 
 
 
-
+    @Ignore
     @Test
     public void doOverallDualTreeTestEconomy()
             throws SolverException, InconsistentTheoryException, IOException, NoConflictException {
@@ -620,7 +861,7 @@ public class OntologyTests extends OntologySession {
     }
 
 
-
+    @Ignore
     @Test
     public void doSearchNoDiagFound() throws IOException, SolverException, InconsistentTheoryException, NoConflictException {
 
