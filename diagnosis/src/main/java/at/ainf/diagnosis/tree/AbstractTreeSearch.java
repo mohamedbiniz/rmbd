@@ -466,6 +466,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         long conflictEnd=System.currentTimeMillis();
         long conflictTime=conflictEnd-conflictStart;
 
+           avgConflictTime=(avgConflictTime+conflictTime)/2;
 
 
 
@@ -789,5 +790,10 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
     public long getNinthDiagnosisTime(){
         return ninthDiagnosisTime;
     }
+
+    public long getAvgConflictTime(){
+        return avgConflictTime;
+    }
+
 
 }
