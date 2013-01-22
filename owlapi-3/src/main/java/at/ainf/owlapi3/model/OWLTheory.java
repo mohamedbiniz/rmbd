@@ -53,12 +53,12 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     public void doBayesUpdate(Set<? extends FormulaSet<OWLLogicalAxiom>> hittingSets) {
         for (FormulaSet<OWLLogicalAxiom> hs : hittingSets) {
             Set<OWLLogicalAxiom> positive = new LinkedHashSet<OWLLogicalAxiom>();
-            
+
             for (int i = 0; i < getKnowledgeBase().getTestsSize(); i++) {
                 Set<OWLLogicalAxiom> testcase = getKnowledgeBase().getTest(i);
-                
-                if(i-1>-1) {
-                    Set<OWLLogicalAxiom> olderTC = getKnowledgeBase().getTest(i-1);
+
+                if (i - 1 > -1) {
+                    Set<OWLLogicalAxiom> olderTC = getKnowledgeBase().getTest(i - 1);
                     if (getKnowledgeBase().getTypeOfTest(olderTC))
                         positive.addAll(olderTC);
                 }
@@ -76,9 +76,6 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
             }
         }
     }
-
-
-
 
 
     protected static final OWLClass TOP_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
@@ -116,14 +113,14 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         if (reasonerFactory.size() == 1)
             setReasoner(new ReasonerOWL(man, reasonerFactory.get(0)));
         else
-            setReasoner(new MultipleReasonersOWL(man,reasonerFactory));
+            setReasoner(new MultipleReasonersOWL(man, reasonerFactory));
 
         //try {
-            //OWLOntology dontology = owlOntologyManager.createOntology();
-            OWLLiteral lit = owlOntologyManager.getOWLDataFactory().getOWLLiteral("Test Ontology");
-            IRI iri = OWLRDFVocabulary.RDFS_COMMENT.getIRI();
-            OWLAnnotation anno = owlOntologyManager.getOWLDataFactory().getOWLAnnotation(owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(iri), lit);
-            //owlOntologyManager.applyChange(new AddOntologyAnnotation(dontology, anno));
+        //OWLOntology dontology = owlOntologyManager.createOntology();
+        OWLLiteral lit = owlOntologyManager.getOWLDataFactory().getOWLLiteral("Test Ontology");
+        IRI iri = OWLRDFVocabulary.RDFS_COMMENT.getIRI();
+        OWLAnnotation anno = owlOntologyManager.getOWLDataFactory().getOWLAnnotation(owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(iri), lit);
+        //owlOntologyManager.applyChange(new AddOntologyAnnotation(dontology, anno));
 
             /*if (BUFFERED_SOLVER)
                 setSolver(reasonerFactory.createReasoner(getOntology()));
@@ -153,15 +150,11 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     }
 
     public void activateReduceToUns() {
-        //setFormularCach(getOriginalOntology().getLogicalAxioms(), getKnowledgeBase().getBackgroundFormulas());
         LinkedHashSet<OWLLogicalAxiom> backupCachedFormulars = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getFormulasCache());
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(getOriginalOntology().getLogicalAxioms());
-        //getReasoner().addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
-        //getSolver().flush();
         if (getReasoner().isConsistent()) {
             Set<OWLClass> entities = getReasoner().getUnsatisfiableEntities();
-            //setFormularCach(Collections.<OWLLogicalAxiom>emptySet());
             entities.remove(BOTTOM_CLASS);
             if (!entities.isEmpty()) {
                 String iri = "http://ainf.at/testiri#";
@@ -169,13 +162,11 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
                 for (OWLClass cl : entities) {
                     OWLDataFactory fac = getOriginalOntology().getOWLOntologyManager().getOWLDataFactory();
                     OWLIndividual test_individual = fac.getOWLNamedIndividual(IRI.create(iri + "d_" + cl.getIRI().getFragment()));
-
-                        getKnowledgeBase().addBackgroundFormulas(Collections.<OWLLogicalAxiom>singleton(fac.getOWLClassAssertionAxiom(cl, test_individual)));
-
+                    getKnowledgeBase().addBackgroundFormulas(Collections.<OWLLogicalAxiom>singleton(fac.getOWLClassAssertionAxiom(cl, test_individual)));
                 }
             }
-        } else
-            //setFormularCach( Collections.<OWLLogicalAxiom>emptySet());
+        }
+
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(backupCachedFormulars);
 
@@ -183,7 +174,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
 
     public OWLTheory(OWLReasonerFactory reasonerFactory, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
             throws InconsistentTheoryException, SolverException {
-        this(Collections.singletonList(reasonerFactory),ontology,backgroundAxioms);
+        this(Collections.singletonList(reasonerFactory), ontology, backgroundAxioms);
     }
 
     public OWLTheory(List<OWLReasonerFactory> reasonerFactories, OWLOntology ontology, Set<OWLLogicalAxiom> backgroundAxioms)
@@ -316,8 +307,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return res;
     }
 
-    private void incrementConsistencyChecks()
-    {
+    private void incrementConsistencyChecks() {
         // TODO remove logging
         this.consistencyCount++;
     }
@@ -376,7 +366,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         if (consistent) {
             if (checkTestsConsistency()) return false;
         }
-        
+
         //if (useCache && consistent)
         //    updateCache(ontology.getLogicalAxioms());
         return consistent;
@@ -509,7 +499,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         cache.addAll(getKnowledgeBase().getBackgroundFormulas());
         cache.addAll(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
-        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent),cache);
+        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent), cache);
 
         // restore the state of the theory prior to the test
         getReasoner().clearFormulasCache();
@@ -530,7 +520,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         cache.addAll(getKnowledgeBase().getBackgroundFormulas());
         cache.addAll(setminus(getKnowledgeBase().getFaultyFormulas(), hs));
 
-        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent),cache);
+        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent), cache);
 
         // restore the state of the theory prior to the test
         getReasoner().clearFormulasCache();
@@ -608,7 +598,6 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     }
 
 
-
     public boolean supportEntailments() {
         return true;
     }
@@ -649,7 +638,6 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     }
 
     public final Set<OWLLogicalAxiom> getEntailments(Set<OWLLogicalAxiom> hittingSet) throws SolverException {
-
 
 
         Set<OWLLogicalAxiom> axioms = setminus(getKnowledgeBase().getFaultyFormulas(), hittingSet);

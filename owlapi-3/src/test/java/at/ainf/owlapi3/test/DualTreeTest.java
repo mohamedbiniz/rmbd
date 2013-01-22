@@ -398,9 +398,9 @@ public class DualTreeTest {//extends BasePerformanceTests {
         InputStream st = ClassLoader.getSystemResourceAsStream(path);
         OWLOntology ont = manager.loadOntologyFromOntologyDocument(st);
 
-        // erzeugen eines module extractors
+        // create a module extractor
         OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
-        // modul als neue ontology bekommen
+        // replace the ontology with a module
         OWLOntology ontology = ex.getIncoherentPartAsOntology(ont);
 
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
@@ -416,6 +416,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         else
             theory = new OWLTheory(reasonerFactory, ontology, bax);
         //assert (theory.verifyRequirements());
+        theory.activateReduceToUns();
         return theory;
     }
 
