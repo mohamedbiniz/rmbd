@@ -19,6 +19,7 @@ import at.ainf.owlapi3.model.OWLTheory;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.perf4j.aop.Profiled;
 import org.semanticweb.HermiT.Reasoner;
@@ -160,9 +161,7 @@ long hsTime=hsEnd-hsStart;
           return result;
     }
 
-
-
-   @Test
+   @Ignore @Test
     public void doSimpleQuerySessionHS()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
@@ -248,7 +247,7 @@ long hsTime=hsEnd-hsStart;
 
 
 
-
+    @Ignore
     @Test
     public void doSimpleQuerySessionBHS()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
