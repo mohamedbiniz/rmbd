@@ -71,18 +71,8 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             throws NoConflictException, SolverException, InconsistentTheoryException {
         resetIterations();
         try {
-            if (!c.verifyRequirements())
-                throw new InconsistentTheoryException("Background theory or test cases are inconsistent! Finding conflicts is impossible!");
-            getReasoner().addFormulasToCache(u);
-            final boolean isCons = c.verifyRequirements();
-
-            if (isCons) {
-                throw new NoConflictException("The theory is satisfiable!");
-            }
-            if (u.isEmpty()) {
+            if (verifyKnowledgeBase(c, u))
                 return new FormulaSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>());
-            }
-            getReasoner().removeFormulasFromCache(u);
             start("Conflict", "qx");
             Set<Id> ids = qqXPlain(c, getReasoner().getFormulasCache(), new FormulaList<Id>(u));
             return new FormulaSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());

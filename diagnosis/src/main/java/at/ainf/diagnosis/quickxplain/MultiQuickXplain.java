@@ -18,10 +18,12 @@ import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -96,18 +98,26 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         try {
             start("QX");
             resetIterations();
-            this.pool = new ThreadPoolExecutor(minThreads, maxThreads, 1,
-                    TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(maxConflicts, true));
             this.results.clear();
+
+            if (verifyKnowledgeBase(searchable, formulas)){
+                addConflict(new FormulaSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>()));
+                return getResults();
+            }
+
+            this.pool = new ThreadPoolExecutor(minThreads, maxThreads, 1,
+                    TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(maxConflicts, true));
+
             if (searchable.isMultiThreading())
                 searchable.setLock(new ReentrantLock());
             quickXplain(searchable, formulas);
 
             try {
-                while (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
+                while (!pool.awaitTermination(10, TimeUnit.MILLISECONDS)) {
                 }
                 if (logger.isInfoEnabled())
-                    logger.info("Pool terminated: " + pool.getLargestPoolSize() + " / " + pool.getCompletedTaskCount());
+                    logger.info("Pool terminated (size/tasks/conflicts): " + pool.getLargestPoolSize() + " / " +
+                            pool.getCompletedTaskCount() + " / " + getResults().size());
             } catch (InterruptedException e) {
                 throw new SolverException("Computation of conflicts was interrupted!");
             }

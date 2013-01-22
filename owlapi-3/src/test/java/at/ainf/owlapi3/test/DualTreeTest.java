@@ -282,7 +282,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
             BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
             binary.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
-            MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
+            MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>(4,10,10);
             searcher.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
             binary.setSearcher(searcher);
 
@@ -295,16 +295,20 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public void runTimeComparison(BinaryTreeSearch referenceSearch, boolean dualMode, String ont)
             throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-        /** try {
+         try {
          Thread.sleep(10000);
          } catch (InterruptedException e) {
          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-         }           **/
+         }
 
-        Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = testHSTree(ont);
 
-        Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = testBHSTree(referenceSearch, dualMode, ont);
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = Collections.emptySet();
 
+        Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = Collections.emptySet();
+
+
+        resultDual = testBHSTree(referenceSearch, dualMode, ont);
+        resultNormal = testHSTree(ont);
 
         assertEquals(resultNormal, resultDual);
 

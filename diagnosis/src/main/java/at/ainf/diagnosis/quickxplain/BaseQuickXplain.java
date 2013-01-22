@@ -168,6 +168,22 @@ public abstract class BaseQuickXplain<Id> implements Searcher<Id> {
         this.formulaRenderer = formulaRenderer;
     }
 
+    public boolean verifyKnowledgeBase(Searchable<Id> c, Collection<Id> u) throws SolverException, InconsistentTheoryException, NoConflictException {
+        if (!c.verifyRequirements())
+            throw new InconsistentTheoryException("Background theory or test cases are inconsistent! Finding conflicts is impossible!");
+        getReasoner().addFormulasToCache(u);
+        final boolean isCons = c.verifyRequirements();
+
+        if (isCons) {
+            throw new NoConflictException("The theory is satisfiable!");
+        }
+        if (u.isEmpty()) {
+            return true;
+        }
+        getReasoner().removeFormulasFromCache(u);
+        return false;
+    }
+
     //public boolean isDual() {
     //    return false;
     //}
