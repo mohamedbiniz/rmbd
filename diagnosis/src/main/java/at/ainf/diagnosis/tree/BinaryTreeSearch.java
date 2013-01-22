@@ -110,7 +110,7 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
     }
 
     private void removeChildren(Node<Id> idNode) {
-        if (idNode!=null&&!getSearchStrategy().getOpenNodes().remove(idNode)) {
+        if (idNode!=null && !getSearchStrategy().getOpenNodes().remove(idNode)) {
             for (Node<Id> node : idNode.getChildren()) {
                 removeChildren(node);
             }
