@@ -18,6 +18,7 @@ import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.base.tools.TableList;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import junit.framework.Assert;
@@ -391,7 +392,13 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
     public OWLTheory createTheory(OWLOntologyManager manager, String path, boolean dual) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         InputStream st = ClassLoader.getSystemResourceAsStream(path);
-        OWLOntology ontology = manager.loadOntologyFromOntologyDocument(st);
+        OWLOntology ont = manager.loadOntologyFromOntologyDocument(st);
+
+        // erzeugen eines module extractors
+        OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+        // modul als neue ontology bekommen
+        OWLOntology ontology = ex.getIncoherentPartAsOntology(ont);
+
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));

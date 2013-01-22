@@ -214,8 +214,9 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         try {
             theory.registerTestCases();
             // verify if background theory is consistent
-            if (!theory.verifyRequirements())
-                throw new SolverException("the background theory doesn't meet requirements");
+
+            //if (!theory.verifyRequirements())
+            //    throw new SolverException("the background theory doesn't meet requirements");
 
             if (logger.isInfoEnabled())
                 logger.info("runPostprocessor started");

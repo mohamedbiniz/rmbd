@@ -1,6 +1,5 @@
 package at.ainf.logging.aop;
 
-import ch.qos.logback.classic.LoggerContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

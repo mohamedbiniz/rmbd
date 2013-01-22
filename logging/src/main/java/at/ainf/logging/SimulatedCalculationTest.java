@@ -2,9 +2,6 @@ package at.ainf.logging;
 
 import at.ainf.logging.aop.ProfVarLogWatch;
 import at.ainf.logging.aop.ProfiledVar;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Appender;
 import org.perf4j.aop.Profiled;
 import org.slf4j.LoggerFactory;
 
