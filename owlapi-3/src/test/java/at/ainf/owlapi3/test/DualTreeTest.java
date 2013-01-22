@@ -18,6 +18,7 @@ import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.base.tools.TableList;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.parser.MyOWLRendererParser;
 import junit.framework.Assert;
@@ -79,7 +80,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
     }
 
-
+    @Ignore
     @Test
     public void testAllVariants() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
@@ -256,7 +257,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
     }
 
 
-    @Ignore
+
     @Test
     public void testResultsEqualTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
@@ -269,7 +270,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
         binary.setSearcher(searcher);
 
 
-        runTimeComparison(binary, false, "Economy-SDA.owl");
+        runTimeComparison(binary, false, "univ.owl");
 
     }
 
@@ -317,7 +318,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
     public Set testHSTree(String ont) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
 
-        logger.info("Normal HS Tree Search");
+        logger.info("-----------------------------Normal HS Tree Search-----------------------------");
         logger.info("Ontology: " + ont);
 
         long normal = System.currentTimeMillis();
@@ -335,14 +336,21 @@ public class DualTreeTest {//extends BasePerformanceTests {
         normal = System.currentTimeMillis() - normal;
 
         System.out.println("normal " + new CalculateDiagnoses().getStringTime(normal));
+        logger.info("Conflict count: " +((AbstractTreeSearch) searchNormal).getConflicts().size());
+        logger.info("Average conflict time: "+((AbstractTreeSearch)searchNormal).getAvgConflictTime());
         logger.info("Time needed for first nine Diagnosis: " + ((AbstractTreeSearch) searchNormal).getNinthDiagnosisTime());
         logger.info("Total time: " + new CalculateDiagnoses().getStringTime(normal));
+        logger.info("Consistency count: "+theoryNormal.getConsistencyCount());
+        logger.info("Consistency time: "+theoryNormal.getConsistencyTime());
+
+
+
         return resultNormal;
     }
 
     public Set testBHSTree(BinaryTreeSearch referenceSearch, boolean dualMode, String ont) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
 
-        logger.info("Binary Tree Search");
+        logger.info("-----------------------------Binary Tree Search-----------------------------");
 
         if (referenceSearch.getSearcher() instanceof MultiQuickXplain)
             logger.info("Multi-threaded");
@@ -373,9 +381,13 @@ public class DualTreeTest {//extends BasePerformanceTests {
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = referenceSearch.getDiagnoses();
         dual = System.currentTimeMillis() - dual;
 
-
+        logger.info("Conflict count: " +referenceSearch.getConflicts().size());
+        logger.info("Average conflict time: "+referenceSearch.getAvgConflictTime());
         logger.info("Total time " + new CalculateDiagnoses().getStringTime(dual));
-        logger.info("Time needed for first nine Diagnosis: " + referenceSearch.getNinthDiagnosisTime());
+        logger.info("Time to compute first nine Diagnosis: " + referenceSearch.getNinthDiagnosisTime());
+        logger.info("Consistency count: "+theoryDual.getConsistencyCount());
+        logger.info("Consistency time: "+theoryDual.getConsistencyTime());
+
         System.out.println("Binary " + new CalculateDiagnoses().getStringTime(dual));
 
         return resultDual;
@@ -384,7 +396,13 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
     public OWLTheory createTheory(OWLOntologyManager manager, String path, boolean dual) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         InputStream st = ClassLoader.getSystemResourceAsStream(path);
-        OWLOntology ontology = manager.loadOntologyFromOntologyDocument(st);
+        OWLOntology ont = manager.loadOntologyFromOntologyDocument(st);
+
+        // erzeugen eines module extractors
+        OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+        // modul als neue ontology bekommen
+        OWLOntology ontology = ex.getIncoherentPartAsOntology(ont);
+
         Set<OWLLogicalAxiom> bax = new HashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));

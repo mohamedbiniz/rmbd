@@ -12,6 +12,7 @@ import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.storage.Partition;
+import at.ainf.diagnosis.tree.AbstractTreeSearch;
 import at.ainf.diagnosis.tree.Rounding;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -519,6 +520,12 @@ public class SimulatedSession extends CalculateDiagnoses {
                 "," + systemBreak + "," + hasQueryWithNoDecisionPossible +
                 "," + consistencyCount + "," + consistencyTime;
         logger.info (msg);
+
+        //Probehalber
+        logger.info("Conflict time: "+((AbstractTreeSearch)getSearch()).getAvgConflictTime() );
+        logger.info("Conflict count: "+((AbstractTreeSearch)getSearch()).getConflicts().size() );
+        logger.info("Conflict count: "+((AbstractTreeSearch)getSearch()).getNinthDiagnosisTime());
+
         if (possibleError) {
             logger.info("Possible an error occured: ");
             logger.info("target diagnosis: " + renderAxioms(getTargetD()));
