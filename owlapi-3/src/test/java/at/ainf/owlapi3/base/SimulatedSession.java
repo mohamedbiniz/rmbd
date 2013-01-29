@@ -514,17 +514,17 @@ public class SimulatedSession extends CalculateDiagnoses {
 //                + ", reaction " + reactionTime + ", user " + userBreak +
 //                ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
 //                ", consistency checks " + consistencyCount;
-        String msg = getMessage() + "," + time + "," + num_of_queries + ","
-                + targetDiagnosisIsMostProbable + "," + targetDiagnosisIsInWind + "," + diagWinSize
-                + "," + reactionTime + "," + userBreak + "," + possibleError +
-                "," + systemBreak + "," + hasQueryWithNoDecisionPossible +
-                "," + consistencyCount + "," + consistencyTime;
+        String msg = getMessage() + "," + "Time: " +time + ", \n" + "Number of queries: "+num_of_queries + ", \n"
+                + "Target Diagnosis is most probable: "+targetDiagnosisIsMostProbable + ", \n" + "Target diagnosis is windows: "+targetDiagnosisIsInWind + ", \n" + "Diagnosis window size: "+diagWinSize
+                + ", \n" + "Reaction time: "+ reactionTime + ", \n" + "User break: "+userBreak + ", \n" + possibleError +
+                ",\n" + "System break: "+systemBreak + ", \n" + "Has query with no decision possible: "+hasQueryWithNoDecisionPossible +
+                ", \n" + "Consistency count: "+consistencyCount + ",\n" +"Consistency time: "+ consistencyTime;
         logger.info (msg);
 
         //Probehalber
         logger.info("Conflict time: "+((AbstractTreeSearch)getSearch()).getAvgConflictTime() );
         logger.info("Conflict count: "+((AbstractTreeSearch)getSearch()).getConflicts().size() );
-        logger.info("Conflict count: "+((AbstractTreeSearch)getSearch()).getNinthDiagnosisTime());
+        logger.info("Time for first nine diagnoses: "+((AbstractTreeSearch)getSearch()).getNinthDiagnosisTime());
 
         if (possibleError) {
             logger.info("Possible an error occured: ");
@@ -538,10 +538,10 @@ public class SimulatedSession extends CalculateDiagnoses {
             }
         }
 
-        String msg1 = time + ", " + num_of_queries + ", " + targetDiagnosisIsMostProbable + ", " + targetDiagnosisIsInWind + ", " + diagWinSize
-                + ", " + reactionTime + ", " + userBreak + "," + possibleError +
-                ", " + systemBreak + ", " + hasQueryWithNoDecisionPossible +
-                ", " + consistencyCount;
+        String msg1 = "Total time: "+time + ", \n " +"Number of queries: " +num_of_queries + ", \\n" +"Target Diagnosis is most probable: "+ targetDiagnosisIsMostProbable + ", \\n" + "Target Diagnosis is in window: " + targetDiagnosisIsInWind + ", \\n" +"Diagnosis windows size: " +diagWinSize
+                + ", \\n" + "Reaction time: "+ reactionTime + ", \\n" +"User break: " +userBreak + ",\\n" + "Possible error: "+possibleError +
+                ", \\n" +"System break: "+ systemBreak + ", \\n" + "Hast query with no decision possible: " +hasQueryWithNoDecisionPossible +
+                ", \\n" + "Consistency count: "+consistencyCount;
         this.entry.addEntr(num_of_queries, queryCardinality, targetDiagnosisIsInWind, targetDiagnosisIsMostProbable,
                 diagWinSize, userBreak, systemBreak, time, queryTime, diagTime, reactionTime, consistencyCount);
         return msg1;

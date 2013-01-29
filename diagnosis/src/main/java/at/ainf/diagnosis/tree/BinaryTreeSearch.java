@@ -41,6 +41,22 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
 
     }
 
+    /*
+    public boolean pruneHittingSet(Node<Id> node) {
+        if (node.isRoot()) return false;
+        Collection<Id> pathLabels = node.getPathLabels();
+        for (T diagnosis : getHittingSets()) {
+            if (pathLabels.containsAll(diagnosis))
+                return true;
+                else if(diagnosis.containsAll(pathLabels))   {
+                    this.hittingSets.remove(diagnosis);
+                return false;
+            }
+
+        }
+        return false;
+    }  */
+
     public void createRoot() throws NoConflictException,
             SolverException, InconsistentTheoryException {
         // if there is already a root
