@@ -71,12 +71,12 @@ public class DualTreeTest {//extends BasePerformanceTests {
         splitStrategies.add(new GreatestConflictSplitStrategy<OWLLogicalAxiom>());
         splitStrategies.add(new MostProbableSplitStrategy<OWLLogicalAxiom>());
 
-        searchers.add(new QuickXplain<OWLLogicalAxiom>());
+    //    searchers.add(new QuickXplain<OWLLogicalAxiom>());
 
-      /*  MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
+        MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
         mult.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
         searchers.add(mult);
-                             */
+
 
     }
 
@@ -309,8 +309,8 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
 
 
-        resultNormal = testHSTree(ont);
-      //resultDual = testBHSTree(referenceSearch, dualMode, ont);
+        //resultNormal = testHSTree(ont);
+      resultDual = testBHSTree(referenceSearch, dualMode, ont);
 
       //  System.out.println(resultNormal.size());
         //System.out.println(resultDual.size());
