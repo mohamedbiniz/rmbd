@@ -39,7 +39,6 @@ import java.util.*;
 
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType;
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType.MINSCORE;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -55,7 +54,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
 
     String[] ontologies = {"Univ.owl"}; //, "Univ2.owl"};
-    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"};
+    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "univ.owl", /*"Economy-SDA.owl", "Transportation-SDA.owl"*/};
     static Set<SplitStrategy<OWLLogicalAxiom>> splitStrategies = new LinkedHashSet<SplitStrategy<OWLLogicalAxiom>>();
     static Set<Searcher<OWLLogicalAxiom>> searchers = new LinkedHashSet<Searcher<OWLLogicalAxiom>>();
 
@@ -66,23 +65,24 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public static void setUp() {
         /* String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);*/
-        splitStrategies.add(new SimpleSplitStrategy<OWLLogicalAxiom>());
         splitStrategies.add(new MostFrequentSplitStrategy<OWLLogicalAxiom>());
+        splitStrategies.add(new SimpleSplitStrategy<OWLLogicalAxiom>());
+
         splitStrategies.add(new GreatestConflictSplitStrategy<OWLLogicalAxiom>());
         splitStrategies.add(new MostProbableSplitStrategy<OWLLogicalAxiom>());
 
         searchers.add(new QuickXplain<OWLLogicalAxiom>());
 
-        MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
+      /*  MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
         mult.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
         searchers.add(mult);
-
+                             */
 
     }
 
     @Ignore
     @Test
-    public void testAllVariants() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+    public void testAllOntologies() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsBinary = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
 
@@ -98,7 +98,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
             for (SplitStrategy<OWLLogicalAxiom> split : splitStrategies) {
                 binary.setSplitStrategy(split);
 
-                for (String ont : ontologies) {
+                for (String ont : jwsOntologies) {
                     boolean success = false;
 
                     while (!success) {
@@ -113,7 +113,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
         Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsNormal = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
 
-        for (String ont : ontologies) {
+        for (String ont : jwsOntologies) {
             resultsNormal.add(testHSTree(ont));
         }
 
@@ -296,11 +296,11 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public void runTimeComparison(BinaryTreeSearch referenceSearch, boolean dualMode, String ont)
             throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-         try {
+       /*  try {
          Thread.sleep(10000);
          } catch (InterruptedException e) {
          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-         }
+         } */
 
 
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = Collections.emptySet();
@@ -308,10 +308,13 @@ public class DualTreeTest {//extends BasePerformanceTests {
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = Collections.emptySet();
 
 
-        resultDual = testBHSTree(referenceSearch, dualMode, ont);
-        resultNormal = testHSTree(ont);
 
-        assertEquals(resultNormal, resultDual);
+        resultNormal = testHSTree(ont);
+      //resultDual = testBHSTree(referenceSearch, dualMode, ont);
+
+      //  System.out.println(resultNormal.size());
+        //System.out.println(resultDual.size());
+      // assertEquals(resultNormal, resultDual);
 
     }
 
@@ -399,7 +402,12 @@ public class DualTreeTest {//extends BasePerformanceTests {
         OWLOntology ont = manager.loadOntologyFromOntologyDocument(st);
 
         // create a module extractor
-        OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+        OWLReasonerFactory rf = new Reasoner.ReasonerFactory();
+       // OWLReasonerFactory rf = new PelletReasonerFactory();
+       // // PelletIncremantalReasonerFactory();
+
+
+        OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(rf);
         // replace the ontology with a module
         OWLOntology ontology = ex.getIncoherentPartAsOntology(ont);
 
@@ -409,7 +417,11 @@ public class DualTreeTest {//extends BasePerformanceTests {
             bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
         }
 
-        OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
+        for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
+            bax.addAll(ontology.getDataPropertyAssertionAxioms(ind));
+        }
+
+        OWLReasonerFactory reasonerFactory = rf;
         OWLTheory theory = null;
         if (dual)
             theory = new DualTreeOWLTheory(reasonerFactory, ontology, bax);

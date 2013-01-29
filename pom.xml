@@ -173,6 +173,15 @@
                 <checksumPolicy>warn</checksumPolicy>
             </releases>
         </repository>
+        <repository>
+            <id>OWLDL</id>
+            <name>OwlDL repo</name>
+            <url>http://on.cs.unibas.ch/maven/repository/</url>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+        </repository>
     </repositories>
 
     <pluginRepositories>

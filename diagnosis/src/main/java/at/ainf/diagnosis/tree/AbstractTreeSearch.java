@@ -50,6 +50,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
     private long ninthDiagnosisTime;
 
+    private long startTime;
+
     private long avgConflictTime=0;
 
     // ICONFLICTSEARCHER: is the start algorithm for conflicts (e.g. QuickXplain)
@@ -181,6 +183,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
     public Set<T> start() throws
             SolverException, NoConflictException, InconsistentTheoryException {
         // reset();
+        this.startTime=System.currentTimeMillis();
         return searchDiagnoses();
     }
 
@@ -323,10 +326,13 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
     protected void processNode(Node<Id> node) throws SolverException, InconsistentTheoryException {
 
+       // boolean prune;
+         //   if(!(this instanceof BinaryTreeSearch))
+            boolean   prune = pruneHittingSet(node);
+        //else prune =false;
 
-        boolean prune = pruneHittingSet(node);
 
-        // if(axiomRenderer!=null) loggerDual.info("arc: " + axiomRenderer.renderAxiom(node.getArcLabel()));
+        //if(axiomRenderer!=null) loggerDual.info("arc: " + axiomRenderer.renderAxiom(node.getArcLabel()));
         if (!prune) {
             try {
                 if (!canReuseConflict(node) )
@@ -346,6 +352,13 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
                 stop("diagnosis");
                 if (logger.isInfoEnabled())
                     logger.info("Closing node. " + getSizeOpenNodes() + " more to process.");
+
+             /*
+                if((this instanceof BinaryTreeSearch) && pruneHittingSet(node)){
+                    this.prunedHS++;
+                    return;
+                }*/
+
 
                 Set<Id> diagnosis = node.getPathLabels();
 
@@ -385,7 +398,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
                 //messe Zeit, falls neunte Diagnose erreicht wurde
                 if(hittingSets.size()==9){
-                   ninthDiagnosisTime=System.currentTimeMillis();
+                   ninthDiagnosisTime=System.currentTimeMillis()-this.startTime;
                 }
 
             }
