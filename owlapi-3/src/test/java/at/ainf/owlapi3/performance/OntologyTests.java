@@ -93,7 +93,7 @@ public class OntologyTests extends OntologySession {
        return start;
    } */
 
-    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"};
+    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"};
     static Set<SplitStrategy<OWLLogicalAxiom>> splitStrategies = new LinkedHashSet<SplitStrategy<OWLLogicalAxiom>>();
     static Set<Searcher<OWLLogicalAxiom>> searchers = new LinkedHashSet<Searcher<OWLLogicalAxiom>>();
 
@@ -454,7 +454,7 @@ public class OntologyTests extends OntologySession {
 
 
 
-
+    @Ignore
     @Test
     public void testNormalCasesBinary() throws SolverException, InconsistentTheoryException, IOException {
 
