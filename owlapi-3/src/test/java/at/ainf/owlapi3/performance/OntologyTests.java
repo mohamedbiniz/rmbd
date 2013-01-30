@@ -414,7 +414,7 @@ public class OntologyTests extends OntologySession {
 
 
 
-                                     if (search.getSearcher() instanceof MultiQuickXplain)
+                                    if (search.getSearcher() instanceof MultiQuickXplain)
                                          logger.info("Multi-threaded");
 
                                      else logger.info("Single-threaded");
