@@ -454,7 +454,7 @@ public class OntologyTests extends OntologySession {
 
 
 
-
+     @Ignore
     @Test
     public void testNormalCasesBinary() throws SolverException, InconsistentTheoryException, IOException {
 
