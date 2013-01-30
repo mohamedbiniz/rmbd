@@ -106,7 +106,7 @@ public class OntologyTests extends OntologySession {
         splitStrategies.add(new GreatestConflictSplitStrategy<OWLLogicalAxiom>());
         splitStrategies.add(new MostProbableSplitStrategy<OWLLogicalAxiom>());
 
-        searchers.add(new QuickXplain<OWLLogicalAxiom>());
+        //searchers.add(new QuickXplain<OWLLogicalAxiom>());
 
 
         MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
