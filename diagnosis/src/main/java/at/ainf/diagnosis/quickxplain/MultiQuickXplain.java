@@ -53,6 +53,10 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
      * min threads to 1 and has queue of the size 10
      */
     public MultiQuickXplain() {
+
+        //Turn off logging
+
+
         this(2, 10, 10);
     }
 

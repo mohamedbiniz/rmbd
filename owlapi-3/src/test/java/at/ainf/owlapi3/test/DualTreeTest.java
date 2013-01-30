@@ -54,7 +54,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
 
     String[] ontologies = {"Univ.owl"}; //, "Univ2.owl"};
-    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "univ.owl", /*"Economy-SDA.owl", "Transportation-SDA.owl"*/};
+    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"};
     static Set<SplitStrategy<OWLLogicalAxiom>> splitStrategies = new LinkedHashSet<SplitStrategy<OWLLogicalAxiom>>();
     static Set<Searcher<OWLLogicalAxiom>> searchers = new LinkedHashSet<Searcher<OWLLogicalAxiom>>();
 
@@ -66,10 +66,11 @@ public class DualTreeTest {//extends BasePerformanceTests {
         /* String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);*/
         splitStrategies.add(new MostFrequentSplitStrategy<OWLLogicalAxiom>());
-        splitStrategies.add(new SimpleSplitStrategy<OWLLogicalAxiom>());
+        /*splitStrategies.add(new SimpleSplitStrategy<OWLLogicalAxiom>());
 
         splitStrategies.add(new GreatestConflictSplitStrategy<OWLLogicalAxiom>());
         splitStrategies.add(new MostProbableSplitStrategy<OWLLogicalAxiom>());
+        */
 
     //    searchers.add(new QuickXplain<OWLLogicalAxiom>());
 
@@ -111,11 +112,11 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
         }
 
-        Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsNormal = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
+      /*  Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsNormal = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
 
         for (String ont : jwsOntologies) {
             resultsNormal.add(testHSTree(ont));
-        }
+        }  */
 
     }
 
