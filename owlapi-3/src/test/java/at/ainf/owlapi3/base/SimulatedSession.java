@@ -515,7 +515,7 @@ public class SimulatedSession extends CalculateDiagnoses {
 //                ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
 //                ", consistency checks " + consistencyCount;
         String msg = getMessage() + "," + "Time: " +time + ", \n" + "Number of queries: "+num_of_queries + ", \n"
-                + "Target Diagnosis is most probable: "+targetDiagnosisIsMostProbable + ", \n" + "Target diagnosis is windows: "+targetDiagnosisIsInWind + ", \n" + "Diagnosis window size: "+diagWinSize
+               +"Query cardinality: "+queryCardinality+", \\n" + "Target Diagnosis is most probable: "+targetDiagnosisIsMostProbable + ", \n" + "Target diagnosis is windows: "+targetDiagnosisIsInWind + ", \n" + "Diagnosis window size: "+diagWinSize
                 + ", \n" + "Reaction time: "+ reactionTime + ", \n" + "User break: "+userBreak + ", \n" + possibleError +
                 ",\n" + "System break: "+systemBreak + ", \n" + "Has query with no decision possible: "+hasQueryWithNoDecisionPossible +
                 ", \n" + "Consistency count: "+consistencyCount + ",\n" +"Consistency time: "+ consistencyTime;
@@ -538,7 +538,7 @@ public class SimulatedSession extends CalculateDiagnoses {
             }
         }
 
-        String msg1 = "Total time: "+time + ", \n " +"Number of queries: " +num_of_queries + ", \\n" +"Target Diagnosis is most probable: "+ targetDiagnosisIsMostProbable + ", \\n" + "Target Diagnosis is in window: " + targetDiagnosisIsInWind + ", \\n" +"Diagnosis windows size: " +diagWinSize
+        String msg1 = "Total time: "+time + ", \n " +"Number of queries: " +num_of_queries + ", \\n"+"Query cardinality: +"+queryCardinality +", \\n"+"Target Diagnosis is most probable: "+ targetDiagnosisIsMostProbable + ", \\n" + "Target Diagnosis is in window: " + targetDiagnosisIsInWind + ", \\n" +"Diagnosis windows size: " +diagWinSize
                 + ", \\n" + "Reaction time: "+ reactionTime + ", \\n" +"User break: " +userBreak + ",\\n" + "Possible error: "+possibleError +
                 ", \\n" +"System break: "+ systemBreak + ", \\n" + "Hast query with no decision possible: " +hasQueryWithNoDecisionPossible +
                 ", \\n" + "Consistency count: "+consistencyCount;
