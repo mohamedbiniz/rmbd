@@ -1,0 +1,710 @@
+package at.ainf.owlapi3.test;
+
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
+import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
+import at.ainf.owlapi3.model.OWLJustificationIncoherencyExtractor;
+import at.ainf.owlapi3.model.OWLTheory;
+import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;
+import com.clarkparsia.owlapi.explanation.HSTExplanationGenerator;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
+import org.semanticweb.owlapi.reasoner.impl.OWLClassNodeSet;
+import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
+import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
+import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
+import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
+
+import java.io.InputStream;
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: pfleiss
+ * Date: 26.01.13
+ * Time: 14:18
+ * To change this template use File | Settings | File Templates.
+ */
+public class TestNew {
+
+    private static Logger logger = LoggerFactory.getLogger(TestNew.class.getName());
+
+    @Ignore
+    @Test
+    public void hsKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+        String[] names = {"mouse2humangenlogmap", "koala", "Univ", "Economy-SDA", "Transportation-SDA"};
+        for (String name : names) {
+            String onto = "ontologies/" + name + ".owl";
+            OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+            OWLJustificationIncoherencyExtractor justExtractor
+                    = new OWLJustificationIncoherencyExtractor(new Reasoner.ReasonerFactory());
+
+            long timeStandard = System.currentTimeMillis();
+            Set<? extends Set<OWLLogicalAxiom>> standardAxiomsResult = searchAllDiags(extractor, onto);
+            timeStandard = System.currentTimeMillis() - timeStandard;
+
+            long timeJust = System.currentTimeMillis();
+            Set<? extends Set<OWLLogicalAxiom>> justificationsAxiomsResult = searchAllDiags(justExtractor, onto);
+            timeJust = System.currentTimeMillis() - timeJust;
+
+            boolean ok = compareSetSets(standardAxiomsResult,justificationsAxiomsResult);
+
+            logger.info("ont: " + name + "time just: " + timeJust + " time standard: " + timeStandard + " ok: " + ok);
+
+        }
+    }
+
+    protected boolean compareSetSets(Set<? extends Set<OWLLogicalAxiom>> a, Set<? extends Set<OWLLogicalAxiom>> b) {
+
+        if (a.size()!=b.size())
+            return false;
+
+        for (Set<OWLLogicalAxiom> s : a) {
+            boolean found = false;
+            for (Set<OWLLogicalAxiom> t : b) {
+                found = compareSets(s,t);
+                if (found)
+                    break;
+            }
+            if(!found)
+                return false;
+        }
+        return true;
+
+    }
+
+    protected boolean compareSets(Set<OWLLogicalAxiom> a, Set<OWLLogicalAxiom> b) {
+        if (a.size() != b.size())
+            return false;
+        ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+        for (OWLLogicalAxiom axiom : a) {
+            boolean found = false;
+            String renderedAxA = renderer.render(axiom);
+            for (OWLLogicalAxiom axiom1 : b) {
+                String renderedAxB = renderer.render(axiom1);
+                if (renderedAxA.equals(renderedAxB))
+                    found = true;
+            }
+            if(!found) return false;
+        }
+        return true;
+
+    }
+
+    @Ignore  @Test
+    public void overlap() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+
+        String onto = "ontologies/fma2ncigenlogmap.owl";
+        //String onto = "ontologies/TRANSPORTATION-SDA.owl";
+        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+
+        List<Set<OWLLogicalAxiom>> modules = new LinkedList<Set<OWLLogicalAxiom>>();
+        List<OWLOntology> ontologies = new LinkedList<OWLOntology>(extractor.getIncoherentPartAsMultipleOntologies(ontFull));
+        for (OWLOntology module : ontologies) {
+            modules.add(new LinkedHashSet<OWLLogicalAxiom>(module.getLogicalAxioms()));
+        }
+        Collections.sort(modules,new Comparator<Set<OWLLogicalAxiom>>() {
+            @Override
+            public int compare(Set<OWLLogicalAxiom> o1, Set<OWLLogicalAxiom> o2) {
+                return - new Integer(o1.size()).compareTo(o2.size());
+            }
+        });
+
+        List<Set<OWLLogicalAxiom>> withoutSame = new LinkedList<Set<OWLLogicalAxiom>>();
+        for (int i = 0; i < modules.size(); i++) {
+            boolean add = true;
+            for (int j = i+1; j < modules.size(); j++) {
+                if (compareSets(modules.get(i),modules.get(j)))
+                    add = false;
+            }
+            if (add)
+                withoutSame.add(modules.get(i));
+        }
+
+        List<Integer> onlyInSingleMod = new LinkedList<Integer>();
+        for(int i = 0; i < withoutSame.size(); i++) {
+            Set<OWLLogicalAxiom> module = new HashSet<OWLLogicalAxiom>(withoutSame.get(i));
+            Set<OWLLogicalAxiom> sumOthers = new HashSet<OWLLogicalAxiom>();
+            for (int j = 0; j < withoutSame.size(); j++) {
+                if (j != i)
+                    sumOthers.addAll(withoutSame.get(j));
+
+            }
+            module.removeAll(sumOthers);
+            onlyInSingleMod.add(module.size());
+        }
+
+        String r = "";
+        for(Integer n : onlyInSingleMod)
+            r += n + ", ";
+        logger.info(r);
+
+
+        for (int i = 0; i < withoutSame.size(); i++) {
+            String res = "";
+            Set<OWLLogicalAxiom> modA = withoutSame.get(i);
+            for (int j = 0; j < withoutSame.size(); j++) {
+                if (j >= i) {
+                    Set<OWLLogicalAxiom> modB = withoutSame.get(j);
+
+                    Set<OWLLogicalAxiom> schnitt = new LinkedHashSet<OWLLogicalAxiom>(modA);
+                    schnitt.retainAll(modB);
+
+                    res += schnitt.size() + ", ";
+                }
+                else
+                    res += ",";
+
+            }
+            logger.info(modA.size() + ",  " + res);
+        }
+
+        logger.info("");
+
+    }
+
+    @Ignore @Test
+    public void moduleTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+
+        String onto = "ontologies/mouse2humangenlogmap.owl";
+        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+        OWLIncoherencyExtractor justExtr = new OWLJustificationIncoherencyExtractor(new Reasoner.ReasonerFactory());
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+
+        long timeFull = System.currentTimeMillis();
+        Set<OWLLogicalAxiom> all = extractor.getIncoherentPartAsOntology(ontFull).getLogicalAxioms();
+        timeFull = System.currentTimeMillis() - timeFull;
+
+        List<Set<OWLLogicalAxiom>> modules = new LinkedList<Set<OWLLogicalAxiom>>();
+        long timeOntologies = System.currentTimeMillis();
+        List<OWLOntology> ontologies = new LinkedList<OWLOntology>(extractor.getIncoherentPartAsMultipleOntologies(ontFull));
+        timeOntologies = System.currentTimeMillis() - timeOntologies;
+        long timeJust = System.currentTimeMillis();
+        List<OWLOntology> justOntos = new LinkedList<OWLOntology>(justExtr.getIncoherentPartAsMultipleOntologies(ontFull));
+        timeJust = System.currentTimeMillis() - timeJust;
+        for (OWLOntology module : ontologies) {
+            modules.add(new LinkedHashSet<OWLLogicalAxiom>(module.getLogicalAxioms()));
+        }
+
+        List<Integer> sizeModules = new LinkedList<Integer>();
+        for (Set<OWLLogicalAxiom> module : modules)
+            sizeModules.add(module.size());
+
+        List<Integer> onlyInSingleMod = new LinkedList<Integer>();
+        for(int i = 0; i < modules.size(); i++) {
+            Set<OWLLogicalAxiom> module = new HashSet<OWLLogicalAxiom>(modules.get(i));
+            Set<OWLLogicalAxiom> sumOthers = new HashSet<OWLLogicalAxiom>();
+            for (int j = 0; j < modules.size(); j++) {
+                  if (j != i)
+                      sumOthers.addAll(modules.get(j));
+
+            }
+            module.removeAll(sumOthers);
+            onlyInSingleMod.add(module.size());
+        }
+
+        Set<OWLLogicalAxiom> allModuleAx = new LinkedHashSet<OWLLogicalAxiom>();
+        for (OWLOntology ontology : ontologies)
+            allModuleAx.addAll(ontology.getLogicalAxioms());
+        Set<OWLLogicalAxiom> allJustModuleAx = new LinkedHashSet<OWLLogicalAxiom>();
+        for (OWLOntology ontology : justOntos)
+            allJustModuleAx.addAll(ontology.getLogicalAxioms());
+
+        logger.info(allModuleAx.size() + " " + allJustModuleAx.size() + "  " + timeFull + " " + timeJust
+          + " " + timeOntologies  );
+
+        int numIdent = 0;
+        int numSubset = 0;
+        for (int i = 0; i < modules.size(); i++) {
+            for (int j = i+1; j < modules.size(); j++) {
+                Set<OWLLogicalAxiom> modA = modules.get(i);
+                Set<OWLLogicalAxiom> modB = modules.get(j);
+
+                if (compareSets(modA,modB))
+                    numIdent++;
+
+                if (modA.size() != modB.size() && (subsetOf(modA,modB) || subsetOf(modB,modA))) {
+                   numSubset++;
+                }
+
+            }
+        }
+
+        Collections.sort(ontologies,new Comparator<OWLOntology>() {
+            @Override
+            public int compare(OWLOntology o1, OWLOntology  o2 ) {
+                return  -((Integer)o1.getLogicalAxioms().size()).compareTo(o2.getLogicalAxioms().size());
+            }
+        });
+
+
+
+        Integer sumModules = 0;
+        Integer min = Collections.min(sizeModules);
+        Integer max = Collections.max(sizeModules);
+        for (Integer n : sizeModules)
+            sumModules += n;
+
+
+
+        logger.info("all: " + all.size() + "num modules: " + modules.size() + " modules: " + sumModules + " " + min + " " + max);
+
+
+    }
+
+    private <E> boolean subsetOf(Set<E> setA, Set<E> setB) {
+        if (setA.size() > setB.size())
+            return false;
+
+        for (E element : setA) {
+            if (!setB.contains(element))
+                return false;
+        }
+        return true;
+
+    }
+
+    @Ignore  @Test
+    public void overlap2() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+
+        String onto = "ontologies/fma2ncigenlogmap.owl";
+        //String onto = "ontologies/TRANSPORTATION-SDA.owl";
+        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+
+        List<Set<OWLLogicalAxiom>> modules = new LinkedList<Set<OWLLogicalAxiom>>();
+        List<OWLOntology> ontologies = new LinkedList<OWLOntology>(extractor.getIncoherentPartAsMultipleOntologies(ontFull));
+        for (OWLOntology module : ontologies) {
+            modules.add(new LinkedHashSet<OWLLogicalAxiom>(module.getLogicalAxioms()));
+        }
+        Collections.sort(modules,new Comparator<Set<OWLLogicalAxiom>>() {
+            @Override
+            public int compare(Set<OWLLogicalAxiom> o1, Set<OWLLogicalAxiom> o2) {
+                return - new Integer(o1.size()).compareTo(o2.size());
+            }
+        });
+
+        List<Set<OWLLogicalAxiom>> withoutSame = new LinkedList<Set<OWLLogicalAxiom>>();
+        for (int i = 0; i < modules.size(); i++) {
+            boolean add = true;
+            for (int j = i+1; j < modules.size(); j++) {
+                if (compareSets(modules.get(i),modules.get(j)))
+                    add = false;
+            }
+            if (add)
+                withoutSame.add(modules.get(i));
+        }
+
+        List<Integer> onlyInSingleMod = new LinkedList<Integer>();
+        for(int i = 0; i < withoutSame.size(); i++) {
+            Set<OWLLogicalAxiom> module = new HashSet<OWLLogicalAxiom>(withoutSame.get(i));
+            Set<OWLLogicalAxiom> sumOthers = new HashSet<OWLLogicalAxiom>();
+            for (int j = 0; j < withoutSame.size(); j++) {
+                if (j != i)
+                    sumOthers.addAll(withoutSame.get(j));
+
+            }
+            module.removeAll(sumOthers);
+            onlyInSingleMod.add(module.size());
+        }
+
+        String r = "";
+        for(Integer n : onlyInSingleMod)
+            r += n + ", ";
+        logger.info(r);
+
+
+        for (int i = 0; i < withoutSame.size(); i++) {
+            String res = "";
+            Set<OWLLogicalAxiom> modA = withoutSame.get(i);
+            for (int j = 0; j < withoutSame.size(); j++) {
+                if (j >= i) {
+                    Set<OWLLogicalAxiom> modB = withoutSame.get(j);
+
+                    Set<OWLLogicalAxiom> schnitt = new LinkedHashSet<OWLLogicalAxiom>(modA);
+                    schnitt.retainAll(modB);
+
+                    res += schnitt.size() + ", ";
+                }
+                else
+                    res += ",";
+
+            }
+            logger.info(modA.size() + ",  " + res);
+        }
+
+        logger.info("");
+
+    }
+
+    /**
+     * Repairs a bugs in StructuralReasoner.getDisjointClasses
+     * @author ernesto
+     *
+     */
+    public class StructuralReasonerExtended extends StructuralReasoner{
+
+        public StructuralReasonerExtended(OWLOntology rootOntology) {
+            super(rootOntology,  new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+        }
+
+
+	/*public NodeSet<OWLClass> getSubClasses(OWLClassExpression ce, boolean direct){
+		try {
+			return super.getSubClasses(ce, direct);
+		}
+		catch (Exception e){
+
+			System.err.println(e.getMessage() +  " " + e.getCause());
+			e.printStackTrace();
+			return null;
+		}
+	}*/
+
+
+        /**
+         * It was an error in original method. the result set contained both the given class and its equivalents.
+         */
+        public NodeSet<OWLClass> getDisjointClasses(OWLClassExpression ce) {
+            //super.ensurePrepared();
+            OWLClassNodeSet nodeSet = new OWLClassNodeSet();
+            if (!ce.isAnonymous()) {
+                for (OWLOntology ontology : getRootOntology().getImportsClosure()) {
+                    for (OWLDisjointClassesAxiom ax : ontology.getDisjointClassesAxioms(ce.asOWLClass())) {
+                        for (OWLClassExpression op : ax.getClassExpressions()) {
+                            if (!op.isAnonymous() && !op.equals(ce)) { //Op must be differnt to ce
+                                nodeSet.addNode(getEquivalentClasses(op));
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+            return nodeSet;
+        }
+
+
+        public boolean isSubClassOf(OWLClass cls1, OWLClass cls2) {
+            return getSubClasses(cls2, false).getFlattened().contains(cls1);
+            //Checks only asserted axioms!!
+            //isEntailed(super.getDataFactory().getOWLSubClassOfAxiom(cls1, cls2));
+        }
+
+
+        public boolean areEquivalent(OWLClass cls1, OWLClass cls2) {
+            return (getEquivalentClasses(cls1).getEntities().contains(cls2)) ||
+                    (getEquivalentClasses(cls2).getEntities().contains(cls1));
+        }
+
+
+
+
+        public String getReasonerName(){
+            return "Extended Structural Reasoner";
+        }
+
+
+    }
+
+    @Ignore @Test
+    public void blackBoxParTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+        String onto = "ontologies/fma2ncigenlogmap.owl";
+        //String onto = "ontologies/mouse2humangenlogmap.owl";
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+
+        OWLReasonerFactory factory = new Reasoner.ReasonerFactory();
+        BlackBoxExplanation blackBoxExplanation = new BlackBoxExplanation(ontFull, factory, factory.createReasoner(ontFull));
+
+        List<OWLClass> initialUnsat = new LinkedList<OWLClass>(blackBoxExplanation.getReasoner().getUnsatisfiableClasses().getEntities());
+        initialUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+
+        List<Set<OWLAxiom>> singleJustList = new LinkedList<Set<OWLAxiom>>();
+
+        long timeOneJust = System.currentTimeMillis();
+        for (OWLEntity unsatClass : initialUnsat)
+            singleJustList.add(blackBoxExplanation.getExplanation((OWLClassExpression)unsatClass));
+        timeOneJust = System.currentTimeMillis() - timeOneJust;
+
+        logger.info("time " + timeOneJust);
+
+
+    }
+
+    @Ignore @Test
+    public void blackBoxVsModuleTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+
+        String onto = "ontologies/fma2ncigenlogmap.owl";
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+
+        OWLReasonerFactory factory = new Reasoner.ReasonerFactory();
+        SyntacticLocalityModuleExtractor moduleStar = new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontFull, ModuleType.STAR);
+        BlackBoxExplanation blackBoxExplanation = new BlackBoxExplanation(ontFull, factory, factory.createReasoner(ontFull));
+        HSTExplanationGenerator hstExplanationGenerator = new HSTExplanationGenerator(blackBoxExplanation);
+
+        List<OWLClass> initialUnsat = new LinkedList<OWLClass>(blackBoxExplanation.getReasoner().getUnsatisfiableClasses().getEntities());
+        initialUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+
+        StructuralReasonerExtended structuralReasoner = new StructuralReasonerExtended(ontFull);
+        List<OWLClass> unsatClasses = new ArrayList<OWLClass>();
+        Set<OWLClass> excluded = new HashSet<OWLClass>();
+
+        boolean isTop;
+
+        for (int i=0; i<initialUnsat.size(); i++){
+            if (excluded.contains(initialUnsat.get(i)))
+                continue; //is not a top class
+            isTop=true;
+            for (int j=0; j<initialUnsat.size(); j++){
+                if (i==j)
+                    continue;
+
+                if (structuralReasoner.areEquivalent(initialUnsat.get(i), initialUnsat.get(j))){ //equivalence
+                    excluded.add(initialUnsat.get(j)); //we repair only one side
+                    continue; //
+                }
+                else if (structuralReasoner.isSubClassOf(initialUnsat.get(j), initialUnsat.get(i))){
+                    excluded.add(initialUnsat.get(j));
+                }
+                else if (structuralReasoner.isSubClassOf(initialUnsat.get(i), initialUnsat.get(j))){
+                    isTop=false;
+                    break;
+                }
+
+            }//For j
+
+            //is top
+            if (isTop){
+                unsatClasses.add(initialUnsat.get(i));
+            }
+
+        }
+
+
+        List<Set<OWLAxiom>> singleJustList = new LinkedList<Set<OWLAxiom>>();
+        List<Set<OWLLogicalAxiom>> singleConflictList = new LinkedList<Set<OWLLogicalAxiom>>();
+        List<Set<Set<OWLAxiom>>> allJustList = new LinkedList<Set<Set<OWLAxiom>>>();
+        List<Set<OWLAxiom>> modules = new LinkedList<Set<OWLAxiom>>();
+
+        long timeOneJust = System.currentTimeMillis();
+        for (OWLEntity unsatClass : unsatClasses)
+            singleJustList.add(blackBoxExplanation.getExplanation((OWLClassExpression)unsatClass));
+        timeOneJust = System.currentTimeMillis() - timeOneJust;
+
+        long timeModules = System.currentTimeMillis();
+        for (OWLEntity unsatClass : unsatClasses)
+            modules.add(moduleStar.extract(Collections.singleton(unsatClass)));
+        timeModules = System.currentTimeMillis() - timeModules;
+
+        long timeOneConflict = System.currentTimeMillis();
+        long timeOnlySearch = 0  ;
+        for (int i = 0; i < modules.size(); i++) {
+            OWLOntology ontology = OWLManager.createOWLOntologyManager().createOntology();
+            ontology.getOWLOntologyManager().addAxioms(ontology,modules.get(i));
+            OWLTheory theory = new OWLTheory(factory,ontology,Collections.<OWLLogicalAxiom>emptySet());
+            QuickXplain<OWLLogicalAxiom> quickXplain = new QuickXplain<OWLLogicalAxiom>();
+            Set<? extends Set<OWLLogicalAxiom>> res = Collections.emptySet();
+            try {
+                long t = System.currentTimeMillis();
+                res = quickXplain.search(theory,ontology.getLogicalAxioms());
+                timeOnlySearch += System.currentTimeMillis() - t;
+            } catch (NoConflictException e) {
+                e.printStackTrace();
+            }
+
+            singleConflictList.add(res.iterator().next());
+        }
+        timeOneConflict = System.currentTimeMillis() - timeOneConflict;
+
+        /*long timeAllJust = System.currentTimeMillis();
+        for (OWLEntity unsatClass : unsatClasses)
+            allJustList.add(hstExplanationGenerator.getExplanations((OWLClassExpression)unsatClass));
+        timeAllJust = System.currentTimeMillis() - timeAllJust;*/
+
+        logger.info(timeOneConflict + " " + timeModules + timeOnlySearch + " " + timeOneJust);
+
+
+
+    }
+
+    protected Set<? extends Set<OWLLogicalAxiom>> searchAllDiags(OWLIncoherencyExtractor extractor, String onto)
+            throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        OWLOntology ontology = extractor.getIncoherentPartAsOntology(ontFull);
+        logger.info(extractor.toString() + " " + ontology.getLogicalAxioms().size());
+
+        Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
+        for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
+            bax.addAll(ontology.getClassAssertionAxioms(ind));
+            bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
+        }
+
+        OWLTheory theory = new OWLTheory(new Reasoner.ReasonerFactory(), ontology, bax);
+
+        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+
+        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+
+        search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+
+        search.setSearchable(theory);
+
+        try {
+            search.setMaxDiagnosesNumber(-1);
+            search.start();
+        } catch (NoConflictException e) {
+
+        }
+        return search.getDiagnoses();
+
+    }
+
+    private List<OWLLogicalAxiom> knownAxioms = new LinkedList<OWLLogicalAxiom>();
+
+    public Integer getNumber(OWLLogicalAxiom axiom) {
+        int num = knownAxioms.indexOf(axiom);
+        if (num == -1) {
+            knownAxioms.add(axiom);
+            num = knownAxioms.size() - 1;
+        }
+
+        return num;
+    }
+
+    @Ignore @Test
+    public void blackKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+        String path = "ontologies/";
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(path + "Univ.owl");
+        OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        Reasoner.ReasonerFactory factory = new Reasoner.ReasonerFactory();
+        OWLReasoner reasoner = factory.createReasoner(ontology);
+        BlackBoxExplanation blackBox = new BlackBoxExplanation(ontology,factory,reasoner);
+
+        HSTExplanationGenerator generator = new HSTExplanationGenerator(blackBox);
+
+        List<Set<OWLAxiom>> explanations = new LinkedList<Set<OWLAxiom>>();
+
+        for (OWLClass entity : reasoner.getUnsatisfiableClasses().getEntities()) {
+            logger.info("entity: " + entity.toString());
+            for (Set<OWLAxiom> just : generator.getExplanations(entity)) {
+                String set = "";
+                for(OWLAxiom axiom : just) {
+                    set += getNumber((OWLLogicalAxiom) axiom) + ", ";
+                }
+                logger.info(set);
+            }
+        }
+
+        //PlanExtractor planExtractor = new PlanExtractor(explanations);
+        //planExtractor.extractPlans();
+        //List<Set<OWLAxiom>> repair_plans = planExtractor.getAllPlansAx();
+    }
+
+    private Set<OWLAxiom> getAllJust(OWLOntology ontology, Reasoner.ReasonerFactory factory) {
+        Set<OWLAxiom> allJust = new LinkedHashSet<OWLAxiom>();
+        OWLReasoner reasoner = factory.createReasoner(ontology);
+        BlackBoxExplanation blackBox = new BlackBoxExplanation(ontology,factory,reasoner);
+        HSTExplanationGenerator generator = new HSTExplanationGenerator(blackBox);
+        for (OWLClass entity : reasoner.getUnsatisfiableClasses().getEntities()) {
+            for(Set<OWLAxiom> just : generator.getExplanations(entity))
+                allJust.addAll(just);
+        }
+        return allJust;
+
+    }
+
+    @Ignore @Test
+    public void testJustExtractor() throws OWLOntologyCreationException {
+
+        String path = "ontologies/";
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(path + "koala.owl");
+        OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        Reasoner.ReasonerFactory factory = new Reasoner.ReasonerFactory();
+
+        long timeForModule = System.currentTimeMillis();
+        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(factory);
+        OWLOntology module = extractor.getIncoherentPartAsOntology(ontology);
+        Set<OWLLogicalAxiom> allModule = module.getLogicalAxioms();
+        timeForModule = System.currentTimeMillis() - timeForModule;
+
+        long timeForModuleJust = System.currentTimeMillis();
+        OWLJustificationIncoherencyExtractor justificationExtractor = new OWLJustificationIncoherencyExtractor(factory);
+        OWLOntology justModule = justificationExtractor.getIncoherentPartAsOntology(ontology);
+        Set<OWLLogicalAxiom> allJustModule = justModule.getLogicalAxioms();
+        timeForModuleJust = System.currentTimeMillis() - timeForModuleJust;
+
+        logger.info("time module: " + timeForModule + " module num: " + allModule.size());
+        logger.info("time module just: " + timeForModuleJust + " just num: " + allJustModule.size());
+
+
+    }
+
+    @Ignore @Test
+    public void moduleVsJust() throws OWLOntologyCreationException {
+
+        String path = "ontologies/";
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(path + "Economy-SDA.owl");
+        OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        Reasoner.ReasonerFactory factory = new Reasoner.ReasonerFactory();
+
+        long timeForModule = System.currentTimeMillis();
+        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(factory);
+        OWLOntology module = extractor.getIncoherentPartAsOntology(ontology);
+        Set<OWLLogicalAxiom> allModule = module.getLogicalAxioms();
+        timeForModule = System.currentTimeMillis() - timeForModule;
+
+        long timeForJust = System.currentTimeMillis();
+        Set<OWLAxiom> allJust = getAllJust(ontology,factory);
+        timeForJust = System.currentTimeMillis() - timeForJust;
+
+        long timeForModuleJust = System.currentTimeMillis();
+        Set<OWLAxiom> allModuleJust = getAllJust(module,factory);
+        timeForModuleJust = System.currentTimeMillis() - timeForModuleJust + timeForModule;
+
+        logger.info("time module: " + timeForModule + " module num: " + allModule.size());
+        logger.info("time just: " + timeForJust + " just num: " + allJust.size());
+        logger.info("time module just: " + timeForModuleJust + " just num: " + allModuleJust.size());
+
+
+    }
+
+
+
+
+}
