@@ -1,7 +1,6 @@
 package at.ainf.owlapi3.model;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.debugging.DebuggerClassExpressionGenerator;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -9,7 +8,7 @@ import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -22,21 +21,25 @@ import java.util.Set;
  */
 public class OWLIncoherencyExtractor {
 
-    private OWLReasonerFactory reasonerFactory;
+    protected OWLReasonerFactory reasonerFactory;
 
     public OWLIncoherencyExtractor(OWLReasonerFactory reasonerFactory) {
         this.reasonerFactory = reasonerFactory;
     }
 
     public OWLOntology getIncoherentPartAsOntology(OWLOntology ontology) {
-        return extract(ontology,false).iterator().next();
+        return extract(ontology,false, false).iterator().next();
+    }
+
+    public OWLOntology getIncoherentPartAsOntologyUsingMultiple(OWLOntology ontology) {
+        return extract(ontology,false, true).iterator().next();
     }
 
     public Set<OWLOntology> getIncoherentPartAsMultipleOntologies(OWLOntology ontology) {
-        return extract(ontology, true);
+        return extract(ontology, true, false);
     }
 
-    private OWLOntology createCopyForExtraction(OWLOntology ontology) {
+    protected OWLOntology createCopyForExtraction(OWLOntology ontology) {
 
         OWLOntology result = null;
         try {
@@ -48,7 +51,7 @@ public class OWLIncoherencyExtractor {
         return result;
     }
 
-    private Set<OWLOntology> extract(OWLOntology ont, boolean multiple) {
+    protected Set<OWLOntology> extract(OWLOntology ont, boolean multiple, boolean useMultiple) {
 
         Set<OWLEntity> signature = new LinkedHashSet<OWLEntity>();
         OWLOntology ontology = createCopyForExtraction(ont);
@@ -90,8 +93,25 @@ public class OWLIncoherencyExtractor {
                         cnt++;
                     }
                 }
-                else
-                    result = Collections.singleton(sme.extractAsOntology(signature, IRI.create(iriString)));
+                else {
+                    if (!useMultiple) {
+                        result = Collections.singleton(sme.extractAsOntology(signature, IRI.create(iriString)));
+                    }
+                    else {
+                        result = new LinkedHashSet<OWLOntology>();
+                        int cnt = 0;
+                        for (OWLEntity i : signature) {
+                            result.add(sme.extractAsOntology(Collections.singleton(i), IRI.create(iriString + "_" + cnt)));
+                            cnt++;
+                        }
+                        Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>();
+                        for (OWLOntology on : result)
+                            axioms.addAll(on.getLogicalAxioms());
+                        result = Collections.singleton(OWLManager.createOWLOntologyManager().createOntology(IRI.create(iriString)));
+                        OWLOntology on = result.iterator().next();
+                        on.getOWLOntologyManager().addAxioms(on,axioms);
+                    }
+                }
 
             } else
                 result = Collections.singleton(OWLManager.createOWLOntologyManager().createOntology(IRI.create(iriString)));

@@ -122,7 +122,7 @@
         <dependency>
             <groupId>org.semanticweb</groupId>
             <artifactId>HermiT</artifactId>
-            <version>20121119</version>
+            <version>20130130</version>
         </dependency>
 
         <dependency>
