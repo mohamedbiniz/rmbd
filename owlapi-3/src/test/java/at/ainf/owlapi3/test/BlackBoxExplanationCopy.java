@@ -356,6 +356,16 @@ public class BlackBoxExplanationCopy extends SingleExplanationGeneratorImpl impl
         this.numOfSatChecks = 0;
     }
 
+    private long timeSatChecks = 0;
+
+    public long getTimeSatChecks() {
+        return timeSatChecks;
+    }
+
+    public void resTimeSatChecks() {
+        this.timeSatChecks = 0;
+    }
+
     /**
      * Tests the satisfiability of the test class. The ontology is recreated
      * before the test is performed.
@@ -372,7 +382,10 @@ public class BlackBoxExplanationCopy extends SingleExplanationGeneratorImpl impl
         }
         numOfSatChecks++ ;
         satTestCount++;
+        long time = System.currentTimeMillis();
         boolean sat = reasoner.isSatisfiable(unsatClass);
+        time = System.currentTimeMillis() - time;
+        timeSatChecks += time;
         reasoner.dispose();
         return sat;
     }
