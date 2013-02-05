@@ -64,7 +64,7 @@
 
     <dependencies>
 
-        <dependency>
+        <!--<dependency>
             <groupId>choco</groupId>
             <artifactId>choco-cp</artifactId>
             <version>2.1.5</version>
@@ -72,6 +72,11 @@
         <dependency>
             <groupId>choco</groupId>
             <artifactId>choco-kernel</artifactId>
+            <version>2.1.5</version>
+        </dependency>-->
+        <dependency>
+            <groupId>choco</groupId>
+            <artifactId>choco</artifactId>
             <version>2.1.5</version>
         </dependency>
 

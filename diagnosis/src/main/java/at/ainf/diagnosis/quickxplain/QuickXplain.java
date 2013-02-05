@@ -85,6 +85,16 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         }
     }
 
+    private int numOfChecks = 0;
+
+    public int getNumOfChecks() {
+        return numOfChecks;
+    }
+
+    public void resetNumOfChecks() {
+        this.numOfChecks = 0;
+    }
+
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException, InterruptedException {
         if (formulaRenderer != null)
@@ -96,6 +106,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         if (Thread.interrupted())
             throw new InterruptedException("QuickXPlain thread is interrupted");
 
+        numOfChecks++ ;
         if ((d != null && d.size() != 0 && !b.verifyRequirements()))
             return null;
 
