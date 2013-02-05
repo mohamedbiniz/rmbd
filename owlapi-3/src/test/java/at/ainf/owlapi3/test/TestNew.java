@@ -183,6 +183,55 @@ public class TestNew {
 
     }
 
+    @Ignore  @Test
+    public void numberConsChecksTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+
+        //String onto = "ontologies/fma2ncigenlogmap.owl";
+        String onto = "ontologies/mouse2humangenlogmap.owl";
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        SyntacticLocalityModuleExtractor extractor = createModuleExtractor(ontFull);
+        OWLReasonerFactory factory = new Reasoner.ReasonerFactory();
+
+
+        OWLReasoner reasoner = factory.createReasoner(ontFull);
+
+        List<OWLClass> initialUnsat = new LinkedList<OWLClass>(getReasoner(ontFull).getUnsatisfiableClasses().getEntities());
+        initialUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+
+        List<OWLClass> unsat = getTopUnsat(ontFull,initialUnsat);
+
+        Set<OWLAxiom> axioms = new HashSet<OWLAxiom>();
+        for (OWLEntity entity : unsat)
+            axioms.addAll(extractor.extract(Collections.singleton(entity)));
+
+        BlackBoxExplanationCopy blackBoxExplanationCopy = new BlackBoxExplanationCopy(ontFull,factory,reasoner);
+        blackBoxExplanationCopy.resetNumOfSatChecks();
+        blackBoxExplanationCopy.getExplanation(unsat.get(0));
+        int num = blackBoxExplanationCopy.getNumOfSatChecks();
+        long time = blackBoxExplanationCopy.getTimeSatChecks();
+
+        Set<OWLAxiom> axiomsConf = extractor.extract(Collections.singleton((OWLEntity)unsat.get(0)));
+
+        OWLOntology ontology = OWLManager.createOWLOntologyManager().createOntology();
+        ontology.getOWLOntologyManager().addAxioms(ontology,extractSmallModule(extractor.extract(Collections.singleton((OWLEntity)unsat.get(0)))));
+        OWLTheory theory = new OWLTheory(factory,ontology,Collections.<OWLLogicalAxiom>emptySet());
+        QuickXplain<OWLLogicalAxiom> quickXplain = new QuickXplain<OWLLogicalAxiom>();
+        Set<? extends Set<OWLLogicalAxiom>> res = Collections.emptySet();
+        try {
+            res = quickXplain.search(theory,ontology.getLogicalAxioms());
+        } catch (NoConflictException e) {
+            e.printStackTrace();
+        }
+        int n = quickXplain.getNumOfChecks();
+        long t = quickXplain.getTimeVerify();
+
+        logger.info(num + " " + n + " " + time + " " + t  );
+
+    }
+
     @Ignore @Test
     public void moduleTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 

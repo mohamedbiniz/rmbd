@@ -95,6 +95,16 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         this.numOfChecks = 0;
     }
 
+    private long timeVerify = 0;
+
+    public long getTimeVerify() {
+        return timeVerify;
+    }
+
+    public void resTimeVerify() {
+        this.timeVerify = 0;
+    }
+
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException, InterruptedException {
         if (formulaRenderer != null)
@@ -107,8 +117,14 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             throw new InterruptedException("QuickXPlain thread is interrupted");
 
         numOfChecks++ ;
-        if ((d != null && d.size() != 0 && !b.verifyRequirements()))
+        long timeVerify = System.currentTimeMillis();
+        if ((d != null && d.size() != 0 && !b.verifyRequirements())) {
+            timeVerify = System.currentTimeMillis() - timeVerify;
+            this.timeVerify += timeVerify;
             return null;
+        }
+        timeVerify = System.currentTimeMillis() - timeVerify;
+        this.timeVerify += timeVerify;
 
         if (c.size() == 1) {
             if (getAxiomListener() != null)
