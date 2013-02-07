@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -61,18 +62,38 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         super.rollbackChanges(c,formulas,changes);
     }
 
+    // module test
+
+    private ModuleProvider<Id> moduleProvider;
+
+    public ModuleProvider<Id> getModuleProvider() {
+        return moduleProvider;
+    }
+
+    public void setModuleProvider(ModuleProvider<Id> moduleProvider) {
+        this.moduleProvider = moduleProvider;
+    }
+
+    private void makeSmaller(final Collection<Id> axioms) {
+        if (moduleProvider != null && !axioms.isEmpty()) {
+            Set<Id> smaller = moduleProvider.getSmallerModule(new HashSet<Id>(axioms));
+            logger.info("axioms was: " + axioms.size() + " reduced to: " + smaller.size());
+            axioms.retainAll(smaller);
+        }
+    }
+
     /**
      * @return conflict
      * @throws at.ainf.diagnosis.tree.exceptions.NoConflictException
      *
      */
-
     public FormulaSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException {
         resetIterations();
         try {
             if (verifyKnowledgeBase(c, u))
                 return new FormulaSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>());
+            makeSmaller(u);
             start("Conflict", "qx");
             Set<Id> ids = qqXPlain(c, getReasoner().getFormulasCache(), new FormulaList<Id>(u));
             return new FormulaSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
@@ -84,6 +105,8 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
                 getAxiomListener().release();
         }
     }
+
+    // logging
 
     private int numOfChecks = 0;
 
@@ -104,6 +127,8 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
     public void resTimeVerify() {
         this.timeVerify = 0;
     }
+
+    //
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException, InterruptedException {
