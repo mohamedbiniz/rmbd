@@ -47,15 +47,21 @@ public class TestNew {
     @Ignore
     @Test
     public void hsKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
-        String[] names = {"fma2ncigenlogmap", "mouse2humangenlogmap", "koala", "Univ", "Economy-SDA"};
+        String[] names = {"mouse2humangenlogmap", "koala", "Univ", "Economy-SDA"};
         for (String name : names) {
             String onto = "ontologies/" + name + ".owl";
             OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
             OWLJustificationIncoherencyExtractor justExtractor
                     = new OWLJustificationIncoherencyExtractor(new Reasoner.ReasonerFactory());
 
+            boolean isElOnto;
+            if (name.endsWith("logmap"))
+                isElOnto = true;
+            else
+                isElOnto = false;
+
             long timeNewer = System.currentTimeMillis();
-            Set<? extends Set<OWLLogicalAxiom>> newerAxiomsResult = searchAllDiags(onto);
+            Set<? extends Set<OWLLogicalAxiom>> newerAxiomsResult = searchAllDiags(onto, isElOnto);
             timeNewer = System.currentTimeMillis() - timeNewer;
 
             long timeStandard = System.currentTimeMillis();
@@ -968,13 +974,13 @@ public class TestNew {
 
     }
 
-    protected Set<? extends Set<OWLLogicalAxiom>> searchAllDiags(String onto)
+    protected Set<? extends Set<OWLLogicalAxiom>> searchAllDiags(String onto, boolean isElOnto)
             throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
 
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
         OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
-        OtfModuleProvider provider = new OtfModuleProvider(ontFull, new Reasoner.ReasonerFactory());
+        OtfModuleProvider provider = new OtfModuleProvider(ontFull, new Reasoner.ReasonerFactory(), isElOnto);
         OWLOntology ontology = createOntology(provider.getModuleUnsatClass());
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
