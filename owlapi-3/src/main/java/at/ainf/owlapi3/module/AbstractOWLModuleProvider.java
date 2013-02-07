@@ -21,11 +21,14 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
     private OWLReasonerFactory reasonerFactory;
     private OWLOntology fullOntology;
 
+    private boolean isElOntology = false;
     private List<Set<OWLLogicalAxiom>> modules = new LinkedList<Set<OWLLogicalAxiom>>();
 
-    public AbstractOWLModuleProvider(OWLOntology ontology, OWLReasonerFactory factory) {
+    public AbstractOWLModuleProvider(OWLOntology ontology, OWLReasonerFactory factory, boolean isElOnto) {
         reasonerFactory = factory;
         fullOntology = ontology;
+        isElOntology = isElOnto;
+
     }
 
     public OWLReasonerFactory getReasonerFactory() {
@@ -123,7 +126,8 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
         List<OWLClass> initialUnsat = new LinkedList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntities());
         initialUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
         List<OWLClass> topUnsat = initialUnsat;
-        // List<OWLClass> topUnsat = getTopUnsat(ontology,initialUnsat);
+        if (isElOntology)
+            topUnsat = getTopUnsat(ontology,initialUnsat);
 
         for (OWLEntity unsatClass : topUnsat)
             modules.add(convertAxiom2LogicalAxiom(moduleStar.extract(Collections.singleton(unsatClass))));

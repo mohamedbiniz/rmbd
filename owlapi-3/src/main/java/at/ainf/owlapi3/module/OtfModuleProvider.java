@@ -22,8 +22,8 @@ import java.util.Set;
  */
 public class OtfModuleProvider extends AbstractOWLModuleProvider {
 
-    public OtfModuleProvider(OWLOntology ontology, OWLReasonerFactory factory) {
-        super(ontology, factory);
+    public OtfModuleProvider(OWLOntology ontology, OWLReasonerFactory factory, boolean isElOnto) {
+        super(ontology, factory, isElOnto);
     }
 
     @Override

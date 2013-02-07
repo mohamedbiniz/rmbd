@@ -15,8 +15,8 @@ import java.util.Set;
  */
 public class OnlySameModuleProvider extends AbstractOWLModuleProvider {
 
-    protected OnlySameModuleProvider(OWLOntology ontology, OWLReasonerFactory factory) {
-        super(ontology, factory);
+    protected OnlySameModuleProvider(OWLOntology ontology, OWLReasonerFactory factory, boolean isElOnto) {
+        super(ontology, factory, isElOnto);
     }
 
     @Override
