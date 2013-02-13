@@ -5,13 +5,12 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,31 +21,61 @@ import java.util.Set;
  */
 public class OtfModuleProvider extends AbstractOWLModuleProvider {
 
+    private static Logger logger = LoggerFactory.getLogger(OtfModuleProvider.class.getName());
+
     public OtfModuleProvider(OWLOntology ontology, OWLReasonerFactory factory, boolean isElOnto) {
         super(ontology, factory, isElOnto);
     }
 
-    @Override
-    public Set<OWLLogicalAxiom> getSmallerModule(Set<OWLLogicalAxiom> module) {
-        OWLOntology ontology = createOntology(module);
-        OWLReasoner reasoner = getReasonerFactory().createNonBufferingReasoner(ontology);
-        SyntacticLocalityModuleExtractor extractor = createModuleExtractor(ontology);
+    private OWLClass unsatClassOfSmallestModule = null;
 
-        Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntities();
-        unsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
-
-        if (unsat.isEmpty())
-            return Collections.emptySet();
-
-        List<Set<OWLAxiom>> modules = new LinkedList<Set<OWLAxiom>>();
-        for (OWLEntity entity : unsat)
-            modules.add(extractor.extract(Collections.singleton(entity)));
-        Set<OWLLogicalAxiom> min = convertAxiom2LogicalAxiom(Collections.min(modules,new SetComparator<OWLAxiom>()));
-
-        if (min.size() == module.size())
-            return min;
-
-        return getSmallerModule(min);
+    public OWLClass getUnsatClass() {
+        return unsatClassOfSmallestModule;
     }
+
+    protected void setUnsatClass(OWLClass unsatClassOfSmallestModule) {
+        this.unsatClassOfSmallestModule = unsatClassOfSmallestModule;
+    }
+
+    private String getUnsatClassesAsString(List<OWLClass> unsatClasses) {
+        String res = "";
+        for (OWLClass unsatClass : unsatClasses)
+            res += getNumber(unsatClass) + ", ";
+        return res;
+    }
+
+    List<OWLClass> knowUnsatClasses = new LinkedList<OWLClass>();
+
+    private int getNumber(OWLClass unsatClass) {
+        if (!knowUnsatClasses.contains(unsatClass))
+            knowUnsatClasses.add(unsatClass);
+        return knowUnsatClasses.indexOf(unsatClass);
+    }
+
+    @Override
+    public Set<OWLLogicalAxiom> getSmallerModule(Set<OWLLogicalAxiom> axioms) {
+
+        LinkedList<OWLClass> topUnsatClasses = new LinkedList<OWLClass>(getUnsatClasses().keySet());
+        List<OWLClass> stillUnsat = getStillUnsat(topUnsatClasses, axioms);
+
+        List<Set<OWLLogicalAxiom>> modulesForStillUnsat = new LinkedList<Set<OWLLogicalAxiom>>();
+        Map<Set<OWLLogicalAxiom>,OWLClass> owlClassForModule = new HashMap<Set<OWLLogicalAxiom>, OWLClass>();
+        for (OWLClass unsatClass : stillUnsat) {
+            modulesForStillUnsat.add(getUnsatClasses().get(unsatClass));
+            owlClassForModule.put(getUnsatClasses().get(unsatClass),unsatClass);
+        }
+        Set<OWLLogicalAxiom> smallest = Collections.min(modulesForStillUnsat,new SetComparator<OWLLogicalAxiom>());
+        //setUnsatClass(owlClassForModule.get(smallest));
+
+        Set<OWLLogicalAxiom> result = new HashSet<OWLLogicalAxiom>(smallest);
+        result.retainAll(axioms);
+
+        List<OWLClass> stillUnsat2 = getStillUnsat(topUnsatClasses, result);
+        logger.info("still unsat size: " + stillUnsat2.size());
+
+        return result;
+    }
+
+
 
 }

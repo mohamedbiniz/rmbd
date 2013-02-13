@@ -22,7 +22,7 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
     private OWLOntology fullOntology;
 
     private boolean isElOntology = false;
-    private List<Set<OWLLogicalAxiom>> modules = new LinkedList<Set<OWLLogicalAxiom>>();
+    private Map<OWLClass, Set<OWLLogicalAxiom>> unsatClasses = new HashMap<OWLClass, Set<OWLLogicalAxiom>>();
 
     public AbstractOWLModuleProvider(OWLOntology ontology, OWLReasonerFactory factory, boolean isElOnto) {
         reasonerFactory = factory;
@@ -37,6 +37,10 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
 
     public OWLOntology getFullOntology() {
         return fullOntology;
+    }
+
+    public Map<OWLClass, Set<OWLLogicalAxiom>> getUnsatClasses() {
+        return Collections.unmodifiableMap(unsatClasses);
     }
 
     /**
@@ -113,26 +117,45 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
         return result;
     }
 
+    protected List<OWLClass> getUnsatClassesWithoutBot (OWLOntology ontology) {
+        OWLReasoner reasoner = getReasonerFactory().createNonBufferingReasoner(ontology);
+        List<OWLClass> initialUnsat = new LinkedList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntities());
+        initialUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+
+        return initialUnsat;
+    }
+
+    public List<OWLClass> getStillUnsat (List<OWLClass> possUnsat, Set<OWLLogicalAxiom> axioms) {
+        List<OWLClass> result = new LinkedList<OWLClass>();
+        OWLReasoner reasoner = getReasonerFactory().createNonBufferingReasoner(createOntology(axioms));
+        for (OWLClass possUnsatClass : possUnsat)
+            if (!reasoner.isSatisfiable(possUnsatClass))
+                result.add(possUnsatClass);
+        return result;
+
+    }
+
     protected SyntacticLocalityModuleExtractor createModuleExtractor(OWLOntology ontology) {
         return new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontology, ModuleType.STAR);
     }
 
     @Override
     public Set<OWLLogicalAxiom> getModuleUnsatClass() {
-        OWLOntology ontology = createOntology(getFullOntology().getLogicalAxioms());
-        OWLReasoner reasoner = getReasonerFactory().createNonBufferingReasoner(ontology);
-        SyntacticLocalityModuleExtractor moduleStar = createModuleExtractor(ontology);
 
-        List<OWLClass> initialUnsat = new LinkedList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntities());
-        initialUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+        OWLOntology ontology = createOntology(getFullOntology().getLogicalAxioms());
+        SyntacticLocalityModuleExtractor moduleStar = createModuleExtractor(ontology);
+        List<OWLClass> initialUnsat = getUnsatClassesWithoutBot(ontology);
         List<OWLClass> topUnsat = initialUnsat;
         if (isElOntology)
             topUnsat = getTopUnsat(ontology,initialUnsat);
 
-        for (OWLEntity unsatClass : topUnsat)
-            modules.add(convertAxiom2LogicalAxiom(moduleStar.extract(Collections.singleton(unsatClass))));
+        for (OWLEntity unsatClass : topUnsat) {
+            Set<OWLLogicalAxiom> owlLogicalAxioms = convertAxiom2LogicalAxiom(moduleStar.extract(Collections.singleton(unsatClass)));
+            unsatClasses.put ((OWLClass) unsatClass, owlLogicalAxioms);
+        }
 
-        return createUnion(modules);
+
+        return createUnion(unsatClasses.values());
     }
 
 }

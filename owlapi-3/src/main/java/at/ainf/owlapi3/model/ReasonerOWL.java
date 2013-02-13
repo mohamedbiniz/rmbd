@@ -72,6 +72,11 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         return reasoner.isConsistent();
     }
 
+    public boolean isSatisfiable(OWLClass unsatClass) {
+        sync();
+        return reasoner.isSatisfiable(unsatClass);
+    }
+
     @Override
     public boolean isCoherent() {
         sync();

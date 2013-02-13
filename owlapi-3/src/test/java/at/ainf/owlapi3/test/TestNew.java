@@ -12,6 +12,7 @@ import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLJustificationIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.module.OtfModuleProvider;
+import at.ainf.owlapi3.module.SatisfiableQuickXplain;
 import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;
 import com.clarkparsia.owlapi.explanation.HSTExplanationGenerator;
 import org.junit.Ignore;
@@ -47,7 +48,9 @@ public class TestNew {
     @Ignore
     @Test
     public void hsKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
-        String[] names = {"mouse2humangenlogmap", "koala", "Univ", "Economy-SDA"};
+
+        String[] names = {"mouse2humangenlogmap"};
+        // String[] names = {"koala", "Univ", "Economy-SDA", "mouse2humangenlogmap"};
         for (String name : names) {
             String onto = "ontologies/" + name + ".owl";
             OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
@@ -68,16 +71,16 @@ public class TestNew {
             Set<? extends Set<OWLLogicalAxiom>> standardAxiomsResult = searchAllDiags(extractor, onto);
             timeStandard = System.currentTimeMillis() - timeStandard;
 
-            long timeJust = System.currentTimeMillis();
-            Set<? extends Set<OWLLogicalAxiom>> justificationsAxiomsResult = searchAllDiags(justExtractor, onto);
-            timeJust = System.currentTimeMillis() - timeJust;
+            //long timeJust = System.currentTimeMillis();
+            //Set<? extends Set<OWLLogicalAxiom>> justificationsAxiomsResult = searchAllDiags(justExtractor, onto);
+            //timeJust = System.currentTimeMillis() - timeJust;
 
-            boolean ok = compareSetSets(standardAxiomsResult,justificationsAxiomsResult);
+            //boolean ok = compareSetSets(standardAxiomsResult,justificationsAxiomsResult);
             boolean ok2 = compareSetSets(standardAxiomsResult,newerAxiomsResult);
 
             //assertTrue("",ok && ok2);
 
-            logger.info("ont: " + name + " ok: " + ok + " ok2: " + ok2 + " time just: " + timeJust
+            logger.info("ont: " + name + " ok2: " + ok2
                                   + " time newer: " + timeNewer + " time standard: " + timeStandard);
         }
     }
@@ -192,6 +195,176 @@ public class TestNew {
         }
 
         logger.info("");
+
+    }
+
+    protected Set<OWLLogicalAxiom> convertAxiom2LogicalAxiom (Set<OWLAxiom> axioms) {
+        Set<OWLLogicalAxiom> result = new LinkedHashSet<OWLLogicalAxiom>();
+        for (OWLAxiom axiom : axioms)
+            result.add((OWLLogicalAxiom)axiom);
+        return result;
+    }
+
+    @Ignore
+    @Test
+    public void treeOfUnSatClasses() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+         String onto = "ontologies/fma2ncigenlogmap.owl";
+        // String onto = "ontologies/mouse2humangenlogmap.owl";
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ont2 = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        ModuleTools tools = new ModuleTools();
+        List<OWLClass> topUnsat = tools.getTopUnsat(ont2.getLogicalAxioms());
+        topUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+        Map<OWLClass,Set<OWLLogicalAxiom>> topModules = tools.getModules(topUnsat,ont2.getLogicalAxioms());
+        int unionTopSize = getUnion(topModules.values()).size();
+
+        for (OWLClass topUnsatClass : topUnsat) {
+            List<OWLClass> stillUnsat = tools.getStillUnsat(topUnsat,topModules.get(topUnsatClass));
+            int size = topModules.get(topUnsatClass).size();
+            String stillUnsatString = "";
+            for (OWLClass u : stillUnsat)
+                stillUnsatString += getNumber(u) + ", ";
+            logger.info(getNumber(topUnsatClass) + " (" + size + "): " + stillUnsatString);
+            List<OWLClass> stillUnsatWithout = new LinkedList<OWLClass>(stillUnsat);
+            stillUnsatWithout.remove(topUnsatClass);
+            Map<OWLClass,Set<OWLLogicalAxiom>> modules = tools.getModules(stillUnsatWithout,
+                                                         topModules.get(topUnsatClass));
+            for (OWLClass unsatClass : modules.keySet()) {
+                List<OWLClass> stillUnsat2 = tools.getStillUnsat(stillUnsatWithout,modules.get(unsatClass));
+                int siz2 = modules.get(unsatClass).size();
+                String stillUnsatString2 = "";
+                for (OWLClass u : stillUnsat2)
+                    stillUnsatString2 += getNumber(u) + ", ";
+                logger.info("  " + getNumber(unsatClass) + " (" + siz2 + "): " + stillUnsatString2);
+            }
+        }
+
+        logger.info("" + topModules + unionTopSize);
+
+    }
+
+
+    @Ignore
+    @Test
+    public void listOfUnsatClasses() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+        String onto = "ontologies/fma2ncigenlogmap.owl";
+        // String onto = "ontologies/mouse2humangenlogmap.owl";
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ont2 = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        ModuleTools tools = new ModuleTools();
+        List<OWLClass> topUnsat = tools.getTopUnsat(ont2.getLogicalAxioms());
+        topUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+        final Map<OWLClass,Set<OWLLogicalAxiom>> topModules = tools.getModules(topUnsat,ont2.getLogicalAxioms());
+        int unionTopSize = getUnion(topModules.values()).size();
+        Collections.sort(topUnsat,new Comparator<OWLClass>() {
+            @Override
+            public int compare(OWLClass o1, OWLClass o2) {
+                return ((Integer) topModules.get(o1).size()).compareTo(topModules.get(o2).size());
+            }
+        });
+
+        for (OWLClass topUnsatClass : topUnsat) {
+            List<OWLClass> stillUnsat = tools.getStillUnsat(topUnsat,topModules.get(topUnsatClass));
+            int size = topModules.get(topUnsatClass).size();
+            String stillUnsatString = "";
+            for (OWLClass u : stillUnsat)
+                if (!u.equals(topUnsatClass))
+                    stillUnsatString += getNumber(u) + ", ";
+            logger.info(getNumber(topUnsatClass) + " (" + size + "): " + stillUnsatString);
+        }
+
+        logger.info("" + topModules + unionTopSize);
+
+
+
+
+    }
+
+    protected Set<OWLLogicalAxiom> getUnion(Collection<Set<OWLLogicalAxiom>> axiomSetSets) {
+        Set<OWLLogicalAxiom> result = new HashSet<OWLLogicalAxiom>();
+        for (Set<OWLLogicalAxiom> set : axiomSetSets)
+            result.addAll(set);
+        return result;
+    }
+
+    List<OWLClass> unsatClassesList = new LinkedList<OWLClass>();
+
+    protected int getNumber(OWLClass unsat) {
+        if (!unsatClassesList.contains(unsat))
+            unsatClassesList.add(unsat);
+        return unsatClassesList.indexOf(unsat);
+    }
+
+    @Ignore
+    @Test
+    public void smallestModuleTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+        String onto = "ontologies/mouse2humangenlogmap.owl";
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ont2 = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        OWLOntology ontFull = createOntology(ont2.getLogicalAxioms());
+        OWLReasonerFactory factory = new Reasoner.ReasonerFactory();
+        OtfModuleProvider provider = new OtfModuleProvider(ontFull, factory, true);
+
+        provider.getModuleUnsatClass();
+        List<Set<OWLLogicalAxiom>> modules = new LinkedList<Set<OWLLogicalAxiom>>(provider.getUnsatClasses().values());
+        Collections.sort(modules,new SetComparator<OWLLogicalAxiom>());
+
+        Collections.reverse(modules);
+        List<Set<OWLLogicalAxiom>> withoutSame = new LinkedList<Set<OWLLogicalAxiom>>();
+        for (int i = 0; i < modules.size(); i++) {
+            boolean add = true;
+            for (int j = i+1; j < modules.size(); j++) {
+                if (compareSets(modules.get(i),modules.get(j)))
+                    add = false;
+            }
+            if (add)
+                withoutSame.add(modules.get(i));
+        }
+
+        List<Integer> onlyInSingleMod = new LinkedList<Integer>();
+        for(int i = 0; i < withoutSame.size(); i++) {
+            Set<OWLLogicalAxiom> module = new HashSet<OWLLogicalAxiom>(withoutSame.get(i));
+            Set<OWLLogicalAxiom> sumOthers = new HashSet<OWLLogicalAxiom>();
+            for (int j = 0; j < withoutSame.size(); j++) {
+                if (j != i)
+                    sumOthers.addAll(withoutSame.get(j));
+
+            }
+            module.removeAll(sumOthers);
+            onlyInSingleMod.add(module.size());
+        }
+
+        String r = "";
+        for(Integer n : onlyInSingleMod)
+            r += n + ", ";
+        logger.info(r);
+
+
+        for (int i = 0; i < withoutSame.size(); i++) {
+            String res = "";
+            Set<OWLLogicalAxiom> modA = withoutSame.get(i);
+            for (int j = 0; j < withoutSame.size(); j++) {
+                if (j >= i) {
+                    Set<OWLLogicalAxiom> modB = withoutSame.get(j);
+
+                    Set<OWLLogicalAxiom> schnitt = new LinkedHashSet<OWLLogicalAxiom>(modA);
+                    schnitt.retainAll(modB);
+
+                    res += schnitt.size() + ", ";
+                }
+                else
+                    res += ",";
+
+            }
+            logger.info(modA.size() + ",  " + res);
+        }
+
+        logger.info("");
+
+        logger.info("ont: " + modules );
 
     }
 
@@ -993,7 +1166,7 @@ public class TestNew {
 
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
-        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
+        search.setSearcher(new SatisfiableQuickXplain<OWLLogicalAxiom>());
 
         ((QuickXplain<OWLLogicalAxiom>) search.getSearcher()).setModuleProvider(provider);
 
