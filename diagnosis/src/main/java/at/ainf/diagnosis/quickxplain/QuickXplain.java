@@ -74,11 +74,14 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         this.moduleProvider = moduleProvider;
     }
 
-    private void makeSmaller(final Collection<Id> axioms) {
-        if (moduleProvider != null && !axioms.isEmpty()) {
-            Set<Id> smaller = moduleProvider.getSmallerModule(new HashSet<Id>(axioms));
-            logger.info("axioms was: " + axioms.size() + " reduced to: " + smaller.size());
-            axioms.retainAll(smaller);
+    protected void makeSmaller(final Collection<Id> u,Set<Id> backgroundFormulars) {
+        if (getModuleProvider() != null && !u.isEmpty()) {
+            HashSet<Id> toMakeSmaller = new HashSet<Id>();
+            toMakeSmaller.addAll(u);
+            toMakeSmaller.addAll(backgroundFormulars);
+            Set<Id> smaller = getModuleProvider().getSmallerModule(toMakeSmaller);
+            logger.info("axioms was: " + u.size() + " reduced to: " + smaller.size());
+            u.retainAll(smaller);
         }
     }
 
@@ -93,7 +96,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         try {
             if (verifyKnowledgeBase(c, u))
                 return new FormulaSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>());
-            makeSmaller(u);
+            makeSmaller(u,c.getKnowledgeBase().getBackgroundFormulas());
             start("Conflict", "qx");
             Set<Id> ids = qqXPlain(c, getReasoner().getFormulasCache(), new FormulaList<Id>(u));
             return new FormulaSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
@@ -130,6 +133,10 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
     //
 
+    protected boolean checkRequirements (Searchable<Id> b) throws SolverException {
+        return b.verifyRequirements();
+    }
+
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException, InterruptedException {
         if (formulaRenderer != null)
@@ -143,7 +150,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
         numOfChecks++ ;
         long timeVerify = System.currentTimeMillis();
-        if ((d != null && d.size() != 0 && !b.verifyRequirements())) {
+        if ((d != null && d.size() != 0 && !checkRequirements(b))) {
             timeVerify = System.currentTimeMillis() - timeVerify;
             this.timeVerify += timeVerify;
             return null;
