@@ -62,28 +62,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         super.rollbackChanges(c,formulas,changes);
     }
 
-    // module test
 
-    private ModuleProvider<Id> moduleProvider;
-
-    public ModuleProvider<Id> getModuleProvider() {
-        return moduleProvider;
-    }
-
-    public void setModuleProvider(ModuleProvider<Id> moduleProvider) {
-        this.moduleProvider = moduleProvider;
-    }
-
-    protected void makeSmaller(final Collection<Id> u,Set<Id> backgroundFormulars) {
-        if (getModuleProvider() != null && !u.isEmpty()) {
-            HashSet<Id> toMakeSmaller = new HashSet<Id>();
-            toMakeSmaller.addAll(u);
-            toMakeSmaller.addAll(backgroundFormulars);
-            Set<Id> smaller = getModuleProvider().getSmallerModule(toMakeSmaller);
-            logger.info("axioms was: " + u.size() + " reduced to: " + smaller.size());
-            u.retainAll(smaller);
-        }
-    }
 
     /**
      * @return conflict
@@ -96,9 +75,9 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
         try {
             if (verifyKnowledgeBase(c, u))
                 return new FormulaSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>());
-            makeSmaller(u,c.getKnowledgeBase().getBackgroundFormulas());
             start("Conflict", "qx");
             Set<Id> ids = qqXPlain(c, getReasoner().getFormulasCache(), new FormulaList<Id>(u));
+            logger.info("found conflict with size: " + ids.size());
             return new FormulaSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
         } catch (InterruptedException e) {
             logger.info(e.getMessage());

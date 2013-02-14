@@ -1,14 +1,10 @@
 package at.ainf.owlapi3.module;
 
-import org.semanticweb.HermiT.Reasoner;
-import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
-import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.*;
 
@@ -23,8 +19,14 @@ public class OtfModuleProvider extends AbstractOWLModuleProvider {
 
     private static Logger logger = LoggerFactory.getLogger(OtfModuleProvider.class.getName());
 
+    OWLReasoner reasoner;
+
+    OWLOntology reasonerOntology;
+
     public OtfModuleProvider(OWLOntology ontology, OWLReasonerFactory factory, boolean isElOnto) {
         super(ontology, factory, isElOnto);
+        reasonerOntology = createOntology(new HashSet<OWLAxiom>());
+        reasoner = getReasonerFactory().createNonBufferingReasoner(reasonerOntology);
     }
 
     private OWLClass unsatClassOfSmallestModule = null;
@@ -52,10 +54,63 @@ public class OtfModuleProvider extends AbstractOWLModuleProvider {
         return knowUnsatClasses.indexOf(unsatClass);
     }
 
+    List<OWLClass> usedUnsatClasses = new LinkedList<OWLClass>();
+
+    static long timeOverall = 0;
+
     @Override
     public Set<OWLLogicalAxiom> getSmallerModule(Set<OWLLogicalAxiom> axioms) {
 
+        List<OWLClass> possibleUnsatClasses = new LinkedList<OWLClass>(getUnsatClasses().keySet());
+        //possibleUnsatClasses.removeAll(usedUnsatClasses);
+
+        // if we have not soo much axioms it could be we have already coherent set
+        /*if (axioms.size()<100) {
+            reasonerOntology.getOWLOntologyManager().removeAxioms(reasonerOntology,reasonerOntology.getLogicalAxioms());
+            reasonerOntology.getOWLOntologyManager().addAxioms(reasonerOntology,axioms);
+            if (reasoner.getUnsatisfiableClasses().getEntities().size()==1) {
+                return Collections.emptySet();
+            }
+        }*/
+
+        long time = System.currentTimeMillis();
+        List<Set<OWLLogicalAxiom>> modulesForStillUnsat = new LinkedList<Set<OWLLogicalAxiom>>();
+        Map<Set<OWLLogicalAxiom>,OWLClass> owlClassForModule = new HashMap<Set<OWLLogicalAxiom>, OWLClass>();
+        for (OWLClass unsatClass : possibleUnsatClasses) {
+            Set<OWLLogicalAxiom> setForUnsatClass = new HashSet<OWLLogicalAxiom>(getUnsatClasses().get(unsatClass));
+            setForUnsatClass.retainAll(axioms);
+            modulesForStillUnsat.add(setForUnsatClass);
+            owlClassForModule.put(setForUnsatClass,unsatClass);
+        }
+        Collections.sort(modulesForStillUnsat,new SetComparator<OWLLogicalAxiom>());
+
+        Set<OWLLogicalAxiom> result = null;
+        for (Set<OWLLogicalAxiom> reducedModule : modulesForStillUnsat) {
+            OWLClass unsatClassInModule = owlClassForModule.get(reducedModule);
+            reasonerOntology.getOWLOntologyManager().removeAxioms(reasonerOntology,reasonerOntology.getLogicalAxioms());
+            reasonerOntology.getOWLOntologyManager().addAxioms(reasonerOntology,reducedModule);
+            if (!reasoner.isSatisfiable(unsatClassInModule)) {
+                usedUnsatClasses.add(unsatClassInModule);
+                setUnsatClass(unsatClassInModule);
+                result = reducedModule;
+                break;
+            }
+        }
+        time = System.currentTimeMillis() - time;
+        timeOverall += time;
+        logger.info("timeOverall needed to search smaller module: " + timeOverall);
+
+        if (result == null)
+            return Collections.emptySet();
+
+        return result;
+    }
+
+    /*@Override
+    public Set<OWLLogicalAxiom> getSmallerModule(Set<OWLLogicalAxiom> axioms) {
+
         LinkedList<OWLClass> topUnsatClasses = new LinkedList<OWLClass>(getUnsatClasses().keySet());
+        // is expensive, alternative?
         List<OWLClass> stillUnsat = getStillUnsat(topUnsatClasses, axioms);
 
         List<Set<OWLLogicalAxiom>> modulesForStillUnsat = new LinkedList<Set<OWLLogicalAxiom>>();
@@ -74,7 +129,7 @@ public class OtfModuleProvider extends AbstractOWLModuleProvider {
         logger.info("still unsat size: " + stillUnsat2.size());
 
         return result;
-    }
+    }*/
 
 
 

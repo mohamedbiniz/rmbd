@@ -49,7 +49,7 @@ public class TestNew {
     @Test
     public void hsKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        String[] names = {"mouse2humangenlogmap"};
+        String[] names = {"fma2ncigenlogmap"};
         // String[] names = {"koala", "Univ", "Economy-SDA", "mouse2humangenlogmap"};
         for (String name : names) {
             String onto = "ontologies/" + name + ".owl";
@@ -1168,7 +1168,7 @@ public class TestNew {
 
         search.setSearcher(new SatisfiableQuickXplain<OWLLogicalAxiom>());
 
-        ((QuickXplain<OWLLogicalAxiom>) search.getSearcher()).setModuleProvider(provider);
+        ((SatisfiableQuickXplain<OWLLogicalAxiom>) search.getSearcher()).setModuleProvider(provider);
 
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
 
