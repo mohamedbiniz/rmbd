@@ -67,21 +67,25 @@ public class TestNew {
             Set<? extends Set<OWLLogicalAxiom>> newerAxiomsResult = searchAllDiags(onto, isElOnto);
             timeNewer = System.currentTimeMillis() - timeNewer;
 
-            long timeStandard = System.currentTimeMillis();
+            /*long timeStandard = System.currentTimeMillis();
             Set<? extends Set<OWLLogicalAxiom>> standardAxiomsResult = searchAllDiags(extractor, onto);
-            timeStandard = System.currentTimeMillis() - timeStandard;
+            timeStandard = System.currentTimeMillis() - timeStandard;*/
 
             //long timeJust = System.currentTimeMillis();
             //Set<? extends Set<OWLLogicalAxiom>> justificationsAxiomsResult = searchAllDiags(justExtractor, onto);
             //timeJust = System.currentTimeMillis() - timeJust;
 
             //boolean ok = compareSetSets(standardAxiomsResult,justificationsAxiomsResult);
-            boolean ok2 = compareSetSets(standardAxiomsResult,newerAxiomsResult);
+            //boolean ok2 = compareSetSets(standardAxiomsResult,newerAxiomsResult);
 
             //assertTrue("",ok && ok2);
 
-            logger.info("ont: " + name + " ok2: " + ok2
-                                  + " time newer: " + timeNewer + " time standard: " + timeStandard);
+            ManchesterOWLSyntaxOWLObjectRendererImpl renderer = new ManchesterOWLSyntaxOWLObjectRendererImpl();
+            for (OWLLogicalAxiom axiom : newerAxiomsResult.iterator().next()) {
+                logger.info("diagnosis axiom: " + renderer.render(axiom));
+            }
+            //logger.info("ont: " + name + " ok2: " + ok2
+            //                      + " time newer: " + timeNewer + " time standard: " + timeStandard);
         }
     }
 

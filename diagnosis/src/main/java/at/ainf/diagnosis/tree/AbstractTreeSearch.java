@@ -291,6 +291,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
             Node<Id> node = getSearchStrategy().getNode();
             if (formulaRenderer != null)
                 logMessage(getDepth(node), " now processing node with uplink : ", node.getArcLabel());
+            logger.info("nummber opennodes: " + getSearchStrategy().getOpenNodes().size());
             processNode(node);
         }
         if (logger.isInfoEnabled())
