@@ -109,6 +109,33 @@ public class TestNew {
 
     }
 
+    @Ignore
+    @Test
+    public void testMultModule() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+
+
+          String onto = "ontologies/" + "fma2ncigenlogmap" + ".owl";
+        boolean isElOnto = true;
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        OtfModuleProvider provider = new OtfModuleProvider(ontFull, new Reasoner.ReasonerFactory(), isElOnto);
+        Set<OWLLogicalAxiom> unsatClassModule = provider.getModuleUnsatClass();
+
+        long timeNormal = System.currentTimeMillis();
+        OtfModuleProvider providerMult = new OtfModuleProvider(ontFull, new Reasoner.ReasonerFactory(), isElOnto);
+        timeNormal = System.currentTimeMillis() - timeNormal;
+        long timeMult = System.currentTimeMillis();
+        //Set<OWLLogicalAxiom> unsatClassModuleMult = providerMult.getModuleUnsatClassMult();
+        timeMult = System.currentTimeMillis() - timeMult;
+
+        /*assertTrue(unsatClassModule.size()==unsatClassModuleMult.size() &&
+                    unsatClassModule.containsAll(unsatClassModuleMult)); */
+
+        logger.info("diagnosis axiom: " + timeNormal + timeMult);
+
+    }
+
     protected boolean compareSets(Set<OWLLogicalAxiom> a, Set<OWLLogicalAxiom> b) {
         if (a.size() != b.size())
             return false;

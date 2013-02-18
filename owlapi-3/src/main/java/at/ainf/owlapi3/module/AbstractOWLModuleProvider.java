@@ -4,10 +4,13 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,6 +20,8 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
+
+    private Logger logger = LoggerFactory.getLogger(AbstractOWLModuleProvider.class.getName());
 
     private OWLReasonerFactory reasonerFactory;
     private OWLOntology fullOntology;
@@ -138,6 +143,61 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
     protected SyntacticLocalityModuleExtractor createModuleExtractor(OWLOntology ontology) {
         return new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontology, ModuleType.STAR);
     }
+
+    /*public Set<OWLLogicalAxiom> getModuleUnsatClassMult() {
+
+        OWLOntology ontology = createOntology(getFullOntology().getLogicalAxioms());
+        SyntacticLocalityModuleExtractor moduleStar = createModuleExtractor(ontology);
+        List<OWLClass> initialUnsat = getUnsatClassesWithoutBot(ontology);
+        List<OWLClass> topUnsat = initialUnsat;
+        if (isElOntology)
+            topUnsat = getTopUnsat(ontology,initialUnsat);
+
+
+        for (OWLEntity unsatClass : topUnsat) {
+            Set<OWLLogicalAxiom> owlLogicalAxioms = convertAxiom2LogicalAxiom(moduleStar.extract(Collections.singleton(unsatClass)));
+            unsatClasses.put ((OWLClass) unsatClass, owlLogicalAxioms);
+        }
+
+        ExecutorService pool = Executors.newFixedThreadPool(3);
+        Map<OWLClass,Future<Set<OWLLogicalAxiom>>> futures = new HashMap<OWLClass,Future<Set<OWLLogicalAxiom>>>();
+        for (OWLEntity unsatClass : topUnsat) {
+            Callable<Set<OWLLogicalAxiom>> callable = new ExtractorCallable(ontology,unsatClass);
+            Future<Set<OWLLogicalAxiom>> future = pool.submit(callable);
+            futures.put((OWLClass)unsatClass,future);
+        }
+
+        for (OWLEntity unsatClass : topUnsat) {
+            try {
+                unsatClasses.put((OWLClass) unsatClass, futures.get(unsatClass).get());
+            } catch (InterruptedException e) {
+                logger.info("thread interrupted");
+            } catch (ExecutionException e) {
+                logger.info("execution");
+            }
+        }
+
+
+        return createUnion(unsatClasses.values());
+    } */
+
+    /* public class ExtractorCallable implements Callable<Set<OWLLogicalAxiom>> {
+        private OWLOntology ontology;
+        private OWLEntity entity;
+
+        public ExtractorCallable(OWLOntology o, OWLEntity e) {
+
+            this.ontology = o;
+            this.entity = e;
+        }
+
+        public Set<OWLLogicalAxiom> call() {
+            SyntacticLocalityModuleExtractor moduleStar = createModuleExtractor(ontology);
+            return convertAxiom2LogicalAxiom(moduleStar.extract(Collections.singleton(entity)));
+        }
+
+    } */
+
 
     @Override
     public Set<OWLLogicalAxiom> getModuleUnsatClass() {
