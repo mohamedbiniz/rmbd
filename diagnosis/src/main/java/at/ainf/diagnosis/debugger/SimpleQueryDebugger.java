@@ -20,6 +20,7 @@ import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
+import at.ainf.diagnosis.tree.searchstrategy.DepthFirstSearchStrategy;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -57,6 +58,10 @@ public class SimpleQueryDebugger<Id> {
         this.theory = theory;
         this.mode = mode;
         init();
+    }
+
+    public Mode getMode() {
+        return mode;
     }
 
     public void init() {
