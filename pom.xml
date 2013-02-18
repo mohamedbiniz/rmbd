@@ -67,7 +67,7 @@
         <!-- <versNumberForRelease>1.0-TTMMYY-HHMM</versNumberForRelease> for deploying diagnosis, owlapi-3
              or <versNumberForRelease>1.0</versNumberForRelease> else -->
         <!-- <versNumberForRelease>1.0-070213-1555</versNumberForRelease> -->
-        <versNumberForRelease>1.0</versNumberForRelease>
+        <!-- <versNumberForRelease>1.0</versNumberForRelease> -->
 
     </properties>
 
@@ -216,12 +216,13 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.0.6</version>
+            <scope>runtime</scope>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>1.0.6</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
