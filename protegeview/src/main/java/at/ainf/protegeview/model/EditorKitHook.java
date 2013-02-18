@@ -7,6 +7,7 @@ import org.protege.editor.owl.model.event.EventType;
 import org.protege.editor.owl.model.event.OWLModelManagerChangeEvent;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -26,6 +27,8 @@ public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerLi
 
     private Logger logger = Logger.getLogger(EditorKitHook.class.getName());
 
+    private org.slf4j.Logger loggerSl4j = LoggerFactory.getLogger(EditorKitHook.class.getName());
+
     private int id = 0;
 
     private static int cnt = 0;
@@ -43,6 +46,7 @@ public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerLi
             id = cnt;
             cnt++;
             logger.debug("initialised editorKitHook " + id);
+            loggerSl4j.debug("this is ls4j logger");
             initialized = true;
         }
         else

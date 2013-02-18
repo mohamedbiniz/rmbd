@@ -68,7 +68,7 @@
                         <Bundle-ClassPath>.;at.ainf.diagnosis.jar;
                             at.ainf.owlapi3.jar;
                             org.slf4j.slf4j.jar;
-                            org.slf4j.slf4j-simple.jar;
+                            org.slf4j.slf4j-log4j12.jar;
                             <!--org.picocontainer.picocontainer.jar-->
                         </Bundle-ClassPath>
                         <!--<Require-Bundle>org.eclipse.equinox.registry,org.eclipse.equinox.common,
@@ -131,12 +131,12 @@
                   <destFileName>org.slf4j.slf4j.jar</destFileName>
               </artifactItem> <artifactItem>
                   <groupId>org.slf4j</groupId>
-                  <artifactId>slf4j-simple</artifactId>
-                  <version>1.6.6</version>
+                  <artifactId>slf4j-log4j12</artifactId>
+                  <version>1.7.2</version>
                   <type>jar</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <destFileName>org.slf4j.slf4j-simple.jar</destFileName>
+                  <destFileName>org.slf4j.slf4j-log4j12.jar</destFileName>
               </artifactItem>
               </artifactItems>
               <outputDirectory>${project.build.directory}/wars</outputDirectory>
@@ -240,16 +240,16 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.6.5</version>
         </dependency>-->
-        <dependency>
+        <!-- <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.6.6</version>
-        </dependency>
-        <dependency>
+        </dependency> -->
+        <!-- <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>ca.uvic.cs.chisel</groupId>
             <artifactId>cajun</artifactId>
@@ -270,6 +270,23 @@
             <artifactId>layouts</artifactId>
             <version>4.2.0.b_284</version>
         </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>[,1.1.1]</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>[,1.2.17]</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.2</version>
+        </dependency> -->
         <!--<dependency>
             <groupId>org.protege.editor.core</groupId>
             <artifactId>application</artifactId>

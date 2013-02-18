@@ -16,7 +16,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>at.ainf</groupId>
     <artifactId>diagnosis</artifactId>
-    <version>${versNumberForRelease}</version>
+    <!-- <version>1.0-TTMMYY-HHMM</version> -->
+    <!-- <version>1.0-070213-1555</version> -->
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>Diagnosis module</name>
 
@@ -109,6 +111,12 @@
             <groupId>at.ainf</groupId>
             <artifactId>logging</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>[,1.1.1]</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
