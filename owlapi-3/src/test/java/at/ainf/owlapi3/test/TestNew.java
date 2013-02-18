@@ -6,6 +6,7 @@ import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.DepthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
@@ -1168,7 +1169,8 @@ public class TestNew {
 
         OWLTheory theory = new OWLTheory(new Reasoner.ReasonerFactory(), ontology, bax);
 
-        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+        search.setSearchStrategy(new DepthFirstSearchStrategy<OWLLogicalAxiom>());
+        //search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
         search.setSearcher(new SatisfiableQuickXplain<OWLLogicalAxiom>());
 
