@@ -50,7 +50,7 @@ public class TestNew {
     @Test
     public void hsKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
-        String[] names = {"fma2ncigenlogmap"};
+        String[] names = {"mouse2humangenlogmap"};
         // String[] names = {"koala", "Univ", "Economy-SDA", "mouse2humangenlogmap"};
         for (String name : names) {
             String onto = "ontologies/" + name + ".owl";

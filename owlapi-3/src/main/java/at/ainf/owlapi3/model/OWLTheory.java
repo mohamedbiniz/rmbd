@@ -342,6 +342,22 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return consistent;
     }
 
+    public boolean verifyConsistencyWithReasonerBackground() {
+        start("Overall consistency check including management");
+        //setFormularCach(getReasoner().getFormulasCache(), getKnowledgeBase().getBackgroundFormulas());
+        LinkedHashSet<OWLLogicalAxiom> formularsToAdd = new LinkedHashSet<OWLLogicalAxiom>(getReasoner().getBackgroundAxioms());
+        formularsToAdd.removeAll(getReasoner().getFormulasCache());
+        getReasoner().addFormulasToCache(formularsToAdd);
+        boolean consistent = doConsistencyTest();
+        getReasoner().removeFormulasFromCache(formularsToAdd);
+        //removeAxioms(getBackgroundFormulas(), getOntology());
+        //removeAxioms(getFormulasCache(), getOntology());
+        stop();
+        if (logger.isTraceEnabled())
+            logger.trace(getOriginalOntology().getOntologyID() + " is consistent: " + consistent);
+        return consistent;
+    }
+
     public boolean verifySatisfiability(OWLClass unsatClass) {
         start("Sat  check including management");
 
