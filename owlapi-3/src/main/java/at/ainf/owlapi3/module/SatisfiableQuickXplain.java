@@ -8,11 +8,13 @@ import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -41,14 +43,61 @@ public class SatisfiableQuickXplain<Id> extends QuickXplain<Id> {
         this.moduleProvider = moduleProvider;
     }
 
-    protected void makeSmaller(final Collection<Id> u,Set<Id> backgroundFormulars) {
+    protected boolean checkRequirements (Searchable<Id> b) throws SolverException {
+        return ((OWLTheory)b).verifyConsistencyWithReasonerBackground();
+    }
+
+    @Override
+    protected Collection<Id> applyChanges(Searchable<Id> c, Collection<Id> axioms, Set<Id> change)
+            throws InconsistentTheoryException, SolverException{
+
+        if (change != null) {
+            for (Id axiom : change)
+                axioms.remove(axiom);
+        }
+
+        Collection<Id> smaller = makeSmaller(axioms,c.getKnowledgeBase().getBackgroundFormulas());
+
+        Collection<Id> newAxioms = new HashSet<Id>(axioms);
+        Set<Id> newBackground = new HashSet<Id>(c.getKnowledgeBase().getBackgroundFormulas());
+        newAxioms.retainAll(smaller);
+        newBackground.retainAll(smaller);
+
+        getReasoner().setBackgroundAxioms(newBackground);
+        getReasoner().modificationsLock();
+        c.getKnowledgeBase().modificationsLock();
+
+        logger.info("axioms was: " + axioms.size() + " reduced to: " + newAxioms.size()
+                       + " bg: " + c.getKnowledgeBase().getBackgroundFormulas().size()+" to: " + newBackground.size());
+        unsatClass = ((OtfModuleProvider)getModuleProvider()).getUnsatClass();
+
+        return newAxioms;
+
+    }
+
+    protected Collection<Id> makeSmaller(final Collection<Id> u, Collection<Id> background) {
+        if (!u.isEmpty()) {
+            HashSet<Id> toMakeSmaller = new HashSet<Id>();
+            toMakeSmaller.addAll(u);
+            toMakeSmaller.addAll(background);
+            Set<Id> smaller = getModuleProvider().getSmallerModule(toMakeSmaller);
+            return smaller;
+
+        }
+        else
+            return u;
+
+    }
+
+    /*protected void makeSmaller(final Collection<Id> u,Searchable<Id> c) {
         if (getModuleProvider() != null && !u.isEmpty()) {
             HashSet<Id> toMakeSmaller = new HashSet<Id>();
             toMakeSmaller.addAll(u);
-            toMakeSmaller.addAll(backgroundFormulars);
+            toMakeSmaller.addAll(c.getKnowledgeBase().getBackgroundFormulas());
             Set<Id> smaller = getModuleProvider().getSmallerModule(toMakeSmaller);
+
             int sizeofU = u.size();
-            u.retainAll(smaller);
+            u.retainAll(smaller);  // delete from background unnecesary axioms
             logger.info("axioms was: " + sizeofU + " reduced to: " + u.size());
             unsatClass = ((OtfModuleProvider)getModuleProvider()).getUnsatClass();
         }
@@ -62,7 +111,7 @@ public class SatisfiableQuickXplain<Id> extends QuickXplain<Id> {
         boolean isCons = false;
         Collection<Id> backup = new HashSet<Id>(u);
         if (getModuleProvider() != null && !u.isEmpty()) {
-            makeSmaller(u,c.getKnowledgeBase().getBackgroundFormulas());
+            makeSmaller(u,c);
             if (u.isEmpty()) {
                 u.addAll(backup);
                 isCons = true;
@@ -78,13 +127,6 @@ public class SatisfiableQuickXplain<Id> extends QuickXplain<Id> {
         }
         getReasoner().removeFormulasFromCache(backup);
         return false;
-    }
-
-    /*protected boolean checkRequirements (Searchable<Id> b) throws SolverException {
-        if (unsatClass == null)
-            return super.checkRequirements(b);
-        else
-            return ((OWLTheory)b).verifySatisfiability(unsatClass);
     }*/
 
 }

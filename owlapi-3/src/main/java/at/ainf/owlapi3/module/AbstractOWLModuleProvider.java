@@ -124,8 +124,8 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
 
     protected List<OWLClass> getUnsatClassesWithoutBot (OWLOntology ontology) {
         OWLReasoner reasoner = getReasonerFactory().createNonBufferingReasoner(ontology);
-        List<OWLClass> initialUnsat = new LinkedList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntities());
-        initialUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
+        List<OWLClass> initialUnsat = new LinkedList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
+        //initialUnsat.remove(OWLManager.getOWLDataFactory().getOWLNothing());
 
         return initialUnsat;
     }
