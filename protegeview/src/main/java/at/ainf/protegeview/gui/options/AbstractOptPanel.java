@@ -1,7 +1,7 @@
 package at.ainf.protegeview.gui.options;
 
 import at.ainf.protegeview.model.configuration.SearchConfiguration;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
  */
 public class AbstractOptPanel extends JPanel {
 
-    private Logger logger = Logger.getLogger(AbstractOptPanel.class.getName());
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(AbstractOptPanel.class.getName());
 
     private SearchConfiguration configuration;
 

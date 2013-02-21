@@ -3,7 +3,6 @@ package at.ainf.diagnosis.model;
 import java.util.HashSet;
 import java.util.Set;
 import at.ainf.diagnosis.storage.FormulaSet;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created with IntelliJ IDEA.

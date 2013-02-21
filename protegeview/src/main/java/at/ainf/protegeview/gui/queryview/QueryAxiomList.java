@@ -4,13 +4,13 @@ import at.ainf.protegeview.gui.AbstractAxiomList;
 import at.ainf.protegeview.gui.axiomsetviews.axiomslist.AxiomListItem;
 import at.ainf.protegeview.model.EditorKitHook;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
-import org.apache.log4j.Logger;
 import org.protege.editor.core.ui.list.MListButton;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.explanation.ExplanationManager;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class QueryAxiomList extends AbstractAxiomList {
 
-    private static Logger logger = Logger.getLogger(QueryAxiomList.class.getName());
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(QueryAxiomList.class.getName());
 
     @Override
     protected List<MListButton> getButtons(Object value) {

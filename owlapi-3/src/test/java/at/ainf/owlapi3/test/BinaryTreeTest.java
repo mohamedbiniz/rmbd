@@ -8,7 +8,7 @@ import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.*;
-import com.sun.org.apache.xerces.internal.impl.dv.DatatypeException;
+
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLIndividual;

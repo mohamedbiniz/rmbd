@@ -1,5 +1,6 @@
 package at.ainf.logging;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.perf4j.slf4j.aop.TimingAspect;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Testcase {
 
-    @Test
+    @Ignore @Test
     public void testAspects() {
         TestClass test = new TestClass();
         test.print();

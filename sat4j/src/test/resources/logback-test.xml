@@ -1,9 +1,9 @@
 <configuration>
-    <appender name="sat4j" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+
+    <appender name="sat4j-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>logs/sat4j.log</File>
         <encoder>
-            <pattern>%p %t %c - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>1</maxIndex>
@@ -13,15 +13,11 @@
             <MaxFileSize>500KB</MaxFileSize>
         </triggeringPolicy>
     </appender>
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%p %t %c - %m%n</pattern>
-        </encoder>
-    </appender>
-    <root level="info">
-        <appender-ref ref="sat4j"/>
-        <!--
-        <appender-ref ref="console"/>
-        -->
-    </root>
+
+    <logger name="at.ainf" level="debug">
+        <appender-ref ref="sat4j-file"/>
+    </logger>
+
+    <root level="debug"/>
+
 </configuration>

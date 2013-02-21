@@ -1,10 +1,9 @@
 <configuration>
 
-    <appender name="choco2" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <appender name="choco2-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>logs/choco2.log</File>
         <encoder>
-            <pattern>%p %t %c - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>1</maxIndex>
@@ -15,8 +14,10 @@
         </triggeringPolicy>
     </appender>
 
-    <root level="debug">
-        <appender-ref ref="choco2"/>
-    </root>
+    <logger name="at.ainf" level="debug">
+        <appender-ref ref="choco2-file"/>
+    </logger>
+
+    <root level="debug"/>
 
 </configuration>

@@ -18,12 +18,12 @@ import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.protegeview.gui.axiomsetviews.axiomslist.AxiomListItem;
 import at.ainf.protegeview.model.configuration.SearchConfiguration;
 import at.ainf.protegeview.model.configuration.SearchCreator;
-import org.apache.log4j.Logger;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntax;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.inference.OWLReasonerManager;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -62,7 +62,7 @@ public class OntologyDiagnosisSearcher {
 
     public static enum SearchStatus { IDLE, RUNNING }
 
-    private Logger logger = Logger.getLogger(OntologyDiagnosisSearcher.class);
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(OntologyDiagnosisSearcher.class.getName());
 
     private SearchStatus searchStatus = SearchStatus.IDLE;
 

@@ -60,6 +60,8 @@ public class FormulaSetImpl<Id> implements FormulaSet<Id>, Comparable<FormulaSet
         this.name = "FormulaSet_" + axCnt++;
         setMeasure(measure);
         this.axioms = Collections.unmodifiableSet(axioms);
+        if (entailments == null)
+            entailments = Collections.emptySet();
         this.entailments = Collections.unmodifiableSet(entailments);
         setEntailments(entailments);
     }
@@ -180,7 +182,7 @@ public class FormulaSetImpl<Id> implements FormulaSet<Id>, Comparable<FormulaSet
         if (entailments != null)
             str += ", entailments=" + this.tempEntailments.size() + "/" + entailments.size();
         for (Id o : this) {
-          str += o.toString();
+          str += "  " + o.toString();
         }
         str += '}';
         return str;
