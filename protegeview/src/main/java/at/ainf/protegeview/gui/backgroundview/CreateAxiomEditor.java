@@ -5,7 +5,6 @@ import at.ainf.protegeview.gui.tcaeview.TcaeListHeader;
 import at.ainf.protegeview.model.EditorKitHook;
 import at.ainf.protegeview.model.ErrorHandler;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
-import org.apache.log4j.Logger;
 import org.protege.editor.owl.OWLEditorKit;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 

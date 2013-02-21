@@ -1,6 +1,5 @@
 package at.ainf.protegeview.model;
 
-import org.apache.log4j.Logger;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.model.OWLEditorKitHook;
 import org.protege.editor.owl.model.event.EventType;
@@ -25,9 +24,7 @@ import java.util.Set;
  */
 public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerListener, ChangeListener {
 
-    private Logger logger = Logger.getLogger(EditorKitHook.class.getName());
-
-    private org.slf4j.Logger loggerSl4j = LoggerFactory.getLogger(EditorKitHook.class.getName());
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(EditorKitHook.class.getName());
 
     private int id = 0;
 
@@ -46,7 +43,7 @@ public class EditorKitHook extends OWLEditorKitHook implements OWLModelManagerLi
             id = cnt;
             cnt++;
             logger.debug("initialised editorKitHook " + id);
-            loggerSl4j.debug("this is ls4j logger");
+            logger.debug("this is ls4j logger");
             initialized = true;
         }
         else

@@ -4,6 +4,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.DepthFirstSearchStrategy;
@@ -20,6 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.io.ToStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNodeSet;
@@ -31,6 +33,7 @@ import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.assertTrue;
@@ -88,6 +91,27 @@ public class TestNew {
             //logger.info("ont: " + name + " ok2: " + ok2
             //                      + " time newer: " + timeNewer + " time standard: " + timeStandard);
         }
+    }
+
+    @Test
+    public void testFormula() {
+        new FormulaSetImpl<Object>(BigDecimal.valueOf(0.5),Collections.emptySet(),null);
+    }
+
+    @Ignore
+    @Test
+    public void testRenderer() throws OWLOntologyCreationException {
+
+
+        String onto = "ontologies/" + "Univ" + ".owl";
+        boolean isElOnto = true;
+
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
+        OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+        for (OWLLogicalAxiom axiom : ontFull.getLogicalAxioms())
+            logger.info("axiom is: " + axiom);
+
     }
 
     protected boolean compareSetSets(Set<? extends Set<OWLLogicalAxiom>> a, Set<? extends Set<OWLLogicalAxiom>> b) {

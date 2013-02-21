@@ -1,51 +1,26 @@
 <configuration>
-    <appender name="theory" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+    <appender name="owlapi3-diagnosis-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <File>logs/theory.log</File>
+        <File>logs/owlapi3-diagnosis.log</File>
         <encoder>
-            <pattern>%p %t %c - %m%n</pattern>
+            <!-- <pattern>%p %t %c - %m%n</pattern> -->
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>
-            <FileNamePattern>logs/theory.log.%i</FileNamePattern>
+            <FileNamePattern>logs/owlapi3-diagnosis.log.%i</FileNamePattern>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>5MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
-    <appender name="diag" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <File>logs/diagnosis.log</File>
-        <encoder>
-            <pattern>%p %t %c - %m%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <maxIndex>5</maxIndex>
-            <FileNamePattern>logs/diagnosis.log.%i</FileNamePattern>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>5MB</MaxFileSize>
-        </triggeringPolicy>
-    </appender>
-    <appender name="treelg" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <File>logs/treelg.log</File>
-        <encoder>
-            <pattern>%p %t %c - %m%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <maxIndex>5</maxIndex>
-            <FileNamePattern>logs/treelg.log.%i</FileNamePattern>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>5MB</MaxFileSize>
-        </triggeringPolicy>
-    </appender>
-    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+    <appender name="owlapi3-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
         <File>logs/owlapi3.log</File>
         <encoder>
-            <pattern>%p %t %c - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>
@@ -55,15 +30,31 @@
             <MaxFileSize>5MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
-    <appender name="time" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+    <appender name="owlapi3-full-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <File>logs/time.log</File>
+        <File>logs/owlapi3-full.log</File>
         <encoder>
-            <pattern>%p %t %c - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>
-            <FileNamePattern>logs/time.log.%i</FileNamePattern>
+            <FileNamePattern>logs/owlapi3-full.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="owlapi3-time-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>logs/owlapi3-time.log</File>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>logs/owlapi3-time.log.%i</FileNamePattern>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>5MB</MaxFileSize>
@@ -124,28 +115,26 @@
         <appender-ref ref="perfStatApp"/>
     </appender>
 
-
     <logger name="org.perf4j.TimingLogger" level="trace">
-        <appender-ref ref="file"/>
+        <appender-ref ref="owlapi3-file"/>
         <appender-ref ref="CoalescingStatistics"/>
     </logger>
-    <logger name="at.ainf.theory" level="info">
-        <appender-ref ref="theory"/>
-    </logger>
+
     <logger name="at.ainf.diagnosis" level="info">
-        <appender-ref ref="diag"/>
+        <appender-ref ref="owlapi3-diagnosis-file"/>
+        <appender-ref ref="owlapi3-full-file"/>
     </logger>
-    <logger name="dualtreelogger" level="info">
-        <appender-ref ref="diag"/>
-    </logger>
+
     <logger name="at.ainf.owlapi3" level="info">
-        <appender-ref ref="file"/>
+        <appender-ref ref="owlapi3-file"/>
+        <appender-ref ref="owlapi3-full-file"/>
     </logger>
-    <logger name="at.ainf.owlapi3.performance.query.AlignmentTests" level="info">
-        <appender-ref ref="file"/>
-    </logger>
+
     <logger name="_dev" level="trace">
-        <appender-ref ref="time"/>
+        <appender-ref ref="owlapi3-time-file"/>
+        <appender-ref ref="owlapi3-full-file"/>
     </logger>
+
     <root level="debug"/>
+
 </configuration>

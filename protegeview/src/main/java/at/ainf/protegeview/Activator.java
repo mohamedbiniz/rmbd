@@ -1,9 +1,11 @@
 package at.ainf.protegeview;
 
 import org.apache.log4j.Logger;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.semanticweb.owlapi.io.ToStringRenderer;
+import org.semanticweb.owlapi.util.SimpleRenderer;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 
 /**
@@ -19,15 +21,16 @@ public class Activator implements BundleActivator {
         System.setProperty("org.slf4j.simplelogger.defaultlog","warn");
     }
 
-    private static Logger logger = Logger.getLogger(Activator.class.getName());
+    private Logger logger = Logger.getLogger(Activator.class.getName());
 
     public void start(BundleContext bundleContext) throws Exception {
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
         logger.debug("bundle started");
-
     }
 
     public void stop(BundleContext bundleContext) throws Exception {
-        //To change body of implemented methods use File | Settings | File Templates.
+        ToStringRenderer.getInstance().setRenderer(new SimpleRenderer());
+
     }
 
 }

@@ -3,10 +3,10 @@ package at.ainf.protegeview.gui.tcaeview;
 import at.ainf.protegeview.model.EditorKitHook;
 import at.ainf.protegeview.model.ErrorHandler;
 import at.ainf.protegeview.model.OntologyDiagnosisSearcher;
-import org.apache.log4j.Logger;
 import org.protege.editor.owl.OWLEditorKit;
 import org.protege.editor.owl.ui.clsdescriptioneditor.ExpressionEditor;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.util.Set;
@@ -22,7 +22,7 @@ import static at.ainf.protegeview.model.OntologyDiagnosisSearcher.ErrorStatus.IN
  */
 public class TcaeItemEditor extends AbstractEditorTCaE {
 
-    private Logger logger = Logger.getLogger(TcaeHeaderEditor.class.getName());
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(TcaeItemEditor.class.getName());
 
     protected String getEditorTitle() {
         return "Edit " + item.getEditorTitleSuffix();
