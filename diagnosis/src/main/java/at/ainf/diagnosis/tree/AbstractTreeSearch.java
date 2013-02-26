@@ -483,6 +483,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
            avgConflictTime=(avgConflictTime+conflictTime)/2;
 
+        logger.info("time for conflict calculation: " + conflictTime);
+
 
 
         if (quickConflict.isEmpty())

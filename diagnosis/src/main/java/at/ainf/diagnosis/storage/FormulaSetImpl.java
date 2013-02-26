@@ -3,6 +3,7 @@ package at.ainf.diagnosis.storage;
 import at.ainf.diagnosis.watchedset.MeasureUpdatedListener;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -178,7 +179,7 @@ public class FormulaSetImpl<Id> implements FormulaSet<Id>, Comparable<FormulaSet
     @Override
     public String toString() {
         String str = name + "{valid=" + valid +
-                ", measure=" + measure;
+                ", measure=" + measure.setScale(8, RoundingMode.HALF_UP);
         if (entailments != null)
             str += ", entailments=" + this.tempEntailments.size() + "/" + entailments.size();
         for (Id o : this) {
