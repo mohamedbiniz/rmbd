@@ -72,7 +72,7 @@ public class ConflictsInModulesTests {
     @Test
     public void conflictsForEachModuleUsingBackground() throws OWLOntologyCreationException {
 
-        String onto = "mouse2human";
+        String onto = "fma2nci";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
         Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
         Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
