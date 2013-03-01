@@ -13,6 +13,7 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLJustificationIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlapi3.module.ExtendedStructuralReasoner;
 import at.ainf.owlapi3.module.OtfModuleProvider;
 import at.ainf.owlapi3.module.SatisfiableQuickXplain;
 import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;
@@ -28,6 +29,7 @@ import org.semanticweb.owlapi.reasoner.impl.OWLClassNodeSet;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
@@ -1356,127 +1358,60 @@ public class TestNew {
 
     }
 
-    @Ignore @Test
-    public void conflictsForEachModuleUsingBackground() throws OWLOntologyCreationException {
+    private static final OWLClass TOP_CLASS = OWLDataFactoryImpl.getInstance().getOWLThing();
 
-        String onto = "fma2nci";
-        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
-        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
-        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
-        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
 
-        Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
-        ontoAxioms.addAll(onto1Axioms);
-        ontoAxioms.addAll(onto2Axioms);
 
-        Set<OWLLogicalAxiom> allAxioms = new HashSet<OWLLogicalAxiom>();
-        allAxioms.addAll(ontoAxioms);
-        allAxioms.addAll(mappingAxioms);
+    protected class DistanceTopComparator implements Comparator<OWLClass> {
 
-        OWLOntology fullOntology = createOntology(allAxioms);
-        OtfModuleProvider provider = new OtfModuleProvider(fullOntology, new Reasoner.ReasonerFactory(),false);
-        Set<OWLLogicalAxiom> bigModule = provider.getModuleUnsatClass();
-        Map<OWLClass,Set<OWLLogicalAxiom>> map = provider.getUnsatClasses();
+        private Map<OWLClass,Integer>  distancesFromTop;
 
-        ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
-        Set<Future<String>> futures = new HashSet<Future<String>>();
-        for (OWLClass unsat : map.keySet()) {
-            Set<OWLLogicalAxiom> moduleAxioms = map.get(unsat);
-            Callable<String> callable = new ExtractorCallable(unsat,moduleAxioms,mappingAxioms,ontoAxioms);
-            Future<String> future = pool.submit(callable);
-            futures.add(future);
-
+        public DistanceTopComparator(Map<OWLClass,Integer> distancesFromTop) {
+            this.distancesFromTop = distancesFromTop;
         }
 
-        for (Future f : futures)
-            try {
-                f.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (ExecutionException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        @Override
+        public int compare(OWLClass o1, OWLClass o2) {
+            return distancesFromTop.get(o1).compareTo(distancesFromTop.get(o2));
+        }
+    }
+
+    protected Map<OWLClass,Integer> getDistancesFromTop(OWLOntology ontology) {
+        StructuralReasoner structuralReasoner = new StructuralReasoner (ontology,
+                new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+
+        Set<OWLClass> toClassify = new HashSet<OWLClass>(ontology.getClassesInSignature());
+        toClassify.remove(TOP_CLASS);
+        Map<OWLClass, Integer> result = new HashMap<OWLClass, Integer>();
+
+        Set<OWLClass> actualParents = Collections.singleton(TOP_CLASS);
+        int distance = 1;
+        while(!toClassify.isEmpty()) {
+            Set<OWLClass> childs = getSubClasses(structuralReasoner,actualParents);
+            for (OWLClass unsatClass : childs) {
+                toClassify.remove(unsatClass);
+                result.put(unsatClass,distance);
             }
 
-        /*for (OWLClass unsat : map.keySet()) {
-            Set<OWLLogicalAxiom> moduleAxioms = map.get(unsat);
-
-            Set<OWLLogicalAxiom> ontoAxiomsInModule = new HashSet<OWLLogicalAxiom>();
-            ontoAxiomsInModule.addAll(ontoAxioms);
-            ontoAxiomsInModule.retainAll(moduleAxioms);
-
-            Set<OWLLogicalAxiom> mappingAxiomsInModule = new HashSet<OWLLogicalAxiom>();
-            mappingAxiomsInModule.addAll(mappingAxioms);
-            mappingAxiomsInModule.retainAll(moduleAxioms);
-
-            HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = searchConflicts(moduleAxioms, ontoAxiomsInModule);
-            int numDiagnoses = search.getDiagnoses().size();
-            int numConflicts = search.getConflicts().size();
-            String sets = getNumbersForConflicts(search);
-
-            logger.info("unsat class: " + unsat + " module: " + moduleAxioms.size() + " from onto: " +
-                         ontoAxiomsInModule.size() + " from mappings: " + mappingAxiomsInModule.size() + " " +
-                         "conflicts: " + numConflicts + " diagnoses: " + numDiagnoses + " found: " + sets);
-
-        }*/
-
-        /*Set<OWLLogicalAxiom> ontoAxiomsInModule = new HashSet<OWLLogicalAxiom>();
-        ontoAxiomsInModule.addAll(ontoAxioms);
-        ontoAxiomsInModule.retainAll(bigModule);
-        Set<OWLLogicalAxiom> mappingAxiomsInModule = new HashSet<OWLLogicalAxiom>();
-        mappingAxiomsInModule.addAll(mappingAxioms);
-        mappingAxiomsInModule.retainAll(bigModule);
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = searchConflicts(bigModule, ontoAxioms);
-        int numDiagnoses = search.getDiagnoses().size();
-        int numConflicts = search.getConflicts().size();
-        String sets = getNumbersForConflicts(search);
-        logger.info("module overall: " + bigModule.size() + " from onto: " +
-                ontoAxiomsInModule.size() + " from mappings: " + mappingAxiomsInModule.size() + " " +
-                "conflicts: " + numConflicts + " diagnoses: " + numDiagnoses + " found: " + sets);*/
-
-        logger.info("");
-
-    }
-
-    public class ExtractorCallable implements Callable<String> {
-
-        private final OWLClass unsat;
-        private final Set<OWLLogicalAxiom> moduleAxioms;
-        private final Set<OWLLogicalAxiom> mappingAxioms;
-        private final Set<OWLLogicalAxiom> ontoAxioms;
-
-        public ExtractorCallable(OWLClass unsat, Set<OWLLogicalAxiom> moduleAxioms,
-                                 Set<OWLLogicalAxiom> mappingAxioms, Set<OWLLogicalAxiom> ontoAxioms) {
-            this.unsat = unsat;
-            this.moduleAxioms = moduleAxioms;
-            this.mappingAxioms = mappingAxioms;
-            this.ontoAxioms = ontoAxioms;
+            actualParents = childs;
+            distance++;
         }
 
-        public String call() {
 
-            Set<OWLLogicalAxiom> ontoAxiomsInModule = new HashSet<OWLLogicalAxiom>();
-            ontoAxiomsInModule.addAll(ontoAxioms);
-            ontoAxiomsInModule.retainAll(moduleAxioms);
-
-            Set<OWLLogicalAxiom> mappingAxiomsInModule = new HashSet<OWLLogicalAxiom>();
-            mappingAxiomsInModule.addAll(mappingAxioms);
-            mappingAxiomsInModule.retainAll(moduleAxioms);
-
-            HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = searchConflicts(moduleAxioms, ontoAxiomsInModule);
-            int numDiagnoses = search.getDiagnoses().size();
-            int numConflicts = search.getConflicts().size();
-            String sets = getNumbersForConflicts(search);
-
-
-            String result = "unsat class: " + unsat + " module: " + moduleAxioms.size() + " from onto: " +
-                    ontoAxiomsInModule.size() + " from mappings: " + mappingAxiomsInModule.size() + " " +
-                    "conflicts: " + numConflicts + " diagnoses: " + numDiagnoses + " found: " + sets;
-            logger.info(result);
-            return result;
-
-        }
-
+        return result;
     }
+
+    public Set<OWLClass> getSubClasses (StructuralReasoner reasoner, Set<OWLClass> unsatClasses) {
+        Set<OWLClass> result = new HashSet<OWLClass>();
+
+        for (OWLClass unsatClass : unsatClasses)
+            result.addAll(reasoner.getSubClasses(unsatClass,true).getFlattened());
+
+        return result;
+    }
+
+
+
 
     private String getNumbersForConflicts(HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
         String result = "";
