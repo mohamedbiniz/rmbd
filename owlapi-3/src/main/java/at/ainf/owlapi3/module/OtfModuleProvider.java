@@ -109,15 +109,15 @@ public class OtfModuleProvider extends AbstractOWLModuleProvider {
     /*@Override
     public Set<OWLLogicalAxiom> getSmallerModule(Set<OWLLogicalAxiom> axioms) {
 
-        LinkedList<OWLClass> topUnsatClasses = new LinkedList<OWLClass>(getUnsatClasses().keySet());
+        LinkedList<OWLClass> topUnsatClasses = new LinkedList<OWLClass>(getInitialUnsatClasses().keySet());
         // is expensive, alternative?
         List<OWLClass> stillUnsat = getStillUnsat(topUnsatClasses, axioms);
 
         List<Set<OWLLogicalAxiom>> modulesForStillUnsat = new LinkedList<Set<OWLLogicalAxiom>>();
         Map<Set<OWLLogicalAxiom>,OWLClass> owlClassForModule = new HashMap<Set<OWLLogicalAxiom>, OWLClass>();
         for (OWLClass unsatClass : stillUnsat) {
-            modulesForStillUnsat.add(getUnsatClasses().get(unsatClass));
-            owlClassForModule.put(getUnsatClasses().get(unsatClass),unsatClass);
+            modulesForStillUnsat.add(getInitialUnsatClasses().get(unsatClass));
+            owlClassForModule.put(getInitialUnsatClasses().get(unsatClass),unsatClass);
         }
         Set<OWLLogicalAxiom> smallest = Collections.min(modulesForStillUnsat,new SetComparator<OWLLogicalAxiom>());
         //setUnsatClass(owlClassForModule.get(smallest));

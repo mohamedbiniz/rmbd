@@ -204,15 +204,21 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
 
         OWLOntology ontology = createOntology(getFullOntology().getLogicalAxioms());
         SyntacticLocalityModuleExtractor moduleStar = createModuleExtractor(ontology);
+        long time = System.currentTimeMillis();
         List<OWLClass> initialUnsat = getUnsatClassesWithoutBot(ontology);
+        time = System.currentTimeMillis() - time;
+        logger.info("time needed for unsat classes calc: " + time);
         List<OWLClass> topUnsat = initialUnsat;
         if (isElOntology)
             topUnsat = getTopUnsat(ontology,initialUnsat);
 
+        long timeModule = System.currentTimeMillis();
         for (OWLEntity unsatClass : topUnsat) {
             Set<OWLLogicalAxiom> owlLogicalAxioms = convertAxiom2LogicalAxiom(moduleStar.extract(Collections.singleton(unsatClass)));
             unsatClasses.put ((OWLClass) unsatClass, owlLogicalAxioms);
         }
+        timeModule = System.currentTimeMillis() - timeModule;
+        logger.info("time needed for module extraction: " + timeModule);
 
 
         return createUnion(unsatClasses.values());
