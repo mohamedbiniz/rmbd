@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
@@ -53,6 +54,33 @@ public class IterativeModuleDiagTests {
     }
 
     @Test
+    public void fma2snomed() throws OWLOntologyCreationException {
+
+        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+        File onto1File = new File(System.getenv("bigontosdir") + "/oaei2012_FMA_whole_ontology.owl");
+        Set<OWLLogicalAxiom> onto1Ax = man.loadOntologyFromOntologyDocument(onto1File).getLogicalAxioms();
+        File onto2File = new File(System.getenv("bigontosdir") + "/oaei2012_SNOMED_extended_overlapping_fma_nci.owl");
+        Set<OWLLogicalAxiom> onto2Ax = man.loadOntologyFromOntologyDocument(onto2File).getLogicalAxioms();
+        File mappingsFile = new File(System.getenv("bigontosdir") + "/onto_mappings_FMA_SNOMED_cleanDG.txt");
+        Set<OWLLogicalAxiom> gs = new HashSet<OWLLogicalAxiom>(new ModuleTargetDiagSearcher(mappingsFile.getPath()).getGSMappings());
+
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+        Set<OWLLogicalAxiom> ontoAxioms = new LinkedHashSet<OWLLogicalAxiom>();
+        ontoAxioms.addAll(onto1Ax);
+        ontoAxioms.addAll(onto2Ax);
+        Set<OWLLogicalAxiom> allAxioms = new HashSet<OWLLogicalAxiom>();
+        allAxioms.addAll(ontoAxioms);
+        allAxioms.addAll(gs);
+
+        IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
+                new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher());
+        diagnosisFinder.calculateTargetDiagnosis();
+
+        logger.info("");
+
+    }
+
+    @Test
     public void fma2nci() throws OWLOntologyCreationException {
 
         String onto = "fma2nci";
@@ -76,6 +104,33 @@ public class IterativeModuleDiagTests {
         diagnosisFinder.calculateTargetDiagnosis();
 
         logger.info("");
+
+    }
+
+    @Test
+    public void fma2nciModules() throws OWLOntologyCreationException {
+
+        String onto = "fma2nci";
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
+        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
+        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
+
+
+        Set<OWLLogicalAxiom> ontoAxioms = new LinkedHashSet<OWLLogicalAxiom>();
+        ontoAxioms.addAll(onto1Axioms);
+        ontoAxioms.addAll(onto2Axioms);
+        Set<OWLLogicalAxiom> allAxioms = new HashSet<OWLLogicalAxiom>();
+        allAxioms.addAll(ontoAxioms);
+        allAxioms.addAll(mappingAxioms);
+
+        OtfModuleProvider provider =
+                new OtfModuleProvider(createOntology(allAxioms),new Reasoner.ReasonerFactory(),false);
+        provider.getModuleUnsatClass();
+        Map<OWLClass, Set<OWLLogicalAxiom>> unsatClasses = provider.getUnsatClasses();
+
+        logger.info("" + unsatClasses);
+
 
     }
 
