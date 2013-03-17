@@ -33,8 +33,6 @@ public class IterativeModuleDiagnosis {
 
     private final Set<OWLLogicalAxiom> ontoAxioms;
 
-    private OWLReasonerFactory reasonerFactory;
-
     public IterativeModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms,
                                    OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher) {
 
@@ -45,13 +43,12 @@ public class IterativeModuleDiagnosis {
         OWLOntology fullOntology = createOntology(allAxioms);
         //OtfModuleProvider provider = new OtfModuleProvider(fullOntology, new Reasoner.ReasonerFactory(),false);
         //Set<OWLLogicalAxiom> bigModule = provider.getModuleUnsatClass();
-        moduleCalculator = new ModuleCalc(fullOntology, new Reasoner.ReasonerFactory());
+        moduleCalculator = new ModuleCalc(fullOntology, factory);
 
         //unsatMap = provider.getUnsatClasses();
         this.ontoAxioms = ontoAxioms;
         this.mappings = mappings;
         this.diagSearcher = moduleDiagSearcher;
-        this.reasonerFactory = factory;
 
     }
 
