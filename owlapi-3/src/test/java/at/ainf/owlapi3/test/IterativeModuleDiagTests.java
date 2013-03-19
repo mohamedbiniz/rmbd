@@ -54,6 +54,36 @@ public class IterativeModuleDiagTests {
     }
 
     @Test
+    public void snomed2nci() throws OWLOntologyCreationException {
+
+        OWLOntologyManager man = OWLManager.createOWLOntologyManager();
+        File onto1File = new File(System.getenv("bigontosdir") + "/oaei2012_SNOMED_extended_overlapping_fma_nci.owl");
+        Set<OWLLogicalAxiom> onto1Ax = man.loadOntologyFromOntologyDocument(onto1File).getLogicalAxioms();
+        File onto2File = new File(System.getenv("bigontosdir") + "/oaei2012_NCI_whole_ontology.owl");
+        Set<OWLLogicalAxiom> onto2Ax = man.loadOntologyFromOntologyDocument(onto2File).getLogicalAxioms();
+        File mappingsFile = new File(System.getenv("bigontosdir") + "/onto_mappings_SNOMED_NCI_cleanDG.txt");
+        Set<OWLLogicalAxiom> gs = new HashSet<OWLLogicalAxiom>(new ModuleTargetDiagSearcher(mappingsFile.getPath()).getGSMappings());
+
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+        Set<OWLLogicalAxiom> ontoAxioms = new LinkedHashSet<OWLLogicalAxiom>();
+        ontoAxioms.addAll(onto1Ax);
+        ontoAxioms.addAll(onto2Ax);
+        Set<OWLLogicalAxiom> allAxioms = new HashSet<OWLLogicalAxiom>();
+        allAxioms.addAll(ontoAxioms);
+        allAxioms.addAll(gs);
+
+        IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
+                new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher());
+        Set<OWLLogicalAxiom> diagnosis = diagnosisFinder.calculateTargetDiagnosis();
+
+        for (OWLLogicalAxiom axiom : diagnosis)
+            logger.info("" + axiom);
+
+        logger.info("");
+
+    }
+
+    @Test
     public void fma2snomed() throws OWLOntologyCreationException {
 
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
@@ -61,7 +91,7 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> onto1Ax = man.loadOntologyFromOntologyDocument(onto1File).getLogicalAxioms();
         File onto2File = new File(System.getenv("bigontosdir") + "/oaei2012_SNOMED_extended_overlapping_fma_nci.owl");
         Set<OWLLogicalAxiom> onto2Ax = man.loadOntologyFromOntologyDocument(onto2File).getLogicalAxioms();
-        File mappingsFile = new File(System.getenv("bigontosdir") + "/onto_mappings_FMA_SNOMED_cleanDG.txt");
+        File mappingsFile = new File(System.getenv("bigontosdir") + "/onto_mappings_FMA_SNOMED_cleanDG_rmbd.txt");
         Set<OWLLogicalAxiom> gs = new HashSet<OWLLogicalAxiom>(new ModuleTargetDiagSearcher(mappingsFile.getPath()).getGSMappings());
 
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());

@@ -55,7 +55,7 @@ public class IterativeModuleDiagnosis {
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
         List<OWLClass> unsatClasses = new LinkedList<OWLClass>(moduleCalculator.getInitialUnsatClasses());
-        Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,mappings,ontoAxioms));
+        //Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,mappings,ontoAxioms));
         int toIndex = Collections.min(Arrays.asList(10,unsatClasses.size()));
         List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0,toIndex));
 
