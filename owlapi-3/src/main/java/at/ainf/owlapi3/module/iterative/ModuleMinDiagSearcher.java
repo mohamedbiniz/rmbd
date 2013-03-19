@@ -64,7 +64,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
         search.setSearchable(theory);
 
-        search.setMaxDiagnosesNumber(-1);
+        search.setMaxDiagnosesNumber(1);
 
         return search;
     }
