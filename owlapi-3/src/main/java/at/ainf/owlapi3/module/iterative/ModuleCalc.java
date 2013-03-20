@@ -23,13 +23,12 @@ public class ModuleCalc {
 
     private Map<OWLClass,Set<OWLLogicalAxiom>> moduleMap = new HashMap<OWLClass, Set<OWLLogicalAxiom>>();
     private Set<OWLClass> initialUnsatClasses;
-    private SyntacticLocalityModuleExtractor extractor;
 
     public ModuleCalc(OWLOntology ontology, OWLReasonerFactory reasonerFactory) {
         this.ontology = ontology;
         this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
         initialUnsatClasses = new HashSet<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
-        extractor =new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(),ontology,ModuleType.STAR);
+
     }
 
     public Set<OWLClass> getInitialUnsatClasses() {
@@ -42,6 +41,8 @@ public class ModuleCalc {
 
     public Set<OWLLogicalAxiom> calculateModule(OWLClass unsatClass) {
         Set<OWLLogicalAxiom> result = moduleMap.get(unsatClass);
+        SyntacticLocalityModuleExtractor extractor =
+                new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontology, ModuleType.STAR);
 
         if (result != null)
             return result;
