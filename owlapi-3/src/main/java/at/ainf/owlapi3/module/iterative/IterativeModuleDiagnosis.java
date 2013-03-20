@@ -8,6 +8,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.util.*;
@@ -71,13 +73,19 @@ public class IterativeModuleDiagnosis {
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
             Set<OWLLogicalAxiom> partDiag = diagSearcher.calculateDiag(axioms,background);
 
+            for (OWLLogicalAxiom axiom : partDiag)
+                logger.info("part diag axiom: " + axiom);
+            logger.info("---");
+
             moduleCalculator.removeAxiomsFromOntologyAndModules(partDiag);
-            updatedLists(actualUnsatClasses,unsatClasses);
+            updatedLists(actualUnsatClasses, unsatClasses);
             targetDiagnosis.addAll(partDiag);
         }
 
         return targetDiagnosis;
     }
+
+    private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
 
     protected boolean isEveryStartUnsatOK(OWLClass unsatClass) {
         //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));

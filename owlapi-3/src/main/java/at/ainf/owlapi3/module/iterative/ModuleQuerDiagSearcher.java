@@ -13,11 +13,10 @@ import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,6 +26,8 @@ import java.util.TreeSet;
  * To change this template use File | Settings | File Templates.
  */
 public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
+
+    private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());
 
     Set<OWLLogicalAxiom> correctAxioms;
 
@@ -38,13 +39,19 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         this.falseAxioms = falseAxioms;
     }
 
-    protected boolean askUser(Partition<OWLLogicalAxiom> partition) {
+    protected boolean askUser(Partition<OWLLogicalAxiom> partition) throws AnswerException {
         if (correctAxioms.containsAll(partition.partition))
             return true;
         else if (falseAxioms.containsAll(partition.partition))
             return false;
-        else
-            throw new IllegalStateException("don't know answer");
+        else {
+            logger.info("we doesn't know an answer for sure (not all axioms false or correct) so we return false ");
+            for (OWLLogicalAxiom axiom : partition.partition)
+                logger.info(axiom + ", " + correctAxioms.contains(axiom) + ", " + falseAxioms.contains(axiom));
+            logger.info(partition.dx.size() + ", " + partition.dnx.size() + ", " + partition.dz.size() + ", ");
+            throw new AnswerException("don't know answer");
+
+        }
     }
 
     private void minimizePartitionAx(Partition<OWLLogicalAxiom> query, Searchable<OWLLogicalAxiom> searchable) {
@@ -60,6 +67,22 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+    }
+
+    class AnswerException extends Exception {
+        AnswerException(String message) {
+            super(message);
+        }
+    }
+
+    protected boolean askUser(OWLLogicalAxiom axiom) {
+        if (correctAxioms.contains(axiom))
+            return true;
+        else if (falseAxioms.contains(axiom))
+            return false;
+        else
+            throw new IllegalStateException("don't know answer");
+
     }
 
     @Override
@@ -85,12 +108,26 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             }
 
             minimizePartitionAx(best,search.getSearchable());
-            boolean answer = askUser(best);
+            try {
+                boolean answer = askUser(best);
 
-            if (answer)
-                search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
-            else
-                search.getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
+                if (answer)
+                    search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
+                else
+                    search.getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
+            }
+            catch (AnswerException e) {
+                for (OWLLogicalAxiom axiom : best.partition) {
+                    boolean answer = askUser(axiom);
+                    Set<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom));
+
+                    if (answer)
+                        search.getSearchable().getKnowledgeBase().addEntailedTest(testcase);
+                    else
+                        search.getSearchable().getKnowledgeBase().addNonEntailedTest(testcase);
+                }
+            }
+
 
             runSearch(search);
             diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
