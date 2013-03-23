@@ -100,11 +100,11 @@ public class InvHsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSe
     }
 
     public Set<T> getDiagnoses() {
-        return getValidAxiomSets(copy(getNodeLabels()));
+        return getValidAxiomSets(getNodeLabels());
     }
 
     public Set<T> getConflicts() {
-        return getValidAxiomSets(copy(getHittingSets()));
+        return getValidAxiomSets(getHittingSets());
     }
 
     public Set<Node<Id>> updateNode(FormulaSet<Id> axSet, HSTreeNode<Id> node) throws SolverException, InconsistentTheoryException {

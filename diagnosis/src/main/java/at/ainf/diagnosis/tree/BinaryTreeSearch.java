@@ -80,14 +80,6 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
         else return null;
     }
 
-    public Set<T> getDiagnoses() {
-        return getValidAxiomSets(copy(getHittingSets()));
-    }
-
-    public Set<T> getConflicts() {
-        return getValidAxiomSets(copy(getNodeLabels()));
-    }
-
     public void updateTree(List<T> invalidHittingSets) throws SolverException, InconsistentTheoryException, NoConflictException {
 
         //construct Set of Elements that must be deleted

@@ -35,8 +35,11 @@ public class IterativeModuleDiagnosis {
 
     private final Set<OWLLogicalAxiom> ontoAxioms;
 
+    private final boolean sortNodes;
+
     public IterativeModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms,
-                                   OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher) {
+                                    OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher,
+                                    boolean sortNodes) {
 
         Set<OWLLogicalAxiom> allAxioms = new HashSet<OWLLogicalAxiom>();
         allAxioms.addAll(ontoAxioms);
@@ -51,13 +54,15 @@ public class IterativeModuleDiagnosis {
         this.ontoAxioms = ontoAxioms;
         this.mappings = mappings;
         this.diagSearcher = moduleDiagSearcher;
+        this.sortNodes = sortNodes;
 
     }
 
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
         List<OWLClass> unsatClasses = new LinkedList<OWLClass>(moduleCalculator.getInitialUnsatClasses());
-        //Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,mappings,ontoAxioms));
+        if (sortNodes)
+            Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,mappings,ontoAxioms));
         int toIndex = Collections.min(Arrays.asList(10,unsatClasses.size()));
         List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0,toIndex));
 

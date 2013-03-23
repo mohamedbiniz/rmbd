@@ -31,13 +31,7 @@ public class HsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSearc
 
     }
 
-    public Set<T> getDiagnoses() {
-        return getValidAxiomSets(copy(getHittingSets()));
-    }
 
-    public Set<T> getConflicts() {
-        return getValidAxiomSets(copy(getNodeLabels()));
-    }
 
 
     protected Set<Set<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{

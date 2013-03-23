@@ -122,6 +122,14 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         return hs;
     }
 
+    public Set<T> getDiagnoses() {
+        return getValidAxiomSets(getHittingSets());
+    }
+
+    public Set<T> getConflicts() {
+        return getValidAxiomSets(getNodeLabels());
+    }
+
     protected Set<Id> calculateEntailmentsForConflictSet(FormulaSet<Id> quickConflict) throws SolverException {
         /*Set<Id> entailments = Collections.emptySet();
         if (getSearchable().supportEntailments() && getSearcher().isDual())
@@ -574,12 +582,12 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         return hs;
     }
 
-    protected Set<Set<T>> copy2(Set<Set<T>> set) {
+    /*protected Set<Set<T>> copy2(Set<Set<T>> set) {
         Set<Set<T>> hs = new LinkedHashSet<Set<T>>();
         for (Set<T> hset : set)
             hs.add(copy(hset));
         return hs;
-    }
+    }*/
 
     protected abstract void pruneConflictSets(Node<Id> node, T conflictSet) throws SolverException, InconsistentTheoryException;
 

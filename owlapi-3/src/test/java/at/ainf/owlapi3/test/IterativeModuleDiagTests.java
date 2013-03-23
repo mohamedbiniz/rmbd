@@ -1,6 +1,5 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.diagnosis.quickxplain.ModuleProvider;
 import at.ainf.owlapi3.module.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
 import org.junit.Test;
@@ -73,7 +72,7 @@ public class IterativeModuleDiagTests {
         allAxioms.addAll(gs);
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
-                new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher());
+                new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), false);
         Set<OWLLogicalAxiom> diagnosis = diagnosisFinder.calculateTargetDiagnosis();
 
         for (OWLLogicalAxiom axiom : diagnosis)
@@ -91,7 +90,7 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> onto1Ax = man.loadOntologyFromOntologyDocument(onto1File).getLogicalAxioms();
         File onto2File = new File(System.getenv("bigontosdir") + "/oaei2012_SNOMED_extended_overlapping_fma_nci.owl");
         Set<OWLLogicalAxiom> onto2Ax = man.loadOntologyFromOntologyDocument(onto2File).getLogicalAxioms();
-        File mappingsFile = new File(System.getenv("bigontosdir") + "/onto_mappings_FMA_SNOMED_cleanDG_rmbd.txt");
+        File mappingsFile = new File(System.getenv("bigontosdir") + "/onto_mappings_SNOMED_NCI_cleanDG_rmbd.txt");
         Set<OWLLogicalAxiom> gs = new HashSet<OWLLogicalAxiom>(new ModuleTargetDiagSearcher(mappingsFile.getPath()).getGSMappings());
 
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
@@ -103,7 +102,7 @@ public class IterativeModuleDiagTests {
         allAxioms.addAll(gs);
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
-                new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher());
+                new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), true);
         diagnosisFinder.calculateTargetDiagnosis();
 
         logger.info("");
@@ -130,7 +129,7 @@ public class IterativeModuleDiagTests {
         allAxioms.addAll(gs);
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
-                new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher());
+                new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), true);
         diagnosisFinder.calculateTargetDiagnosis();
 
         logger.info("");
@@ -202,7 +201,7 @@ public class IterativeModuleDiagTests {
         ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms);
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
-                                                         new Reasoner.ReasonerFactory(), d);
+                                                         new Reasoner.ReasonerFactory(), d, true);
 
         Set<OWLLogicalAxiom> targetDiagnosis = diagnosisFinder.calculateTargetDiagnosis();
 
