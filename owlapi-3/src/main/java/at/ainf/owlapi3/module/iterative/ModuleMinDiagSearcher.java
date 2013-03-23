@@ -32,6 +32,17 @@ import java.util.Set;
  */
 public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
+    private int maxDiags;
+
+    public ModuleMinDiagSearcher() {
+        this.maxDiags = -1;
+
+    }
+
+    public ModuleMinDiagSearcher(int maxDiags) {
+        this.maxDiags = maxDiags;
+    }
+
     protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
         OWLOntology debuggingOntology = null;
         try {
@@ -64,7 +75,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
         search.setSearchable(theory);
 
-        search.setMaxDiagnosesNumber(1);
+        search.setMaxDiagnosesNumber(maxDiags);
 
         return search;
     }

@@ -110,6 +110,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             minimizePartitionAx(best,search.getSearchable());
             try {
                 boolean answer = askUser(best);
+                logger.info("user answered query " + answer);
 
                 if (answer)
                     search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
@@ -117,9 +118,11 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                     search.getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
             }
             catch (AnswerException e) {
+                logger.info("user cannot answer this query ");
                 for (OWLLogicalAxiom axiom : best.partition) {
                     boolean answer = askUser(axiom);
                     Set<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom));
+                    logger.info("user answers part of query " + answer);
 
                     if (answer)
                         search.getSearchable().getKnowledgeBase().addEntailedTest(testcase);
