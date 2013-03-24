@@ -2,6 +2,7 @@ package at.ainf.owlapi3.module.iterative;
 
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -16,6 +17,12 @@ public class ModuleTargetDiagSearcher extends ModuleMinDiagSearcher {
     private Set<OWLLogicalAxiom> mappingAxioms;
 
     public ModuleTargetDiagSearcher(String path) {
+        this (path, null);
+
+    }
+
+    public ModuleTargetDiagSearcher(String path, Map<OWLLogicalAxiom, BigDecimal> confidences) {
+        super(confidences);
         GS_MappingsReader reader = new GS_MappingsReader();
         this.mappingAxioms = reader.loadGSmappings(path);
     }
