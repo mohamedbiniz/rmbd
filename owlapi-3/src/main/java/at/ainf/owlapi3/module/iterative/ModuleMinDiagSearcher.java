@@ -4,6 +4,7 @@ import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.tree.ConfidenceCostsEstimator;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
@@ -18,10 +19,8 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,13 +33,16 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
     private int maxDiags;
 
+    private Map<OWLLogicalAxiom, BigDecimal> confidences;
+
     public ModuleMinDiagSearcher() {
-        this.maxDiags = -1;
+        this (null);
 
     }
 
-    public ModuleMinDiagSearcher(int maxDiags) {
-        this.maxDiags = maxDiags;
+    public ModuleMinDiagSearcher(Map<OWLLogicalAxiom, BigDecimal> confidences) {
+        this.maxDiags = 1;
+        this.confidences = confidences;
     }
 
     protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
@@ -59,8 +61,9 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
 
         OWLTheory theory = null;
+        OWLOntology ontology = createOntology(axioms);
         try {
-            theory = new OWLTheory(new Reasoner.ReasonerFactory(), createOntology(axioms), backg);
+            theory = new OWLTheory(new Reasoner.ReasonerFactory(), ontology, backg);
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {
@@ -71,7 +74,11 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
 
-        search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+        if (confidences != null)
+            search.setCostsEstimator(new ConfidenceCostsEstimator<OWLLogicalAxiom>(ontology.getLogicalAxioms(), BigDecimal.ONE,confidences));
+        else
+            search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
+
 
         search.setSearchable(theory);
 

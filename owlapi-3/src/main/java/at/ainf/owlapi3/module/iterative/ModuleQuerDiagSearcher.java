@@ -16,6 +16,7 @@ import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -34,7 +35,11 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
     Set<OWLLogicalAxiom> falseAxioms;
 
     public ModuleQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms) {
-        super(path);
+        this (path, correctAxioms, falseAxioms, null);
+    }
+
+    public ModuleQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, Map<OWLLogicalAxiom, BigDecimal> confidences) {
+        super(path,confidences);
         this.correctAxioms = correctAxioms;
         this.falseAxioms = falseAxioms;
     }
