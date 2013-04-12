@@ -99,9 +99,13 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getSearchable(), qss);
         ckk.setThreshold(0.01);
 
+        long time = System.currentTimeMillis();
         runSearch(search);
+        time = System.currentTimeMillis() - time;
+        logger.info ("time needed to search for diagnoses: " + time);
         Collection<Set<OWLLogicalAxiom>> diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
 
+        int numOfQueries = 0;
         while (diagnoses.size() > 1) {
             Partition<OWLLogicalAxiom> best = null;
             try {
@@ -116,6 +120,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             try {
                 boolean answer = askUser(best);
                 logger.info("user answered query " + answer);
+                numOfQueries++;
 
                 if (answer)
                     search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
@@ -128,6 +133,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                     boolean answer = askUser(axiom);
                     Set<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom));
                     logger.info("user answers part of query " + answer);
+                    numOfQueries++;
 
                     if (answer)
                         search.getSearchable().getKnowledgeBase().addEntailedTest(testcase);
@@ -137,9 +143,13 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             }
 
 
+            time = System.currentTimeMillis();
             runSearch(search);
+            time = System.currentTimeMillis() - time;
+            logger.info ("time needed to search for diagnoses: " + time);
             diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
         }
+        logger.info("number of queries: " + numOfQueries);
         return diagnoses.iterator().next();
 
     }

@@ -105,7 +105,10 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
 
+        long time = System.currentTimeMillis();
         runSearch(search);
+        time = System.currentTimeMillis() - time;
+        logger.info ("time needed to search for diagnoses: " + time);
 
         return chooseDiagnosis(search.getDiagnoses());
 
