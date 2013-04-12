@@ -478,7 +478,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
 
-        String ont = "example2005.owl";
+        String ont = "ecai.simple.owl";
         if (TEST_CACHING) {
             for (int i = 10; i <= 10; i = i + 5) {
                 logger.info("Running diagnosis compare " + ont + " (" + i + ")");

@@ -1,9 +1,7 @@
 package at.ainf.owlapi3.model;
 
-import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.storage.FormulaSet;
-import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -202,7 +200,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         this.owlOntologyManager = owlOntologyManager;
     }
 
-    private OWLNegateAxiom vis = null;
+    //private OWLNegateAxiom vis = null;
 
     /*public OWLLogicalAxiom negate(OWLLogicalAxiom ax) {
         if (getNegationVisitor() == null)
@@ -480,11 +478,11 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     }
 
     */
-
+    /*
     protected OWLNegateAxiom getNegationVisitor() {
         return vis;
     }
-
+    */
     // A
     public boolean diagnosisConsistent(FormulaSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent) {
         // cleanup stack

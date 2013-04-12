@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.module;
+package at.ainf.owlapi3.reasoner;
 
 /**
  * Created with IntelliJ IDEA.
@@ -67,13 +67,8 @@ public class ExtendedStructuralReasoner extends StructuralReasoner {
                 (getEquivalentClasses(cls2).getEntities().contains(cls1));
     }
 
-
-
-
     public String getReasonerName(){
         return "Extended Structural Reasoner";
     }
-
-
 }
 

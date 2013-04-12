@@ -7,12 +7,10 @@ import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
-import at.ainf.owlapi3.debugging.OWLNegateAxiom;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,12 +256,13 @@ public class TreeTest {
     }
     */
 
+    /*
     public OWLLogicalAxiom negate(OWLLogicalAxiom ax) {
         OWLNegateAxiom vis = new OWLNegateAxiom(manager.getOWLDataFactory());
         OWLLogicalAxiom negated = (OWLLogicalAxiom) ax.accept(vis);
         return negated;
     }
-
+    */
     /*private void testEntailment(OWLTheory th, OWLReasoner solver, OWLLogicalAxiom ax, boolean res) {
         OWLLogicalAxiom neg = th.negate(ax);
         th.getOwlOntologyManager().addAxiom(th.getOntology(), neg);

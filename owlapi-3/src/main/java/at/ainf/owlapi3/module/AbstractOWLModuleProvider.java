@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.module;
 
+import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -10,7 +11,6 @@ import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.

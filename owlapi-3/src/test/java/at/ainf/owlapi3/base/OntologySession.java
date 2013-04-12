@@ -89,7 +89,8 @@ public class OntologySession extends SimulatedSession {
             }
         }
 
-        int number = rnd.nextInt(res.size());
+        int n = res.size() + (int) (System.currentTimeMillis() % 10000);
+        int number = rnd.nextInt(n);
 
 
         int i = 1;
