@@ -2,6 +2,8 @@ package at.ainf.owlapi3.reasoner;
 
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
+import org.semanticweb.owlapi.reasoner.OWLReasonerConfiguration;
+import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.util.Version;
 
 /**
@@ -15,7 +17,11 @@ public class SatReasoner extends ExtendedStructuralReasoner {
 
 
     public SatReasoner(OWLOntology ontology) {
-        super(ontology);
+        this(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+    }
+
+    public SatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
+        super(ontology, config, buffering);
     }
 
     @Override

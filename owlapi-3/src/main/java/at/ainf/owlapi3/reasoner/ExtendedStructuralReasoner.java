@@ -8,27 +8,28 @@ package at.ainf.owlapi3.reasoner;
  * To change this template use File | Settings | File Templates.
  */
 
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLClassExpression;
-import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.reasoner.BufferingMode;
-import org.semanticweb.owlapi.reasoner.NodeSet;
-import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNodeSet;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 
+import java.util.Set;
+
 /**
  * This class is taken from LogMap and was written by Ernesto Jimenez Ruiz
- *
+ * <p/>
  * Repairs a bugs in StructuralReasoner.getDisjointClasses
- * @author ernesto
  *
+ * @author ernesto
  */
 public class ExtendedStructuralReasoner extends StructuralReasoner {
 
     public ExtendedStructuralReasoner(OWLOntology rootOntology) {
-        super(rootOntology,  new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+        this(rootOntology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+    }
+
+    public ExtendedStructuralReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
+        super(ontology, config, buffering);
     }
 
     /**
@@ -50,7 +51,6 @@ public class ExtendedStructuralReasoner extends StructuralReasoner {
         }
 
 
-
         return nodeSet;
     }
 
@@ -67,8 +67,29 @@ public class ExtendedStructuralReasoner extends StructuralReasoner {
                 (getEquivalentClasses(cls2).getEntities().contains(cls1));
     }
 
-    public String getReasonerName(){
+    public String getReasonerName() {
         return "Extended Structural Reasoner";
+    }
+
+    @Override
+    public boolean isConsistent() throws ReasonerInterruptedException, TimeOutException {
+        return super.isConsistent();
+    }
+
+    public boolean isCoherent() throws ReasonerInterruptedException, TimeOutException {
+        for (OWLClass owlClass : getRootOntology().getClassesInSignature()) {
+            boolean isSat = isSatisfiable(owlClass.getEquivalentClasses(getRootOntology()))
+                    && isSatisfiable(owlClass.getSuperClasses(getRootOntology()));
+            if (!isSat) return false;
+        }
+        return true;
+    }
+
+    private boolean isSatisfiable(Set<OWLClassExpression> classExpressions) {
+        for (OWLClassExpression classExpression : classExpressions) {
+            if (!isSatisfiable(classExpression)) return false;
+        }
+        return true;
     }
 }
 
