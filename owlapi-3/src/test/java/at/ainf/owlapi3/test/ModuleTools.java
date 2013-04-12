@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.owlapi3.module.ExtendedStructuralReasoner;
+import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
