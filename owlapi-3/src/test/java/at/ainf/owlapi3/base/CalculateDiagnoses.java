@@ -182,8 +182,7 @@ public class CalculateDiagnoses {
     }
 
     private OWLReasonerFactory getReasonerFactory() {
-          return new StructuralReasonerFactory();
-        //return new Reasoner.ReasonerFactory();
+        return new Reasoner.ReasonerFactory();
     }
 
     public OWLTheory getSimpleTheory(OWLOntology ontology, boolean dual) {

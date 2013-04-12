@@ -10,6 +10,9 @@ import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
+import at.ainf.owlapi3.reasoner.ExtendedStructuralReasonerFactory;
+import at.ainf.owlapi3.reasoner.SatReasonerFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -19,7 +22,6 @@ import org.semanticweb.owlapi.model.OWLIndividual;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.*;
 
+import static at.ainf.owlapi3.base.tools.LoggerUtils.addConsoleLogger;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -36,9 +39,9 @@ import static org.junit.Assert.assertTrue;
  * Time: 11:44
  * To change this template use File | Settings | File Templates.
  */
-public class MultipleReasonersTest {
+public class ReasonersTest {
 
-    private static Logger logger = LoggerFactory.getLogger(MultipleReasonersTest.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(ReasonersTest.class.getName());
 
     public Set<FormulaSet<OWLLogicalAxiom>> getDiagnoses(String ontologyString, List<OWLReasonerFactory> factoryList) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
@@ -96,7 +99,30 @@ public class MultipleReasonersTest {
                 + " found (elk, hermit, combined): " + elkCorrectDiagnoses.size() + ", " + hermitDiagnoses.size()
                 + ", " + multipleDiagnoses.size());
 
+    }
 
+    @Test
+    public void SatReasonerTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+        addConsoleLogger();
+        String ontology = "ontologies/ecai.simple.owl";
+        long timeStruct = System.currentTimeMillis();
+        Set<FormulaSet<OWLLogicalAxiom>> structDiagnoses = getDiagnoses(ontology, Collections.<OWLReasonerFactory>singletonList(new ExtendedStructuralReasonerFactory()));
+        timeStruct = System.currentTimeMillis() - timeStruct;
+        long timeSat= System.currentTimeMillis();
+        Set<FormulaSet<OWLLogicalAxiom>> satDiagnoses = getDiagnoses(ontology, Collections.<OWLReasonerFactory>singletonList(new SatReasonerFactory()));
+        timeSat = System.currentTimeMillis() - timeSat;
+
+        long timeHermit = System.currentTimeMillis();
+        Set<FormulaSet<OWLLogicalAxiom>> hermitDiagnoses = getDiagnoses(ontology, Collections.<OWLReasonerFactory>singletonList(new Reasoner.ReasonerFactory()));
+        timeHermit = System.currentTimeMillis() - timeHermit;
+
+        for (FormulaSet<OWLLogicalAxiom> diagnosis : structDiagnoses)
+            logger.info("Structural: " + CalculateDiagnoses.renderAxioms(diagnosis));
+        for (FormulaSet<OWLLogicalAxiom> diagnosis : satDiagnoses)
+            logger.info("SAT: " + CalculateDiagnoses.renderAxioms(diagnosis));
+        logger.info("time (SAT, Structural, hermit): " + timeSat + ", " + timeStruct + ", " + timeHermit
+                + " found (SAT, Structural, hermit): " + satDiagnoses.size() + ", " + structDiagnoses.size()
+                + ", " + hermitDiagnoses.size());
 
     }
 
