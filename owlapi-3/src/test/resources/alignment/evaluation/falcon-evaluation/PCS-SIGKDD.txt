@@ -1,0 +1,12 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/PCS.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/SIGKDD.owl
+sourceNamespace = http://PCS.owl
+targetNamespace = http://SIGKDD.owl
+
++ Review = Review | 0.9998176359909903
++ DOCUMENT = Document | 0.99954674760751
++ Conference = Conference | 0.9993862005771124
++ Author = Author | 0.997790138511145
++ PERSON = Person | 0.9966934745260793
++ Paper = Paper | 0.9948622573900403
+> CommitteeMember = Program_Committee_member | 0.7686289745519175

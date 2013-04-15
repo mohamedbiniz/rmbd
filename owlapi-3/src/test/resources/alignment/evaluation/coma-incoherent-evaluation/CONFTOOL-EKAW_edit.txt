@@ -1,0 +1,1 @@
+http://CONFTOOL.owl#Poster EquivalentTo http://EKAW.owl#Poster_Paper, http://CONFTOOL.owl#Camera_Ready_event EquivalentTo http://EKAW.owl#Camera_Ready_Paper, http://CONFTOOL.owl#Company SubClassOf http://EKAW.owl#Research_Institute 
