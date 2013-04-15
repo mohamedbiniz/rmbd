@@ -78,6 +78,8 @@ public class ExtendedStructuralReasoner extends StructuralReasoner {
 
     public boolean isCoherent() throws ReasonerInterruptedException, TimeOutException {
         for (OWLClass owlClass : getRootOntology().getClassesInSignature()) {
+            if (getEquivalentClasses(owlClass).contains(getDataFactory().getOWLNothing()))
+                return false;
             boolean isSat = isSatisfiable(owlClass.getEquivalentClasses(getRootOntology()))
                     && isSatisfiable(owlClass.getSuperClasses(getRootOntology()));
             if (!isSat) return false;
