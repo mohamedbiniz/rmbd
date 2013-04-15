@@ -73,7 +73,7 @@ public class ExtendedStructuralReasoner extends StructuralReasoner {
 
     @Override
     public boolean isConsistent() throws ReasonerInterruptedException, TimeOutException {
-        return super.isConsistent();
+        return isCoherent();
     }
 
     public boolean isCoherent() throws ReasonerInterruptedException, TimeOutException {

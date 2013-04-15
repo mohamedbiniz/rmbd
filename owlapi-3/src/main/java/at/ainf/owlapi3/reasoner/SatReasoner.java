@@ -1,9 +1,7 @@
 package at.ainf.owlapi3.reasoner;
 
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.reasoner.BufferingMode;
-import org.semanticweb.owlapi.reasoner.OWLReasonerConfiguration;
-import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
+import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.util.Version;
 
 /**
@@ -35,4 +33,21 @@ public class SatReasoner extends ExtendedStructuralReasoner {
     }
 
 
+    @Override
+    public boolean isConsistent() throws ReasonerInterruptedException, TimeOutException {
+        // SAT implementation of consistency
+
+        // extract horn clauses from subsumption hierarchy (structural)
+
+        // process disjointness and equivalence
+
+        // run SAT4J
+
+        return true;
+    }
+
+    @Override
+    public boolean isCoherent() throws ReasonerInterruptedException, TimeOutException {
+        return isConsistent();
+    }
 }
