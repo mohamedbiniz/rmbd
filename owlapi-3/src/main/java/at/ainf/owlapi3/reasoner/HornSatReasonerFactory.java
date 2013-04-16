@@ -11,20 +11,20 @@ import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
  * Time: 10:08
  * To change this template use File | Settings | File Templates.
  */
-public class SatReasonerFactory extends StructuralReasonerFactory{
+public class HornSatReasonerFactory extends StructuralReasonerFactory{
 
     @Override
     public String getReasonerName() {
-        return "SAT Reasoner";
+        return "Horn SAT Reasoner";
     }
 
     @Override
     public OWLReasoner createNonBufferingReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
-        return new SatReasoner(ontology, config, BufferingMode.NON_BUFFERING);
+        return new HornSatReasoner(ontology, config, BufferingMode.NON_BUFFERING);
     }
 
     @Override
     public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
-        return new SatReasoner(ontology, config, BufferingMode.BUFFERING);
+        return new HornSatReasoner(ontology, config, BufferingMode.BUFFERING);
     }
 }
