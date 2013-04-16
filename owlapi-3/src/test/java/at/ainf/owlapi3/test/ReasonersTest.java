@@ -11,7 +11,7 @@ import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.reasoner.ExtendedStructuralReasonerFactory;
-import at.ainf.owlapi3.reasoner.SatReasonerFactory;
+import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -124,7 +124,7 @@ public class ReasonersTest {
         addConsoleLogger();
 
         Result hermit = reasonerTest(new Reasoner.ReasonerFactory(), ontology);
-        Result sat = reasonerTest(new SatReasonerFactory(), ontology);
+        Result sat = reasonerTest(new HornSatReasonerFactory(), ontology);
         Result struct = reasonerTest(new ExtendedStructuralReasonerFactory(), ontology);
 
         hermit.print("Hermit");

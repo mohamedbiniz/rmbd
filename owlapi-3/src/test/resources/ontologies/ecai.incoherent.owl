@@ -37,7 +37,23 @@
     <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#A -->
 
     <owl:Class rdf:about="&ecai;A">
-        <rdfs:subClassOf rdf:resource="&ecai;B"/>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:complementOf>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <owl:Class>
+                                <owl:complementOf rdf:resource="&ecai;C"/>
+                            </owl:Class>
+                            <owl:Class>
+                                <owl:complementOf rdf:resource="&ecai;R"/>
+                            </owl:Class>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:complementOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <owl:disjointWith rdf:resource="&ecai;R"/>
     </owl:Class>
     
 
@@ -45,7 +61,7 @@
     <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#B -->
 
     <owl:Class rdf:about="&ecai;B">
-        <rdfs:subClassOf rdf:resource="&ecai;C"/>
+        <rdfs:subClassOf rdf:resource="&ecai;R"/>
     </owl:Class>
     
 
@@ -70,9 +86,36 @@
     
 
 
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#E -->
+
+    <owl:Class rdf:about="&ecai;E">
+        <owl:disjointUnionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="&ecai;B"/>
+            <rdf:Description rdf:about="&ecai;F"/>
+            <rdf:Description rdf:about="&ecai;R"/>
+        </owl:disjointUnionOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#F -->
+
+    <owl:Class rdf:about="&ecai;F"/>
+    
+
+
     <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#R -->
 
-    <owl:Class rdf:about="&ecai;R"/>
+    <owl:Class rdf:about="&ecai;R">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&ecai;A"/>
+                    <rdf:Description rdf:about="&ecai;C"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
 </rdf:RDF>
 
 
