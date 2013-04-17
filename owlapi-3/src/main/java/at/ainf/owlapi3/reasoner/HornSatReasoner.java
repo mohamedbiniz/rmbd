@@ -54,21 +54,21 @@ public class HornSatReasoner extends StructuralReasoner {
         if (this.sat != null)
             return this.sat;
         try {
-            solver.isSatisfiable();
+            return solver.isSatisfiable();
         } catch (TimeoutException e) {
             throw new TimeOutException();
         }
-
-        return true;
     }
+
 
     @Override
     protected void handleChanges(Set<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
         super.handleChanges(addAxioms, removeAxioms);
-        processAxioms(addAxioms, true);
+        processAxioms(addAxioms);
     }
 
-    private void processAxioms(Set<OWLAxiom> axioms, boolean add) {
+    private void processAxioms(Set<OWLAxiom> axioms) {
+        getSolverClauses().clear();
         for (OWLAxiom axiom : axioms) {
             if (axiom.getAxiomType() == AxiomType.SUBCLASS_OF)
                 processAxiom((OWLSubClassOfAxiom) axiom);
@@ -79,11 +79,13 @@ public class HornSatReasoner extends StructuralReasoner {
             else if (axiom.getAxiomType() == AxiomType.DISJOINT_CLASSES)
                 processAxiom((OWLDisjointClassesAxiom) axiom);
 
-            if (add) {
-                getSolverClauses().addAll(getTranslations().get(axiom));
-            } else
-                getSolverClauses().removeAll(getTranslations().get(axiom));
+            getSolverClauses().addAll(getTranslations().get(axiom));
         }
+        NodeSet<OWLClass> classes = getSubClasses(getDataFactory().getOWLThing(), true);
+        for (OWLClass owlClass : classes.getFlattened()) {
+            getSolverClauses().add(getiVecInt(owlClass));
+        }
+
         this.sat = null;
         solver.reset();
         //solver.newVar(getNumberOfVariables(getSolverClauses()));
@@ -152,35 +154,39 @@ public class HornSatReasoner extends StructuralReasoner {
 
             // create DIMACS clauses
             for (OWLClassExpression clause : clauses) {
-                if (!isDisjunctionOfLiterals(clause, false))
+                if (!isDisjunctionOfLiterals(clause, true))
                     continue;
-                IVecInt satClause = new VecInt();
-                for (OWLClassExpression expr : clause.asDisjunctSet()) {
-                    // ignore all restrictions an put only literals including classes
-                    if (expr.isClassExpressionLiteral())
-                        satClause.push(getIndex(expr));
-                }
+                IVecInt satClause = getiVecInt(clause);
 
                 // ignore facts, which are impossible in this reasoner without proper grounding
-                if (satClause.size() > 1)
+                if (satClause.size() > 1) // && isHornClause(satClause)
                     getTranslations().put(axiom, satClause);
             }
         }
         return getTranslations().get(axiom);
     }
 
+    private IVecInt getiVecInt(OWLClassExpression clause) {
+        IVecInt satClause = new VecInt();
+        for (OWLClassExpression expr : clause.asDisjunctSet()) {
+            // ignore all restrictions an put only literals including classes
+            if (expr.isClassExpressionLiteral())
+                satClause.push(getIndex(expr));
+        }
+        return satClause;
+    }
+
     private Set<OWLClassExpression> convertToCNF(OWLClassExpression fl) {
-        if (isDisjunctionOfLiterals(fl, true)) return Collections.singleton(fl);
+        if (isDisjunctionOfLiterals(fl, false)) return Collections.singleton(fl);
 
         // apply distribution
         if (fl.getClassExpressionType() == ClassExpressionType.OBJECT_UNION_OF) {
             OWLClassExpression conj = null, cl2 = null;
             Set<OWLClassExpression> disj = new HashSet<OWLClassExpression>();
             for (OWLClassExpression cl : fl.asDisjunctSet()) {
-                if (conj == null && cl.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF){
+                if (conj == null && cl.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF) {
                     conj = cl;
-                }
-                else if (cl2 == null) cl2 = cl;
+                } else if (cl2 == null) cl2 = cl;
                 else
                     disj.add(cl);
             }
@@ -206,19 +212,19 @@ public class HornSatReasoner extends StructuralReasoner {
             // verify whether we have a CNF
             Set<OWLClassExpression> cnf = new HashSet<OWLClassExpression>();
             for (OWLClassExpression expr : fl.asConjunctSet()) {
-                 cnf.addAll(convertToCNF(expr));
+                cnf.addAll(convertToCNF(expr));
             }
             return cnf;
         }
 
     }
 
-    private boolean isDisjunctionOfLiterals(OWLClassExpression fl, boolean acceptRestrictions) {
+    private boolean isDisjunctionOfLiterals(OWLClassExpression fl, boolean rejectRestrictions) {
         if (fl.isClassExpressionLiteral())
             return true;
         if (fl.getClassExpressionType() == ClassExpressionType.OBJECT_UNION_OF) {
             for (OWLClassExpression expr : fl.asDisjunctSet()) {
-                if (!expr.isClassExpressionLiteral() && (!acceptRestrictions || !(expr instanceof OWLRestriction)))
+                if (!expr.isClassExpressionLiteral() || (rejectRestrictions && expr instanceof OWLRestriction))
                     return false;
             }
         } else return false;
