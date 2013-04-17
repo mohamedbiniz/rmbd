@@ -66,8 +66,8 @@ public class HornSatReasoner extends StructuralReasoner {
                 if (!solver.isSatisfiable())
                     return false;
 
-               if (iConstr != null)
-                   solver.removeConstr(iConstr);
+                if (iConstr != null)
+                    solver.removeConstr(iConstr);
             }
             return true;
         } catch (TimeoutException e) {
@@ -133,7 +133,7 @@ public class HornSatReasoner extends StructuralReasoner {
                 IVecInt clause = new VecInt(2);
                 for (OWLClassExpression expr : pair.getClassExpressions()) {
                     if (!expr.isClassExpressionLiteral())
-                        throw new RuntimeException("Not a literal in a pairwise disjoint axiom!");
+                        throw new RuntimeException("Not a literal in a pairwise disjoint axiom! " + axiom);
 
                     clause.push(-1 * getIndex(expr));
                 }
@@ -143,12 +143,30 @@ public class HornSatReasoner extends StructuralReasoner {
         return getTranslations().get(axiom);
     }
 
-    private void processAxiom(OWLDisjointUnionAxiom axiom) {
-        //To change body of created methods use File | Settings | File Templates.
+    private Collection<IVecInt> processAxiom(OWLDisjointUnionAxiom axiom) {
+        if (!getTranslations().containsKey(axiom)) {
+            Collection<IVecInt> impl1 = processAxiom(axiom.getOWLDisjointClassesAxiom());
+            Collection<IVecInt> impl2 = processAxiom(axiom.getOWLEquivalentClassesAxiom());
+            getTranslations().putAll(axiom, impl1);
+            getTranslations().putAll(axiom, impl2);
+        }
+        return getTranslations().get(axiom);
     }
 
-    private void processAxiom(OWLEquivalentClassesAxiom axiom) {
-        //To change body of created methods use File | Settings | File Templates.
+    private Collection<IVecInt> processAxiom(OWLEquivalentClassesAxiom axiom) {
+        if (!getTranslations().containsKey(axiom)) {
+            List<OWLClassExpression> expr = axiom.getClassExpressionsAsList();
+            if (expr.size() != 2)
+                throw new RuntimeException("Equivalence axiom with number of class expressions != 2 " + axiom);
+
+            OWLClassExpression cl1 = expr.get(0);
+            OWLClassExpression cl2 = expr.get(1);
+            Collection<IVecInt> impl1 = processAxiom(getDataFactory().getOWLSubClassOfAxiom(cl1, cl2));
+            Collection<IVecInt> impl2 = processAxiom(getDataFactory().getOWLSubClassOfAxiom(cl2, cl1));
+            getTranslations().putAll(axiom, impl1);
+            getTranslations().putAll(axiom, impl2);
+        }
+        return getTranslations().get(axiom);
     }
 
     private Collection<IVecInt> processAxiom(OWLSubClassOfAxiom axiom) {
@@ -202,7 +220,7 @@ public class HornSatReasoner extends StructuralReasoner {
                     disj.add(cl);
             }
 
-            if (conj == null) throw new RuntimeException("No conjunction for distribution!");
+            if (conj == null) throw new RuntimeException("No conjunction for distribution! " + fl);
 
             Set<OWLClassExpression> newConj = new HashSet<OWLClassExpression>();
             for (OWLClassExpression c : conj.asConjunctSet()) {
@@ -245,7 +263,7 @@ public class HornSatReasoner extends StructuralReasoner {
 
     private int getIndex(OWLClassExpression expr) {
         if (!expr.isClassExpressionLiteral())
-            throw new RuntimeException("Only literals are a part of an index!");
+            throw new RuntimeException("Only literals are a part of an index! " + expr);
 
         if (!expr.isAnonymous()) {
             OWLClass cl = expr.asOWLClass();
@@ -264,7 +282,7 @@ public class HornSatReasoner extends StructuralReasoner {
     private int addToIndex(OWLClass cl) {
         int value = maxIndex++;
         if (getIndex().containsKey(cl))
-            throw new RuntimeException("Adding a key that already exists!");
+            throw new RuntimeException("Adding a key that already exists! " + cl);
         getIndex().put(cl, value);
         return value;
     }
