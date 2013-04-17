@@ -43,6 +43,11 @@ public class ReasonersTest {
     private static Logger logger = LoggerFactory.getLogger(ReasonersTest.class.getName());
 
     public Set<FormulaSet<OWLLogicalAxiom>> getDiagnoses(String ontologyString, List<OWLReasonerFactory> factoryList) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = computeDianoses(ontologyString, factoryList);
+        return new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
+    }
+
+    public HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> computeDianoses(String ontologyString, List<OWLReasonerFactory> factoryList) throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream(ontologyString);
         OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
@@ -66,8 +71,7 @@ public class ReasonersTest {
         } catch (NoConflictException e) {
             logger.info("no conflict found ");
         }
-
-        return new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
+        return search;
     }
 
     @Ignore
@@ -102,11 +106,12 @@ public class ReasonersTest {
 
     private class Result {
         private List<Long> time = new ArrayList<Long>(10);
-        private Set<FormulaSet<OWLLogicalAxiom>> diagnoses;
+        private Set<FormulaSet<OWLLogicalAxiom>> diagnoses = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>();
+        private Set<FormulaSet<OWLLogicalAxiom>> conflicts = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>();
 
         public void print(String name) {
-            for (FormulaSet<OWLLogicalAxiom> diagnosis : diagnoses)
-                logger.info(name + " " + CalculateDiagnoses.renderAxioms(diagnosis));
+            printAxiomSet(name, "Diagnosis",  diagnoses);
+            printAxiomSet(name, "Conflict", conflicts);
 
             Collections.sort(time);
             long avg = 0;
@@ -114,6 +119,11 @@ public class ReasonersTest {
                 avg += time.get(i);
 
             logger.info("time " + name + ": " + (avg/(time.size()-4)) + ", " + " found : " + diagnoses.size());
+        }
+
+        private void printAxiomSet(String name, String s, Set<FormulaSet<OWLLogicalAxiom>> conflicts) {
+            for (FormulaSet<OWLLogicalAxiom> diagnosis : conflicts)
+                logger.info(name + " " + s + ": " +  CalculateDiagnoses.renderAxioms(diagnosis));
         }
     }
 
@@ -123,8 +133,8 @@ public class ReasonersTest {
         String ontology = "ontologies/ecai.incoherent.owl";
         addConsoleLogger();
 
-        Result hermit = reasonerTest(new Reasoner.ReasonerFactory(), ontology);
         Result sat = reasonerTest(new HornSatReasonerFactory(), ontology);
+        Result hermit = reasonerTest(new Reasoner.ReasonerFactory(), ontology);
         Result struct = reasonerTest(new ExtendedStructuralReasonerFactory(), ontology);
 
         hermit.print("Hermit");
@@ -136,8 +146,12 @@ public class ReasonersTest {
         Result res = new Result();
         for (int i = 0; i < 10; i++) {
             long time = System.currentTimeMillis();
-            res.diagnoses = getDiagnoses(ontology,
+            HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = computeDianoses(ontology,
                     Collections.<OWLReasonerFactory>singletonList(factory));
+            if (res.conflicts.isEmpty())
+                res.conflicts.addAll(search.getConflicts());
+            if (res.diagnoses.isEmpty())
+                res.diagnoses.addAll(search.getDiagnoses());
             time = System.currentTimeMillis() - time;
 
             res.time.add(time);

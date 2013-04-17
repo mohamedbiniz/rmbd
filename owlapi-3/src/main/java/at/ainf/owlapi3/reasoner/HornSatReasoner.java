@@ -54,7 +54,22 @@ public class HornSatReasoner extends StructuralReasoner {
         if (this.sat != null)
             return this.sat;
         try {
-            return solver.isSatisfiable();
+            //NodeSet<OWLClass> classes = getSubClasses(getDataFactory().getOWLThing(), true);
+            //for (OWLClass owlClass : classes.getFlattened()) {
+            for (OWLClass owlClass : getRootOntology().getClassesInSignature()) {
+                IConstr iConstr = null;
+                try {
+                    iConstr = solver.addClause(getiVecInt(owlClass));
+                } catch (ContradictionException e) {
+                    return false;
+                }
+                if (!solver.isSatisfiable())
+                    return false;
+
+               if (iConstr != null)
+                   solver.removeConstr(iConstr);
+            }
+            return true;
         } catch (TimeoutException e) {
             throw new TimeOutException();
         }
@@ -64,7 +79,7 @@ public class HornSatReasoner extends StructuralReasoner {
     @Override
     protected void handleChanges(Set<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
         super.handleChanges(addAxioms, removeAxioms);
-        processAxioms(addAxioms);
+        processAxioms(getRootOntology().getAxioms());
     }
 
     private void processAxioms(Set<OWLAxiom> axioms) {
@@ -80,10 +95,6 @@ public class HornSatReasoner extends StructuralReasoner {
                 processAxiom((OWLDisjointClassesAxiom) axiom);
 
             getSolverClauses().addAll(getTranslations().get(axiom));
-        }
-        NodeSet<OWLClass> classes = getSubClasses(getDataFactory().getOWLThing(), true);
-        for (OWLClass owlClass : classes.getFlattened()) {
-            getSolverClauses().add(getiVecInt(owlClass));
         }
 
         this.sat = null;
