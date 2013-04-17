@@ -26,6 +26,23 @@
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#s -->
+
+    <owl:ObjectProperty rdf:about="&ecai;s"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
     // Classes
     //
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -39,18 +56,26 @@
     <owl:Class rdf:about="&ecai;A">
         <rdfs:subClassOf>
             <owl:Class>
-                <owl:complementOf>
+                <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Class>
-                        <owl:unionOf rdf:parseType="Collection">
+                        <owl:complementOf>
                             <owl:Class>
-                                <owl:complementOf rdf:resource="&ecai;C"/>
+                                <owl:unionOf rdf:parseType="Collection">
+                                    <owl:Class>
+                                        <owl:complementOf rdf:resource="&ecai;C"/>
+                                    </owl:Class>
+                                    <owl:Class>
+                                        <owl:complementOf rdf:resource="&ecai;R"/>
+                                    </owl:Class>
+                                </owl:unionOf>
                             </owl:Class>
-                            <owl:Class>
-                                <owl:complementOf rdf:resource="&ecai;R"/>
-                            </owl:Class>
-                        </owl:unionOf>
+                        </owl:complementOf>
                     </owl:Class>
-                </owl:complementOf>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="&ecai;s"/>
+                        <owl:someValuesFrom rdf:resource="&ecai;E"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
             </owl:Class>
         </rdfs:subClassOf>
         <owl:disjointWith rdf:resource="&ecai;R"/>

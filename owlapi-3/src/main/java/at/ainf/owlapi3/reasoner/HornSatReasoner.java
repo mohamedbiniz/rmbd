@@ -122,7 +122,7 @@ public class HornSatReasoner extends StructuralReasoner {
                     if (!expr.isClassExpressionLiteral())
                         throw new RuntimeException("Not a literal in a pairwise disjoint axiom!");
 
-                    clause.push(getIndex(expr));
+                    clause.push(-1 * getIndex(expr));
                 }
                 getTranslations().put(axiom, clause);
             }
@@ -140,19 +140,94 @@ public class HornSatReasoner extends StructuralReasoner {
 
     private Collection<IVecInt> processAxiom(OWLSubClassOfAxiom axiom) {
         if (!getTranslations().containsKey(axiom)) {
-            IVecInt clause = new VecInt();
-            OWLClassExpression subClass = axiom.getSubClass();
-            clause.push(getIndex(subClass));
+            // remove implication by transforming to a disjunction
+            OWLClassExpression subCl = axiom.getSubClass().getComplementNNF();
+            OWLClassExpression superCl = axiom.getSuperClass().getNNF();
+            OWLObjectUnionOf fl = getOWLDataFactory().getOWLObjectUnionOf(
+                    subCl,
+                    superCl);
 
-            // TODO: finish implementation
-            OWLClassExpression nnf = axiom.getSuperClass().getNNF();
+            // convert to CNF
+            Set<OWLClassExpression> clauses = convertToCNF(fl);
+
+            // create DIMACS clauses
+            for (OWLClassExpression clause : clauses) {
+                if (!isDisjunctionOfLiterals(clause, false))
+                    continue;
+                IVecInt satClause = new VecInt();
+                for (OWLClassExpression expr : clause.asDisjunctSet()) {
+                    // ignore all restrictions an put only literals including classes
+                    if (expr.isClassExpressionLiteral())
+                        satClause.push(getIndex(expr));
+                }
+
+                // ignore facts, which are impossible in this reasoner without proper grounding
+                if (satClause.size() > 1)
+                    getTranslations().put(axiom, satClause);
+            }
         }
         return getTranslations().get(axiom);
     }
 
+    private Set<OWLClassExpression> convertToCNF(OWLClassExpression fl) {
+        if (isDisjunctionOfLiterals(fl, true)) return Collections.singleton(fl);
+
+        // apply distribution
+        if (fl.getClassExpressionType() == ClassExpressionType.OBJECT_UNION_OF) {
+            OWLClassExpression conj = null, cl2 = null;
+            Set<OWLClassExpression> disj = new HashSet<OWLClassExpression>();
+            for (OWLClassExpression cl : fl.asDisjunctSet()) {
+                if (conj == null && cl.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF){
+                    conj = cl;
+                }
+                else if (cl2 == null) cl2 = cl;
+                else
+                    disj.add(cl);
+            }
+
+            if (conj == null) throw new RuntimeException("No conjunction for distribution!");
+
+            Set<OWLClassExpression> newConj = new HashSet<OWLClassExpression>();
+            for (OWLClassExpression c : conj.asConjunctSet()) {
+                OWLClassExpression newClause = getDataFactory().getOWLObjectUnionOf(cl2, c);
+                newConj.add(newClause);
+            }
+
+            // return single conjunction as a set of clauses
+            if (disj.isEmpty())
+                return newConj;
+
+            disj.add(getDataFactory().getOWLObjectIntersectionOf(newConj));
+
+            // add to a source disjunction replacing two selected conjunctions
+            OWLClassExpression expr = getDataFactory().getOWLObjectUnionOf(disj);
+            return Collections.singleton(expr);
+        } else {
+            // verify whether we have a CNF
+            Set<OWLClassExpression> cnf = new HashSet<OWLClassExpression>();
+            for (OWLClassExpression expr : fl.asConjunctSet()) {
+                 cnf.addAll(convertToCNF(expr));
+            }
+            return cnf;
+        }
+
+    }
+
+    private boolean isDisjunctionOfLiterals(OWLClassExpression fl, boolean acceptRestrictions) {
+        if (fl.isClassExpressionLiteral())
+            return true;
+        if (fl.getClassExpressionType() == ClassExpressionType.OBJECT_UNION_OF) {
+            for (OWLClassExpression expr : fl.asDisjunctSet()) {
+                if (!expr.isClassExpressionLiteral() && (!acceptRestrictions || !(expr instanceof OWLRestriction)))
+                    return false;
+            }
+        } else return false;
+        return true;
+    }
+
 
     private int getIndex(OWLClassExpression expr) {
-        if (expr.isClassExpressionLiteral())
+        if (!expr.isClassExpressionLiteral())
             throw new RuntimeException("Only literals are a part of an index!");
 
         if (!expr.isAnonymous()) {
@@ -170,7 +245,11 @@ public class HornSatReasoner extends StructuralReasoner {
     }
 
     private int addToIndex(OWLClass cl) {
-        return getIndex().put(cl, maxIndex++);
+        int value = maxIndex++;
+        if (getIndex().containsKey(cl))
+            throw new RuntimeException("Adding a key that already exists!");
+        getIndex().put(cl, value);
+        return value;
     }
 
     protected Map<OWLClass, Integer> getIndex() {
