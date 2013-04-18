@@ -198,7 +198,7 @@ public class IterativeModuleDiagTests {
 
         //ModuleDiagSearcher d = new ModuleMinDiagSearcher();
         //ModuleDiagSearcher d = new ModuleTargetDiagSearcher(pathMappings);
-        ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms);
+        ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, true);
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
                                                          new Reasoner.ReasonerFactory(), d, true);

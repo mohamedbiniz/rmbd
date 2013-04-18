@@ -30,16 +30,19 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
 
     private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());
 
+    private boolean isMinimizerActive;
+
     Set<OWLLogicalAxiom> correctAxioms;
 
     Set<OWLLogicalAxiom> falseAxioms;
 
-    public ModuleQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms) {
-        this (path, correctAxioms, falseAxioms, null);
+    public ModuleQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, boolean isMinimizerActive) {
+        this (path, correctAxioms, falseAxioms, null, isMinimizerActive);
     }
 
-    public ModuleQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, Map<OWLLogicalAxiom, BigDecimal> confidences) {
+    public ModuleQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, Map<OWLLogicalAxiom, BigDecimal> confidences, boolean isMinimizerActive) {
         super(path,confidences);
+        this.isMinimizerActive = isMinimizerActive;
         this.correctAxioms = correctAxioms;
         this.falseAxioms = falseAxioms;
     }
@@ -116,7 +119,9 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 // e.printStackTrace();
             }
 
-            minimizePartitionAx(best,search.getSearchable());
+            if (isMinimizerActive)
+                minimizePartitionAx(best,search.getSearchable());
+
             try {
                 boolean answer = askUser(best);
                 logger.info("user answered query " + answer);
@@ -125,7 +130,8 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 if (answer)
                     search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
                 else
-                    search.getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
+                    for (OWLLogicalAxiom axiom : best.partition)
+                        search.getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom)));
             }
             catch (AnswerException e) {
                 logger.info("user cannot answer this query ");

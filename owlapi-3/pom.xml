@@ -137,7 +137,7 @@
         <dependency>
             <groupId>org.semanticweb</groupId>
             <artifactId>HermiT</artifactId>
-            <version>20130130</version>
+            <version>20130417</version>
         </dependency>
 
         <dependency>
@@ -155,28 +155,28 @@
         <dependency>
             <groupId>org.semanticweb.elk</groupId>
             <artifactId>elk-owlapi</artifactId>
-            <version>0.3.1</version>
+            <version>0.3.2</version>
         </dependency>
 
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
             <artifactId>owlapi-api</artifactId>
             <!--<version>3.2.5_svn_1944</version>-->
-            <version>3.4.2</version>
+            <version>3.4.3</version>
         </dependency>
 
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
             <artifactId>owlapi-impl</artifactId>
             <!--<version>3.2.5_svn_1944</version>-->
-            <version>3.4.2</version>
+            <version>3.4.3</version>
         </dependency>
 
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>
             <artifactId>owlapi-tools</artifactId>
             <!--<version>3.2.5_svn_1944</version>-->
-            <version>3.4.2</version>
+            <version>3.4.3</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
