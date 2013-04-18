@@ -127,7 +127,6 @@ public class ReasonersTest {
         }
     }
 
-
     @Test
     public void satTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
         String ontology = "ontologies/ecai.incoherent.owl";

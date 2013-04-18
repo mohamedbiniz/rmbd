@@ -8,6 +8,7 @@ import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.model.OWLTheory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -357,6 +358,7 @@ public class TreeTest {
         assertFalse(consistent);
     }               */
 
+    @Ignore
     @Test
     public void testDebugIncoherent() throws OWLException, SolverException, URISyntaxException, InconsistentTheoryException, NoConflictException {
         OWLTheory owlTheory = testOntology("ontologies/ecai.incoherent.owl", false);
