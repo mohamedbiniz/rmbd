@@ -1,8 +1,10 @@
 package at.ainf.owlapi3.reasoner.axiomprocessors;
 
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import org.sat4j.specs.IVecInt;
 import org.semanticweb.owlapi.model.*;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -73,6 +75,11 @@ public class OWLClassAxiomNegation implements Translator<OWLClassExpression> {
         OWLObjectUnionOf disj = asDisjunction(axiom);
         Set<OWLClassExpression> exprs = reasoner.convertToCNF(disj.getComplementNNF());
         return getDataFactory().getOWLObjectIntersectionOf(exprs);
+    }
+
+    @Override
+    public OWLClassExpression visit(OWLClassAssertionAxiom axiom) {
+        return axiom.getClassExpression().getComplementNNF();
     }
 
     private OWLObjectUnionOf asDisjunction(OWLSubClassOfAxiom axiom) {

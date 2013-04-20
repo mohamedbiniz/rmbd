@@ -1,10 +1,7 @@
 package at.ainf.owlapi3.reasoner.axiomprocessors;
 
 import org.sat4j.specs.IVecInt;
-import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
-import org.semanticweb.owlapi.model.OWLDisjointUnionAxiom;
-import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
+import org.semanticweb.owlapi.model.*;
 
 import java.util.Collection;
 
@@ -24,4 +21,6 @@ public interface Translator<T> {
     T visit(OWLEquivalentClassesAxiom axiom);
 
     T visit(OWLSubClassOfAxiom axiom);
+
+    T visit(OWLClassAssertionAxiom axiom);
 }

@@ -11,7 +11,7 @@ public class OWL2SATTranslator implements Translator<Collection<IVecInt>> {
 
     private final HornSatReasoner reasoner;
 
-    public OWL2SATTranslator(HornSatReasoner reasoner){
+    public OWL2SATTranslator(HornSatReasoner reasoner) {
         this.reasoner = reasoner;
     }
 
@@ -87,6 +87,20 @@ public class OWL2SATTranslator implements Translator<Collection<IVecInt>> {
 
 
             }
+        }
+        return reasoner.getTranslations().get(axiom);
+    }
+
+    @Override
+    public Collection<IVecInt> visit(OWLClassAssertionAxiom axiom) {
+        if (!reasoner.getTranslations().containsKey(axiom)) {
+            OWLClassExpression expr = axiom.getClassExpression();
+            if (expr.isOWLThing())
+                return Collections.emptySet();
+            if (expr.isOWLNothing())
+                throw new RuntimeException("Individual is of type Nothing! " + axiom);
+            Set<IVecInt> satClauses = reasoner.getiVecInt(expr);
+            reasoner.getTranslations().putAll(axiom, satClauses);
         }
         return reasoner.getTranslations().get(axiom);
     }
