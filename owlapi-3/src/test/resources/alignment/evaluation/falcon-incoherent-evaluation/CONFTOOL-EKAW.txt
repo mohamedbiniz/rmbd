@@ -1,0 +1,23 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/EKAW.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://EKAW.owl
+
++ Tutorial = Tutorial | 0.9988780549656556
++ Workshop = Workshop | 0.9987194072602734
++ Social_event = Social_Event | 0.9976065086364666
++ University = University | 0.9966127953365675
++ Student = Student | 0.9900899963139332
++ Person = Person | 0.9895395080033049
++ Event = Event | 0.9754112664440275
++ Conference = Conference | 0.9740686003174045
++ Paper = Paper | 0.9682386859010321
+> Member = SC_Member | 0.9123436691084668
+- Poster = Poster_Paper | 0.8235252514170217
++ Member_PC = PC_Member | 0.819100593500433
+- Regular = Regular_Paper | 0.8168753897795015
++ Chair_PC = PC_Chair | 0.7953794057422965
++ Author = Paper_Author | 0.7653359542563132
+- Reviewing_event = Review | 0.7414359556750973
+- Camera_Ready_event = Camera_Ready_Paper | 0.7136802592224383
++ Participant = Conference_Participant | 0.7109128159006567

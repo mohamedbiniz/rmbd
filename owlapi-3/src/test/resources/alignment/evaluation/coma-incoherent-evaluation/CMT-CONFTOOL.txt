@@ -1,0 +1,15 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/CONFTOOL.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://CONFTOOL.owl
+
+- Document = Topic | 0.12958956
+- Meta-Reviewer = Reviewing_results_event | 0.22792816
+- Rejection = Reception | 0.14258267
+- Preference = Event | 0.28436637
++ Administrator = Administrator | 0.25042573
++ Author = Author | 0.2747136
+> Chairman = Chair_PC | 0.20000255
++ Conference = Conference | 0.23333333
++ Paper = Paper | 0.24054001
++ ProgramCommitteeMember = Member_PC | 0.2870426

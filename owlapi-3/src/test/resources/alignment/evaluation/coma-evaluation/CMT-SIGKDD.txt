@@ -1,0 +1,15 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/SIGKDD.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://SIGKDD.owl
+
++ ProgramCommittee = Program_Committee | 0.35
++ Document = Document | 0.5116853
+- Preference = Fee | 0.439288
++ Author = Author | 0.4671549
++ Conference = Conference | 0.46400082
+< Co-author = Author_of_paper | 0.28658926
++ Paper = Paper | 0.39664894
++ PaperAbstract = Abstract | 0.3488603
+- User = Listener | 0.29320735
++ Review = Review | 0.408651

@@ -1,0 +1,17 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/SIGKDD.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/CMT.owl
+sourceNamespace = http://SIGKDD.owl
+targetNamespace = http://CMT.owl
+
++ Author = Author | 0.6875
+- Best_Paper_Awards_Committee = ProgramCommittee | 0.64
+> Committee = ProgramCommittee | 0.8
++ Conference = Conference | 1.0
++ Document = Document | 0.875
+- Main_office = Chairman | 0.6950000000000001
+- Organizing_Committee = ProgramCommittee | 0.64
++ Person = Person | 0.7833333333333333
+- Place = Chairman | 0.65
++ Program_Committee = ProgramCommittee | 1.0
++ Program_Committee_member = ProgramCommitteeMember | 0.6428571428571428
++ Review = Review | 0.8333333333333333
