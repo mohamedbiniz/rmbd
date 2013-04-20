@@ -145,7 +145,7 @@ public class HornSatReasoner extends StructuralReasoner {
 
     @Override
     protected void handleChanges(Set<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
-        //super.handleChanges(addAxioms, removeAxioms);
+        super.handleChanges(addAxioms, removeAxioms);
         //processAxioms(getRootOntology().getAxioms());
         processAxioms(getReasonerAxioms());
     }
