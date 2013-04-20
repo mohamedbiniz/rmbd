@@ -17,7 +17,11 @@ import org.slf4j.LoggerFactory;
  */
 public class LoggerUtils {
 
+    private static boolean added = false;
+
     public static void addConsoleLogger(){
+        if (added) return;
+        added = true;
         Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         LoggerContext loggerContext = rootLogger.getLoggerContext();
 

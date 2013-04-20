@@ -1,12 +1,18 @@
 package at.ainf.owlapi3.reasoner;
 
+import at.ainf.owlapi3.reasoner.axiomprocessors.OWL2SATTranslator;
+import at.ainf.owlapi3.reasoner.axiomprocessors.OWLClassAxiomNegation;
+import at.ainf.owlapi3.reasoner.axiomprocessors.Translator;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
+import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
+import org.semanticweb.owlapi.reasoner.impl.OWLReasonerBase;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 import org.semanticweb.owlapi.util.Version;
 
@@ -26,7 +32,7 @@ public class HornSatReasoner extends StructuralReasoner {
     private final Multimap<OWLAxiom, IVecInt> translations = HashMultimap.create();
     private final ISolver solver = SolverFactory.newDefault();
     private final Set<IVecInt> solverClauses = new HashSet<IVecInt>();
-    private Object solverAxioms;
+    private Set<OWLClass> unSatClasses = new HashSet<OWLClass>();
     private Boolean sat = null;
     private int maxIndex = 1;
 
@@ -36,6 +42,15 @@ public class HornSatReasoner extends StructuralReasoner {
 
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
         super(ontology, config, buffering);
+        processAxioms(getReasonerAxioms());
+    }
+
+    public Set<OWLClass> getUnSatClasses() {
+        return Sets.intersection(unSatClasses, getRootOntology().getClassesInSignature());
+    }
+
+    public void setUnSatClasses(Set<OWLClass> unSatClasses) {
+        this.unSatClasses = unSatClasses;
     }
 
     @Override
@@ -48,57 +63,103 @@ public class HornSatReasoner extends StructuralReasoner {
         return new Version(1, 0, 0, 0);
     }
 
+    @Override
+    public boolean isEntailed(OWLAxiom axiom) throws ReasonerInterruptedException, UnsupportedEntailmentTypeException, TimeOutException, AxiomNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+        if (!isEntailmentCheckingSupported(axiom.getAxiomType()))
+            throw new UnsupportedEntailmentTypeException(axiom);
+        if (!isConsistent())
+            throw new InconsistentOntologyException();
+        if (!axiom.getDataPropertiesInSignature().isEmpty() || !axiom.getObjectPropertiesInSignature().isEmpty())
+            throw new UnsupportedEntailmentTypeException(axiom);
+
+        OWLClassExpression negation = processAxiom(axiom, new OWLClassAxiomNegation(this));
+        return !isSatisfiable(negation);
+    }
+
+    @Override
+    public boolean isEntailed(Set<? extends OWLAxiom> axioms) throws ReasonerInterruptedException, UnsupportedEntailmentTypeException, TimeOutException, AxiomNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+        for (OWLAxiom ax : axioms) {
+            if (!isEntailed(ax))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Node<OWLClass> getUnsatisfiableClasses() throws ReasonerInterruptedException, TimeOutException {
+        Set<OWLClass> unSat = new HashSet<OWLClass>();
+        for (OWLClass owlClass : getRootOntology().getClassesInSignature()) {
+            if (!isSatisfiable(owlClass))
+                unSat.add(owlClass);
+        }
+        return new OWLClassNode(unSat);
+    }
+
+    @Override
+    public boolean isSatisfiable(OWLClassExpression classExpression) throws ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+        Set<IConstr> iConstr = new HashSet<IConstr>();
+        try {
+            Set<IVecInt> iVecInt = getiVecInt(classExpression);
+            for (IVecInt constr : iVecInt) {
+                IConstr cons = solver.addClause(constr);
+                iConstr.add(cons);
+            }
+
+            if (!solver.isSatisfiable())
+                return false;
+
+        } catch (ContradictionException e) {
+            return false;
+        } catch (TimeoutException e) {
+            throw new TimeOutException();
+        } finally {
+            if (!iConstr.isEmpty())
+                for (IConstr constr : iConstr) {
+                    if (constr != null)
+                        solver.removeConstr(constr);
+                }
+        }
+        return true;
+    }
 
     @Override
     public boolean isConsistent() throws ReasonerInterruptedException, TimeOutException {
         if (this.sat != null)
             return this.sat;
-        try {
-            //NodeSet<OWLClass> classes = getSubClasses(getDataFactory().getOWLThing(), true);
-            //for (OWLClass owlClass : classes.getFlattened()) {
-            for (OWLClass owlClass : getRootOntology().getClassesInSignature()) {
-                IConstr iConstr = null;
-                try {
-                    iConstr = solver.addClause(getiVecInt(owlClass));
-                } catch (ContradictionException e) {
-                    return false;
-                }
-                if (!solver.isSatisfiable())
-                    return false;
 
-                if (iConstr != null)
-                    solver.removeConstr(iConstr);
+        // verify unsatisfiable classes
+        // if no classes are given then the solver verifies all classes in the signature
+        Set<OWLClass> classes = getUnSatClasses();
+        if (classes.isEmpty())
+            classes = getRootOntology().getClassesInSignature();
+
+        for (OWLClass owlClass : classes) {
+            if (!isSatisfiable(owlClass)) {
+                sat = false;
+                return sat;
             }
-            return true;
-        } catch (TimeoutException e) {
-            throw new TimeOutException();
         }
+        sat = true;
+        return sat;
     }
-
 
     @Override
     protected void handleChanges(Set<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
-        super.handleChanges(addAxioms, removeAxioms);
-        processAxioms(getRootOntology().getAxioms());
+        //super.handleChanges(addAxioms, removeAxioms);
+        //processAxioms(getRootOntology().getAxioms());
+        processAxioms(getReasonerAxioms());
     }
 
-    private void processAxioms(Set<OWLAxiom> axioms) {
-        getSolverClauses().clear();
-        for (OWLAxiom axiom : axioms) {
-            if (axiom.getAxiomType() == AxiomType.SUBCLASS_OF)
-                processAxiom((OWLSubClassOfAxiom) axiom);
-            else if (axiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES)
-                processAxiom((OWLEquivalentClassesAxiom) axiom);
-            else if (axiom.getAxiomType() == AxiomType.DISJOINT_UNION)
-                processAxiom((OWLDisjointUnionAxiom) axiom);
-            else if (axiom.getAxiomType() == AxiomType.DISJOINT_CLASSES)
-                processAxiom((OWLDisjointClassesAxiom) axiom);
-
-            getSolverClauses().addAll(getTranslations().get(axiom));
-        }
-
+    private void processAxioms(Collection<OWLAxiom> axioms) {
+        // clean up the solver instance
         this.sat = null;
         solver.reset();
+        getSolverClauses().clear();
+
+        for (OWLAxiom axiom : axioms) {
+            processAxiom(axiom, new OWL2SATTranslator(this));
+            getSolverClauses().addAll(getTranslations().get(axiom));
+        }
         //solver.newVar(getNumberOfVariables(getSolverClauses()));
         //solver.setExpectedNumberOfClauses(getSolverClauses().size());
         try {
@@ -106,6 +167,24 @@ public class HornSatReasoner extends StructuralReasoner {
         } catch (ContradictionException e) {
             this.sat = false;
         }
+    }
+
+    @Override
+    public boolean isEntailmentCheckingSupported(AxiomType<?> axiomType) {
+        return axiomType == AxiomType.SUBCLASS_OF || axiomType == AxiomType.EQUIVALENT_CLASSES ||
+                axiomType == AxiomType.DISJOINT_UNION || axiomType == AxiomType.DISJOINT_CLASSES;
+    }
+
+    public <T> T processAxiom(OWLAxiom axiom, Translator<T> translator) {
+        if (axiom.getAxiomType() == AxiomType.SUBCLASS_OF)
+            return translator.visit((OWLSubClassOfAxiom) axiom);
+        else if (axiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES)
+            return translator.visit((OWLEquivalentClassesAxiom) axiom);
+        else if (axiom.getAxiomType() == AxiomType.DISJOINT_UNION)
+            return translator.visit((OWLDisjointUnionAxiom) axiom);
+        else if (axiom.getAxiomType() == AxiomType.DISJOINT_CLASSES)
+            return translator.visit((OWLDisjointClassesAxiom) axiom);
+        return null;
     }
 
     private int getNumberOfVariables(Set<IVecInt> solverClauses) {
@@ -127,141 +206,8 @@ public class HornSatReasoner extends StructuralReasoner {
         }
     }
 
-    private Collection<IVecInt> processAxiom(OWLDisjointClassesAxiom axiom) {
-        if (!getTranslations().containsKey(axiom)) {
-            for (OWLDisjointClassesAxiom pair : axiom.asPairwiseAxioms()) {
-                IVecInt clause = new VecInt(2);
-                for (OWLClassExpression expr : pair.getClassExpressions()) {
-                    if (!expr.isClassExpressionLiteral())
-                        throw new RuntimeException("Not a literal in a pairwise disjoint axiom! " + axiom);
 
-                    clause.push(-1 * getIndex(expr));
-                }
-                getTranslations().put(axiom, clause);
-            }
-        }
-        return getTranslations().get(axiom);
-    }
-
-    private Collection<IVecInt> processAxiom(OWLDisjointUnionAxiom axiom) {
-        if (!getTranslations().containsKey(axiom)) {
-            Collection<IVecInt> impl1 = processAxiom(axiom.getOWLDisjointClassesAxiom());
-            Collection<IVecInt> impl2 = processAxiom(axiom.getOWLEquivalentClassesAxiom());
-            getTranslations().putAll(axiom, impl1);
-            getTranslations().putAll(axiom, impl2);
-        }
-        return getTranslations().get(axiom);
-    }
-
-    private Collection<IVecInt> processAxiom(OWLEquivalentClassesAxiom axiom) {
-        if (!getTranslations().containsKey(axiom)) {
-            List<OWLClassExpression> expr = axiom.getClassExpressionsAsList();
-            if (expr.size() != 2)
-                throw new RuntimeException("Equivalence axiom with number of class expressions != 2 " + axiom);
-
-            OWLClassExpression cl1 = expr.get(0);
-            OWLClassExpression cl2 = expr.get(1);
-            Collection<IVecInt> impl1 = processAxiom(getDataFactory().getOWLSubClassOfAxiom(cl1, cl2));
-            Collection<IVecInt> impl2 = processAxiom(getDataFactory().getOWLSubClassOfAxiom(cl2, cl1));
-            getTranslations().putAll(axiom, impl1);
-            getTranslations().putAll(axiom, impl2);
-        }
-        return getTranslations().get(axiom);
-    }
-
-    private Collection<IVecInt> processAxiom(OWLSubClassOfAxiom axiom) {
-        if (!getTranslations().containsKey(axiom)) {
-            // remove implication by transforming to a disjunction
-            OWLClassExpression subCl = axiom.getSubClass().getComplementNNF();
-            OWLClassExpression superCl = axiom.getSuperClass().getNNF();
-            OWLObjectUnionOf fl = getOWLDataFactory().getOWLObjectUnionOf(
-                    subCl,
-                    superCl);
-
-            // convert to CNF
-            Set<OWLClassExpression> clauses = convertToCNF(fl);
-
-            // create DIMACS clauses
-            for (OWLClassExpression clause : clauses) {
-                if (!isDisjunctionOfLiterals(clause, true))
-                    continue;
-                IVecInt satClause = getiVecInt(clause);
-
-                // ignore facts, which are impossible in this reasoner without proper grounding
-                if (satClause.size() > 1) // && isHornClause(satClause)
-                    getTranslations().put(axiom, satClause);
-            }
-        }
-        return getTranslations().get(axiom);
-    }
-
-    private IVecInt getiVecInt(OWLClassExpression clause) {
-        IVecInt satClause = new VecInt();
-        for (OWLClassExpression expr : clause.asDisjunctSet()) {
-            // ignore all restrictions an put only literals including classes
-            if (expr.isClassExpressionLiteral())
-                satClause.push(getIndex(expr));
-        }
-        return satClause;
-    }
-
-    private Set<OWLClassExpression> convertToCNF(OWLClassExpression fl) {
-        if (isDisjunctionOfLiterals(fl, false)) return Collections.singleton(fl);
-
-        // apply distribution
-        if (fl.getClassExpressionType() == ClassExpressionType.OBJECT_UNION_OF) {
-            OWLClassExpression conj = null, cl2 = null;
-            Set<OWLClassExpression> disj = new HashSet<OWLClassExpression>();
-            for (OWLClassExpression cl : fl.asDisjunctSet()) {
-                if (conj == null && cl.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF) {
-                    conj = cl;
-                } else if (cl2 == null) cl2 = cl;
-                else
-                    disj.add(cl);
-            }
-
-            if (conj == null) throw new RuntimeException("No conjunction for distribution! " + fl);
-
-            Set<OWLClassExpression> newConj = new HashSet<OWLClassExpression>();
-            for (OWLClassExpression c : conj.asConjunctSet()) {
-                OWLClassExpression newClause = getDataFactory().getOWLObjectUnionOf(cl2, c);
-                newConj.add(newClause);
-            }
-
-            // return single conjunction as a set of clauses
-            if (disj.isEmpty())
-                return newConj;
-
-            disj.add(getDataFactory().getOWLObjectIntersectionOf(newConj));
-
-            // add to a source disjunction replacing two selected conjunctions
-            OWLClassExpression expr = getDataFactory().getOWLObjectUnionOf(disj);
-            return Collections.singleton(expr);
-        } else {
-            // verify whether we have a CNF
-            Set<OWLClassExpression> cnf = new HashSet<OWLClassExpression>();
-            for (OWLClassExpression expr : fl.asConjunctSet()) {
-                cnf.addAll(convertToCNF(expr));
-            }
-            return cnf;
-        }
-
-    }
-
-    private boolean isDisjunctionOfLiterals(OWLClassExpression fl, boolean rejectRestrictions) {
-        if (fl.isClassExpressionLiteral())
-            return true;
-        if (fl.getClassExpressionType() == ClassExpressionType.OBJECT_UNION_OF) {
-            for (OWLClassExpression expr : fl.asDisjunctSet()) {
-                if (!expr.isClassExpressionLiteral() || (rejectRestrictions && expr instanceof OWLRestriction))
-                    return false;
-            }
-        } else return false;
-        return true;
-    }
-
-
-    private int getIndex(OWLClassExpression expr) {
+    public int getIndex(OWLClassExpression expr) {
         if (!expr.isClassExpressionLiteral())
             throw new RuntimeException("Only literals are a part of an index! " + expr);
 
@@ -297,5 +243,81 @@ public class HornSatReasoner extends StructuralReasoner {
 
     public Multimap<OWLAxiom, IVecInt> getTranslations() {
         return translations;
+    }
+
+    public Set<IVecInt> getiVecInt(OWLClassExpression clause) {
+        Set<IVecInt> clauses = new HashSet<IVecInt>();
+        for (OWLClassExpression conj : clause.asConjunctSet()) {
+            IVecInt satClause = new VecInt();
+            for (OWLClassExpression expr : conj.asDisjunctSet()) {
+                // ignore all restrictions an put only literals including classes
+                if (expr.isClassExpressionLiteral())
+                    satClause.push(getIndex(expr));
+            }
+            if (!satClause.isEmpty())
+                clauses.add(satClause);
+        }
+        return clauses;
+    }
+
+    public Set<OWLClassExpression> convertToCNF(OWLClassExpression fl) {
+        if (isDisjunctionOfLiterals(fl, false)) return Collections.singleton(fl);
+
+        // apply distribution to non-unary disjunctions
+        if (fl.getClassExpressionType() == ClassExpressionType.OBJECT_UNION_OF) {
+            Set<OWLClassExpression> disjuncs = fl.asDisjunctSet();
+            if (disjuncs.isEmpty())
+                return Collections.emptySet();
+            if (disjuncs.size() == 1)
+                return convertToCNF(disjuncs.iterator().next());
+            OWLClassExpression conj = null, cl2 = null;
+            Set<OWLClassExpression> disj = new HashSet<OWLClassExpression>();
+            for (OWLClassExpression cl : disjuncs) {
+                if (conj == null && cl.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF) {
+                    conj = cl;
+                } else if (cl2 == null) cl2 = cl;
+                else
+                    disj.add(cl);
+            }
+
+            if (conj == null) throw new RuntimeException("No conjunction for distribution! " + fl);
+
+            Set<OWLClassExpression> newConj = new HashSet<OWLClassExpression>();
+            for (OWLClassExpression c : conj.asConjunctSet()) {
+                OWLClassExpression newClause = getOWLDataFactory().getOWLObjectUnionOf(cl2, c);
+                Set<OWLClassExpression> exprs = convertToCNF(newClause);
+                newConj.addAll(exprs);
+            }
+
+            // return single conjunction as a set of clauses
+            if (disj.isEmpty())
+                return newConj;
+
+            disj.add(getOWLDataFactory().getOWLObjectIntersectionOf(newConj));
+
+            // add to a source disjunction replacing two selected conjunctions
+            OWLClassExpression expr = getOWLDataFactory().getOWLObjectUnionOf(disj);
+            return convertToCNF(expr);
+        } else {
+            // verify whether we have a CNF
+            Set<OWLClassExpression> cnf = new HashSet<OWLClassExpression>();
+            for (OWLClassExpression expr : fl.asConjunctSet()) {
+                cnf.addAll(convertToCNF(expr));
+            }
+            return cnf;
+        }
+
+    }
+
+    public boolean isDisjunctionOfLiterals(OWLClassExpression fl, boolean rejectRestrictions) {
+        if (fl.isClassExpressionLiteral())
+            return true;
+        if (fl.getClassExpressionType() == ClassExpressionType.OBJECT_UNION_OF) {
+            for (OWLClassExpression expr : fl.asDisjunctSet()) {
+                if (!expr.isClassExpressionLiteral() && (rejectRestrictions || !(expr instanceof OWLRestriction)))
+                    return false;
+            }
+        } else return false;
+        return true;
     }
 }

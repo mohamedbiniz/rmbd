@@ -125,7 +125,30 @@
 
     <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#F -->
 
-    <owl:Class rdf:about="&ecai;F"/>
+    <owl:Class rdf:about="&ecai;F">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&ecai;M"/>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="&ecai;N"/>
+                    </owl:Class>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#M -->
+
+    <owl:Class rdf:about="&ecai;M"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#N -->
+
+    <owl:Class rdf:about="&ecai;N"/>
     
 
 

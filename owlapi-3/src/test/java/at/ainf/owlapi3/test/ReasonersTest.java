@@ -11,19 +11,19 @@ import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.reasoner.ExtendedStructuralReasonerFactory;
+import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
+import at.ainf.owlapi3.reasoner.axiomprocessors.OWLClassAxiomNegation;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLIndividual;
-import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 
 import java.io.InputStream;
 import java.util.*;
@@ -125,6 +125,35 @@ public class ReasonersTest {
             for (FormulaSet<OWLLogicalAxiom> diagnosis : conflicts)
                 logger.info(name + " " + s + ": " +  CalculateDiagnoses.renderAxioms(diagnosis));
         }
+    }
+
+    @Test
+    public void testEntailment() throws OWLOntologyCreationException {
+        addConsoleLogger();
+        String ontologyString = "ontologies/ecai.corrected.owl";
+        InputStream koalaStream = ClassLoader.getSystemResourceAsStream(ontologyString);
+        OWLOntology ontology = OWLManager.createOWLOntologyManager().
+                loadOntologyFromOntologyDocument(koalaStream);
+
+        HornSatReasoner sat = new HornSatReasoner(ontology);
+        assertTrue(sat.isConsistent());
+        logger.info("Entailment holds");
+        for (OWLLogicalAxiom owlLogicalAxiom : ontology.getLogicalAxioms()) {
+            OWLClassExpression expr = sat.processAxiom(owlLogicalAxiom, new OWLClassAxiomNegation(sat));
+            if (expr != null)
+                logger.info(render(owlLogicalAxiom) + " -> " + render(expr));
+
+            try {
+                boolean entailed = sat.isEntailed(owlLogicalAxiom);
+                assertTrue(entailed);
+            } catch (UnsupportedEntailmentTypeException e) {
+                logger.info("Entailment of " + render(owlLogicalAxiom) + " cannot be verified");
+            }
+        }
+    }
+
+    private String render(OWLObject expr) {
+        return new ManchesterOWLSyntaxOWLObjectRendererImpl().render(expr);
     }
 
     @Test
