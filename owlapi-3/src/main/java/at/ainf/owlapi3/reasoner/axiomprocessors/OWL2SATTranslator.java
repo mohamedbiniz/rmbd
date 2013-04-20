@@ -4,12 +4,15 @@ import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import org.sat4j.core.VecInt;
 import org.sat4j.specs.IVecInt;
 import org.semanticweb.owlapi.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class OWL2SATTranslator implements Translator<Collection<IVecInt>> {
 
     private final HornSatReasoner reasoner;
+    private static Logger logger = LoggerFactory.getLogger(OWL2SATTranslator.class.getName());
 
     public OWL2SATTranslator(HornSatReasoner reasoner) {
         this.reasoner = reasoner;
@@ -47,17 +50,26 @@ public class OWL2SATTranslator implements Translator<Collection<IVecInt>> {
     public Collection<IVecInt> visit(OWLEquivalentClassesAxiom axiom) {
         if (!reasoner.getTranslations().containsKey(axiom)) {
             List<OWLClassExpression> expr = axiom.getClassExpressionsAsList();
-            if (expr.size() != 2)
-                throw new RuntimeException("Equivalence axiom with number of class expressions != 2 " + axiom);
-
+            if (expr.size() != 2) {
+                logger.warn("Ignoring equivalence axiom with number of class expressions != 2 " + axiom);
+                return null;
+            }
+            if (expr.contains(getDataFactory().getOWLThing()) || expr.contains(getDataFactory().getOWLNothing())) {
+                logger.warn("Ignoring equivalence axiom contains Top or Bottom! " + axiom);
+                return null;
+            }
             OWLClassExpression cl1 = expr.get(0);
             OWLClassExpression cl2 = expr.get(1);
-            Collection<IVecInt> impl1 = visit(reasoner.getOWLDataFactory().getOWLSubClassOfAxiom(cl1, cl2));
-            Collection<IVecInt> impl2 = visit(reasoner.getOWLDataFactory().getOWLSubClassOfAxiom(cl2, cl1));
+            Collection<IVecInt> impl1 = visit(getDataFactory().getOWLSubClassOfAxiom(cl1, cl2));
+            Collection<IVecInt> impl2 = visit(getDataFactory().getOWLSubClassOfAxiom(cl2, cl1));
             reasoner.getTranslations().putAll(axiom, impl1);
             reasoner.getTranslations().putAll(axiom, impl2);
         }
         return reasoner.getTranslations().get(axiom);
+    }
+
+    private OWLDataFactory getDataFactory() {
+        return reasoner.getOWLDataFactory();
     }
 
     @Override
@@ -66,7 +78,7 @@ public class OWL2SATTranslator implements Translator<Collection<IVecInt>> {
             // remove implication by transforming to a disjunction
             OWLClassExpression subCl = axiom.getSubClass().getComplementNNF();
             OWLClassExpression superCl = axiom.getSuperClass().getNNF();
-            OWLObjectUnionOf fl = reasoner.getOWLDataFactory().getOWLObjectUnionOf(
+            OWLObjectUnionOf fl = getDataFactory().getOWLObjectUnionOf(
                     subCl,
                     superCl);
 
