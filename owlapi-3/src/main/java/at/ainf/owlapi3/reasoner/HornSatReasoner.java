@@ -113,11 +113,10 @@ public class HornSatReasoner extends StructuralReasoner {
         } catch (TimeoutException e) {
             throw new TimeOutException();
         } finally {
-            if (!iConstr.isEmpty())
-                for (IConstr constr : iConstr) {
-                    if (constr != null)
-                        solver.removeConstr(constr);
-                }
+            for (IConstr constr : iConstr) {
+                if (constr != null)
+                    solver.removeConstr(constr);
+            }
         }
         return true;
     }
@@ -184,6 +183,8 @@ public class HornSatReasoner extends StructuralReasoner {
             return translator.visit((OWLDisjointUnionAxiom) axiom);
         else if (axiom.getAxiomType() == AxiomType.DISJOINT_CLASSES)
             return translator.visit((OWLDisjointClassesAxiom) axiom);
+        //else if (axiom.getAxiomType() == AxiomType.CLASS_ASSERTION)
+        //    return translator.visit((OWLClassAssertionAxiom) axiom);
         return null;
     }
 
