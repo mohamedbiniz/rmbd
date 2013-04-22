@@ -1,0 +1,15 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/SIGKDD.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://SIGKDD.owl
+
++ Document = Document | 0.9991931445374065
++ Conference = Conference | 0.9991040926335539
++ Review = Review | 0.9984950498194731
++ Person = Person | 0.9981211042220446
++ Author = Author | 0.9976280897400581
++ ProgramCommittee = Program_Committee | 0.9967427819501619
++ Paper = Paper | 0.9951335994403907
++ ProgramCommitteeMember = Program_Committee_member | 0.9706858566168033
++ ProgramCommitteeChair = Program_Chair | 0.838105138797212
++ PaperAbstract = Abstract | 0.7798364170887429

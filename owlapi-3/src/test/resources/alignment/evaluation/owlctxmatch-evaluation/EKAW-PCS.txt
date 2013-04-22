@@ -1,0 +1,21 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/EKAW.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/PCS.owl
+sourceNamespace = http://EKAW.owl
+targetNamespace = http://PCS.owl
+
++ Conference > Conference | 1.0
++ Conference < Conference | 1.0
++ Person > PERSON | 1.0
++ Person < PERSON | 1.0
++ Document > DOCUMENT | 1.0
++ Document < DOCUMENT | 1.0
++ Rejected_Paper > Rejected_paper | 1.0
++ Rejected_Paper < Rejected_paper | 1.0
++ Review > Review | 1.0
++ Review < Review | 1.0
++ Web_Site > Web_site | 1.0
++ Web_Site < Web_site | 1.0
++ Accepted_Paper > Accepted_paper | 1.0
++ Accepted_Paper < Accepted_paper | 1.0
++ Paper > Paper | 1.0
++ Paper < Paper | 1.0

@@ -1,0 +1,19 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CRS.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/EKAW.owl
+sourceNamespace = http://CRS.owl
+targetNamespace = http://EKAW.owl
+
++ person > Person | 1.0
++ person < Person | 1.0
++ event > Event | 1.0
++ event < Event | 1.0
++ document > Document | 1.0
++ document < Document | 1.0
++ session > Session | 1.0
++ session < Session | 1.0
++ conference > Conference | 1.0
++ conference < Conference | 1.0
++ abstract > Abstract | 1.0
++ abstract < Abstract | 1.0
++ review > Review | 1.0
++ review < Review | 1.0
