@@ -14,11 +14,10 @@
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>at.ainf</groupId>
     <artifactId>diagnosis</artifactId>
     <!-- <version>1.0-TTMMYY-HHMM</version> -->
     <!-- <version>1.0-070213-1555</version> -->
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Diagnosis module</name>
 
