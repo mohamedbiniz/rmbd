@@ -9,6 +9,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
+import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.reasoner.ExtendedStructuralReasonerFactory;
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
@@ -50,7 +51,15 @@ public class ReasonersTest {
     public HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> computeDianoses(String ontologyString, List<OWLReasonerFactory> factoryList) throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream(ontologyString);
-        OWLOntology ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+        OWLOntology ontologyFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
+
+        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+        OWLOntology ontology = extractor.getIncoherentPartAsOntology(ontologyFull);
+
+
+         if (factoryList.size() == 1 && factoryList.get(0) instanceof HornSatReasonerFactory)
+            ((HornSatReasonerFactory) factoryList.get(0)).precomputeUnsatClasses(ontology);
+
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
             bax.addAll(ontology.getClassAssertionAxioms(ind));
@@ -58,13 +67,14 @@ public class ReasonersTest {
         }
 
         OWLTheory theory = new OWLTheory(factoryList, ontology, bax);
+
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
         search.setSearchable(theory);
         long time = 0;
         try {
-            search.setMaxDiagnosesNumber(9);
+            //search.setMaxDiagnosesNumber(9);
             time = System.currentTimeMillis();
             search.start();
             time = System.currentTimeMillis() - time;
@@ -157,17 +167,20 @@ public class ReasonersTest {
     }
 
     @Test
-    public void satTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+    public void satTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, InterruptedException {
+        //Thread.sleep(5000);
         String ontology = "ontologies/ecai.incoherent.owl";
+        //String ontology = "ontologies/Transportation-SDA.owl";
         addConsoleLogger();
 
-        Result sat = reasonerTest(new HornSatReasonerFactory(), ontology);
+        HornSatReasonerFactory factory = new HornSatReasonerFactory();
+        Result sat = reasonerTest(factory, ontology);
         Result hermit = reasonerTest(new Reasoner.ReasonerFactory(), ontology);
-        Result struct = reasonerTest(new ExtendedStructuralReasonerFactory(), ontology);
+        //Result struct = reasonerTest(new ExtendedStructuralReasonerFactory(), ontology);
 
         hermit.print("Hermit");
         sat.print("SAT");
-        struct.print("Structural");
+        //struct.print("Structural");
     }
 
     private Result reasonerTest(OWLReasonerFactory factory, String ontology) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
