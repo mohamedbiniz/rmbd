@@ -12,9 +12,10 @@ import org.sat4j.specs.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
-import org.semanticweb.owlapi.reasoner.impl.OWLReasonerBase;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 import org.semanticweb.owlapi.util.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -27,14 +28,34 @@ import java.util.*;
  */
 public class HornSatReasoner extends StructuralReasoner {
 
+    private static Logger logger = LoggerFactory.getLogger(HornSatReasoner.class.getName());
 
     private final Map<OWLClass, Integer> index = new HashMap<OWLClass, Integer>();
+
     private final Multimap<OWLAxiom, IVecInt> translations = HashMultimap.create();
+    private Multimap<IVecInt, IConstr> iConstrTranslation = HashMultimap.create();
+
     private final ISolver solver = SolverFactory.newDefault();
     private final Set<IVecInt> solverClauses = new HashSet<IVecInt>();
     private Set<OWLClass> unSatClasses = new HashSet<OWLClass>();
     private Boolean sat = null;
     private int maxIndex = 1;
+
+    private long[] measures = new long[3];
+
+    public long getCalls() {
+        return this.measures[0];
+    }
+
+    public long getCnfTime() {
+        this.measures[1] = System.currentTimeMillis() - this.measures[1];
+        return this.measures[1];
+    }
+
+    public void resetCalls() {
+        this.measures[0] = 0;
+        this.measures[1] = System.currentTimeMillis();
+    }
 
     public HornSatReasoner(OWLOntology ontology) {
         this(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
@@ -42,7 +63,7 @@ public class HornSatReasoner extends StructuralReasoner {
 
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
         super(ontology, config, buffering);
-        processAxioms(getReasonerAxioms());
+        processAxioms(getReasonerAxioms(), Collections.<OWLAxiom>emptySet());
     }
 
     public Set<OWLClass> getUnSatClasses() {
@@ -144,28 +165,69 @@ public class HornSatReasoner extends StructuralReasoner {
 
     @Override
     protected void handleChanges(Set<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
-        super.handleChanges(addAxioms, removeAxioms);
+        //super.handleChanges(addAxioms, removeAxioms);
         //processAxioms(getRootOntology().getAxioms());
-        processAxioms(getReasonerAxioms());
+        processAxioms(addAxioms, removeAxioms);
+
     }
 
-    private void processAxioms(Collection<OWLAxiom> axioms) {
+    private void processAxioms(Collection<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
         // clean up the solver instance
+        resetCalls();
         this.sat = null;
-        solver.reset();
+        //solver.reset();
         getSolverClauses().clear();
 
-        for (OWLAxiom axiom : axioms) {
-            processAxiom(axiom, new OWL2SATTranslator(this));
-            getSolverClauses().addAll(getTranslations().get(axiom));
+        for (OWLAxiom axiom : removeAxioms) {
+            Collection<IVecInt> clauses = processAxiom(axiom, new OWL2SATTranslator(this));
+            if (clauses != null)
+                for (IVecInt clause : clauses) {
+                    for (IConstr iConstr : getIConstrTranslations().get(clause)) {
+                        if (iConstr != null)
+                            solver.removeConstr(iConstr);
+                    }
+                    getIConstrTranslations().removeAll(clause);
+                }
         }
+
+        for (OWLAxiom axiom : addAxioms) {
+            Collection<IVecInt> clauses = processAxiom(axiom, new OWL2SATTranslator(this));
+            if (clauses != null)
+                for (IVecInt clause : clauses) {
+                    if (clause == null)
+                        continue;
+                    IConstr iConstr = null;
+                    try {
+                        iConstr = solver.addClause(clause);
+                    } catch (ContradictionException e) {
+                        this.sat = false;
+                        return;
+                    }
+                    getIConstrTranslations().put(clause, iConstr);
+                }
+
+            //getSolverClauses().addAll(clauses);
+        }
+
+        if (getCalls() != 0 && logger.isInfoEnabled())
+            logger.info("Converted to CNF in " + getCnfTime() + " ms using " + getCalls()
+                    + " calls");
+
+        if (getIConstrTranslations().size() != solver.nConstraints())
+            logger.error("Solver is not synchronized! (T/S) " +
+                    getIConstrTranslations().size() + "/" +  solver.nConstraints());
         //solver.newVar(getNumberOfVariables(getSolverClauses()));
         //solver.setExpectedNumberOfClauses(getSolverClauses().size());
+        /*
         try {
-            sync();
+            this.sat = null;
+            for (IVecInt cl : getSolverClauses()) {
+                solver.addClause(cl);
+            }
         } catch (ContradictionException e) {
             this.sat = false;
         }
+        */
     }
 
     @Override
@@ -198,13 +260,6 @@ public class HornSatReasoner extends StructuralReasoner {
             }
         }
         return var.size();
-    }
-
-    private void sync() throws ContradictionException {
-        this.sat = null;
-        for (IVecInt cl : getSolverClauses()) {
-            solver.addClause(cl);
-        }
     }
 
 
@@ -262,6 +317,7 @@ public class HornSatReasoner extends StructuralReasoner {
     }
 
     public Set<OWLClassExpression> convertToCNF(OWLClassExpression fl) {
+        this.measures[0]++;
         if (isDisjunctionOfLiterals(fl, false)) return Collections.singleton(fl);
 
         // apply distribution to non-unary disjunctions
@@ -271,34 +327,36 @@ public class HornSatReasoner extends StructuralReasoner {
                 return Collections.emptySet();
             if (disjuncs.size() == 1)
                 return convertToCNF(disjuncs.iterator().next());
-            OWLClassExpression conj = null, cl2 = null;
-            Set<OWLClassExpression> disj = new HashSet<OWLClassExpression>();
+            OWLClassExpression conj = null;
+            Set<OWLClassExpression> cl2 = new LinkedHashSet<OWLClassExpression>();
+            //Set<OWLClassExpression> disj = new HashSet<OWLClassExpression>();
             for (OWLClassExpression cl : disjuncs) {
-                if (conj == null && cl.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF) {
+                if (conj == null && !cl.isClassExpressionLiteral() && !isDisjunctionOfLiterals(cl, false)
+                        && cl.getClassExpressionType() == ClassExpressionType.OBJECT_INTERSECTION_OF)
                     conj = cl;
-                } else if (cl2 == null) cl2 = cl;
                 else
-                    disj.add(cl);
+                    cl2.add(cl);
             }
 
             if (conj == null) throw new RuntimeException("No conjunction for distribution! " + fl);
 
             Set<OWLClassExpression> newConj = new HashSet<OWLClassExpression>();
             for (OWLClassExpression c : conj.asConjunctSet()) {
-                OWLClassExpression newClause = getOWLDataFactory().getOWLObjectUnionOf(cl2, c);
+                OWLClassExpression newClause = getOWLDataFactory().getOWLObjectUnionOf(
+                        getOWLDataFactory().getOWLObjectUnionOf(cl2), c);
                 Set<OWLClassExpression> exprs = convertToCNF(newClause);
                 newConj.addAll(exprs);
             }
 
             // return single conjunction as a set of clauses
-            if (disj.isEmpty())
-                return newConj;
+            //if (disj.isEmpty())
+            return newConj;
 
-            disj.add(getOWLDataFactory().getOWLObjectIntersectionOf(newConj));
+            //disj.add(getOWLDataFactory().getOWLObjectIntersectionOf(newConj));
 
             // add to a source disjunction replacing two selected conjunctions
-            OWLClassExpression expr = getOWLDataFactory().getOWLObjectUnionOf(disj);
-            return convertToCNF(expr);
+            //OWLClassExpression expr = getOWLDataFactory().getOWLObjectUnionOf(disj);
+            //return convertToCNF(expr);
         } else {
             // verify whether we have a CNF
             Set<OWLClassExpression> cnf = new HashSet<OWLClassExpression>();
@@ -320,5 +378,9 @@ public class HornSatReasoner extends StructuralReasoner {
             }
         } else return false;
         return true;
+    }
+
+    public Multimap<IVecInt, IConstr> getIConstrTranslations() {
+        return this.iConstrTranslation;
     }
 }

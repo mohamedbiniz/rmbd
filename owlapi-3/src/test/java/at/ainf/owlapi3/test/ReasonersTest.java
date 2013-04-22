@@ -137,7 +137,7 @@ public class ReasonersTest {
 
         HornSatReasoner sat = new HornSatReasoner(ontology);
         assertTrue(sat.isConsistent());
-        logger.info("Entailment holds");
+        logger.info("KB is consistent");
         for (OWLLogicalAxiom owlLogicalAxiom : ontology.getLogicalAxioms()) {
             OWLClassExpression expr = sat.processAxiom(owlLogicalAxiom, new OWLClassAxiomNegation(sat));
             if (expr != null)
