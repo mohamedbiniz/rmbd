@@ -486,12 +486,12 @@ public class TestNew {
 
 
         String onto = "ontologies/mouse2humangenlogmap.owl";
-        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
         OWLIncoherencyExtractor justExtr = new OWLJustificationIncoherencyExtractor(new Reasoner.ReasonerFactory());
 
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream(onto);
         OWLOntology ontFull = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(koalaStream);
 
+        OWLIncoherencyExtractor extractor = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
         long timeFull = System.currentTimeMillis();
         Set<OWLLogicalAxiom> all = extractor.getIncoherentPartAsOntology(ontFull).getLogicalAxioms();
         timeFull = System.currentTimeMillis() - timeFull;
