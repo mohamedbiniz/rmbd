@@ -113,7 +113,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
         Differencing<E> dif = new Differencing<E>(desc);
 
-        findPartition(dif);   // calculates partition where daigs in dx have common entailments
+        findPartition(dif);   // calculates partition where diags in dx have common entailments
         Collections.sort(getPartitions(), new Comparator<Partition<Id>>() {
             public int compare(Partition<Id> o1, Partition<Id> o2) {
                 int res = o1.difference.compareTo(o2.difference);
