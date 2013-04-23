@@ -32,6 +32,10 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
         this.unsatClasses = null;
     }
 
+    public Set<OWLClass> getUnsatClasses() {
+        return unsatClasses;
+    }
+
     @Override
     public OWLReasoner createNonBufferingReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
         HornSatReasoner reasoner = new HornSatReasoner(ontology, config, BufferingMode.NON_BUFFERING);

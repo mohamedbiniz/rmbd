@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.module.iterative;
 
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;

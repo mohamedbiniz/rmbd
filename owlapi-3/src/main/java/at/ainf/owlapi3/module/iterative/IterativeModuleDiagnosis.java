@@ -50,12 +50,11 @@ public class IterativeModuleDiagnosis {
         //Set<OWLLogicalAxiom> bigModule = provider.getModuleUnsatClass();
         moduleCalculator = new ModuleCalc(fullOntology, factory);
 
-        //unsatMap = provider.getUnsatClasses();
         this.ontoAxioms = ontoAxioms;
         this.mappings = mappings;
         this.diagSearcher = moduleDiagSearcher;
         this.sortNodes = sortNodes;
-
+        diagSearcher.setReasonerFactory(factory);
     }
 
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
