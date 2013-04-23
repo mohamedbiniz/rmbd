@@ -16,6 +16,7 @@ import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,8 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
     private Map<OWLLogicalAxiom, BigDecimal> confidences;
 
+    private OWLReasonerFactory factory;
+
     public ModuleMinDiagSearcher() {
         this (null);
 
@@ -43,6 +46,16 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
     public ModuleMinDiagSearcher(Map<OWLLogicalAxiom, BigDecimal> confidences) {
         this.maxDiags = 1;
         this.confidences = confidences;
+    }
+
+    @Override
+    public void setReasonerFactory(OWLReasonerFactory reasonerFactory) {
+        factory = reasonerFactory;
+    }
+
+    @Override
+    public OWLReasonerFactory getReasonerFactory() {
+        return factory;
     }
 
     protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
@@ -63,7 +76,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         OWLTheory theory = null;
         OWLOntology ontology = createOntology(axioms);
         try {
-            theory = new OWLTheory(new Reasoner.ReasonerFactory(), ontology, backg);
+            theory = new OWLTheory(getReasonerFactory(), ontology, backg);
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SolverException e) {

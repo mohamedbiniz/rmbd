@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.module.iterative;
 
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.util.Collection;
 import java.util.Set;
@@ -15,5 +16,9 @@ import java.util.Set;
 public interface ModuleDiagSearcher {
 
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg);
+
+    public void setReasonerFactory(OWLReasonerFactory reasonerFactory);
+
+    public OWLReasonerFactory getReasonerFactory();
 
 }
