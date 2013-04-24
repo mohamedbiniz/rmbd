@@ -118,10 +118,13 @@ public class ReasonersTest {
         private List<Long> time = new ArrayList<Long>(10);
         private Set<FormulaSet<OWLLogicalAxiom>> diagnoses = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>();
         private Set<FormulaSet<OWLLogicalAxiom>> conflicts = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>();
+        private boolean printResults = false;
 
         public void print(String name) {
-            printAxiomSet(name, "Diagnosis",  diagnoses);
-            printAxiomSet(name, "Conflict", conflicts);
+            if (printResults){
+                printAxiomSet(name, "Diagnosis",  diagnoses);
+                printAxiomSet(name, "Conflict", conflicts);
+            }
 
             Collections.sort(time);
             long avg = 0;
@@ -171,7 +174,7 @@ public class ReasonersTest {
         //Thread.sleep(5000);
         String ontology = "ontologies/ecai.incoherent.owl";
         //String ontology = "ontologies/Transportation-SDA.owl";
-        addConsoleLogger();
+        //addConsoleLogger();
 
         HornSatReasonerFactory factory = new HornSatReasonerFactory();
         Result sat = reasonerTest(factory, ontology);
@@ -185,7 +188,7 @@ public class ReasonersTest {
 
     private Result reasonerTest(OWLReasonerFactory factory, String ontology) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
         Result res = new Result();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             long time = System.currentTimeMillis();
             HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = computeDianoses(ontology,
                     Collections.<OWLReasonerFactory>singletonList(factory));
