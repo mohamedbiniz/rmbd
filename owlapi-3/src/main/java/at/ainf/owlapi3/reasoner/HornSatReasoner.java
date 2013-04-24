@@ -153,12 +153,20 @@ public class HornSatReasoner extends StructuralReasoner {
         if (classes.isEmpty())
             classes = getRootOntology().getClassesInSignature();
 
+        /*
+        OWLObjectIntersectionOf test = getDataFactory().getOWLObjectIntersectionOf(classes);
+        if (!isSatisfiable(test)) {
+            sat = false;
+            return sat;
+        }
+        */
         for (OWLClass owlClass : classes) {
             if (!isSatisfiable(owlClass)) {
                 sat = false;
                 return sat;
             }
         }
+
         sat = true;
         return sat;
     }
@@ -215,7 +223,7 @@ public class HornSatReasoner extends StructuralReasoner {
 
         if (getIConstrTranslations().size() != solver.nConstraints())
             logger.error("Solver is not synchronized! (T/S) " +
-                    getIConstrTranslations().size() + "/" +  solver.nConstraints());
+                    getIConstrTranslations().size() + "/" + solver.nConstraints());
         //solver.newVar(getNumberOfVariables(getSolverClauses()));
         //solver.setExpectedNumberOfClauses(getSolverClauses().size());
         /*
@@ -237,17 +245,21 @@ public class HornSatReasoner extends StructuralReasoner {
     }
 
     public <T> T processAxiom(OWLAxiom axiom, Translator<T> translator) {
+        T translation = null;
         if (axiom.getAxiomType() == AxiomType.SUBCLASS_OF)
-            return translator.visit((OWLSubClassOfAxiom) axiom);
+            translation = translator.visit((OWLSubClassOfAxiom) axiom);
         else if (axiom.getAxiomType() == AxiomType.EQUIVALENT_CLASSES)
-            return translator.visit((OWLEquivalentClassesAxiom) axiom);
+            translation = translator.visit((OWLEquivalentClassesAxiom) axiom);
         else if (axiom.getAxiomType() == AxiomType.DISJOINT_UNION)
-            return translator.visit((OWLDisjointUnionAxiom) axiom);
+            translation = translator.visit((OWLDisjointUnionAxiom) axiom);
         else if (axiom.getAxiomType() == AxiomType.DISJOINT_CLASSES)
-            return translator.visit((OWLDisjointClassesAxiom) axiom);
+            translation = translator.visit((OWLDisjointClassesAxiom) axiom);
         //else if (axiom.getAxiomType() == AxiomType.CLASS_ASSERTION)
         //    return translator.visit((OWLClassAssertionAxiom) axiom);
-        return null;
+
+
+
+        return translation;
     }
 
     private int getNumberOfVariables(Set<IVecInt> solverClauses) {
