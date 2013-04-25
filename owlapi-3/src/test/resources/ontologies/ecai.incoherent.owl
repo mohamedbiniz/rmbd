@@ -164,6 +164,77 @@
             </owl:Class>
         </rdfs:subClassOf>
     </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#Y1 -->
+
+    <owl:Class rdf:about="&ecai;Y1">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:complementOf rdf:resource="&ecai;Y4"/>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#Y2 -->
+
+    <owl:Class rdf:about="&ecai;Y2">
+        <rdfs:subClassOf rdf:resource="&ecai;Y1"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#Y3 -->
+
+    <owl:Class rdf:about="&ecai;Y3">
+        <rdfs:subClassOf rdf:resource="&ecai;Y2"/>
+        <rdfs:subClassOf rdf:resource="&ecai;Y5"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#Y4 -->
+
+    <owl:Class rdf:about="&ecai;Y4"/>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#Y5 -->
+
+    <owl:Class rdf:about="&ecai;Y5">
+        <rdfs:subClassOf rdf:resource="&ecai;Y4"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#Z1 -->
+
+    <owl:Class rdf:about="&ecai;Z1">
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:complementOf rdf:resource="&ecai;Z3"/>
+            </owl:Class>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#Z2 -->
+
+    <owl:Class rdf:about="&ecai;Z2">
+        <rdfs:subClassOf rdf:resource="&ecai;Z1"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/ontologies/2010/0/ecai.owl#Z3 -->
+
+    <owl:Class rdf:about="&ecai;Z3">
+        <rdfs:subClassOf rdf:resource="&ecai;Z2"/>
+    </owl:Class>
 </rdf:RDF>
 
 
