@@ -43,7 +43,7 @@ public class HornSatReasoner extends StructuralReasoner {
     private long[] measures = new long[3];
     private Set<OWLClass> relevantClasses = new HashSet<OWLClass>();
 
-    private boolean extractingCones = true;
+    private boolean extractingCones = false;
 
     public long getCalls() {
         return this.measures[0];
@@ -189,7 +189,7 @@ public class HornSatReasoner extends StructuralReasoner {
         this.sat = null;
         //solver.reset();
         getSolverClauses().clear();
-        Set<Integer> constrainedSymbols = new HashSet<Integer>();
+        Set<IVecInt> constraints = new HashSet<IVecInt>();
 
         for (OWLAxiom axiom : removeAxioms) {
             Collection<IVecInt> clauses = processAxiom(axiom, new OWL2SATTranslator(this));
@@ -221,20 +221,33 @@ public class HornSatReasoner extends StructuralReasoner {
                         return;
                     }
                     getIConstrTranslations().put(clause, iConstr);
-                    if (isExtractingCones())
-                        constrainedSymbols.addAll(analyzeSymbols(clause));
+                    if (isExtractingCones() && isConstraint(clause))
+                        constraints.add(clause);
                 }
         }
         //getSolverClauses().addAll(clauses);
         int sigSize = getRootOntology().getClassesInSignature().size();
         if (isExtractingCones()) {
             Set<Integer> cone = new HashSet<Integer>();
-            for (Integer symbol : constrainedSymbols) {
-                cone = extractCone(symbol, cone);
-                // break if the whole signature is relevant to possible unsat classes
+            for (IVecInt constraint : constraints) {
+                Set<Integer> supportingSymbols = new HashSet<Integer>(sigSize);
+                for (IteratorInt iterator = constraint.iterator(); iterator.hasNext(); ) {
+                    int symbol = iterator.next();
+                    Set<Integer> symbols = extractCone(symbol, new HashSet<Integer>(sigSize));
+
+                    if (supportingSymbols.isEmpty())
+                        supportingSymbols = symbols;
+                    else
+                        supportingSymbols.retainAll(symbols);
+
+                    if (supportingSymbols.size() == sigSize)
+                        break;
+                }
+                cone.addAll(supportingSymbols);
                 if (cone.size() == sigSize)
                     break;
             }
+
 
             if (cone.isEmpty())
                 getRelevantClasses().clear();
@@ -302,6 +315,18 @@ public class HornSatReasoner extends StructuralReasoner {
                 symbols.add(symbol);
         }
         return symbols;
+    }
+
+    private boolean isConstraint(IVecInt clause) {
+        boolean constraint = true;
+        for (IteratorInt iterator = clause.iterator(); iterator.hasNext(); ) {
+            int symbol = iterator.next();
+            if (symbol >= 0) {
+                getSymbolsToClauses().put(symbol, clause);
+                constraint = false;
+            }
+        }
+        return constraint;
     }
 
     private Set<Integer> analyzeSymbols(IVecInt clause) {
