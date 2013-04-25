@@ -57,8 +57,8 @@ public class ReasonersTest {
         OWLOntology ontology = extractor.getIncoherentPartAsOntology(ontologyFull);
 
 
-         if (factoryList.size() == 1 && factoryList.get(0) instanceof HornSatReasonerFactory)
-            ((HornSatReasonerFactory) factoryList.get(0)).precomputeUnsatClasses(ontology);
+         //if (factoryList.size() == 1 && factoryList.get(0) instanceof HornSatReasonerFactory)
+         //   ((HornSatReasonerFactory) factoryList.get(0)).precomputeUnsatClasses(ontology);
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
@@ -171,6 +171,7 @@ public class ReasonersTest {
 
     @Test
     public void satTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, InterruptedException {
+        addConsoleLogger();
         //Thread.sleep(5000);
         String ontology = "ontologies/ecai.incoherent.owl";
         //String ontology = "ontologies/Transportation-SDA.owl";
