@@ -3,9 +3,7 @@ package at.ainf.owlapi3.reasoner;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWL2SATTranslator;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWLClassAxiomNegation;
 import at.ainf.owlapi3.reasoner.axiomprocessors.Translator;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.*;
@@ -30,9 +28,10 @@ public class HornSatReasoner extends StructuralReasoner {
 
     private static Logger logger = LoggerFactory.getLogger(HornSatReasoner.class.getName());
 
-    private final Map<OWLClass, Integer> index = new HashMap<OWLClass, Integer>();
+    private final BiMap<OWLClass, Integer> index = HashBiMap.create();
 
     private final Multimap<OWLAxiom, IVecInt> translations = HashMultimap.create();
+    private final Multimap<Integer, IVecInt> symbolsToClauses = HashMultimap.create();
     private Multimap<IVecInt, IConstr> iConstrTranslation = HashMultimap.create();
 
     private final ISolver solver = SolverFactory.newDefault();
@@ -42,6 +41,9 @@ public class HornSatReasoner extends StructuralReasoner {
     private int maxIndex = 1;
 
     private long[] measures = new long[3];
+    private Set<OWLClass> relevantClasses = new HashSet<OWLClass>();
+
+    private boolean extractingCones = true;
 
     public long getCalls() {
         return this.measures[0];
@@ -67,6 +69,8 @@ public class HornSatReasoner extends StructuralReasoner {
     }
 
     public Set<OWLClass> getUnSatClasses() {
+        if (isExtractingCones())
+            return Sets.intersection(unSatClasses, getRelevantClasses());
         return Sets.intersection(unSatClasses, getRootOntology().getClassesInSignature());
     }
 
@@ -185,6 +189,7 @@ public class HornSatReasoner extends StructuralReasoner {
         this.sat = null;
         //solver.reset();
         getSolverClauses().clear();
+        Set<Integer> constrainedSymbols = new HashSet<Integer>();
 
         for (OWLAxiom axiom : removeAxioms) {
             Collection<IVecInt> clauses = processAxiom(axiom, new OWL2SATTranslator(this));
@@ -194,7 +199,11 @@ public class HornSatReasoner extends StructuralReasoner {
                         if (iConstr != null)
                             solver.removeConstr(iConstr);
                     }
+                    // remove old translations
                     getIConstrTranslations().removeAll(clause);
+                    // unregister clauses by corresponding symbols
+                    if (isExtractingCones())
+                        getSymbolsToClauses().values().remove(clause);
                 }
         }
 
@@ -212,10 +221,29 @@ public class HornSatReasoner extends StructuralReasoner {
                         return;
                     }
                     getIConstrTranslations().put(clause, iConstr);
+                    if (isExtractingCones())
+                        constrainedSymbols.addAll(analyzeSymbols(clause));
                 }
-
-            //getSolverClauses().addAll(clauses);
         }
+        //getSolverClauses().addAll(clauses);
+        int sigSize = getRootOntology().getClassesInSignature().size();
+        if (isExtractingCones()) {
+            Set<Integer> cone = new HashSet<Integer>();
+            for (Integer symbol : constrainedSymbols) {
+                cone = extractCone(symbol, cone);
+                // break if the whole signature is relevant to possible unsat classes
+                if (cone.size() == sigSize)
+                    break;
+            }
+
+            if (cone.isEmpty())
+                getRelevantClasses().clear();
+            else {
+                Set<OWLClass> classes = convertToOWLClasses(cone);
+                getRelevantClasses().addAll(classes);
+            }
+        }
+
 
         if (getCalls() != 0 && logger.isInfoEnabled())
             logger.info("Converted to CNF in " + getCnfTime() + " ms using " + getCalls()
@@ -238,6 +266,60 @@ public class HornSatReasoner extends StructuralReasoner {
         */
     }
 
+    private Set<OWLClass> convertToOWLClasses(Set<Integer> cone) {
+        Set<OWLClass> classes = new HashSet<OWLClass>(cone.size());
+        for (Integer symbol : cone) {
+            OWLClass ocl = getIndex(symbol);
+            classes.add(ocl);
+        }
+        return classes;
+    }
+
+    public Multimap<Integer, IVecInt> getSymbolsToClauses() {
+        return symbolsToClauses;
+    }
+
+    private Set<Integer> extractCone(Integer literal, Set<Integer> cone) {
+        // remove negation
+        int symbol = Math.abs(literal);
+        if (cone.contains(symbol)) return cone;
+        cone.add(symbol);
+        // analyze clauses in which symbol is positive, i.e. in the head of a rule
+        for (IVecInt clause : getSymbolsToClauses().get(symbol)) {
+            Set<Integer> neg = getNegativeSymbols(clause);
+            for (Integer lit : neg) {
+                extractCone(lit, cone);
+            }
+        }
+        return cone;
+    }
+
+    private Set<Integer> getNegativeSymbols(IVecInt clause) {
+        Set<Integer> symbols = new HashSet<Integer>(clause.size());
+        for (IteratorInt iterator = clause.iterator(); iterator.hasNext(); ) {
+            int symbol = iterator.next();
+            if (symbol < 0)
+                symbols.add(symbol);
+        }
+        return symbols;
+    }
+
+    private Set<Integer> analyzeSymbols(IVecInt clause) {
+        Set<Integer> symbols = new HashSet<Integer>(clause.size());
+        boolean constraint = true;
+        for (IteratorInt iterator = clause.iterator(); iterator.hasNext(); ) {
+            int symbol = iterator.next();
+            if (symbol >= 0) {
+                getSymbolsToClauses().put(symbol, clause);
+                constraint = false;
+            } else if (constraint)
+                symbols.add(-1 * (symbol));
+        }
+        if (constraint)
+            return symbols;
+        return Collections.emptySet();
+    }
+
     @Override
     public boolean isEntailmentCheckingSupported(AxiomType<?> axiomType) {
         return axiomType == AxiomType.SUBCLASS_OF || axiomType == AxiomType.EQUIVALENT_CLASSES ||
@@ -256,7 +338,6 @@ public class HornSatReasoner extends StructuralReasoner {
             translation = translator.visit((OWLDisjointClassesAxiom) axiom);
         //else if (axiom.getAxiomType() == AxiomType.CLASS_ASSERTION)
         //    return translator.visit((OWLClassAssertionAxiom) axiom);
-
 
 
         return translation;
@@ -303,6 +384,10 @@ public class HornSatReasoner extends StructuralReasoner {
 
     protected Map<OWLClass, Integer> getIndex() {
         return index;
+    }
+
+    private OWLClass getIndex(int index) {
+        return this.index.inverse().get(index);
     }
 
     protected Set<IVecInt> getSolverClauses() {
@@ -394,5 +479,21 @@ public class HornSatReasoner extends StructuralReasoner {
 
     public Multimap<IVecInt, IConstr> getIConstrTranslations() {
         return this.iConstrTranslation;
+    }
+
+    public void setRelevantClasses(Set<OWLClass> relevantClasses) {
+        this.relevantClasses = relevantClasses;
+    }
+
+    public Set<OWLClass> getRelevantClasses() {
+        return relevantClasses;
+    }
+
+    public boolean isExtractingCones() {
+        return extractingCones;
+    }
+
+    public void setExtractingCones(boolean extractingCones) {
+        this.extractingCones = extractingCones;
     }
 }
