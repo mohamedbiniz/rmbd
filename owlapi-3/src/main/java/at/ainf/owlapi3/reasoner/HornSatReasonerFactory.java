@@ -1,10 +1,12 @@
 package at.ainf.owlapi3.reasoner;
 
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**

@@ -30,12 +30,12 @@ public class HornSatReasoner extends StructuralReasoner {
 
     private final BiMap<OWLClass, Integer> index = HashBiMap.create();
 
+    // caching of transformations
     private final Multimap<OWLAxiom, IVecInt> translations = HashMultimap.create();
     private final Multimap<Integer, IVecInt> symbolsToClauses = HashMultimap.create();
     private Multimap<IVecInt, IConstr> iConstrTranslation = HashMultimap.create();
 
     private final ISolver solver = SolverFactory.newDefault();
-    private final Set<IVecInt> solverClauses = new HashSet<IVecInt>();
     private Set<OWLClass> unSatClasses = new HashSet<OWLClass>();
     private Boolean sat = null;
     private int maxIndex = 1;
@@ -65,11 +65,10 @@ public class HornSatReasoner extends StructuralReasoner {
 
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
         super(ontology, config, buffering);
-        processAxioms(getReasonerAxioms(), Collections.<OWLAxiom>emptySet());
     }
 
     public Set<OWLClass> getUnSatClasses() {
-        if (isExtractingCones())
+        if (!getRelevantClasses().isEmpty())
             return Sets.intersection(unSatClasses, getRelevantClasses());
         return Sets.intersection(unSatClasses, getRootOntology().getClassesInSignature());
     }
@@ -113,11 +112,23 @@ public class HornSatReasoner extends StructuralReasoner {
     @Override
     public Node<OWLClass> getUnsatisfiableClasses() throws ReasonerInterruptedException, TimeOutException {
         Set<OWLClass> unSat = new HashSet<OWLClass>();
-        for (OWLClass owlClass : getRootOntology().getClassesInSignature()) {
+        Set<OWLClass> classesInSignature = extractPossiblyUnsatClasses();
+        //Set<OWLClass> classesInSignature = (getRelevantClasses().isEmpty()) ?
+        //        getRootOntology().getClassesInSignature() : getRelevantClasses();
+
+        for (OWLClass owlClass : classesInSignature) {
             if (!isSatisfiable(owlClass))
                 unSat.add(owlClass);
         }
         return new OWLClassNode(unSat);
+    }
+
+    private Set<OWLClass> extractPossiblyUnsatClasses() {
+        boolean extract = isExtractingCones();
+        setExtractingCones(true);
+        processAxioms();
+        setExtractingCones(extract);
+        return getRelevantClasses();
     }
 
     @Override
@@ -188,7 +199,6 @@ public class HornSatReasoner extends StructuralReasoner {
         resetCalls();
         this.sat = null;
         //solver.reset();
-        getSolverClauses().clear();
         Set<IVecInt> constraints = new HashSet<IVecInt>();
 
         for (OWLAxiom axiom : removeAxioms) {
@@ -228,15 +238,21 @@ public class HornSatReasoner extends StructuralReasoner {
         //getSolverClauses().addAll(clauses);
         int sigSize = getRootOntology().getClassesInSignature().size();
         if (isExtractingCones()) {
+            getRelevantClasses().clear();
+            Multimap<Integer, Integer> supportingMap = HashMultimap.create();
             Set<Integer> cone = new HashSet<Integer>();
             for (IVecInt constraint : constraints) {
                 Set<Integer> supportingSymbols = new HashSet<Integer>(sigSize);
                 for (IteratorInt iterator = constraint.iterator(); iterator.hasNext(); ) {
                     int symbol = iterator.next();
-                    Set<Integer> symbols = extractCone(symbol, new HashSet<Integer>(sigSize));
+                    Collection<Integer> symbols;
+                    if (!supportingMap.containsKey(symbol)) {
+                        symbols = extractCone(symbol, new HashSet<Integer>(sigSize));
+                        supportingMap.putAll(symbol, symbols);
+                    } else symbols = supportingMap.get(symbol);
 
                     if (supportingSymbols.isEmpty())
-                        supportingSymbols = symbols;
+                        supportingSymbols.addAll(symbols);
                     else
                         supportingSymbols.retainAll(symbols);
 
@@ -248,15 +264,11 @@ public class HornSatReasoner extends StructuralReasoner {
                     break;
             }
 
-
-            if (cone.isEmpty())
-                getRelevantClasses().clear();
-            else {
+            if (!cone.isEmpty()) {
                 Set<OWLClass> classes = convertToOWLClasses(cone);
                 getRelevantClasses().addAll(classes);
             }
         }
-
 
         if (getCalls() != 0 && logger.isInfoEnabled())
             logger.info("Converted to CNF in " + getCnfTime() + " ms using " + getCalls()
@@ -415,10 +427,6 @@ public class HornSatReasoner extends StructuralReasoner {
         return this.index.inverse().get(index);
     }
 
-    protected Set<IVecInt> getSolverClauses() {
-        return solverClauses;
-    }
-
     public Multimap<OWLAxiom, IVecInt> getTranslations() {
         return translations;
     }
@@ -520,5 +528,9 @@ public class HornSatReasoner extends StructuralReasoner {
 
     public void setExtractingCones(boolean extractingCones) {
         this.extractingCones = extractingCones;
+    }
+
+    void processAxioms() {
+        processAxioms(getReasonerAxioms(), Collections.<OWLAxiom>emptySet());
     }
 }
