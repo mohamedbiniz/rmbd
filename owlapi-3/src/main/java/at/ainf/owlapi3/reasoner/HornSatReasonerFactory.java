@@ -1,12 +1,12 @@
 package at.ainf.owlapi3.reasoner;
 
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 
-import java.util.Collections;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -20,17 +20,33 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
 
     private Set<OWLClass> unsatClasses = null;
 
+    private boolean precompute = true;
+
     @Override
     public String getReasonerName() {
         return "Horn SAT Reasoner";
     }
 
-    public void precomputeUnsatClasses(OWLOntology ontology) {
-        HornSatReasoner reasoner = new HornSatReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
-        unsatClasses = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+    public void setPrecomputeUnsatClasses(boolean precompute) {
+        this.precompute = precompute;
     }
 
-    public void resetUnsatClasses(){
+    public boolean isPrecomputingUnSatClasses() {
+        return precompute;
+    }
+
+    public void precomputeUnsatClasses(OWLOntology ontology) {
+        HornSatReasoner reasoner = new HornSatReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+        computeUnSatClasses(reasoner);
+    }
+
+    private Collection<OWLClass> computeUnSatClasses(HornSatReasoner reasoner) {
+        reasoner.extractPossiblyUnsatClasses();
+        unsatClasses = reasoner.getUnsatisfiableClasses().getEntities();
+        return this.unsatClasses;
+    }
+
+    public void resetUnsatClasses() {
         this.unsatClasses = null;
     }
 
@@ -41,16 +57,24 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
     @Override
     public OWLReasoner createNonBufferingReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
         HornSatReasoner reasoner = new HornSatReasoner(ontology, config, BufferingMode.NON_BUFFERING);
-        if (this.unsatClasses != null)
-            reasoner.setUnSatClasses(this.unsatClasses);
+        initReasoner(reasoner);
         return reasoner;
+    }
+
+    private void initReasoner(HornSatReasoner reasoner) {
+        if (getUnsatClasses() != null)
+            reasoner.setUnSatClasses(getUnsatClasses());
+        else if (isPrecomputingUnSatClasses()) {
+            Collection<OWLClass> classes = computeUnSatClasses(reasoner);
+            if (classes != null)
+                reasoner.setUnSatClasses(new HashSet<OWLClass>(classes));
+        }
     }
 
     @Override
     public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
         HornSatReasoner reasoner = new HornSatReasoner(ontology, config, BufferingMode.BUFFERING);
-        if (this.unsatClasses != null)
-            reasoner.setUnSatClasses(this.unsatClasses);
+        initReasoner(reasoner);
         return reasoner;
     }
 }
