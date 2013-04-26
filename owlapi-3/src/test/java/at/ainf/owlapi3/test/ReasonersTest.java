@@ -17,6 +17,7 @@ import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWLClassAxiomNegation;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.perf4j.aop.Profiled;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -48,6 +49,7 @@ public class ReasonersTest {
         return new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
     }
 
+    @Profiled(tag="ComputationDiagnoses")
     public HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> computeDianoses(String ontologyString, List<OWLReasonerFactory> factoryList) throws OWLOntologyCreationException, InconsistentTheoryException, SolverException {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream(ontologyString);
@@ -142,7 +144,7 @@ public class ReasonersTest {
 
     @Test
     public void testEntailment() throws OWLOntologyCreationException {
-        addConsoleLogger();
+        //addConsoleLogger();
         String ontologyString = "ontologies/ecai.corrected.owl";
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream(ontologyString);
         OWLOntology ontology = OWLManager.createOWLOntologyManager().
@@ -171,13 +173,14 @@ public class ReasonersTest {
 
     @Test
     public void satTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, InterruptedException {
-        addConsoleLogger();
+        //addConsoleLogger();
         //Thread.sleep(5000);
         String ontology = "ontologies/ecai.incoherent.owl";
         //String ontology = "ontologies/Transportation-SDA.owl";
         //addConsoleLogger();
 
         HornSatReasonerFactory factory = new HornSatReasonerFactory();
+        factory.setPrecomputeUnsatClasses(true);
         Result sat = reasonerTest(factory, ontology);
         Result hermit = reasonerTest(new Reasoner.ReasonerFactory(), ontology);
         //Result struct = reasonerTest(new ExtendedStructuralReasonerFactory(), ontology);
