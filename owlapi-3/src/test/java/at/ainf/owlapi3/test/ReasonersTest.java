@@ -11,7 +11,6 @@ import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.reasoner.ExtendedStructuralReasonerFactory;
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWLClassAxiomNegation;
@@ -22,7 +21,8 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.*;
+import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.reasoner.UnsupportedEntailmentTypeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
@@ -30,7 +30,6 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 import java.io.InputStream;
 import java.util.*;
 
-import static at.ainf.owlapi3.base.tools.LoggerUtils.addConsoleLogger;
 import static org.junit.Assert.assertTrue;
 
 /**
