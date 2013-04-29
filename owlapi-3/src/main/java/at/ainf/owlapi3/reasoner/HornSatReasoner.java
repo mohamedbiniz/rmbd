@@ -10,7 +10,7 @@ import org.sat4j.specs.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
-import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
+//import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 import org.semanticweb.owlapi.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public class HornSatReasoner extends StructuralReasoner {
         super(ontology, config, buffering);
         boolean extract = isExtractingCoresOnUpdate();
         setExtractCoresOnUpdate(true);
-        processAxioms(getReasonerAxioms(), Collections.<OWLAxiom>emptySet());
+        processAxioms(getReasonerAxiomsSet(), Collections.<OWLAxiom>emptySet());
         Set<OWLClass> entities = getUnsatisfiableClasses().getEntities();
         this.unSatClasses = Collections.unmodifiableSet(entities);
         setExtractCoresOnUpdate(extract);
@@ -84,7 +84,7 @@ public class HornSatReasoner extends StructuralReasoner {
 
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering, Set<OWLClass> unSatClasses) {
         super(ontology, config, buffering);
-        processAxioms(getReasonerAxioms(), Collections.<OWLAxiom>emptySet());
+        processAxioms(getReasonerAxiomsSet(), Collections.<OWLAxiom>emptySet());
         this.unSatClasses = Collections.unmodifiableSet(unSatClasses);
     }
 
@@ -151,7 +151,7 @@ public class HornSatReasoner extends StructuralReasoner {
     }
 
     Set<OWLClass> extractPossiblyUnsatClasses() {
-        Set<IVecInt> constraints = getConstraints(getReasonerAxioms());
+        Set<IVecInt> constraints = getConstraints(getReasonerAxiomsSet());
         return extractCore(constraints);
     }
 
@@ -585,4 +585,6 @@ public class HornSatReasoner extends StructuralReasoner {
     void setExtractCoresOnUpdate(boolean extractCoresOnUpdate) {
         this.extractCoresOnUpdate = extractCoresOnUpdate;
     }
+
+
 }
