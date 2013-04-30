@@ -24,7 +24,7 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
 
     @Override
     public String getReasonerName() {
-        return "Horn SAT Reasoner";
+        return HornSatReasoner.NAME;
     }
 
     public void setPrecomputeUnsatClasses(boolean precompute) {
