@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.module.iterative;
 
+import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -29,7 +30,7 @@ public class ModuleCalc {
         this.ontology = ontology;
 
         OWLOntology onto = createOntology(ontology);
-        if (reasonerFactory.getReasonerName().equals("Horn SAT Reasoner")) {
+        if (reasonerFactory.getReasonerName().equals(HornSatReasoner.NAME)) {
             HornSatReasonerFactory hornSatReasonerFactory = (HornSatReasonerFactory) reasonerFactory;
             hornSatReasonerFactory.precomputeUnsatClasses(onto);
             this.reasoner = reasonerFactory.createNonBufferingReasoner(onto);

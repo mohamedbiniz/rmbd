@@ -24,7 +24,7 @@ import java.util.*;
  * Time: 23:20
  * To change this template use File | Settings | File Templates.
  */
-public class HornSatReasoner extends StructuralReasoner {
+public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     private static Logger logger = LoggerFactory.getLogger(HornSatReasoner.class.getName());
 
@@ -46,6 +46,8 @@ public class HornSatReasoner extends StructuralReasoner {
     private Set<OWLClass> relevantClasses = null;
     //private Set<IVecInt> constraints = new HashSet<IVecInt>();
     private boolean extractCoresOnUpdate = true;
+
+    public final static String NAME = "SAT Reasoner for OWL";
 
     public long getCalls() {
         return this.measures[0];
@@ -96,7 +98,7 @@ public class HornSatReasoner extends StructuralReasoner {
 
     @Override
     public String getReasonerName() {
-        return "SAT Reasoner for OWL";
+        return NAME;
     }
 
     @Override
