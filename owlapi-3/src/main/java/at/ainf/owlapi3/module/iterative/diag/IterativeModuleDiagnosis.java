@@ -1,16 +1,13 @@
-package at.ainf.owlapi3.module.iterative;
+package at.ainf.owlapi3.module.iterative.diag;
 
-import org.semanticweb.HermiT.Reasoner;
-import org.semanticweb.owlapi.apibinding.OWLManager;
+import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.util.*;
 
@@ -21,19 +18,9 @@ import java.util.*;
  * Time: 09:54
  * To change this template use File | Settings | File Templates.
  */
-public class IterativeModuleDiagnosis {
+public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
-
-
-    private ModuleDiagSearcher diagSearcher;
-
-    //private Map<OWLClass, Set<OWLLogicalAxiom>> unsatMap;
-
-    private ModuleCalc moduleCalculator;
-
-    private Set<OWLLogicalAxiom> mappings;
-
-    private final Set<OWLLogicalAxiom> ontoAxioms;
+    private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
 
     private final boolean sortNodes;
 
@@ -41,47 +28,41 @@ public class IterativeModuleDiagnosis {
                                     OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher,
                                     boolean sortNodes) {
 
-        Set<OWLLogicalAxiom> allAxioms = new HashSet<OWLLogicalAxiom>();
-        allAxioms.addAll(ontoAxioms);
-        allAxioms.addAll(mappings);
+        super(mappings,ontoAxioms,factory,moduleDiagSearcher);
 
-        OWLOntology fullOntology = createOntology(allAxioms);
-        //OtfModuleProvider provider = new OtfModuleProvider(fullOntology, new Reasoner.ReasonerFactory(),false);
-        //Set<OWLLogicalAxiom> bigModule = provider.getModuleUnsatClass();
-        moduleCalculator = new ModuleCalc(fullOntology, factory);
-
-        this.ontoAxioms = ontoAxioms;
-        this.mappings = mappings;
-        this.diagSearcher = moduleDiagSearcher;
         this.sortNodes = sortNodes;
-        diagSearcher.setReasonerFactory(factory);
+
+    }
+
+    protected boolean isSortNodes() {
+        return sortNodes;
     }
 
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
-        List<OWLClass> unsatClasses = new LinkedList<OWLClass>(moduleCalculator.getInitialUnsatClasses());
-        if (sortNodes)
-            Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,mappings,ontoAxioms));
+        List<OWLClass> unsatClasses = new LinkedList<OWLClass>(getModuleCalculator().getInitialUnsatClasses());
+        if (isSortNodes())
+            Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,getMappings(),getOntoAxioms()));
         int toIndex = Collections.min(Arrays.asList(10,unsatClasses.size()));
         List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0,toIndex));
 
         while (!actualUnsatClasses.isEmpty()) {
             for (OWLClass unsatClass : actualUnsatClasses)
-                moduleCalculator.calculateModule(unsatClass);
-            Map<OWLClass, Set<OWLLogicalAxiom>> map = moduleCalculator.getModuleMap();
+                getModuleCalculator().calculateModule(unsatClass);
+            Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
             OWLClass actualUnsatClass = Collections.min(actualUnsatClasses,new ModuleSizeComparator(map));
             Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
             Set<OWLLogicalAxiom> background = new LinkedHashSet<OWLLogicalAxiom>(axioms);
-            background.retainAll(ontoAxioms);
+            background.retainAll(getOntoAxioms());
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
-            Set<OWLLogicalAxiom> partDiag = diagSearcher.calculateDiag(axioms,background);
+            Set<OWLLogicalAxiom> partDiag = getDiagSearcher().calculateDiag(axioms, background);
 
             for (OWLLogicalAxiom axiom : partDiag)
                 logger.info("part diag axiom: " + axiom);
             logger.info("---");
 
-            moduleCalculator.removeAxiomsFromOntologyAndModules(partDiag);
+            getModuleCalculator().removeAxiomsFromOntologyAndModules(partDiag);
             updatedLists(actualUnsatClasses, unsatClasses);
             targetDiagnosis.addAll(partDiag);
         }
@@ -89,26 +70,12 @@ public class IterativeModuleDiagnosis {
         return targetDiagnosis;
     }
 
-    private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
-
-    protected boolean isEveryStartUnsatOK(OWLClass unsatClass) {
-        //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
-        //if (!reasoner.isSatisfiable(unsatClass))
-            //return false;
-        /*for (OWLClass unsat : unsatMap.keySet()) {
-            if (!reasoner.isSatisfiable(unsat))
-                return false;
-        }*/
-        return true;
-
-    }
-
     protected void updatedLists (List<OWLClass> actualUnsat, List<OWLClass> allUnsat) {
 
         Set<OWLClass> toCheck = new HashSet<OWLClass>(actualUnsat);
         for (OWLClass unsatClass : toCheck) {
             //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
-            if (moduleCalculator.isSatisfiable(unsatClass)) {
+            if (getModuleCalculator().isSatisfiable(unsatClass)) {
                 actualUnsat.remove(unsatClass);
                 allUnsat.remove(unsatClass);
             }
@@ -117,7 +84,7 @@ public class IterativeModuleDiagnosis {
         toCheck.removeAll(actualUnsat);
         for (OWLClass unsatClass : toCheck) {
             //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
-            if (!moduleCalculator.isSatisfiable(unsatClass)) {
+            if (!getModuleCalculator().isSatisfiable(unsatClass)) {
                 actualUnsat.add(unsatClass);
                 if (actualUnsat.size() == 10)
                     break;
@@ -126,26 +93,6 @@ public class IterativeModuleDiagnosis {
                 allUnsat.remove(unsatClass);
             }
         }
-    }
-
-    protected void removeDiagnosisFromModules(Set<OWLLogicalAxiom> diagnosis, Map<OWLClass, Set<OWLLogicalAxiom>> unsatMap) {
-        for (Set<OWLLogicalAxiom> module : unsatMap.values())
-            module.removeAll(diagnosis);
-    }
-
-    protected class ModuleSizeComparator implements Comparator<OWLClass> {
-
-        private final Map<OWLClass, Set<OWLLogicalAxiom>> unsatMap;
-
-        public ModuleSizeComparator(Map<OWLClass, Set<OWLLogicalAxiom>> unsatMap) {
-            this.unsatMap = unsatMap;
-        }
-
-        @Override
-        public int compare(OWLClass o1, OWLClass o2) {
-            return new Integer(unsatMap.get(o1).size()).compareTo(unsatMap.get(o2).size());
-        }
-
     }
 
     protected class ChildsComparator implements Comparator<OWLClass> {
@@ -180,19 +127,6 @@ public class IterativeModuleDiagnosis {
             return map.get(o1).compareTo(map.get(o2));
         }
 
-    }
-
-    private static final OWLClass BOT_CLASS = OWLDataFactoryImpl.getInstance().getOWLNothing();
-
-    protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
-        OWLOntology debuggingOntology = null;
-        try {
-            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology, axioms);
-        return debuggingOntology;
     }
 
 }

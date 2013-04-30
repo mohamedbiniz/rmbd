@@ -116,6 +116,7 @@ public class OntologyTests extends OntologySession {
 
     }
 
+
      @Ignore
     @Test
     public void doSimpleQuerySession()
@@ -129,7 +130,7 @@ public class OntologyTests extends OntologySession {
         session.setNumberOfHittingSets(2);
         QSSType type = QSSType.MINSCORE;
         boolean dual = false;
-        String name = "buggy-sweet-jpl.owl";
+        String name = "koala.owl";
         //String name = "dualpaper.owl";
 
         OWLOntology ontology = getOntologySimple("ontologies", name);

@@ -15,7 +15,7 @@
   </aspects>
 
    <weaver>
-       <!-- </weaver><weaver options="-verbose -showWeaveInfo">-->
+       <!--<weaver options="-verbose -showWeaveInfo">-->
 
     <include within="at.ainf..*"/>
   </weaver>
