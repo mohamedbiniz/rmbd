@@ -104,7 +104,8 @@ public class CalculateDiagnoses {
         for (OWLLogicalAxiom axiom : axioms) {
             result += renderer.render(axiom) + ", ";
         }
-        result = (String) result.subSequence(0,result.length()-2);
+        if (result.length() > 2)
+            result = (String) result.subSequence(0,result.length()-2);
 
         return result;
     }

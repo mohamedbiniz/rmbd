@@ -2,15 +2,13 @@ package at.ainf.owlapi3.test;
 
 import at.ainf.owlapi3.module.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
-import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
+import at.ainf.owlapi3.module.iterative.diag.IterativeModuleDiagnosis;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
-import org.semanticweb.elk.owlapi.ElkReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.ToStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;

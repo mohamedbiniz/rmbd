@@ -19,25 +19,37 @@ import java.util.*;
  */
 public class ModuleCalc {
 
-    private OWLOntology ontology;
+    private Set<OWLLogicalAxiom> ontology;
     private OWLReasoner reasoner;
 
     private Map<OWLClass,Set<OWLLogicalAxiom>> moduleMap = new HashMap<OWLClass, Set<OWLLogicalAxiom>>();
     private Set<OWLClass> initialUnsatClasses;
 
-    public ModuleCalc(OWLOntology ontology, OWLReasonerFactory reasonerFactory) {
+    public ModuleCalc(Set<OWLLogicalAxiom> ontology, OWLReasonerFactory reasonerFactory) {
         this.ontology = ontology;
 
+        OWLOntology onto = createOntology(ontology);
         if (reasonerFactory.getReasonerName().equals("Horn SAT Reasoner")) {
             HornSatReasonerFactory hornSatReasonerFactory = (HornSatReasonerFactory) reasonerFactory;
-            hornSatReasonerFactory.precomputeUnsatClasses(ontology);
-            this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
+            hornSatReasonerFactory.precomputeUnsatClasses(onto);
+            this.reasoner = reasonerFactory.createNonBufferingReasoner(onto);
             initialUnsatClasses = new HashSet<OWLClass>(hornSatReasonerFactory.getUnsatClasses());
         }
         else {
-            this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
+            this.reasoner = reasonerFactory.createNonBufferingReasoner(onto);
             initialUnsatClasses = new HashSet<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
         }
+    }
+
+    protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
+        OWLOntology debuggingOntology = null;
+        try {
+            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
+        } catch (OWLOntologyCreationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology, axioms);
+        return debuggingOntology;
     }
 
     public Set<OWLClass> getInitialUnsatClasses() {
@@ -50,17 +62,23 @@ public class ModuleCalc {
 
     public Set<OWLLogicalAxiom> calculateModule(OWLClass unsatClass) {
         Set<OWLLogicalAxiom> result = moduleMap.get(unsatClass);
-        SyntacticLocalityModuleExtractor extractor =
-                new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontology, ModuleType.STAR);
 
         if (result != null)
             return result;
 
-        result = new HashSet<OWLLogicalAxiom>();
-        for (OWLAxiom axiom : extractor.extract(Collections.singleton((OWLEntity) unsatClass)))
-            result.add((OWLLogicalAxiom)axiom);
+        result = extractModule(createOntology(ontology), unsatClass);
         moduleMap.put(unsatClass,result);
 
+        return result;
+    }
+
+    public Set<OWLLogicalAxiom> extractModule (OWLOntology ontology, OWLClass unsatClass) {
+        Set<OWLLogicalAxiom> result = new HashSet<OWLLogicalAxiom>();
+        SyntacticLocalityModuleExtractor extractor =
+                new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontology, ModuleType.STAR);
+
+        for (OWLAxiom axiom : extractor.extract(Collections.singleton((OWLEntity) unsatClass)))
+            result.add((OWLLogicalAxiom)axiom);
         return result;
     }
 
@@ -69,7 +87,7 @@ public class ModuleCalc {
     }
 
     public void removeAxiomsFromOntologyAndModules(Set<OWLLogicalAxiom> axioms) {
-        ontology.getOWLOntologyManager().removeAxioms(ontology,axioms);
+        ontology.removeAll(axioms);
 
         for (Set<OWLLogicalAxiom> module : moduleMap.values())
             module.removeAll(axioms);

@@ -85,6 +85,8 @@ public class WikiExamplesTest {
         // here we save the result in a new list
         Set<FormulaSet<OWLLogicalAxiom>> result = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
 
+
+
         // Koala normally has 10 diagnoses so we should have found enough
         assertTrue(result.size() == 9);
 

@@ -141,6 +141,7 @@ public class ReasonersTest {
         }
     }
 
+    @Ignore
     @Test
     public void testEntailment() throws OWLOntologyCreationException {
         //addConsoleLogger();
