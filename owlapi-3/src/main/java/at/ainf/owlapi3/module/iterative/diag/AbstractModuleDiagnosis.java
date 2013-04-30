@@ -42,7 +42,8 @@ public abstract class AbstractModuleDiagnosis implements ModuleDiagnosis {
         allAxioms.addAll(ontoAxioms);
         allAxioms.addAll(mappings);
 
-        moduleCalculator = new ModuleCalc(allAxioms, factory);
+        OWLOntology ontology = createOntology(allAxioms);
+        moduleCalculator = new ModuleCalc(ontology, factory);
 
         this.ontoAxioms = ontoAxioms;
         this.mappings = mappings;
