@@ -39,6 +39,7 @@ package at.ainf.owlapi3.reasoner;
  * limitations under the License.
  */
 
+import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 
@@ -66,8 +67,8 @@ public abstract class OWLExtendedReasonerBase implements OWLReasoner {
         }
     };
 
-    private Set<OWLAxiom> added = null;
-    private Set<OWLAxiom> removed = null;
+    //private Set<OWLAxiom> added = null;
+    //private Set<OWLAxiom> removed = null;
 
     protected OWLExtendedReasonerBase(OWLOntology rootOntology, OWLReasonerConfiguration configuration, BufferingMode bufferingMode) {
         this.rootOntology = rootOntology;
@@ -79,10 +80,10 @@ public abstract class OWLExtendedReasonerBase implements OWLReasoner {
         reasonerAxioms = new HashSet<OWLAxiom>();
         for (OWLOntology ont : rootOntology.getImportsClosure()) {
             for (OWLAxiom ax : ont.getLogicalAxioms()) {
-                reasonerAxioms.add(ax.getAxiomWithoutAnnotations());
+                getReasonerAxiomsSet().add(ax.getAxiomWithoutAnnotations());
             }
             for (OWLAxiom ax : ont.getAxioms(AxiomType.DECLARATION)) {
-                reasonerAxioms.add(ax.getAxiomWithoutAnnotations());
+                getReasonerAxiomsSet().add(ax.getAxiomWithoutAnnotations());
             }
         }
     }
@@ -119,7 +120,7 @@ public abstract class OWLExtendedReasonerBase implements OWLReasoner {
      */
     protected synchronized void handleRawOntologyChanges(
             List<? extends OWLOntologyChange> changes) {
-        rawChanges.addAll(changes);
+        getRawChanges().addAll(changes);
         // We auto-flush the changes if the reasoner is non-buffering
         if (bufferingMode.equals(BufferingMode.NON_BUFFERING)) {
             flush();
@@ -128,7 +129,7 @@ public abstract class OWLExtendedReasonerBase implements OWLReasoner {
 
     @Override
     public List<OWLOntologyChange> getPendingChanges() {
-        return new ArrayList<OWLOntologyChange>(rawChanges);
+        return new ArrayList<OWLOntologyChange>(getRawChanges());
     }
 
     @Override
@@ -148,20 +149,22 @@ public abstract class OWLExtendedReasonerBase implements OWLReasoner {
     @Override
     public void flush() {
         // Process the changes
-        Set<OWLAxiom> added = this.added;
-        Set<OWLAxiom> removed = this.removed;
-        if (added == null && removed == null) {
+        Set<OWLAxiom> added = null, removed = null; //this.added;
+        //Set<OWLAxiom> removed = this.removed;
+      //  if (added == null && removed == null) {
             added = new HashSet<OWLAxiom>();
             removed = new HashSet<OWLAxiom>();
             computeDiff(added, removed);
-        }
+      //  }
         flush(added, removed);
     }
 
+    /*
     public void setDirectChanges(Set<OWLAxiom> added, Set<OWLAxiom> removed){
         this.added = added;
         this.removed = removed;
     }
+    */
 
     public void flush(Set<OWLAxiom> added, Set<OWLAxiom> removed) {
         // Process the changes
@@ -171,8 +174,8 @@ public abstract class OWLExtendedReasonerBase implements OWLReasoner {
         if (!added.isEmpty() || !removed.isEmpty()) {
             handleChanges(added, removed);
         }
-        this.added = null;
-        this.removed = null;
+       // this.added = null;
+       // this.removed = null;
     }
 
     protected Set<OWLAxiom> getReasonerAxiomsSet() {
@@ -193,26 +196,34 @@ public abstract class OWLExtendedReasonerBase implements OWLReasoner {
      *                ontology
      */
     private void computeDiff(Set<OWLAxiom> added, Set<OWLAxiom> removed) {
-        if (rawChanges.isEmpty()) {
+        if (getRawChanges().isEmpty()) {
             return;
         }
+        Set<OWLAxiom> commonAxioms = new HashSet<OWLAxiom>();
         for (OWLOntology ont : rootOntology.getImportsClosure()) {
             for (OWLAxiom ax : ont.getLogicalAxioms()) {
-                if (!reasonerAxioms.contains(ax.getAxiomWithoutAnnotations())) {
+                if (!getReasonerAxiomsSet().contains(ax.getAxiomWithoutAnnotations())) {
                     added.add(ax);
-                }
+                } else
+                    commonAxioms.add(ax);
             }
             for (OWLAxiom ax : ont.getAxioms(AxiomType.DECLARATION)) {
-                if (!reasonerAxioms.contains(ax.getAxiomWithoutAnnotations())) {
+                if (!getReasonerAxiomsSet().contains(ax.getAxiomWithoutAnnotations())) {
                     added.add(ax);
                 }
+                else
+                    commonAxioms.add(ax);
             }
         }
-        for (OWLAxiom ax : reasonerAxioms) {
+        removed.addAll(Sets.difference(getReasonerAxiomsSet(), commonAxioms));
+
+        /*
+        for (OWLAxiom ax : getReasonerAxiomsSet()) {
             if (!rootOntology.containsAxiomIgnoreAnnotations(ax, true)) {
                 removed.add(ax);
             }
         }
+        */
     }
 
     /**

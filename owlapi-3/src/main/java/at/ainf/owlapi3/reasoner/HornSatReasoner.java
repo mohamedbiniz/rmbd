@@ -115,8 +115,91 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (!axiom.getDataPropertiesInSignature().isEmpty() || !axiom.getObjectPropertiesInSignature().isEmpty())
             throw new UnsupportedEntailmentTypeException(axiom);
 
-        OWLClassExpression negation = processAxiom(axiom, new OWLClassAxiomNegation(this));
-        return !isSatisfiable(negation);
+        Boolean result = null;
+        if (axiom.getAxiomType() == AxiomType.SUBCLASS_OF)
+            result = verifySubClass((OWLSubClassOfAxiom) axiom);
+        else if (axiom.getAxiomType() == AxiomType.DISJOINT_CLASSES)
+            result = verifyDisjointness((OWLDisjointClassesAxiom) axiom);
+
+        if (result == null) {
+            OWLClassExpression negation = processAxiom(axiom, new OWLClassAxiomNegation(this));
+            result = !isSatisfiable(negation);
+        }
+        return result;
+    }
+
+    private Boolean verifyDisjointness(OWLDisjointClassesAxiom axiom) {
+        // TODO: check cone, axiom on intersection
+        return null;
+    }
+
+    private Boolean verifySubClass(OWLSubClassOfAxiom axiom) {
+        // TODO check if heads can be reached from body over Horn clauses only
+        return null;
+    }
+
+
+    @Override
+    public boolean isSatisfiable(OWLClassExpression classExpression) throws ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+        Collection<IVecInt> iVecInts;
+        if (classExpression instanceof OWLAxiom) {
+            OWLAxiom axiom = (OWLAxiom) classExpression;
+            iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
+        } else
+            iVecInts = getiVecInt(classExpression);
+        return isSatisfiable(iVecInts);
+    }
+
+    private boolean isSatisfiable(Collection<IVecInt> iVecInt) {
+        Set<IConstr> iConstr = new HashSet<IConstr>();
+        try {
+            for (IVecInt constr : iVecInt) {
+                IConstr cons = solver.addClause(constr);
+                iConstr.add(cons);
+            }
+
+            if (!solver.isSatisfiable())
+                return false;
+
+        } catch (ContradictionException e) {
+            return false;
+        } catch (TimeoutException e) {
+            throw new TimeOutException();
+        } finally {
+            for (IConstr constr : iConstr) {
+                if (constr != null)
+                    solver.removeConstr(constr);
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isConsistent() throws ReasonerInterruptedException, TimeOutException {
+        if (this.sat != null)
+            return this.sat;
+
+        // verify unsatisfiable classes
+        // if no classes are given then the solver verifies all classes in the signature
+        Set<OWLClass> classes = getTestClasses();
+
+        /*
+        OWLObjectIntersectionOf test = getDataFactory().getOWLObjectIntersectionOf(classes);
+        if (!isSatisfiable(test)) {
+            sat = false;
+            return sat;
+        }
+        */
+        for (OWLClass owlClass : classes) {
+            Set<IVecInt> iVecInts = getiVecInt(owlClass);
+            if (!isSatisfiable(iVecInts)) {
+                sat = false;
+                return sat;
+            }
+        }
+
+        sat = true;
+        return sat;
     }
 
     @Override
@@ -158,61 +241,8 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
     @Override
-    public boolean isSatisfiable(OWLClassExpression classExpression) throws ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
-        Set<IConstr> iConstr = new HashSet<IConstr>();
-        try {
-            Set<IVecInt> iVecInt = getiVecInt(classExpression);
-            for (IVecInt constr : iVecInt) {
-                IConstr cons = solver.addClause(constr);
-                iConstr.add(cons);
-            }
-
-            if (!solver.isSatisfiable())
-                return false;
-
-        } catch (ContradictionException e) {
-            return false;
-        } catch (TimeoutException e) {
-            throw new TimeOutException();
-        } finally {
-            for (IConstr constr : iConstr) {
-                if (constr != null)
-                    solver.removeConstr(constr);
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean isConsistent() throws ReasonerInterruptedException, TimeOutException {
-        if (this.sat != null)
-            return this.sat;
-
-        // verify unsatisfiable classes
-        // if no classes are given then the solver verifies all classes in the signature
-        Set<OWLClass> classes = getTestClasses();
-
-        /*
-        OWLObjectIntersectionOf test = getDataFactory().getOWLObjectIntersectionOf(classes);
-        if (!isSatisfiable(test)) {
-            sat = false;
-            return sat;
-        }
-        */
-        for (OWLClass owlClass : classes) {
-            if (!isSatisfiable(owlClass)) {
-                sat = false;
-                return sat;
-            }
-        }
-
-        sat = true;
-        return sat;
-    }
-
-    @Override
     protected void handleChanges(Set<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
-        //super.handleChanges(addAxioms, removeAxioms);
+        super.handleChanges(addAxioms, removeAxioms);
         //processAxioms(getRootOntology().getAxioms());
         processAxioms(addAxioms, removeAxioms);
 
