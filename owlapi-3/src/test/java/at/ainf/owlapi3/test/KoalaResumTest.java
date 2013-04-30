@@ -58,7 +58,6 @@ public class  KoalaResumTest {
         return new ManchesterOWLSyntaxOWLObjectRendererImpl().render(axiom);
     }
 
-
     @Test
     public void searchKoalaTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
