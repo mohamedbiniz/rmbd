@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.module.iterative.diag;
 
+import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
@@ -40,6 +41,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
+        Speed4JMeasurement.start("calculatetargetdiag");
         List<OWLClass> unsatClasses = new LinkedList<OWLClass>(getModuleCalculator().getInitialUnsatClasses());
         if (isSortNodes())
             Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,getMappings(),getOntoAxioms()));
@@ -56,7 +58,9 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             background.retainAll(getOntoAxioms());
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
+            Speed4JMeasurement.start("calculatepartdiag");
             Set<OWLLogicalAxiom> partDiag = getDiagSearcher().calculateDiag(axioms, background);
+            Speed4JMeasurement.stop();
 
             for (OWLLogicalAxiom axiom : partDiag)
                 logger.info("part diag axiom: " + axiom);
@@ -67,6 +71,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             targetDiagnosis.addAll(partDiag);
         }
 
+        Speed4JMeasurement.stop();
         return targetDiagnosis;
     }
 

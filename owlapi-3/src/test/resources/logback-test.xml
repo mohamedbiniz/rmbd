@@ -130,6 +130,11 @@
         <appender-ref ref="owlapi3-full-file"/>
     </logger>
 
+    <logger name="at.ainf.speed4j" level="info">
+        <appender-ref ref="owlapi3-file"/>
+        <appender-ref ref="owlapi3-full-file"/>
+    </logger>
+
     <logger name="_dev" level="trace">
         <appender-ref ref="owlapi3-time-file"/>
         <appender-ref ref="owlapi3-full-file"/>

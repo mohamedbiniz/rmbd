@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.test;
 
+import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.owlapi3.module.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
 import at.ainf.owlapi3.module.iterative.diag.IterativeModuleDiagnosis;
@@ -197,9 +198,9 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> falseAxioms = new HashSet<OWLLogicalAxiom>(mappingAxioms);
         falseAxioms.removeAll(correctAxioms);
 
-        ModuleDiagSearcher d = new ModuleMinDiagSearcher();
+        //ModuleDiagSearcher d = new ModuleMinDiagSearcher();
         //ModuleDiagSearcher d = new ModuleTargetDiagSearcher(pathMappings);
-        //ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
+        ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
 
         long time = System.currentTimeMillis();
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,

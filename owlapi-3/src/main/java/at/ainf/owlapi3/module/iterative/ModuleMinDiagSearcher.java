@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.module.iterative;
 
+import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
@@ -103,6 +104,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
     private Logger logger = LoggerFactory.getLogger(ModuleMinDiagSearcher.class.getName());
 
     protected void runSearch (HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search) {
+        Speed4JMeasurement.start("runofhstree");
         try {
             search.start();
         } catch (SolverException e) {
@@ -110,8 +112,29 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         } catch (InconsistentTheoryException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (NoConflictException e) {
-            logger.info("no more conflicts can be found ");
+            logger.info("no more conflicts can be found - trying to reset");
+            search.reset();
+            try {
+                search.start();
+            } catch (SolverException e1) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (InconsistentTheoryException e1) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (NoConflictException e1) {
+                logger.info("there are really no more conflicts");
+            }
         }
+        String label = Speed4JMeasurement.getLabelOfLastStopWatch();
+        Speed4JMeasurement.stop();
+        String conflicts = label + " found conflicts with sizes: ";
+        for (Set<OWLLogicalAxiom> cs : search.getConflicts())
+            conflicts += cs.size() + ", ";
+        String diagnoses = label + " found diagnoses with sizes: ";
+        for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
+            diagnoses += hs.size() + ", ";
+        logger.info(conflicts);
+        logger.info(diagnoses);
+
     }
 
     @Override

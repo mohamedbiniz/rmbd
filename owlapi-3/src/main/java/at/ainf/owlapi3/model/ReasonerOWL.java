@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.model;
 
+import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.diagnosis.model.AbstractReasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -68,20 +69,35 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
 
     @Override
     public boolean isConsistent() {
+        Speed4JMeasurement.start("consistencycheck");
+        Speed4JMeasurement.start("syncbeforeconsistencycheck");
         sync();
-        return reasoner.isConsistent();
+        Speed4JMeasurement.stop();
+        boolean r = reasoner.isConsistent();
+        Speed4JMeasurement.stop();
+        return r;
     }
 
     public boolean isSatisfiable(OWLClass unsatClass) {
+        Speed4JMeasurement.start("issatisfiablecheck");
+        Speed4JMeasurement.start("syncbeforeissatisfiablecheck");
         sync();
-        return reasoner.isSatisfiable(unsatClass);
+        Speed4JMeasurement.stop();
+        boolean r = reasoner.isSatisfiable(unsatClass);
+        Speed4JMeasurement.stop();
+        return r;
     }
 
     @Override
     public boolean isCoherent() {
+        Speed4JMeasurement.start("iscoherencycheck");
+        Speed4JMeasurement.start("syncbeforeiscoherencycheck");
         sync();
+        Speed4JMeasurement.stop();
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
-        return reasoner.getBottomClassNode().isSingleton();
+        boolean r = reasoner.getBottomClassNode().isSingleton();
+        Speed4JMeasurement.stop();
+        return r;
     }
 
     @Override
