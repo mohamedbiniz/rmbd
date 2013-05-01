@@ -165,6 +165,12 @@ public class ReasonersTest {
                 logger.info("Entailment of " + render(owlLogicalAxiom) + " cannot be verified");
             }
         }
+        OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
+        final String pref = "http://www.semanticweb.org/ontologies/2010/0/ecai.owl#";
+        OWLSubClassOfAxiom axiom = df.getOWLSubClassOfAxiom(df.getOWLClass(IRI.create(pref + "A1")),
+                df.getOWLClass(IRI.create(pref + "C")));
+        final boolean entailed = sat.isEntailed(axiom);
+        assertTrue(entailed);
     }
 
     private String render(OWLObject expr) {

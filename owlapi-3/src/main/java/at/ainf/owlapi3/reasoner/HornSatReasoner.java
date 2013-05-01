@@ -129,13 +129,51 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
     private Boolean verifyDisjointness(OWLDisjointClassesAxiom axiom) {
+        // the search is incomplete if head appears not in horn clauses
+        boolean incomplete = false;
+        // convert axiom to CNF and verify whether every element is a horn clause
         // TODO: check cone, axiom on intersection
         return null;
     }
 
     private Boolean verifySubClass(OWLSubClassOfAxiom axiom) {
-        // TODO check if heads can be reached from body over Horn clauses only
-        return null;
+        // the search is incomplete if head cannot be derived using only horn clauses
+        // convert axiom to CNF and verify whether every element is a horn clause
+        Collection<IVecInt> iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
+        // verify if premises can be reached from the head (backward chaining) for each clause
+        for (IVecInt clause : iVecInts) {
+            int head = getHornClauseHead(clause);
+            if (head == 0)
+                return null;
+            Core core = new Core();
+            core.useOnlyHornClauses = true;
+            Core hornCore = extractCore(head, core);
+            // head is derivable if horn core contains all premises
+            boolean derivable = hornCore.symbols.containsAll(getNegativeSymbols(clause));
+            if (!derivable && core.isHornComplete)
+                return false;
+            if (!derivable) return null;
+        }
+        return true;
+    }
+
+    /**
+     * Verifies whether an input clause is a Horn clause
+     * @param clause input clause to be verified in DIMACS format, with no <code>0</code>  values allowed
+     * @return  a positive integer if the head has one element, negative integer if the head is empty and
+     * <code>0</code> if the clause is not a Horn clause
+     */
+    private int getHornClauseHead(IVecInt clause) {
+        int head = 0;
+        int literal = 0;
+        for (IteratorInt it = clause.iterator(); it.hasNext();){
+            literal = it.next();
+            if (literal > 0 && head > 0)
+                return 0;
+            else if (literal > 0)
+                head = literal;
+        }
+        return (head>0) ? head : literal;
     }
 
 
@@ -347,7 +385,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                 int symbol = iterator.next();
                 Collection<Integer> symbols;
                 if (!supportingMap.containsKey(symbol)) {
-                    symbols = extractCore(symbol, new HashSet<Integer>(sigSize));
+                    symbols = extractCore(symbol, new Core(sigSize)).symbols;
                     supportingMap.putAll(symbol, symbols);
                 } else symbols = supportingMap.get(symbol);
 
@@ -380,19 +418,37 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return symbolsToClauses;
     }
 
-    private Set<Integer> extractCore(Integer literal, Set<Integer> cone) {
+
+    private class Core{
+        Set<Integer> symbols;
+        boolean useOnlyHornClauses = false;
+        Boolean isHornComplete = null;
+
+        Core(int size){symbols = new HashSet<Integer>(size);}
+        Core() {this(16);}
+    }
+
+    private Core extractCore(Integer literal, Core core) {
         // remove negation
         int symbol = Math.abs(literal);
-        if (cone.contains(symbol)) return cone;
-        cone.add(symbol);
+        if (core.symbols.contains(symbol)) return core;
+        core.symbols.add(symbol);
         // analyze clauses in which symbol is positive, i.e. in the head of a rule
         for (IVecInt clause : getSymbolsToClauses().get(symbol)) {
+            if (core.useOnlyHornClauses && !isHornClause(clause)){
+                core.isHornComplete = false;
+                continue;
+            }
             Set<Integer> neg = getNegativeSymbols(clause);
             for (Integer lit : neg) {
-                extractCore(lit, cone);
+                extractCore(lit, core);
             }
         }
-        return cone;
+        return core;
+    }
+
+    private boolean isHornClause(IVecInt clause) {
+        return getHornClauseHead(clause) != 0;
     }
 
     private Set<Integer> getNegativeSymbols(IVecInt clause) {
