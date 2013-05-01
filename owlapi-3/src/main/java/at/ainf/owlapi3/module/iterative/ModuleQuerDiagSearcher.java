@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.module.iterative;
 
 import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
@@ -111,9 +112,13 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
 
         int numOfQueries = 0;
         while (diagnoses.size() > 1) {
+            String lastLabel = "";
             Partition<OWLLogicalAxiom> best = null;
             try {
+                Speed4JMeasurement.start("calculatingpartition");
                 best = ckk.generatePartition(search.getDiagnoses());
+                lastLabel = Speed4JMeasurement.getLabelOfLastStopWatch();
+                Speed4JMeasurement.stop();
             } catch (SolverException e) {
                 // e.printStackTrace();
             } catch (InconsistentTheoryException e) {
@@ -122,6 +127,8 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
 
             if (isMinimizerActive)
                 minimizePartitionAx(best,search.getSearchable());
+
+            logger.info(lastLabel + " size of partition " + best.partition.size());
 
             try {
                 boolean answer = askUser(best);
@@ -148,6 +155,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                     else
                         search.getSearchable().getKnowledgeBase().addNonEntailedTest(testcase);
                 }
+                // search.reset();
             }
 
 
