@@ -10,12 +10,13 @@ import org.sat4j.specs.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.impl.OWLClassNode;
-//import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 import org.semanticweb.owlapi.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+
+//import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 
 /**
  * Created with IntelliJ IDEA.
@@ -179,23 +180,44 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     private Boolean verifyConstraintEntailment(IVecInt clause) {
         boolean hornComplete = true;
         // check if this constraint can be derived from the other - getConstraints(getSolverClauses().keys())
-        for (IteratorInt it = clause.iterator(); it.hasNext(); ) {
-            int literal = it.next();
-            Core core = new Core();
-            core.useOnlyHornClauses = true;
-            Core hornCore = extractCore(literal, core);
-            // head is derivable if horn core contains all premises
-            Set<Integer> negativeSymbols = getNegativeSymbols(clause, true);
-            negativeSymbols.remove(literal);
-            boolean derivable = hornCore.symbols.containsAll(negativeSymbols);
-            if (derivable) return true;
-            if (!core.isHornComplete)
-                hornComplete = false;
+        final Set<IVecInt> constraints = getRelevantConstraints(getSolverClauses().keySet(), clause);
+        for (IVecInt constraint : constraints) {
+            for (IteratorInt it = constraint.iterator(); it.hasNext(); ) {
+                int literal = Math.abs(it.next());
+                Core core = new Core();
+                core.useOnlyHornClauses = true;
+                Core hornCore = extractCore(literal, core);
+                core.addSymbols(constraint);
+                // head is derivable if horn core contains all premises
+                Set<Integer> symbols = getNegativeSymbols(clause, true);
+                boolean derivable = hornCore.symbols.containsAll(symbols);
+                if (derivable) return true;
+                if (!core.isHornComplete)
+                    hornComplete = false;
+            }
         }
         // there is derivation for the disjointness in a horn complete KB
         if (hornComplete) return false;
         // no decision can be made
         return null;
+    }
+
+    private Set<IVecInt> getRelevantConstraints(Set<IVecInt> iVecInts, IVecInt symbols) {
+        Set<IVecInt> constraints = new HashSet<IVecInt>(iVecInts.size());
+        for (IVecInt clause : iVecInts) {
+            if (isConstraint(clause) && areIntersecting(clause, symbols))
+                constraints.add(clause);
+        }
+        return constraints;
+    }
+
+    private boolean areIntersecting(IVecInt clause, IVecInt symbols) {
+        for (IteratorInt it = clause.iterator(); it.hasNext(); ) {
+            int literal = it.next();
+            if (symbols.contains(literal))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -472,6 +494,13 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         Core() {
             this(16);
         }
+
+        public void addSymbols(IVecInt clause) {
+            for (IteratorInt it = clause.iterator(); it.hasNext(); ) {
+                int literal = Math.abs(it.next());
+                symbols.add(literal);
+            }
+        }
     }
 
     private Core extractCore(Integer literal, Core core) {
@@ -615,7 +644,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
     private OWLClass getIndex(int index) {
-        return this.index.inverse().get(index);
+        return this.index.inverse().get(Math.abs(index));
     }
 
     public Multimap<OWLAxiom, IVecInt> getTranslations() {
