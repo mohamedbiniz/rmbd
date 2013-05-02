@@ -30,6 +30,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 import java.io.InputStream;
 import java.util.*;
 
+import static at.ainf.owlapi3.base.tools.LoggerUtils.addConsoleLogger;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -141,10 +142,10 @@ public class ReasonersTest {
         }
     }
 
-    @Ignore
+   // @Ignore
     @Test
     public void testEntailment() throws OWLOntologyCreationException {
-        //addConsoleLogger();
+        addConsoleLogger();
         String ontologyString = "ontologies/ecai.corrected.owl";
         InputStream koalaStream = ClassLoader.getSystemResourceAsStream(ontologyString);
         OWLOntology ontology = OWLManager.createOWLOntologyManager().
@@ -167,9 +168,19 @@ public class ReasonersTest {
         }
         OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
         final String pref = "http://www.semanticweb.org/ontologies/2010/0/ecai.owl#";
-        OWLSubClassOfAxiom axiom = df.getOWLSubClassOfAxiom(df.getOWLClass(IRI.create(pref + "A1")),
+        OWLAxiom axiom = df.getOWLSubClassOfAxiom(df.getOWLClass(IRI.create(pref + "A1")),
                 df.getOWLClass(IRI.create(pref + "C")));
-        final boolean entailed = sat.isEntailed(axiom);
+        boolean entailed = sat.isEntailed(axiom);
+        assertTrue(entailed);
+
+        axiom = df.getOWLSubClassOfAxiom(df.getOWLClass(IRI.create(pref + "T2")),
+                df.getOWLObjectComplementOf(df.getOWLClass(IRI.create(pref + "A"))));
+        entailed = sat.isEntailed(axiom);
+        assertTrue(entailed);
+
+        axiom = df.getOWLDisjointClassesAxiom(df.getOWLClass(IRI.create(pref + "A")),
+                df.getOWLClass(IRI.create(pref + "T2")));
+        entailed = sat.isEntailed(axiom);
         assertTrue(entailed);
     }
 

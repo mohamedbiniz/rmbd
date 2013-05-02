@@ -33,7 +33,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     // caching of transformations
     private final Multimap<OWLAxiom, IVecInt> translations = HashMultimap.create();
     private final Multimap<Integer, IVecInt> symbolsToClauses = HashMultimap.create();
-    private Multimap<IVecInt, IConstr> iConstrTranslation = HashMultimap.create();
+    private Multimap<IVecInt, IConstr> solverClauses = HashMultimap.create();
 
     private final ISolver solver = SolverFactory.newDefault();
     private final Set<OWLClass> unSatClasses;
@@ -87,10 +87,14 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering, Set<OWLClass> unSatClasses) {
         super(ontology, config, buffering);
         processAxioms(getReasonerAxiomsSet(), Collections.<OWLAxiom>emptySet());
-        this.unSatClasses = Collections.unmodifiableSet(unSatClasses);
+        if (unSatClasses != null)
+            this.unSatClasses = Collections.unmodifiableSet(unSatClasses);
+        else this.unSatClasses = null;
     }
 
     public Set<OWLClass> getTestClasses() {
+        if (unSatClasses == null)
+            return getRootOntology().getClassesInSignature();
         if (getRelevantClasses() != null)
             return Sets.intersection(unSatClasses, getRelevantClasses());
         return Sets.intersection(unSatClasses, getRootOntology().getClassesInSignature());
@@ -108,6 +112,10 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     @Override
     public boolean isEntailed(OWLAxiom axiom) throws ReasonerInterruptedException, UnsupportedEntailmentTypeException, TimeOutException, AxiomNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+        // all ontology axioms are entailed
+        if (getRootOntology().getLogicalAxioms().contains(axiom))
+            return true;
+
         if (!isEntailmentCheckingSupported(axiom.getAxiomType()))
             throw new UnsupportedEntailmentTypeException(axiom);
         if (!isConsistent())
@@ -129,11 +137,16 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
     private Boolean verifyDisjointness(OWLDisjointClassesAxiom axiom) {
-        // the search is incomplete if head appears not in horn clauses
-        boolean incomplete = false;
-        // convert axiom to CNF and verify whether every element is a horn clause
-        // TODO: check cone, axiom on intersection
-        return null;
+        Collection<IVecInt> iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
+        // verify if premises can be reached from the head (backward chaining) for each clause
+        for (IVecInt clause : iVecInts) {
+            if (getSolverClauses().containsKey(clause))
+                continue;
+            Boolean result = verifyConstraintEntailment(clause);
+            if (result == null || !result)
+                return result;
+        }
+        return true;
     }
 
     private Boolean verifySubClass(OWLSubClassOfAxiom axiom) {
@@ -142,38 +155,66 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         Collection<IVecInt> iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
         // verify if premises can be reached from the head (backward chaining) for each clause
         for (IVecInt clause : iVecInts) {
-            int head = getHornClauseHead(clause);
-            if (head == 0)
-                return null;
-            Core core = new Core();
-            core.useOnlyHornClauses = true;
-            Core hornCore = extractCore(head, core);
-            // head is derivable if horn core contains all premises
-            boolean derivable = hornCore.symbols.containsAll(getNegativeSymbols(clause));
-            if (!derivable && core.isHornComplete)
-                return false;
+            if (getSolverClauses().containsKey(clause))
+                continue;
+            Integer head = getHornClauseHead(clause);
+            if (head == null) return null;
+            boolean derivable;
+            if (head == 0) {
+                derivable = verifyConstraintEntailment(clause);
+            } else {
+                Core core = new Core();
+                core.useOnlyHornClauses = true;
+                Core hornCore = extractCore(head, core);
+                // head is derivable if horn core contains all premises
+                derivable = hornCore.symbols.containsAll(getNegativeSymbols(clause, true));
+                if (!derivable && core.isHornComplete)
+                    return false;
+            }
             if (!derivable) return null;
         }
         return true;
     }
 
+    private Boolean verifyConstraintEntailment(IVecInt clause) {
+        boolean hornComplete = true;
+        // check if this constraint can be derived from the other - getConstraints(getSolverClauses().keys())
+        for (IteratorInt it = clause.iterator(); it.hasNext(); ) {
+            int literal = it.next();
+            Core core = new Core();
+            core.useOnlyHornClauses = true;
+            Core hornCore = extractCore(literal, core);
+            // head is derivable if horn core contains all premises
+            Set<Integer> negativeSymbols = getNegativeSymbols(clause, true);
+            negativeSymbols.remove(literal);
+            boolean derivable = hornCore.symbols.containsAll(negativeSymbols);
+            if (derivable) return true;
+            if (!core.isHornComplete)
+                hornComplete = false;
+        }
+        // there is derivation for the disjointness in a horn complete KB
+        if (hornComplete) return false;
+        // no decision can be made
+        return null;
+    }
+
     /**
      * Verifies whether an input clause is a Horn clause
+     *
      * @param clause input clause to be verified in DIMACS format, with no <code>0</code>  values allowed
-     * @return  a positive integer if the head has one element, negative integer if the head is empty and
-     * <code>0</code> if the clause is not a Horn clause
+     * @return a positive integer if the head has one element, 0 if the head is empty and
+     *         <code>null</code> if the clause is not a Horn clause
      */
-    private int getHornClauseHead(IVecInt clause) {
+    private Integer getHornClauseHead(IVecInt clause) {
         int head = 0;
-        int literal = 0;
-        for (IteratorInt it = clause.iterator(); it.hasNext();){
-            literal = it.next();
+        for (IteratorInt it = clause.iterator(); it.hasNext(); ) {
+            int literal = it.next();
             if (literal > 0 && head > 0)
-                return 0;
+                return null;
             else if (literal > 0)
                 head = literal;
         }
-        return (head>0) ? head : literal;
+        return head;
     }
 
 
@@ -299,12 +340,12 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             Collection<IVecInt> clauses = processAxiom(axiom, new OWL2SATTranslator(this));
             if (clauses != null)
                 for (IVecInt clause : clauses) {
-                    for (IConstr iConstr : getIConstrTranslations().get(clause)) {
+                    for (IConstr iConstr : getSolverClauses().get(clause)) {
                         if (iConstr != null)
                             solver.removeConstr(iConstr);
                     }
                     // remove old translations
-                    getIConstrTranslations().removeAll(clause);
+                    getSolverClauses().removeAll(clause);
                     // unregister clauses by corresponding symbols
                     if (isExtractingCoresOnUpdate()) {
                         getSymbolsToClauses().values().remove(clause);
@@ -325,7 +366,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                         this.sat = false;
                         return;
                     }
-                    getIConstrTranslations().put(clause, iConstr);
+                    getSolverClauses().put(clause, iConstr);
                     //if (isExtractingCoresOnUpdate() && isConstraint(clause))
                     //      addSymbolsToConstants(clause);
                     //    constraints.add(clause);
@@ -342,9 +383,9 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             logger.info("Converted to CNF in " + getCnfTime() + " ms using " + getCalls()
                     + " calls");
 
-        if (getIConstrTranslations().size() != solver.nConstraints())
+        if (getSolverClauses().size() != solver.nConstraints())
             logger.error("Solver is not synchronized! (T/S) " +
-                    getIConstrTranslations().size() + "/" + solver.nConstraints());
+                    getSolverClauses().size() + "/" + solver.nConstraints());
         //solver.newVar(getNumberOfVariables(getSolverClauses()));
         //solver.setExpectedNumberOfClauses(getSolverClauses().size());
         /*
@@ -419,13 +460,18 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
 
-    private class Core{
+    private class Core {
         Set<Integer> symbols;
         boolean useOnlyHornClauses = false;
-        Boolean isHornComplete = null;
+        boolean isHornComplete = true;
 
-        Core(int size){symbols = new HashSet<Integer>(size);}
-        Core() {this(16);}
+        Core(int size) {
+            symbols = new HashSet<Integer>(size);
+        }
+
+        Core() {
+            this(16);
+        }
     }
 
     private Core extractCore(Integer literal, Core core) {
@@ -435,11 +481,11 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         core.symbols.add(symbol);
         // analyze clauses in which symbol is positive, i.e. in the head of a rule
         for (IVecInt clause : getSymbolsToClauses().get(symbol)) {
-            if (core.useOnlyHornClauses && !isHornClause(clause)){
+            if (core.useOnlyHornClauses && !isHornClause(clause)) {
                 core.isHornComplete = false;
                 continue;
             }
-            Set<Integer> neg = getNegativeSymbols(clause);
+            Set<Integer> neg = getNegativeSymbols(clause, false);
             for (Integer lit : neg) {
                 extractCore(lit, core);
             }
@@ -448,15 +494,16 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
     private boolean isHornClause(IVecInt clause) {
-        return getHornClauseHead(clause) != 0;
+        return getHornClauseHead(clause) != null;
     }
 
-    private Set<Integer> getNegativeSymbols(IVecInt clause) {
+    private Set<Integer> getNegativeSymbols(IVecInt clause, boolean removeSign) {
+        int power = (removeSign) ? -1 : 1;
         Set<Integer> symbols = new HashSet<Integer>(clause.size());
         for (IteratorInt iterator = clause.iterator(); iterator.hasNext(); ) {
             int symbol = iterator.next();
             if (symbol < 0)
-                symbols.add(symbol);
+                symbols.add(symbol * power);
         }
         return symbols;
     }
@@ -654,8 +701,8 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return true;
     }
 
-    public Multimap<IVecInt, IConstr> getIConstrTranslations() {
-        return this.iConstrTranslation;
+    public Multimap<IVecInt, IConstr> getSolverClauses() {
+        return this.solverClauses;
     }
 
     protected void setRelevantClasses(Set<OWLClass> relevantClasses) {
