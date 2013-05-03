@@ -35,20 +35,22 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     private final Multimap<OWLAxiom, IVecInt> translations = HashMultimap.create();
     private final Multimap<Integer, IVecInt> symbolsToClauses = HashMultimap.create();
     private Multimap<IVecInt, IConstr> solverClauses = HashMultimap.create();
+    private Set<IVecInt> constraints = null;
 
     private final ISolver solver = SolverFactory.newDefault();
-    private final Set<OWLClass> unSatClasses;
+
     private Boolean sat = null;
     private int maxIndex = 1;
 
     private long[] measures = new long[3];
 
+    private final Set<OWLClass> unSatClasses;
     // fields storing data used in extraction of an unsat core
     private Set<OWLClass> relevantClasses = null;
-    //private Set<IVecInt> constraints = new HashSet<IVecInt>();
-    private boolean extractCoresOnUpdate = true;
+    //private boolean extractCoresOnUpdate = true;
 
     public final static String NAME = "SAT Reasoner for OWL";
+
 
     public long getCalls() {
         return this.measures[0];
@@ -77,12 +79,12 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
      */
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
         super(ontology, config, buffering);
-        boolean extract = isExtractingCoresOnUpdate();
-        setExtractCoresOnUpdate(true);
+        //boolean extract = isExtractingCoresOnUpdate();
+        //setExtractCoresOnUpdate(true);
         processAxioms(getReasonerAxiomsSet(), Collections.<OWLAxiom>emptySet());
         Set<OWLClass> entities = getUnsatisfiableClasses().getEntities();
         this.unSatClasses = Collections.unmodifiableSet(entities);
-        setExtractCoresOnUpdate(extract);
+        //setExtractCoresOnUpdate(extract);
     }
 
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering, Set<OWLClass> unSatClasses) {
@@ -114,7 +116,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     @Override
     public boolean isEntailed(OWLAxiom axiom) throws ReasonerInterruptedException, UnsupportedEntailmentTypeException, TimeOutException, AxiomNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
         // all ontology axioms are entailed
-        if (getRootOntology().getLogicalAxioms().contains(axiom))
+        if (getReasonerAxiomsSet().contains(axiom))
             return true;
 
         if (!isEntailmentCheckingSupported(axiom.getAxiomType()))
@@ -180,7 +182,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     private Boolean verifyConstraintEntailment(IVecInt clause) {
         boolean hornComplete = true;
         // check if this constraint can be derived from the other - getConstraints(getSolverClauses().keys())
-        final Set<IVecInt> constraints = getRelevantConstraints(getSolverClauses().keySet(), clause);
+        final Set<IVecInt> constraints = getRelevantConstraints(getConstraints(), clause);
         for (IVecInt constraint : constraints) {
             for (IteratorInt it = constraint.iterator(); it.hasNext(); ) {
                 int literal = Math.abs(it.next());
@@ -241,14 +243,55 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
 
     @Override
-    public boolean isSatisfiable(OWLClassExpression classExpression) throws ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+    public boolean isSatisfiable(OWLClassExpression classExpression) throws
+            ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
         Collection<IVecInt> iVecInts;
         if (classExpression instanceof OWLAxiom) {
             OWLAxiom axiom = (OWLAxiom) classExpression;
             iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
         } else
             iVecInts = getiVecInt(classExpression);
+        if (iVecInts.size() == 1)
+            return isSatisfiable(iVecInts.iterator().next());
         return isSatisfiable(iVecInts);
+    }
+
+    /*
+        if (isConjunctionOfUnits(iVecInts)){
+            Boolean result = verifyConstraintEntailment(getConstraint(iVecInts));
+            if (result != null)
+                return result;
+        }
+
+    private IVecInt getConstraint(Collection<IVecInt> iVecInts) {
+        VecInt constraint = new VecInt(iVecInts.size());
+        for (IVecInt iVecInt : iVecInts) {
+            for (IteratorInt it = iVecInt.iterator(); it.hasNext();)
+            {
+                int value = it.next();
+                if (value < 0) return null;
+                    constraint.push(-1*value);
+            }
+        }
+        return constraint;
+    }
+
+
+    private boolean isConjunctionOfUnits(Collection<IVecInt> iVecInts) {
+        for (IVecInt clause : iVecInts) {
+            if (clause.size() > 1)
+                return false;
+        }
+        return true;
+    }
+    */
+
+    private boolean isSatisfiable(IVecInt clause) {
+        try {
+            return solver.isSatisfiable(clause);
+        } catch (TimeoutException e) {
+            throw new TimeOutException();
+        }
     }
 
     private boolean isSatisfiable(Collection<IVecInt> iVecInt) {
@@ -344,7 +387,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     @Override
     protected void handleChanges(Set<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
         super.handleChanges(addAxioms, removeAxioms);
-        //processAxioms(getRootOntology().getAxioms());
         processAxioms(addAxioms, removeAxioms);
 
     }
@@ -352,6 +394,8 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     private void processAxioms(Collection<OWLAxiom> addAxioms, Set<OWLAxiom> removeAxioms) {
         // clean up the solver instance
         resetCalls();
+        if (constraints == null)
+            constraints =  new HashSet<IVecInt>();
         // reset solver state in case of changes
         if (!addAxioms.isEmpty() || !removeAxioms.isEmpty()) {
             setRelevantClasses(null);
@@ -368,10 +412,12 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                     }
                     // remove old translations
                     getSolverClauses().removeAll(clause);
+                    getConstraints().remove(clause);
+
                     // unregister clauses by corresponding symbols
-                    if (isExtractingCoresOnUpdate()) {
+                    //if (isExtractingCoresOnUpdate()) {
                         getSymbolsToClauses().values().remove(clause);
-                    }
+                    //}
                 }
         }
 
@@ -389,17 +435,17 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                         return;
                     }
                     getSolverClauses().put(clause, iConstr);
-                    //if (isExtractingCoresOnUpdate() && isConstraint(clause))
-                    //      addSymbolsToConstants(clause);
-                    //    constraints.add(clause);
+                    //if (isExtractingCoresOnUpdate()) {
+                    addSymbolsToConstants(clause);
+                    if (isConstraint(clause))
+                        getConstraints().add(clause);
+                    //}
                 }
         }
 
-        if (isExtractingCoresOnUpdate()) {
-            //Set<IVecInt> constraints = getConstraints(getReasonerAxioms());
-            //setRelevantClasses(extractCore(constraints));
+        //if (isExtractingCoresOnUpdate()) {
             setRelevantClasses(extractPossiblyUnsatClasses());
-        }
+        //}
 
         if (getCalls() != 0 && logger.isInfoEnabled())
             logger.info("Converted to CNF in " + getCnfTime() + " ms using " + getCalls()
@@ -408,21 +454,15 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (getSolverClauses().size() != solver.nConstraints())
             logger.error("Solver is not synchronized! (T/S) " +
                     getSolverClauses().size() + "/" + solver.nConstraints());
-        //solver.newVar(getNumberOfVariables(getSolverClauses()));
-        //solver.setExpectedNumberOfClauses(getSolverClauses().size());
-        /*
-        try {
-            this.sat = null;
-            for (IVecInt cl : getSolverClauses()) {
-                solver.addClause(cl);
-            }
-        } catch (ContradictionException e) {
-            this.sat = false;
-        }
-        */
+    }
+
+    private Set<IVecInt> getConstraints() {
+        return this.constraints;
     }
 
     private Set<IVecInt> getConstraints(Collection<OWLAxiom> reasonerAxioms) {
+        if (getConstraints() != null)
+            return getConstraints();
         Set<IVecInt> constraints = new HashSet<IVecInt>();
         for (OWLAxiom axiom : reasonerAxioms) {
             Collection<IVecInt> clauses = processAxiom(axiom, new OWL2SATTranslator(this));
@@ -742,6 +782,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return relevantClasses;
     }
 
+    /*
     public boolean isExtractingCoresOnUpdate() {
         return extractCoresOnUpdate;
     }
@@ -749,6 +790,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     void setExtractCoresOnUpdate(boolean extractCoresOnUpdate) {
         this.extractCoresOnUpdate = extractCoresOnUpdate;
     }
-
+    */
 
 }
