@@ -43,7 +43,7 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
     }
 
     public boolean addFormulasToCache(Collection<T> formulas) {
-        if (formulas != null){
+        if (formulas != null) {
             return this.formulasCache.addAll(formulas);
         }
         return false;
@@ -101,12 +101,10 @@ public abstract class AbstractReasoner<T> implements IReasoner<T> {
     }
 
     public boolean isEntailed(Set<T> test) {
-
         throw new RuntimeException("This theory does not support the verification of entailments");
     }
 
     public Set<T> getEntailments() {
-
         throw new RuntimeException("This theory does not support the calculation of entailments");
     }
 
