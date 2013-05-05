@@ -6,8 +6,6 @@ import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,9 +16,11 @@ import java.util.Set;
  */
 public class HornSatReasonerFactory extends StructuralReasonerFactory {
 
-    private Set<OWLClass> unsatClasses = null;
+    private HornSatReasoner.OWLSatStructure owlSatStructure = null;
 
     private boolean precompute = true;
+    private OWLOntology ontology = null;
+
 
     @Override
     public String getReasonerName() {
@@ -36,17 +36,19 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
     }
 
     public void precomputeUnsatClasses(OWLOntology ontology) {
-        HornSatReasoner reasoner = new HornSatReasoner(ontology, new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
-        this.unsatClasses = reasoner.getUnsatisfiableClasses().getEntities();
+        HornSatReasoner reasoner = new HornSatReasoner(ontology, new SimpleConfiguration(), BufferingMode.BUFFERING);
+        this.owlSatStructure = reasoner.getOWLSatStructure();
+        this.ontology = ontology;
     }
 
 
-    public void resetUnsatClasses() {
-        this.unsatClasses = null;
+    public void resetOWLSatStructure() {
+        this.owlSatStructure = null;
+        this.ontology = null;
     }
 
-    public Set<OWLClass> getUnsatClasses() {
-        return unsatClasses;
+    public HornSatReasoner.OWLSatStructure getOWLSatStructure() {
+        return owlSatStructure;
     }
 
     @Override
@@ -55,14 +57,18 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
     }
 
     private HornSatReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
-        if (getUnsatClasses() == null && isPrecomputingUnSatClasses()) {
+        if (getOWLSatStructure() == null && isPrecomputingUnSatClasses()) {
             return new HornSatReasoner(ontology, config, buffering);
         }
-        return new HornSatReasoner(ontology, config, buffering, getUnsatClasses());
+        return new HornSatReasoner(ontology, config, buffering, getOWLSatStructure());
     }
 
     @Override
     public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
         return createReasoner(ontology, config, BufferingMode.BUFFERING);
+    }
+
+    public Collection<OWLClass> getUnsatClasses() {
+        return getOWLSatStructure().getUnsatClasses();
     }
 }
