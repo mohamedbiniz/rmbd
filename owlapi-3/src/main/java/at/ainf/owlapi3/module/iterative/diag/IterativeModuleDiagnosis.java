@@ -51,6 +51,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         while (!actualUnsatClasses.isEmpty()) {
             for (OWLClass unsatClass : actualUnsatClasses)
                 getModuleCalculator().calculateModule(unsatClass);
+            Speed4JMeasurement.start("calculatemodule");
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
             OWLClass actualUnsatClass = Collections.min(actualUnsatClasses,new ModuleSizeComparator(map));
             Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
@@ -59,6 +60,10 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
             Speed4JMeasurement.start("calculatepartdiag");
+            IterativeStatistics.avgCoherencyTime.createNewValueGroup();
+            IterativeStatistics.avgConsistencyTime.createNewValueGroup();
+            IterativeStatistics.avgConsistencyCheck.createNewValueGroup();
+            IterativeStatistics.avgCoherencyCheck.createNewValueGroup();
             Set<OWLLogicalAxiom> partDiag = getDiagSearcher().calculateDiag(axioms, background);
             Speed4JMeasurement.stop();
 
@@ -66,10 +71,22 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                 logger.info("part diag axiom: " + axiom);
             logger.info("---");
 
+            long timeModule = Speed4JMeasurement.stop();
+            IterativeStatistics.moduleTime.add(timeModule);
             getModuleCalculator().removeAxiomsFromOntologyAndModules(partDiag);
             getModuleCalculator().updatedLists(actualUnsatClasses, unsatClasses);
             targetDiagnosis.addAll(partDiag);
         }
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCardCS, "average cardinality CS");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.cardHS, "cardinality HS");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.numberCS, "number CS");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.moduleSize, "module size");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.diagnosisTime, "diagnosis time");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.moduleTime, "module time");
+        IterativeStatistics.logAndClear (logger, IterativeStatistics.avgConsistencyTime, "consistency time");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyTime, "coherency time");
+        IterativeStatistics.logAndClear (logger, IterativeStatistics.avgConsistencyCheck, "consistency checks");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyCheck, "coherency checks");
 
         Speed4JMeasurement.stop();
         return targetDiagnosis;

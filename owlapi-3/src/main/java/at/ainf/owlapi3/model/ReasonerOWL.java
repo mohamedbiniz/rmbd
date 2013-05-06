@@ -2,6 +2,7 @@ package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.diagnosis.model.AbstractReasoner;
+import at.ainf.owlapi3.module.iterative.diag.IterativeStatistics;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -13,8 +14,6 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static _dev.TimeLog.start;
 import static _dev.TimeLog.stop;
@@ -74,7 +73,9 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         sync();
         Speed4JMeasurement.stop();
         boolean r = reasoner.isConsistent();
-        Speed4JMeasurement.stop();
+        long time = Speed4JMeasurement.stop();
+        IterativeStatistics.avgConsistencyTime.addValue(time);
+        IterativeStatistics.avgConsistencyCheck.addValue(1L);
         return r;
     }
 
@@ -96,7 +97,9 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         Speed4JMeasurement.stop();
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         boolean r = reasoner.getBottomClassNode().isSingleton();
-        Speed4JMeasurement.stop();
+        long time = Speed4JMeasurement.stop();
+        IterativeStatistics.avgCoherencyTime.addValue(time);
+        IterativeStatistics.avgCoherencyCheck.addValue(1L);
         return r;
     }
 

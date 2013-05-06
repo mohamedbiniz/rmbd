@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.model;
 
+import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.storage.FormulaSet;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -373,6 +374,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
     protected boolean doConsistencyTest() {
 
         //OWLReasoner reasoner = getSolver();
+        //Speed4JMeasurement.start("consistencytest");
         boolean consistent, coherent = true;
         //if (useCache)
         //    verifyCache(ontology.getLogicalAxioms());
@@ -394,6 +396,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         if (consistent) {
             if (checkTestsConsistency()) return false;
         }
+        //Speed4JMeasurement.stop();
 
         //if (useCache && consistent)
         //    updateCache(ontology.getLogicalAxioms());

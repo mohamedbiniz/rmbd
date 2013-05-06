@@ -50,9 +50,10 @@ public class Speed4JMeasurement {
         runningStopWatches.add(swf.getStopWatch(label));
     }
 
-    public static void stop() {
+    public static long stop() {
         StopWatch sw = runningStopWatches.remove(runningStopWatches.size()-1);
         sw.stop();
+        return sw.getTimeMicros();
     }
 
     public static String getLabelOfLastStopWatch() {

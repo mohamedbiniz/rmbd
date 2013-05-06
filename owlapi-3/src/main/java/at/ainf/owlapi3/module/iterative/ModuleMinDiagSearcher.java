@@ -11,7 +11,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
-import org.semanticweb.HermiT.Reasoner;
+import at.ainf.owlapi3.module.iterative.diag.IterativeStatistics;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -125,7 +125,8 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
             }
         }
         String label = Speed4JMeasurement.getLabelOfLastStopWatch();
-        Speed4JMeasurement.stop();
+        long timeTreeSearch = Speed4JMeasurement.stop();
+        IterativeStatistics.diagnosisTime.add(timeTreeSearch);
         String conflicts = label + " found conflicts with sizes: ";
         for (Set<OWLLogicalAxiom> cs : search.getConflicts())
             conflicts += cs.size() + ", ";
@@ -146,7 +147,16 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         time = System.currentTimeMillis() - time;
         logger.info ("time needed to search for diagnoses: " + time);
 
-        return chooseDiagnosis(search.getDiagnoses());
+        IterativeStatistics.numberCS.add((long)search.getConflicts().size());
+        IterativeStatistics.avgCardCS.createNewValueGroup();
+        for (Set<OWLLogicalAxiom> cs : search.getConflicts())
+            IterativeStatistics.avgCardCS.addValue((long)cs.size());
+        IterativeStatistics.moduleSize.add((long)axioms.size());
+
+        Set<OWLLogicalAxiom> diagnosis = chooseDiagnosis(search.getDiagnoses());
+        IterativeStatistics.cardHS.add((long)diagnosis.size());
+
+        return diagnosis;
 
     }
 
