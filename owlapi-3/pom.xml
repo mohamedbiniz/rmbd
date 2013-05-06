@@ -188,6 +188,10 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>net.sourceforge.owlapi</groupId>
+                    <artifactId>owlapi</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 

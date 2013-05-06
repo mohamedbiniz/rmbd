@@ -418,14 +418,20 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                     getConstraints().remove(clause);
 
                     // unregister clauses by corresponding symbols
+                    /*
                     if (isExtractingCoresOnUpdate()) {
                         getSymbolsToClauses().values().remove(clause);
                     }
+                    */
                 }
         }
 
         for (OWLAxiom axiom : addAxioms) {
-            Collection<IVecInt> clauses = processAxiom(axiom, new OWL2SATTranslator(this));
+            Collection<IVecInt> clauses = getTranslations(axiom);
+            if (clauses == null || clauses.isEmpty()){
+                clauses = processAxiom(axiom, new OWL2SATTranslator(this));
+                addSymbolsToClauses(clauses);
+            }
             if (clauses != null)
                 for (IVecInt clause : clauses) {
                     if (clause == null || getSolverClauses().containsKey(clause))
@@ -439,7 +445,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                     }
                     getSolverClauses().put(clause, iConstr);
                     if (isExtractingCoresOnUpdate()) {
-                        addSymbolsToConstants(clause);
                         if (isConstraint(clause))
                             getConstraints().add(clause);
                     }
@@ -463,6 +468,14 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                     getSolverClauses().size() + "/" + solver.nConstraints());
     }
 
+    private void addSymbolsToClauses(Collection<IVecInt> clauses) {
+        if (clauses == null || clauses.isEmpty())
+            return;
+        for (IVecInt clause : clauses) {
+            addSymbolsToClauses(clause);
+        }
+    }
+
     private Set<IVecInt> getConstraints() {
         return this.constraints;
     }
@@ -477,7 +490,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                 for (IVecInt clause : clauses) {
                     if (clause == null)
                         continue;
-                    addSymbolsToConstants(clause);
+                    addSymbolsToClauses(clause);
                     if (isConstraint(clause))
                         constraints.add(clause);
                 }
@@ -570,7 +583,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return true;
     }
 
-    private void addSymbolsToConstants(IVecInt clause) {
+    private void addSymbolsToClauses(IVecInt clause) {
         for (IteratorInt iterator = clause.iterator(); iterator.hasNext(); ) {
             int symbol = iterator.next();
             if (symbol >= 0) {
@@ -609,6 +622,8 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return Collections.emptySet();
     }
     */
+
+
 
     @Override
     public boolean isEntailmentCheckingSupported(AxiomType<?> axiomType) {
@@ -676,8 +691,8 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return getOWLSatStructure().index.inverse().get(Math.abs(index));
     }
 
-    public Multimap<OWLAxiom, IVecInt> getTranslations() {
-        return getOWLSatStructure().translations;
+    public Collection<IVecInt> getTranslations(OWLAxiom axiom) {
+        return getOWLSatStructure().translations.get(axiom);
     }
 
     public Set<IVecInt> getiVecInt(OWLClassExpression clause) {
@@ -778,6 +793,18 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     void setExtractCoresOnUpdate(boolean extractCoresOnUpdate) {
         this.extractCoresOnUpdate = extractCoresOnUpdate;
+    }
+
+    public boolean hasTranslations(OWLAxiom axiom) {
+        return getOWLSatStructure().translations.containsKey(axiom);
+    }
+
+    public void addTranslation(OWLAxiom axiom, IVecInt clause) {
+        getOWLSatStructure().translations.put(axiom, clause);
+    }
+
+    public void addTranslations(OWLAxiom axiom, Collection<IVecInt> clauses) {
+        getOWLSatStructure().translations.putAll(axiom, clauses);
     }
 
 
