@@ -67,37 +67,12 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             logger.info("---");
 
             getModuleCalculator().removeAxiomsFromOntologyAndModules(partDiag);
-            updatedLists(actualUnsatClasses, unsatClasses);
+            getModuleCalculator().updatedLists(actualUnsatClasses, unsatClasses);
             targetDiagnosis.addAll(partDiag);
         }
 
         Speed4JMeasurement.stop();
         return targetDiagnosis;
-    }
-
-    protected void updatedLists (List<OWLClass> actualUnsat, List<OWLClass> allUnsat) {
-
-        Set<OWLClass> toCheck = new HashSet<OWLClass>(actualUnsat);
-        for (OWLClass unsatClass : toCheck) {
-            //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
-            if (getModuleCalculator().isSatisfiable(unsatClass)) {
-                actualUnsat.remove(unsatClass);
-                allUnsat.remove(unsatClass);
-            }
-        }
-        toCheck = new HashSet<OWLClass>(allUnsat);
-        toCheck.removeAll(actualUnsat);
-        for (OWLClass unsatClass : toCheck) {
-            //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
-            if (!getModuleCalculator().isSatisfiable(unsatClass)) {
-                actualUnsat.add(unsatClass);
-                if (actualUnsat.size() == 10)
-                    break;
-            }
-            else {
-                allUnsat.remove(unsatClass);
-            }
-        }
     }
 
     protected class ChildsComparator implements Comparator<OWLClass> {
