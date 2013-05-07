@@ -73,7 +73,6 @@ public class ExtendedStructuralReasoner extends OWLExtendedReasonerBase {
         return !superCls.isAnonymous() || superCls.getClassExpressionType() == ClassExpressionType.OBJECT_COMPLEMENT_OF;
     }
 
-
     public boolean isSubClassOf(OWLClass cls1, OWLClass cls2) {
         return getSubClasses(cls2, false).getFlattened().contains(cls1);
         //Checks only asserted axioms!!
@@ -232,6 +231,30 @@ public class ExtendedStructuralReasoner extends OWLExtendedReasonerBase {
             return classHierarchyInfo.getNodeHierarchyChildren(ce.asOWLClass(), direct, ns);
         }
         return ns;
+    }
+
+    public NodeSet<OWLClass> getSubClasses(OWLClassExpression ce, boolean direct, int leastNumberOfNodes) throws InconsistentOntologyException, ClassExpressionNotInProfileException, FreshEntitiesException, ReasonerInterruptedException, TimeOutException {
+        Set<Node<OWLClass>> ns = new HashSet<Node<OWLClass>>(getRootOntology().getSignature().size());
+        if (!ce.isAnonymous()) {
+            ensurePrepared();
+            OWLClassNodeSet children = (OWLClassNodeSet)classHierarchyInfo.getNodeHierarchyChildren(ce.asOWLClass(), true, new OWLClassNodeSet());
+            if (direct)
+                return children;
+            else
+            {
+                while (!children.isEmpty() || ns.size() < leastNumberOfNodes){
+                    ns.addAll(children.getNodes());
+                    Iterator<Node<OWLClass>> it = children.iterator();
+                    Set<OWLClass> entities = it.next().getEntities();
+                    it.remove();
+                    for (OWLClass entity : entities) {
+                        NodeSet<OWLClass> localChildren = classHierarchyInfo.getNodeHierarchyChildren(entity, true, new OWLClassNodeSet());
+                        children.addAllNodes(localChildren.getNodes());
+                    }
+                }
+            }
+        }
+        return new OWLClassNodeSet(ns);
     }
 
     @Override
