@@ -232,12 +232,15 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     @Override
     public boolean isSatisfiable(OWLClassExpression classExpression) throws
-            ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException, FreshEntitiesException, InconsistentOntologyException {
+            ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException,
+            FreshEntitiesException, InconsistentOntologyException {
         Collection<IVecInt> iVecInts;
         if (classExpression instanceof OWLAxiom) {
             OWLAxiom axiom = (OWLAxiom) classExpression;
             iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
-        } else
+        } else if (classExpression instanceof OWLClass && isExtractingCoresOnUpdate() && sat != null) {
+            return getOWLSatStructure().getUnsatClasses().contains(classExpression);
+        }   else
             iVecInts = getiVecInt(classExpression);
         if (iVecInts.size() == 1)
             return isSatisfiable(iVecInts.iterator().next());
