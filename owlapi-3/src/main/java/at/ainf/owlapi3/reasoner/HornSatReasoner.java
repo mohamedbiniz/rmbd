@@ -442,8 +442,10 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                     } catch (ContradictionException e) {
                         this.sat = false;
                         return;
+                    } finally {
+                        getSolverClauses().put(clause, iConstr);
                     }
-                    getSolverClauses().put(clause, iConstr);
+
                     if (isExtractingCoresOnUpdate()) {
                         if (isConstraint(clause))
                             getConstraints().add(clause);

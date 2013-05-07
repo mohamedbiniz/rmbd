@@ -238,12 +238,12 @@ public class ExtendedStructuralReasoner extends OWLExtendedReasonerBase {
         if (!ce.isAnonymous()) {
             ensurePrepared();
             OWLClassNodeSet children = (OWLClassNodeSet)classHierarchyInfo.getNodeHierarchyChildren(ce.asOWLClass(), true, new OWLClassNodeSet());
+            ns.addAll(children.getNodes());
             if (direct)
                 return children;
             else
             {
-                while (!children.isEmpty() || ns.size() < leastNumberOfNodes){
-                    ns.addAll(children.getNodes());
+                while (!children.isEmpty() && ns.size() < leastNumberOfNodes){
                     Iterator<Node<OWLClass>> it = children.iterator();
                     Set<OWLClass> entities = it.next().getEntities();
                     it.remove();
@@ -251,6 +251,7 @@ public class ExtendedStructuralReasoner extends OWLExtendedReasonerBase {
                         NodeSet<OWLClass> localChildren = classHierarchyInfo.getNodeHierarchyChildren(entity, true, new OWLClassNodeSet());
                         children.addAllNodes(localChildren.getNodes());
                     }
+                    ns.addAll(children.getNodes());
                 }
             }
         }
