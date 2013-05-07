@@ -7,6 +7,8 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
 import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
@@ -20,6 +22,8 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class ModuleCalc {
+
+    private static Logger logger = LoggerFactory.getLogger(ModuleCalc.class.getName());
 
     private OWLOntology ontology;
     private OWLReasoner reasoner;
@@ -47,6 +51,8 @@ public class ModuleCalc {
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
             Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
             actualUnsat.retainAll(unsat);
+            if (logger.isInfoEnabled())
+                logger.info("Unsat classes old: " + allUnsat.size() + " new: " + unsat.size() + " actual: " + actualUnsat.size());
             allUnsat.retainAll(unsat);
 
             for (OWLClass owlClass : allUnsat) {
