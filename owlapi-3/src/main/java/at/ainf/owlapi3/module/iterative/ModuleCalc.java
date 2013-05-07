@@ -56,7 +56,7 @@ public class ModuleCalc {
             allUnsat.retainAll(unsat);
 
             for (OWLClass owlClass : allUnsat) {
-                if (!actualUnsat.contains(owlClass))
+                if (!actualUnsat.contains(owlClass) && !reasoner.isSatisfiable(owlClass))
                     actualUnsat.add(owlClass);
                 if (actualUnsat.size() == 10)
                     break;
