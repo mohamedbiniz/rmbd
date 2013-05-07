@@ -153,8 +153,9 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
             IterativeStatistics.avgCardCS.addValue((long)cs.size());
         IterativeStatistics.moduleSize.add((long)axioms.size());
 
-        Set<OWLLogicalAxiom> diagnosis = chooseDiagnosis(search.getDiagnoses());
-        IterativeStatistics.cardHS.add((long)diagnosis.size());
+        Set<FormulaSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
+        Set<OWLLogicalAxiom> diagnosis = chooseDiagnosis(diagnoses);
+        IterativeStatistics.cardHS.add((long) diagnosis.size());
 
         return diagnosis;
 
