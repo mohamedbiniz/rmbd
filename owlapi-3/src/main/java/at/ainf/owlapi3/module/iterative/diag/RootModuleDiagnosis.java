@@ -1,8 +1,8 @@
 package at.ainf.owlapi3.module.iterative.diag;
 
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +18,15 @@ import java.util.*;
  */
 public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
 
+    private static final int SUITABLE_MODULE_SIZE = 100;
+
     private static Logger logger = LoggerFactory.getLogger(RootModuleDiagnosis.class.getName());
 
-    private List<OWLClass> repaired = new LinkedList<OWLClass>();
+    private Set<OWLClass> repaired = new LinkedHashSet<OWLClass>();
 
     private Map<Integer,Set<OWLClass>> table = new HashMap<Integer, Set<OWLClass>>();
+
+    //private Map<OWLClass,Integer> moduleSizes = new HashMap<OWLClass, Integer>();
 
     public RootModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms,
                                     OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher) {
@@ -30,19 +34,19 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
 
     }
 
-    private List<OWLClass> computeUnsatClasses(List<OWLClass> repaired) {
+    private List<OWLClass> computeUnsatClasses(Set<OWLClass> repaired) {
         List<OWLClass> result = new LinkedList<OWLClass>(getModuleCalculator().getInitialUnsatClasses());
         result.removeAll(repaired);
         return result;
     }
 
-    private List<OWLClass> computeNvClasses(Map<Integer,Set<OWLClass>> table, List<OWLClass> repaired) {
+    private List<OWLClass> computeNvClasses(Map<Integer,Set<OWLClass>> table, Set<OWLClass> repaired) {
         List<OWLClass> result = computeUnsatClasses(repaired);
         result.removeAll(unionOf(table.values()));
         return result;
     }
 
-    private List<OWLClass> computeVClasses(Map<Integer,Set<OWLClass>> table, List<OWLClass> repaired) {
+    private List<OWLClass> computeVClasses(Map<Integer,Set<OWLClass>> table, Set<OWLClass> repaired) {
         List<OWLClass> result = computeUnsatClasses(repaired);
         result.retainAll(unionOf(table.values()));
         return result;
@@ -71,13 +75,6 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
     }
 
 
-    private Map<OWLClass,Integer> table1 = new HashMap<OWLClass, Integer>();
-
-    private Set<OWLClass> s = new LinkedHashSet<OWLClass>();
-
-    private Set<OWLLogicalAxiom> rootModul = null;
-
-
     protected void updateTable (Map<OWLClass, Integer> table1) {
         for (Map.Entry<OWLClass,Integer> entry : table1.entrySet()) {
             if (!table.containsKey(entry.getValue()))
@@ -87,28 +84,10 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
         }
     }
 
-    protected OWLClass checkModuleForUnsatClassesAndUpdateRepaired(OWLClass unsatClass, Set<OWLLogicalAxiom> modul, Set<OWLLogicalAxiom> targetDiagnosis) {
-        for (OWLClass cls : getClassesInModuleSignature(modul)) {
-            if (cls.equals(unsatClass))
-                continue;
-
-            Set<OWLLogicalAxiom> testModule = computeModule(cls, targetDiagnosis);
-            if (!testModule.isEmpty()) {
-                return cls;
-            }
-            else {
-                repaired.add(cls);
-            }
-        }
-
-        return null;
-
-    }
-
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
 
-        List<OWLClass> nvClasses = computeNvClasses(table,repaired);
+        List<OWLClass> nvClasses = computeNvClasses(table, repaired);
         List<OWLClass> vClasses = computeVClasses(table,repaired);
 
         boolean bothEmpty = nvClasses.isEmpty() && vClasses.isEmpty();
@@ -117,44 +96,24 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
             Set<OWLLogicalAxiom> module = null;
             OWLClass actualUnsatClass = null;
             boolean rootModuleFound = false;
+            boolean foundActualUnsatClass = false;
+            Set<OWLClass> muv = new LinkedHashSet<OWLClass>();
             for (OWLClass unsatClass : nvClasses) {
                 module = computeModule(unsatClass, targetDiagnosis);
 
-                OWLClass foundUnsatClass = checkModuleForUnsatClassesAndUpdateRepaired(unsatClass, module, targetDiagnosis);
+                //if (module.size() > SUITABLE_MODULE_SIZE)
+                //    continue;
 
-                if (foundUnsatClass != null) {
+                muv = computeReallyUnsatClassesAndUpdateRepaired(module);
 
+                if (!muv.isEmpty()) {
                     actualUnsatClass = unsatClass;
+                    foundActualUnsatClass = true;
                     break;
                 }
-                else {
-                    if (module.isEmpty()) {
-                        repaired.add(unsatClass);
-                        nvClasses.remove(unsatClass);
-                    }
-                    else {
-                        boolean satisfiable;
-                        if (getReasonerFactory().getReasonerName().equals(HornSatReasoner.NAME)) {
-                            Set<OWLClass> unsat = getReasonerFactory().createNonBufferingReasoner(createOntology(module)).getUnsatisfiableClasses().getEntitiesMinusBottom();
-                            satisfiable = !unsat.contains(unsatClass);
-                        }
-                        else {
-                            satisfiable = getReasonerFactory().createNonBufferingReasoner(createOntology(module)).isSatisfiable(unsatClass);
-                        }
-                        if (satisfiable) {
-                            repaired.add(unsatClass);
-                            nvClasses.remove(unsatClass);
-                        }
-                        else {
-                            rootModuleFound = true;
-                            actualUnsatClass = unsatClass;
-                            break;
-                        }
-                    }
 
-                }
             }
-            if (actualUnsatClass == null) {
+            if (!foundActualUnsatClass) {
                 Collections.sort(vClasses, new Comparator<OWLClass>() {
                     @Override
                     public int compare(OWLClass o1, OWLClass o2) {
@@ -176,65 +135,43 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                 for (OWLClass unsatClass : vClasses) {
                     module = computeModule(unsatClass, targetDiagnosis);
 
-                    OWLClass foundUnsatClass = checkModuleForUnsatClassesAndUpdateRepaired(unsatClass, module, targetDiagnosis);
+                    muv = computeReallyUnsatClassesAndUpdateRepaired(module);
 
-                    if (foundUnsatClass != null) {
-
+                    if (!muv.isEmpty()) {
                         actualUnsatClass = unsatClass;
                         break;
                     }
-                    else {
-                        if (module.isEmpty()) {
-                            repaired.add(unsatClass);
-                            vClasses.remove(unsatClass);
-                        }
-                        else {
-                            boolean satisfiable;
-                            if (getReasonerFactory().getReasonerName().equals(HornSatReasoner.NAME)) {
-                                Set<OWLClass> unsat = getReasonerFactory().createNonBufferingReasoner(createOntology(module)).getUnsatisfiableClasses().getEntitiesMinusBottom();
-                                satisfiable = !unsat.contains(unsatClass);
-                            }
-                            else {
-                                satisfiable = getReasonerFactory().createNonBufferingReasoner(createOntology(module)).isSatisfiable(unsatClass);
-                            }
-                            if (satisfiable) {
-                                repaired.add(unsatClass);
-                                vClasses.remove(unsatClass);
-                            }
-                            else {
-                                rootModuleFound = true;
-                                actualUnsatClass = unsatClass;
-                                break;
-                            }
-                        }
-
-                    }
                 }
             }
 
-            boolean alreadyVisited = false;
+            if (muv.isEmpty())
+                return targetDiagnosis;
+
+            Map<OWLClass,Integer> table1 = new HashMap<OWLClass, Integer>();
+
+            Set<OWLClass> s = new LinkedHashSet<OWLClass>();
 
             if (!rootModuleFound) {
-                try {
+
+                    //Set<OWLClass> muv = getClassesInModuleSignature(module);
+                    //muv.retainAll(getModuleCalculator().getInitialUnsatClasses());
+                    muv.removeAll(repaired);
+                    muv.remove(actualUnsatClass);
+
                     if (nvClasses.contains(actualUnsatClass)) {
-                        module = reduceClassToRootModule(actualUnsatClass, true, module);
+                        module = reduceToRootModule(actualUnsatClass, true, module, table1, s, muv);
                     }
                     else if (vClasses.contains(actualUnsatClass)) {
-                        module = reduceClassToRootModule(actualUnsatClass, false, module);
+                        module = reduceToRootModule(actualUnsatClass, false, module, table1, s, muv);
                     }
                     else
                         throw new IllegalStateException("both sets cannot be total empty");
-                }
-                catch (AlreadyVisitedException e) {
-                    alreadyVisited = true;
-                }
-                catch(FoundRootModuleException e) {
-                    module = rootModul;
-                    rootModul = null;
-                }
+
+
+
             }
 
-            if (!alreadyVisited && !module.isEmpty()) {
+            if (!module.isEmpty()) {
                 Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(module);
                 Set<OWLLogicalAxiom> background = new LinkedHashSet<OWLLogicalAxiom>(axioms);
                 background.retainAll(getOntoAxioms());
@@ -266,16 +203,46 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
         return targetDiagnosis;
     }
 
-    protected Set<OWLLogicalAxiom> reduceClassToRootModule(OWLClass unsatClass, boolean isNew, Set<OWLLogicalAxiom> initialModul)
-        throws AlreadyVisitedException, FoundRootModuleException {
+    /*protected boolean isOntoSat(Set<OWLLogicalAxiom> targetDiagnosis) {
+        Set<OWLLogicalAxiom> ontology = new LinkedHashSet<OWLLogicalAxiom>();
+        ontology.addAll(getOntoAxioms());
+        ontology.addAll(getMappings());
+        ontology.removeAll(targetDiagnosis);
+        return getReasonerFactory().createNonBufferingReasoner(createOntology(ontology)).getUnsatisfiableClasses().getEntitiesMinusBottom().size() == 0;
+    }*/
 
-        Set<OWLClass> muv = getClassesInModuleSignature(initialModul);
+    protected Set<OWLClass> computeReallyUnsatClassesAndUpdateRepaired(Set<OWLLogicalAxiom> module) {
+        OWLReasoner reasoner = getReasonerFactory().createNonBufferingReasoner(createOntology(module));
+
+        Set<OWLClass> unsatClasses = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+
+        Set<OWLClass> alreadyRepairedClasses = new LinkedHashSet<OWLClass>(getClassesInModuleSignature(module));
+        alreadyRepairedClasses.retainAll(getModuleCalculator().getInitialUnsatClasses());
+        alreadyRepairedClasses.removeAll(unsatClasses);
+
+        repaired.addAll(alreadyRepairedClasses);
+
+        return unsatClasses;
+
+    }
+
+
+    protected Set<OWLLogicalAxiom> reduceToRootModule(OWLClass unsatClass,
+                                                      boolean isNew, Set<OWLLogicalAxiom> modul, Map<OWLClass, Integer> table1, Set<OWLClass> s, Set<OWLClass> muv)
+                      {
+
+        /*Set<OWLClass> muv = getClassesInModuleSignature(modul);
         muv.removeAll(repaired);
         muv.remove(unsatClass);
         muv.removeAll(table1.keySet());
         muv.removeAll(s);
-        muv.retainAll(getModuleCalculator().getInitialUnsatClasses());
-        while (!muv.isEmpty()) {
+        muv.retainAll(getModuleCalculator().getInitialUnsatClasses());*/
+
+        //muv = calculateStillUnsatClass (muv, modul);
+
+        if (muv.isEmpty())
+            return modul;
+
             if (isNew) {
                 Set<OWLClass> setOfT = new LinkedHashSet<OWLClass>(unionOf(table.values()));
                 if (setOfT.containsAll(muv)) {
@@ -306,15 +273,15 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
 
                     updateTable(table1);
 
-                    throw new AlreadyVisitedException();
+                    return Collections.emptySet();
                 }
 
                 Set<OWLClass> classes = new LinkedHashSet<OWLClass>(muv);
                 classes.removeAll(unionOf(table.values()));
                 OWLClass modulClass = classes.iterator().next();
 
-                Set<OWLLogicalAxiom> submodule = getModuleCalculator().extractModule(createOntology(initialModul),modulClass);
-                if (initialModul.size() == submodule.size()) {
+                Set<OWLLogicalAxiom> submodule = getModuleCalculator().extractModule(createOntology(modul),modulClass);
+                if (modul.size() == submodule.size()) {
                     s.add(modulClass);
                 }
                 else {
@@ -326,9 +293,12 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                     s.add(modulClass);
                 }
 
+                muv.remove(modulClass);
+                muv.removeAll(table1.keySet());
+                muv.removeAll(s);
+                muv.retainAll(getClassesInModuleSignature(submodule));
 
-
-                reduceClassToRootModule(modulClass,isNew,submodule);
+                return reduceToRootModule(modulClass, isNew, submodule, table1, s, muv);
             }
             else {
                 Integer minKey = Collections.min(table.keySet());
@@ -346,9 +316,9 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                 Set<OWLClass> temp = new HashSet<OWLClass>(muv);
                 temp.retainAll(table.get(minKey));
                 OWLClass modulClass = temp.iterator().next();
-                Set<OWLLogicalAxiom> submodule = getModuleCalculator().extractModule(createOntology(initialModul),modulClass);
+                Set<OWLLogicalAxiom> submodule = getModuleCalculator().extractModule(createOntology(modul),modulClass);
 
-                if (initialModul.size() == submodule.size()) {
+                if (modul.size() == submodule.size()) {
                     s.add(modulClass);
                 }
                 else {
@@ -356,23 +326,19 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                     s.add(modulClass);
                 }
 
-                reduceClassToRootModule(modulClass,isNew,submodule);
+                muv.remove(modulClass);
+                muv.removeAll(table1.keySet());
+                muv.removeAll(s);
+                muv.retainAll(getClassesInModuleSignature(submodule));
+
+                return reduceToRootModule(modulClass, isNew, submodule, table1, s, muv);
             }
-        }
 
 
-        rootModul = initialModul;
 
-        throw new FoundRootModuleException();
 
     }
 
-    class AlreadyVisitedException extends Exception {
 
-    }
-
-    class FoundRootModuleException extends Exception {
-
-    }
 
 }
