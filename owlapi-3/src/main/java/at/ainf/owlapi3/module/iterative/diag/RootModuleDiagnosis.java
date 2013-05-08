@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.module.iterative.diag;
 
+import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
 
-    private static final int SUITABLE_MODULE_SIZE = 100;
+    private static final int MIN_MODUL_SIZE = 100;
 
     private static Logger logger = LoggerFactory.getLogger(RootModuleDiagnosis.class.getName());
 
@@ -26,7 +27,7 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
 
     private Map<Integer,Set<OWLClass>> table = new HashMap<Integer, Set<OWLClass>>();
 
-    //private Map<OWLClass,Integer> moduleSizes = new HashMap<OWLClass, Integer>();
+    private Map<OWLClass,Integer> moduleSizes = new HashMap<OWLClass, Integer>();
 
     public RootModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms,
                                     OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher) {
@@ -84,6 +85,18 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
         }
     }
 
+    protected boolean isSatisfiable (OWLClass possibleUnsat, Set<OWLLogicalAxiom> module) {
+        OWLReasoner reasoner = getReasonerFactory().createNonBufferingReasoner(createOntology(module));
+        return reasoner.isSatisfiable(possibleUnsat);
+    }
+
+    protected boolean isAlreadyConsistent(Set<OWLLogicalAxiom> targetDiagnosis) {
+        Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(getOntoAxioms());
+        axioms.addAll(getMappings());
+        axioms.removeAll(targetDiagnosis);
+        return getReasonerFactory().createNonBufferingReasoner(createOntology(axioms)).getUnsatisfiableClasses().getEntitiesMinusBottom().isEmpty();
+    }
+
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
 
@@ -91,6 +104,7 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
         List<OWLClass> vClasses = computeVClasses(table,repaired);
 
         boolean bothEmpty = nvClasses.isEmpty() && vClasses.isEmpty();
+
         while (!bothEmpty) {
 
             Set<OWLLogicalAxiom> module = null;
@@ -98,21 +112,75 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
             boolean rootModuleFound = false;
             boolean foundActualUnsatClass = false;
             Set<OWLClass> muv = new LinkedHashSet<OWLClass>();
+            Speed4JMeasurement.start("for-nv");
+
+            int counter = 0;
+            boolean alreadyCheckedConsistency = false;
+            int max_search_before_test = nvClasses.size() * 10 / 100;
+
             for (OWLClass unsatClass : nvClasses) {
+                counter++;
+                if ( counter > max_search_before_test && !alreadyCheckedConsistency) {
+                    alreadyCheckedConsistency = true;
+                    if (isAlreadyConsistent(targetDiagnosis))
+                        return targetDiagnosis;
+                }
+
                 module = computeModule(unsatClass, targetDiagnosis);
 
                 //if (module.size() > SUITABLE_MODULE_SIZE)
                 //    continue;
 
-                muv = computeReallyUnsatClassesAndUpdateRepaired(module);
+                Set<OWLClass> possiblyUnsat = getClassesInModuleSignature(module);
+                possiblyUnsat.retainAll(getModuleCalculator().getInitialUnsatClasses());
+                possiblyUnsat.removeAll(repaired);
+                for (OWLClass cls : possiblyUnsat) {
+                    if (cls.equals(unsatClass))
+                        continue;
 
-                if (!muv.isEmpty()) {
-                    actualUnsatClass = unsatClass;
-                    foundActualUnsatClass = true;
-                    break;
+                    Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>(module);
+                    axioms.removeAll(targetDiagnosis);
+                    Set<OWLLogicalAxiom> submodule = getModuleCalculator().extractModule(createOntology(axioms),cls);
+
+
+                    if (submodule.isEmpty()) {
+                        repaired.add(cls);
+
+                    }
+                    else {
+                        if (moduleSizes.containsKey(cls) && moduleSizes.get(cls).equals(submodule.size())) {
+                            actualUnsatClass = cls;
+                            module = submodule;
+                            foundActualUnsatClass = true;
+                            break;
+                        }
+                        else {
+                            if (isSatisfiable(cls,module)) {
+                                repaired.add(cls);
+
+                            }
+                            else {
+                                moduleSizes.put(cls,submodule.size());
+
+                                actualUnsatClass = cls;
+                                module = submodule;
+                                foundActualUnsatClass = true;
+                                break;
+                            }
+                        }
+                    }
+
                 }
 
+                if (foundActualUnsatClass)
+                    break;
+
+                 //
+                // TODO set MUV
+
             }
+            Speed4JMeasurement.stop();
+            Speed4JMeasurement.start("for-v");
             if (!foundActualUnsatClass) {
                 Collections.sort(vClasses, new Comparator<OWLClass>() {
                     @Override
@@ -132,20 +200,78 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                         return o1Key.compareTo(o2Key);
                     }
                 });
+
+                int counterV = 0;
+                boolean alreadyCheckedConsistencyV = false;
+                int max_search_before_testV = vClasses.size() * 15 / 100;
+
                 for (OWLClass unsatClass : vClasses) {
+                    counterV++;
+                    if ( counterV > max_search_before_testV && !alreadyCheckedConsistencyV) {
+                        alreadyCheckedConsistencyV = true;
+                        if (isAlreadyConsistent(targetDiagnosis))
+                            return targetDiagnosis;
+                    }
+
                     module = computeModule(unsatClass, targetDiagnosis);
 
-                    muv = computeReallyUnsatClassesAndUpdateRepaired(module);
+                    //if (module.size() > SUITABLE_MODULE_SIZE)
+                    //    continue;
 
-                    if (!muv.isEmpty()) {
-                        actualUnsatClass = unsatClass;
-                        break;
+                    Set<OWLClass> possiblyUnsat = getClassesInModuleSignature(module);
+                    possiblyUnsat.retainAll(getModuleCalculator().getInitialUnsatClasses());
+                    possiblyUnsat.removeAll(repaired);
+                    for (OWLClass cls : possiblyUnsat) {
+                        if (cls.equals(unsatClass))
+                            continue;
+
+                        Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>(module);
+                        axioms.removeAll(targetDiagnosis);
+                        Set<OWLLogicalAxiom> submodule = getModuleCalculator().extractModule(createOntology(axioms),cls);
+
+
+                        if (submodule.isEmpty()) {
+                            repaired.add(cls);
+
+                        }
+                        else {
+                            if (moduleSizes.containsKey(cls) && moduleSizes.get(cls).equals(submodule.size())) {
+                                actualUnsatClass = cls;
+                                module = submodule;
+                                break;
+                            }
+                            else {
+                                if (isSatisfiable(cls,module)) {
+                                    repaired.add(cls);
+
+                                }
+                                else {
+                                    moduleSizes.put(cls,submodule.size());
+
+                                    actualUnsatClass = cls;
+                                    module = submodule;
+                                    break;
+                                }
+                            }
+                        }
                     }
+
+                    if (foundActualUnsatClass)
+                        break;
+
                 }
             }
+            Speed4JMeasurement.stop();
 
-            if (muv.isEmpty())
+
+            if (actualUnsatClass == null)
                 return targetDiagnosis;
+
+            muv = getClassesInModuleSignature(module);
+            muv.retainAll(getModuleCalculator().getInitialUnsatClasses());
+            muv.removeAll(repaired);
+            muv.remove(actualUnsatClass);
+
 
             Map<OWLClass,Integer> table1 = new HashMap<OWLClass, Integer>();
 
@@ -159,10 +285,14 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                     muv.remove(actualUnsatClass);
 
                     if (nvClasses.contains(actualUnsatClass)) {
+                        Speed4JMeasurement.start("reducetounsat");
                         module = reduceToRootModule(actualUnsatClass, true, module, table1, s, muv);
+                        Speed4JMeasurement.stop();
                     }
                     else if (vClasses.contains(actualUnsatClass)) {
+                        Speed4JMeasurement.start("reducetounsat1");
                         module = reduceToRootModule(actualUnsatClass, false, module, table1, s, muv);
+                        Speed4JMeasurement.stop();
                     }
                     else
                         throw new IllegalStateException("both sets cannot be total empty");
@@ -182,7 +312,9 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                     targetDiagnosis.addAll(possibleFaulty);
                 }
                 else {
+                    Speed4JMeasurement.start("diagnosisspeed");
                     targetDiagnosis.addAll(getDiagSearcher().calculateDiag(axioms, background));
+                    Speed4JMeasurement.stop();
                 }
                 repaired.addAll(s);
             }
@@ -298,6 +430,9 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                 muv.removeAll(s);
                 muv.retainAll(getClassesInModuleSignature(submodule));
 
+                if (submodule.size() < MIN_MODUL_SIZE)
+                    return submodule;
+
                 return reduceToRootModule(modulClass, isNew, submodule, table1, s, muv);
             }
             else {
@@ -330,6 +465,9 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                 muv.removeAll(table1.keySet());
                 muv.removeAll(s);
                 muv.retainAll(getClassesInModuleSignature(submodule));
+
+                if (submodule.size() < MIN_MODUL_SIZE)
+                    return submodule;
 
                 return reduceToRootModule(modulClass, isNew, submodule, table1, s, muv);
             }
