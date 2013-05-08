@@ -1,0 +1,18 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/PCS.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/CRS.owl
+sourceNamespace = http://PCS.owl
+targetNamespace = http://CRS.owl
+
+< Accepted_paper = article | 0.8200000000000001
++ Author = author | 0.6
+- Conference = article | 0.7
++ DOCUMENT = document | 0.9285714285714286
+- Information = program | 0.8
++ Paper = article | 0.9
++ PERSON = person | 0.7
++ Programme = program | 1.0
+< Rejected_paper = article | 0.8200000000000001
+- Report = article | 0.8
++ Report = document | 0.8
++ Review = review | 1.0
+- System = program | 0.8
