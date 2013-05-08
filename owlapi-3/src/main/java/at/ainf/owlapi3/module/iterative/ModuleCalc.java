@@ -131,6 +131,7 @@ public class ModuleCalc {
 
         for (Set<OWLLogicalAxiom> module : moduleMap.values())
             module.removeAll(axioms);
+
     }
 
 }
