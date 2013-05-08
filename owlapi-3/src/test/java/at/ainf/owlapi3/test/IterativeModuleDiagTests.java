@@ -4,6 +4,8 @@ import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.owlapi3.module.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
 import at.ainf.owlapi3.module.iterative.diag.IterativeModuleDiagnosis;
+import at.ainf.owlapi3.module.iterative.diag.ModuleDiagnosis;
+import at.ainf.owlapi3.module.iterative.diag.RootModuleDiagnosis;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -203,8 +205,10 @@ public class IterativeModuleDiagTests {
         //ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
 
         long time = System.currentTimeMillis();
-        IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
-                                                         new Reasoner.ReasonerFactory(), d, true);
+        //ModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
+        //                                                 new Reasoner.ReasonerFactory(), d, true);
+        ModuleDiagnosis diagnosisFinder = new RootModuleDiagnosis(mappingAxioms, ontoAxioms,
+                new Reasoner.ReasonerFactory(), d);
 
         Set<OWLLogicalAxiom> targetDiagnosis = diagnosisFinder.calculateTargetDiagnosis();
         time = System.currentTimeMillis() - time;
