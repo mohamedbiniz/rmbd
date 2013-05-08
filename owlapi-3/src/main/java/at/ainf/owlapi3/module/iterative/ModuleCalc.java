@@ -48,8 +48,9 @@ public class ModuleCalc {
     }
 
     public void updatedLists(List<OWLClass> actualUnsat, List<OWLClass> allUnsat) {
+
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
-            Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+            Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntities();
             actualUnsat.retainAll(unsat);
             if (logger.isInfoEnabled())
                 logger.info("Unsat classes old: " + allUnsat.size() + " new: " + unsat.size() + " actual: " + actualUnsat.size());
