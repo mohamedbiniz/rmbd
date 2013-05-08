@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import static at.ainf.owlapi3.base.tools.LoggerUtils.addConsoleLogger;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -201,7 +202,7 @@ public class ReasonersTest {
         Result sat = reasonerTest(factory, ontology);
         Result hermit = reasonerTest(new Reasoner.ReasonerFactory(), ontology);
         //Result struct = reasonerTest(new ExtendedStructuralReasonerFactory(), ontology);
-
+        assertEquals(sat.diagnoses.size(), hermit.diagnoses.size());
         hermit.print("Hermit");
         sat.print("SAT");
         //struct.print("Structural");
