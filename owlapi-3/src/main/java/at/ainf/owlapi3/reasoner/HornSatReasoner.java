@@ -354,10 +354,12 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     @Override
     public Node<OWLClass> getUnsatisfiableClasses() throws ReasonerInterruptedException, TimeOutException {
+        /*
         if (getRelevantClasses() != null && this.sat != null && isExtractingCoresOnUpdate()){
             getOWLSatStructure().unSatClasses = getRelevantClasses();
             return new OWLClassNode(getOWLSatStructure().unSatClasses);
         }
+        */
 
         Set<OWLClass> unSat = new HashSet<OWLClass>();
 
@@ -446,7 +448,11 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                         this.sat = false;
                         return;
                     } finally {
-                        getSolverClauses().put(clause, iConstr);
+                        if (iConstr != null)
+                            getSolverClauses().put(clause, iConstr);
+                        if (logger.isDebugEnabled() && getSolverClauses().size() != this.solver.nConstraints()){
+                            logger.debug("Solver cache is not sync! Constraint " + iConstr + " clause " + clause);
+                        }
                     }
 
                     if (isExtractingCoresOnUpdate()) {
@@ -461,16 +467,13 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             setRelevantClasses(convertToOWLClasses(core.symbols));
             if (core.isHornComplete){
                 this.sat = core.symbols.isEmpty();
+                getOWLSatStructure().unSatClasses = getRelevantClasses();
             }
         }
 
         if (getCalls() != 0 && logger.isInfoEnabled())
             logger.info("Converted to CNF in " + getCnfTime() + " ms using " + getCalls()
                     + " calls");
-
-        if (getSolverClauses().size() != this.solver.nConstraints())
-            logger.error("Solver is not synchronized! (T/S) " +
-                    getSolverClauses().size() + "/" + solver.nConstraints());
     }
 
     private void addSymbolsToClauses(Collection<IVecInt> clauses) {
