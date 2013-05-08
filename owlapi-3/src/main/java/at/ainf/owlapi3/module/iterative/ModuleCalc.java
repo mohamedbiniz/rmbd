@@ -64,6 +64,27 @@ public class ModuleCalc {
             }
         } else*/
         {
+
+            for (Iterator<OWLClass> it = actualUnsat.iterator(); it.hasNext(); ) {
+                OWLClass cl = it.next();
+                if (isSatisfiable(cl)) {
+                    it.remove();
+                    allUnsat.remove(cl);
+                }
+            }
+            if (logger.isInfoEnabled())
+                logger.info("Unsat classes all: " + allUnsat.size() + " actual: " + actualUnsat.size());
+            Iterator<OWLClass> it = allUnsat.iterator();
+            while (it.hasNext() && actualUnsat.size() < 10) {
+                OWLClass cl = it.next();
+                if (isSatisfiable(cl)) {
+                    it.remove();
+                } else {
+                    actualUnsat.add(cl);
+                }
+
+            }
+            /*
             Set<OWLClass> toCheck = new HashSet<OWLClass>(actualUnsat);
             for (OWLClass unsatClass : toCheck) {
                 //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
@@ -84,6 +105,7 @@ public class ModuleCalc {
                     allUnsat.remove(unsatClass);
                 }
             }
+            */
 
         }
     }

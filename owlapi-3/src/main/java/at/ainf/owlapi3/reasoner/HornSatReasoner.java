@@ -238,10 +238,11 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (classExpression instanceof OWLAxiom) {
             OWLAxiom axiom = (OWLAxiom) classExpression;
             iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
-        } /*else if (classExpression instanceof OWLClass && isExtractingCoresOnUpdate() && sat != null) {
-            return !getOWLSatStructure().getUnsatClasses().contains(classExpression);
+        } else if (classExpression instanceof OWLClass && isExtractingCoresOnUpdate() &&
+                !getRelevantClasses().contains(classExpression)) {
+            return true;
 
-        }  */ else
+        }  else
             iVecInts = getiVecInt(classExpression);
         return isSatisfiable(iVecInts);
     }
