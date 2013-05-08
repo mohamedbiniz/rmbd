@@ -238,12 +238,11 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (classExpression instanceof OWLAxiom) {
             OWLAxiom axiom = (OWLAxiom) classExpression;
             iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
-        } else if (classExpression instanceof OWLClass && isExtractingCoresOnUpdate() && sat != null) {
+        } /*else if (classExpression instanceof OWLClass && isExtractingCoresOnUpdate() && sat != null) {
             return !getOWLSatStructure().getUnsatClasses().contains(classExpression);
-        }   else
+
+        }  */ else
             iVecInts = getiVecInt(classExpression);
-        if (iVecInts.size() == 1)
-            return isSatisfiable(iVecInts.iterator().next());
         return isSatisfiable(iVecInts);
     }
 
@@ -286,6 +285,9 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
     private boolean isSatisfiable(Collection<IVecInt> iVecInt) {
+        if (iVecInt.size() == 1)
+            return isSatisfiable(iVecInt.iterator().next());
+
         Set<IConstr> iConstr = new HashSet<IConstr>();
         try {
             for (IVecInt constr : iVecInt) {
@@ -467,7 +469,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             setRelevantClasses(convertToOWLClasses(core.symbols));
             if (core.isHornComplete){
                 this.sat = core.symbols.isEmpty();
-                getOWLSatStructure().unSatClasses = getRelevantClasses();
             }
         }
 
