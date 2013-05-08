@@ -48,7 +48,7 @@ public class ModuleCalc {
     }
 
     public void updatedLists(List<OWLClass> actualUnsat, List<OWLClass> allUnsat) {
-
+        /*
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
             Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntities();
             actualUnsat.retainAll(unsat);
@@ -62,7 +62,7 @@ public class ModuleCalc {
                 if (actualUnsat.size() == 10)
                     break;
             }
-        } else
+        } else*/
         {
             Set<OWLClass> toCheck = new HashSet<OWLClass>(actualUnsat);
             for (OWLClass unsatClass : toCheck) {
