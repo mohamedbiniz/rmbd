@@ -207,10 +207,13 @@ public class IterativeModuleDiagTests {
         long time = System.currentTimeMillis();
         //ModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
         //                                                 new Reasoner.ReasonerFactory(), d, true);
+        Speed4JMeasurement.start("modulediagnosiscreation");
         ModuleDiagnosis diagnosisFinder = new RootModuleDiagnosis(mappingAxioms, ontoAxioms,
                 new Reasoner.ReasonerFactory(), d);
+        Speed4JMeasurement.stop();
 
         Set<OWLLogicalAxiom> targetDiagnosis = diagnosisFinder.calculateTargetDiagnosis();
+        logger.info("size of target diag: " + targetDiagnosis.size());
         time = System.currentTimeMillis() - time;
 
         Set<OWLLogicalAxiom> repaired = new HashSet<OWLLogicalAxiom>();

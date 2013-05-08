@@ -166,7 +166,11 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
         }
         logger.info("number of queries: " + numOfQueries);
-        return diagnoses.iterator().next();
+
+        if (diagnoses.isEmpty())
+            return Collections.emptySet();
+        else
+            return diagnoses.iterator().next();
 
     }
 
