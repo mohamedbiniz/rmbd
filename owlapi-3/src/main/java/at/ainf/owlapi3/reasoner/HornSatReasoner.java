@@ -406,17 +406,31 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     public List<OWLClass> getSortedUnsatisfiableClasses() {
         final Core rcore = getRelevantCore();
         ArrayList<OWLClass> sortedSymbols = new ArrayList<OWLClass>(computeUnsatisfiableClasses());
+        //final int avg = average(rcore.getSymbolsMap().values());
         if (!sortedSymbols.isEmpty())
             Collections.sort(sortedSymbols, new Comparator<OWLClass>() {
                 @Override
                 public int compare(OWLClass o1, OWLClass o2) {
                     final Collection<Integer> level1 = rcore.getSymbolsMap().get(getIndex(o1));
                     final Collection<Integer> level2 = rcore.getSymbolsMap().get(getIndex(o2));
-                    return Collections.min(level1).compareTo(Collections.min(level2));
+                    if (level1.size() != level2.size())
+                        return Integer.valueOf(level1.size()).compareTo(level2.size());
+
+                    Integer min1 = Math.abs(Collections.min(level1)); // avg-
+                    Integer min2 = Math.abs(Collections.min(level2));
+                    return min1.compareTo(min2);
                 }
             });
 
         return sortedSymbols;
+    }
+
+    private int average(Collection<Integer> values) {
+        int sum = 0;
+        for (Integer value : values) {
+            sum+=value;
+        }
+        return sum/values.size();
     }
 
     Core extractPossiblyUnsatCore() {
