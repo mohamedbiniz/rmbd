@@ -87,6 +87,10 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyTime, "coherency time");
         IterativeStatistics.logAndClear (logger, IterativeStatistics.avgConsistencyCheck, "consistency checks");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyCheck, "coherency checks");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.numOfQueries, "num of queries");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgTimeQueryGen, "time querygen");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgReactTime, "reaction time");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgQueryCard, "query card");
 
         Speed4JMeasurement.stop();
         return targetDiagnosis;
