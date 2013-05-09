@@ -53,7 +53,11 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                 getModuleCalculator().calculateModule(unsatClass);
             Speed4JMeasurement.start("calculatemodule");
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
-            OWLClass actualUnsatClass = Collections.min(actualUnsatClasses,new ModuleSizeComparator(map));
+            OWLClass actualUnsatClass;
+            if (isSortNodes())
+                actualUnsatClass = Collections.min(actualUnsatClasses,new ModuleSizeComparator(map));
+            else
+                actualUnsatClass = actualUnsatClasses.get(0);
             Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
             Set<OWLLogicalAxiom> background = new LinkedHashSet<OWLLogicalAxiom>(axioms);
             background.retainAll(getOntoAxioms());

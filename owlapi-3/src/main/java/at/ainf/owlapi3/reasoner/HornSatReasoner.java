@@ -34,7 +34,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     private final ISolver solver = SolverFactory.newDefault();
     private Boolean sat = null;
-    private boolean recomputeUnsatClasses;
+    private boolean recomputeUnsatClasses = true;
 
     private long[] measures = new long[3];
 
@@ -68,7 +68,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             setOWLSatStructure(structure);
         else
             setOWLSatStructure(new OWLSatStructure(ontology));
-
         this.solverClauses = HashMultimap.create(getOWLSatStructure().axiomsCount, 1);
 
         processAxioms(getReasonerAxiomsSet(), Collections.<OWLAxiom>emptySet());
@@ -244,7 +243,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                 !getRelevantCore().getRelevantClasses().contains(classExpression)) {
             return true;
 
-        }  else
+        } else
             iVecInts = getiVecInt(classExpression);
         return isSatisfiable(iVecInts);
     }
@@ -404,21 +403,34 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return unSat;
     }
 
-    public List<OWLClass> getSortedUnsatisfiableClasses(){
-        final Multimap<Integer, Integer> symbols = getRelevantCore().getSymbolsMap();
-        final Sets.SetView<Integer> unsat = Sets.intersection(symbols.keySet(), computeUnsatisfiableClasses());
-        ArrayList<Integer> sortedSymbols = new ArrayList<Integer>(unsat);
-        Collections.sort(sortedSymbols, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                final Collection<Integer> level1 = symbols.get(o1);
-                final Collection<Integer> level2 = symbols.get(o2);
-                return Collections.min(level1).compareTo(Collections.min(level2));
-            }
-        });
+    public List<OWLClass> getSortedUnsatisfiableClasses() {
+        final Core rcore = getRelevantCore();
+        ArrayList<OWLClass> sortedSymbols = new ArrayList<OWLClass>(computeUnsatisfiableClasses());
+        //final int avg = average(rcore.getSymbolsMap().values());
+        if (!sortedSymbols.isEmpty())
+            Collections.sort(sortedSymbols, new Comparator<OWLClass>() {
+                @Override
+                public int compare(OWLClass o1, OWLClass o2) {
+                    final Collection<Integer> level1 = rcore.getSymbolsMap().get(getIndex(o1));
+                    final Collection<Integer> level2 = rcore.getSymbolsMap().get(getIndex(o2));
+                    if (level1.size() != level2.size())
+                        return Integer.valueOf(level1.size()).compareTo(level2.size());
 
-        return convertToOWLClasses(sortedSymbols,
-                new ArrayList<OWLClass>(sortedSymbols.size()));
+                    Integer min1 = Math.abs(Collections.min(level1)); // avg-
+                    Integer min2 = Math.abs(Collections.min(level2));
+                    return min1.compareTo(min2);
+                }
+            });
+
+        return sortedSymbols;
+    }
+
+    private int average(Collection<Integer> values) {
+        int sum = 0;
+        for (Integer value : values) {
+            sum+=value;
+        }
+        return sum/values.size();
     }
 
     Core extractPossiblyUnsatCore() {
@@ -461,7 +473,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
         for (OWLAxiom axiom : addAxioms) {
             Collection<IVecInt> clauses = getTranslations(axiom);
-            if (clauses == null || clauses.isEmpty()){
+            if (clauses == null || clauses.isEmpty()) {
                 clauses = processAxiom(axiom, new OWL2SATTranslator(this));
                 addSymbolsToClauses(clauses);
             }
@@ -478,7 +490,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                     } finally {
                         if (iConstr != null)
                             getSolverClauses().put(clause, iConstr);
-                        if (logger.isDebugEnabled() && getSolverClauses().size() != this.solver.nConstraints()){
+                        if (logger.isDebugEnabled() && getSolverClauses().size() != this.solver.nConstraints()) {
                             logger.debug("Solver cache is not sync! Constraint " + iConstr + " clause " + clause);
                         }
                     }
@@ -493,7 +505,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (isExtractingCoresOnUpdate()) {
             final Core core = extractPossiblyUnsatCore();
             setRelevantClasses(core);
-            if (core.isHornComplete){
+            if (core.isHornComplete) {
                 this.sat = core.symbols.isEmpty();
             }
         }
@@ -552,15 +564,15 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         Core core = new Core(sigSize, consSize);
         //Set<Integer> core = new HashSet<Integer>();
         for (IVecInt constraint : constraints) {
-            Multimap<Integer,Integer> supportingSymbols =  HashMultimap.create(sigSize, consSize);
+            Multimap<Integer, Integer> supportingSymbols = HashMultimap.create(sigSize, consSize);
             for (IteratorInt iterator = constraint.iterator(); iterator.hasNext(); ) {
                 int symbol = iterator.next();
                 Core localCore;
                 //if (!supportingMap.containsKey(symbol)) {
-                    localCore = extractCore(symbol, new Core(sigSize, consSize));
-                    if (!localCore.isHornComplete)
-                        core.isHornComplete = false;
-                    supportingMap.putAll(symbol, localCore.getSymbolsSet());
+                localCore = extractCore(symbol, new Core(sigSize, consSize));
+                if (!localCore.isHornComplete)
+                    core.isHornComplete = false;
+                supportingMap.putAll(symbol, localCore.getSymbolsSet());
                 //} else symbols = supportingMap.get(symbol);
 
                 if (supportingSymbols.isEmpty())
@@ -580,7 +592,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
 
-
     private <T extends Collection<OWLClass>> T convertToOWLClasses(Collection<Integer> core, T classes) {
         for (Integer symbol : core) {
             OWLClass ocl = getIndex(symbol);
@@ -593,7 +604,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return getOWLSatStructure().symbolsToClauses;
     }
 
-    private Core extractCore(Integer literal, Core core){
+    private Core extractCore(Integer literal, Core core) {
         return extractCore(literal, core, 0);
     }
 
@@ -674,7 +685,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return Collections.emptySet();
     }
     */
-
 
 
     @Override
@@ -931,11 +941,11 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             }
         }
 
-        public Set<Integer> getSymbolsSet(){
+        public Set<Integer> getSymbolsSet() {
             return this.symbols.keySet();
         }
 
-        public Set<OWLClass> getRelevantClasses(){
+        public Set<OWLClass> getRelevantClasses() {
             if (this.relevantClasses == null) {
                 final Set<Integer> symbolsSet = getSymbolsSet();
                 this.relevantClasses = convertToOWLClasses(symbolsSet, new HashSet<OWLClass>(symbolsSet.size()));
