@@ -32,7 +32,7 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
     private int maxAxiomsPerQuery = 10;
 
     public ModuleAltQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, boolean isMinimizerActive) {
-        super (path, correctAxioms, falseAxioms, null, isMinimizerActive);
+        super(path, correctAxioms, falseAxioms, null, isMinimizerActive);
     }
 
     public ModuleAltQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, Map<OWLLogicalAxiom, BigDecimal> confidences, boolean isMinimizerActive) {
@@ -43,6 +43,7 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
         public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
             HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
             search.setMaxDiagnosesNumber(9);
+            search.getCostsEstimator().getFormulaSetCosts(search.getDiagnoses().)
 
             QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
             CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getSearchable(), qss);
@@ -58,18 +59,24 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
             int numOfQueries = 0;
             while (diagnoses.size() > 1 && !found) {
 
-                Partition<OWLLogicalAxiom> best = null;
-                try {
-                    best = ckk.generatePartition(search.getDiagnoses());
+                Set<OWLLogicalAxiom> query = getQuery(diagnoses);
+                logger.info("Query consists of the following " + query.size() + " axioms:");
+                Iterator it = query.iterator();
+                while(it.hasNext()){
+                    logger.info(it.next());
+                }
+                /*try {
+
+                    //best = ckk.generatePartition(search.getDiagnoses());
                 } catch (SolverException e) {
                     // e.printStackTrace();
                 } catch (InconsistentTheoryException e) {
                     // e.printStackTrace();
-                }
+                }*/
 
                 try {
-                    boolean answer = askUser(best);
-                    logger.info("user answered query " + answer);
+                    boolean answer = askUser(query);
+                    logger.info("user answered query by" + answer);
                     numOfQueries++;
 
                     if (answer)
@@ -106,7 +113,7 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
         }
 
 
-    protected boolean askUser(FormulaSet query) throws AnswerException {
+    protected boolean askUser(Set<OWLLogicalAxiom> query) throws AnswerException {
             if (falseAxioms.containsAll(query)){
                 logger.info("Query is STRONG FALSE");
                 return false;
@@ -121,8 +128,8 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
             }
     }
 
-    private FormulaSet getQuery(Collection<FormulaSet> diagnoses){
-        List<FormulaSet> sortedDiags = new LinkedList<FormulaSet>(diagnoses);
+    private Set<OWLLogicalAxiom> getQuery(Collection<Set<OWLLogicalAxiom>> diagnoses){
+        List<FormulaSet> sortedDiags = new LinkedList<FormulaSet>((Collection<? extends FormulaSet>) diagnoses);
         Collections.sort(sortedDiags, new Comparator<FormulaSet>() {
                     public int compare(FormulaSet d1, FormulaSet d2) {
                         return d1.getMeasure().compareTo(d2.getMeasure());
