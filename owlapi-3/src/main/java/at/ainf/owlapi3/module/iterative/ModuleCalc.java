@@ -110,8 +110,10 @@ public class ModuleCalc {
         }
     }
 
-    public Set<OWLClass> getInitialUnsatClasses() {
-        return initialUnsatClasses;
+    public List<OWLClass> getInitialUnsatClasses() {
+        if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
+            return ((HornSatReasoner)reasoner).getSortedUnsatisfiableClasses();
+        return new ArrayList<OWLClass>(initialUnsatClasses);
     }
 
     public Set<OWLClass> getUnsatisfiableClasses() {
