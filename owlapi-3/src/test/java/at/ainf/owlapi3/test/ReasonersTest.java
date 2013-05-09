@@ -189,6 +189,7 @@ public class ReasonersTest {
         return new ManchesterOWLSyntaxOWLObjectRendererImpl().render(expr);
     }
 
+    @Ignore
     @Test
     public void satTest() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, InterruptedException {
         //addConsoleLogger();

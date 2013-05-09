@@ -154,7 +154,11 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         IterativeStatistics.moduleSize.add((long)axioms.size());
 
         Set<FormulaSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
-        Set<OWLLogicalAxiom> diagnosis = chooseDiagnosis(diagnoses);
+        Set<OWLLogicalAxiom> diagnosis;
+        if (diagnoses.isEmpty())
+            diagnosis = Collections.emptySet();
+        else
+            diagnosis = chooseDiagnosis(diagnoses);
         IterativeStatistics.cardHS.add((long) diagnosis.size());
 
         return diagnosis;
