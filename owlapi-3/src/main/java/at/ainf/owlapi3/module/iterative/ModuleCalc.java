@@ -48,8 +48,9 @@ public class ModuleCalc {
     }
 
     public void updatedLists(List<OWLClass> actualUnsat, List<OWLClass> allUnsat) {
+        /*
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
-            Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+            Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntities();
             actualUnsat.retainAll(unsat);
             if (logger.isInfoEnabled())
                 logger.info("Unsat classes old: " + allUnsat.size() + " new: " + unsat.size() + " actual: " + actualUnsat.size());
@@ -61,8 +62,29 @@ public class ModuleCalc {
                 if (actualUnsat.size() == 10)
                     break;
             }
-        } else
+        } else*/
         {
+
+            for (Iterator<OWLClass> it = actualUnsat.iterator(); it.hasNext(); ) {
+                OWLClass cl = it.next();
+                if (isSatisfiable(cl)) {
+                    it.remove();
+                    allUnsat.remove(cl);
+                }
+            }
+            if (logger.isInfoEnabled())
+                logger.info("Unsat classes all: " + allUnsat.size() + " actual: " + actualUnsat.size());
+            Iterator<OWLClass> it = allUnsat.iterator();
+            while (it.hasNext() && actualUnsat.size() < 10) {
+                OWLClass cl = it.next();
+                if (isSatisfiable(cl)) {
+                    it.remove();
+                } else {
+                    actualUnsat.add(cl);
+                }
+
+            }
+            /*
             Set<OWLClass> toCheck = new HashSet<OWLClass>(actualUnsat);
             for (OWLClass unsatClass : toCheck) {
                 //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
@@ -83,12 +105,15 @@ public class ModuleCalc {
                     allUnsat.remove(unsatClass);
                 }
             }
+            */
 
         }
     }
 
-    public Set<OWLClass> getInitialUnsatClasses() {
-        return initialUnsatClasses;
+    public List<OWLClass> getInitialUnsatClasses() {
+        if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
+            return ((HornSatReasoner)reasoner).getSortedUnsatisfiableClasses();
+        return new ArrayList<OWLClass>(initialUnsatClasses);
     }
 
     public Set<OWLClass> getUnsatisfiableClasses() {
