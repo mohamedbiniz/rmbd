@@ -317,10 +317,38 @@ public class IterativeModuleDiagTests {
 
         for (Set<OWLLogicalAxiom> submodul : submodules) {
             Speed4JMeasurement.start("hornreasoner_submodul_classifiy");
-            HornSatReasoner reasoner = (HornSatReasoner) reasonerFactory.createNonBufferingReasoner(createOntology(submodul));
-            logger.info("unsat classes in submodul: " + reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom().size());
+            final HornSatReasoner reasoner = (HornSatReasoner) reasonerFactory.createNonBufferingReasoner(createOntology(submodul));
+            //logger.info("unsat classes in submodul: " + reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom().size());
+
+            List<OWLClass> sortedClassesInSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(submodul));
+            Collections.sort(sortedClassesInSignature, new Comparator<OWLClass>() {
+                @Override
+                public int compare(OWLClass o1, OWLClass o2) {
+                    Integer levelO1 = Collections.min(reasoner.getRelevantCore().getSymbolsMap().get(reasoner.getIndex(o1)));
+                    Integer levelO2 = Collections.min(reasoner.getRelevantCore().getSymbolsMap().get(reasoner.getIndex(o2)));
+                    return levelO1.compareTo(levelO2);
+                }
+            });
+
+            OWLClass firstUnsat = null;
+            int cnt = 1;
+            for (OWLClass cls : sortedClassesInSignature) {
+                if (!reasoner.isSatisfiable(cls)) {
+                    firstUnsat = cls;
+                    break;
+                }
+                cnt++;
+            }
+            logger.info("needed iterations to find unsat:" + cnt);
+
+            Set<OWLLogicalAxiom> subsubmod = extractModule(submodul, Collections.singletonList(firstUnsat));
+            logger.info("subsubmodul size: " + subsubmod.size() + ", signature size: " + getClassesInModuleSignature(subsubmod).size());
             Speed4JMeasurement.stop();
-            //reasoner.getRelev
+
+            Speed4JMeasurement.start("subsub_classifiy");
+            logger.info("unsat classes in subsubmodul: " + reasonerFactory.createNonBufferingReasoner(createOntology(subsubmod)).getUnsatisfiableClasses().getEntitiesMinusBottom().size());
+            Speed4JMeasurement.stop();
+
         }
 
         Speed4JMeasurement.start("hornreasoner_intersection_classifiy");
