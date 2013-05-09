@@ -162,6 +162,13 @@
         </dependency>
 
         <dependency>
+              <groupId>edu.arizona.bio5.onto.decomposition</groupId>
+              <artifactId>atomic-decomposition-core</artifactId>
+              <version>0.2_03042013</version>
+              <classifier>checkout_03042013</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>org.semanticweb</groupId>
             <artifactId>HermiT</artifactId>
             <version>20130417</version>

@@ -49,6 +49,14 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         this.falseAxioms = falseAxioms;
     }
 
+    public boolean isMinimizerActive() {
+            return isMinimizerActive;
+        }
+
+    public void setMinimizerActive(boolean minimizerActive) {
+        isMinimizerActive = minimizerActive;
+    }
+
     protected boolean askUser(Partition<OWLLogicalAxiom> partition) throws AnswerException {
         if (correctAxioms.containsAll(partition.partition))
             return true;
