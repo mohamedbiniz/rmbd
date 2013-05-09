@@ -39,7 +39,7 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
         super(path,correctAxioms,falseAxioms,confidences,isMinimizerActive);
     }
 
-    @Override
+    /*@Override
         public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
             HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
             search.setMaxDiagnosesNumber(9);
@@ -65,14 +65,14 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
                 while(it.hasNext()){
                     logger.info(it.next());
                 }
-                /*try {
+                *//*try {
 
                     //best = ckk.generatePartition(search.getDiagnoses());
                 } catch (SolverException e) {
                     // e.printStackTrace();
                 } catch (InconsistentTheoryException e) {
                     // e.printStackTrace();
-                }*/
+                }*//*
 
                 try {
                     boolean answer = askUser(query);
@@ -168,5 +168,5 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
             }
         }
         return minCardDiag;
-    }
+    }*/
 }

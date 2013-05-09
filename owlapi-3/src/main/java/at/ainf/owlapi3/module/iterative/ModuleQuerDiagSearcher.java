@@ -63,16 +63,16 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         else if (falseAxioms.containsAll(partition.partition))
             return false;
         else {
-            logger.info("we doesn't know an answer for sure (not all axioms false or correct) so we return false ");
-            for (OWLLogicalAxiom axiom : partition.partition)
-                logger.info(axiom + ", " + correctAxioms.contains(axiom) + ", " + falseAxioms.contains(axiom));
-            logger.info(partition.dx.size() + ", " + partition.dnx.size() + ", " + partition.dz.size() + ", ");
-            throw new AnswerException("don't know answer");
+            //logger.info("we doesn't know an answer for sure (not all axioms false or correct) so we return false ");
+            //for (OWLLogicalAxiom axiom : partition.partition)
+            //    logger.info(axiom + ", " + correctAxioms.contains(axiom) + ", " + falseAxioms.contains(axiom));
+            //logger.info(partition.dx.size() + ", " + partition.dnx.size() + ", " + partition.dz.size() + ", ");
+            throw new AnswerException("some axioms true, some false");
 
         }
     }
 
-    private void minimizePartitionAx(Partition<OWLLogicalAxiom> query, Searchable<OWLLogicalAxiom> searchable) {
+    protected void minimizePartitionAx(Partition<OWLLogicalAxiom> query, Searchable<OWLLogicalAxiom> searchable) {
         if (query.partition == null) return;
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, searchable);
         QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
@@ -108,9 +108,10 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
         search.setMaxDiagnosesNumber(9);
 
-        QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
+        //QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
+        QSS<OWLLogicalAxiom> qss = QSSFactory.createSplitInHalfQSS();
         CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getSearchable(), qss);
-        ckk.setThreshold(0.01);
+        ckk.setThreshold(0.1); //old: 0.01
 
         long time = System.currentTimeMillis();
         runSearch(search);
@@ -150,7 +151,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 reactionTime = System.currentTimeMillis() - reactionTime;
                 IterativeStatistics.avgReactTime.addValue(reactionTime);
                 boolean answer = askUser(best);
-                logger.info("user answered query " + answer);
+                logger.info("user answered query: All axioms " + answer);
                 numOfQueries++;
 
                 if (answer)
