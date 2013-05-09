@@ -18,13 +18,19 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
 
     private HornSatReasoner.OWLSatStructure owlSatStructure = null;
 
+    /*
     private boolean precompute = true;
     private OWLOntology ontology = null;
-
+    */
 
     @Override
     public String getReasonerName() {
         return HornSatReasoner.NAME;
+    }
+
+    /*
+     public Collection<OWLClass> getUnsatClasses() {
+        return getOWLSatStructure().getUnsatClasses();
     }
 
     public void setPrecomputeUnsatClasses(boolean precompute) {
@@ -47,9 +53,11 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
         this.ontology = null;
     }
 
+
     public HornSatReasoner.OWLSatStructure getOWLSatStructure() {
         return owlSatStructure;
     }
+    */
 
     @Override
     public OWLReasoner createNonBufferingReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
@@ -57,18 +65,17 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
     }
 
     private HornSatReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
+        return new HornSatReasoner(ontology, config, buffering);
+        /*
         if (getOWLSatStructure() == null && isPrecomputingUnSatClasses()) {
             return new HornSatReasoner(ontology, config, buffering);
         }
         return new HornSatReasoner(ontology, config, buffering, getOWLSatStructure());
+        */
     }
 
     @Override
     public OWLReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config) throws IllegalConfigurationException {
         return createReasoner(ontology, config, BufferingMode.BUFFERING);
-    }
-
-    public Collection<OWLClass> getUnsatClasses() {
-        return getOWLSatStructure().getUnsatClasses();
     }
 }

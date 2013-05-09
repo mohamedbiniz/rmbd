@@ -29,21 +29,23 @@ public class ModuleCalc {
     private OWLReasoner reasoner;
 
     private Map<OWLClass, Set<OWLLogicalAxiom>> moduleMap = new HashMap<OWLClass, Set<OWLLogicalAxiom>>();
-    private Set<OWLClass> initialUnsatClasses;
+    //private Set<OWLClass> initialUnsatClasses;
 
     // TODO split into horn and non-horm implementations!
 
     public ModuleCalc(OWLOntology ontology, OWLReasonerFactory reasonerFactory) {
         this.ontology = ontology;
 
+        /*
         if (reasonerFactory.getReasonerName().equals(HornSatReasoner.NAME)) {
             HornSatReasonerFactory hornSatReasonerFactory = (HornSatReasonerFactory) reasonerFactory;
-            hornSatReasonerFactory.precomputeUnsatClasses(ontology);
+            //hornSatReasonerFactory.precomputeUnsatClasses(ontology);
             this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
             initialUnsatClasses = new HashSet<OWLClass>(hornSatReasonerFactory.getUnsatClasses());
-        } else {
+        } else*/
+        {
             this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
-            initialUnsatClasses = new HashSet<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
+            //initialUnsatClasses = new HashSet<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
         }
     }
 
@@ -113,7 +115,7 @@ public class ModuleCalc {
     public List<OWLClass> getInitialUnsatClasses() {
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
             return ((HornSatReasoner)reasoner).getSortedUnsatisfiableClasses();
-        return new ArrayList<OWLClass>(initialUnsatClasses);
+        return new ArrayList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
     }
 
     public Set<OWLClass> getUnsatisfiableClasses() {
