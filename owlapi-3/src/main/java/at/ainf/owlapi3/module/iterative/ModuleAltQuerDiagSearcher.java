@@ -35,7 +35,7 @@ public class ModuleAltQuerDiagSearcher extends ModuleQuerDiagSearcher  {
         super(path, correctAxioms, falseAxioms, null, isMinimizerActive);
     }
 
-    /*
+
     public ModuleAltQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, Map<OWLLogicalAxiom, BigDecimal> confidences, boolean isMinimizerActive) {
         super(path,correctAxioms,falseAxioms,confidences,isMinimizerActive);
     }
