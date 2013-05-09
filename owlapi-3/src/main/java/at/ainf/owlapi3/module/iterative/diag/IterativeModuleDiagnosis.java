@@ -21,6 +21,7 @@ import java.util.*;
  */
 public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
+    public static final int MAX_UNSAT_CLASSES = 5;
     private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
 
     private final boolean sortNodes;
@@ -45,12 +46,13 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses();
         if (isSortNodes())
             Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,getMappings(),getOntoAxioms()));
-        int toIndex = Collections.min(Arrays.asList(10,unsatClasses.size()));
+        int toIndex = Collections.min(Arrays.asList(MAX_UNSAT_CLASSES,unsatClasses.size()));
         List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0,toIndex));
 
         while (!actualUnsatClasses.isEmpty()) {
             for (OWLClass unsatClass : actualUnsatClasses)
                 getModuleCalculator().calculateModule(unsatClass);
+
             Speed4JMeasurement.start("calculatemodule");
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
             OWLClass actualUnsatClass;
@@ -58,7 +60,12 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                 actualUnsatClass = Collections.min(actualUnsatClasses,new ModuleSizeComparator(map));
             else
                 actualUnsatClass = actualUnsatClasses.get(0);
-            Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
+
+            Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>();
+
+            for (OWLClass unsatClass : actualUnsatClasses)
+                axioms.addAll(map.get(unsatClass));
+
             Set<OWLLogicalAxiom> background = new LinkedHashSet<OWLLogicalAxiom>(axioms);
             background.retainAll(getOntoAxioms());
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);
@@ -78,7 +85,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             long timeModule = Speed4JMeasurement.stop();
             IterativeStatistics.moduleTime.add(timeModule);
             getModuleCalculator().removeAxiomsFromOntologyAndModules(partDiag);
-            getModuleCalculator().updatedLists(actualUnsatClasses, unsatClasses);
+            getModuleCalculator().updatedLists(actualUnsatClasses, unsatClasses, MAX_UNSAT_CLASSES);
             targetDiagnosis.addAll(partDiag);
         }
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCardCS, "average cardinality CS");

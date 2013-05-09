@@ -49,7 +49,7 @@ public class ModuleCalc {
         }
     }
 
-    public void updatedLists(List<OWLClass> actualUnsat, List<OWLClass> allUnsat) {
+    public void updatedLists(List<OWLClass> actualUnsat, List<OWLClass> allUnsat, int maxClasses) {
         /*
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
             Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntities();
@@ -77,7 +77,7 @@ public class ModuleCalc {
             if (logger.isInfoEnabled())
                 logger.info("Unsat classes all: " + allUnsat.size() + " actual: " + actualUnsat.size());
             Iterator<OWLClass> it = allUnsat.iterator();
-            while (it.hasNext() && actualUnsat.size() < 10) {
+            while (it.hasNext() && actualUnsat.size() < maxClasses) {
                 OWLClass cl = it.next();
                 if (isSatisfiable(cl)) {
                     it.remove();
@@ -132,18 +132,19 @@ public class ModuleCalc {
         if (result != null)
             return result;
 
-        result = extractModule(ontology, unsatClass);
+        result = extractModule(ontology, Collections.singleton((OWLEntity)unsatClass));
         moduleMap.put(unsatClass, result);
 
         return result;
     }
 
-    public Set<OWLLogicalAxiom> extractModule(OWLOntology ontology, OWLClass unsatClass) {
+    public Set<OWLLogicalAxiom> extractModule(OWLOntology ontology, Set<OWLEntity> unsatClass) {
         Set<OWLLogicalAxiom> result = new HashSet<OWLLogicalAxiom>();
         SyntacticLocalityModuleExtractor extractor =
                 new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontology, ModuleType.STAR);
 
-        for (OWLAxiom axiom : extractor.extract(Collections.singleton((OWLEntity) unsatClass)))
+        Set<OWLAxiom> module = extractor.extract(unsatClass);
+        for (OWLAxiom axiom : module)
             result.add((OWLLogicalAxiom) axiom);
         return result;
     }

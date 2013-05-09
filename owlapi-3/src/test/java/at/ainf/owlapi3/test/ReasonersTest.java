@@ -60,8 +60,8 @@ public class ReasonersTest {
         OWLOntology ontology = extractor.getIncoherentPartAsOntology(ontologyFull);
 
 
-         if (factoryList.size() == 1 && factoryList.get(0) instanceof HornSatReasonerFactory)
-            ((HornSatReasonerFactory) factoryList.get(0)).precomputeUnsatClasses(ontology);
+         //if (factoryList.size() == 1 && factoryList.get(0) instanceof HornSatReasonerFactory)
+         //   ((HornSatReasonerFactory) factoryList.get(0)).precomputeUnsatClasses(ontology);
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
@@ -198,7 +198,7 @@ public class ReasonersTest {
         //addConsoleLogger();
 
         HornSatReasonerFactory factory = new HornSatReasonerFactory();
-        factory.setPrecomputeUnsatClasses(true);
+        //factory.setPrecomputeUnsatClasses(true);
         Result sat = reasonerTest(factory, ontology);
         Result hermit = reasonerTest(new Reasoner.ReasonerFactory(), ontology);
         //Result struct = reasonerTest(new ExtendedStructuralReasonerFactory(), ontology);

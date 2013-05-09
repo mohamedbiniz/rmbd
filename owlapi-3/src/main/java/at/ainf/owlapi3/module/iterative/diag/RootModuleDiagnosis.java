@@ -2,6 +2,7 @@ package at.ainf.owlapi3.module.iterative.diag;
 
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
@@ -110,7 +111,7 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
         axioms.addAll(getMappings());
         axioms.addAll(getOntoAxioms());
         axioms.removeAll(targetDiagnosis);
-        return getModuleCalculator().extractModule(createOntology(axioms),unsatClass);
+        return getModuleCalculator().extractModule(createOntology(axioms),Collections.singleton((OWLEntity)unsatClass));
     }
 
     protected class MinDependentComparator<OWLClass> implements Comparator<OWLClass> {
