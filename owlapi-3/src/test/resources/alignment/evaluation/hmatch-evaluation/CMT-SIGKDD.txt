@@ -1,0 +1,14 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/SIGKDD.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://SIGKDD.owl
+
++ Author = Author | 0.6875
+- Chairman = Main_office | 0.6950000000000001
++ Conference = Conference | 1.0
++ Document = Document | 0.875
++ Person = Person | 0.7833333333333333
++ ProgramCommittee = Program_Committee | 1.0
++ ProgramCommitteeMember = Program_Committee_member | 0.6428571428571428
++ Review = Review | 0.8333333333333333
+- SubjectArea = Place | 0.64

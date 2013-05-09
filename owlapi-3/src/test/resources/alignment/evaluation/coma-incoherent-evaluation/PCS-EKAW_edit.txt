@@ -1,0 +1,1 @@
+http://EKAW.owl#Conference_Paper EquivalentTo http://PCS.owl#ConferenceMember, http://EKAW.owl#Research_Topic EquivalentTo http://PCS.owl#Report, http://EKAW.owl#Programme_Brochure EquivalentTo http://PCS.owl#Programme
