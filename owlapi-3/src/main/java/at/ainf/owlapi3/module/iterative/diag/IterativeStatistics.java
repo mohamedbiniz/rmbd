@@ -34,6 +34,14 @@ public class IterativeStatistics {
 
     public static Average avgCoherencyCheck = new Average(Average.Mode.SUM);
 
+    public static List<Long> numOfQueries = new LinkedList<Long>();
+
+    public static Average avgTimeQueryGen = new Average();
+
+    public static Average avgQueryCard = new Average();
+
+    public static Average avgReactTime = new Average();
+
     public static void logAndClear (Logger log, Average set, String message) {
         logAndClear(log,set.toAverageCollection(),message);
         set.reset();
@@ -41,7 +49,7 @@ public class IterativeStatistics {
 
     public static void logAndClear (Logger log, Collection<Long> set, String message) {
         Long min = 0L;
-        Long mean = 0L;
+        Double mean = 0.0;
         Long max = 0L;
         if (!set.isEmpty()) {
             min = Collections.min(set);

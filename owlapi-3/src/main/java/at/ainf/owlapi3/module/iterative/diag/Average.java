@@ -31,7 +31,7 @@ public class Average {
 
     private Long doModeOp(Collection<Long> set) {
         if (mode.equals(Mode.MEAN)) {
-            return mean(set);
+            return Math.round(mean(set));
         }
         else if (mode.equals(Mode.SUM)) {
             Long sum = 0L;
@@ -43,13 +43,13 @@ public class Average {
             throw new UnsupportedOperationException("operation unknown ");
     }
 
-    public static Long mean (Collection<Long> set) {
+    public static Double mean (Collection<Long> set) {
         if (set.isEmpty())
-            return 0L;
+            return 0.0;
         Long sum = 0L;
         for (Long i : set)
             sum += i;
-        return sum / set.size();
+        return ((double) sum) / set.size();
     }
 
     public void createNewValueGroup() {

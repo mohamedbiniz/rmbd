@@ -2,11 +2,11 @@ package at.ainf.owlapi3.module.iterative.diag;
 
 import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.semanticweb.owlapi.reasoner.SimpleConfiguration;
-import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +98,10 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyTime, "coherency time");
         IterativeStatistics.logAndClear (logger, IterativeStatistics.avgConsistencyCheck, "consistency checks");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyCheck, "coherency checks");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.numOfQueries, "num of queries");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgTimeQueryGen, "time querygen");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgReactTime, "reaction time");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgQueryCard, "query card");
 
         Speed4JMeasurement.stop();
         return targetDiagnosis;
@@ -107,6 +111,8 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         private Collection<OWLLogicalAxiom> mappings;
         private Collection<OWLLogicalAxiom> ontoAxioms;
         private final Map<OWLClass, Integer> map;
+
+        private static final int LEAST_NUMBER_OF_NODES = 100;
 
         public ChildsComparator(Collection<OWLClass> unsatClasses, Collection<OWLLogicalAxiom> mappings, Collection<OWLLogicalAxiom> ontoAxioms) {
             this.mappings = mappings;
@@ -120,11 +126,14 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             Set<OWLLogicalAxiom> allAxioms = new HashSet<OWLLogicalAxiom>();
             allAxioms.addAll(mappings);
             allAxioms.addAll(ontoAxioms);
-            StructuralReasoner reasoner = new StructuralReasoner (createOntology(allAxioms),
+            ExtendedStructuralReasoner reasoner = new ExtendedStructuralReasoner (createOntology(allAxioms),
                     new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
+            logger.info(" having " + unsatClasses.size() + " unsat classes to calculate childs ");
             for (OWLClass unsatClass : unsatClasses) {
-                Set<OWLClass> childs = new HashSet<OWLClass>(reasoner.getSubClasses(unsatClass,false).getFlattened());
+                Set<OWLClass> childs = new HashSet<OWLClass>(
+                        reasoner.getSubClasses(unsatClass,false,LEAST_NUMBER_OF_NODES).getFlattened());
                 childs.remove(BOT_CLASS);
+                logger.info("unsat class " + unsatClass + ", number of childs: " + childs.size());
                 result.put(unsatClass,childs.size());
             }
             return result;

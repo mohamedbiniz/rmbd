@@ -35,6 +35,8 @@ public abstract class AbstractModuleDiagnosis implements ModuleDiagnosis {
 
     private final Set<OWLLogicalAxiom> ontoAxioms;
 
+    private OWLReasonerFactory factory;
+
     public AbstractModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms,
                                OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher) {
 
@@ -49,7 +51,12 @@ public abstract class AbstractModuleDiagnosis implements ModuleDiagnosis {
         this.mappings = mappings;
         this.diagSearcher = moduleDiagSearcher;
         diagSearcher.setReasonerFactory(factory);
+        this.factory = factory;
 
+    }
+
+    public OWLReasonerFactory getReasonerFactory() {
+        return factory;
     }
 
     protected ModuleCalc getModuleCalculator() {
