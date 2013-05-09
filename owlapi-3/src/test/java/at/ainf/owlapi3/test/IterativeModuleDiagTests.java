@@ -8,6 +8,7 @@ import at.ainf.owlapi3.module.iterative.diag.ModuleDiagnosis;
 import at.ainf.owlapi3.module.iterative.diag.RootModuleDiagnosis;
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
+import com.google.common.collect.Multimap;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -321,14 +322,20 @@ public class IterativeModuleDiagTests {
             //logger.info("unsat classes in submodul: " + reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom().size());
 
             List<OWLClass> sortedClassesInSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(submodul));
-            Collections.sort(sortedClassesInSignature, new Comparator<OWLClass>() {
+            /*Collections.sort(sortedClassesInSignature, new Comparator<OWLClass>() {
                 @Override
                 public int compare(OWLClass o1, OWLClass o2) {
-                    Integer levelO1 = Collections.min(reasoner.getRelevantCore().getSymbolsMap().get(reasoner.getIndex(o1)));
-                    Integer levelO2 = Collections.min(reasoner.getRelevantCore().getSymbolsMap().get(reasoner.getIndex(o2)));
+                    Multimap<Integer,Integer> symbolMap = reasoner.getRelevantCore().getSymbolsMap();
+                    int o1Index = reasoner.getIndex(o1);
+                    int o2Index = reasoner.getIndex(o2);
+                    if (!symbolMap.containsKey(o1Index) || !symbolMap.containsKey(o2Index))
+                        return 0;
+
+                    Integer levelO1 = Collections.min(symbolMap.get(o1Index));
+                    Integer levelO2 = Collections.min(symbolMap.get(o2Index));
                     return levelO1.compareTo(levelO2);
                 }
-            });
+            });*/
 
             OWLClass firstUnsat = null;
             int cnt = 1;
@@ -353,6 +360,32 @@ public class IterativeModuleDiagTests {
 
         Speed4JMeasurement.start("hornreasoner_intersection_classifiy");
         logger.info("unsat classes in intersection: " + reasonerFactory.createNonBufferingReasoner(createOntology(intersection)).getUnsatisfiableClasses().getEntitiesMinusBottom().size());
+        Speed4JMeasurement.stop();
+
+        Speed4JMeasurement.start("interesction_classifiy");
+
+        final HornSatReasoner reasoner = (HornSatReasoner) reasonerFactory.createNonBufferingReasoner(createOntology(intersection));
+
+        List<OWLClass> sortedClassesInSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(intersection));
+
+
+        OWLClass firstUnsat = null;
+        int cnt = 1;
+        for (OWLClass cls : sortedClassesInSignature) {
+            if (!reasoner.isSatisfiable(cls)) {
+                firstUnsat = cls;
+                break;
+            }
+            cnt++;
+        }
+        logger.info("needed iterations to find unsat in intersection:" + cnt);
+
+        Set<OWLLogicalAxiom> subsubmod = extractModule(intersection, Collections.singletonList(firstUnsat));
+        logger.info("intersectionsub size: " + subsubmod.size() + ", signature size: " + getClassesInModuleSignature(subsubmod).size());
+        Speed4JMeasurement.stop();
+
+        Speed4JMeasurement.start("intersectionsub_classifiy");
+        logger.info("unsat classes in intersectionsub: " + reasonerFactory.createNonBufferingReasoner(createOntology(subsubmod)).getUnsatisfiableClasses().getEntitiesMinusBottom().size());
         Speed4JMeasurement.stop();
 
 
