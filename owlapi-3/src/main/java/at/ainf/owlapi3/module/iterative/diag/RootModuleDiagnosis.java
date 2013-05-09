@@ -175,8 +175,6 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                 if (foundActualUnsatClass)
                     break;
 
-                 //
-                // TODO set MUV
 
             }
             Speed4JMeasurement.stop();

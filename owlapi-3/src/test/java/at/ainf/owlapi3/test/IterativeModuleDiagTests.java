@@ -15,6 +15,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
+import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
+import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.io.File;
 import java.io.InputStream;
@@ -177,8 +179,15 @@ public class IterativeModuleDiagTests {
         logger.info(axioms.toString() + "");
     }
 
+    protected Set<OWLClass> getClassesInModuleSignature(Set<OWLLogicalAxiom> module) {
+        Set<OWLClass> classesInModule = new LinkedHashSet<OWLClass>();
+        for (OWLLogicalAxiom axiom : module)
+            classesInModule.addAll (axiom.getClassesInSignature());
+        return classesInModule;
+    }
+
     @Test
-    public void testIterativeDiagnosis() throws OWLOntologyCreationException {
+    public void testSplittingModule() throws OWLOntologyCreationException {
 
         String onto = "fma2nci";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
@@ -187,6 +196,63 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
         //String fileMappings = "mouse2human_reference_2011";
         String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
+
+        Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
+        ontoAxioms.addAll(onto1Axioms);
+        ontoAxioms.addAll(onto2Axioms);
+        String pathMappings = ClassLoader.getSystemResource("ontologies/" + fileMappings + ".txt").getPath();
+
+        Set<OWLLogicalAxiom> correctAxioms = new HashSet<OWLLogicalAxiom>();
+        Set<OWLLogicalAxiom> gsMappings = new ModuleTargetDiagSearcher(pathMappings).getGSMappings();
+        correctAxioms.addAll(ontoAxioms);
+        correctAxioms.addAll(gsMappings);
+        Set<OWLLogicalAxiom> falseAxioms = new HashSet<OWLLogicalAxiom>(mappingAxioms);
+        falseAxioms.removeAll(correctAxioms);
+
+        Set<OWLLogicalAxiom> fullOnto = new LinkedHashSet<OWLLogicalAxiom>(ontoAxioms);
+        fullOnto.addAll(mappingAxioms);
+        logger.info("onto size: " + fullOnto.size());
+        List<OWLClass> signature = new LinkedList<OWLClass>(getClassesInModuleSignature(fullOnto));
+        logger.info("signature size: " + signature.size());
+        int n = 1;
+        List<OWLClass> subsignature = signature.subList(signature.size()/10 * n,signature.size()/10 * (n+1));
+        logger.info("subsignature size: " + subsignature.size());
+
+        Speed4JMeasurement.start("calculationsubsignaturemodule");
+        Set<OWLLogicalAxiom> submodul = extractModule(fullOnto,subsignature);
+        Speed4JMeasurement.stop();
+
+        Speed4JMeasurement.start("cc");
+        boolean consistent = new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(submodul)).getUnsatisfiableClasses().getEntitiesMinusBottom().isEmpty();
+        Speed4JMeasurement.stop();
+        logger.info("submodul consistent: " + consistent);
+        logger.info("size of submodule: " + submodul.size());
+
+
+    }
+
+    protected Set<OWLLogicalAxiom> extractModule (Set<OWLLogicalAxiom> ontology, List<OWLClass> signature) {
+        Set<OWLLogicalAxiom> result = new LinkedHashSet<OWLLogicalAxiom>();
+        Set<OWLEntity> input = new LinkedHashSet<OWLEntity>();
+        for (OWLEntity e : signature)
+            input.add(e);
+        SyntacticLocalityModuleExtractor extractor =
+                new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), createOntology(ontology), ModuleType.STAR);
+        for (OWLAxiom axiom : extractor.extract(input))
+            result.add((OWLLogicalAxiom) axiom);
+        return result;
+    }
+
+    @Test
+    public void testIterativeDiagnosis() throws OWLOntologyCreationException {
+
+        String onto = "mouse2human";
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
+        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
+        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
+        String fileMappings = "mouse2human_reference_2011";
+        //String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
 
         Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
         ontoAxioms.addAll(onto1Axioms);
