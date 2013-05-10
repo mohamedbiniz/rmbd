@@ -93,7 +93,7 @@ public class TimeLog {
             String msg = message + ": " + key + " " + ev.message + " : " + ev.min + ", "
                     + ev.max + ", " + (ev.overall / ev.count)
                     + ", " + ev.overall + ", " + ev.count;
-            logger.info(msg);
+            logger.debug(msg);
             msgs.add(msg);
         }
         messages.add(msgs);
@@ -121,7 +121,7 @@ public class TimeLog {
             String msg = message + ": " + key + ": " + min/timeList.size() + ", " + max/timeList.size() + ", "
                     + avg/timeList.size() + ", " + overall/timeList.size()
                     + ", " +calls/timeList.size();
-            logger.info(msg);
+            logger.debug(msg);
 
         }
             timeList.clear();

@@ -40,6 +40,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     // fields storing data used in extraction of an unsat core
     private Core relevantClasses = null;
+    private Set<OWLClass> unSatClasses = null;
     private boolean extractCoresOnUpdate = true;
 
     public final static String NAME = "SAT Reasoner for OWL";
@@ -59,7 +60,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
      */
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
         this(ontology, config, buffering, null);
-        getOWLSatStructure().unSatClasses = Collections.unmodifiableSet(getUnsatisfiableClasses().getEntities());
+        //getOWLSatStructure().unSatClasses = Collections.unmodifiableSet(getUnsatisfiableClasses().getEntities());
     }
 
     public HornSatReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering, OWLSatStructure structure) {
@@ -80,11 +81,11 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
     public Set<OWLClass> getTestClasses() {
-        if (getOWLSatStructure().unSatClasses == null)
+        if (getUnsatClasses() == null)
             return getRootOntology().getClassesInSignature();
         if (getRelevantCore() != null)
-            return Sets.intersection(getOWLSatStructure().unSatClasses, getRelevantCore().getRelevantClasses());
-        return Sets.intersection(getOWLSatStructure().unSatClasses, getRootOntology().getClassesInSignature());
+            return Sets.intersection(getUnsatClasses(), getRelevantCore().getRelevantClasses());
+        return Sets.intersection(getUnsatClasses(), getRootOntology().getClassesInSignature());
     }
 
     @Override
@@ -371,7 +372,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     protected Set<OWLClass> computeUnsatisfiableClasses() {
         if (!this.recomputeUnsatClasses)
-            return getOWLSatStructure().getUnsatClasses();
+            return getUnsatClasses();
 
         Set<OWLClass> relevantClasses = getRelevantCore().getRelevantClasses();
 
@@ -398,7 +399,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                 unSat.add(owlClass);
         }
 
-        getOWLSatStructure().unSatClasses = unSat;
+        this.unSatClasses = unSat;
         this.recomputeUnsatClasses = false;
         return unSat;
     }
@@ -433,8 +434,8 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                     if (level1.size() != level2.size())
                         return Integer.valueOf(level1.size()).compareTo(level2.size());
 
-                    Integer min1 = Math.abs(Collections.min(level1)); // avg-
-                    Integer min2 = Math.abs(Collections.min(level2));
+                    Integer min1 = Math.abs(Collections.max(level1)); // avg-
+                    Integer min2 = Math.abs(Collections.max(level2));
                     return min1.compareTo(min2);
                 }
             });
@@ -893,7 +894,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         // caching of transformations
         private final Multimap<OWLAxiom, IVecInt> translations;
         private final Multimap<Integer, IVecInt> symbolsToClauses;
-        private Set<OWLClass> unSatClasses = null;
 
         private int maxIndex = 1;
         private final int axiomsCount;
@@ -922,11 +922,10 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             this.index.put(cl, value);
             return value;
         }
+    }
 
-        public Set<OWLClass> getUnsatClasses() {
-            return unSatClasses;
-        }
-
+    public Set<OWLClass> getUnsatClasses() {
+        return unSatClasses;
     }
 
     public void setOWLSatStructure(OWLSatStructure owlSatStructure) {

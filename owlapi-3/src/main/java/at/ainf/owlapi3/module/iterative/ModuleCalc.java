@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.module.iterative;
 
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -23,6 +24,9 @@ public class ModuleCalc {
 
     private static Logger logger = LoggerFactory.getLogger(ModuleCalc.class.getName());
 
+    private final OWLReasoner testReasoner;
+    private OWLOntology testOnto;
+
     private OWLOntology ontology;
     private OWLReasoner reasoner;
 
@@ -31,15 +35,16 @@ public class ModuleCalc {
 
     // TODO split into horn and non-horm implementations!
 
-    public ModuleCalc(OWLOntology ontology, OWLReasonerFactory reasonerFactory) {
+    public ModuleCalc(OWLOntology ontology, OWLReasonerFactory reasonerFactory) throws OWLOntologyCreationException {
         this.ontology = ontology;
-
+        this.testOnto = ontology.getOWLOntologyManager().createOntology(IRI.create("http://ainf.at/debug" + System.nanoTime()));
+        this.testReasoner = reasonerFactory.createNonBufferingReasoner(testOnto);
         /*
         if (reasonerFactory.getReasonerName().equals(HornSatReasoner.NAME)) {
             HornSatReasonerFactory hornSatReasonerFactory = (HornSatReasonerFactory) reasonerFactory;
             //hornSatReasonerFactory.precomputeUnsatClasses(ontology);
             this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
-            initialUnsatClasses = new HashSet<OWLClass>(hornSatReasonerFactory.getUnsatClasses());
+            //initialUnsatClasses = new HashSet<OWLClass>(hornSatReasonerFactory.getUnsatClasses());
         } else*/
         {
             this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
@@ -74,6 +79,14 @@ public class ModuleCalc {
             }
             if (logger.isInfoEnabled())
                 logger.info("Unsat classes all: " + allUnsat.size() + " actual: " + actualUnsat.size());
+
+            if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
+                List<OWLClass> additionalUnsatClasses = getInitialUnsatClasses(maxClasses - actualUnsat.size());
+                actualUnsat.addAll(additionalUnsatClasses);
+                allUnsat.addAll(additionalUnsatClasses);
+                return;
+            }
+
             Iterator<OWLClass> it = allUnsat.iterator();
             while (it.hasNext() && actualUnsat.size() < maxClasses) {
                 OWLClass cl = it.next();
@@ -82,7 +95,6 @@ public class ModuleCalc {
                 } else {
                     actualUnsat.add(cl);
                 }
-
             }
             /*
             Set<OWLClass> toCheck = new HashSet<OWLClass>(actualUnsat);
@@ -117,8 +129,8 @@ public class ModuleCalc {
     public List<OWLClass> getInitialUnsatClasses(int maxClasses) {
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
             if (maxClasses > 0)
-                return ((HornSatReasoner)reasoner).getSortedUnsatisfiableClasses(maxClasses);
-            else return ((HornSatReasoner)reasoner).getSortedUnsatisfiableClasses();
+                return ((HornSatReasoner) reasoner).getSortedUnsatisfiableClasses(maxClasses);
+            else return ((HornSatReasoner) reasoner).getSortedUnsatisfiableClasses();
         return new ArrayList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
     }
 
@@ -136,7 +148,7 @@ public class ModuleCalc {
         if (result != null)
             return result;
 
-        result = extractModule(ontology, Collections.singleton((OWLEntity)unsatClass));
+        result = extractModule(ontology, Collections.singleton((OWLEntity) unsatClass));
         moduleMap.put(unsatClass, result);
 
         return result;
@@ -166,4 +178,10 @@ public class ModuleCalc {
 
     }
 
+    public boolean isConsistent(Sets.SetView<OWLLogicalAxiom> intersection) {
+        testOnto.getOWLOntologyManager().addAxioms(testOnto, intersection);
+        boolean consistent = this.testReasoner.isConsistent();
+        testOnto.getOWLOntologyManager().removeAxioms(testOnto, intersection);
+        return consistent;
+    }
 }
