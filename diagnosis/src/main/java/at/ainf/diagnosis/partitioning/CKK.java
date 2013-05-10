@@ -106,14 +106,14 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
         numOfHittingSets = hittingSets.size();
         reset();
-        Set<E> hs = preprocess(hittingSets);
+        Set<E> hs = preprocess(hittingSets);  // eliminates common entailments of all hs
 
         // find the best partition
         Set<E> desc = new LinkedHashSet<E>(new TreeSet<E>(hs).descendingSet());
 
         Differencing<E> dif = new Differencing<E>(desc);
 
-        findPartition(dif);
+        findPartition(dif);   // calculates partition where diags in dx have common entailments
         Collections.sort(getPartitions(), new Comparator<Partition<Id>>() {
             public int compare(Partition<Id> o1, Partition<Id> o2) {
                 int res = o1.difference.compareTo(o2.difference);
@@ -126,7 +126,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
 
         Partition<Id> partition = null;
 
-        sort(getPartitions());
+        sort(getPartitions());  // sorts partitions ascending by difference
 
         partition = nextPartition(partition);
 
@@ -191,6 +191,7 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         BigDecimal left = sumProbabilities(partition.dx);
         BigDecimal right = sumProbabilities(partition.dnx);
         BigDecimal none = sumProbabilities(partition.dz);
+        //TODO think about the following statement
         partition.difference = left.subtract(right).add(none.divide(new BigDecimal(2))).abs();
     }
 

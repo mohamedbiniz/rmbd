@@ -772,7 +772,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return getOWLSatStructure().index;
     }
 
-    private OWLClass getIndex(int index) {
+    public OWLClass getIndex(int index) {
         return getOWLSatStructure().index.inverse().get(Math.abs(index));
     }
 
@@ -867,7 +867,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         this.relevantClasses = relevantClasses;
     }
 
-    protected Core getRelevantCore() {
+    public Core getRelevantCore() {
         return relevantClasses;
     }
 
@@ -941,7 +941,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return owlSatStructure;
     }
 
-    private class Core {
+    public class Core {
         Multimap<Integer, Integer> symbols;
         boolean useOnlyHornClauses = false;
         boolean isHornComplete = true;
