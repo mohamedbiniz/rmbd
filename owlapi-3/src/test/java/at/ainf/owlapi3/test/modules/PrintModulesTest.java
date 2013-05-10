@@ -13,6 +13,7 @@ import at.ainf.owlapi3.module.OtfModuleProvider;
 import edu.arizona.bio5.onto.decomposition.Atom;
 import edu.arizona.bio5.onto.decomposition.AtomicDecomposition;
 import edu.arizona.bio5.onto.decomposition.ChiaraDecompositionAlgorithm;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
@@ -40,6 +41,7 @@ public class PrintModulesTest {
 
     private static Logger logger = LoggerFactory.getLogger(PrintModulesTest.class.getName());
 
+        @Ignore
         @Test
         /**
          * This testcase is a simple example how to start diagnoses

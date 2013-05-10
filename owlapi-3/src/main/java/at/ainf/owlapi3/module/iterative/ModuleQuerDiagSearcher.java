@@ -140,12 +140,15 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 // e.printStackTrace();
             }
 
-            if (isMinimizerActive)
+            if (isMinimizerActive())
                 minimizePartitionAx(best,search.getSearchable());
 
             IterativeStatistics.avgQueryCard.addValue((long)best.partition.size());
 
             logger.info(lastLabel + " size of partition " + best.partition.size());
+            for (OWLLogicalAxiom axiom : best.partition)
+                logger.info("query axiom: " + axiom);
+            logger.info("query axiom end");
 
             try {
                 reactionTime = System.currentTimeMillis() - reactionTime;
@@ -194,5 +197,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             return diagnoses.iterator().next();
 
     }
+
+
 
 }

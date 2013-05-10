@@ -416,13 +416,13 @@ public class IterativeModuleDiagTests {
     @Test
     public void testIterativeDiagnosis() throws OWLOntologyCreationException {
 
-        String onto = "fma2nci";
+        String onto = "mouse2human";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
         Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
         Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
         Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
-        //String fileMappings = "mouse2human_reference_2011";
-        String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
+        String fileMappings = "mouse2human_reference_2011";
+        //String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
 
         Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
         ontoAxioms.addAll(onto1Axioms);
@@ -438,14 +438,15 @@ public class IterativeModuleDiagTests {
 
         //ModuleDiagSearcher d = new ModuleMinDiagSearcher();
         //ModuleDiagSearcher d = new ModuleTargetDiagSearcher(pathMappings);
-        ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
+        //ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
+        ModuleDiagSearcher d = new ModuleOptQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
 
         long time = System.currentTimeMillis();
-        //ModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
-        //                                                 new Reasoner.ReasonerFactory(), d, true);
+        ModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
+                                                         new Reasoner.ReasonerFactory(), d, true);
         Speed4JMeasurement.start("modulediagnosiscreation");
-        ModuleDiagnosis diagnosisFinder = new RootModuleDiagnosis(mappingAxioms, ontoAxioms,
-                new Reasoner.ReasonerFactory(), d);
+        //ModuleDiagnosis diagnosisFinder = new RootModuleDiagnosis(mappingAxioms, ontoAxioms,
+        //        new Reasoner.ReasonerFactory(), d);
         Speed4JMeasurement.stop();
 
         Set<OWLLogicalAxiom> targetDiagnosis = diagnosisFinder.calculateTargetDiagnosis();

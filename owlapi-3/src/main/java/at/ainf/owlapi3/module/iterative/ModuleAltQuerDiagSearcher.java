@@ -11,7 +11,7 @@ import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import java.math.BigDecimal;
 
-import javafx.util.converter.BigDecimalStringConverter;
+
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

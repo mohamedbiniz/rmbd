@@ -28,18 +28,16 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
    private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());
 
-    private boolean isMinimizerActive;
-
     private Collection<Set<OWLLogicalAxiom>> collectedNonEntailedTCs = new LinkedHashSet<Set<OWLLogicalAxiom>>();
 
 
 
     public ModuleOptQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, boolean isMinimizerActive) {
-            super(path, correctAxioms, falseAxioms, null, isMinimizerActive);
+        super(path, correctAxioms, falseAxioms, null, isMinimizerActive);
     }
 
     public ModuleOptQuerDiagSearcher(String path, Set<OWLLogicalAxiom> correctAxioms, Set<OWLLogicalAxiom> falseAxioms, Map<OWLLogicalAxiom, BigDecimal> confidences, boolean isMinimizerActive) {
-            super(path,correctAxioms,falseAxioms,confidences,isMinimizerActive);
+        super(path,correctAxioms,falseAxioms,confidences,isMinimizerActive);
     }
 
     private enum Answer {
@@ -78,35 +76,35 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
 
     private boolean getUserAnswer(OWLLogicalAxiom axiom) {
-            if (correctAxioms.contains(axiom))
-                return true;
-            else if (falseAxioms.contains(axiom))
-                return false;
-            else {
-                throw new IllegalStateException();
-            }
+        if (correctAxioms.contains(axiom))
+            return true;
+        else if (falseAxioms.contains(axiom))
+            return false;
+        else {
+            throw new IllegalStateException();
+        }
     }
 
     private Answer getUserAnswer(Set<OWLLogicalAxiom> query) {
-            if (correctAxioms.containsAll(query))
-                return Answer.TRUE;
-            else if (falseAxioms.containsAll(query))
-                return Answer.STRONGLY_FALSE;
-            else {
-                return Answer.FALSE;
-            }
+        if (correctAxioms.containsAll(query))
+            return Answer.TRUE;
+        else if (falseAxioms.containsAll(query))
+            return Answer.STRONGLY_FALSE;
+        else {
+            return Answer.FALSE;
+        }
     }
 
     private Set<OWLLogicalAxiom> getIntersectionOfDiags(Set<Set<OWLLogicalAxiom>> diagnoses){
-        Set<OWLLogicalAxiom> intersectionOfDiags = diagnoses.iterator().next();
-        for(Set<OWLLogicalAxiom> diag : diagnoses){
-            intersectionOfDiags.retainAll(diag);
-        }
+        final Iterator<Set<OWLLogicalAxiom>> i = diagnoses.iterator();
+        Set<OWLLogicalAxiom> intersectionOfDiags = new LinkedHashSet<OWLLogicalAxiom>(i.next());
+        while (i.hasNext())
+            intersectionOfDiags.retainAll(i.next());
         return intersectionOfDiags;
     }
 
     private Set<OWLLogicalAxiom> getUnionOfDiags(Set<Set<OWLLogicalAxiom>> diagnoses){
-        Set<OWLLogicalAxiom> unionOfDiags = null;
+        Set<OWLLogicalAxiom> unionOfDiags = new LinkedHashSet<OWLLogicalAxiom>();
         for(Set<OWLLogicalAxiom> diag : diagnoses){
             unionOfDiags.addAll(diag);
         }
@@ -123,7 +121,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
         discAx.retainAll(axioms);
 
         Set<OWLLogicalAxiom> d = diagnoses.iterator().next();
-        Set<OWLLogicalAxiom> query = axioms;
+        Set<OWLLogicalAxiom> query = new LinkedHashSet<OWLLogicalAxiom>(axioms);
         query.removeAll(d);
         query.retainAll(discAx);
         return query;
@@ -150,9 +148,12 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
 
     @Override
-    public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
+    public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> module, Set<OWLLogicalAxiom> backg) {
+        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(module,backg);
         search.setMaxDiagnosesNumber(9);
+
+        Set<OWLLogicalAxiom> possibleFaultyAxioms = new LinkedHashSet<OWLLogicalAxiom>(module);
+        possibleFaultyAxioms.removeAll(backg);
 
         //QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
         QSS<OWLLogicalAxiom> qss = QSSFactory.createSplitInHalfQSS();
@@ -186,13 +187,15 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                 // e.printStackTrace();
             }
 
-            if (isMinimizerActive)
+            if (isMinimizerActive())
                 minimizePartitionAx(best,search.getSearchable());
 
             IterativeStatistics.avgQueryCard.addValue((long)best.partition.size());
 
             logger.info(lastLabel + " size of partition " + best.partition.size());
-
+            for (OWLLogicalAxiom axiom : best.partition)
+                logger.info("query axiom: " + axiom);
+            logger.info("query axiom end");
 
             reactionTime = System.currentTimeMillis() - reactionTime;
             IterativeStatistics.avgReactTime.addValue(reactionTime);
@@ -217,7 +220,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                             collectedNonEntailedTCs.add(new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom)));
                         logger.info("user answered query: " + Answer.STRONGLY_FALSE.name());
                         if(!firstAltQuAsked){
-                            query = getFirstAlternativeQuery(new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses()),axioms);
+                            query = getFirstAlternativeQuery(new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses()),possibleFaultyAxioms);
                             firstAltQuAsked = true;
                         }else if(!secondAltQuAsked){
                             qd = getSecondAlternativeQuery(new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses()),query);
@@ -225,7 +228,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                             secondAltQuAsked = true;
                         }else{
                             Set<OWLLogicalAxiom> targetDiag = qd.getDiagnosis();
-                            targetDiag = extendWithNonEntailedTCs(targetDiag,axioms);
+                            targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
                             return targetDiag;
                         }
                         break;
@@ -244,16 +247,26 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                         logger.info("error in query answering!!");
                 }
 
+                if (!posTcOrTargetDiagFound) {
+                    time = System.currentTimeMillis();
+                    runSearch(search);
+                    time = System.currentTimeMillis() - time;
+                    logger.info ("time needed to search for diagnoses: " + time);
+                    if (search.getDiagnoses().size() == 1)
+                        posTcOrTargetDiagFound = true;
+                }
+
 
             }
 
             reactionTime = 0;
 
-
-            time = System.currentTimeMillis();
-            runSearch(search);
-            time = System.currentTimeMillis() - time;
-            logger.info ("time needed to search for diagnoses: " + time);
+            if (search.getDiagnoses().size() != 1) {
+                time = System.currentTimeMillis();
+                runSearch(search);
+                time = System.currentTimeMillis() - time;
+                logger.info ("time needed to search for diagnoses: " + time);
+            }
             diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
         }
         logger.info("number of queries: " + numOfQueries);
@@ -263,27 +276,21 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             return Collections.emptySet();
         else {
             Set<OWLLogicalAxiom> targetDiag = diagnoses.iterator().next();
-            targetDiag = extendWithNonEntailedTCs(targetDiag,axioms);
+            targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
             return targetDiag;
         }
 
     }
 
     private Set<OWLLogicalAxiom> extendWithNonEntailedTCs(Set<OWLLogicalAxiom> diagnosis, Set<OWLLogicalAxiom> axioms){
-        Set<OWLLogicalAxiom> d = diagnosis;
-        for(Set<OWLLogicalAxiom> n : collectedNonEntailedTCs){
-            if(n.size() == 1 && axioms.containsAll(n))
-                d.addAll(n);
+        Set<OWLLogicalAxiom> extended_Diagnosis = new LinkedHashSet<OWLLogicalAxiom>(diagnosis);
+        for(Set<OWLLogicalAxiom> testcase : collectedNonEntailedTCs){
+            if(testcase.size() == 1 && axioms.containsAll(testcase))
+                extended_Diagnosis.addAll(testcase);
         }
-        return d;
+        return extended_Diagnosis;
     }
 
-    public boolean isMinimizerActive() {
-                return isMinimizerActive;
-            }
 
-    public void setMinimizerActive(boolean minimizerActive) {
-        isMinimizerActive = minimizerActive;
-    }
 
 }
