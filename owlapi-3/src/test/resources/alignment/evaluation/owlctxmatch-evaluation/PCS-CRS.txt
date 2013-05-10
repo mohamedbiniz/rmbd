@@ -1,0 +1,17 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/PCS.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CRS.owl
+sourceNamespace = http://PCS.owl
+targetNamespace = http://CRS.owl
+
++ Author > author | 1.0
++ Author < author | 1.0
++ PERSON > person | 1.0
++ PERSON < person | 1.0
++ Programme > program | 1.0
++ Programme < program | 1.0
++ DOCUMENT > document | 1.0
++ DOCUMENT < document | 1.0
++ Conference > conference | 1.0
++ Conference < conference | 1.0
++ Review > review | 1.0
++ Review < review | 1.0

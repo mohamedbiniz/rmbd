@@ -1,0 +1,13 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/SIGKDD.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/CRS.owl
+sourceNamespace = http://SIGKDD.owl
+targetNamespace = http://CRS.owl
+
++ Abstract = abstract | 0.7
++ Conference = conference | 1.0
++ Document = document | 1.0
+< General_Chair = chair | 0.6000000000000001
++ Paper = article | 0.6000000000000001
++ Person = person | 0.65
+< Program_Chair = chair | 0.6000000000000001
++ Review = review | 1.0

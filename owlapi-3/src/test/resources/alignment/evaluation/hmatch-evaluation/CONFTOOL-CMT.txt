@@ -1,0 +1,12 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/CMT.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://CMT.owl
+
++ Administrator = Administrator | 0.625
++ Conference = Conference | 0.6
+- Country = SubjectArea | 0.8
+- Person = SubjectArea | 0.8
+- Scholar = SubjectArea | 0.64
+- Student = SubjectArea | 0.64
++ Topic = SubjectArea | 1.0

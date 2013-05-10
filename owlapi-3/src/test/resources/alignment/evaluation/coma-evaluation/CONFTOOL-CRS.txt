@@ -1,0 +1,10 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/CRS.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://CRS.owl
+
+- Member_PC = pc_meeting | 0.34934863
+- Reception = session | 0.22520937
++ Author = author | 0.36776063
++ Event = event | 0.80922306
++ Conference = conference | 0.4762505
