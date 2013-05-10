@@ -3,6 +3,7 @@ package at.ainf.owlapi3.test.modules;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.owlapi3.module.OtfModuleProvider;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -28,7 +29,7 @@ public class Modules4AllClassesTest {
 
     private static Logger logger = LoggerFactory.getLogger(PrintModulesTest.class.getName());
 
-            @Test
+            @Ignore @Test
             /**
              * This testcase is a simple example how to start diagnoses
              */
