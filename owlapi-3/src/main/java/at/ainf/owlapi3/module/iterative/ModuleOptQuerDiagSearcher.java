@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
-   private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());   //
+   private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());
 
     private Collection<Set<OWLLogicalAxiom>> collectedNonEntailedTCs = new LinkedHashSet<Set<OWLLogicalAxiom>>();
 
