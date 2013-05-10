@@ -35,9 +35,13 @@ public class ModuleCalc {
 
     // TODO split into horn and non-horm implementations!
 
-    public ModuleCalc(OWLOntology ontology, OWLReasonerFactory reasonerFactory) throws OWLOntologyCreationException {
+    public ModuleCalc(OWLOntology ontology, OWLReasonerFactory reasonerFactory) {
         this.ontology = ontology;
-        this.testOnto = ontology.getOWLOntologyManager().createOntology(IRI.create("http://ainf.at/debug" + System.nanoTime()));
+        try {
+            this.testOnto = ontology.getOWLOntologyManager().createOntology(IRI.create("http://ainf.at/debug" + System.nanoTime()));
+        } catch (OWLOntologyCreationException e) {
+            logger.error("Testing ontology cannot be created!");
+        }
         this.testReasoner = reasonerFactory.createNonBufferingReasoner(testOnto);
         /*
         if (reasonerFactory.getReasonerName().equals(HornSatReasoner.NAME)) {
@@ -74,16 +78,27 @@ public class ModuleCalc {
                 OWLClass cl = it.next();
                 if (isSatisfiable(cl)) {
                     it.remove();
-                    allUnsat.remove(cl);
                 }
             }
+
+            allUnsat.retainAll(actualUnsat);
+            Set<OWLClass> classes = new HashSet<OWLClass>(getModuleMap().keySet());
+            for (OWLClass owlClass : classes) {
+                if (!actualUnsat.contains(owlClass))
+                    getModuleMap().remove(owlClass);
+            }
+
             if (logger.isInfoEnabled())
                 logger.info("Unsat classes all: " + allUnsat.size() + " actual: " + actualUnsat.size());
 
             if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
-                List<OWLClass> additionalUnsatClasses = getInitialUnsatClasses(maxClasses - actualUnsat.size());
-                actualUnsat.addAll(additionalUnsatClasses);
-                allUnsat.addAll(additionalUnsatClasses);
+
+                do {
+                    List<OWLClass> additionalUnsatClasses = getInitialUnsatClasses(actualUnsat, maxClasses - actualUnsat.size());
+                    List<OWLClass> owlClasses = calculateModules(additionalUnsatClasses);
+                    actualUnsat.addAll(owlClasses);
+                    allUnsat.addAll(owlClasses);
+                } while (actualUnsat.size() < maxClasses);
                 return;
             }
 
@@ -122,16 +137,16 @@ public class ModuleCalc {
         }
     }
 
-    public List<OWLClass> getInitialUnsatClasses() {
-        return getInitialUnsatClasses(0);
-    }
-
-    public List<OWLClass> getInitialUnsatClasses(int maxClasses) {
+    public List<OWLClass> getInitialUnsatClasses(Collection<OWLClass> excludeClasses, int maxClasses) {
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
             if (maxClasses > 0)
-                return ((HornSatReasoner) reasoner).getSortedUnsatisfiableClasses(maxClasses);
+                return ((HornSatReasoner) reasoner).getSortedUnsatisfiableClasses(excludeClasses, maxClasses);
             else return ((HornSatReasoner) reasoner).getSortedUnsatisfiableClasses();
         return new ArrayList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
+    }
+
+    public Collection<? extends OWLClass> getInitialUnsatClasses() {
+        return reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
     }
 
     public Set<OWLClass> getUnsatisfiableClasses() {
@@ -149,6 +164,8 @@ public class ModuleCalc {
             return result;
 
         result = extractModule(ontology, Collections.singleton((OWLEntity) unsatClass));
+        if (moduleMap.containsValue(result))
+            return null;
         moduleMap.put(unsatClass, result);
 
         return result;
@@ -184,4 +201,16 @@ public class ModuleCalc {
         testOnto.getOWLOntologyManager().removeAxioms(testOnto, intersection);
         return consistent;
     }
+
+    public List<OWLClass> calculateModules(List<OWLClass> actualUnsatClasses) {
+        Iterator<OWLClass> iterator = actualUnsatClasses.iterator();
+        while (iterator.hasNext()) {
+            OWLClass owlClass = iterator.next();
+            if (calculateModule(owlClass) == null)
+                iterator.remove();
+        }
+        return actualUnsatClasses;
+    }
+
+
 }
