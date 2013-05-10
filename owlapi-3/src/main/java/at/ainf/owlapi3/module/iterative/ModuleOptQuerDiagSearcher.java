@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
-   private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());   //
+   private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());
 
     private boolean isMinimizerActive;
 
