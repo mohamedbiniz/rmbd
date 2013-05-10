@@ -418,13 +418,18 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     public List<OWLClass> getSortedUnsatisfiableClasses()
     {
-        return getSortedUnsatisfiableClasses(0);
+        return getSortedUnsatisfiableClasses(Collections.<OWLClass>emptySet(),0);
     }
 
-    public List<OWLClass> getSortedUnsatisfiableClasses(int maxClasses) {
+    public List<OWLClass> getSortedUnsatisfiableClasses(Collection<OWLClass> excludeClasses, int maxClasses) {
         final Core rcore = getRelevantCore();
         //final int avg = average(rcore.getSymbolsMap().values());
         ArrayList<Integer> sortedSymbols = new ArrayList<Integer>(getRelevantCore().getSymbolsSet());
+
+        for (OWLClass excludeClass : excludeClasses) {
+            sortedSymbols.remove(getIndex(excludeClass));
+        }
+
         if (!sortedSymbols.isEmpty())
             Collections.sort(sortedSymbols, new Comparator<Integer>() {
                 @Override

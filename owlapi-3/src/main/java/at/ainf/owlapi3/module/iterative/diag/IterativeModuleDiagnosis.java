@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
-    public static final int MAX_UNSAT_CLASSES = 20;
+    public static final int MAX_UNSAT_CLASSES = 50;
     private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
 
     private final boolean sortNodes;
@@ -31,7 +31,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                                     OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher,
                                     boolean sortNodes) {
 
-        super(mappings,ontoAxioms,factory,moduleDiagSearcher);
+        super(mappings, ontoAxioms, factory, moduleDiagSearcher);
 
         this.sortNodes = sortNodes;
 
@@ -44,35 +44,42 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
         Speed4JMeasurement.start("calculatetargetdiag");
-        List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses(MAX_UNSAT_CLASSES);
+        List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses(Collections.<OWLClass>emptySet(),
+                MAX_UNSAT_CLASSES);
         if (isSortNodes())
-            Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,getMappings(),getOntoAxioms()));
-        int toIndex = Collections.min(Arrays.asList(MAX_UNSAT_CLASSES,unsatClasses.size()));
-        List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0,toIndex));
+            Collections.sort(unsatClasses, new ChildsComparator(unsatClasses, getMappings(), getOntoAxioms()));
+        int toIndex = Collections.min(Arrays.asList(MAX_UNSAT_CLASSES, unsatClasses.size()));
+        List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0, toIndex));
 
         while (!actualUnsatClasses.isEmpty()) {
-            for (OWLClass unsatClass : actualUnsatClasses)
-                getModuleCalculator().calculateModule(unsatClass);
+            getModuleCalculator().calculateModules(actualUnsatClasses);
+
 
             Speed4JMeasurement.start("calculatemodule");
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
             OWLClass actualUnsatClass;
-            if (isSortNodes())
-                actualUnsatClass = Collections.min(actualUnsatClasses,new ModuleSizeComparator(map));
-            else
-                actualUnsatClass = actualUnsatClasses.get(0);
+            //if (isSortNodes())
+            actualUnsatClass = Collections.min(actualUnsatClasses, new ModuleSizeComparator(map));
+            //else
+            //    actualUnsatClass = actualUnsatClasses.get(0);
 
             //Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
 
-            Iterator<OWLClass> it = actualUnsatClasses.iterator();
-            OWLClass owlClass = it.next();
-            Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>(map.get(owlClass));
+            //Iterator<OWLClass> it = actualUnsatClasses.iterator();
+            //OWLClass owlClass = it.next();
+            Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
+            actualUnsatClasses.remove(actualUnsatClass);
             //Set<OWLLogicalAxiom> intersection = new HashSet<OWLLogicalAxiom>(map.get(owlClass));
-            while (it.hasNext()){
-                Sets.SetView<OWLLogicalAxiom> intersection = Sets.intersection(axioms, map.get(it.next()));
-                if (!intersection.isEmpty() && intersection.size() < axioms.size() &&
-                        !getModuleCalculator().isConsistent(intersection))
-                    axioms = new HashSet<OWLLogicalAxiom>(intersection);
+            for (OWLClass unsatClass : actualUnsatClasses) {
+                Set<OWLLogicalAxiom> module = map.get(unsatClass);
+                if (module.size() < axioms.size())
+                    axioms = new HashSet<OWLLogicalAxiom>(module);
+                else {
+                    Sets.SetView<OWLLogicalAxiom> intersection = Sets.intersection(axioms, module);
+                    if (!intersection.isEmpty() && intersection.size() < axioms.size() &&
+                            !getModuleCalculator().isConsistent(intersection))
+                        axioms = new HashSet<OWLLogicalAxiom>(intersection);
+                }
             }
 
             /*
@@ -83,7 +90,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             background.retainAll(getOntoAxioms());
 
             if (logger.isInfoEnabled())
-                logger.info("Processing module with BK: " + background.size() + " from " + axioms.size() );
+                logger.info("Processing module with BK: " + background.size() + " from " + axioms.size());
 
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
@@ -111,9 +118,9 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         IterativeStatistics.logAndClear(logger, IterativeStatistics.moduleSize, "module size");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.diagnosisTime, "diagnosis time");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.moduleTime, "module time");
-        IterativeStatistics.logAndClear (logger, IterativeStatistics.avgConsistencyTime, "consistency time");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgConsistencyTime, "consistency time");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyTime, "coherency time");
-        IterativeStatistics.logAndClear (logger, IterativeStatistics.avgConsistencyCheck, "consistency checks");
+        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgConsistencyCheck, "consistency checks");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyCheck, "coherency checks");
 
         Speed4JMeasurement.stop();
@@ -132,17 +139,17 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             this.map = calculateNumberTransitiveUnsatChilds(unsatClasses);
         }
 
-        protected Map<OWLClass,Integer> calculateNumberTransitiveUnsatChilds(Collection<OWLClass> unsatClasses) {
-            Map<OWLClass,Integer> result = new LinkedHashMap<OWLClass, Integer>();
+        protected Map<OWLClass, Integer> calculateNumberTransitiveUnsatChilds(Collection<OWLClass> unsatClasses) {
+            Map<OWLClass, Integer> result = new LinkedHashMap<OWLClass, Integer>();
             Set<OWLLogicalAxiom> allAxioms = new HashSet<OWLLogicalAxiom>();
             allAxioms.addAll(mappings);
             allAxioms.addAll(ontoAxioms);
-            StructuralReasoner reasoner = new StructuralReasoner (createOntology(allAxioms),
+            StructuralReasoner reasoner = new StructuralReasoner(createOntology(allAxioms),
                     new SimpleConfiguration(), BufferingMode.NON_BUFFERING);
             for (OWLClass unsatClass : unsatClasses) {
-                Set<OWLClass> childs = new HashSet<OWLClass>(reasoner.getSubClasses(unsatClass,false).getFlattened());
+                Set<OWLClass> childs = new HashSet<OWLClass>(reasoner.getSubClasses(unsatClass, false).getFlattened());
                 childs.remove(BOT_CLASS);
-                result.put(unsatClass,childs.size());
+                result.put(unsatClass, childs.size());
             }
             return result;
         }
