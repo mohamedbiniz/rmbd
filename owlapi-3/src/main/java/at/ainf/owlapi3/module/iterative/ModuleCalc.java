@@ -1,10 +1,8 @@
 package at.ainf.owlapi3.module.iterative;
 
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
-import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.Node;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
@@ -113,8 +111,14 @@ public class ModuleCalc {
     }
 
     public List<OWLClass> getInitialUnsatClasses() {
+        return getInitialUnsatClasses(0);
+    }
+
+    public List<OWLClass> getInitialUnsatClasses(int maxClasses) {
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
-            return ((HornSatReasoner)reasoner).getSortedUnsatisfiableClasses();
+            if (maxClasses > 0)
+                return ((HornSatReasoner)reasoner).getSortedUnsatisfiableClasses(maxClasses);
+            else return ((HornSatReasoner)reasoner).getSortedUnsatisfiableClasses();
         return new ArrayList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
     }
 

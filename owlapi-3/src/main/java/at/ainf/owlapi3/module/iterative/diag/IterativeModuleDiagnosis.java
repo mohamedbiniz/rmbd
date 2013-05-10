@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
-    public static final int MAX_UNSAT_CLASSES = 5;
+    public static final int MAX_UNSAT_CLASSES = 10;
     private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
 
     private final boolean sortNodes;
@@ -43,7 +43,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
         Speed4JMeasurement.start("calculatetargetdiag");
-        List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses();
+        List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses(MAX_UNSAT_CLASSES);
         if (isSortNodes())
             Collections.sort(unsatClasses,new ChildsComparator(unsatClasses,getMappings(),getOntoAxioms()));
         int toIndex = Collections.min(Arrays.asList(MAX_UNSAT_CLASSES,unsatClasses.size()));
@@ -61,11 +61,12 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             else
                 actualUnsatClass = actualUnsatClasses.get(0);
 
-            Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>();
+            Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
 
+            /*
             for (OWLClass unsatClass : actualUnsatClasses)
                 axioms.addAll(map.get(unsatClass));
-
+            */
             Set<OWLLogicalAxiom> background = new LinkedHashSet<OWLLogicalAxiom>(axioms);
             background.retainAll(getOntoAxioms());
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);

@@ -403,16 +403,33 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return unSat;
     }
 
-    public List<OWLClass> getSortedUnsatisfiableClasses() {
+    protected List<OWLClass> computeUnsatisfiableClasses(List<Integer> sortedSymbols, int maxClasses) {
+        List<OWLClass> unSat = new ArrayList<OWLClass>(maxClasses);
+        for (Integer index : sortedSymbols) {
+            OWLClass owlClass = getIndex(index);
+            if (!isSatisfiable(owlClass))
+                unSat.add(owlClass);
+            if (maxClasses > 0 && unSat.size() == maxClasses)
+                return unSat;
+        }
+        return unSat;
+    }
+
+    public List<OWLClass> getSortedUnsatisfiableClasses()
+    {
+        return getSortedUnsatisfiableClasses(0);
+    }
+
+    public List<OWLClass> getSortedUnsatisfiableClasses(int maxClasses) {
         final Core rcore = getRelevantCore();
-        ArrayList<OWLClass> sortedSymbols = new ArrayList<OWLClass>(computeUnsatisfiableClasses());
         //final int avg = average(rcore.getSymbolsMap().values());
+        ArrayList<Integer> sortedSymbols = new ArrayList<Integer>(getRelevantCore().getSymbolsSet());
         if (!sortedSymbols.isEmpty())
-            Collections.sort(sortedSymbols, new Comparator<OWLClass>() {
+            Collections.sort(sortedSymbols, new Comparator<Integer>() {
                 @Override
-                public int compare(OWLClass o1, OWLClass o2) {
-                    final Collection<Integer> level1 = rcore.getSymbolsMap().get(getIndex(o1));
-                    final Collection<Integer> level2 = rcore.getSymbolsMap().get(getIndex(o2));
+                public int compare(Integer o1, Integer o2) {
+                    final Collection<Integer> level1 = rcore.getSymbolsMap().get(o1);
+                    final Collection<Integer> level2 = rcore.getSymbolsMap().get(o2);
                     if (level1.size() != level2.size())
                         return Integer.valueOf(level1.size()).compareTo(level2.size());
 
@@ -422,7 +439,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                 }
             });
 
-        return sortedSymbols;
+        return computeUnsatisfiableClasses(sortedSymbols, maxClasses);
     }
 
     private int average(Collection<Integer> values) {
