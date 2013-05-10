@@ -2,6 +2,7 @@ package at.ainf.owlapi3.module.iterative.diag;
 
 import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -21,7 +22,7 @@ import java.util.*;
  */
 public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
-    public static final int MAX_UNSAT_CLASSES = 10;
+    public static final int MAX_UNSAT_CLASSES = 20;
     private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
 
     private final boolean sortNodes;
@@ -61,7 +62,18 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             else
                 actualUnsatClass = actualUnsatClasses.get(0);
 
-            Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
+            //Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
+
+            Iterator<OWLClass> it = actualUnsatClasses.iterator();
+            OWLClass owlClass = it.next();
+            Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>(map.get(owlClass));
+            //Set<OWLLogicalAxiom> intersection = new HashSet<OWLLogicalAxiom>(map.get(owlClass));
+            while (it.hasNext()){
+                Sets.SetView<OWLLogicalAxiom> intersection = Sets.intersection(axioms, map.get(it.next()));
+                if (!intersection.isEmpty() && intersection.size() < axioms.size() &&
+                        !getModuleCalculator().isConsistent(intersection))
+                    axioms = new HashSet<OWLLogicalAxiom>(intersection);
+            }
 
             /*
             for (OWLClass unsatClass : actualUnsatClasses)
@@ -69,6 +81,10 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             */
             Set<OWLLogicalAxiom> background = new LinkedHashSet<OWLLogicalAxiom>(axioms);
             background.retainAll(getOntoAxioms());
+
+            if (logger.isInfoEnabled())
+                logger.info("Processing module with BK: " + background.size() + " from " + axioms.size() );
+
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
             Speed4JMeasurement.start("calculatepartdiag");
