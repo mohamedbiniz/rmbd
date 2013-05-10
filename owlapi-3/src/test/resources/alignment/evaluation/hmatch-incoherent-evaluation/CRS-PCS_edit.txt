@@ -1,0 +1,1 @@
+http://CRS.owl#abstract EquivalentTo http://PCS.owl#Paper

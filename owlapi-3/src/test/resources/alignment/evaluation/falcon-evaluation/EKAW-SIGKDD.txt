@@ -1,0 +1,13 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/EKAW.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/SIGKDD.owl
+sourceNamespace = http://EKAW.owl
+targetNamespace = http://SIGKDD.owl
+
++ Abstract = Abstract | 0.9987414004069741
++ Document = Document | 0.9985161531536606
++ Review = Review | 0.9982259361699284
++ Person = Person | 0.9980750539207972
++ Paper = Paper | 0.9949153887578446
++ Invited_Speaker = Invited_Speaker | 0.9942087454687818
++ Conference = Conference | 0.972010770506621
++ Paper_Author = Author_of_paper | 0.9521748693937425
