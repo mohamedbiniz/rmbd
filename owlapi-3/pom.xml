@@ -12,7 +12,7 @@
     <name>OWLAPI adapter</name>
     <!-- <version>1.0-TTMMYY-HHMM</version> -->
     <!-- <version>1.0-070213-1555</version> -->
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-070513-1430</version>
 
     <packaging>jar</packaging>
     <build>
@@ -159,6 +159,13 @@
             <artifactId>diagnosis</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+              <groupId>edu.arizona.bio5.onto.decomposition</groupId>
+              <artifactId>atomic-decomposition-core</artifactId>
+              <version>0.2_03042013</version>
+              <classifier>checkout_03042013</classifier>
         </dependency>
 
         <dependency>

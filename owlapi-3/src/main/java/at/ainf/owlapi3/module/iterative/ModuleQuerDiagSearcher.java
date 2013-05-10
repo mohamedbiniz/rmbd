@@ -13,8 +13,8 @@ import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.module.iterative.diag.IterativeStatistics;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,22 +49,30 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         this.falseAxioms = falseAxioms;
     }
 
+    public boolean isMinimizerActive() {
+            return isMinimizerActive;
+        }
+
+    public void setMinimizerActive(boolean minimizerActive) {
+        isMinimizerActive = minimizerActive;
+    }
+
     protected boolean askUser(Partition<OWLLogicalAxiom> partition) throws AnswerException {
         if (correctAxioms.containsAll(partition.partition))
             return true;
         else if (falseAxioms.containsAll(partition.partition))
             return false;
         else {
-            logger.info("we doesn't know an answer for sure (not all axioms false or correct) so we return false ");
-            for (OWLLogicalAxiom axiom : partition.partition)
-                logger.info(axiom + ", " + correctAxioms.contains(axiom) + ", " + falseAxioms.contains(axiom));
-            logger.info(partition.dx.size() + ", " + partition.dnx.size() + ", " + partition.dz.size() + ", ");
-            throw new AnswerException("don't know answer");
+            //logger.info("we doesn't know an answer for sure (not all axioms false or correct) so we return false ");
+            //for (OWLLogicalAxiom axiom : partition.partition)
+            //    logger.info(axiom + ", " + correctAxioms.contains(axiom) + ", " + falseAxioms.contains(axiom));
+            //logger.info(partition.dx.size() + ", " + partition.dnx.size() + ", " + partition.dz.size() + ", ");
+            throw new AnswerException("some axioms true, some false");
 
         }
     }
 
-    private void minimizePartitionAx(Partition<OWLLogicalAxiom> query, Searchable<OWLLogicalAxiom> searchable) {
+    protected void minimizePartitionAx(Partition<OWLLogicalAxiom> query, Searchable<OWLLogicalAxiom> searchable) {
         if (query.partition == null) return;
         QueryMinimizer<OWLLogicalAxiom> mnz = new QueryMinimizer<OWLLogicalAxiom>(query, searchable);
         QuickXplain<OWLLogicalAxiom> q = new QuickXplain<OWLLogicalAxiom>();
@@ -100,9 +108,10 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
         search.setMaxDiagnosesNumber(9);
 
-        QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
+        //QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
+        QSS<OWLLogicalAxiom> qss = QSSFactory.createSplitInHalfQSS();
         CKK<OWLLogicalAxiom> ckk = new CKK<OWLLogicalAxiom>(search.getSearchable(), qss);
-        ckk.setThreshold(0.01);
+        ckk.setThreshold(0.1); //old: 0.01
 
         long time = System.currentTimeMillis();
         runSearch(search);
@@ -110,7 +119,12 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         logger.info ("time needed to search for diagnoses: " + time);
         Collection<Set<OWLLogicalAxiom>> diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
 
+        IterativeStatistics.avgTimeQueryGen.createNewValueGroup();
+        IterativeStatistics.avgQueryCard.createNewValueGroup();
+        IterativeStatistics.avgReactTime.createNewValueGroup();
+
         int numOfQueries = 0;
+        long reactionTime = System.currentTimeMillis();
         while (diagnoses.size() > 1) {
             String lastLabel = "";
             Partition<OWLLogicalAxiom> best = null;
@@ -118,21 +132,29 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 Speed4JMeasurement.start("calculatingpartition");
                 best = ckk.generatePartition(search.getDiagnoses());
                 lastLabel = Speed4JMeasurement.getLabelOfLastStopWatch();
-                Speed4JMeasurement.stop();
+                long queryCalc = Speed4JMeasurement.stop();
+                IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);
             } catch (SolverException e) {
                 // e.printStackTrace();
             } catch (InconsistentTheoryException e) {
                 // e.printStackTrace();
             }
 
-            if (isMinimizerActive)
+            if (isMinimizerActive())
                 minimizePartitionAx(best,search.getSearchable());
 
+            IterativeStatistics.avgQueryCard.addValue((long)best.partition.size());
+
             logger.info(lastLabel + " size of partition " + best.partition.size());
+            for (OWLLogicalAxiom axiom : best.partition)
+                logger.info("query axiom: " + axiom);
+            logger.info("query axiom end");
 
             try {
+                reactionTime = System.currentTimeMillis() - reactionTime;
+                IterativeStatistics.avgReactTime.addValue(reactionTime);
                 boolean answer = askUser(best);
-                logger.info("user answered query " + answer);
+                logger.info("user answered query: All axioms " + answer);
                 numOfQueries++;
 
                 if (answer)
@@ -157,6 +179,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 }
                 // search.reset();
             }
+            reactionTime = 0;
 
 
             time = System.currentTimeMillis();
@@ -166,8 +189,15 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
         }
         logger.info("number of queries: " + numOfQueries);
-        return diagnoses.iterator().next();
+        IterativeStatistics.numOfQueries.add((long)numOfQueries);
+
+        if (diagnoses.isEmpty())
+            return Collections.emptySet();
+        else
+            return diagnoses.iterator().next();
 
     }
+
+
 
 }
