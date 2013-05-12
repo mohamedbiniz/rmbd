@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
-    public static final int MAX_UNSAT_CLASSES = 50;
+    public static final int MAX_UNSAT_CLASSES = 10;
     private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
 
     private final boolean sortNodes;
@@ -52,36 +52,38 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0, toIndex));
 
         while (!actualUnsatClasses.isEmpty()) {
-            getModuleCalculator().calculateModules(actualUnsatClasses);
-
-
+            Speed4JMeasurement.start("debugmodule");
             Speed4JMeasurement.start("calculatemodule");
+            getModuleCalculator().calculateModules(actualUnsatClasses);
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
             OWLClass actualUnsatClass;
             //if (isSortNodes())
-            actualUnsatClass = Collections.min(actualUnsatClasses, new ModuleSizeComparator(map));
+            //actualUnsatClass = Collections.min(actualUnsatClasses, new ModuleSizeComparator(map));
             //else
-            //    actualUnsatClass = actualUnsatClasses.get(0);
+                actualUnsatClass = actualUnsatClasses.get(0);
 
             //Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
 
             //Iterator<OWLClass> it = actualUnsatClasses.iterator();
             //OWLClass owlClass = it.next();
             Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
+
+
             actualUnsatClasses.remove(actualUnsatClass);
             //Set<OWLLogicalAxiom> intersection = new HashSet<OWLLogicalAxiom>(map.get(owlClass));
             for (OWLClass unsatClass : actualUnsatClasses) {
                 Set<OWLLogicalAxiom> module = map.get(unsatClass);
-                if (module.size() < axioms.size())
-                    axioms = new HashSet<OWLLogicalAxiom>(module);
-                else {
+                if (module.size() + axioms.size() < 500)
+                    axioms.addAll(module); // axioms = new HashSet<OWLLogicalAxiom>(module);
+                /*else {
                     Sets.SetView<OWLLogicalAxiom> intersection = Sets.intersection(axioms, module);
                     if (!intersection.isEmpty() && intersection.size() < axioms.size() &&
                             !getModuleCalculator().isConsistent(intersection))
                         axioms = new HashSet<OWLLogicalAxiom>(intersection);
-                }
+                } */
             }
 
+            Speed4JMeasurement.stop();
             /*
             for (OWLClass unsatClass : actualUnsatClasses)
                 axioms.addAll(map.get(unsatClass));
