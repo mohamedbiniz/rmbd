@@ -93,12 +93,15 @@ public class ModuleCalc {
 
             if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
 
+                final HashSet<OWLClass> exclude = new HashSet<OWLClass>(actualUnsat);
+                List<OWLClass> additionalUnsatClasses;
                 do {
-                    List<OWLClass> additionalUnsatClasses = getInitialUnsatClasses(actualUnsat, maxClasses - actualUnsat.size());
+                    additionalUnsatClasses = getInitialUnsatClasses(exclude, maxClasses - actualUnsat.size());
+                    exclude.addAll(additionalUnsatClasses);
                     List<OWLClass> owlClasses = calculateModules(additionalUnsatClasses);
                     actualUnsat.addAll(owlClasses);
                     allUnsat.addAll(owlClasses);
-                } while (actualUnsat.size() < maxClasses);
+                } while (actualUnsat.size() < maxClasses && !additionalUnsatClasses.isEmpty());
                 return;
             }
 
@@ -158,15 +161,18 @@ public class ModuleCalc {
     }
 
     public Set<OWLLogicalAxiom> calculateModule(OWLClass unsatClass) {
+
         Set<OWLLogicalAxiom> result = moduleMap.get(unsatClass);
 
         if (result != null)
             return result;
 
         result = extractModule(ontology, Collections.singleton((OWLEntity) unsatClass));
-        if (moduleMap.containsValue(result))
-            return null;
+        //if (moduleMap.containsValue(result))
+        //    return null;
         moduleMap.put(unsatClass, result);
+        if (logger.isDebugEnabled())
+            logger.debug("Computed module for " + unsatClass.toString() + " with " + result.size() + " axioms");
 
         return result;
     }
@@ -202,14 +208,17 @@ public class ModuleCalc {
         return consistent;
     }
 
-    public List<OWLClass> calculateModules(List<OWLClass> actualUnsatClasses) {
-        Iterator<OWLClass> iterator = actualUnsatClasses.iterator();
+    public List<OWLClass> calculateModules(List<OWLClass> unsatClasses) {
+        Iterator<OWLClass> iterator = unsatClasses.iterator();
         while (iterator.hasNext()) {
             OWLClass owlClass = iterator.next();
-            if (calculateModule(owlClass) == null)
+            if (calculateModule(owlClass) == null){
                 iterator.remove();
+                if (logger.isDebugEnabled())
+                    logger.debug("The module is rejected!");
+            }
         }
-        return actualUnsatClasses;
+        return unsatClasses;
     }
 
 
