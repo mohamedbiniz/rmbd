@@ -269,12 +269,12 @@ public class IterativeModuleDiagTests {
     @Test
     public void testExtracionModule() throws OWLOntologyCreationException {
 
-        String onto = "fma2nci";
+        String onto = "snomed2nci";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
 
-        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
-        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
-        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
+        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "_gen1_onto1.owl");
+        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "_gen1_onto2.owl");
+        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "_gen1_mappings.owl");
         Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
         ontoAxioms.addAll(onto1Axioms);
         ontoAxioms.addAll(onto2Axioms);
@@ -287,7 +287,7 @@ public class IterativeModuleDiagTests {
         logger.info("signature size: " + signature.size());
 
         //List<List<OWLClass>> subsignatures = calculateSubSignaturePartitioned(signature,20);
-        List<List<OWLClass>> subsignatures = calculateSubSignatureOfSize(signature,500,10);
+        List<List<OWLClass>> subsignatures = calculateSubSignatureOfSize(signature,50,10);
 
         List<Set<OWLLogicalAxiom>> submodules = new LinkedList<Set<OWLLogicalAxiom>>();
         Speed4JMeasurement.start("submodules_extraction_overall");
@@ -406,23 +406,30 @@ public class IterativeModuleDiagTests {
         Set<OWLEntity> input = new LinkedHashSet<OWLEntity>();
         for (OWLEntity e : signature)
             input.add(e);
+        Speed4JMeasurement.start("creation_module_extractor");
         SyntacticLocalityModuleExtractor extractor =
                 new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), createOntology(ontology), ModuleType.STAR);
+        Speed4JMeasurement.stop();
+        Speed4JMeasurement.start("extraction_module");
         for (OWLAxiom axiom : extractor.extract(input))
             result.add((OWLLogicalAxiom) axiom);
+        Speed4JMeasurement.stop();
         return result;
     }
 
     @Test
     public void testIterativeDiagnosis() throws OWLOntologyCreationException {
 
-        String onto = "mouse2human";
+        String onto = "snomed2nci";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
-        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
-        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
-        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
-        String fileMappings = "mouse2human_reference_2011";
-        //String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
+        //Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
+        //Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
+        //Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
+        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "_gen1_onto1.owl");
+        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "_gen1_onto2.owl");
+        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "_gen1_mappings.owl");
+        //String fileMappings = "mouse2human_reference_2011";
+        String fileMappings = "onto_mappings_SNOMED_NCI_cleanDG_rmbd";
 
         Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
         ontoAxioms.addAll(onto1Axioms);
@@ -443,7 +450,7 @@ public class IterativeModuleDiagTests {
 
         long time = System.currentTimeMillis();
         ModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
-                                                         new Reasoner.ReasonerFactory(), d, true);
+                                                         new HornSatReasonerFactory(), d, true);
         Speed4JMeasurement.start("modulediagnosiscreation");
         //ModuleDiagnosis diagnosisFinder = new RootModuleDiagnosis(mappingAxioms, ontoAxioms,
         //        new Reasoner.ReasonerFactory(), d);
