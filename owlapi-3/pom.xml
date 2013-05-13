@@ -12,7 +12,7 @@
     <name>OWLAPI adapter</name>
     <!-- <version>1.0-TTMMYY-HHMM</version> -->
     <!-- <version>1.0-070213-1555</version> -->
-    <version>1.0-070513-1430</version>
+    <version>1.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <build>

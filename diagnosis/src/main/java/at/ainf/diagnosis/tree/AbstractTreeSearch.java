@@ -299,7 +299,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
             Node<Id> node = getSearchStrategy().getNode();
             if (formulaRenderer != null)
                 logMessage(getDepth(node), " now processing node with uplink : ", node.getArcLabel());
-            logger.debug("number open nodes: " + getSearchStrategy().getOpenNodes().size());
+            if (logger.isDebugEnabled())
+                logger.debug("number open nodes: " + getSearchStrategy().getOpenNodes().size());
             processNode(node);
         }
         if (logger.isInfoEnabled())
@@ -307,21 +308,25 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
     }
 
     private void logMessage(int depth, String message, Set<Id> axioms) {
+        if (!loggerDual.isDebugEnabled())
+            return;
         String prefix = "";
         if (depth > 0)
             for (int i = 0; i < depth; i++)
                 prefix += "    ";
 
-        loggerDual.info(prefix + "o " + message + formulaRenderer.renderAxioms(axioms));
+        loggerDual.debug(prefix + "o " + message + formulaRenderer.renderAxioms(axioms));
     }
 
     private void logMessage(int depth, String message, Id axioms) {
+        if (!loggerDual.isDebugEnabled())
+            return;
         String prefix = "";
         if (depth > 0)
             for (int i = 0; i < depth; i++)
                 prefix += "    ";
 
-        loggerDual.info(prefix + message + formulaRenderer.renderAxiom(axioms));
+        loggerDual.debug(prefix + message + formulaRenderer.renderAxiom(axioms));
     }
 
     protected abstract boolean proveValidnessDiagnosis(Set<Id> diagnosis) throws SolverException;
@@ -491,7 +496,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
            avgConflictTime=(avgConflictTime+conflictTime)/2;
 
-        logger.info("time for conflict calculation: " + conflictTime);
+        if (logger.isInfoEnabled())
+            logger.info("time for conflict calculation: " + conflictTime);
 
 
 
@@ -506,7 +512,11 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
         //if(!searcher.isDual()) {
         if (logger.isInfoEnabled())
-            logger.info("Found conflict: " + quickConflict);
+            logger.info("Found conflict including " + quickConflict.size() + " axioms");
+
+        if (logger.isDebugEnabled())
+            logger.debug("Found conflict " + quickConflict);
+
 
         T conflictSet = createConflictSet(node, quickConflict.iterator().next());
 
