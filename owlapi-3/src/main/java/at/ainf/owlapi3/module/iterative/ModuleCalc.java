@@ -43,100 +43,51 @@ public class ModuleCalc {
             logger.error("Testing ontology cannot be created!");
         }
         this.testReasoner = reasonerFactory.createNonBufferingReasoner(testOnto);
-        /*
-        if (reasonerFactory.getReasonerName().equals(HornSatReasoner.NAME)) {
-            HornSatReasonerFactory hornSatReasonerFactory = (HornSatReasonerFactory) reasonerFactory;
-            //hornSatReasonerFactory.precomputeUnsatClasses(ontology);
-            this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
-            //initialUnsatClasses = new HashSet<OWLClass>(hornSatReasonerFactory.getUnsatClasses());
-        } else*/
         {
             this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
-            //initialUnsatClasses = new HashSet<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
         }
     }
 
     public void updatedLists(List<OWLClass> actualUnsat, List<OWLClass> allUnsat, int maxClasses) {
-        /*
+        for (Iterator<OWLClass> it = actualUnsat.iterator(); it.hasNext(); ) {
+            OWLClass cl = it.next();
+            if (isSatisfiable(cl)) {
+                it.remove();
+            }
+        }
+
+        allUnsat.retainAll(actualUnsat);
+        Set<OWLClass> classes = new HashSet<OWLClass>(getModuleMap().keySet());
+        for (OWLClass owlClass : classes) {
+            if (!actualUnsat.contains(owlClass))
+                getModuleMap().remove(owlClass);
+        }
+
+        if (logger.isInfoEnabled())
+            logger.info("Unsat classes all: " + allUnsat.size() + " actual: " + actualUnsat.size());
+
         if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
-            Set<OWLClass> unsat = reasoner.getUnsatisfiableClasses().getEntities();
-            actualUnsat.retainAll(unsat);
-            if (logger.isInfoEnabled())
-                logger.info("Unsat classes old: " + allUnsat.size() + " new: " + unsat.size() + " actual: " + actualUnsat.size());
-            allUnsat.retainAll(unsat);
 
-            for (OWLClass owlClass : allUnsat) {
-                if (!actualUnsat.contains(owlClass) && !reasoner.isSatisfiable(owlClass))
-                    actualUnsat.add(owlClass);
-                if (actualUnsat.size() == 10)
-                    break;
+            final HashSet<OWLClass> exclude = new HashSet<OWLClass>(actualUnsat);
+            List<OWLClass> additionalUnsatClasses;
+            do {
+                additionalUnsatClasses = getInitialUnsatClasses(exclude, maxClasses - actualUnsat.size());
+                exclude.addAll(additionalUnsatClasses);
+                List<OWLClass> owlClasses = calculateModules(additionalUnsatClasses);
+                actualUnsat.addAll(owlClasses);
+                allUnsat.addAll(owlClasses);
+            } while (actualUnsat.size() < maxClasses && !additionalUnsatClasses.isEmpty());
+            return;
+        }
+
+        Iterator<OWLClass> it = allUnsat.iterator();
+        while (it.hasNext() && actualUnsat.size() < maxClasses) {
+            OWLClass cl = it.next();
+            if (isSatisfiable(cl)) {
+                it.remove();
+            } else {
+                actualUnsat.add(cl);
             }
-        } else*/
-        {
-
-            for (Iterator<OWLClass> it = actualUnsat.iterator(); it.hasNext(); ) {
-                OWLClass cl = it.next();
-                if (isSatisfiable(cl)) {
-                    it.remove();
-                }
-            }
-
-            allUnsat.retainAll(actualUnsat);
-            Set<OWLClass> classes = new HashSet<OWLClass>(getModuleMap().keySet());
-            for (OWLClass owlClass : classes) {
-                if (!actualUnsat.contains(owlClass))
-                    getModuleMap().remove(owlClass);
-            }
-
-            if (logger.isInfoEnabled())
-                logger.info("Unsat classes all: " + allUnsat.size() + " actual: " + actualUnsat.size());
-
-            if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
-
-                final HashSet<OWLClass> exclude = new HashSet<OWLClass>(actualUnsat);
-                List<OWLClass> additionalUnsatClasses;
-                do {
-                    additionalUnsatClasses = getInitialUnsatClasses(exclude, maxClasses - actualUnsat.size());
-                    exclude.addAll(additionalUnsatClasses);
-                    List<OWLClass> owlClasses = calculateModules(additionalUnsatClasses);
-                    actualUnsat.addAll(owlClasses);
-                    allUnsat.addAll(owlClasses);
-                } while (actualUnsat.size() < maxClasses && !additionalUnsatClasses.isEmpty());
-                return;
-            }
-
-            Iterator<OWLClass> it = allUnsat.iterator();
-            while (it.hasNext() && actualUnsat.size() < maxClasses) {
-                OWLClass cl = it.next();
-                if (isSatisfiable(cl)) {
-                    it.remove();
-                } else {
-                    actualUnsat.add(cl);
-                }
-            }
-            /*
-            Set<OWLClass> toCheck = new HashSet<OWLClass>(actualUnsat);
-            for (OWLClass unsatClass : toCheck) {
-                //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
-                if (isSatisfiable(unsatClass)) {
-                    actualUnsat.remove(unsatClass);
-                    allUnsat.remove(unsatClass);
-                }
-            }
-            toCheck = new HashSet<OWLClass>(allUnsat);
-            toCheck.removeAll(actualUnsat);
-            for (OWLClass unsatClass : toCheck) {
-                //OWLReasoner reasoner = reasonerFactory.createNonBufferingReasoner(createOntology(unsatMap.get(unsatClass)));
-                if (!isSatisfiable(unsatClass)) {
-                    actualUnsat.add(unsatClass);
-                    if (actualUnsat.size() == 10)
-                        break;
-                } else {
-                    allUnsat.remove(unsatClass);
-                }
-            }
-            */
-
         }
     }
 
@@ -201,18 +152,11 @@ public class ModuleCalc {
 
     }
 
-    public boolean isConsistent(Sets.SetView<OWLLogicalAxiom> intersection) {
-        testOnto.getOWLOntologyManager().addAxioms(testOnto, intersection);
-        boolean consistent = this.testReasoner.isConsistent();
-        testOnto.getOWLOntologyManager().removeAxioms(testOnto, intersection);
-        return consistent;
-    }
-
     public List<OWLClass> calculateModules(List<OWLClass> unsatClasses) {
         Iterator<OWLClass> iterator = unsatClasses.iterator();
         while (iterator.hasNext()) {
             OWLClass owlClass = iterator.next();
-            if (calculateModule(owlClass) == null){
+            if (calculateModule(owlClass) == null) {
                 iterator.remove();
                 if (logger.isDebugEnabled())
                     logger.debug("The module is rejected!");
@@ -221,5 +165,19 @@ public class ModuleCalc {
         return unsatClasses;
     }
 
+    public Set<Set<OWLAxiom>> clusterModule(Set<OWLAxiom> module){
+        if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
+            throw new UnsupportedOperationException();
+        this.testOnto.getOWLOntologyManager().addAxioms(this.testOnto, module);
+        Set<Set<OWLAxiom>> clusters = ((HornSatReasoner) this.testReasoner).clusterAxioms(module);
+        testOnto.getOWLOntologyManager().removeAxioms(testOnto, module);
+        return clusters;
+    }
 
+    public boolean isConsistent(Sets.SetView<OWLLogicalAxiom> intersection) {
+        testOnto.getOWLOntologyManager().addAxioms(testOnto, intersection);
+        boolean consistent = this.testReasoner.isConsistent();
+        testOnto.getOWLOntologyManager().removeAxioms(testOnto, intersection);
+        return consistent;
+    }
 }
