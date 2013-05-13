@@ -408,14 +408,14 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
 
-    public Set<Set<OWLAxiom>> clusterAxioms(Set<OWLAxiom> axioms) {
-        Set<Set<OWLAxiom>> clusters = new HashSet<Set<OWLAxiom>>();
+    public <T extends OWLAxiom> Set<Set<T>> clusterAxioms(Set<T> axioms) {
+        Set<Set<T>> clusters = new HashSet<Set<T>>();
         for (IVecInt clause : getConstraintsSet()) {
             Core core = new Core(axioms.size(), 2);
             core.useOnlyHornClauses = true;
             final Set<Integer> symbolsSet = extractCore(clause, core).getSymbolsSet();
-            Set<OWLAxiom> cluster = new HashSet<OWLAxiom>(symbolsSet.size());
-            for (OWLAxiom axiom : axioms) {
+            Set<T> cluster = new HashSet<T>(symbolsSet.size());
+            for (T axiom : axioms) {
                 for (OWLClass owlClass : axiom.getClassesInSignature()) {
                     if (symbolsSet.contains(owlClass)) {
                         cluster.add(axiom);
@@ -433,7 +433,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             logger.debug("Extracting unsatisfiable classes");
         final Core rcore = getRelevantCore();
         //final int avg = average(rcore.getSymbolsMap().values());
-        final Set<Integer> symbolsSet = getRelevantCore().getSymbolsSet();
+        final Set<Integer> symbolsSet = rcore.getSymbolsSet();
         if (symbolsSet.isEmpty())
             return Collections.emptyList();
 

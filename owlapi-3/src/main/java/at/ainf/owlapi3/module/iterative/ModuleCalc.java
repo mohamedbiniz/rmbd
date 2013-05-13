@@ -36,6 +36,9 @@ public class ModuleCalc {
     // TODO split into horn and non-horm implementations!
 
     public ModuleCalc(OWLOntology ontology, OWLReasonerFactory reasonerFactory) {
+
+        //TODO retrieve constraints from the ontology and create a module for each constraint and save the signatures
+
         this.ontology = ontology;
         try {
             this.testOnto = ontology.getOWLOntologyManager().createOntology(IRI.create("http://ainf.at/debug" + System.nanoTime()));
@@ -43,9 +46,7 @@ public class ModuleCalc {
             logger.error("Testing ontology cannot be created!");
         }
         this.testReasoner = reasonerFactory.createNonBufferingReasoner(testOnto);
-        {
-            this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
-        }
+        this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
     }
 
     public void updatedLists(List<OWLClass> actualUnsat, List<OWLClass> allUnsat, int maxClasses) {
@@ -165,11 +166,11 @@ public class ModuleCalc {
         return unsatClasses;
     }
 
-    public Set<Set<OWLAxiom>> clusterModule(Set<OWLAxiom> module){
-        if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
+    public <T extends OWLAxiom> Set<Set<T>> clusterModule(Set<T> module){
+        if (!testReasoner.getReasonerName().equals(HornSatReasoner.NAME))
             throw new UnsupportedOperationException();
         this.testOnto.getOWLOntologyManager().addAxioms(this.testOnto, module);
-        Set<Set<OWLAxiom>> clusters = ((HornSatReasoner) this.testReasoner).clusterAxioms(module);
+        Set<Set<T>> clusters = ((HornSatReasoner) this.testReasoner).clusterAxioms(module);
         testOnto.getOWLOntologyManager().removeAxioms(testOnto, module);
         return clusters;
     }

@@ -70,6 +70,8 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
 
             actualUnsatClasses.remove(actualUnsatClass);
+            if (axioms.size() > 10000)
+                getModuleCalculator().clusterModule(axioms);
             //Set<OWLLogicalAxiom> intersection = new HashSet<OWLLogicalAxiom>(map.get(owlClass));
             for (OWLClass unsatClass : actualUnsatClasses) {
                 Set<OWLLogicalAxiom> module = map.get(unsatClass);
