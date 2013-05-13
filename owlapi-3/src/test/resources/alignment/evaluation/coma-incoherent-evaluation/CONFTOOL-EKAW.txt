@@ -1,0 +1,22 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/EKAW.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://EKAW.owl
+
++ Tutorial = Tutorial | 0.25648084
++ Member_PC = PC_Member | 0.24618661
++ University = University | 0.25197545
++ Person = Person | 0.23333333
++ Banquet = Conference_Banquet | 0.2058974
++ Paper = Paper | 0.26982906
++ Student = Student | 0.2753245
++ Topic = Research_Topic | 0.17405856
+- Poster = Poster_Paper | 0.25007638
++ Chair_PC = PC_Chair | 0.26744834
+- Camera_Ready_event = Camera_Ready_Paper | 0.19451946
++ Participant = Conference_Participant | 0.19866133
++ Workshop = Workshop | 0.2551984
++ Trip = Conference_Trip | 0.20444323
++ Conference = Conference | 0.28465736
+> Company = Research_Institute | 0.08922271
++ Social_event = Social_Event | 0.30352315

@@ -1,0 +1,18 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/EKAW.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://EKAW.owl
+
+- AssociatedChair = OC_Chair | 0.72
++ Author = Paper_Author | 0.65
+< Chairman = Demo_Chair | 0.6000000000000001
++ ConferenceChair = OC_Chair | 0.72
+> ConferenceMember = PC_Member | 0.7023529411764706
++ Document = Document | 0.9032258064516129
+- PaperAbstract = Paper | 0.6447368421052632
++ PaperFullVersion = Paper | 0.6447368421052632
++ Person = Person | 0.8125
+- ProgramCommitteeChair = OC_Chair | 0.6533333333333333
++ ProgramCommitteeMember = PC_Member | 0.706
++ Review = Review | 0.6666666666666666
+< Reviewer = Possible_Reviewer | 0.6727272727272727

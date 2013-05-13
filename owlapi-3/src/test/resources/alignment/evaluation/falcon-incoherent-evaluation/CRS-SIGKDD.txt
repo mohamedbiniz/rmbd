@@ -1,0 +1,12 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/CRS.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/SIGKDD.owl
+sourceNamespace = http://CRS.owl
+targetNamespace = http://SIGKDD.owl
+
++ document = Document | 0.9984651821287112
++ review = Review | 0.9982726887516871
++ conference = Conference | 0.9981027928500441
++ abstract = Abstract | 0.997836760915788
++ person = Person | 0.9976106916692447
++ author = Author | 0.9966686314616824
+- program = Program_Chair | 0.7569616801120423
