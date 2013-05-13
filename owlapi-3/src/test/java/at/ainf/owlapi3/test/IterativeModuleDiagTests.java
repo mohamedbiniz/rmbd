@@ -416,13 +416,13 @@ public class IterativeModuleDiagTests {
     @Test
     public void testIterativeDiagnosis() throws OWLOntologyCreationException {
 
-        String onto = "mouse2human";
+        String onto = "fma2nci";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
         Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
         Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
         Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
-        String fileMappings = "mouse2human_reference_2011";
-        //String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
+        //String fileMappings = "mouse2human_reference_2011";
+        String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
 
         Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
         ontoAxioms.addAll(onto1Axioms);
