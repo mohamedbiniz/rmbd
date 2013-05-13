@@ -407,7 +407,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return getSortedUnsatisfiableClasses(Collections.<OWLClass>emptySet(), 0);
     }
 
-    Map<Integer, Integer> score = null;
 
     public Set<Set<OWLAxiom>> clusterAxioms(Set<OWLAxiom> axioms) {
         Set<Set<OWLAxiom>> clusters = new HashSet<Set<OWLAxiom>>();
@@ -418,7 +417,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             Set<OWLAxiom> cluster = new HashSet<OWLAxiom>(symbolsSet.size());
             for (OWLAxiom axiom : axioms) {
                 for (OWLClass owlClass : axiom.getClassesInSignature()) {
-                    if (symbolsSet.contains(owlClass)){
+                    if (symbolsSet.contains(owlClass)) {
                         cluster.add(axiom);
                         break;
                     }
@@ -438,22 +437,26 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (symbolsSet.isEmpty())
             return Collections.emptyList();
 
-        if (score == null) {
-            score = new HashMap<Integer, Integer>(symbolsSet.size());
-            for (Integer index : symbolsSet) {
-                final Set<Integer> dependentSymbols = getDependentSymbols(index, symbolsSet);
-                symbolsSet.removeAll(dependentSymbols);
-                final int score = dependentSymbols.size(); //Sets.intersection(symbolsSet, dependentSymbols).size();
-                this.score.put(index, score);
-                if (logger.isDebugEnabled() && dependentSymbols.size() != score)
-                    logger.debug("Dependent symbols included irrelevant elements " + (dependentSymbols.size() - score));
-            }
+        final Map<Integer, Integer> scores = new HashMap<Integer, Integer>(symbolsSet.size());
+        Set<Integer> excludedSymbols = new HashSet<Integer>(symbolsSet.size());
+
+        for (Integer symbol : symbolsSet) {
+            if (excludedSymbols.contains(symbol))
+                continue;
+            final Set<Integer> dependentSymbols = getDependentSymbols(symbol);
+            excludedSymbols.addAll(dependentSymbols);
+            final int score = dependentSymbols.size(); //Sets.intersection(symbolsSet, dependentSymbols).size();
+            scores.put(symbol, score);
+            if (logger.isDebugEnabled() && dependentSymbols.size() != score)
+                logger.debug("Dependent symbols included irrelevant elements " + (dependentSymbols.size() - score));
         }
+
+        //symbolsSet.removeAll(excludedSymbols);
 
         for (OWLClass excludeClass : excludeClasses) {
             final int index = getIndex(excludeClass);
             symbolsSet.remove(index);
-            symbolsSet.removeAll(getDependentSymbols(index, symbolsSet));
+            symbolsSet.removeAll(getDependentSymbols(index));
         }
 
         ArrayList<Integer> sortedSymbols = new ArrayList<Integer>(symbolsSet);
@@ -475,17 +478,26 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                 //Integer min1 = Math.abs(Collections.min(level1)); // avg-
                 //Integer min2 = Math.abs(Collections.min(level2));
                 //return min1.compareTo(min2);
-                return -1 * getScore(o1, symbolsSet).compareTo(getScore(o2, symbolsSet));
+                return -1 * getScore(o1).compareTo(getScore(o2));
+            }
+
+            private Integer getScore(Integer index) {//, Set<Integer> relevantIndexes) {
+                if (!scores.containsKey(index)) {
+                    return 0;
+                    //final Set<Integer> dependentSymbols = getDependentSymbols(index, relevantIndexes);
+                    //score.put(index, dependentSymbols.size());//score.put(index, Sets.intersection(relevantIndexes, dependentSymbols).size());
+                }
+                return scores.get(index);
             }
         });
 
-        Set<Integer> excludedIndexes = new HashSet<Integer>(sortedSymbols.size());
+        excludedSymbols = new HashSet<Integer>(sortedSymbols.size());
         List<OWLClass> unSat = new ArrayList<OWLClass>(maxClasses);
         for (Integer index : sortedSymbols) {
             OWLClass owlClass = getIndex(index);
-            if (!excludedIndexes.contains(index) && !isSatisfiable(owlClass)) {
+            if (!excludedSymbols.contains(index) && !isSatisfiable(owlClass)) {
                 unSat.add(owlClass);
-                excludedIndexes.addAll(getDependentSymbols(index, symbolsSet));
+                excludedSymbols.addAll(getDependentSymbols(index));
             }
             if (maxClasses > 0 && unSat.size() == maxClasses)
                 break;
@@ -493,22 +505,16 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (logger.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder("Selected unsat classes with scores: ");
             for (OWLClass owlClass : unSat) {
-                sb.append(this.score.get(getIndex(owlClass))).append(" ");
+                sb.append(scores.get(getIndex(owlClass))).append(" ");
             }
             logger.debug(sb.toString());
         }
         return unSat;
     }
 
-    private Integer getScore(Integer index, Set<Integer> relevantIndexes) {
-        if (!score.containsKey(index)) {
-            final Set<Integer> dependentSymbols = getDependentSymbols(index, relevantIndexes);
-            score.put(index, dependentSymbols.size());//score.put(index, Sets.intersection(relevantIndexes, dependentSymbols).size());
-        }
-        return score.get(index);
-    }
 
-    private Set<Integer> getDependentSymbols(int index, Set<Integer> selectedIndexes) {
+
+    private Set<Integer> getDependentSymbols(int index) {
         Core core = new Core();
         core.useOnlyHornClauses = true;
         core = extractCore(index, core);
