@@ -233,9 +233,9 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                         }
                         break;
                     case FALSE:
-                        for (OWLLogicalAxiom axiom : best.partition){
-                            if(getUserAnswer(axiom) == true){
-                                search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
+                        for (OWLLogicalAxiom axiom : query){
+                            if(getUserAnswer(axiom)){
+                                search.getSearchable().getKnowledgeBase().addEntailedTest(Collections.singleton(axiom));
                             } else{
                                 collectedNonEntailedTCs.add(new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom)));
                             }
