@@ -80,7 +80,7 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
             logger.info("found conflict with size: " + ids.size());
             return new FormulaSetImpl<Id>(new BigDecimal(1), ids, new TreeSet<Id>());
         } catch (InterruptedException e) {
-            logger.info(e.getMessage());
+            logger.error(e.getMessage());
             return null;
         } finally {
             if (getAxiomListener() != null)
@@ -118,8 +118,8 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
     private Set<Id> qqXPlain(Searchable<Id> b, Collection<Id> d, FormulaList<Id> c)
             throws SolverException, InterruptedException {
-        if (formulaRenderer != null)
-            logger.info("B = {" + formulaRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas())
+        if (formulaRenderer != null && logger.isDebugEnabled())
+            logger.debug("B = {" + formulaRenderer.renderAxioms(b.getKnowledgeBase().getBackgroundFormulas())
                     + "}, \n D={" + formulaRenderer.renderAxioms(getReasoner().getFormulasCache())
                     + "}, \n Delta = {" + formulaRenderer.renderAxioms(d) + "}, \n OD = {" + formulaRenderer.renderAxioms(c) + "}");
         incIterations();
@@ -149,13 +149,13 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
 
         boolean res = getReasoner().addFormulasToCache(c1);
         Set<Id> d2 = qqXPlain(b, c1, c2);
-        if (formulaRenderer != null)
-            logger.info("D2 = {" + formulaRenderer.renderAxioms(d2) + "}");
+        if (formulaRenderer != null && logger.isDebugEnabled())
+            logger.debug("D2 = {" + formulaRenderer.renderAxioms(d2) + "}");
         if (res) getReasoner().removeFormulasFromCache(c1);
         res = getReasoner().addFormulasToCache(d2);
         Set<Id> d1 = qqXPlain(b, d2, c1);
-        if (formulaRenderer != null)
-            logger.info("D1 = {" + formulaRenderer.renderAxioms(d1) + "}");
+        if (formulaRenderer != null && logger.isDebugEnabled())
+            logger.debug("D1 = {" + formulaRenderer.renderAxioms(d1) + "}");
         if (res) getReasoner().removeFormulasFromCache(d2);
 
         if (d2 != null)
@@ -163,8 +163,8 @@ public class QuickXplain<Id> extends BaseQuickXplain<Id> {
                 return d2;
             else
                 d1.addAll(d2);
-        if (formulaRenderer != null)
-            logger.info("return D = {" + formulaRenderer.renderAxioms(d1) + "}");
+        if (formulaRenderer != null && logger.isDebugEnabled())
+            logger.debug("return D = {" + formulaRenderer.renderAxioms(d1) + "}");
         return d1;
     }
 

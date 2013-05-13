@@ -119,8 +119,8 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             try {
                 while (!pool.awaitTermination(10, TimeUnit.MILLISECONDS)) {
                 }
-                if (logger.isInfoEnabled())
-                    logger.info("Pool terminated (size/tasks/conflicts): " + pool.getLargestPoolSize() + " / " +
+                if (logger.isDebugEnabled())
+                    logger.debug("Pool terminated (size/tasks/conflicts): " + pool.getLargestPoolSize() + " / " +
                             pool.getCompletedTaskCount() + " / " + getResults().size());
             } catch (InterruptedException e) {
                 throw new SolverException("Computation of conflicts was interrupted!");
@@ -166,14 +166,14 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             while (!listener.isReleased() || listener.hasAxioms()) {
                 Id foundAxiom = listener.getFoundAxiom();
                 if (foundAxiom != null) {
-                    if (logger.isInfoEnabled())
-                        logger.info("Level " + getCount() + " - found axiom " + foundAxiom);
+                    if (logger.isDebugEnabled())
+                        logger.debug("Level " + getCount() + " - found axiom " + foundAxiom);
 
                     Set<Id> cu = new HashSet<Id>(u);
                     cu.remove(foundAxiom);
                     if (!containsConflict(cu)) {
-                        if (logger.isInfoEnabled())
-                            logger.info("Starting a new task. Active "
+                        if (logger.isDebugEnabled())
+                            logger.debug("Starting a new task. Active "
                                     + pool.getActiveCount() + " complete " + pool.getCompletedTaskCount()
                                     + " threads " + pool.getLargestPoolSize());
 
@@ -185,8 +185,8 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
                                 this.pool.shutdownNow();
                             break;
                         }
-                    } else if (logger.isInfoEnabled())
-                        logger.info("Duplicate conflict possible. The branch is ignored!");
+                    } else if (logger.isDebugEnabled())
+                        logger.debug("Duplicate conflict possible. The branch is ignored!");
                 }
             }
             fqx.get();
