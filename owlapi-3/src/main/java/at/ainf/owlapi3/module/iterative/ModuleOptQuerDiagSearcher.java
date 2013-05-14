@@ -111,7 +111,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
         return unionOfDiags;
     }
 
-    private Set<OWLLogicalAxiom> getFirstAlternativeQuery(HashSet<Set<OWLLogicalAxiom>> diagnoses, Set<OWLLogicalAxiom> axioms){
+    private Set<OWLLogicalAxiom> getFirstAlternativeQuery(HashSet<Set<OWLLogicalAxiom>> diagnoses, Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> previousQuery){
 
         Set<OWLLogicalAxiom> unionOfDiags = getUnionOfDiags(diagnoses);
         Set<OWLLogicalAxiom> intersectionOfDiags = getIntersectionOfDiags(diagnoses);
@@ -120,14 +120,26 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
         discAx.removeAll(intersectionOfDiags);
         discAx.retainAll(axioms);
 
-        Set<OWLLogicalAxiom> d = diagnoses.iterator().next();
+        Iterator<Set<OWLLogicalAxiom>> diagIter = diagnoses.iterator();
+        Set<OWLLogicalAxiom> d = diagIter.next();
         Set<OWLLogicalAxiom> query = new LinkedHashSet<OWLLogicalAxiom>(axioms);
         query.removeAll(d);
         query.retainAll(discAx);
-        return query;
+        if(query.equals(previousQuery)){
+            if(!diagIter.hasNext())
+                throw new IllegalStateException("no eligible diagnosis found, BUT there must be such a diagnosis!");
+            else{
+                d = diagIter.next();
+                query = new LinkedHashSet<OWLLogicalAxiom>(axioms);
+                query.removeAll(d);
+                query.retainAll(discAx);
+                return query;
+            }
+        } else
+            return query;
     }
 
-    private QueryDiag getSecondAlternativeQuery(HashSet<Set<OWLLogicalAxiom>> diagnoses, Set<OWLLogicalAxiom> stronglyFalseQuery){
+    private QueryDiag getSecondAlternativeQuery(HashSet<Set<OWLLogicalAxiom>> diagnoses, Set<OWLLogicalAxiom> stronglyFalseQuery, Collection<Set<OWLLogicalAxiom>> entailedTCs){
 
         Set<OWLLogicalAxiom> intersectionOfDiags = getIntersectionOfDiags(diagnoses);
 
@@ -137,12 +149,27 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             temp.removeAll(stronglyFalseQuery);
             if(!intersectionOfDiags.containsAll(temp)){
                 QueryDiag qd = new QueryDiag();
+                temp = minimizeQueryToNotAnsweredAxioms(temp,entailedTCs);
                 qd.setQuery(temp);
                 qd.setDiagnosis(diag);
                 return qd;
             }
         }
         throw new IllegalStateException("no eligible diagnosis found, BUT there must be such a diagnosis!");
+    }
+
+    private Set<OWLLogicalAxiom> minimizeQueryToNotAnsweredAxioms(Set<OWLLogicalAxiom> query, Collection<Set<OWLLogicalAxiom>> entailedTCs){
+        Set<OWLLogicalAxiom> axToRemove = new HashSet<OWLLogicalAxiom>();
+        Set<OWLLogicalAxiom> axSet = new HashSet<OWLLogicalAxiom>();
+        for(OWLLogicalAxiom ax : query){
+            axSet = Collections.singleton(ax);
+            if(entailedTCs.contains(axSet) || collectedNonEntailedTCs.contains(axSet)){
+                axToRemove.add(ax);
+            }
+        }
+        Set<OWLLogicalAxiom> minimizedQuery = new HashSet<OWLLogicalAxiom>(query);
+        minimizedQuery.removeAll(axToRemove);
+        return minimizedQuery;
     }
 
 
@@ -208,7 +235,6 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                 Answer answer = getUserAnswer(query);
                 numOfQueries++;
 
-
                 switch(answer){
                     case TRUE:
                         logger.info("user answered query: " + Answer.TRUE.name());
@@ -220,11 +246,16 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                             collectedNonEntailedTCs.add(new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom)));
                         logger.info("user answered query: " + Answer.STRONGLY_FALSE.name());
                         if(!firstAltQuAsked){
-                            query = getFirstAlternativeQuery(new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses()),possibleFaultyAxioms);
+                            query = getFirstAlternativeQuery(new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses()),possibleFaultyAxioms, query);
                             firstAltQuAsked = true;
                         }else if(!secondAltQuAsked){
-                            qd = getSecondAlternativeQuery(new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses()),query);
+                            qd = getSecondAlternativeQuery(new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses()),query,search.getSearchable().getKnowledgeBase().getEntailedTests());
                             query = qd.getQuery();
+                            if(query.isEmpty()){
+                                Set<OWLLogicalAxiom> targetDiag = qd.getDiagnosis();
+                                targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
+                                return targetDiag;
+                            }
                             secondAltQuAsked = true;
                         }else{
                             Set<OWLLogicalAxiom> targetDiag = qd.getDiagnosis();
