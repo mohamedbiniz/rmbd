@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.Speed4JMeasurement;
+import at.ainf.owlapi3.model.ModuleExtractor;
 import at.ainf.owlapi3.module.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
 import at.ainf.owlapi3.module.iterative.diag.IterativeModuleDiagnosis;
@@ -264,6 +265,46 @@ public class IterativeModuleDiagTests {
         }
 
         return subsignatures;
+    }
+
+    @Test
+    public void testModuleGenerat() throws OWLOntologyCreationException {
+
+        String onto = "snomed2nci";
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+
+        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "_gen1_onto1.owl");
+        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "_gen1_onto2.owl");
+        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "_gen1_mappings.owl");
+        Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
+        ontoAxioms.addAll(onto1Axioms);
+        ontoAxioms.addAll(onto2Axioms);
+
+        Set<OWLLogicalAxiom> fullOnto = new LinkedHashSet<OWLLogicalAxiom>(ontoAxioms);
+        fullOnto.addAll(mappingAxioms);
+        logger.info("onto size: " + fullOnto.size());
+
+        List<OWLClass> signature = new LinkedList<OWLClass>(getClassesInModuleSignature(fullOnto));
+        logger.info("signature size: " + signature.size());
+
+        ModuleExtractor extractor = new ModuleExtractor(fullOnto);
+        final int MAX_PART = 70;
+        for (int i = 2; i < MAX_PART; i++) {
+            List<List<OWLClass>> subsignatures = calculateSubSignaturePartitioned (signature, i);
+
+            List<Set<OWLLogicalAxiom>> submodules = new LinkedList<Set<OWLLogicalAxiom>>();
+            for (List<OWLClass> s : subsignatures) {
+                Speed4JMeasurement.start("submodules_extraction_single");
+                Set<OWLLogicalAxiom> submod = extractor.calculateModule(s);
+                long time = Speed4JMeasurement.stop();
+                logger.info("parts: " + i + ", time: " + time + ", start signature size : " + s.size() + ", submodul size: " + submod.size() + ", signature size: " + getClassesInModuleSignature(submod).size());
+                submodules.add(submod);
+            }
+
+        }
+
+
+
     }
 
     @Test

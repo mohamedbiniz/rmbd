@@ -1,0 +1,57 @@
+package at.ainf.owlapi3.model;
+
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.*;
+import uk.ac.manchester.cs.owlapi.modularity.ModuleType;
+import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
+
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: pfleiss
+ * Date: 14.05.13
+ * Time: 10:13
+ * To change this template use File | Settings | File Templates.
+ */
+public class ModuleExtractor {
+
+    private SyntacticLocalityModuleExtractor extractor;
+
+    public ModuleExtractor (Set<OWLLogicalAxiom> ontology) {
+        extractor = new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), createOntology(ontology), ModuleType.STAR);
+    }
+
+    private OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
+        OWLOntology debuggingOntology = null;
+        try {
+            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
+        } catch (OWLOntologyCreationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology,axioms);
+        return debuggingOntology;
+    }
+
+    private Set<OWLEntity> convertClassToEntity (Collection<OWLClass> signature) {
+        Set<OWLEntity> result = new LinkedHashSet<OWLEntity>();
+        for (OWLEntity e : signature)
+            result.add(e);
+        return result;
+    }
+
+    private Set<OWLLogicalAxiom> convertToLogicalAxioms (Set<OWLAxiom> module) {
+        Set<OWLLogicalAxiom> result = new LinkedHashSet<OWLLogicalAxiom>();
+        for (OWLAxiom axiom : module)
+            result.add((OWLLogicalAxiom)axiom);
+        return result;
+    }
+
+    public Set<OWLLogicalAxiom> calculateModule (Collection<OWLClass> signature) {
+        Set<OWLAxiom> result = extractor.extract(convertClassToEntity(signature));
+        return convertToLogicalAxioms(result);
+    }
+
+}

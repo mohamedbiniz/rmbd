@@ -254,12 +254,14 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                             if(query.isEmpty()){
                                 Set<OWLLogicalAxiom> targetDiag = qd.getDiagnosis();
                                 targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
+                                collectedNonEntailedTCs.clear();
                                 return targetDiag;
                             }
                             secondAltQuAsked = true;
                         }else{
                             Set<OWLLogicalAxiom> targetDiag = qd.getDiagnosis();
                             targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
+                            collectedNonEntailedTCs.clear();
                             return targetDiag;
                         }
                         break;
@@ -303,11 +305,14 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
         logger.info("number of queries: " + numOfQueries);
         IterativeStatistics.numOfQueries.add((long)numOfQueries);
 
-        if (diagnoses.isEmpty())
+        if (diagnoses.isEmpty()) {
+            collectedNonEntailedTCs.clear();
             return Collections.emptySet();
+        }
         else {
             Set<OWLLogicalAxiom> targetDiag = diagnoses.iterator().next();
             targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
+            collectedNonEntailedTCs.clear();
             return targetDiag;
         }
 
