@@ -2,6 +2,7 @@ package at.ainf.owlapi3.module.iterative.diag;
 
 import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
 import org.semanticweb.owlapi.model.*;
@@ -70,8 +71,17 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
 
             actualUnsatClasses.remove(actualUnsatClass);
-            if (axioms.size() > 10000)
-                getModuleCalculator().clusterModule(axioms);
+            if (axioms.size() > 10000){
+                Multimap<OWLAxiom,OWLClass> modMap = getModuleCalculator().clusterModule(axioms);
+                for (OWLAxiom owlAxiom : modMap.keySet()) {
+                    Collection<OWLClass> classes = modMap.get(owlAxiom);
+                    Collection<OWLClass> subModule = getModuleCalculator().calculateModules(classes);
+                    if (logger.isDebugEnabled())
+                        logger.debug("Submodule for " + owlAxiom + " including " + subModule.size() + " axioms");
+                }
+
+
+            }
             //Set<OWLLogicalAxiom> intersection = new HashSet<OWLLogicalAxiom>(map.get(owlClass));
             for (OWLClass unsatClass : actualUnsatClasses) {
                 Set<OWLLogicalAxiom> module = map.get(unsatClass);

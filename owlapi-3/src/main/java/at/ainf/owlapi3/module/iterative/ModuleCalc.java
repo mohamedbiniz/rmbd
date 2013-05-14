@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.module.iterative;
 
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -74,7 +75,7 @@ public class ModuleCalc {
             do {
                 additionalUnsatClasses = getInitialUnsatClasses(exclude, maxClasses - actualUnsat.size());
                 exclude.addAll(additionalUnsatClasses);
-                List<OWLClass> owlClasses = calculateModules(additionalUnsatClasses);
+                Collection<OWLClass> owlClasses = calculateModules(additionalUnsatClasses);
                 actualUnsat.addAll(owlClasses);
                 allUnsat.addAll(owlClasses);
             } while (actualUnsat.size() < maxClasses && !additionalUnsatClasses.isEmpty());
@@ -153,7 +154,7 @@ public class ModuleCalc {
 
     }
 
-    public List<OWLClass> calculateModules(List<OWLClass> unsatClasses) {
+    public Collection<OWLClass> calculateModules(Collection<OWLClass> unsatClasses) {
         Iterator<OWLClass> iterator = unsatClasses.iterator();
         while (iterator.hasNext()) {
             OWLClass owlClass = iterator.next();
@@ -166,13 +167,19 @@ public class ModuleCalc {
         return unsatClasses;
     }
 
-    public <T extends OWLAxiom> Set<Set<T>> clusterModule(Set<T> module){
+    public Multimap<OWLAxiom, OWLClass> clusterModule(Set<? extends OWLAxiom> module){
         if (!testReasoner.getReasonerName().equals(HornSatReasoner.NAME))
             throw new UnsupportedOperationException();
         this.testOnto.getOWLOntologyManager().addAxioms(this.testOnto, module);
-        Set<Set<T>> clusters = ((HornSatReasoner) this.testReasoner).clusterAxioms(module);
+        Multimap<OWLAxiom,OWLClass> modMap = ((HornSatReasoner) this.testReasoner).clusterAxioms(module);
+        for (OWLAxiom owlAxiom : modMap.keySet()) {
+            Collection<OWLClass> classes = modMap.get(owlAxiom);
+            Set<OWLLogicalAxiom> subModule = extractModule(testOnto, new HashSet<OWLEntity>(classes));
+            if (logger.isDebugEnabled())
+                logger.debug("Submodule: constraint " + owlAxiom + ", classes " + classes.size() + ", axioms" + subModule.size());
+        }
         testOnto.getOWLOntologyManager().removeAxioms(testOnto, module);
-        return clusters;
+        return modMap;
     }
 
     public boolean isConsistent(Sets.SetView<OWLLogicalAxiom> intersection) {

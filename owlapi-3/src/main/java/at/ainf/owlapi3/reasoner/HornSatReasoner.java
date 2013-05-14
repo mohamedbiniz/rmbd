@@ -3,6 +3,8 @@ package at.ainf.owlapi3.reasoner;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWL2SATTranslator;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWLClassAxiomNegation;
 import at.ainf.owlapi3.reasoner.axiomprocessors.Translator;
+import at.ainf.owlapi3.reasoner.cores.Core;
+import at.ainf.owlapi3.reasoner.cores.HornCore;
 import com.google.common.collect.*;
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
@@ -125,70 +127,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return result;
     }
 
-    private Boolean verifyDisjointness(OWLDisjointClassesAxiom axiom) {
-        Collection<IVecInt> iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
-        // verify if premises can be reached from the head (backward chaining) for each clause
-        for (IVecInt clause : iVecInts) {
-            if (getSolverClauses().containsKey(clause))
-                continue;
-            Boolean result = verifyConstraintEntailment(clause);
-            if (result == null || !result)
-                return result;
-        }
-        return true;
-    }
-
-    private Boolean verifySubClass(OWLSubClassOfAxiom axiom) {
-        // the search is incomplete if head cannot be derived using only horn clauses
-        // convert axiom to CNF and verify whether every element is a horn clause
-        Collection<IVecInt> iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
-        // verify if premises can be reached from the head (backward chaining) for each clause
-        for (IVecInt clause : iVecInts) {
-            if (getSolverClauses().containsKey(clause))
-                continue;
-            Integer head = getHornClauseHead(clause);
-            if (head == null) return null;
-            boolean derivable;
-            if (head == 0) {
-                derivable = verifyConstraintEntailment(clause);
-            } else {
-                Core core = new Core();
-                core.useOnlyHornClauses = true;
-                Core hornCore = extractCore(head, core);
-                // head is derivable if horn core contains all premises
-                derivable = containsAllNegativeSymbols(clause, hornCore.getSymbolsSet(), true);
-                if (!derivable && core.isHornComplete)
-                    return false;
-            }
-            if (!derivable) return null;
-        }
-        return true;
-    }
-
-    private Boolean verifyConstraintEntailment(IVecInt clause) {
-        boolean hornComplete = true;
-        // check if this constraint can be derived from the other - getConstraints(getSolverClauses().keys())
-        final Set<IVecInt> constraints = getRelevantConstraints(getConstraintsSet(), clause);
-        for (IVecInt constraint : constraints) {
-            for (IteratorInt it = constraint.iterator(); it.hasNext(); ) {
-                int literal = Math.abs(it.next());
-                Core core = new Core();
-                core.useOnlyHornClauses = true;
-                Core hornCore = extractCore(literal, core);
-                core.addSymbols(constraint);
-                // head is derivable if horn core contains all premises
-                boolean derivable = containsAllNegativeSymbols(clause, hornCore.getSymbolsSet(), true);
-                if (derivable) return true;
-                if (!core.isHornComplete)
-                    hornComplete = false;
-            }
-        }
-        // there is derivation for the disjointness in a horn complete KB
-        if (hornComplete) return false;
-        // no decision can be made
-        return null;
-    }
-
     @Override
     public void prepareReasoner() throws ReasonerInterruptedException, TimeOutException {
         //super.prepareReasoner();
@@ -211,26 +149,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         }
         return false;
     }
-
-    /**
-     * Verifies whether an input clause is a Horn clause
-     *
-     * @param clause input clause to be verified in DIMACS format, with no <code>0</code>  values allowed
-     * @return a positive integer if the head has one element, 0 if the head is empty and
-     *         <code>null</code> if the clause is not a Horn clause
-     */
-    private Integer getHornClauseHead(IVecInt clause) {
-        int head = 0;
-        for (IteratorInt it = clause.iterator(); it.hasNext(); ) {
-            int literal = it.next();
-            if (literal > 0 && head > 0)
-                return null;
-            else if (literal > 0)
-                head = literal;
-        }
-        return head;
-    }
-
 
     @Override
     public boolean isSatisfiable(OWLClassExpression classExpression) throws
@@ -408,25 +326,37 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     }
 
 
-    public <T extends OWLAxiom> Set<Set<T>> clusterAxioms(Set<T> axioms) {
-        Set<Set<T>> clusters = new HashSet<Set<T>>();
-        for (IVecInt clause : getConstraintsSet()) {
-            Core core = new Core(axioms.size(), 2);
-            core.useOnlyHornClauses = true;
-            final Set<Integer> symbolsSet = extractCore(clause, core).getSymbolsSet();
+    public Multimap<OWLAxiom, OWLClass> clusterAxioms(Set<? extends OWLAxiom> axioms) {
+        Set<IVecInt> constraintsSet = getConstraintsSet();
+        Multimap<OWLAxiom, OWLClass> clusters = HashMultimap.create(constraintsSet.size(), 20);
+        for (IVecInt clause : constraintsSet) {
+            Core core = new HornCore(this, axioms.size(), 2);
+            final Set<Integer> symbolsSet = core.extractCore(clause).getSymbolsSet();
+            if (symbolsSet.isEmpty())
+                continue;
+            Set<OWLClass> owlClasses = convertToOWLClasses(symbolsSet);
+            clusters.putAll(getConstraints().get(clause), owlClasses);
+            if (logger.isDebugEnabled())
+                logger.debug("Cluster for a constraint " + getConstraints().get(clause) + " includes " +
+                        String.valueOf((owlClasses.size() > 10) ? owlClasses.size() : owlClasses));
+            /*
             Set<T> cluster = new HashSet<T>(symbolsSet.size());
+            cluster.addAll(convertToOWLClasses(symbolsSet));
             for (T axiom : axioms) {
                 for (OWLClass owlClass : axiom.getClassesInSignature()) {
-                    if (symbolsSet.contains(owlClass)) {
+                    if (symbolsSet.contains(getIndex(owlClass))) {
                         cluster.add(axiom);
                         break;
                     }
                 }
             }
             clusters.add(cluster);
+            */
         }
         return clusters;
     }
+
+
 
     public List<OWLClass> getSortedUnsatisfiableClasses(Collection<OWLClass> excludeClasses, int maxClasses) {
         if (logger.isDebugEnabled())
@@ -512,12 +442,9 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return unSat;
     }
 
-
-
     private Set<Integer> getDependentSymbols(int index) {
-        Core core = new Core();
-        core.useOnlyHornClauses = true;
-        core = extractCore(index, core);
+        Core core = new HornCore(this);
+        core = core.extractCore(index);
         return core.getSymbolsSet();
     }
 
@@ -604,8 +531,8 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (isExtractingCoresOnUpdate()) {
             final Core core = extractPossiblyUnsatCore();
             setRelevantClasses(core);
-            if (core.isHornComplete) {
-                this.sat = core.symbols.isEmpty();
+            if (core.isHornComplete()) {
+                this.sat = core.getSymbolsMap().isEmpty();
             }
         }
 
@@ -664,85 +591,30 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         final int consSize = constraints.size();
         //Multimap<Integer, Integer> supportingMap = HashMultimap.create();
 
-        Core core = new Core(sigSize, consSize);
+        Core core = new Core(this, sigSize, consSize);
         for (IVecInt constraint : constraints) {
-            core = extractCore(constraint, core);
-            if (core.symbols.size() == sigSize)
+            core = core.extractCore(constraint);
+            if (core.getSymbolsMap().size() == sigSize)
                 break;
         }
         return core;
     }
 
-    private Core extractCore(IVecInt constraint, Core core) { // Multimap<Integer, Integer> supportingMap
-        Multimap<Integer, Integer> supportingSymbols = HashMultimap.create(core.signatureSize, core.constraintsCount);
-        for (IteratorInt iterator = constraint.iterator(); iterator.hasNext(); ) {
-            int symbol = iterator.next();
-            Core localCore;
-            //if (!supportingMap.containsKey(symbol)) {
-            localCore = extractCore(symbol, new Core(core.signatureSize, core.constraintsCount));
-            if (!localCore.isHornComplete)
-                core.isHornComplete = false;
-            //supportingMap.putAll(symbol, localCore.getSymbolsSet());
-            //} else symbols = supportingMap.get(symbol);
-
-            if (supportingSymbols.isEmpty())
-                supportingSymbols.putAll(localCore.symbols);
-            else
-                supportingSymbols.keySet().retainAll(localCore.getSymbolsSet());
-
-            if (supportingSymbols.size() == core.signatureSize)
-                break;
-        }
-        core.symbols.putAll(supportingSymbols);
-        return core;
-    }
-
-
-    private Set<OWLClass> convertToOWLClasses(Core core) {
-        HashSet<OWLClass> classes = new HashSet<OWLClass>(core.getSymbolsSet().size());
-        for (Integer symbol : core.getSymbolsSet()) {
+    private Set<OWLClass> convertToOWLClasses(Set<Integer> symbolsSet) {
+        HashSet<OWLClass> classes = new HashSet<OWLClass>(symbolsSet.size());
+        for (Integer symbol : symbolsSet) {
             OWLClass ocl = getIndex(symbol);
             classes.add(ocl);
         }
         return classes;
     }
 
+    public Set<OWLClass> convertToOWLClasses(Core core) {
+        return convertToOWLClasses(core.getSymbolsSet());
+    }
+
     public Multimap<Integer, IVecInt> getSymbolsToClauses() {
         return getOWLSatStructure().symbolsToClauses;
-    }
-
-    private Core extractCore(Integer literal, Core core) {
-        return extractCore(literal, core, 0);
-    }
-
-    private Core extractCore(Integer literal, Core core, int level) {
-        // remove negation
-        int symbol = Math.abs(literal);
-        if (core.getSymbolsSet().contains(symbol)) return core;
-        core.symbols.put(symbol, level);
-        //if (core.selectedClasses.contains(symbol))
-        //    core.selectedScore++;
-        // analyze clauses in which symbol is positive, i.e. in the head of a rule
-        for (IVecInt clause : getSymbolsToClauses().get(symbol)) {
-            if (!getSolverClauses().containsKey(clause))
-                continue;
-            final boolean isHornClause = isHornClause(clause);
-            if (!isHornClause) core.isHornComplete = false;
-            if (core.useOnlyHornClauses && !isHornClause) {
-                continue;
-            }
-            //Set<Integer> neg = containsAllNegativeSymbols(clause, false);
-
-            for (IteratorInt iterator = clause.iterator(); iterator.hasNext(); ) {
-                int lit = iterator.next();
-                if (lit < 0) extractCore(lit, core, ++level);
-            }
-        }
-        return core;
-    }
-
-    private boolean isHornClause(IVecInt clause) {
-        return getHornClauseHead(clause) != null;
     }
 
     private boolean containsAllNegativeSymbols(IVecInt clause, Set<Integer> symbols, boolean ignoreSign) {
@@ -1027,48 +899,6 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return owlSatStructure;
     }
 
-    public class Core {
-        private final int signatureSize;
-        private final int constraintsCount;
-        Multimap<Integer, Integer> symbols;
-        boolean useOnlyHornClauses = false;
-        boolean isHornComplete = true;
-        Set<OWLClass> relevantClasses = null;
-
-        Core(int symbols, int constraints) {
-            this.signatureSize = symbols;
-            this.constraintsCount = constraints;
-            this.symbols = HashMultimap.create(symbols, constraints);
-        }
-
-        Core() {
-            this(16, 2);
-        }
-
-        public void addSymbols(IVecInt clause) {
-            for (IteratorInt it = clause.iterator(); it.hasNext(); ) {
-                int literal = Math.abs(it.next());
-                symbols.put(literal, 0);
-            }
-        }
-
-        public Set<Integer> getSymbolsSet() {
-            return this.symbols.keySet();
-        }
-
-        public Set<OWLClass> getRelevantClasses() {
-            if (this.relevantClasses == null) {
-                final Set<Integer> symbolsSet = getSymbolsSet();
-                this.relevantClasses = convertToOWLClasses(this);
-            }
-            return this.relevantClasses;
-        }
-
-        public Multimap<Integer, Integer> getSymbolsMap() {
-            return this.symbols;
-        }
-    }
-
     public long getCalls() {
         return this.measures[0];
     }
@@ -1082,5 +912,71 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         this.measures[0] = 0;
         this.measures[1] = System.currentTimeMillis();
     }
+
+    /*
+     private Boolean verifyDisjointness(OWLDisjointClassesAxiom axiom) {
+        Collection<IVecInt> iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
+        // verify if premises can be reached from the head (backward chaining) for each clause
+        for (IVecInt clause : iVecInts) {
+            if (getSolverClauses().containsKey(clause))
+                continue;
+            Boolean result = verifyConstraintEntailment(clause);
+            if (result == null || !result)
+                return result;
+        }
+        return true;
+    }
+
+    private Boolean verifySubClass(OWLSubClassOfAxiom axiom) {
+        // the search is incomplete if head cannot be derived using only horn clauses
+        // convert axiom to CNF and verify whether every element is a horn clause
+        Collection<IVecInt> iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
+        // verify if premises can be reached from the head (backward chaining) for each clause
+        for (IVecInt clause : iVecInts) {
+            if (getSolverClauses().containsKey(clause))
+                continue;
+            Integer head = getHornClauseHead(clause);
+            if (head == null) return null;
+            boolean derivable;
+            if (head == 0) {
+                derivable = verifyConstraintEntailment(clause);
+            } else {
+                Core core = new Core();
+                core.useOnlyHornClauses = true;
+                Core hornCore = core.extractCore(head);
+                // head is derivable if horn core contains all premises
+                derivable = containsAllNegativeSymbols(clause, hornCore.getSymbolsSet(), true);
+                if (!derivable && core.isHornComplete)
+                    return false;
+            }
+            if (!derivable) return null;
+        }
+        return true;
+    }
+
+    private Boolean verifyConstraintEntailment(IVecInt clause) {
+        boolean hornComplete = true;
+        // check if this constraint can be derived from the other - getConstraints(getSolverClauses().keys())
+        final Set<IVecInt> constraints = getRelevantConstraints(getConstraintsSet(), clause);
+        for (IVecInt constraint : constraints) {
+            for (IteratorInt it = constraint.iterator(); it.hasNext(); ) {
+                int literal = Math.abs(it.next());
+                Core core = new Core(this);
+                core.useOnlyHornClauses = true;
+                Core hornCore = core.extractCore(literal);
+                core.addSymbols(constraint);
+                // head is derivable if horn core contains all premises
+                boolean derivable = containsAllNegativeSymbols(clause, hornCore.getSymbolsSet(), true);
+                if (derivable) return true;
+                if (!core.isHornComplete)
+                    hornComplete = false;
+            }
+        }
+        // there is derivation for the disjointness in a horn complete KB
+        if (hornComplete) return false;
+        // no decision can be made
+        return null;
+    }
+     */
 
 }
