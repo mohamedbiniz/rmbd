@@ -1,0 +1,1 @@
+http://CONFTOOL.owl#Member_PC EquivalentTo http://CRS.owl#pc_meeting, http://CONFTOOL.owl#Reception EquivalentTo http://CRS.owl#session 
