@@ -297,7 +297,8 @@ public class IterativeModuleDiagTests {
                 Speed4JMeasurement.start("submodules_extraction_single");
                 Set<OWLLogicalAxiom> submod = extractor.calculateModule(s);
                 long time = Speed4JMeasurement.stop();
-                logger.info("parts: " + i + ", time: " + time + ", start signature size : " + s.size() + ", submodul size: " + submod.size() + ", signature size: " + getClassesInModuleSignature(submod).size());
+                logger.info("parts / time / start signature size / submodul size / signature size: " +
+                            i + ", " + time + ", " + s.size() + ", " + submod.size() + ", " + getClassesInModuleSignature(submod).size());
                 submodules.add(submod);
             }
 
