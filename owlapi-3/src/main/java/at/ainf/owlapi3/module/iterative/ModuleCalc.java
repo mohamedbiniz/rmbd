@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.module.iterative;
 
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -170,7 +171,7 @@ public class ModuleCalc {
 
     public Multimap<OWLAxiom, OWLClass> clusterModule(Set<? extends OWLAxiom> module){
         if (!testReasoner.getReasonerName().equals(HornSatReasoner.NAME))
-            throw new UnsupportedOperationException();
+            return HashMultimap.create(0, 0);
         this.testOnto.getOWLOntologyManager().addAxioms(this.testOnto, module);
         Multimap<OWLAxiom,OWLClass> modMap = ((HornSatReasoner) this.testReasoner).clusterAxioms(module);
         for (OWLAxiom owlAxiom : modMap.keySet()) {
@@ -188,5 +189,17 @@ public class ModuleCalc {
         boolean consistent = this.testReasoner.isConsistent();
         testOnto.getOWLOntologyManager().removeAxioms(testOnto, intersection);
         return consistent;
+    }
+
+    public void sortUnsatisfiableClasses(List<OWLClass> actualUnsatClasses) {
+        if (testReasoner.getReasonerName().equals(HornSatReasoner.NAME))
+            return;
+        Collections.sort(actualUnsatClasses, new Comparator<OWLClass>() {
+            @Override
+            public int compare(OWLClass o1, OWLClass o2) {
+                return Integer.valueOf(moduleMap.get(o1).size()).compareTo(moduleMap.get(o2).size());
+            }
+        });
+
     }
 }

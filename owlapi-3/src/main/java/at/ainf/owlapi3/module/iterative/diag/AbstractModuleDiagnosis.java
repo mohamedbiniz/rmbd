@@ -85,19 +85,4 @@ public abstract class AbstractModuleDiagnosis implements ModuleDiagnosis {
         debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology, axioms);
         return debuggingOntology;
     }
-
-    protected class ModuleSizeComparator implements Comparator<OWLClass> {
-
-        private final Map<OWLClass, Set<OWLLogicalAxiom>> unsatMap;
-
-        public ModuleSizeComparator(Map<OWLClass, Set<OWLLogicalAxiom>> unsatMap) {
-            this.unsatMap = unsatMap;
-        }
-
-        @Override
-        public int compare(OWLClass o1, OWLClass o2) {
-            return new Integer(unsatMap.get(o1).size()).compareTo(unsatMap.get(o2).size());
-        }
-
-    }
 }

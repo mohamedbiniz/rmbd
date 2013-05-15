@@ -57,18 +57,11 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             Speed4JMeasurement.start("calculatemodule");
             getModuleCalculator().calculateModules(actualUnsatClasses);
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
-            OWLClass actualUnsatClass;
-            //if (isSortNodes())
-            //actualUnsatClass = Collections.min(actualUnsatClasses, new ModuleSizeComparator(map));
-            //else
-                actualUnsatClass = actualUnsatClasses.get(0);
 
-            //Set<OWLLogicalAxiom> axioms = new LinkedHashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
+            getModuleCalculator().sortUnsatisfiableClasses(actualUnsatClasses);
+            OWLClass actualUnsatClass = actualUnsatClasses.get(0);
 
-            //Iterator<OWLClass> it = actualUnsatClasses.iterator();
-            //OWLClass owlClass = it.next();
             Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>(map.get(actualUnsatClass));
-
 
             actualUnsatClasses.remove(actualUnsatClass);
             if (axioms.size() > 10000){
@@ -79,9 +72,8 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                     if (logger.isDebugEnabled())
                         logger.debug("Submodule for " + owlAxiom + " including " + subModule.size() + " axioms");
                 }
-
-
             }
+
             //Set<OWLLogicalAxiom> intersection = new HashSet<OWLLogicalAxiom>(map.get(owlClass));
             for (OWLClass unsatClass : actualUnsatClasses) {
                 Set<OWLLogicalAxiom> module = map.get(unsatClass);
