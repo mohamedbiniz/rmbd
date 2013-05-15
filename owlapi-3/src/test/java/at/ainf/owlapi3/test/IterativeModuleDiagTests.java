@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.io.ToStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.util.DLExpressivityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
@@ -239,6 +240,19 @@ public class IterativeModuleDiagTests {
 
     }
 
+    protected List<List<OWLClass>> calculateSubSignatureInterleaved(List<OWLClass> signature, int n) {
+        List<List<OWLClass>> subsignatures = new LinkedList<List<OWLClass>>();
+        for (int i = 0; i < n; i++) {
+            LinkedList<OWLClass> s = new LinkedList<OWLClass>();
+            for (int j = 0; j*n+i < signature.size(); j++) {
+                OWLClass cls = signature.get(i+j*n);
+                s.add(cls);
+            }
+            subsignatures.add(s);
+        }
+        return  subsignatures;
+    }
+
     protected List<List<OWLClass>> calculateSubSignaturePartitioned(List<OWLClass> signature, int n) {
         int size = signature.size() / n;
         List<List<OWLClass>> subsignatures = new LinkedList<List<OWLClass>>();
@@ -268,6 +282,54 @@ public class IterativeModuleDiagTests {
     }
 
     @Test
+    public void testModuleIntersection() throws OWLOntologyCreationException {
+
+        String onto = "snomed2nci";
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+
+        Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "_gen1_onto1.owl");
+        Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "_gen1_onto2.owl");
+        Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "_gen1_mappings.owl");
+        //Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
+        //Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
+        //Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
+        Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
+        ontoAxioms.addAll(onto1Axioms);
+        ontoAxioms.addAll(onto2Axioms);
+
+        Set<OWLLogicalAxiom> fullOnto = new LinkedHashSet<OWLLogicalAxiom>(ontoAxioms);
+        fullOnto.addAll(mappingAxioms);
+        logger.info("onto size / expressivity: " + fullOnto.size() + ", " + getExpressivity(fullOnto));
+
+        List<OWLClass> signature = new LinkedList<OWLClass>(getClassesInModuleSignature(fullOnto));
+        logger.info("signature size: " + signature.size());
+
+        Set<OWLLogicalAxiom> minimalModule = createMinimalModule(fullOnto, 20);
+        Set<OWLClass> unsatClasses = new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(minimalModule)).getUnsatisfiableClasses().getEntitiesMinusBottom();
+
+        logger.info ("unsat classes in minimal module / expressiveness minimal module: " + unsatClasses.size() + ", " + getExpressivity(minimalModule));
+
+    }
+
+    protected String getExpressivity (Set<OWLLogicalAxiom> axioms) {
+        return new DLExpressivityChecker(Collections.singleton(createOntology(axioms))).getDescriptionLogicName();
+    }
+
+    protected Set<OWLLogicalAxiom> createMinimalModule (Set<OWLLogicalAxiom> ontology, int split) {
+
+        List<OWLClass> classesInModuleSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(ontology));
+        List<Set<OWLLogicalAxiom>> modules = recursiveModuleExtract(ontology, classesInModuleSignature, split);
+        Set<OWLLogicalAxiom> intersection = createIntersection(modules);
+
+        logger.info ("intersection size / intersection signature size / expressiveness intersection: " + intersection.size() + ", " + getClassesInModuleSignature(intersection).size() + ", " + getExpressivity(intersection));
+
+        if (intersection.size() == ontology.size())
+            return intersection;
+
+        return createMinimalModule(intersection, split);
+    }
+
+    @Test
     public void testModuleGenerat() throws OWLOntologyCreationException {
 
         String onto = "snomed2nci";
@@ -276,6 +338,9 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "_gen1_onto1.owl");
         Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "_gen1_onto2.owl");
         Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "_gen1_mappings.owl");
+        //Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
+        //Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
+        //Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "genmapp.owl");
         Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
         ontoAxioms.addAll(onto1Axioms);
         ontoAxioms.addAll(onto2Axioms);
@@ -287,25 +352,70 @@ public class IterativeModuleDiagTests {
         List<OWLClass> signature = new LinkedList<OWLClass>(getClassesInModuleSignature(fullOnto));
         logger.info("signature size: " + signature.size());
 
+        /* Speed4JMeasurement.start("whole onto unsat classes");
+        Set<OWLClass> unsatClasses = getUnsatClasses(fullOnto);
+        logger.info("unsat classes: " + unsatClasses.size());
+        Speed4JMeasurement.stop(); */
+
         ModuleExtractor extractor = new ModuleExtractor(fullOnto);
-        final int MAX_PART = 70;
-        for (int i = 2; i < MAX_PART; i++) {
+        final int MAX_PART = 20;
+        for (int i = 20; i <= MAX_PART; i++) {
+            //List<List<OWLClass>> subsignatures = calculateSubSignatureInterleaved(signature,i);
             List<List<OWLClass>> subsignatures = calculateSubSignaturePartitioned (signature, i);
 
-            List<Set<OWLLogicalAxiom>> submodules = new LinkedList<Set<OWLLogicalAxiom>>();
-            for (List<OWLClass> s : subsignatures) {
-                Speed4JMeasurement.start("submodules_extraction_single");
-                Set<OWLLogicalAxiom> submod = extractor.calculateModule(s);
-                long time = Speed4JMeasurement.stop();
-                logger.info("parts / time / start signature size / submodul size / signature size: " +
-                            i + ", " + time + ", " + s.size() + ", " + submod.size() + ", " + getClassesInModuleSignature(submod).size());
-                submodules.add(submod);
+            Speed4JMeasurement.start("moduleextract_");
+            List<Set<OWLLogicalAxiom>> modules = recursiveModuleExtract(fullOnto,signature,20);
+            Speed4JMeasurement.stop();
+            for (Set<OWLLogicalAxiom> module : modules) {
+                logger.info("module size / module signature size: " + module.size() + ", " + getClassesInModuleSignature(module).size());
+                final List<OWLClass> classesInModuleSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(module));
+                Speed4JMeasurement.start("submoduleextract ");
+                final List<Set<OWLLogicalAxiom>> submodules = recursiveModuleExtract(module, classesInModuleSignature, 20);
+                Speed4JMeasurement.stop();
+
+                for (Set<OWLLogicalAxiom> submodule : submodules)
+                    logger.info("submodule size / submodule signature size: " + submodule.size() + ", " + getClassesInModuleSignature(submodule).size());
+
+                //logger.info("parts / time / start signature size / submodul size / signature size: " +
+                //            i + ", " + time + ", " + module.size() + ", " + submod.size() + ", " + getClassesInModuleSignature(submod).size());
+
+                final Set<OWLLogicalAxiom> intersectionsub = createIntersection(submodules);
+                logger.info ("submodules intersection  size / submodules intersection  size signature: " + intersectionsub.size() + ", " + getClassesInModuleSignature(intersectionsub).size());
+
             }
+
+            final Set<OWLLogicalAxiom> intersection = createIntersection(modules);
+            logger.info ("modules intersection  size: " + intersection.size());
+
+            final List<Set<OWLLogicalAxiom>> intersectionsubmodules = recursiveModuleExtract(intersection, new LinkedList<OWLClass>(getClassesInModuleSignature(intersection)), 20);
+            final Set<OWLLogicalAxiom> intersection2 = createIntersection(intersectionsubmodules);
+            logger.info ("intersectionsubmodules intersection  size / intersectionsubmodules intersection  size signature: " + intersection2.size() + ", " + getClassesInModuleSignature(intersection2).size());
 
         }
 
+    }
 
+    protected List<Set<OWLLogicalAxiom>> recursiveModuleExtract (Set<OWLLogicalAxiom> ontology, List<OWLClass> signature, int split) {
+        List<Set<OWLLogicalAxiom>> submodules = new LinkedList<Set<OWLLogicalAxiom>>();
+        ModuleExtractor extractor = new ModuleExtractor(ontology);
+        List<List<OWLClass>> subsignatures = calculateSubSignaturePartitioned (signature, split);
+        for (List<OWLClass> s : subsignatures) {
+            Speed4JMeasurement.start("submodules_extraction_single");
+            Set<OWLLogicalAxiom> submod = extractor.calculateModule(s);
+            long time = Speed4JMeasurement.stop();
+            //logger.info("parts / time / start signature size / submodul size / signature size: " +
+            //        split + ", " + time + ", " + s.size() + ", " + submod.size() + ", " + getClassesInModuleSignature(submod).size());
+            submodules.add(submod);
+        }
+        return submodules;
+    }
 
+    protected <X> Set<X> createIntersection (Collection<Set<X>> collection) {
+        final Iterator<Set<X>> iterator = collection.iterator();
+        Set<X> intersection = new LinkedHashSet<X>(iterator.next());
+        while (iterator.hasNext())
+            intersection.retainAll(iterator.next());
+        return intersection;
     }
 
     @Test
@@ -328,6 +438,7 @@ public class IterativeModuleDiagTests {
         List<OWLClass> signature = new LinkedList<OWLClass>(getClassesInModuleSignature(fullOnto));
         logger.info("signature size: " + signature.size());
 
+        //List<List<OWLClass>> subsignatures = calculateSubSignatureInterleaved(signature,10);
         List<List<OWLClass>> subsignatures = calculateSubSignaturePartitioned(signature,10);
         //List<List<OWLClass>> subsignatures = calculateSubSignatureOfSize(signature,50,10);
 
@@ -492,7 +603,7 @@ public class IterativeModuleDiagTests {
 
         long time = System.currentTimeMillis();
         ModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
-                                                         new Reasoner.ReasonerFactory(), d, true);
+                                                         new HornSatReasonerFactory(), d, true);
         Speed4JMeasurement.start("modulediagnosiscreation");
         //ModuleDiagnosis diagnosisFinder = new RootModuleDiagnosis(mappingAxioms, ontoAxioms,
         //        new Reasoner.ReasonerFactory(), d);
