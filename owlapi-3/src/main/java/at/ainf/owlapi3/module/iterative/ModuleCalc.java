@@ -55,10 +55,11 @@ public class ModuleCalc {
             OWLClass cl = it.next();
             if (isSatisfiable(cl)) {
                 it.remove();
+                allUnsat.remove(cl);
             }
         }
 
-        allUnsat.retainAll(actualUnsat);
+        //allUnsat.retainAll(actualUnsat);
         Set<OWLClass> classes = new HashSet<OWLClass>(getModuleMap().keySet());
         for (OWLClass owlClass : classes) {
             if (!actualUnsat.contains(owlClass))
