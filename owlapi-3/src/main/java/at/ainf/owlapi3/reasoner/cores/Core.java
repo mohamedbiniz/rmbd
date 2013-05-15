@@ -20,9 +20,9 @@ public class Core {
     private final int signatureSize;
     private final int constraintsCount;
     private final HornSatReasoner reasoner;
-    Multimap<Integer, Integer> symbols;
-    boolean isHornComplete = true;
-    Set<OWLClass> relevantClasses = null;
+    protected Multimap<Integer, Integer> symbols;
+    protected boolean isHornComplete = true;
+    protected Set<OWLClass> relevantClasses = null;
 
     public Core(HornSatReasoner reasoner, int symbols, int constraints) {
         this.reasoner = reasoner;
@@ -56,7 +56,7 @@ public class Core {
 
     public Set<OWLClass> getRelevantClasses() {
         if (this.relevantClasses == null) {
-            final Set<Integer> symbolsSet = getSymbolsSet();
+            //final Set<Integer> symbolsSet = getSymbolsSet();
             this.relevantClasses = reasoner.convertToOWLClasses(this);
         }
         return this.relevantClasses;
@@ -80,15 +80,23 @@ public class Core {
         for (IVecInt clause : this.reasoner.getSymbolsToClauses().get(symbol)) {
             if (!this.reasoner.getSolverClauses().containsKey(clause))
                 continue;
-            final boolean isHornClause = isHornClause(clause);
-            if (!isHornClause) isHornComplete = false;
+            if (!isBCHornClause(clause)) isHornComplete = false;
 
-            for (IteratorInt iterator = clause.iterator(); iterator.hasNext(); ) {
-                int lit = iterator.next();
-                if (lit < 0) extractCore(lit, ++level);
-            }
+            if (isExpandable(clause))
+                expand(clause, level);
         }
         return this;
+    }
+
+    protected boolean isExpandable(IVecInt clause) {
+        return true;
+    }
+
+    protected void expand(IVecInt clause, int level){
+        for (IteratorInt iterator = clause.iterator(); iterator.hasNext(); ) {
+            int lit = iterator.next();
+            if (lit < 0) extractCore(lit, ++level);
+        }
     }
 
     public Core extractCore(IVecInt constraint) { // Multimap<Integer, Integer> supportingMap
@@ -120,8 +128,13 @@ public class Core {
     }
 
 
-    protected boolean isHornClause(IVecInt clause) {
-        return getHornClauseHead(clause) != null;
+    /**
+     * Detect if the clause corresponds to a rule of a form a->b
+     * @param clause clause to be analyzed
+     * @return true if correspondence is identified
+     */
+    protected boolean isBCHornClause(IVecInt clause) {
+        return clause.size() <= 2 && clause.get(0) * clause.get(1) < 0;
     }
 
     /**
