@@ -1,0 +1,41 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CMT.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://CMT.owl
+
++ Paper > Paper | 1.0
++ Paper < Paper | 1.0
++ Person > Person | 1.0
++ Person < Person | 1.0
++ Conference > Conference | 1.0
++ Conference < Conference | 1.0
++ Member > Co-author | 1.0
+- Member < Co-author | 1.0
++ Member > Reviewer | 1.0
+- Member < Reviewer | 1.0
++ Member > ProgramCommitteeMember | 1.0
+- Member < ProgramCommitteeMember | 1.0
++ Administrator > Administrator | 1.0
++ Administrator < Administrator | 1.0
+- Chair_PC > ConferenceChair | 1.0
+- Chair_PC < ConferenceChair | 1.0
++ Member > ConferenceChair | 1.0
+- Member < ConferenceChair | 1.0
++ Member > Author | 1.0
+- Member < Author | 1.0
++ Chair_PC > ProgramCommitteeChair | 1.0
++ Chair_PC < ProgramCommitteeChair | 1.0
++ Member > ProgramCommitteeChair | 1.0
+- Member < ProgramCommitteeChair | 1.0
++ Member > ConferenceMember | 1.0
+- Member < ConferenceMember | 1.0
+- Chair_PC > AssociatedChair | 1.0
+- Chair_PC < AssociatedChair | 1.0
++ Member > AssociatedChair | 1.0
+- Member < AssociatedChair | 1.0
+- Chair_PC > Chairman | 1.0
++ Chair_PC < Chairman | 1.0
++ Member > Chairman | 1.0
+- Member < Chairman | 1.0
++ Member > Meta-Reviewer | 1.0
+- Member < Meta-Reviewer | 1.0

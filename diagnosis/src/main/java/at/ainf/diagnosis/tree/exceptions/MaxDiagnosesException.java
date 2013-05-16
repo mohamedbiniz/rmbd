@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2009 Kostyantyn Shchekotykhin
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v3.0
+ * http://www.gnu.org/licenses/gpl.txt
+ */
+
+/*
+ * Created on 28.11.2004
+ *
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+package at.ainf.diagnosis.tree.exceptions;
+
+/**
+ * @author kostya
+ *         <p/>
+ *         TODO To change the template for this generated type comment go to
+ *         Window - Preferences - Java - Code Style - Code Templates
+ */
+public class MaxDiagnosesException extends Exception {
+    static final long serialVersionUID = -5364263032760791042L;
+}

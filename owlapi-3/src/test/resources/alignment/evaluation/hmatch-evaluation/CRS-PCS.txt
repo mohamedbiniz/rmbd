@@ -1,0 +1,12 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CRS.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/PCS.owl
+sourceNamespace = http://CRS.owl
+targetNamespace = http://PCS.owl
+
+- abstract = Paper | 0.66384
++ article = Paper | 0.9
++ author = Author | 0.6
++ document = DOCUMENT | 0.9285714285714286
++ person = PERSON | 0.7
++ program = Programme | 1.0
++ review = Review | 1.0

@@ -1,0 +1,21 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CRS.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CONFTOOL.owl
+sourceNamespace = http://CRS.owl
+targetNamespace = http://CONFTOOL.owl
+
++ event > Event | 1.0
++ event < Event | 1.0
++ conference > Conference | 1.0
++ conference < Conference | 1.0
++ person > Person | 1.0
++ person < Person | 1.0
++ participant > Participant | 1.0
++ participant < Participant | 1.0
++ participant > Member | 1.0
++ participant < Member | 1.0
++ participant > Regular | 1.0
+- participant < Regular | 1.0
++ participant > Student | 1.0
+- participant < Student | 1.0
++ author > Author | 1.0
++ author < Author | 1.0
