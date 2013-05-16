@@ -17,15 +17,13 @@ import java.util.*;
  * Time: 08:46
  * To change this template use File | Settings | File Templates.
  */
-public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
+public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
-    private static final int MIN_MODUL_SIZE = 100;
+
 
     private static Logger logger = LoggerFactory.getLogger(RootModuleDiagnosis.class.getName());
 
     private Set<OWLClass> repaired = new LinkedHashSet<OWLClass>();
-
-    private Map<Integer,Set<OWLClass>> table = new HashMap<Integer, Set<OWLClass>>();
 
     private Map<OWLClass,Integer> moduleSizes = new HashMap<OWLClass, Integer>();
 
@@ -53,13 +51,6 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
         return result;
     }
 
-    protected Set<OWLClass> getClassesInModuleSignature(Set<OWLLogicalAxiom> module) {
-        Set<OWLClass> classesInModule = new LinkedHashSet<OWLClass>();
-        for (OWLLogicalAxiom axiom : module)
-            classesInModule.addAll (axiom.getClassesInSignature());
-        return classesInModule;
-    }
-
     protected Set<OWLLogicalAxiom> computeModule(OWLClass unsatClass, Set<OWLLogicalAxiom> targetDiagnosis) {
         Set<OWLLogicalAxiom> axioms = new HashSet<OWLLogicalAxiom>();
         axioms.addAll(getMappings());
@@ -68,22 +59,6 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
         return getModuleCalculator().extractModule(createOntology(axioms),Collections.singleton((OWLEntity)unsatClass));
     }
 
-    private <X> Set<X> unionOf (Collection<Set<X>> sets) {
-        Set<X> union = new HashSet<X>();
-        for (Set<X> set : sets)
-            union.addAll(set);
-        return union;
-    }
-
-
-    protected void updateTable (Map<OWLClass, Integer> table1) {
-        for (Map.Entry<OWLClass,Integer> entry : table1.entrySet()) {
-            if (!table.containsKey(entry.getValue()))
-                table.put(entry.getValue(),new LinkedHashSet<OWLClass>());
-
-            table.get(entry.getValue()).add(entry.getKey());
-        }
-    }
 
     protected boolean isSatisfiable (OWLClass possibleUnsat, Set<OWLLogicalAxiom> module) {
         OWLReasoner reasoner = getReasonerFactory().createNonBufferingReasoner(createOntology(module));
@@ -100,8 +75,8 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
 
-        List<OWLClass> nvClasses = computeNvClasses(table, repaired);
-        List<OWLClass> vClasses = computeVClasses(table,repaired);
+        List<OWLClass> nvClasses = computeNvClasses(getTable(), repaired);
+        List<OWLClass> vClasses = computeVClasses(getTable(),repaired);
 
         boolean bothEmpty = nvClasses.isEmpty() && vClasses.isEmpty();
 
@@ -185,7 +160,7 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                     public int compare(OWLClass o1, OWLClass o2) {
                         Integer o1Key = -1;
                         Integer o2Key = -1;
-                        for (Map.Entry<Integer, Set<OWLClass>> entry : table.entrySet()) {
+                        for (Map.Entry<Integer, Set<OWLClass>> entry : getTable().entrySet()) {
                             if (entry.getValue().contains(o1))
                                 o1Key = entry.getKey();
                             else if (entry.getValue().contains(o2))
@@ -324,8 +299,8 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
                 s.clear();
             }
 
-            nvClasses = computeNvClasses(table,repaired);
-            vClasses = computeVClasses(table,repaired);
+            nvClasses = computeNvClasses(getTable(),repaired);
+            vClasses = computeVClasses(getTable(),repaired);
 
             bothEmpty = nvClasses.isEmpty() && vClasses.isEmpty();
         }
@@ -355,126 +330,6 @@ public class RootModuleDiagnosis extends AbstractModuleDiagnosis {
         return unsatClasses;
 
     }
-
-
-    protected Set<OWLLogicalAxiom> reduceToRootModule(OWLClass unsatClass,
-                                                      boolean isNew, Set<OWLLogicalAxiom> modul, Map<OWLClass, Integer> table1, Set<OWLClass> s, Set<OWLClass> muv)
-                      {
-
-        /*Set<OWLClass> muv = getClassesInModuleSignature(modul);
-        muv.removeAll(repaired);
-        muv.remove(unsatClass);
-        muv.removeAll(table1.keySet());
-        muv.removeAll(s);
-        muv.retainAll(getModuleCalculator().getInitialUnsatClasses());*/
-
-        //muv = calculateStillUnsatClass (muv, modul);
-
-        if (muv.isEmpty())
-            return modul;
-
-            if (isNew) {
-                Set<OWLClass> setOfT = new LinkedHashSet<OWLClass>(unionOf(table.values()));
-                if (setOfT.containsAll(muv)) {
-                    for (OWLClass key : table1.keySet())
-                        table1.put(key, table1.get(key) + 1);
-                    for (OWLClass cls : s)
-                        table1.put(cls,1);
-                    table1.put(unsatClass,0);
-
-                    List<Integer> tKeys = new LinkedList<Integer>(table.keySet());
-                    Collections.sort(tKeys);
-                    //Collections.reverse(tKeys);
-                    Integer min = -1;
-                    for (Integer key : tKeys) {
-                        Set<OWLClass> classes = new LinkedHashSet<OWLClass>(table.get(key));
-                        classes.retainAll(muv);
-                        if (!classes.isEmpty()) {
-                            min = key;
-                            break;
-                        }
-                    }
-
-                    if (min == -1)
-                        throw new IllegalStateException("there is no min key in table for element in muv");
-
-                    for (OWLClass key : table1.keySet())
-                        table1.put(key, table1.get(key) + min);
-
-                    updateTable(table1);
-
-                    return Collections.emptySet();
-                }
-
-                Set<OWLClass> classes = new LinkedHashSet<OWLClass>(muv);
-                classes.removeAll(unionOf(table.values()));
-                OWLClass modulClass = classes.iterator().next();
-
-                Set<OWLLogicalAxiom> submodule = getModuleCalculator().extractModule(createOntology(modul),Collections.singleton((OWLEntity)modulClass));
-                if (modul.size() == submodule.size()) {
-                    s.add(modulClass);
-                }
-                else {
-                    for (OWLClass key : table1.keySet())
-                        table1.put(key, table1.get(key) + 1);
-                    for (OWLClass cls : s)
-                        table1.put(cls,1);
-                    s.clear();
-                    s.add(modulClass);
-                }
-
-                muv.remove(modulClass);
-                muv.removeAll(table1.keySet());
-                muv.removeAll(s);
-                muv.retainAll(getClassesInModuleSignature(submodule));
-
-                if (submodule.size() < MIN_MODUL_SIZE)
-                    return submodule;
-
-                return reduceToRootModule(modulClass, isNew, submodule, table1, s, muv);
-            }
-            else {
-                Integer minKey = Collections.min(table.keySet());
-                if (!table.get(minKey).contains(unsatClass))
-                    throw new IllegalStateException ("concept is not in min key set of table");
-                if (!table.containsKey(minKey + 1))
-                    throw new IllegalStateException ("set of min + 1 (key) not available in table");
-                table.get(minKey).remove(unsatClass);
-                table.get(minKey+1).add(unsatClass);
-
-                if (table.get(minKey).isEmpty())
-                    throw new IllegalStateException("there must be another class with min key");
-
-
-                Set<OWLClass> temp = new HashSet<OWLClass>(muv);
-                temp.retainAll(table.get(minKey));
-                OWLClass modulClass = temp.iterator().next();
-                Set<OWLLogicalAxiom> submodule = getModuleCalculator().extractModule(createOntology(modul),Collections.singleton((OWLEntity)modulClass));
-
-                if (modul.size() == submodule.size()) {
-                    s.add(modulClass);
-                }
-                else {
-                    s.clear();
-                    s.add(modulClass);
-                }
-
-                muv.remove(modulClass);
-                muv.removeAll(table1.keySet());
-                muv.removeAll(s);
-                muv.retainAll(getClassesInModuleSignature(submodule));
-
-                if (submodule.size() < MIN_MODUL_SIZE)
-                    return submodule;
-
-                return reduceToRootModule(modulClass, isNew, submodule, table1, s, muv);
-            }
-
-
-
-
-    }
-
 
 
 }

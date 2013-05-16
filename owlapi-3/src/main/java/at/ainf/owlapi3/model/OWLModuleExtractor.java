@@ -16,11 +16,11 @@ import java.util.Set;
  * Time: 10:13
  * To change this template use File | Settings | File Templates.
  */
-public class ModuleExtractor {
+public class OWLModuleExtractor {
 
     private SyntacticLocalityModuleExtractor extractor;
 
-    public ModuleExtractor (Set<OWLLogicalAxiom> ontology) {
+    public OWLModuleExtractor(Set<OWLLogicalAxiom> ontology) {
         extractor = new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), createOntology(ontology), ModuleType.STAR);
     }
 
