@@ -2,6 +2,7 @@ package at.ainf.owlapi3.test;
 
 import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.owlapi3.model.OWLModuleExtractor;
+import at.ainf.owlapi3.model.intersection.OWLPerecentConceptIntersectionExtractor;
 import at.ainf.owlapi3.module.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
 import at.ainf.owlapi3.module.iterative.diag.IterativeModuleDiagnosis;
@@ -15,7 +16,6 @@ import org.semanticweb.owlapi.io.ToStringRenderer;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import org.semanticweb.owlapi.util.DLExpressivityChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
@@ -26,6 +26,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
+import static at.ainf.owlapi3.util.OWLUtils.calculateExpressivity;
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+import static at.ainf.owlapi3.util.SetUtils.createIntersection;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -49,17 +52,6 @@ public class IterativeModuleDiagTests {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return ontology.getLogicalAxioms();
-    }
-
-    protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
-        OWLOntology debuggingOntology = null;
-        try {
-            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology,axioms);
-        return debuggingOntology;
     }
 
     @Test
@@ -281,7 +273,7 @@ public class IterativeModuleDiagTests {
 
     enum OntoName { SNOMED2NCI, MOUSE2HUMAN }
 
-    protected Set<OWLLogicalAxiom> loadOntology (OntoName name) {
+    protected Set<OWLLogicalAxiom> loadOntologyWithMappings(OntoName name) {
         if (name.equals(OntoName.SNOMED2NCI)) {
             String onto = "snomed2nci";
             Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "_gen1_onto1.owl");
@@ -312,14 +304,27 @@ public class IterativeModuleDiagTests {
             throw new IllegalArgumentException("unknown ontology to load");
     }
 
+    protected Set<OWLLogicalAxiom> loadMappings(OntoName name) {
+        if (name.equals(OntoName.SNOMED2NCI)) {
+            String onto = "snomed2nci";
+            return getAxioms("ontologies/" + onto + "_gen1_mappings.owl");
+        }
+        else if (name.equals(OntoName.MOUSE2HUMAN)) {
+            String onto = "mouse2human";
+            return getAxioms("ontologies/" + onto + "genmapp.owl");
+        }
+        else
+            throw new IllegalArgumentException("unknown ontology to load");
+    }
+
     @Test
     public void testModuleInconsistency() throws OWLOntologyCreationException {
 
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
-        Set<OWLLogicalAxiom> fullOnto = loadOntology(OntoName.MOUSE2HUMAN);
+        Set<OWLLogicalAxiom> fullOnto = loadOntologyWithMappings(OntoName.MOUSE2HUMAN);
 
 
-        logger.info("onto size / expressivity: " + fullOnto.size() + ", " + getExpressivity(fullOnto));
+        logger.info("onto size / expressivity: " + fullOnto.size() + ", " + calculateExpressivity(fullOnto));
 
         List<OWLClass> signature = new LinkedList<OWLClass>(getClassesInModuleSignature(fullOnto));
         logger.info("signature size: " + signature.size());
@@ -333,8 +338,51 @@ public class IterativeModuleDiagTests {
             Set<OWLClass> moduleSignature = getClassesInModuleSignature(module);
             logger.info ("module size / module signature size / unsat classes in module / expressiveness module: " +
                         module.size() + ", " + moduleSignature.size() + ", " + unsatClasses.size() +
-                        ", " + getExpressivity(module));
+                        ", " + calculateExpressivity(module));
         }
+
+    }
+
+    @Test
+    public void testMinimalModuleDebug() throws OWLOntologyCreationException {
+
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+        Set<OWLLogicalAxiom> fullOnto = loadOntologyWithMappings(OntoName.SNOMED2NCI);
+
+        logger.info("onto size / expressivity: " + fullOnto.size() + ", " + calculateExpressivity(fullOnto));
+
+        List<OWLClass> signature = new LinkedList<OWLClass>(getClassesInModuleSignature(fullOnto));
+        logger.info("signature size: " + signature.size());
+
+        //Set<OWLLogicalAxiom> minimalModule = new OWLEqualIntersectionExtractor(40).calculateMinModule(fullOnto);
+        //Set<OWLLogicalAxiom> minimalModule = new OWLRestConceptIntersectionExtractor(4107).calculateMinModule(fullOnto);
+        Set<OWLLogicalAxiom> minimalModule = new OWLPerecentConceptIntersectionExtractor(0.05).calculateMinModule(fullOnto);
+
+        Set<OWLClass> unsatClasses = new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(minimalModule)).getUnsatisfiableClasses().getEntitiesMinusBottom();
+        logger.info ("module size / unsat classes in minimal module / expressiveness minimal module: " +
+                minimalModule.size() + ", " + unsatClasses.size() + ", " + calculateExpressivity(minimalModule));
+
+        Set<OWLLogicalAxiom> minimalModuleMappings = new LinkedHashSet<OWLLogicalAxiom>(loadMappings(OntoName.SNOMED2NCI));
+        minimalModuleMappings.retainAll(minimalModule);
+        Set<OWLLogicalAxiom> minimalModuleOntologies = new LinkedHashSet<OWLLogicalAxiom>(minimalModule);
+        minimalModuleOntologies.removeAll(minimalModuleMappings);
+
+        IterativeModuleDiagnosis diagSe = new IterativeModuleDiagnosis(minimalModuleMappings, minimalModuleOntologies, new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), true);
+        Set<OWLLogicalAxiom> diagnosis = diagSe.calculateTargetDiagnosis();
+
+        Set<OWLLogicalAxiom> repairedOnto = new LinkedHashSet<OWLLogicalAxiom>(fullOnto);
+        repairedOnto.removeAll(diagnosis);
+
+        Set<OWLLogicalAxiom> minimalModuleRepaired = new OWLPerecentConceptIntersectionExtractor(0.05).calculateMinModule(repairedOnto);
+        Set<OWLClass> unsatClassesRepaired = new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(minimalModuleRepaired)).getUnsatisfiableClasses().getEntitiesMinusBottom();
+        logger.info ("module size / unsat classes in minimal module / expressiveness minimal module: " +
+                minimalModuleRepaired.size() + ", " + unsatClassesRepaired.size() + ", " + calculateExpressivity(minimalModuleRepaired));
+
+        //Set<OWLClass> unsatClassesFull = new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(fullOnto)).getUnsatisfiableClasses().getEntitiesMinusBottom();
+        //logger.info("unsat classes in full stage1 ont: " + unsatClassesFull.size());
+
+        //Set<OWLClass> unsatClassesRepaired = new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(repairedOnto)).getUnsatisfiableClasses().getEntitiesMinusBottom();
+        //logger.info("unsat classes in repaired stage1 ont: " + unsatClassesRepaired.size());
 
     }
 
@@ -342,36 +390,21 @@ public class IterativeModuleDiagTests {
     public void testModuleIntersection() throws OWLOntologyCreationException {
 
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
-        Set<OWLLogicalAxiom> fullOnto = loadOntology(OntoName.SNOMED2NCI);
+        Set<OWLLogicalAxiom> fullOnto = loadOntologyWithMappings(OntoName.SNOMED2NCI);
 
-        logger.info("onto size / expressivity: " + fullOnto.size() + ", " + getExpressivity(fullOnto));
+        logger.info("onto size / expressivity: " + fullOnto.size() + ", " + calculateExpressivity(fullOnto));
 
         List<OWLClass> signature = new LinkedList<OWLClass>(getClassesInModuleSignature(fullOnto));
         logger.info("signature size: " + signature.size());
 
-        Set<OWLLogicalAxiom> minimalModule = createMinimalModule(fullOnto, 40);
+        //Set<OWLLogicalAxiom> minimalModule = new OWLEqualIntersectionExtractor(40).calculateMinModule(fullOnto);
+        //Set<OWLLogicalAxiom> minimalModule = new OWLRestConceptIntersectionExtractor(4107).calculateMinModule(fullOnto);
+        Set<OWLLogicalAxiom> minimalModule = new OWLPerecentConceptIntersectionExtractor(0.05).calculateMinModule(fullOnto);
         Set<OWLClass> unsatClasses = new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(minimalModule)).getUnsatisfiableClasses().getEntitiesMinusBottom();
 
-        logger.info ("unsat classes in minimal module / expressiveness minimal module: " + unsatClasses.size() + ", " + getExpressivity(minimalModule));
+        logger.info ("module size / unsat classes in minimal module / expressiveness minimal module: " +
+                minimalModule.size() + ", " + unsatClasses.size() + ", " + calculateExpressivity(minimalModule));
 
-    }
-
-    protected String getExpressivity (Set<OWLLogicalAxiom> axioms) {
-        return new DLExpressivityChecker(Collections.singleton(createOntology(axioms))).getDescriptionLogicName();
-    }
-
-    protected Set<OWLLogicalAxiom> createMinimalModule (Set<OWLLogicalAxiom> ontology, int split) {
-
-        List<OWLClass> classesInModuleSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(ontology));
-        List<Set<OWLLogicalAxiom>> modules = recursiveModuleExtract(ontology, classesInModuleSignature, split);
-        Set<OWLLogicalAxiom> intersection = createIntersection(modules);
-
-        logger.info ("intersection size / intersection signature size / expressiveness intersection: " + intersection.size() + ", " + getClassesInModuleSignature(intersection).size() + ", " + getExpressivity(intersection));
-
-        if (intersection.size() == ontology.size())
-            return intersection;
-
-        return createMinimalModule(intersection, split);
     }
 
     @Test
@@ -453,14 +486,6 @@ public class IterativeModuleDiagTests {
             submodules.add(submod);
         }
         return submodules;
-    }
-
-    protected <X> Set<X> createIntersection (Collection<Set<X>> collection) {
-        final Iterator<Set<X>> iterator = collection.iterator();
-        Set<X> intersection = new LinkedHashSet<X>(iterator.next());
-        while (iterator.hasNext())
-            intersection.retainAll(iterator.next());
-        return intersection;
     }
 
     @Test
@@ -591,13 +616,6 @@ public class IterativeModuleDiagTests {
 
     }
 
-    protected boolean isConsistent (Set<OWLLogicalAxiom> ontology) {
-        return new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(ontology)).getUnsatisfiableClasses().getEntitiesMinusBottom().isEmpty();
-    }
-
-    protected Set<OWLClass> getUnsatClasses (Set<OWLLogicalAxiom> ontology) {
-        return new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(ontology)).getUnsatisfiableClasses().getEntitiesMinusBottom();
-    }
 
     protected Set<OWLLogicalAxiom> extractModule (Set<OWLLogicalAxiom> ontology, List<OWLClass> signature) {
         Set<OWLLogicalAxiom> result = new LinkedHashSet<OWLLogicalAxiom>();
