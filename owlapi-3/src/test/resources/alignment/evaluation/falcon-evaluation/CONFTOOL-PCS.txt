@@ -1,0 +1,11 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/PCS.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://PCS.owl
+
++ Conference = Conference | 0.9964000713571557
++ Author = Author | 0.9909509031396456
++ Person = PERSON | 0.9905458051625735
++ Administrator = Administrator | 0.9888049741595976
++ Paper = Paper | 0.9824665217919466
+- Reviewing_event = Review | 0.7354378000713597

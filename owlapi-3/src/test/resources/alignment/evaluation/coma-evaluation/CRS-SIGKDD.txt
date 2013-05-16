@@ -1,0 +1,12 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CRS.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/SIGKDD.owl
+sourceNamespace = http://CRS.owl
+targetNamespace = http://SIGKDD.owl
+
++ author = Author | 0.39735132
++ review = Review | 0.38882348
++ conference = Conference | 0.35
+- program = Program_Chair | 0.23333333
+- program = Program_Committee | 0.23333333
++ abstract = Abstract | 0.38267985
+- event = Fee | 0.50414705

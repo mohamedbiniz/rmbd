@@ -1,0 +1,1 @@
+http://CONFTOOL.owl#Workshop EquivalentTo http://SIGKDD.owl#Conference
