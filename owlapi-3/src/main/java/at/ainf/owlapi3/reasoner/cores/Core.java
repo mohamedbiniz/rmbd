@@ -134,7 +134,7 @@ public class Core {
      * @return true if correspondence is identified
      */
     protected boolean isBCHornClause(IVecInt clause) {
-        return clause.size() <= 2 && clause.get(0) * clause.get(1) < 0;
+        return clause.size() <= 2 && getHornClauseHead(clause) != null;
     }
 
     /**
