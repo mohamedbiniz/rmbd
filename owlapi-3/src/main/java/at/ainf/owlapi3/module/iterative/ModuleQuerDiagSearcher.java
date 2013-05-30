@@ -1,7 +1,7 @@
 package at.ainf.owlapi3.module.iterative;
 
 import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.Speed4JMeasurement;
+import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
@@ -11,9 +11,9 @@ import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
-import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.module.iterative.diag.IterativeStatistics;
+import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,9 +103,11 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
 
     }
 
+    private MetricsManager metricsManager = MetricsManager.getInstance();
+
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
         search.setMaxDiagnosesNumber(9);
 
         //QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
@@ -129,10 +131,10 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             String lastLabel = "";
             Partition<OWLLogicalAxiom> best = null;
             try {
-                Speed4JMeasurement.start("calculatingpartition");
+                metricsManager.startNewTimer("calculatingpartition");
                 best = ckk.generatePartition(search.getDiagnoses());
-                lastLabel = Speed4JMeasurement.getLabelOfLastStopWatch();
-                long queryCalc = Speed4JMeasurement.stop();
+                lastLabel = metricsManager.getLabels();
+                long queryCalc = metricsManager.stopAndLogTimer();
                 IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);
             } catch (SolverException e) {
                 // e.printStackTrace();

@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.module.iterative.diag;
 
-import at.ainf.diagnosis.Speed4JMeasurement;
+import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -72,6 +72,8 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
         return getReasonerFactory().createNonBufferingReasoner(createOntology(axioms)).getUnsatisfiableClasses().getEntitiesMinusBottom().isEmpty();
     }
 
+    private MetricsManager metricsManager = MetricsManager.getInstance();
+
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
 
@@ -87,7 +89,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
             boolean rootModuleFound = false;
             boolean foundActualUnsatClass = false;
             Set<OWLClass> muv = new LinkedHashSet<OWLClass>();
-            Speed4JMeasurement.start("for-nv");
+            metricsManager.startNewTimer("for-nv");
 
             int counter = 0;
             boolean alreadyCheckedConsistency = false;
@@ -152,8 +154,8 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
 
             }
-            Speed4JMeasurement.stop();
-            Speed4JMeasurement.start("for-v");
+            metricsManager.stopAndLogTimer();
+            metricsManager.startNewTimer("for-v");
             if (!foundActualUnsatClass) {
                 Collections.sort(vClasses, new Comparator<OWLClass>() {
                     @Override
@@ -234,7 +236,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
                 }
             }
-            Speed4JMeasurement.stop();
+            metricsManager.stopAndLogTimer();
 
 
             if (actualUnsatClass == null)
@@ -258,14 +260,14 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
                     muv.remove(actualUnsatClass);
 
                     if (nvClasses.contains(actualUnsatClass)) {
-                        Speed4JMeasurement.start("reducetounsat");
+                        metricsManager.startNewTimer("reducetounsat");
                         module = reduceToRootModule(actualUnsatClass, true, module, table1, s, muv);
-                        Speed4JMeasurement.stop();
+                        metricsManager.stopAndLogTimer();
                     }
                     else if (vClasses.contains(actualUnsatClass)) {
-                        Speed4JMeasurement.start("reducetounsat1");
+                        metricsManager.startNewTimer("reducetounsat1");
                         module = reduceToRootModule(actualUnsatClass, false, module, table1, s, muv);
-                        Speed4JMeasurement.stop();
+                        metricsManager.stopAndLogTimer();
                     }
                     else
                         throw new IllegalStateException("both sets cannot be total empty");
@@ -285,9 +287,9 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
                     targetDiagnosis.addAll(possibleFaulty);
                 }
                 else {
-                    Speed4JMeasurement.start("diagnosisspeed");
+                    metricsManager.startNewTimer("diagnosisspeed");
                     targetDiagnosis.addAll(getDiagSearcher().calculateDiag(axioms, background));
-                    Speed4JMeasurement.stop();
+                    metricsManager.stopAndLogTimer();
                 }
                 repaired.addAll(s);
             }

@@ -1,9 +1,11 @@
 package at.ainf.owlapi3.module.iterative.diag;
 
-import at.ainf.diagnosis.Speed4JMeasurement;
+import at.ainf.diagnosis.logging.MetricsLogger;
+import at.ainf.diagnosis.logging.old.MetricsManager;
+import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
@@ -42,9 +44,11 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         return sortNodes;
     }
 
+    private MetricsManager metricsManager = MetricsManager.getInstance();
+
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
-        Speed4JMeasurement.start("calculatetargetdiag");
+        metricsManager.startNewTimer("calculatetargetdiag");
         List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses(Collections.<OWLClass>emptySet(),
                 MAX_UNSAT_CLASSES);
         if (isSortNodes())
@@ -53,8 +57,8 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0, toIndex));
 
         while (!actualUnsatClasses.isEmpty()) {
-            Speed4JMeasurement.start("debugmodule");
-            Speed4JMeasurement.start("calculatemodule");
+            metricsManager.startNewTimer("debugmodule");
+            metricsManager.startNewTimer("calculatemodule");
             getModuleCalculator().calculateModules(actualUnsatClasses);
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
 
@@ -87,7 +91,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                 } */
             }
 
-            Speed4JMeasurement.stop();
+            metricsManager.stopAndLogTimer();
             /*
             for (OWLClass unsatClass : actualUnsatClasses)
                 axioms.addAll(map.get(unsatClass));
@@ -100,24 +104,32 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
-            Speed4JMeasurement.start("calculatepartdiag");
+            metricsManager.startNewTimer("calculatepartdiag");
+            //metricsManager.getMetrics().histogram("avgCoherencyTimeMetric");
             IterativeStatistics.avgCoherencyTime.createNewValueGroup();
             IterativeStatistics.avgConsistencyTime.createNewValueGroup();
             IterativeStatistics.avgConsistencyCheck.createNewValueGroup();
             IterativeStatistics.avgCoherencyCheck.createNewValueGroup();
+            MetricsLogger.getInstance().addLabel("modulediag");
             Set<OWLLogicalAxiom> partDiag = getDiagSearcher().calculateDiag(axioms, background);
-            Speed4JMeasurement.stop();
+            MetricRegistry metric = MetricsLogger.getInstance().removeLabel("modulediag");
+            MetricsLogger.getInstance().getHistogram("moduleNumConsistencyChecks").update(metric.getTimers().get("consistencyChecks").getCount());
+            MetricsLogger.getInstance().getHistogram("moduleTimeConsistencyChecks").update((long)metric.getTimers().get("consistencyChecks").getSnapshot().getMean());
+            MetricsLogger.getInstance().getHistogram("moduleNumCoherencyChecks").update(metric.getTimers().get("coherencyChecks").getCount());
+            MetricsLogger.getInstance().getHistogram("moduleTimeCoherencyChecks").update((long)metric.getTimers().get("coherencyChecks").getSnapshot().getMean());
+            metricsManager.stopAndLogTimer();
 
             for (OWLLogicalAxiom axiom : partDiag)
                 logger.info("part diag axiom: " + axiom);
             logger.info("---");
 
-            long timeModule = Speed4JMeasurement.stop();
+            long timeModule = metricsManager.stopAndLogTimer();
             IterativeStatistics.moduleTime.add(timeModule);
             getModuleCalculator().removeAxiomsFromOntologyAndModules(partDiag);
             getModuleCalculator().updatedLists(actualUnsatClasses, unsatClasses, MAX_UNSAT_CLASSES);
             targetDiagnosis.addAll(partDiag);
         }
+        //metricsManager.logAllMetrics();
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCardCS, "average cardinality CS");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.cardHS, "cardinality HS");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.numberCS, "number CS");
@@ -133,7 +145,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgReactTime, "reaction time");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgQueryCard, "query card");
 
-        Speed4JMeasurement.stop();
+        metricsManager.stopAndLogTimer();
         return targetDiagnosis;
     }
 

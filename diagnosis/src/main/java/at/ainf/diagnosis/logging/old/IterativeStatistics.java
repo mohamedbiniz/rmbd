@@ -1,8 +1,8 @@
-package at.ainf.owlapi3.module.iterative.diag;
+package at.ainf.diagnosis.logging.old;
 
 import java.util.*;
 
-import at.ainf.diagnosis.Speed4JMeasurement;
+import at.ainf.diagnosis.logging.MetricsLogger;
 import org.slf4j.Logger;
 
 /**
@@ -57,7 +57,7 @@ public class IterativeStatistics {
             max = Collections.max(set);
         }
 
-        log.info(Speed4JMeasurement.getLabelOfLastStopWatch() + " " + message + ", (min,mean,max,numofentries), " + min + ", " + mean + ", " + max + ", " + set.size());
+        log.info(MetricsLogger.getInstance().getLabelsConcat() + " " + message + ", (min,mean,max,numofentries), " + min + ", " + mean + ", " + max + ", " + set.size());
         set.clear();
 
     }

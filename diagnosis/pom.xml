@@ -107,15 +107,20 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>3.0.0-BETA2</version>
+        </dependency>
+        <dependency>
             <groupId>at.ainf</groupId>
             <artifactId>logging</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.ecyrd.speed4j</groupId>
             <artifactId>speed4j</artifactId>
             <version>0.17</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>

@@ -7,9 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static at.ainf.owlapi3.util.OWLUtils.calculateSignature;
-import static at.ainf.owlapi3.util.SetUtils.createIntersection;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,10 +25,36 @@ public class OWLEqualIntersectionExtractor extends AbstractOWLIntersectionExtrac
 
     private static Logger logger = LoggerFactory.getLogger(OWLEqualIntersectionExtractor.class.getName());
 
+    private final static int USABLE_CORES = Runtime.getRuntime().availableProcessors() - 1;
+
     private int split;
 
     public OWLEqualIntersectionExtractor(int split) {
         this.split = split;
+    }
+
+    public class ModuleCalculationTask implements Callable<Set<OWLLogicalAxiom>> {
+
+        private final Set<OWLLogicalAxiom> axioms;
+
+        private final List<OWLClass> subSig;
+
+        public ModuleCalculationTask(Set<OWLLogicalAxiom> axioms, List<OWLClass> subSig) {
+            this.axioms = axioms;
+            this.subSig = subSig;
+        }
+
+        @Override
+        public Set<OWLLogicalAxiom> call() throws Exception {
+
+            OWLModuleExtractor owlModuleExtractor = new OWLModuleExtractor(axioms);
+            Set<OWLLogicalAxiom> module = owlModuleExtractor.calculateModule(subSig);
+            logger.info("extracted module of size: " + module.size());
+
+            return module;
+        }
+
+
     }
 
     @Override
@@ -35,6 +64,10 @@ public class OWLEqualIntersectionExtractor extends AbstractOWLIntersectionExtrac
 
         List<List<OWLClass>> subsignatures = calculateSubSignatures(signature);
 
+        ExecutorService pool = Executors.newFixedThreadPool(USABLE_CORES);
+        List<Future<Set<OWLLogicalAxiom>>> futures = new ArrayList<Future<Set<OWLLogicalAxiom>>>(split);
+        for (List<OWLClass> subsignature : subsignatures)
+            futures.add(pool.submit(new ModuleCalculationTask(axioms,subsignature)));
         List<Set<OWLLogicalAxiom>> submodules = new LinkedList<Set<OWLLogicalAxiom>>();
         for (List<OWLClass> s : subsignatures)
             submodules.add(extractor.calculateModule(s));
@@ -42,7 +75,7 @@ public class OWLEqualIntersectionExtractor extends AbstractOWLIntersectionExtrac
         return submodules;
     }
 
-    protected List<List<OWLClass>> calculateSubSignatures(List<OWLClass> signature) {
+    public List<List<OWLClass>> calculateSubSignatures(List<OWLClass> signature) {
         int size = signature.size() / split;
         List<List<OWLClass>> subsignatures = new LinkedList<List<OWLClass>>();
         for (int i = 0; i < split; i++) {

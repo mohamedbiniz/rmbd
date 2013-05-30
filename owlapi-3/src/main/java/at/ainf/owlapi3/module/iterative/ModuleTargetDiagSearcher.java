@@ -52,7 +52,7 @@ public class ModuleTargetDiagSearcher extends ModuleMinDiagSearcher {
             public int compare(Set<OWLLogicalAxiom> o1, Set<OWLLogicalAxiom> o2) {
                 Set<OWLLogicalAxiom> o1r = new HashSet<OWLLogicalAxiom>(o1);
                 o1r.removeAll(getGSMappings());
-                Set<OWLLogicalAxiom> o2r = new HashSet<OWLLogicalAxiom>(o1);
+                Set<OWLLogicalAxiom> o2r = new HashSet<OWLLogicalAxiom>(o2);
                 o2r.removeAll(getGSMappings());
                 return new Integer(o1r.size()).compareTo(o2r.size());
             }
