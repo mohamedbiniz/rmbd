@@ -1,6 +1,5 @@
 package at.ainf.owlapi3.model;
 
-import at.ainf.diagnosis.Speed4JMeasurement;
 import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.storage.FormulaSet;
 import org.semanticweb.owlapi.apibinding.OWLManager;

@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.module.iterative.diag;
+package at.ainf.diagnosis.logging.old;
 
 import java.util.*;
 

@@ -21,4 +21,11 @@ public class SetUtils {
         return intersection;
     }
 
+    public static <X> Set<X> createUnion (Collection<Set<X>> collection) {
+        Set<X> union = new LinkedHashSet<X>();
+        for (Set<X> set : collection)
+            union.addAll(set);
+        return union;
+    }
+
 }

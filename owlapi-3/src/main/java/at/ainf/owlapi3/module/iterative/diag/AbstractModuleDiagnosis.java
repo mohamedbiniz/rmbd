@@ -55,6 +55,15 @@ public abstract class AbstractModuleDiagnosis implements ModuleDiagnosis {
 
     }
 
+    public AbstractModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms,
+                                   OWLReasonerFactory factory) {
+
+        this.ontoAxioms = ontoAxioms;
+        this.mappings = mappings;
+        this.factory = factory;
+
+    }
+
     public OWLReasonerFactory getReasonerFactory() {
         return factory;
     }

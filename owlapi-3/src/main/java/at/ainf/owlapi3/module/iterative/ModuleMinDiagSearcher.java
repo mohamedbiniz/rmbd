@@ -1,17 +1,18 @@
 package at.ainf.owlapi3.module.iterative;
 
-import at.ainf.diagnosis.Speed4JMeasurement;
+import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.ConfidenceCostsEstimator;
 import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.module.iterative.diag.IterativeStatistics;
+import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -49,6 +50,10 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         this.confidences = confidences;
     }
 
+    public Map<OWLLogicalAxiom, BigDecimal> getConfidences() {
+        return confidences;
+    }
+
     @Override
     public void setReasonerFactory(OWLReasonerFactory reasonerFactory) {
         factory = reasonerFactory;
@@ -70,7 +75,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         return debuggingOntology;
     }
 
-    protected HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> createSearch
+    protected TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> createSearch
             (Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
 
@@ -103,8 +108,10 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
     private Logger logger = LoggerFactory.getLogger(ModuleMinDiagSearcher.class.getName());
 
-    protected void runSearch (HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search) {
-        Speed4JMeasurement.start("runofhstree");
+    private MetricsManager metricsManager = MetricsManager.getInstance();
+
+    protected void runSearch (TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search) {
+        metricsManager.startNewTimer("runofhstree");
         try {
             search.start();
         } catch (SolverException e) {
@@ -124,8 +131,8 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
                 logger.info("there are really no more conflicts");
             }
         }
-        String label = Speed4JMeasurement.getLabelOfLastStopWatch();
-        long timeTreeSearch = Speed4JMeasurement.stop();
+        String label = metricsManager.getLabels();
+        long timeTreeSearch = metricsManager.stopAndLogTimer();
         IterativeStatistics.diagnosisTime.add(timeTreeSearch);
         String conflicts = label + " found conflicts with sizes: ";
         for (Set<OWLLogicalAxiom> cs : search.getConflicts())
@@ -140,7 +147,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
 
         long time = System.currentTimeMillis();
         runSearch(search);
