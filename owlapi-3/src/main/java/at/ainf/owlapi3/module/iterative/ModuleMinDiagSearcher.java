@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.module.iterative;
 
-import at.ainf.diagnosis.logging.old.MetricsManager;
+//import at.ainf.diagnosis.logging.old.MetricsManager;
+import at.ainf.diagnosis.logging.MetricsLogger;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
@@ -108,10 +109,12 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
     private Logger logger = LoggerFactory.getLogger(ModuleMinDiagSearcher.class.getName());
 
-    private MetricsManager metricsManager = MetricsManager.getInstance();
+    private MetricsLogger metricsLogger = MetricsLogger.getInstance();
+
+    //private MetricsManager metricsManager = MetricsManager.getInstance();
 
     protected void runSearch (TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search) {
-        metricsManager.startNewTimer("runofhstree");
+        metricsLogger.startTimer("runofhstree");
         try {
             search.start();
         } catch (SolverException e) {
@@ -131,8 +134,8 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
                 logger.info("there are really no more conflicts");
             }
         }
-        String label = metricsManager.getLabels();
-        long timeTreeSearch = metricsManager.stopAndLogTimer();
+        String label = metricsLogger.getLabelsConcat();
+        long timeTreeSearch = metricsLogger.stopTimer("runofhstree");
         IterativeStatistics.diagnosisTime.add(timeTreeSearch);
         String conflicts = label + " found conflicts with sizes: ";
         for (Set<OWLLogicalAxiom> cs : search.getConflicts())

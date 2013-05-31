@@ -65,8 +65,10 @@ public class MetricsLogger {
         contexts.put(timer, getTimer(timer).time());
     }
 
-    public void stopTimer (String timer) {
-        logTime(timer, contexts.get(timer).stop());
+    public long stopTimer (String timer) {
+        long time = contexts.get(timer).stop();
+        logTime(timer, time);
+        return time;
     }
 
     public MetricRegistry addLabel (String label) {

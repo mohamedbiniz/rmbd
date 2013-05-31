@@ -1,7 +1,6 @@
 package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.logging.MetricsLogger;
-import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import com.codahale.metrics.Timer;
@@ -68,19 +67,19 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         }
     }
 
-    private MetricsManager metricsManager = MetricsManager.getInstance();
+    //private MetricsManager metricsManager = MetricsManager.getInstance();
 
-    private MetricsLogger metricsMgr = MetricsLogger.getInstance();
+    private MetricsLogger metricsLogger = MetricsLogger.getInstance();
 
     @Override
     public boolean isConsistent() {
-        Timer.Context timer = metricsMgr.getTimer("consistencyChecks").time();
-        metricsManager.startNewTimer("consistencycheck");
-        metricsManager.startNewTimer("syncbeforeconsistencycheck");
+        Timer.Context timer = metricsLogger.getTimer("consistencyChecks").time();
+        metricsLogger.startTimer("consistencychecks");
+        metricsLogger.startTimer("syncbeforeconsistencycheck");
         sync();
-        metricsManager.stopAndLogTimer();
+        metricsLogger.stopTimer("syncbeforeconsistencycheck");
         boolean r = reasoner.isConsistent();
-        long time = metricsManager.stopAndLogTimer();
+        long time = metricsLogger.stopTimer("consistencychecks");
         timer.stop();
         IterativeStatistics.avgConsistencyTime.addValue(time);
         IterativeStatistics.avgConsistencyCheck.addValue(1L);
@@ -88,27 +87,27 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
     }
 
     public boolean isSatisfiable(OWLClass unsatClass) {
-        Timer.Context timer = metricsMgr.getTimer("satisfiableChecks").time();
-        metricsManager.startNewTimer("issatisfiablecheck");
-        metricsManager.startNewTimer("syncbeforeissatisfiablecheck");
+        Timer.Context timer = metricsLogger.getTimer("satisfiableChecks").time();
+        metricsLogger.startTimer("issatisfiablecheck");
+        metricsLogger.startTimer("syncbeforeissatisfiablecheck");
         sync();
-        metricsManager.stopAndLogTimer();
+        metricsLogger.stopTimer("syncbeforeissatisfiablecheck");
         boolean r = reasoner.isSatisfiable(unsatClass);
-        metricsManager.stopAndLogTimer();
+        metricsLogger.stopTimer("issatisfiablecheck");
         timer.stop();
         return r;
     }
 
     @Override
     public boolean isCoherent() {
-        Timer.Context coherencyTimer = metricsMgr.getTimer("coherencyChecks").time();
-        metricsManager.startNewTimer("iscoherencycheck");
-        metricsManager.startNewTimer("syncbeforeiscoherencycheck");
+        Timer.Context coherencyTimer = metricsLogger.getTimer("coherencyChecks").time();
+        metricsLogger.startTimer("iscoherencycheck");
+        metricsLogger.startTimer("syncbeforeiscoherencycheck");
         sync();
-        metricsManager.stopAndLogTimer();
+        metricsLogger.stopTimer("syncbeforeiscoherencycheck");
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         boolean r = reasoner.getBottomClassNode().isSingleton();
-        long time = metricsManager.stopAndLogTimer();
+        long time = metricsLogger.stopTimer("iscoherencycheck");
         coherencyTimer.stop();
         IterativeStatistics.avgCoherencyTime.addValue(time);
         IterativeStatistics.avgCoherencyCheck.addValue(1L);

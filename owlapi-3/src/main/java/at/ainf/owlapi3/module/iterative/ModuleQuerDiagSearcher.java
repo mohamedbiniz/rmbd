@@ -1,7 +1,8 @@
 package at.ainf.owlapi3.module.iterative;
 
 import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.logging.old.MetricsManager;
+//import at.ainf.diagnosis.logging.old.MetricsManager;
+import at.ainf.diagnosis.logging.MetricsLogger;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
@@ -103,7 +104,9 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
 
     }
 
-    private MetricsManager metricsManager = MetricsManager.getInstance();
+    private MetricsLogger metricsLogger = MetricsLogger.getInstance();
+
+    //private MetricsManager metricsManager = MetricsManager.getInstance();
 
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
@@ -131,10 +134,10 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             String lastLabel = "";
             Partition<OWLLogicalAxiom> best = null;
             try {
-                metricsManager.startNewTimer("calculatingpartition");
+                metricsLogger.startTimer("calculatingpartition");
                 best = ckk.generatePartition(search.getDiagnoses());
-                lastLabel = metricsManager.getLabels();
-                long queryCalc = metricsManager.stopAndLogTimer();
+                lastLabel = metricsLogger.getLabelsConcat();
+                long queryCalc = metricsLogger.stopTimer("calculatingpartition");
                 IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);
             } catch (SolverException e) {
                 // e.printStackTrace();
