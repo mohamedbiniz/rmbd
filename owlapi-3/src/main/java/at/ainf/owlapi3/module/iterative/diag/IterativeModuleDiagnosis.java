@@ -1,7 +1,8 @@
 package at.ainf.owlapi3.module.iterative.diag;
 
+
 import at.ainf.diagnosis.logging.MetricsLogger;
-import at.ainf.diagnosis.logging.old.MetricsManager;
+//import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
 import com.codahale.metrics.MetricRegistry;
@@ -28,6 +29,8 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
     public static final int MAX_UNSAT_CLASSES = 10;
     private static Logger logger = LoggerFactory.getLogger(IterativeModuleDiagnosis.class.getName());
 
+    private MetricsLogger metricsLogger = MetricsLogger.getInstance();
+    
     private final boolean sortNodes;
 
     public IterativeModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms,
@@ -44,11 +47,11 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         return sortNodes;
     }
 
-    private MetricsManager metricsManager = MetricsManager.getInstance();
+    //private MetricsManager metricsManager = MetricsManager.getInstance();
 
     public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
-        metricsManager.startNewTimer("calculatetargetdiag");
+        metricsLogger.startTimer("calculatetargetdiag");
         List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses(Collections.<OWLClass>emptySet(),
                 MAX_UNSAT_CLASSES);
         if (isSortNodes())
@@ -57,8 +60,8 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0, toIndex));
 
         while (!actualUnsatClasses.isEmpty()) {
-            metricsManager.startNewTimer("debugmodule");
-            metricsManager.startNewTimer("calculatemodule");
+            metricsLogger.startTimer("debugmodule");
+            metricsLogger.startTimer("calculatemodule");
             getModuleCalculator().calculateModules(actualUnsatClasses);
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
 
@@ -91,7 +94,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                 } */
             }
 
-            metricsManager.stopAndLogTimer();
+            metricsLogger.stopTimer("calculatemodule");
             /*
             for (OWLClass unsatClass : actualUnsatClasses)
                 axioms.addAll(map.get(unsatClass));
@@ -104,7 +107,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
             //Set<? extends Set<OWLLogicalAxiom>> diagnoses = searchDiagnoses(axioms, background);
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
-            metricsManager.startNewTimer("calculatepartdiag");
+            metricsLogger.startTimer("calculatepartdiag");
             //metricsManager.getMetrics().histogram("avgCoherencyTimeMetric");
             IterativeStatistics.avgCoherencyTime.createNewValueGroup();
             IterativeStatistics.avgConsistencyTime.createNewValueGroup();
@@ -117,13 +120,13 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             MetricsLogger.getInstance().getHistogram("moduleTimeConsistencyChecks").update((long)metric.getTimers().get("consistencyChecks").getSnapshot().getMean());
             MetricsLogger.getInstance().getHistogram("moduleNumCoherencyChecks").update(metric.getTimers().get("coherencyChecks").getCount());
             MetricsLogger.getInstance().getHistogram("moduleTimeCoherencyChecks").update((long)metric.getTimers().get("coherencyChecks").getSnapshot().getMean());
-            metricsManager.stopAndLogTimer();
+            metricsLogger.stopTimer("calculatepartdiag");
 
             for (OWLLogicalAxiom axiom : partDiag)
                 logger.info("part diag axiom: " + axiom);
             logger.info("---");
 
-            long timeModule = metricsManager.stopAndLogTimer();
+            long timeModule = metricsLogger.stopTimer("debugmodule");
             IterativeStatistics.moduleTime.add(timeModule);
             getModuleCalculator().removeAxiomsFromOntologyAndModules(partDiag);
             getModuleCalculator().updatedLists(actualUnsatClasses, unsatClasses, MAX_UNSAT_CLASSES);
@@ -145,7 +148,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgReactTime, "reaction time");
         IterativeStatistics.logAndClear(logger, IterativeStatistics.avgQueryCard, "query card");
 
-        metricsManager.stopAndLogTimer();
+        metricsLogger.stopTimer("calculatetargetdiag");
         return targetDiagnosis;
     }
 
