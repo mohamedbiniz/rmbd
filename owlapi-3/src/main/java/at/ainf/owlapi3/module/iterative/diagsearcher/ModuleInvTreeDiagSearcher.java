@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.module.iterative;
+package at.ainf.owlapi3.module.iterative.diagsearcher;
 
 import at.ainf.diagnosis.logging.MetricsLogger;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -69,7 +69,7 @@ public class ModuleInvTreeDiagSearcher extends ModuleMinDiagSearcher {
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
         Set<OWLLogicalAxiom> diagnosis = super.calculateDiag(axioms, backg);
-        metricsLogger.createGauge("module-size",axioms.size());
+        metricsLogger.createGauge("module-size", axioms.size());
         Set<OWLLogicalAxiom> repaired = new HashSet<OWLLogicalAxiom>(axioms);
         repaired.removeAll(diagnosis);
         boolean isRepaired = getReasonerFactory().createNonBufferingReasoner(createOntology(repaired)).getUnsatisfiableClasses().getEntitiesMinusBottom().isEmpty();

@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.module.iterative;
+package at.ainf.owlapi3.module.iterative.diagsearcher;
 
 //import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.diagnosis.logging.MetricsLogger;
@@ -13,11 +13,8 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
-import org.semanticweb.owlapi.apibinding.OWLManager;
-import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,7 +151,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         for (Set<OWLLogicalAxiom> cs : search.getConflicts())
             metricsLogger.getHistogram("card-cs").update(cs.size());
         //IterativeStatistics.moduleSize.add((long)axioms.size());
-        metricsLogger.createGauge("module-size",axioms.size());
+        metricsLogger.createGauge("module-size", axioms.size());
 
         Set<FormulaSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
         Set<OWLLogicalAxiom> diagnosis;

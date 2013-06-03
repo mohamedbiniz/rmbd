@@ -13,7 +13,7 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLJustificationIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.module.OtfModuleProvider;
+import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import at.ainf.owlapi3.module.SatisfiableQuickXplain;
 import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
 import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;

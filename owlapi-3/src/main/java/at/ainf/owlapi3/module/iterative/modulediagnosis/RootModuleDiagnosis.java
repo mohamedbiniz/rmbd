@@ -1,8 +1,9 @@
-package at.ainf.owlapi3.module.iterative.diag;
+package at.ainf.owlapi3.module.iterative.modulediagnosis;
 
 //import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.diagnosis.logging.MetricsLogger;
-import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -79,7 +80,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
     //private MetricsManager metricsManager = MetricsManager.getInstance();
 
-    public Set<OWLLogicalAxiom> start() {
+    public Set<FormulaSet<OWLLogicalAxiom>> start() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
 
         List<OWLClass> nvClasses = computeNvClasses(getTable(), repaired);
@@ -105,7 +106,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
                 if ( counter > max_search_before_test && !alreadyCheckedConsistency) {
                     alreadyCheckedConsistency = true;
                     if (isAlreadyConsistent(targetDiagnosis))
-                        return targetDiagnosis;
+                        return Collections.singleton(createFormularSet(targetDiagnosis));
                 }
 
                 module = computeModule(unsatClass, targetDiagnosis);
@@ -191,7 +192,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
                     if ( counterV > max_search_before_testV && !alreadyCheckedConsistencyV) {
                         alreadyCheckedConsistencyV = true;
                         if (isAlreadyConsistent(targetDiagnosis))
-                            return targetDiagnosis;
+                            return Collections.singleton(createFormularSet(targetDiagnosis));
                     }
 
                     module = computeModule(unsatClass, targetDiagnosis);
@@ -246,7 +247,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
 
             if (actualUnsatClass == null)
-                return targetDiagnosis;
+                return Collections.singleton(createFormularSet(targetDiagnosis));
 
             muv = getClassesInModuleSignature(module);
             muv.retainAll(getModuleCalculator().getInitialUnsatClasses());
@@ -313,7 +314,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
             bothEmpty = nvClasses.isEmpty() && vClasses.isEmpty();
         }
 
-        return targetDiagnosis;
+        return Collections.singleton(createFormularSet(targetDiagnosis));
     }
 
     /*protected boolean isOntoSat(Set<OWLLogicalAxiom> targetDiagnosis) {

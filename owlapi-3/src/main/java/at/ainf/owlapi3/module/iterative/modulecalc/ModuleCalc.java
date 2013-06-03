@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.module.iterative;
+package at.ainf.owlapi3.module.iterative.modulecalc;
 
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import com.google.common.collect.HashMultimap;
@@ -51,6 +51,10 @@ public class ModuleCalc {
         this.reasoner = reasonerFactory.createNonBufferingReasoner(ontology);
     }
 
+    protected OWLReasoner getReasoner() {
+        return reasoner;
+    }
+
     public void updatedLists(List<OWLClass> actualUnsat, List<OWLClass> allUnsat, int maxClasses) {
         for (Iterator<OWLClass> it = actualUnsat.iterator(); it.hasNext(); ) {
             OWLClass cl = it.next();
@@ -70,19 +74,10 @@ public class ModuleCalc {
         if (logger.isInfoEnabled())
             logger.info("Unsat classes all: " + allUnsat.size() + " actual: " + actualUnsat.size());
 
-        if (reasoner.getReasonerName().equals(HornSatReasoner.NAME)) {
+        refillActualUnsatClasses(actualUnsat, allUnsat, maxClasses);
+    }
 
-            final HashSet<OWLClass> exclude = new HashSet<OWLClass>(actualUnsat);
-            List<OWLClass> additionalUnsatClasses;
-            do {
-                additionalUnsatClasses = getInitialUnsatClasses(exclude, maxClasses - actualUnsat.size());
-                exclude.addAll(additionalUnsatClasses);
-                Collection<OWLClass> owlClasses = calculateModules(additionalUnsatClasses);
-                actualUnsat.addAll(owlClasses);
-                allUnsat.addAll(owlClasses);
-            } while (actualUnsat.size() < maxClasses && !additionalUnsatClasses.isEmpty());
-            return;
-        }
+    protected void refillActualUnsatClasses(List<OWLClass> actualUnsat, List<OWLClass> allUnsat, int maxClasses) {
 
         Iterator<OWLClass> it = allUnsat.iterator();
         while (it.hasNext() && actualUnsat.size() < maxClasses) {
@@ -96,23 +91,19 @@ public class ModuleCalc {
     }
 
     public List<OWLClass> getInitialUnsatClasses(Collection<OWLClass> excludeClasses, int maxClasses) {
-        if (reasoner.getReasonerName().equals(HornSatReasoner.NAME))
-            if (maxClasses > 0)
-                return ((HornSatReasoner) reasoner).getSortedUnsatisfiableClasses(excludeClasses, maxClasses);
-            else return ((HornSatReasoner) reasoner).getSortedUnsatisfiableClasses();
-        return new ArrayList<OWLClass>(reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom());
+        return new ArrayList<OWLClass>(getReasoner().getUnsatisfiableClasses().getEntitiesMinusBottom());
     }
 
     public Collection<? extends OWLClass> getInitialUnsatClasses() {
-        return reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+        return getReasoner().getUnsatisfiableClasses().getEntitiesMinusBottom();
     }
 
     public Set<OWLClass> getUnsatisfiableClasses() {
-        return reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+        return getReasoner().getUnsatisfiableClasses().getEntitiesMinusBottom();
     }
 
     public boolean isSatisfiable(OWLClass unsatClass) {
-        return reasoner.isSatisfiable(unsatClass);
+        return getReasoner().isSatisfiable(unsatClass);
     }
 
     public Set<OWLLogicalAxiom> calculateModule(OWLClass unsatClass) {

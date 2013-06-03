@@ -1,14 +1,22 @@
 package at.ainf.owlapi3.test;
 
+import at.ainf.diagnosis.Debugger;
 import at.ainf.diagnosis.logging.MetricsLogger;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLModuleExtractor;
 import at.ainf.owlapi3.model.intersection.OWLEqualIntersectionExtractor;
 import at.ainf.owlapi3.model.intersection.OWLPerecentConceptIntersectionExtractor;
-import at.ainf.owlapi3.model.multhread.InvTreeDiagSearcher;
-import at.ainf.owlapi3.module.OtfModuleProvider;
+import at.ainf.owlapi3.module.iterative.modulediagnosis.multhread.InvTreeDiagSearcher;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleMinDiagSearcher;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleQuerDiagSearcher;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleTargetDiagSearcher;
+import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
-import at.ainf.owlapi3.module.iterative.diag.IterativeModuleDiagnosis;
-import at.ainf.owlapi3.module.iterative.diag.ModuleDiagnosis;
+import at.ainf.owlapi3.module.iterative.modulediagnosis.IterativeModuleDiagnosis;
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
 import org.junit.Test;
@@ -80,7 +88,7 @@ public class IterativeModuleDiagTests {
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
                 new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), false);
-        Set<OWLLogicalAxiom> diagnosis = diagnosisFinder.start();
+        Set<OWLLogicalAxiom> diagnosis = diagnosisFinder.start().iterator().next();
 
         for (OWLLogicalAxiom axiom : diagnosis)
             logger.info("" + axiom);
@@ -375,7 +383,7 @@ public class IterativeModuleDiagTests {
         minimalModuleOntologies.removeAll(minimalModuleMappings);
 
         IterativeModuleDiagnosis diagSe = new IterativeModuleDiagnosis(minimalModuleMappings, minimalModuleOntologies, new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), true);
-        Set<OWLLogicalAxiom> diagnosis = diagSe.start();
+        Set<OWLLogicalAxiom> diagnosis = diagSe.start().iterator().next();
 
         Set<OWLLogicalAxiom> repairedOnto = new LinkedHashSet<OWLLogicalAxiom>(fullOnto);
         repairedOnto.removeAll(diagnosis);
@@ -415,7 +423,7 @@ public class IterativeModuleDiagTests {
     }
 
     @Test
-    public void testInvTreeDiagSearcher() {
+    public void testInvTreeDiagSearcher() throws SolverException, InconsistentTheoryException, NoConflictException {
         String onto = "snomed2nci";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
 
@@ -429,8 +437,8 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> fullOnto = new LinkedHashSet<OWLLogicalAxiom>(ontoAxioms);
         fullOnto.addAll(mappingAxioms);
 
-        ModuleDiagnosis diagSearcher = new InvTreeDiagSearcher(mappingAxioms, ontoAxioms, new Reasoner.ReasonerFactory());
-        Set<OWLLogicalAxiom> targetDiagnosis = diagSearcher.start();
+        Debugger<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> diagSearcher = new InvTreeDiagSearcher(mappingAxioms, ontoAxioms, new Reasoner.ReasonerFactory());
+        Set<OWLLogicalAxiom> targetDiagnosis = diagSearcher.start().iterator().next();
         logger.info("found target diagnosis with size: " + targetDiagnosis.size());
 
     }
@@ -837,7 +845,7 @@ public class IterativeModuleDiagTests {
     }
 
     @Test
-    public void testIterativeDiagnosis() throws OWLOntologyCreationException {
+    public void testIterativeDiagnosis() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
 
         String onto = "fma2nci";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
@@ -869,14 +877,14 @@ public class IterativeModuleDiagTests {
         //ModuleDiagSearcher d = new ModuleOptQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
 
         long time = System.currentTimeMillis();
-        ModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
-                                                         new Reasoner.ReasonerFactory(), d, true);
+        Debugger<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
+                new Reasoner.ReasonerFactory(), d, true);
         metricsLogger.startTimer("modulediagnosiscreation");
         //ModuleDiagnosis diagnosisFinder = new RootModuleDiagnosis(mappingAxioms, ontoAxioms,
         //        new Reasoner.ReasonerFactory(), d);
         metricsLogger.stopTimer("modulediagnosiscreation");
 
-        Set<OWLLogicalAxiom> targetDiagnosis = diagnosisFinder.start();
+        Set<OWLLogicalAxiom> targetDiagnosis = diagnosisFinder.start().iterator().next();
         logger.info("size of target diag: " + targetDiagnosis.size());
         time = System.currentTimeMillis() - time;
 

@@ -1,8 +1,9 @@
-package at.ainf.owlapi3.module.iterative.diag;
+package at.ainf.owlapi3.module.iterative.modulediagnosis;
 
 
 import at.ainf.diagnosis.logging.MetricsLogger;
-import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.Multimap;
 import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
@@ -49,7 +50,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
     //private MetricsManager metricsManager = MetricsManager.getInstance();
 
-    public Set<OWLLogicalAxiom> start() {
+    public Set<FormulaSet<OWLLogicalAxiom>> start() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
         metricsLogger.startTimer("calculatetargetdiag");
         List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses(Collections.<OWLClass>emptySet(),
@@ -166,7 +167,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
 
         metricsLogger.stopTimer("calculatetargetdiag");
-        return targetDiagnosis;
+        return Collections.singleton(createFormularSet(targetDiagnosis));
     }
 
     protected class ChildsComparator implements Comparator<OWLClass> {
