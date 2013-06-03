@@ -111,6 +111,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
         TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
+        MetricsLogger.getInstance().createGauge("module-size",axioms.size());
         search.setMaxDiagnosesNumber(9);
 
         //QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
@@ -130,6 +131,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
 
         int numOfQueries = 0;
         long reactionTime = System.currentTimeMillis();
+        MetricsLogger.getInstance().startTimer("reactionTime");
         while (diagnoses.size() > 1) {
             String lastLabel = "";
             Partition<OWLLogicalAxiom> best = null;
@@ -149,6 +151,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 minimizePartitionAx(best,search.getSearchable());
 
             IterativeStatistics.avgQueryCard.addValue((long)best.partition.size());
+            MetricsLogger.getInstance().getHistogram("partition-size").update(best.partition.size());
 
             logger.info(lastLabel + " size of partition " + best.partition.size());
             for (OWLLogicalAxiom axiom : best.partition)
@@ -156,11 +159,13 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             logger.info("query axiom end");
 
             try {
+                MetricsLogger.getInstance().stopTimer("reactionTime");
                 reactionTime = System.currentTimeMillis() - reactionTime;
                 IterativeStatistics.avgReactTime.addValue(reactionTime);
                 boolean answer = askUser(best);
                 logger.info("user answered query: All axioms " + answer);
                 numOfQueries++;
+                MetricsLogger.getInstance().getCounter("numfofqueries").inc();
 
                 if (answer)
                     search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
@@ -176,6 +181,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                     Set<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom));
                     logger.info("user answers part of query " + answer);
                     numOfQueries++;
+                    MetricsLogger.getInstance().getCounter("numfofqueries").inc();
 
                     if (answer)
                         search.getSearchable().getKnowledgeBase().addEntailedTest(testcase);

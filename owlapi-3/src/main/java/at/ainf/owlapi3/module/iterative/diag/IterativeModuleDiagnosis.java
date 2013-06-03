@@ -60,7 +60,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
         List<OWLClass> actualUnsatClasses = new LinkedList<OWLClass>(unsatClasses.subList(0, toIndex));
 
         while (!actualUnsatClasses.isEmpty()) {
-            metricsLogger.startTimer("debugmodule");
+            metricsLogger.startTimer("moduleTimeNew");
             metricsLogger.startTimer("calculatemodule");
             getModuleCalculator().calculateModules(actualUnsatClasses);
             Map<OWLClass, Set<OWLLogicalAxiom>> map = getModuleCalculator().getModuleMap();
@@ -116,6 +116,22 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             MetricsLogger.getInstance().addLabel("modulediag");
             Set<OWLLogicalAxiom> partDiag = getDiagSearcher().calculateDiag(axioms, background);
             MetricRegistry metric = MetricsLogger.getInstance().removeLabel("modulediag");
+            // TODO null pointer exception
+            if (metric.getGauges().get("module-size") != null)
+              MetricsLogger.getInstance().getHistogram("moduleSizes").update((Integer)metric.getGauges().get("module-size").getValue());
+            if (metric.getGauges().get("card-hs") != null)
+                MetricsLogger.getInstance().getHistogram("cardHs").update((Integer)metric.getGauges().get("card-hs").getValue());
+            if (metric.getHistograms().get("card-cs") != null)
+                MetricsLogger.getInstance().getHistogram("cardCs").update((long)metric.getHistograms().get("card-cs").getSnapshot().getMean());
+            if (metric.getHistograms().get("card-cs") != null)
+                MetricsLogger.getInstance().getHistogram("numCs").update(metric.getHistograms().get("card-cs").getCount());
+            if (metric.getCounters().get("numofqueries") != null)
+                MetricsLogger.getInstance().getHistogram("numOfQueries").update(metric.getCounters().get("numofqueries").getCount());
+            MetricsLogger.getInstance().getHistogram("reactionTime").update((long)metric.getTimers().get("reactionTime").getSnapshot().getMean());
+            MetricsLogger.getInstance().updateHistogram("queryCard",metric.getHistograms().get("partition-size").getSnapshot().getValues());
+            //MetricsLogger.getInstance().getHistogram("queryCard").update((long)metric.getHistograms().get("partition-size").getSnapshot().getMean());
+            MetricsLogger.getInstance().getHistogram("timeQueryGen").update((long)metric.getTimers().get("calculatingpartition").getSnapshot().getMean());
+            MetricsLogger.getInstance().getHistogram("avgRunofhstree").update((long)metric.getTimers().get("runofhstree").getSnapshot().getMean());
             MetricsLogger.getInstance().getHistogram("moduleNumConsistencyChecks").update(metric.getTimers().get("consistencyChecks").getCount());
             MetricsLogger.getInstance().getHistogram("moduleTimeConsistencyChecks").update((long)metric.getTimers().get("consistencyChecks").getSnapshot().getMean());
             MetricsLogger.getInstance().getHistogram("moduleNumCoherencyChecks").update(metric.getTimers().get("coherencyChecks").getCount());
@@ -126,7 +142,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                 logger.info("part diag axiom: " + axiom);
             logger.info("---");
 
-            long timeModule = metricsLogger.stopTimer("debugmodule");
+            long timeModule = metricsLogger.stopTimer("moduleTimeNew");
             IterativeStatistics.moduleTime.add(timeModule);
             getModuleCalculator().removeAxiomsFromOntologyAndModules(partDiag);
             getModuleCalculator().updatedLists(actualUnsatClasses, unsatClasses, MAX_UNSAT_CLASSES);
