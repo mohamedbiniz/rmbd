@@ -64,10 +64,12 @@ public class ModuleInvTreeDiagSearcher extends ModuleMinDiagSearcher {
         return search;
     }
 
+    private MetricsLogger metricsLogger = MetricsLogger.getInstance();
+
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
         Set<OWLLogicalAxiom> diagnosis = super.calculateDiag(axioms, backg);
-        MetricsLogger.getInstance().createGauge("module-size",axioms.size());
+        metricsLogger.createGauge("module-size",axioms.size());
         Set<OWLLogicalAxiom> repaired = new HashSet<OWLLogicalAxiom>(axioms);
         repaired.removeAll(diagnosis);
         boolean isRepaired = getReasonerFactory().createNonBufferingReasoner(createOntology(repaired)).getUnsatisfiableClasses().getEntitiesMinusBottom().isEmpty();

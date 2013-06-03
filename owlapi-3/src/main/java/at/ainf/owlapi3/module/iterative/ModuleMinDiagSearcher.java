@@ -152,9 +152,9 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         //for (Set<OWLLogicalAxiom> cs : search.getConflicts())
             //IterativeStatistics.avgCardCS.addValue((long)cs.size());
         for (Set<OWLLogicalAxiom> cs : search.getConflicts())
-            MetricsLogger.getInstance().getHistogram("card-cs").update(cs.size());
+            metricsLogger.getHistogram("card-cs").update(cs.size());
         //IterativeStatistics.moduleSize.add((long)axioms.size());
-        MetricsLogger.getInstance().createGauge("module-size",axioms.size());
+        metricsLogger.createGauge("module-size",axioms.size());
 
         Set<FormulaSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
         Set<OWLLogicalAxiom> diagnosis;
@@ -163,7 +163,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         else
             diagnosis = chooseDiagnosis(diagnoses);
         //IterativeStatistics.cardHS.add((long) diagnosis.size());
-        MetricsLogger.getInstance().createGauge("card-hs", diagnosis.size());
+        metricsLogger.createGauge("card-hs", diagnosis.size());
 
         return diagnosis;
 

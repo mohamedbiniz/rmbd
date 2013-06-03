@@ -83,7 +83,7 @@
         <dependency>
             <groupId>at.ainf</groupId>
             <artifactId>diagnosis</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

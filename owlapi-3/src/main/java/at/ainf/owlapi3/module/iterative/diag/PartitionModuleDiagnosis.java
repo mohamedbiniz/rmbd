@@ -20,7 +20,7 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     }
 
     @Override
-    public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
+    public Set<OWLLogicalAxiom> start() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

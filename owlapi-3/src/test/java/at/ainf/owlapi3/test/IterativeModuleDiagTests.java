@@ -11,8 +11,6 @@ import at.ainf.owlapi3.module.iterative.diag.IterativeModuleDiagnosis;
 import at.ainf.owlapi3.module.iterative.diag.ModuleDiagnosis;
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
-import com.codahale.metrics.*;
-import com.codahale.metrics.Timer;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -82,7 +80,7 @@ public class IterativeModuleDiagTests {
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
                 new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), false);
-        Set<OWLLogicalAxiom> diagnosis = diagnosisFinder.calculateTargetDiagnosis();
+        Set<OWLLogicalAxiom> diagnosis = diagnosisFinder.start();
 
         for (OWLLogicalAxiom axiom : diagnosis)
             logger.info("" + axiom);
@@ -112,7 +110,7 @@ public class IterativeModuleDiagTests {
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
                 new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), true);
-        diagnosisFinder.calculateTargetDiagnosis();
+        diagnosisFinder.start();
 
         logger.info("");
 
@@ -139,7 +137,7 @@ public class IterativeModuleDiagTests {
 
         IterativeModuleDiagnosis diagnosisFinder = new IterativeModuleDiagnosis(gs, ontoAxioms,
                 new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), true);
-        diagnosisFinder.calculateTargetDiagnosis();
+        diagnosisFinder.start();
 
         logger.info("");
 
@@ -377,7 +375,7 @@ public class IterativeModuleDiagTests {
         minimalModuleOntologies.removeAll(minimalModuleMappings);
 
         IterativeModuleDiagnosis diagSe = new IterativeModuleDiagnosis(minimalModuleMappings, minimalModuleOntologies, new Reasoner.ReasonerFactory(), new ModuleMinDiagSearcher(), true);
-        Set<OWLLogicalAxiom> diagnosis = diagSe.calculateTargetDiagnosis();
+        Set<OWLLogicalAxiom> diagnosis = diagSe.start();
 
         Set<OWLLogicalAxiom> repairedOnto = new LinkedHashSet<OWLLogicalAxiom>(fullOnto);
         repairedOnto.removeAll(diagnosis);
@@ -432,7 +430,7 @@ public class IterativeModuleDiagTests {
         fullOnto.addAll(mappingAxioms);
 
         ModuleDiagnosis diagSearcher = new InvTreeDiagSearcher(mappingAxioms, ontoAxioms, new Reasoner.ReasonerFactory());
-        Set<OWLLogicalAxiom> targetDiagnosis = diagSearcher.calculateTargetDiagnosis();
+        Set<OWLLogicalAxiom> targetDiagnosis = diagSearcher.start();
         logger.info("found target diagnosis with size: " + targetDiagnosis.size());
 
     }
@@ -470,8 +468,6 @@ public class IterativeModuleDiagTests {
         //Histogram moduleSizes = metricsManager.getMetrics().histogram(name(IterativeModuleDiagTests.class, "module-sizes"));
         //Timer moduleCalcTime = metricsManager.getMetrics().timer(name(IterativeModuleDiagTests.class, "module-calc"));
 
-        MetricsLogger metricsLogger = MetricsLogger.getInstance();
-
         for (List<OWLClass> subsignature : subSignatures) {
             //Timer.Context time = moduleCalcTime.time();
             metricsLogger.startTimer("modulecalcnew");
@@ -495,7 +491,7 @@ public class IterativeModuleDiagTests {
                     subsignature.size() + ", " + moduleSignature.size() + ", " +
                     subModule.size() + ", " + mappingsInSubmodule.size() + ", " + mappingsInModuleSignature.size());
         }
-        MetricsLogger.getInstance().logStandardMetrics();
+        metricsLogger.logStandardMetrics();
         Set<OWLLogicalAxiom> intersection = createIntersection(subModules);
         Set<OWLLogicalAxiom> union = createUnion(subModules);
         Set<OWLClass> intersectionSig = calculateSignature(intersection);
@@ -880,7 +876,7 @@ public class IterativeModuleDiagTests {
         //        new Reasoner.ReasonerFactory(), d);
         metricsLogger.stopTimer("modulediagnosiscreation");
 
-        Set<OWLLogicalAxiom> targetDiagnosis = diagnosisFinder.calculateTargetDiagnosis();
+        Set<OWLLogicalAxiom> targetDiagnosis = diagnosisFinder.start();
         logger.info("size of target diag: " + targetDiagnosis.size());
         time = System.currentTimeMillis() - time;
 
@@ -896,7 +892,7 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> gsMappingAxInDiag = new HashSet<OWLLogicalAxiom>(ontoAxioms);
         gsMappingAxInDiag.retainAll(targetDiagnosis);
         //assertTrue(gsMappingAxInDiag.isEmpty());
-        MetricsLogger.getInstance().logStandardMetrics();
+        metricsLogger.logStandardMetrics();
         Set<OWLClass> unsatClasses = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
         assertTrue(unsatClasses.isEmpty());
 
