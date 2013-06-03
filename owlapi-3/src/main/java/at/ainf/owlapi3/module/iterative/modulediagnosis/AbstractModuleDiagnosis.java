@@ -1,18 +1,21 @@
-package at.ainf.owlapi3.module.iterative.diag;
+package at.ainf.owlapi3.module.iterative.modulediagnosis;
 
-import at.ainf.owlapi3.module.iterative.ModuleCalc;
-import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
-import org.semanticweb.owlapi.apibinding.OWLManager;
+import at.ainf.diagnosis.Debugger;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
+import at.ainf.owlapi3.module.iterative.modulecalc.HornModuleCalc;
+import at.ainf.owlapi3.module.iterative.modulecalc.ModuleCalc;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
+import at.ainf.owlapi3.reasoner.HornSatReasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static at.ainf.owlapi3.util.OWLUtils.createOntology;
 
@@ -23,7 +26,7 @@ import static at.ainf.owlapi3.util.OWLUtils.createOntology;
  * Time: 08:48
  * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractModuleDiagnosis implements ModuleDiagnosis {
+public abstract class AbstractModuleDiagnosis implements Debugger<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> {
 
     private static Logger logger = LoggerFactory.getLogger(AbstractModuleDiagnosis.class.getName());
 
@@ -47,13 +50,21 @@ public abstract class AbstractModuleDiagnosis implements ModuleDiagnosis {
         allAxioms.addAll(mappings);
 
         OWLOntology ontology = createOntology(allAxioms);
-        moduleCalculator = new ModuleCalc(ontology, factory);
+        moduleCalculator = createModuleCalc(factory, ontology);
 
         this.ontoAxioms = ontoAxioms;
         this.mappings = mappings;
         this.diagSearcher = moduleDiagSearcher;
         diagSearcher.setReasonerFactory(factory);
         this.factory = factory;
+
+    }
+
+    protected ModuleCalc createModuleCalc(OWLReasonerFactory factory, OWLOntology ontology) {
+        if (factory.getReasonerName().equals(HornSatReasoner.NAME))
+            return new HornModuleCalc(ontology);
+        else
+            return new ModuleCalc(ontology, factory);
 
     }
 
@@ -64,6 +75,35 @@ public abstract class AbstractModuleDiagnosis implements ModuleDiagnosis {
         this.mappings = mappings;
         this.factory = factory;
 
+    }
+
+    @Override
+    public void setMaxDiagnosesNumber(int number) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public int getMaxDiagnosesNumber() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void reset() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public Set<FormulaSet<OWLLogicalAxiom>> getConflicts() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public Set<FormulaSet<OWLLogicalAxiom>> getDiagnoses() {
+        throw new NotImplementedException();
+    }
+
+    protected <X> FormulaSet<X> createFormularSet (Set<X> set) {
+        return new FormulaSetImpl<X>(BigDecimal.valueOf(-1),set, Collections.<X>emptySet());
     }
 
     public OWLReasonerFactory getReasonerFactory() {

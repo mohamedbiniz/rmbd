@@ -1,19 +1,15 @@
-package at.ainf.owlapi3.model.multhread;
+package at.ainf.owlapi3.module.iterative.modulediagnosis.multhread;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
-import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
-import at.ainf.diagnosis.tree.ConfidenceCostsEstimator;
-import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLModuleExtractor;
-import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.model.intersection.OWLEqualIntersectionExtractor;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -22,7 +18,6 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;

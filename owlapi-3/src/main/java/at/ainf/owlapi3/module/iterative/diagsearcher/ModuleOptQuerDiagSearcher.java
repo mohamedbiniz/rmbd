@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.module.iterative;
+package at.ainf.owlapi3.module.iterative.diagsearcher;
 
 //import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.diagnosis.logging.MetricsLogger;
@@ -179,7 +179,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> module, Set<OWLLogicalAxiom> backg) {
         TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(module,backg);
-        metricsLogger.createGauge("module-size",module.size());
+        metricsLogger.createGauge("module-size", module.size());
         search.setMaxDiagnosesNumber(9);
 
         Set<OWLLogicalAxiom> possibleFaultyAxioms = new LinkedHashSet<OWLLogicalAxiom>(module);

@@ -1,6 +1,7 @@
-package at.ainf.owlapi3.module.iterative.diag;
+package at.ainf.owlapi3.module.iterative.modulediagnosis;
 
-import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
@@ -20,7 +21,7 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     }
 
     @Override
-    public Set<OWLLogicalAxiom> start() {
+    public Set<FormulaSet<OWLLogicalAxiom>> start() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

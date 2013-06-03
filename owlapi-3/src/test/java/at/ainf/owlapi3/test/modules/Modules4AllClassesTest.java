@@ -2,7 +2,7 @@ package at.ainf.owlapi3.test.modules;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.owlapi3.module.OtfModuleProvider;
+import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;

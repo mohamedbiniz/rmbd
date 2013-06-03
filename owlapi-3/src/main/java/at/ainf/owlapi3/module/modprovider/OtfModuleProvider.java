@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.module;
+package at.ainf.owlapi3.module.modprovider;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;

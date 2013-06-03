@@ -1,6 +1,6 @@
-package at.ainf.owlapi3.module.iterative.diag;
+package at.ainf.owlapi3.module.iterative.modulediagnosis;
 
-import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;

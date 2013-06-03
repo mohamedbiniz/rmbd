@@ -1,7 +1,8 @@
-package at.ainf.owlapi3.model.multhread;
+package at.ainf.owlapi3.module.iterative.modulediagnosis.multhread;
 
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.owlapi3.model.intersection.OWLEqualIntersectionExtractor;
-import at.ainf.owlapi3.module.iterative.diag.AbstractModuleDiagnosis;
+import at.ainf.owlapi3.module.iterative.modulediagnosis.AbstractModuleDiagnosis;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -30,13 +31,13 @@ public class InvTreeDiagSearcher extends AbstractModuleDiagnosis {
     }
 
     @Override
-    public Set<OWLLogicalAxiom> start() {
+    public Set<FormulaSet<OWLLogicalAxiom>> start() {
         List<List<OWLClass>> subSignatures = calculateSubSignatures(getMappings(), USABLE_CORES);
 
         ExecutorService pool = Executors.newFixedThreadPool(USABLE_CORES);
         List<Future<Set<OWLLogicalAxiom>>> futures = startWorkerThreads(pool, subSignatures, USABLE_CORES);
 
-        return computeTargetDiagnosis(futures);
+        return Collections.singleton(createFormularSet(computeTargetDiagnosis(futures)));
     }
 
     protected Set<OWLLogicalAxiom> computeTargetDiagnosis(List<Future<Set<OWLLogicalAxiom>>> futures) {

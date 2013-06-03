@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.module;
+package at.ainf.owlapi3.module.modprovider;
 
 import at.ainf.diagnosis.quickxplain.ModuleProvider;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;

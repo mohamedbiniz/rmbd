@@ -9,7 +9,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.module.OtfModuleProvider;
+import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
