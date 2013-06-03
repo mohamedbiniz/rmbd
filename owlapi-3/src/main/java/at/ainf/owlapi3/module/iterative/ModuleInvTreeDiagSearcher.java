@@ -1,18 +1,16 @@
 package at.ainf.owlapi3.module.iterative;
 
+import at.ainf.diagnosis.logging.MetricsLogger;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
-import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.ConfidenceCostsEstimator;
-import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
-import at.ainf.owlapi3.model.OWLTheory;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
@@ -67,6 +65,7 @@ public class ModuleInvTreeDiagSearcher extends ModuleMinDiagSearcher {
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
         Set<OWLLogicalAxiom> diagnosis = super.calculateDiag(axioms, backg);
+        MetricsLogger.getInstance().createGauge("module-size",axioms.size());
         Set<OWLLogicalAxiom> repaired = new HashSet<OWLLogicalAxiom>(axioms);
         repaired.removeAll(diagnosis);
         boolean isRepaired = getReasonerFactory().createNonBufferingReasoner(createOntology(repaired)).getUnsatisfiableClasses().getEntitiesMinusBottom().isEmpty();

@@ -1,9 +1,6 @@
 package at.ainf.diagnosis.logging;
 
-import com.codahale.metrics.Histogram;
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
+import com.codahale.metrics.*;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
@@ -11,6 +8,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static com.codahale.metrics.MetricRegistry.name;
 
 /**
  * Created with IntelliJ IDEA.
@@ -114,11 +113,36 @@ public class MetricsLogger {
         return histogram;
     }
 
+    public void updateHistogram (String name, long[] values) {
+        Histogram histogram = getHistogram(name);
+        for (long value : values)
+            histogram.update(value);
+    }
+
     public Timer getTimer (String name) {
         Timer timer = getActualMetric().getTimers().get(name);
         if (timer == null)
             timer = getActualMetric().timer(name);
         return timer;
+    }
+
+    public Gauge createGauge (String identifier, final int value) {
+        Gauge gauge = getActualMetric().getGauges().get(identifier);
+        if (gauge == null)
+            gauge = getActualMetric().register(name(MetricsLogger.class, identifier), new Gauge<Integer>() {
+                @Override
+                public Integer getValue() {
+                    return value;
+                }
+            });
+        return gauge;
+    }
+
+    public Counter getCounter (String name) {
+        Counter counter = getActualMetric().getCounters().get(name);
+        if (counter == null)
+            counter = getActualMetric().counter(name);
+        return counter;
     }
 
     public void logStandardMetrics() {

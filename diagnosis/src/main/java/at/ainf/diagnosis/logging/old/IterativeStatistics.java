@@ -14,33 +14,33 @@ import org.slf4j.Logger;
  */
 public class IterativeStatistics {
 
-    public static List<Long> numberCS = new LinkedList<Long>();
+    public static List<Long> numberCS = new LinkedList<Long>(); // DONE
 
-    public static Average avgCardCS = new Average();
+    public static Average avgCardCS = new Average(); // DONE
 
-    public static List<Long> cardHS = new LinkedList<Long>();
+    public static List<Long> cardHS = new LinkedList<Long>();  // DONE
 
-    public static List<Long> moduleSize = new LinkedList<Long>();
+    public static List<Long> moduleSize = new LinkedList<Long>(); // DONE
 
-    public static List<Long> diagnosisTime = new LinkedList<Long>();
+    public static List<Long> diagnosisTime = new LinkedList<Long>(); // DONE
 
-    public static List<Long> moduleTime = new LinkedList<Long>();
+    public static List<Long> moduleTime = new LinkedList<Long>(); // DONE
 
-    public static Average avgConsistencyTime = new Average();
+    public static Average avgConsistencyTime = new Average(); // DONE
 
-    public static Average avgCoherencyTime = new Average();
+    public static Average avgCoherencyTime = new Average(); // DONE
 
-    public static Average avgConsistencyCheck = new Average(Average.Mode.SUM);
+    public static Average avgConsistencyCheck = new Average(Average.Mode.SUM); //  DONE
 
-    public static Average avgCoherencyCheck = new Average(Average.Mode.SUM);
+    public static Average avgCoherencyCheck = new Average(Average.Mode.SUM); //  DONE
 
-    public static List<Long> numOfQueries = new LinkedList<Long>();
+    public static List<Long> numOfQueries = new LinkedList<Long>(); // DONE
 
-    public static Average avgTimeQueryGen = new Average();
+    public static Average avgTimeQueryGen = new Average(); // DONE
 
-    public static Average avgQueryCard = new Average();
+    public static Average avgQueryCard = new Average(); // DONE
 
-    public static Average avgReactTime = new Average();
+    public static Average avgReactTime = new Average(); // DONE
 
     public static void logAndClear (Logger log, Average set, String message) {
         logAndClear(log,set.toAverageCollection(),message);

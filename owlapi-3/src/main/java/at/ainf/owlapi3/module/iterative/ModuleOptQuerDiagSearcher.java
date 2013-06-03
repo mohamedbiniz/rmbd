@@ -180,6 +180,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> module, Set<OWLLogicalAxiom> backg) {
         TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(module,backg);
+        MetricsLogger.getInstance().createGauge("module-size",module.size());
         search.setMaxDiagnosesNumber(9);
 
         Set<OWLLogicalAxiom> possibleFaultyAxioms = new LinkedHashSet<OWLLogicalAxiom>(module);
