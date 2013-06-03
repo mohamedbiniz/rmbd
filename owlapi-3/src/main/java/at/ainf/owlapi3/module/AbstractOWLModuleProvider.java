@@ -12,6 +12,8 @@ import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.*;
 
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -102,17 +104,6 @@ public abstract class AbstractOWLModuleProvider implements OWLModuleProvider {
         for (OWLAxiom axiom : axioms)
             result.add((OWLLogicalAxiom)axiom);
         return result;
-    }
-
-    protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
-        OWLOntology debuggingOntology = null;
-        try {
-            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology,axioms);
-        return debuggingOntology;
     }
 
     protected <X> Set<X> createUnion (Collection<Set<X>> sets) {

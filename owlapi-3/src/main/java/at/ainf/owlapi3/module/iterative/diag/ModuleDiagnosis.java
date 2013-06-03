@@ -13,6 +13,6 @@ import java.util.Set;
  */
 public interface ModuleDiagnosis {
 
-    public Set<OWLLogicalAxiom> calculateTargetDiagnosis();
+    public Set<OWLLogicalAxiom> start();
 
 }

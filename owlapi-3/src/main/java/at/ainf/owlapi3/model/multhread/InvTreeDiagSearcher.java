@@ -30,7 +30,7 @@ public class InvTreeDiagSearcher extends AbstractModuleDiagnosis {
     }
 
     @Override
-    public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
+    public Set<OWLLogicalAxiom> start() {
         List<List<OWLClass>> subSignatures = calculateSubSignatures(getMappings(), USABLE_CORES);
 
         ExecutorService pool = Executors.newFixedThreadPool(USABLE_CORES);

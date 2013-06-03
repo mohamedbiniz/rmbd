@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -22,17 +24,6 @@ public class OWLModuleExtractor {
 
     public OWLModuleExtractor(Set<OWLLogicalAxiom> ontology) {
         extractor = new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), createOntology(ontology), ModuleType.STAR);
-    }
-
-    private OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
-        OWLOntology debuggingOntology = null;
-        try {
-            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology,axioms);
-        return debuggingOntology;
     }
 
     private Set<OWLEntity> convertClassToEntity (Collection<OWLClass> signature) {

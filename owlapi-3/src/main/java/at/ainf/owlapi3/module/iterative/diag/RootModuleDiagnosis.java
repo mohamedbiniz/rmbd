@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -77,7 +79,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
     //private MetricsManager metricsManager = MetricsManager.getInstance();
 
-    public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
+    public Set<OWLLogicalAxiom> start() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
 
         List<OWLClass> nvClasses = computeNvClasses(getTable(), repaired);

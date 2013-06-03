@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -47,7 +49,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
     //private MetricsManager metricsManager = MetricsManager.getInstance();
 
-    public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
+    public Set<OWLLogicalAxiom> start() {
         Set<OWLLogicalAxiom> targetDiagnosis = new HashSet<OWLLogicalAxiom>();
         metricsLogger.startTimer("calculatetargetdiag");
         List<OWLClass> unsatClasses = getModuleCalculator().getInitialUnsatClasses(Collections.<OWLClass>emptySet(),
@@ -111,29 +113,29 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             //IterativeStatistics.avgConsistencyTime.createNewValueGroup();
             //IterativeStatistics.avgConsistencyCheck.createNewValueGroup();
             //IterativeStatistics.avgCoherencyCheck.createNewValueGroup();
-            MetricsLogger.getInstance().addLabel("modulediag");
+            metricsLogger.addLabel("modulediag");
             Set<OWLLogicalAxiom> partDiag = getDiagSearcher().calculateDiag(axioms, background);
-            MetricRegistry metric = MetricsLogger.getInstance().removeLabel("modulediag");
+            MetricRegistry metric = metricsLogger.removeLabel("modulediag");
             // TODO null pointer exception
             if (metric.getGauges().get("module-size") != null)
-              MetricsLogger.getInstance().getHistogram("moduleSizes").update((Integer)metric.getGauges().get("module-size").getValue());
+              metricsLogger.getHistogram("moduleSizes").update((Integer)metric.getGauges().get("module-size").getValue());
             if (metric.getGauges().get("card-hs") != null)
-                MetricsLogger.getInstance().getHistogram("cardHs").update((Integer)metric.getGauges().get("card-hs").getValue());
+                metricsLogger.getHistogram("cardHs").update((Integer)metric.getGauges().get("card-hs").getValue());
             if (metric.getHistograms().get("card-cs") != null)
-                MetricsLogger.getInstance().getHistogram("cardCs").update((long)metric.getHistograms().get("card-cs").getSnapshot().getMean());
+                metricsLogger.getHistogram("cardCs").update((long)metric.getHistograms().get("card-cs").getSnapshot().getMean());
             if (metric.getHistograms().get("card-cs") != null)
-                MetricsLogger.getInstance().getHistogram("numCs").update(metric.getHistograms().get("card-cs").getCount());
+                metricsLogger.getHistogram("numCs").update(metric.getHistograms().get("card-cs").getCount());
             if (metric.getCounters().get("numofqueries") != null)
-                MetricsLogger.getInstance().getHistogram("numOfQueries").update(metric.getCounters().get("numofqueries").getCount());
-            MetricsLogger.getInstance().getHistogram("reactionTime").update((long)metric.getTimers().get("reactionTime").getSnapshot().getMean());
-            MetricsLogger.getInstance().updateHistogram("queryCard",metric.getHistograms().get("partition-size").getSnapshot().getValues());
-            //MetricsLogger.getInstance().getHistogram("queryCard").update((long)metric.getHistograms().get("partition-size").getSnapshot().getMean());
-            MetricsLogger.getInstance().getHistogram("timeQueryGen").update((long)metric.getTimers().get("calculatingpartition").getSnapshot().getMean());
-            MetricsLogger.getInstance().getHistogram("avgRunofhstree").update((long)metric.getTimers().get("runofhstree").getSnapshot().getMean());
-            MetricsLogger.getInstance().getHistogram("moduleNumConsistencyChecks").update(metric.getTimers().get("consistencyChecks").getCount());
-            MetricsLogger.getInstance().getHistogram("moduleTimeConsistencyChecks").update((long)metric.getTimers().get("consistencyChecks").getSnapshot().getMean());
-            MetricsLogger.getInstance().getHistogram("moduleNumCoherencyChecks").update(metric.getTimers().get("coherencyChecks").getCount());
-            MetricsLogger.getInstance().getHistogram("moduleTimeCoherencyChecks").update((long)metric.getTimers().get("coherencyChecks").getSnapshot().getMean());
+                metricsLogger.getHistogram("numOfQueries").update(metric.getCounters().get("numofqueries").getCount());
+            metricsLogger.getHistogram("reactionTime").update((long)metric.getTimers().get("reactionTime").getSnapshot().getMean());
+            metricsLogger.updateHistogram("queryCard",metric.getHistograms().get("partition-size").getSnapshot().getValues());
+            //metricsLogger.getHistogram("queryCard").update((long)metric.getHistograms().get("partition-size").getSnapshot().getMean());
+            metricsLogger.getHistogram("timeQueryGen").update((long)metric.getTimers().get("calculatingpartition").getSnapshot().getMean());
+            metricsLogger.getHistogram("avgRunofhstree").update((long)metric.getTimers().get("runofhstree").getSnapshot().getMean());
+            metricsLogger.getHistogram("moduleNumConsistencyChecks").update(metric.getTimers().get("consistencyChecks").getCount());
+            metricsLogger.getHistogram("moduleTimeConsistencyChecks").update((long)metric.getTimers().get("consistencyChecks").getSnapshot().getMean());
+            metricsLogger.getHistogram("moduleNumCoherencyChecks").update(metric.getTimers().get("coherencyChecks").getCount());
+            metricsLogger.getHistogram("moduleTimeCoherencyChecks").update((long)metric.getTimers().get("coherencyChecks").getSnapshot().getMean());
             metricsLogger.stopTimer("calculatepartdiag");
 
             for (OWLLogicalAxiom axiom : partDiag)

@@ -8,6 +8,8 @@ import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 import java.util.*;
 
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
