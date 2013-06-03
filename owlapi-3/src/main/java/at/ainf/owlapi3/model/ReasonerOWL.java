@@ -2,7 +2,6 @@ package at.ainf.owlapi3.model;
 
 import at.ainf.diagnosis.logging.MetricsLogger;
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import com.codahale.metrics.Timer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
@@ -81,8 +80,8 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         boolean r = reasoner.isConsistent();
         long time = metricsLogger.stopTimer("consistencychecks");
         timer.stop();
-        IterativeStatistics.avgConsistencyTime.addValue(time);
-        IterativeStatistics.avgConsistencyCheck.addValue(1L);
+        //IterativeStatistics.avgConsistencyTime.addValue(time);
+        //IterativeStatistics.avgConsistencyCheck.addValue(1L);
         return r;
     }
 
@@ -109,8 +108,8 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         boolean r = reasoner.getBottomClassNode().isSingleton();
         long time = metricsLogger.stopTimer("iscoherencycheck");
         coherencyTimer.stop();
-        IterativeStatistics.avgCoherencyTime.addValue(time);
-        IterativeStatistics.avgCoherencyCheck.addValue(1L);
+        //IterativeStatistics.avgCoherencyTime.addValue(time);
+        //IterativeStatistics.avgCoherencyCheck.addValue(1L);
         return r;
     }
 

@@ -14,7 +14,6 @@ import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,9 +124,9 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         logger.info ("time needed to search for diagnoses: " + time);
         Collection<Set<OWLLogicalAxiom>> diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
 
-        IterativeStatistics.avgTimeQueryGen.createNewValueGroup();
-        IterativeStatistics.avgQueryCard.createNewValueGroup();
-        IterativeStatistics.avgReactTime.createNewValueGroup();
+        //IterativeStatistics.avgTimeQueryGen.createNewValueGroup();
+        //IterativeStatistics.avgQueryCard.createNewValueGroup();
+        //IterativeStatistics.avgReactTime.createNewValueGroup();
 
         int numOfQueries = 0;
         long reactionTime = System.currentTimeMillis();
@@ -140,7 +139,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 best = ckk.generatePartition(search.getDiagnoses());
                 lastLabel = metricsLogger.getLabelsConcat();
                 long queryCalc = metricsLogger.stopTimer("calculatingpartition");
-                IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);
+                //IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);
             } catch (SolverException e) {
                 // e.printStackTrace();
             } catch (InconsistentTheoryException e) {
@@ -150,7 +149,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             if (isMinimizerActive())
                 minimizePartitionAx(best,search.getSearchable());
 
-            IterativeStatistics.avgQueryCard.addValue((long)best.partition.size());
+            //IterativeStatistics.avgQueryCard.addValue((long)best.partition.size());
             MetricsLogger.getInstance().getHistogram("partition-size").update(best.partition.size());
 
             logger.info(lastLabel + " size of partition " + best.partition.size());
@@ -161,7 +160,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             try {
                 MetricsLogger.getInstance().stopTimer("reactionTime");
                 reactionTime = System.currentTimeMillis() - reactionTime;
-                IterativeStatistics.avgReactTime.addValue(reactionTime);
+                //IterativeStatistics.avgReactTime.addValue(reactionTime);
                 boolean answer = askUser(best);
                 logger.info("user answered query: All axioms " + answer);
                 numOfQueries++;
@@ -200,7 +199,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
         }
         logger.info("number of queries: " + numOfQueries);
-        IterativeStatistics.numOfQueries.add((long)numOfQueries);
+        //IterativeStatistics.numOfQueries.add((long)numOfQueries);
 
         if (diagnoses.isEmpty())
             return Collections.emptySet();

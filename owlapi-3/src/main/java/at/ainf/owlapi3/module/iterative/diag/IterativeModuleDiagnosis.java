@@ -2,8 +2,6 @@ package at.ainf.owlapi3.module.iterative.diag;
 
 
 import at.ainf.diagnosis.logging.MetricsLogger;
-//import at.ainf.diagnosis.logging.old.MetricsManager;
-import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.Multimap;
@@ -109,10 +107,10 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             //Set<OWLLogicalAxiom> partDiag = diagnosisOracle.chooseDiagnosis(diagnoses);
             metricsLogger.startTimer("calculatepartdiag");
             //metricsManager.getMetrics().histogram("avgCoherencyTimeMetric");
-            IterativeStatistics.avgCoherencyTime.createNewValueGroup();
-            IterativeStatistics.avgConsistencyTime.createNewValueGroup();
-            IterativeStatistics.avgConsistencyCheck.createNewValueGroup();
-            IterativeStatistics.avgCoherencyCheck.createNewValueGroup();
+            //IterativeStatistics.avgCoherencyTime.createNewValueGroup();
+            //IterativeStatistics.avgConsistencyTime.createNewValueGroup();
+            //IterativeStatistics.avgConsistencyCheck.createNewValueGroup();
+            //IterativeStatistics.avgCoherencyCheck.createNewValueGroup();
             MetricsLogger.getInstance().addLabel("modulediag");
             Set<OWLLogicalAxiom> partDiag = getDiagSearcher().calculateDiag(axioms, background);
             MetricRegistry metric = MetricsLogger.getInstance().removeLabel("modulediag");
@@ -143,26 +141,27 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             logger.info("---");
 
             long timeModule = metricsLogger.stopTimer("moduleTimeNew");
-            IterativeStatistics.moduleTime.add(timeModule);
+            //IterativeStatistics.moduleTime.add(timeModule);
             getModuleCalculator().removeAxiomsFromOntologyAndModules(partDiag);
             getModuleCalculator().updatedLists(actualUnsatClasses, unsatClasses, MAX_UNSAT_CLASSES);
             targetDiagnosis.addAll(partDiag);
         }
         //metricsManager.logAllMetrics();
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCardCS, "average cardinality CS");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.cardHS, "cardinality HS");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.numberCS, "number CS");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.moduleSize, "module size");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.diagnosisTime, "diagnosis time");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.moduleTime, "module time");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgConsistencyTime, "consistency time");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyTime, "coherency time");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgConsistencyCheck, "consistency checks");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyCheck, "coherency checks");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.numOfQueries, "num of queries");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgTimeQueryGen, "time querygen");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgReactTime, "reaction time");
-        IterativeStatistics.logAndClear(logger, IterativeStatistics.avgQueryCard, "query card");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCardCS, "average cardinality CS");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.cardHS, "cardinality HS");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.numberCS, "number CS");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.moduleSize, "module size");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.diagnosisTime, "diagnosis time");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.moduleTime, "module time");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.avgConsistencyTime, "consistency time");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyTime, "coherency time");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.avgConsistencyCheck, "consistency checks");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.avgCoherencyCheck, "coherency checks");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.numOfQueries, "num of queries");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.avgTimeQueryGen, "time querygen");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.avgReactTime, "reaction time");
+        //IterativeStatistics.logAndClear(logger, IterativeStatistics.avgQueryCard, "query card");
+
 
         metricsLogger.stopTimer("calculatetargetdiag");
         return targetDiagnosis;
