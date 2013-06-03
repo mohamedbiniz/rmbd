@@ -13,7 +13,6 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.diagnosis.logging.old.IterativeStatistics;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -25,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
+
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
 
 /**
  * Created with IntelliJ IDEA.
@@ -63,17 +64,6 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
     @Override
     public OWLReasonerFactory getReasonerFactory() {
         return factory;
-    }
-
-    protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
-        OWLOntology debuggingOntology = null;
-        try {
-            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology, axioms);
-        return debuggingOntology;
     }
 
     protected TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> createSearch
@@ -136,7 +126,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         }
         String label = metricsLogger.getLabelsConcat();
         long timeTreeSearch = metricsLogger.stopTimer("runofhstree");
-        IterativeStatistics.diagnosisTime.add(timeTreeSearch);
+        //IterativeStatistics.diagnosisTime.add(timeTreeSearch);
         String conflicts = label + " found conflicts with sizes: ";
         for (Set<OWLLogicalAxiom> cs : search.getConflicts())
             conflicts += cs.size() + ", ";
@@ -157,13 +147,13 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         time = System.currentTimeMillis() - time;
         logger.info ("time needed to search for diagnoses: " + time);
 
-        IterativeStatistics.numberCS.add((long)search.getConflicts().size());
-        IterativeStatistics.avgCardCS.createNewValueGroup();
-        for (Set<OWLLogicalAxiom> cs : search.getConflicts())
-            IterativeStatistics.avgCardCS.addValue((long)cs.size());
+        //IterativeStatistics.numberCS.add((long)search.getConflicts().size());
+        //IterativeStatistics.avgCardCS.createNewValueGroup();
+        //for (Set<OWLLogicalAxiom> cs : search.getConflicts())
+            //IterativeStatistics.avgCardCS.addValue((long)cs.size());
         for (Set<OWLLogicalAxiom> cs : search.getConflicts())
             MetricsLogger.getInstance().getHistogram("card-cs").update(cs.size());
-        IterativeStatistics.moduleSize.add((long)axioms.size());
+        //IterativeStatistics.moduleSize.add((long)axioms.size());
         MetricsLogger.getInstance().createGauge("module-size",axioms.size());
 
         Set<FormulaSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
@@ -172,8 +162,8 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
             diagnosis = Collections.emptySet();
         else
             diagnosis = chooseDiagnosis(diagnoses);
-        IterativeStatistics.cardHS.add((long) diagnosis.size());
-        MetricsLogger.getInstance().createGauge("card-hs",diagnosis.size());
+        //IterativeStatistics.cardHS.add((long) diagnosis.size());
+        MetricsLogger.getInstance().createGauge("card-hs", diagnosis.size());
 
         return diagnosis;
 

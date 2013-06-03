@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
