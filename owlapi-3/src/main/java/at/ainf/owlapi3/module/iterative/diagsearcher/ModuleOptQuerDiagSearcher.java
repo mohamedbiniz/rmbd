@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static at.ainf.owlapi3.util.SetUtils.createIntersection;
+import static at.ainf.owlapi3.util.SetUtils.createUnion;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pr8
@@ -28,7 +31,10 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
    private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());
 
-    private Collection<Set<OWLLogicalAxiom>> collectedNonEntailedTCs = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+   private MetricsLogger metricsLogger = MetricsLogger.getInstance();
+
+
+   private Collection<Set<OWLLogicalAxiom>> collectedNonEntailedTCs = new LinkedHashSet<Set<OWLLogicalAxiom>>();
 
 
 
@@ -40,9 +46,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
         super(path,correctAxioms,falseAxioms,confidences,isMinimizerActive);
     }
 
-    private enum Answer {
-        TRUE, FALSE, STRONGLY_FALSE;
-    }
+
 
     private class QueryDiag {
 
@@ -74,47 +78,34 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
     }
 
+    private class Pair<A,B> {
 
-    private boolean getUserAnswer(OWLLogicalAxiom axiom) {
-        if (correctAxioms.contains(axiom))
-            return true;
-        else if (falseAxioms.contains(axiom))
-            return false;
-        else {
-            throw new IllegalStateException();
+        private final A first;
+        private final B second;
+
+        public Pair(A first, B second){
+            this.first = first;
+            this.second = second;
         }
-    }
 
-    private Answer getUserAnswer(Set<OWLLogicalAxiom> query) {
-        if (correctAxioms.containsAll(query))
-            return Answer.TRUE;
-        else if (falseAxioms.containsAll(query))
-            return Answer.STRONGLY_FALSE;
-        else {
-            return Answer.FALSE;
+        public A getFirst() {
+            return first;
         }
-    }
 
-    private Set<OWLLogicalAxiom> getIntersectionOfDiags(Set<Set<OWLLogicalAxiom>> diagnoses){
-        final Iterator<Set<OWLLogicalAxiom>> i = diagnoses.iterator();
-        Set<OWLLogicalAxiom> intersectionOfDiags = new LinkedHashSet<OWLLogicalAxiom>(i.next());
-        while (i.hasNext())
-            intersectionOfDiags.retainAll(i.next());
-        return intersectionOfDiags;
-    }
-
-    private Set<OWLLogicalAxiom> getUnionOfDiags(Set<Set<OWLLogicalAxiom>> diagnoses){
-        Set<OWLLogicalAxiom> unionOfDiags = new LinkedHashSet<OWLLogicalAxiom>();
-        for(Set<OWLLogicalAxiom> diag : diagnoses){
-            unionOfDiags.addAll(diag);
+        public B getSecond() {
+            return second;
         }
-        return unionOfDiags;
+
     }
+
+
+
+
 
     private Set<OWLLogicalAxiom> getFirstAlternativeQuery(HashSet<Set<OWLLogicalAxiom>> diagnoses, Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> previousQuery){
 
-        Set<OWLLogicalAxiom> unionOfDiags = getUnionOfDiags(diagnoses);
-        Set<OWLLogicalAxiom> intersectionOfDiags = getIntersectionOfDiags(diagnoses);
+        Set<OWLLogicalAxiom> unionOfDiags = createUnion(diagnoses);
+        Set<OWLLogicalAxiom> intersectionOfDiags = createIntersection(diagnoses);
 
         Set<OWLLogicalAxiom> discAx = unionOfDiags;
         discAx.removeAll(intersectionOfDiags);
@@ -141,7 +132,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
     private QueryDiag getSecondAlternativeQuery(HashSet<Set<OWLLogicalAxiom>> diagnoses, Set<OWLLogicalAxiom> stronglyFalseQuery, Collection<Set<OWLLogicalAxiom>> entailedTCs){
 
-        Set<OWLLogicalAxiom> intersectionOfDiags = getIntersectionOfDiags(diagnoses);
+        Set<OWLLogicalAxiom> intersectionOfDiags = createIntersection(diagnoses);
 
         Set<OWLLogicalAxiom> temp = null;
         for(Set<OWLLogicalAxiom> diag : diagnoses){
@@ -158,6 +149,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
         throw new IllegalStateException("no eligible diagnosis found, BUT there must be such a diagnosis!");
     }
 
+
     private Set<OWLLogicalAxiom> minimizeQueryToNotAnsweredAxioms(Set<OWLLogicalAxiom> query, Collection<Set<OWLLogicalAxiom>> entailedTCs){
         Set<OWLLogicalAxiom> axToRemove = new HashSet<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> axSet;
@@ -172,9 +164,6 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
         return minimizedQuery;
     }
 
-    private MetricsLogger metricsLogger = MetricsLogger.getInstance();
-
-    //private MetricsManager metricsManager = MetricsManager.getInstance();
 
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> module, Set<OWLLogicalAxiom> backg) {
@@ -208,7 +197,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             try {
                 metricsLogger.startTimer("calculatingpartition");
                 best = ckk.generatePartition(search.getDiagnoses());
-                lastLabel = metricsLogger.getLabelsConcat();
+                lastLabel = metricsLogger.getLabelManager().getLabelsConc();
                 long queryCalc = metricsLogger.stopTimer("calculatingpartition");
                 //IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);
             } catch (SolverException e) {
@@ -235,7 +224,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             Set<OWLLogicalAxiom> query = best.partition;
             QueryDiag qd = null;
             while(!posTcOrTargetDiagFound){
-                Answer answer = getUserAnswer(query);
+                Answer answer = askUser(query);
                 numOfQueries++;
 
                 switch(answer){
@@ -270,7 +259,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                         break;
                     case FALSE:
                         for (OWLLogicalAxiom axiom : query){
-                            if(getUserAnswer(axiom)){
+                            if(askUser(axiom)){
                                 search.getSearchable().getKnowledgeBase().addEntailedTest(Collections.singleton(axiom));
                             } else{
                                 collectedNonEntailedTCs.add(new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom)));

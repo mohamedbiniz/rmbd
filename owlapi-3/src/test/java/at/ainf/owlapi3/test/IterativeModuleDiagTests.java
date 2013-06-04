@@ -9,11 +9,8 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLModuleExtractor;
 import at.ainf.owlapi3.model.intersection.OWLEqualIntersectionExtractor;
 import at.ainf.owlapi3.model.intersection.OWLPerecentConceptIntersectionExtractor;
+import at.ainf.owlapi3.module.iterative.diagsearcher.*;
 import at.ainf.owlapi3.module.iterative.modulediagnosis.multhread.InvTreeDiagSearcher;
-import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
-import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleMinDiagSearcher;
-import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleQuerDiagSearcher;
-import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleTargetDiagSearcher;
 import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
 import at.ainf.owlapi3.module.iterative.modulediagnosis.IterativeModuleDiagnosis;
@@ -870,11 +867,13 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> falseAxioms = new HashSet<OWLLogicalAxiom>(mappingAxioms);
         falseAxioms.removeAll(correctAxioms);
 
-        //ModuleDiagSearcher d = new ModuleMinDiagSearcher();
+        ModuleDiagSearcher d = new ModuleMinDiagSearcher();
         //ModuleDiagSearcher d = new ModuleInvTreeDiagSearcher();
         //ModuleDiagSearcher d = new ModuleTargetDiagSearcher(pathMappings);
-        ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
+        //ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
         //ModuleDiagSearcher d = new ModuleOptQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
+
+        d.setTreeCreator(new InvHSTreeCreator());
 
         long time = System.currentTimeMillis();
         Debugger<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,
