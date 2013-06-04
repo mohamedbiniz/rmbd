@@ -1,18 +1,20 @@
 package at.ainf.owlapi3.module.iterative.diagsearcher;
 
 //import at.ainf.diagnosis.logging.old.MetricsManager;
+import at.ainf.diagnosis.Searchable;
+import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.logging.MetricsLogger;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.ConfidenceCostsEstimator;
-import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -33,11 +35,14 @@ import static at.ainf.owlapi3.util.OWLUtils.createOntology;
  */
 public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
-    private int maxDiags;
+    protected int maxDiags;
 
     private Map<OWLLogicalAxiom, BigDecimal> confidences;
 
     private OWLReasonerFactory factory;
+
+
+    private TreeCreator treeCreator;
 
     public ModuleMinDiagSearcher() {
         this (null);
@@ -47,6 +52,15 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
     public ModuleMinDiagSearcher(Map<OWLLogicalAxiom, BigDecimal> confidences) {
         this.maxDiags = 1;
         this.confidences = confidences;
+        this.treeCreator = new HSTreeCreator();
+    }
+
+    public TreeCreator getTreeCreator() {
+        return treeCreator;
+    }
+
+    public void setTreeCreator(TreeCreator treeCreator) {
+        this.treeCreator = treeCreator;
     }
 
     public Map<OWLLogicalAxiom, BigDecimal> getConfidences() {
@@ -65,23 +79,17 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
     protected TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> createSearch
             (Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
-        HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getTreeCreator().getSearch();
 
-        OWLTheory theory = null;
         OWLOntology ontology = createOntology(axioms);
-        try {
-            theory = new OWLTheory(getReasonerFactory(), ontology, backg);
-        } catch (InconsistentTheoryException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (SolverException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+
+        Searchable<OWLLogicalAxiom> theory = getTreeCreator().getSearchable(getReasonerFactory(), backg, ontology);
+
+        search.setSearcher(getTreeCreator().getSearcher());
 
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
 
-        search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
-
-        if (confidences != null)
+        if (getConfidences() != null)
             search.setCostsEstimator(new ConfidenceCostsEstimator<OWLLogicalAxiom>(ontology.getLogicalAxioms(), BigDecimal.ONE,confidences));
         else
             search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(theory));
@@ -121,7 +129,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
                 logger.info("there are really no more conflicts");
             }
         }
-        String label = metricsLogger.getLabelsConcat();
+        String label = metricsLogger.getLabelManager().getLabelsConc();
         long timeTreeSearch = metricsLogger.stopTimer("runofhstree");
         //IterativeStatistics.diagnosisTime.add(timeTreeSearch);
         String conflicts = label + " found conflicts with sizes: ";

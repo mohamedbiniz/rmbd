@@ -27,7 +27,9 @@ public class MetricsLogger {
 
     private String actualMetric;
 
-    private List<String> labels = new LinkedList<String>();
+    private Map<String,Timer.Context> contexts = new HashMap<String, Timer.Context>();
+
+    private LabelManager labelManager;
 
     public static MetricsLogger getInstance() {
         if (instance != null)
@@ -39,26 +41,31 @@ public class MetricsLogger {
 
     public MetricsLogger() {
         metrics.put(standardMetric, new MetricRegistry());
-        labels.add(standardMetric);
+        labelManager = new LabelManager(standardMetric);
         actualMetric = standardMetric;
     }
 
-    private Map<String,Integer> countOfLabels = new HashMap<String, Integer>();
-
-    private int increaseCounter(String identifier) {
-        if (!countOfLabels.containsKey(identifier))
-            countOfLabels.put(identifier,0);
-
-        Integer counter = countOfLabels.get(identifier);
-        countOfLabels.put(identifier,counter+1);
-        return counter;
+    public LabelManager getLabelManager() {
+        return labelManager;
     }
 
-    private int getActualCounter(String identifier) {
-        return countOfLabels.get(identifier) - 1;
+    public MetricRegistry addLabel (String label) {
+
+        String labelFull = labelManager.addLabel(label);
+        MetricRegistry metricRegistry = new MetricRegistry();
+        metrics.put(labelFull, metricRegistry);
+        actualMetric = labelFull;
+        return metricRegistry;
     }
 
-    Map<String,Timer.Context> contexts = new HashMap<String, Timer.Context>();
+    public MetricRegistry removeLabel (String label) {
+
+        String labelFull = labelManager.removeLabel(label);
+        MetricRegistry removed = metrics.remove(labelFull);
+        actualMetric = labelManager.getActualLabel();
+        return removed;
+    }
+
 
     public void startTimer (String timer) {
         contexts.put(timer, getTimer(timer).time());
@@ -70,36 +77,8 @@ public class MetricsLogger {
         return time;
     }
 
-    public MetricRegistry addLabel (String label) {
-
-        String labelFull = label + "-" + increaseCounter(label);
-        labels.add(labelFull);
-        MetricRegistry metricRegistry = new MetricRegistry();
-        metrics.put(labelFull, metricRegistry);
-        actualMetric = labelFull;
-        return metricRegistry;
-    }
-
-    public MetricRegistry removeLabel (String label) {
-
-        String labelFull = label + "-" + getActualCounter(label);
-        labels.remove(labelFull);
-        MetricRegistry removed = metrics.remove(labelFull);
-        actualMetric = labels.get(labels.size() - 1);
-        return removed;
-    }
-
-    public String getLabelsConcat() {
-        StringBuilder full = new StringBuilder();
-        for (String label : labels) {
-            full.append(label);
-            full.append("_");
-        }
-        return full.toString();
-    }
-
     public void logTime(String timerIdent, long time) {
-        LoggerFactory.getLogger("at.ainf.metrics").info(getLabelsConcat() + "_" + timerIdent + ": " + time);
+        LoggerFactory.getLogger("at.ainf.metrics").info(labelManager.getLabelsConc() + "_" + timerIdent + ": " + time);
     }
 
     public MetricRegistry getActualMetric() {

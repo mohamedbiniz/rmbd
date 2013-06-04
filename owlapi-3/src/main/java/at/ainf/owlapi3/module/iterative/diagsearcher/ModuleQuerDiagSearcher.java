@@ -21,6 +21,9 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.mindswap.pellet.utils.ATermUtils.assertTrue;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -57,19 +60,14 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         isMinimizerActive = minimizerActive;
     }
 
-    protected boolean askUser(Partition<OWLLogicalAxiom> partition) throws AnswerException {
-        if (correctAxioms.containsAll(partition.partition))
-            return true;
-        else if (falseAxioms.containsAll(partition.partition))
-            return false;
-        else {
-            //logger.info("we doesn't know an answer for sure (not all axioms false or correct) so we return false ");
-            //for (OWLLogicalAxiom axiom : partition.partition)
-            //    logger.info(axiom + ", " + correctAxioms.contains(axiom) + ", " + falseAxioms.contains(axiom));
-            //logger.info(partition.dx.size() + ", " + partition.dnx.size() + ", " + partition.dz.size() + ", ");
-            throw new AnswerException("some axioms true, some false");
+    protected Answer askUser(Set<OWLLogicalAxiom> partition) {
+        if (correctAxioms.containsAll(partition))
+            return Answer.TRUE;
+        else if (falseAxioms.containsAll(partition))
+            return Answer.STRONGLY_FALSE;
+        else
+            return Answer.FALSE;
 
-        }
     }
 
     protected void minimizePartitionAx(Partition<OWLLogicalAxiom> query, Searchable<OWLLogicalAxiom> searchable) {
@@ -87,12 +85,6 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         }
     }
 
-    class AnswerException extends Exception {
-        AnswerException(String message) {
-            super(message);
-        }
-    }
-
     protected boolean askUser(OWLLogicalAxiom axiom) {
         if (correctAxioms.contains(axiom))
             return true;
@@ -106,6 +98,10 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
     private MetricsLogger metricsLogger = MetricsLogger.getInstance();
 
     //private MetricsManager metricsManager = MetricsManager.getInstance();
+
+    protected enum Answer {
+        TRUE, FALSE, STRONGLY_FALSE;
+    }
 
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
@@ -136,8 +132,8 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             Partition<OWLLogicalAxiom> best = null;
             try {
                 metricsLogger.startTimer("calculatingpartition");
-                best = ckk.generatePartition(search.getDiagnoses());
-                lastLabel = metricsLogger.getLabelsConcat();
+                best = checkNotNull(ckk.generatePartition(search.getDiagnoses()));
+                lastLabel = metricsLogger.getLabelManager().getLabelsConc();
                 long queryCalc = metricsLogger.stopTimer("calculatingpartition");
                 //IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);
             } catch (SolverException e) {
@@ -157,32 +153,33 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                 logger.info("query axiom: " + axiom);
             logger.info("query axiom end");
 
-            try {
-                metricsLogger.stopTimer("reactionTime");
-                reactionTime = System.currentTimeMillis() - reactionTime;
-                //IterativeStatistics.avgReactTime.addValue(reactionTime);
-                boolean answer = askUser(best);
+
+            metricsLogger.stopTimer("reactionTime");
+            reactionTime = System.currentTimeMillis() - reactionTime;
+            //IterativeStatistics.avgReactTime.addValue(reactionTime);
+            Answer answer = askUser(best.partition);
+            if (!answer.equals(Answer.FALSE)) {
                 logger.info("user answered query: All axioms " + answer);
                 numOfQueries++;
                 metricsLogger.getCounter("numfofqueries").inc();
 
-                if (answer)
+                if (answer.equals(Answer.TRUE))
                     search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
-                else
+                else if (answer.equals(Answer.STRONGLY_FALSE))
                     search.getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
                     //for (OWLLogicalAxiom axiom : best.partition)
                     //    search.getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom)));
             }
-            catch (AnswerException e) {
+            else {
                 logger.info("user cannot answer this query ");
                 for (OWLLogicalAxiom axiom : best.partition) {
-                    boolean answer = askUser(axiom);
+                    boolean singlAnswer = askUser(axiom);
                     Set<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom));
-                    logger.info("user answers part of query " + answer);
+                    logger.info("user answers part of query " + singlAnswer);
                     numOfQueries++;
                     metricsLogger.getCounter("numfofqueries").inc();
 
-                    if (answer)
+                    if (singlAnswer)
                         search.getSearchable().getKnowledgeBase().addEntailedTest(testcase);
                     else
                         search.getSearchable().getKnowledgeBase().addNonEntailedTest(testcase);

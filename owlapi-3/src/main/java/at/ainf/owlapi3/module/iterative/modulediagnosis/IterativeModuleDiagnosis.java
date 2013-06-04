@@ -117,6 +117,8 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             metricsLogger.addLabel("modulediag");
             Set<OWLLogicalAxiom> partDiag = getDiagSearcher().calculateDiag(axioms, background);
             MetricRegistry metric = metricsLogger.removeLabel("modulediag");
+            metricsLogger.stopTimer("calculatepartdiag");
+
             // TODO null pointer exception
             if (metric.getGauges().get("module-size") != null)
               metricsLogger.getHistogram("moduleSizes").update((Integer)metric.getGauges().get("module-size").getValue());
@@ -137,7 +139,6 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             metricsLogger.getHistogram("moduleTimeConsistencyChecks").update((long)metric.getTimers().get("consistencyChecks").getSnapshot().getMean());
             metricsLogger.getHistogram("moduleNumCoherencyChecks").update(metric.getTimers().get("coherencyChecks").getCount());
             metricsLogger.getHistogram("moduleTimeCoherencyChecks").update((long)metric.getTimers().get("coherencyChecks").getSnapshot().getMean());
-            metricsLogger.stopTimer("calculatepartdiag");
 
             for (OWLLogicalAxiom axiom : partDiag)
                 logger.info("part diag axiom: " + axiom);
