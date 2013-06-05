@@ -23,4 +23,6 @@ public interface TreeCreator {
     public Searchable<OWLLogicalAxiom> getSearchable(OWLReasonerFactory factory, Set<OWLLogicalAxiom> backg, OWLOntology ontology);
 
     public Searcher<OWLLogicalAxiom> getSearcher();
+
+    void runSearch(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search);
 }

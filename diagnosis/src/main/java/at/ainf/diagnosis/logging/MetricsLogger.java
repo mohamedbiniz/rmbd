@@ -105,6 +105,13 @@ public class MetricsLogger {
         return timer;
     }
 
+    public Counter getCounter (String name) {
+        Counter counter = getActualMetric().getCounters().get(name);
+        if (counter == null)
+            counter = getActualMetric().counter(name);
+        return counter;
+    }
+
     public Gauge createGauge (String identifier, final int value) {
         Gauge gauge = getActualMetric().getGauges().get(identifier);
         if (gauge == null)
@@ -115,13 +122,6 @@ public class MetricsLogger {
                 }
             });
         return gauge;
-    }
-
-    public Counter getCounter (String name) {
-        Counter counter = getActualMetric().getCounters().get(name);
-        if (counter == null)
-            counter = getActualMetric().counter(name);
-        return counter;
     }
 
     public void logStandardMetrics() {

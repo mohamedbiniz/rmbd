@@ -62,8 +62,8 @@ public class CsvLikeSlf4jReporter extends ScheduledReporter {
     private void logTimer(String name, Timer timer) {
         final Snapshot snapshot = timer.getSnapshot();
         logger.info(marker,
-                "type / name / count / min / max / mean / stddev / median / " +
-                        "p75 / p95 / p98 / p999 / mean_rate / m1 / m5 / m15 / rate_unit / duration_unit: " +
+                // "type / name / count / min / max / mean / stddev / median / " +
+                        // "p75 / p95 / p98 / p999 / mean_rate / m1 / m5 / m15 / rate_unit / duration_unit: " +
                         "TIMER, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}",
                 name,
                 timer.getCount(),
@@ -102,8 +102,8 @@ public class CsvLikeSlf4jReporter extends ScheduledReporter {
     private void logHistogram(String name, Histogram histogram) {
         final Snapshot snapshot = histogram.getSnapshot();
         logger.info(marker,
-                "type / name / count / min / max / mean / " +
-                        "stddev / median / p75 / p95 / p98 / p999: " +
+                // "type / name / count / min / max / mean / " +
+                        // "stddev / median / p75 / p95 / p98 / p999: " +
                         "HISTOGRAM, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}",
                 name,
                 histogram.getCount(),
