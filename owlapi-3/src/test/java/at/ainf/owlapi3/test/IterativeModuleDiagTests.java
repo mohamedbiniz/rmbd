@@ -873,7 +873,7 @@ public class IterativeModuleDiagTests {
         //ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
         //ModuleDiagSearcher d = new ModuleOptQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
 
-        d.setTreeCreator(new InvHSTreeCreator());
+        //d.setTreeCreator(new InvHSTreeCreator());
 
         long time = System.currentTimeMillis();
         Debugger<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> diagnosisFinder = new IterativeModuleDiagnosis(mappingAxioms, ontoAxioms,

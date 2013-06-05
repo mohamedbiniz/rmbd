@@ -106,7 +106,13 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
         TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
-        metricsLogger.createGauge("module-size", axioms.size());
+
+        try {
+            metricsLogger.createGauge("module-size", axioms.size());
+        }
+        catch (IllegalArgumentException e) {
+            // module size already exists
+        }
         search.setMaxDiagnosesNumber(9);
 
         //QSS<OWLLogicalAxiom> qss = QSSFactory.createDynamicRiskQSS(0, 0.5, 0.4);
@@ -115,7 +121,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         ckk.setThreshold(0.1); //old: 0.01
 
         long time = System.currentTimeMillis();
-        runSearch(search);
+        getTreeCreator().runSearch(search);
         time = System.currentTimeMillis() - time;
         logger.info ("time needed to search for diagnoses: " + time);
         Collection<Set<OWLLogicalAxiom>> diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
@@ -161,7 +167,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             if (!answer.equals(Answer.FALSE)) {
                 logger.info("user answered query: All axioms " + answer);
                 numOfQueries++;
-                metricsLogger.getCounter("numfofqueries").inc();
+                metricsLogger.getCounter("numofqueries").inc();
 
                 if (answer.equals(Answer.TRUE))
                     search.getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(best.partition));
@@ -177,7 +183,7 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
                     Set<OWLLogicalAxiom> testcase = new TreeSet<OWLLogicalAxiom>(Collections.singleton(axiom));
                     logger.info("user answers part of query " + singlAnswer);
                     numOfQueries++;
-                    metricsLogger.getCounter("numfofqueries").inc();
+                    metricsLogger.getCounter("numofqueries").inc();
 
                     if (singlAnswer)
                         search.getSearchable().getKnowledgeBase().addEntailedTest(testcase);
@@ -188,13 +194,15 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
             }
             reactionTime = 0;
 
+            metricsLogger.startTimer("reactionTime");
 
             time = System.currentTimeMillis();
-            runSearch(search);
+            getTreeCreator().runSearch(search);
             time = System.currentTimeMillis() - time;
             logger.info ("time needed to search for diagnoses: " + time);
             diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
         }
+        metricsLogger.stopTimer("reactionTime");
         logger.info("number of queries: " + numOfQueries);
         //IterativeStatistics.numOfQueries.add((long)numOfQueries);
 

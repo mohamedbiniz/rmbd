@@ -180,7 +180,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
         ckk.setThreshold(0.1); //old: 0.01
 
         long time = System.currentTimeMillis();
-        runSearch(search);
+        getTreeCreator().runSearch(search);
         time = System.currentTimeMillis() - time;
         logger.info ("time needed to search for diagnoses: " + time);
         Collection<Set<OWLLogicalAxiom>> diagnoses = new HashSet<Set<OWLLogicalAxiom>>(search.getDiagnoses());
@@ -209,7 +209,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             if (isMinimizerActive())
                 minimizePartitionAx(best,search.getSearchable());
 
-            //IterativeStatistics.avgQueryCard.addValue((long)best.partition.size());
+            metricsLogger.getHistogram("partition-size").update(best.partition.size());
 
             logger.info(lastLabel + " size of partition " + best.partition.size());
             for (OWLLogicalAxiom axiom : best.partition)
@@ -217,7 +217,6 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             logger.info("query axiom end");
 
             reactionTime = System.currentTimeMillis() - reactionTime;
-            //IterativeStatistics.avgReactTime.addValue(reactionTime);
             boolean posTcOrTargetDiagFound = false;
             boolean firstAltQuAsked = false;
             boolean secondAltQuAsked = false;
@@ -226,6 +225,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             while(!posTcOrTargetDiagFound){
                 Answer answer = askUser(query);
                 numOfQueries++;
+                metricsLogger.getCounter("numofqueries").inc();
 
                 switch(answer){
                     case TRUE:
@@ -274,7 +274,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
                 if (!posTcOrTargetDiagFound) {
                     time = System.currentTimeMillis();
-                    runSearch(search);
+                    getTreeCreator().runSearch(search);
                     time = System.currentTimeMillis() - time;
                     logger.info ("time needed to search for diagnoses: " + time);
                     if (search.getDiagnoses().size() == 1)
@@ -288,7 +288,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
             if (search.getDiagnoses().size() != 1) {
                 time = System.currentTimeMillis();
-                runSearch(search);
+                getTreeCreator().runSearch(search);
                 time = System.currentTimeMillis() - time;
                 logger.info ("time needed to search for diagnoses: " + time);
             }

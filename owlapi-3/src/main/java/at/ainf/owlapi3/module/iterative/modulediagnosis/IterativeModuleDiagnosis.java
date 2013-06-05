@@ -124,21 +124,18 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
               metricsLogger.getHistogram("moduleSizes").update((Integer)metric.getGauges().get("module-size").getValue());
             if (metric.getGauges().get("card-hs") != null)
                 metricsLogger.getHistogram("cardHs").update((Integer)metric.getGauges().get("card-hs").getValue());
-            if (metric.getHistograms().get("card-cs") != null)
-                metricsLogger.getHistogram("cardCs").update((long)metric.getHistograms().get("card-cs").getSnapshot().getMean());
-            if (metric.getHistograms().get("card-cs") != null)
-                metricsLogger.getHistogram("numCs").update(metric.getHistograms().get("card-cs").getCount());
-            if (metric.getCounters().get("numofqueries") != null)
-                metricsLogger.getHistogram("numOfQueries").update(metric.getCounters().get("numofqueries").getCount());
-            metricsLogger.getHistogram("reactionTime").update((long)metric.getTimers().get("reactionTime").getSnapshot().getMean());
-            metricsLogger.updateHistogram("queryCard",metric.getHistograms().get("partition-size").getSnapshot().getValues());
-            //metricsLogger.getHistogram("queryCard").update((long)metric.getHistograms().get("partition-size").getSnapshot().getMean());
-            metricsLogger.getHistogram("timeQueryGen").update((long)metric.getTimers().get("calculatingpartition").getSnapshot().getMean());
-            metricsLogger.getHistogram("avgRunofhstree").update((long)metric.getTimers().get("runofhstree").getSnapshot().getMean());
-            metricsLogger.getHistogram("moduleNumConsistencyChecks").update(metric.getTimers().get("consistencyChecks").getCount());
-            metricsLogger.getHistogram("moduleTimeConsistencyChecks").update((long)metric.getTimers().get("consistencyChecks").getSnapshot().getMean());
-            metricsLogger.getHistogram("moduleNumCoherencyChecks").update(metric.getTimers().get("coherencyChecks").getCount());
-            metricsLogger.getHistogram("moduleTimeCoherencyChecks").update((long)metric.getTimers().get("coherencyChecks").getSnapshot().getMean());
+
+            metricsLogger.getActualMetric().histogram("cardCs").update((long)metric.histogram("card-cs").getSnapshot().getMean());
+            metricsLogger.getActualMetric().histogram("numCs").update(metric.histogram("card-cs").getCount());
+            metricsLogger.getActualMetric().histogram("numOfQueries").update(metric.counter("numofqueries").getCount());
+            metricsLogger.getActualMetric().histogram("reactionTime").update((long)metric.timer("reactionTime").getSnapshot().getMean());
+            metricsLogger.getActualMetric().histogram("timeQueryGen").update((long)metric.timer("calculatingpartition").getSnapshot().getMean());
+            metricsLogger.getActualMetric().histogram("avgRunofhstree").update((long)metric.timer("runofhstree").getSnapshot().getMean());
+            metricsLogger.getActualMetric().histogram("moduleNumConsistencyChecks").update(metric.timer("consistencyChecks").getCount());
+            metricsLogger.getActualMetric().histogram("moduleTimeConsistencyChecks").update((long)metric.timer("consistencyChecks").getSnapshot().getMean());
+            metricsLogger.getActualMetric().histogram("moduleNumCoherencyChecks").update(metric.timer("coherencyChecks").getCount());
+            metricsLogger.getActualMetric().histogram("moduleTimeCoherencyChecks").update((long)metric.timer("coherencyChecks").getSnapshot().getMean());
+            metricsLogger.updateHistogram("queryCard",metric.histogram("partition-size").getSnapshot().getValues());
 
             for (OWLLogicalAxiom axiom : partDiag)
                 logger.info("part diag axiom: " + axiom);

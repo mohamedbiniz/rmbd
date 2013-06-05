@@ -108,47 +108,14 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
     //private MetricsManager metricsManager = MetricsManager.getInstance();
 
-    protected void runSearch (TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search) {
-        metricsLogger.startTimer("runofhstree");
-        try {
-            search.start();
-        } catch (SolverException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InconsistentTheoryException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (NoConflictException e) {
-            logger.info("no more conflicts can be found - trying to reset");
-            search.reset();
-            try {
-                search.start();
-            } catch (SolverException e1) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (InconsistentTheoryException e1) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (NoConflictException e1) {
-                logger.info("there are really no more conflicts");
-            }
-        }
-        String label = metricsLogger.getLabelManager().getLabelsConc();
-        long timeTreeSearch = metricsLogger.stopTimer("runofhstree");
-        //IterativeStatistics.diagnosisTime.add(timeTreeSearch);
-        String conflicts = label + " found conflicts with sizes: ";
-        for (Set<OWLLogicalAxiom> cs : search.getConflicts())
-            conflicts += cs.size() + ", ";
-        String diagnoses = label + " found diagnoses with sizes: ";
-        for (Set<OWLLogicalAxiom> hs : search.getDiagnoses())
-            diagnoses += hs.size() + ", ";
-        logger.info(conflicts);
-        logger.info(diagnoses);
 
-    }
 
     @Override
     public Set<OWLLogicalAxiom> calculateDiag(Set<OWLLogicalAxiom> axioms, Set<OWLLogicalAxiom> backg) {
         TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = createSearch(axioms,backg);
 
         long time = System.currentTimeMillis();
-        runSearch(search);
+        getTreeCreator().runSearch(search);
         time = System.currentTimeMillis() - time;
         logger.info ("time needed to search for diagnoses: " + time);
 

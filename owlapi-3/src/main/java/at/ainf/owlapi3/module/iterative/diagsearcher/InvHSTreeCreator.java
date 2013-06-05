@@ -22,7 +22,7 @@ import java.util.Set;
 * Time: 14:00
 * To change this template use File | Settings | File Templates.
 */
-public class InvHSTreeCreator implements TreeCreator {
+public class InvHSTreeCreator extends HSTreeCreator implements TreeCreator {
 
     @Override
     public TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
@@ -45,4 +45,11 @@ public class InvHSTreeCreator implements TreeCreator {
     public Searcher<OWLLogicalAxiom> getSearcher() {
         return new DirectDiagnosis<OWLLogicalAxiom>();
     }
+
+    @Override
+    public void runSearch(TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search) {
+        search.reset();
+        super.runSearch(search);
+    }
+
 }
