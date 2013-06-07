@@ -137,9 +137,9 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
             metricsLogger.getActualMetric().histogram("moduleTimeCoherencyChecks").update((long)metric.timer("coherencyChecks").getSnapshot().getMean());
             metricsLogger.updateHistogram("queryCard",metric.histogram("partition-size").getSnapshot().getValues());
 
-            for (OWLLogicalAxiom axiom : partDiag)
-                logger.info("part diag axiom: " + axiom);
-            logger.info("---");
+            // for (OWLLogicalAxiom axiom : partDiag)
+            //    logger.info("part diag axiom: " + axiom);
+            // logger.info("---");
 
             long timeModule = metricsLogger.stopTimer("moduleTimeNew");
             //IterativeStatistics.moduleTime.add(timeModule);
@@ -194,7 +194,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
                 Set<OWLClass> childs = new HashSet<OWLClass>(
                         reasoner.getSubClasses(unsatClass,false,LEAST_NUMBER_OF_NODES).getFlattened());
                 childs.remove(BOT_CLASS);
-                logger.info("unsat class " + unsatClass + ", number of childs: " + childs.size());
+                //logger.info("unsat class " + unsatClass + ", number of childs: " + childs.size());
                 result.put(unsatClass, childs.size());
             }
             return result;

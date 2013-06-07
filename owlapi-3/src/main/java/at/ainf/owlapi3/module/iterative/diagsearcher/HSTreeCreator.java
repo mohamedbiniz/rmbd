@@ -28,7 +28,7 @@ import java.util.Set;
 */
 public class HSTreeCreator implements TreeCreator {
 
-    private Logger logger = LoggerFactory.getLogger(ModuleMinDiagSearcher.class.getName());
+    private Logger logger = LoggerFactory.getLogger(HSTreeCreator.class.getName());
 
     private MetricsLogger metricsLogger = MetricsLogger.getInstance();
 
