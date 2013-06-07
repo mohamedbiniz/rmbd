@@ -82,3 +82,5 @@ NEQUAL : '!=' ;
 RANGE : '..' ;
 INT : ('0'..'9')+ ;
 SYMBOLS : (' ' | 'a'..'z' | 'A'..'Z' | '0'..'9' | '_')+ ;
+
+LINE_COMMENT  : '%' ~('\n'|'\r')* -> skip ;

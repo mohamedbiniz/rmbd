@@ -13,12 +13,16 @@ import java.io.OutputStreamWriter;
 import java.util.Set;
 
 import at.ainf.asp.model.IProgramElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Melanie Fruehstueck
  *
  */
 public class ASPConverter {
+
+    private static Logger logger = LoggerFactory.getLogger(ASPConverter.class.getName());
 
 	protected char[] data;
 
@@ -39,7 +43,7 @@ public class ASPConverter {
 		try {
 			reader = new BufferedReader(new FileReader(filePath));
 		} catch (FileNotFoundException e) {
-			System.out.println("File was not found: " + e);
+			logger.info("File was not found: " + e);
 		}
 	    String line = null;
 	    StringBuilder stringBuilder = new StringBuilder();
@@ -51,7 +55,7 @@ public class ASPConverter {
 			    stringBuilder.append(ls);
 			}
 		} catch (IOException e) {
-			System.out.println("Problems with reading lines of file: " + e);
+			logger.error("Problems with reading lines of file: " + e);
 		}
 
 	    return stringBuilder.toString();

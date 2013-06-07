@@ -8,6 +8,8 @@ import at.ainf.diagnosis.model.BaseSearchableObject;
 import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.IReasoner;
 import at.ainf.diagnosis.model.SolverException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Melanie Fruehstueck
@@ -15,7 +17,7 @@ import at.ainf.diagnosis.model.SolverException;
  */
 public class ASPTheory extends BaseSearchableObject<IProgramElement> {
 
-	
+    private static Logger logger = LoggerFactory.getLogger(ASPSolver.class.getName());
 	
 	@Override
 	public ReasonerASP getReasoner() {
@@ -25,14 +27,14 @@ public class ASPTheory extends BaseSearchableObject<IProgramElement> {
 	@Override
 	public boolean verifyConsistency() throws SolverException {
 		LinkedHashSet<IProgramElement> formulasToAdd = new LinkedHashSet<IProgramElement>(getKnowledgeBase().getBackgroundFormulas());
-		System.out.println("\nFormulas to add:");
+        logger.info("\nFormulas to add:");
 		for (IProgramElement pe : formulasToAdd) {
-			System.out.println(pe.getString());
+            logger.info(pe.getString());
 		}
 		Set<IProgramElement> cache = getReasoner().getFormulasCache();
-		System.out.println("\nFormulas cached:");
+        logger.info("\nFormulas cached:");
 		for (IProgramElement pe : cache) {
-			System.out.println(pe.getString());
+            logger.info(pe.getString());
 		}
 		formulasToAdd.removeAll(getReasoner().getFormulasCache());
 		getReasoner().addFormulasToCache(formulasToAdd);
