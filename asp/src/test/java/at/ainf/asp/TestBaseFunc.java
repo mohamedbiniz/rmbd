@@ -8,6 +8,7 @@ import at.ainf.asp.model.ASPTheory;
 import at.ainf.asp.model.IProgramElement;
 import at.ainf.asp.model.ProgramListener;
 import at.ainf.asp.model.ReasonerASP;
+import junit.framework.Assert;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -112,50 +113,29 @@ public class TestBaseFunc {
         
         Set<FormulaSet<IProgramElement>> conflicts = search.getConflicts();
         Set<FormulaSet<IProgramElement>> diagnosis = search.getDiagnoses();
-        int i = 0;
-        int j = 0;
-		for (FormulaSet<IProgramElement> fs : conflicts) {
-			logger.info("Conflicts " + i + ":");
-			for (IProgramElement pe : fs) {
-				logger.info(pe.getString());
-			}
-			i++;
-		}
-		for (FormulaSet<IProgramElement> fs : diagnosis) {
-			logger.info("Diagnosis " + j + ":");
-			for (IProgramElement pe : fs) {
-				logger.info(pe.getString());
-			}
-			j++;
-		}
-        
+        Assert.assertTrue(conflicts.size() == 1);
+        Assert.assertTrue(diagnosis.size() == 1);
+        Assert.assertTrue(conflicts.iterator().next().size() == 1);
+        Assert.assertTrue(diagnosis.iterator().next().size() == 1);
+        Assert.assertTrue(conflicts.iterator().next().iterator().next().getString().equals(":- pc(M)."));
+        Assert.assertTrue(diagnosis.iterator().next().iterator().next().getString().equals(":- pc(M)."));
+        printFormularSets(conflicts, "Conflict ");
+        printFormularSets(diagnosis, "Diagnosis ");
+
 //        QuickXplain<IProgramElement> qxp = new QuickXplain<IProgramElement>();
-//        try {
 ////			Set<FormulaSet<IProgramElement>> conflict = qxp.search(theory, model.getRules(), null);
-//			int i = 0;
-//			for (FormulaSet<IProgramElement> fs : conflicts) {
-//				System.out.println("Conflicts " + i + ":");
-//				for (IProgramElement pe : fs) {
-//					System.out.println(pe.getString());
-//				}
-//				i++;
-//			}
-//			for (FormulaSet<IProgramElement> fs : diagnosis) {
-//				System.out.println("Diagnosis " + i + ":");
-//				for (IProgramElement pe : fs) {
-//					System.out.println(pe.getString());
-//				}
-//				i++;
-//			}
-//		} catch (SolverException e) {
-//			System.out.println("Solving did fail: " + e);
-//		} catch (NoConflictException e) {
-//			System.out.println("No conflict was found: " + e);
-//			e.printStackTrace();
-//		} catch (InconsistentTheoryException e) {
-//			System.out.println("Theory is inconsistent: " + e);
-//			e.printStackTrace();
-//		}
+
 	}
+
+    private void printFormularSets(Set<FormulaSet<IProgramElement>> diagnosis, String namePr) {
+        int j = 0;
+        for (FormulaSet<IProgramElement> fs : diagnosis) {
+            logger.info(namePr + j + ":");
+            for (IProgramElement pe : fs) {
+                logger.info(pe.getString());
+            }
+            j++;
+        }
+    }
 
 }

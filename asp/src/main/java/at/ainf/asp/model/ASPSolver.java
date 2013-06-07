@@ -5,6 +5,8 @@ package at.ainf.asp.model;
 
 import at.ainf.asp.inputoutputactions.ASPConverter;
 import at.ainf.asp.inputoutputactions.StreamGobbler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -16,15 +18,18 @@ import java.util.Set;
  *
  */
 public class ASPSolver {
-	
+
+
+    private static Logger logger = LoggerFactory.getLogger(ASPSolver.class.getName());
+
 	public boolean solve(Set<IProgramElement> program) {
 		boolean retVal = true;
 		Process proc = null;
 		Runtime rt = Runtime.getRuntime();
 		
-		System.out.println("\nProgram executed: ");
+		logger.info("\nProgram executed: ");
 		for (IProgramElement pe : program) {
-			System.out.println(pe.getString());
+            logger.info(pe.getString());
 		}
 		
 		ASPConverter con = new ASPConverter();
@@ -32,7 +37,7 @@ public class ASPSolver {
 		try {
 			filePath = con.write(program);
 		} catch (IOException e) {
-			System.out.println("Writing to file failed: " + e);
+            logger.info("Writing to file failed: " + e);
 		}
 
         String shellName;
@@ -42,11 +47,11 @@ public class ASPSolver {
             shellName = "/bin/sh";
         else shellName = "/bin/sh";  // pipe under w
 
-		String[] cmd = { shellName, "-c", "gringo " + filePath + " | clasp -q | grep UNSATISFIABLE" };
+		String[] cmd = { shellName, "/c", "gringo " + filePath + " | clasp -q | grep UNSATISFIABLE" };
 		try {
 			proc = rt.exec(cmd);
 		} catch (IOException e) {
-			System.out.println("Exception within execution of command: " + e);
+            logger.info("Exception within execution of command: " + e);
 		}
 
 		StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream(), "ERROR");
@@ -56,8 +61,8 @@ public class ASPSolver {
 
 		try {
 			proc.waitFor();
-		} catch (InterruptedException e) { 
-			System.out.println("Thread is waiting, sleeping, or otherwise occupied: " + e);
+		} catch (InterruptedException e) {
+            logger.info("Thread is waiting, sleeping, or otherwise occupied: " + e);
 		}
 		
 		String output = outputGobbler.getOutput();
