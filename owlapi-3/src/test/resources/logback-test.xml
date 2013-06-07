@@ -1,5 +1,51 @@
 <configuration>
 
+    <timestamp key="bySecond" datePattern="yyyy'-'MM'-'dd'-T-'HH-mm-ss"/>
+
+    <appender name="owlapi3-timestamp" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${bySecond}/owlapi3-${bySecond}.log</file>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="diagnosis-timestamp" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${bySecond}/diagnosis-${bySecond}.log</file>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="metrics-timestamp" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${bySecond}/metrics-${bySecond}.log</file>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="dev-timestamp" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${bySecond}/dev-${bySecond}.log</file>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="diagnosis-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>logs/diagnosis.log</File>
+        <encoder>
+            <!-- <pattern>%p %t %c - %m%n</pattern> -->
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>logs/diagnosis.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
     <appender name="metrics-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
         <File>logs/metrics.log</File>
@@ -10,22 +56,6 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>
             <FileNamePattern>logs/metrics.log.%i</FileNamePattern>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>5MB</MaxFileSize>
-        </triggeringPolicy>
-    </appender>
-
-    <appender name="owlapi3-diagnosis-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <File>logs/owlapi3-diagnosis.log</File>
-        <encoder>
-            <!-- <pattern>%p %t %c - %m%n</pattern> -->
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <maxIndex>5</maxIndex>
-            <FileNamePattern>logs/owlapi3-diagnosis.log.%i</FileNamePattern>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>5MB</MaxFileSize>
@@ -47,30 +77,15 @@
         </triggeringPolicy>
     </appender>
 
-    <appender name="owlapi3-full-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="dev-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <File>logs/owlapi3-full.log</File>
+        <File>logs/dev.log</File>
         <encoder>
             <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>
-            <FileNamePattern>logs/owlapi3-full.log.%i</FileNamePattern>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>10MB</MaxFileSize>
-        </triggeringPolicy>
-    </appender>
-
-    <appender name="owlapi3-time-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <File>logs/owlapi3-time.log</File>
-        <encoder>
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <maxIndex>5</maxIndex>
-            <FileNamePattern>logs/owlapi3-time.log.%i</FileNamePattern>
+            <FileNamePattern>logs/dev.log.%i</FileNamePattern>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>5MB</MaxFileSize>
@@ -132,33 +147,28 @@
     </appender>
 
     <logger name="org.perf4j.TimingLogger" level="trace">
-        <appender-ref ref="owlapi3-file"/>
         <appender-ref ref="CoalescingStatistics"/>
     </logger>
 
+
     <logger name="at.ainf.diagnosis" level="info">
-        <appender-ref ref="owlapi3-diagnosis-file"/>
-        <appender-ref ref="owlapi3-full-file"/>
+        <appender-ref ref="diagnosis-file"/>
+        <appender-ref ref="diagnosis-timestamp"/>
     </logger>
 
     <logger name="at.ainf.owlapi3" level="info">
         <appender-ref ref="owlapi3-file"/>
-        <appender-ref ref="owlapi3-full-file"/>
+        <appender-ref ref="owlapi3-timestamp"/>
     </logger>
 
     <logger name="at.ainf.metrics" level="info">
         <appender-ref ref="metrics-file"/>
-        <appender-ref ref="owlapi3-full-file"/>
-    </logger>
-
-    <logger name="at.ainf.speed4j" level="info">
-        <appender-ref ref="owlapi3-file"/>
-        <appender-ref ref="owlapi3-full-file"/>
+        <appender-ref ref="metrics-timestamp"/>
     </logger>
 
     <logger name="_dev" level="trace">
-        <appender-ref ref="owlapi3-time-file"/>
-        <appender-ref ref="owlapi3-full-file"/>
+        <appender-ref ref="dev-file"/>
+        <appender-ref ref="dev-timestamp"/>
     </logger>
 
     <root level="debug"/>

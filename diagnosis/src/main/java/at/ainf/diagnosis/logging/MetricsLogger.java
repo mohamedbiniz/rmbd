@@ -73,12 +73,12 @@ public class MetricsLogger {
 
     public long stopTimer (String timer) {
         long time = contexts.get(timer).stop();
-        logTime(timer, time);
+        // logTime(timer, time);
         return time;
     }
 
-    public void logTime(String timerIdent, long time) {
-        LoggerFactory.getLogger("at.ainf.metrics").info(labelManager.getLabelsConc() + "_" + timerIdent + ": " + time);
+    public void logTime(String timer, long time) {
+        LoggerFactory.getLogger("at.ainf.metrics").info(labelManager.getLabelsConc() + "_" + timer + ": " + time);
     }
 
     public MetricRegistry getActualMetric() {
