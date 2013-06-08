@@ -69,8 +69,24 @@ public class ASPSolver {
 		if (output.equals("UNSATISFIABLE")) {
 			retVal = false;
 		}
-		
+
+//        logger.info ("result of " + cnt + " check: " + retVal);
+//        if (cnt == 0 && !retVal ||
+//                cnt == 1 && retVal ||
+//                cnt == 2 && !retVal ||
+//                cnt == 3 && !retVal ||
+//                cnt == 4 && !retVal ||
+//                cnt == 5 && retVal ||
+//                cnt == 6 && retVal ||
+//                cnt == 7 && retVal)
+//            logger.info (" unexpected result :-)");
+//        cnt++;
+
+
 		return retVal;
 	}
-	
+
+    // private static int cnt = 0;
+
+
 }
