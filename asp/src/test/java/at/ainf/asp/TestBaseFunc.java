@@ -1,6 +1,6 @@
 package at.ainf.asp;
 
-import java.util.Set;
+import java.util.*;
 
 import at.ainf.asp.inputoutputactions.ASPConverter;
 import at.ainf.asp.model.ASPModel;
@@ -45,59 +45,17 @@ public class TestBaseFunc {
 	final private static String filePathUNSAT = ClassLoader.getSystemResource("test1_UNSAT.lp").getPath();
 	
 	@Ignore  @Test
-	public void testEasy() {
-		
-		ASPConverter converter = new ASPConverter();
-		String src = converter.convertFromFileToString(filePathUNSAT);
-//		String src = converter.convertFromFileToString(filePathSAT);
-		
-		// do the parsing
-		ANTLRInputStream input = null;
-		input = new ANTLRInputStream(src);
-        ASPProgramLexer lexer = new ASPProgramLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ASPProgramParser parser = new ASPProgramParser(tokens);
-        ParseTree tree = parser.prog();
-        ProgramListener pl = new ProgramListener();
-        ParseTreeWalker.DEFAULT.walk(pl, tree);
-        
-//       	parser.setBuildParseTree(true);
-//       	ParserRuleContext tree = parser.prog();
-//       	tree.inspect(parser);    
-        
-        logger.info("Parsing OK");
-        
-        // fill the asp model with rules
-        ASPModel model = ASPModel.getASPModelInstance();
-        for (IProgramElement r : model.getRules()) {
-        	model.addProgramElement(r);
-        }
+	public void testHsTree() {
+
+        ASPModel model = createAspModel(filePathUNSAT);
         
 //        ReasonerASP reasoner = new ReasonerASP();
 //        boolean consistent = reasoner.isConsistent();
 //        System.out.println("is consistent: " + consistent);
-        
-        ASPTheory theory = new ASPTheory();
-        ReasonerASP reasoner = new ReasonerASP();
-        theory.setReasoner(reasoner);
-        KnowledgeBase<IProgramElement> knowledgeBase = new KnowledgeBase<IProgramElement>();
-        knowledgeBase.setBackgroundFormulas(model.getFacts());
-        theory.setKnowledgeBase(knowledgeBase);
-        theory.getKnowledgeBase().addFormulas(model.getProgramElements());
-        
-        HsTreeSearch<FormulaSet<IProgramElement>,IProgramElement> search = new HsTreeSearch<FormulaSet<IProgramElement>,IProgramElement>();
 
-        // we want to use UniformCostSearch as our start strategy
-        search.setSearchStrategy(new BreadthFirstSearchStrategy<IProgramElement>());
+        ASPTheory theory = createAspTheory(model);
 
-        // because we use Reiter's Tree nodes are conflicts which we start using QuickXplain
-        search.setSearcher(new QuickXplain<IProgramElement>());
-
-        // because we use UniformCostSearch we have to give a cost estimator to the start
-        search.setCostsEstimator(new SimpleCostsEstimator<IProgramElement>());
-
-        // at last we combine theory with start and get our ready to use object
-        search.setSearchable(theory);
+        HsTreeSearch<FormulaSet<IProgramElement>, IProgramElement> search = createTreeSearch(theory);
         try {
 			search.start();
 		} catch (SolverException e1) {
@@ -126,6 +84,80 @@ public class TestBaseFunc {
 ////			Set<FormulaSet<IProgramElement>> conflict = qxp.search(theory, model.getRules(), null);
 
 	}
+
+    protected ASPTheory createAspTheory(ASPModel model) {
+        ASPTheory theory = new ASPTheory();
+        ReasonerASP reasoner = new ReasonerASP();
+        theory.setReasoner(reasoner);
+        KnowledgeBase<IProgramElement> knowledgeBase = new KnowledgeBase<IProgramElement>();
+        knowledgeBase.setBackgroundFormulas(model.getFacts());
+        theory.setKnowledgeBase(knowledgeBase);
+        theory.getKnowledgeBase().addFormulas(model.getProgramElements());
+        return theory;
+    }
+
+    protected ASPModel createAspModel(String file) {
+        ASPConverter converter = new ASPConverter();
+        String src = converter.convertFromFileToString(file);
+//		String src = converter.convertFromFileToString(filePathSAT);
+
+        // do the parsing
+        ANTLRInputStream input = null;
+        input = new ANTLRInputStream(src);
+        ASPProgramLexer lexer = new ASPProgramLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        ASPProgramParser parser = new ASPProgramParser(tokens);
+        ParseTree tree = parser.prog();
+        ProgramListener pl = new ProgramListener();
+        ParseTreeWalker.DEFAULT.walk(pl, tree);
+
+//       	parser.setBuildParseTree(true);
+//       	ParserRuleContext tree = parser.prog();
+//       	tree.inspect(parser);
+
+        logger.info("Parsing OK");
+
+        // fill the asp model with rules
+        ASPModel model = ASPModel.getASPModelInstance();
+        for (IProgramElement r : model.getRules()) {
+        	model.addProgramElement(r);
+        }
+        return model;
+    }
+
+    @Ignore  @Test
+    public void testQuickx() throws NoConflictException, InconsistentTheoryException, SolverException {
+
+        ASPModel model = createAspModel(filePathUNSAT);
+        ASPTheory theory = createAspTheory(model);
+
+
+        QuickXplain<IProgramElement> qxp = new QuickXplain<IProgramElement>();
+			Set<FormulaSet<IProgramElement>> conflict =
+                    qxp.search(theory, model.getRules(), Collections.<IProgramElement>emptySet());
+
+        List<IProgramElement> possibleFaultyRules = new LinkedList<IProgramElement>(model.getRules());
+        Assert.assertTrue(possibleFaultyRules.get(0).getString().equals("conflict_of_interest(M,P):- bid(M,P,0)."));
+        Assert.assertTrue(possibleFaultyRules.get(1).getString().equals("conflict_of_interest(M,P):- pc(M), paper(P), author(M,P)."));
+        Assert.assertTrue(possibleFaultyRules.get(2).getString().equals("bid(M,P,0):- pc(M), paper(P), conflict_of_interest(M,P)."));
+        Assert.assertTrue(possibleFaultyRules.get(3).getString().equals(":- assigned(P,M), bid(M,P,0)."));
+        Assert.assertTrue(possibleFaultyRules.get(4).getString().equals(":- pc(M)."));
+
+        Assert.assertTrue(conflict.size() == 1);
+        Assert.assertTrue(conflict.iterator().next().size() == 1);
+        Assert.assertTrue(conflict.iterator().next().iterator().next().getString().equals(":- pc(M)."));
+
+
+    }
+
+    private HsTreeSearch<FormulaSet<IProgramElement>, IProgramElement> createTreeSearch(ASPTheory theory) {
+        HsTreeSearch<FormulaSet<IProgramElement>,IProgramElement> search = new HsTreeSearch<FormulaSet<IProgramElement>,IProgramElement>();
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<IProgramElement>());
+        search.setSearcher(new QuickXplain<IProgramElement>());
+        search.setCostsEstimator(new SimpleCostsEstimator<IProgramElement>());
+        search.setSearchable(theory);
+        return search;
+    }
 
     private void printFormularSets(Set<FormulaSet<IProgramElement>> diagnosis, String namePr) {
         int j = 0;
