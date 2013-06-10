@@ -1,0 +1,23 @@
+<configuration>
+
+    <appender name="asp-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>logs/asp.log</File>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>1</maxIndex>
+            <FileNamePattern>logs/asp.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>500KB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <logger name="at.ainf" level="debug">
+        <appender-ref ref="asp-file"/>
+    </logger>
+
+    <root level="debug"/>
+
+</configuration>
