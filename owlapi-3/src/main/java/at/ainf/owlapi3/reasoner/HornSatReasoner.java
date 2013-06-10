@@ -3,7 +3,9 @@ package at.ainf.owlapi3.reasoner;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWL2SATTranslator;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWLClassAxiomNegation;
 import at.ainf.owlapi3.reasoner.axiomprocessors.Translator;
+import at.ainf.owlapi3.reasoner.cores.AbstractCore;
 import at.ainf.owlapi3.reasoner.cores.Core;
+import at.ainf.owlapi3.reasoner.cores.CoreSymbol;
 import at.ainf.owlapi3.reasoner.cores.HornCore;
 import com.google.common.collect.*;
 import org.sat4j.core.VecInt;
@@ -335,8 +337,9 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         Set<IVecInt> constraintsSet = getConstraintsSet();
         Multimap<OWLAxiom, OWLClass> clusters = HashMultimap.create(constraintsSet.size(), 20);
         for (IVecInt clause : constraintsSet) {
-            Core core = new HornCore(this, axioms.size(), 2);
-            final Set<Integer> symbolsSet = core.extractCore(clause).getSymbolsSet();
+            Core core = new HornCore(this, axioms.size());
+            core.extractCore(clause);
+            final Set<CoreSymbol> symbolsSet = core.getSymbols();
             if (symbolsSet.isEmpty())
                 continue;
             Set<OWLClass> owlClasses = convertToOWLClasses(symbolsSet);
@@ -368,17 +371,17 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             logger.debug("Extracting unsatisfiable classes");
         final Core rcore = getRelevantCore();
         //final int avg = average(rcore.getSymbolsMap().values());
-        final Set<Integer> symbolsSet = rcore.getSymbolsSet();
+        final Set<CoreSymbol> symbolsSet = rcore.getSymbols();
         if (symbolsSet.isEmpty())
             return Collections.emptyList();
 
-        final Map<Integer, Integer> scores = new HashMap<Integer, Integer>(symbolsSet.size());
-        Set<Integer> excludedSymbols = new HashSet<Integer>(symbolsSet.size());
+        final Map<CoreSymbol, Integer> scores = new HashMap<CoreSymbol, Integer>(symbolsSet.size());
+        Set<CoreSymbol> excludedSymbols = new HashSet<CoreSymbol>(symbolsSet.size());
 
-        for (Integer symbol : symbolsSet) {
+        for (CoreSymbol symbol : symbolsSet) {
             if (excludedSymbols.contains(symbol))
                 continue;
-            final Set<Integer> dependentSymbols = getDependentSymbols(symbol);
+            final Set<CoreSymbol> dependentSymbols = getDependentSymbols(symbol);
             excludedSymbols.addAll(dependentSymbols);
             final int score = dependentSymbols.size(); //Sets.intersection(symbolsSet, dependentSymbols).size();
             scores.put(symbol, score);
@@ -389,12 +392,12 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         //symbolsSet.removeAll(excludedSymbols);
 
         for (OWLClass excludeClass : excludeClasses) {
-            final int index = getIndex(excludeClass);
+            final CoreSymbol index = new CoreSymbol(getIndex(excludeClass), 0);
             symbolsSet.remove(index);
             symbolsSet.removeAll(getDependentSymbols(index));
         }
 
-        ArrayList<Integer> sortedSymbols = new ArrayList<Integer>(symbolsSet);
+        ArrayList<CoreSymbol> sortedSymbols = new ArrayList<CoreSymbol>(symbolsSet);
 
         if (logger.isDebugEnabled())
             logger.debug("Searching " + maxClasses + " unsat classes from " + sortedSymbols.size());
@@ -402,9 +405,9 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         if (sortedSymbols.isEmpty()) {
             return Collections.emptyList();
         }
-        Collections.sort(sortedSymbols, new Comparator<Integer>() {
+        Collections.sort(sortedSymbols, new Comparator<CoreSymbol>() {
             @Override
-            public int compare(Integer o1, Integer o2) {
+            public int compare(CoreSymbol o1, CoreSymbol o2) {
                 //final Collection<Integer> level1 = rcore.getSymbolsMap().get(o1);
                 //final Collection<Integer> level2 = rcore.getSymbolsMap().get(o2);
                 //if (level1.size() != level2.size())
@@ -416,7 +419,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
                 return -1 * getScore(o1).compareTo(getScore(o2));
             }
 
-            private Integer getScore(Integer index) {//, Set<Integer> relevantIndexes) {
+            private Integer getScore(CoreSymbol index) {//, Set<Integer> relevantIndexes) {
                 if (!scores.containsKey(index)) {
                     return 0;
                     //final Set<Integer> dependentSymbols = getDependentSymbols(index, relevantIndexes);
@@ -426,13 +429,13 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             }
         });
 
-        excludedSymbols = new HashSet<Integer>(sortedSymbols.size());
+        excludedSymbols = new HashSet<CoreSymbol>(sortedSymbols.size());
         List<OWLClass> unSat = new ArrayList<OWLClass>(maxClasses);
-        for (Integer index : sortedSymbols) {
-            OWLClass owlClass = getIndex(index);
-            if (!excludedSymbols.contains(index) && !isSatisfiable(owlClass)) {
+        for (CoreSymbol symbol : sortedSymbols) {
+            OWLClass owlClass = getIndex(symbol.getSymbol());
+            if (!excludedSymbols.contains(symbol) && !isSatisfiable(owlClass)) {
                 unSat.add(owlClass);
-                excludedSymbols.addAll(getDependentSymbols(index));
+                excludedSymbols.addAll(getDependentSymbols(symbol));
             }
             if (maxClasses > 0 && unSat.size() == maxClasses)
                 break;
@@ -447,10 +450,10 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
         return unSat;
     }
 
-    private Set<Integer> getDependentSymbols(int index) {
-        Core core = new HornCore(this);
-        core = core.extractCore(index);
-        return core.getSymbolsSet();
+    private Set<CoreSymbol> getDependentSymbols(CoreSymbol index) {
+        HornCore core = new HornCore(this);
+        core.extractCore(index);
+        return core.getSymbols();
     }
 
     private int average(Collection<Integer> values) {
@@ -537,7 +540,7 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
             final Core core = extractPossiblyUnsatCore();
             setRelevantClasses(core);
             if (core.isHornComplete()) {
-                this.sat = core.getSymbolsMap().isEmpty();
+                this.sat = core.getSymbols().isEmpty();
             }
         }
 
@@ -593,29 +596,25 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     private Core extractCore(Set<IVecInt> constraints) {
         final int sigSize = getRootOntology().getClassesInSignature().size();
-        final int consSize = constraints.size();
-        //Multimap<Integer, Integer> supportingMap = HashMultimap.create();
+        // final int consSize = constraints.size();
+        // Multimap<Integer, Integer> supportingMap = HashMultimap.create();
 
-        Core core = new Core(this, sigSize, consSize);
-        for (IVecInt constraint : constraints) {
-            core = core.extractCore(constraint);
-            if (core.getSymbolsMap().size() == sigSize)
-                break;
-        }
+        Core core = new Core(this, sigSize);
+        core.extractCore(constraints);
         return core;
     }
 
-    private Set<OWLClass> convertToOWLClasses(Set<Integer> symbolsSet) {
+    public <T extends CoreSymbol> Set<OWLClass> convertToOWLClasses(Set<T> symbolsSet) {
         HashSet<OWLClass> classes = new HashSet<OWLClass>(symbolsSet.size());
-        for (Integer symbol : symbolsSet) {
-            OWLClass ocl = getIndex(symbol);
+        for (T symbol : symbolsSet) {
+            OWLClass ocl = getIndex(symbol.getSymbol());
             classes.add(ocl);
         }
         return classes;
     }
 
-    public Set<OWLClass> convertToOWLClasses(Core core) {
-        return convertToOWLClasses(core.getSymbolsSet());
+    public Set<OWLClass> convertToOWLClasses(AbstractCore<?> core) {
+        return convertToOWLClasses(core.getSymbols());
     }
 
     public Multimap<Integer, IVecInt> getSymbolsToClauses() {
