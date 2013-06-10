@@ -11,7 +11,6 @@ import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import uk.ac.manchester.cs.owl.owlapi.OWLDataFactoryImpl;
 
 import java.math.BigDecimal;
@@ -79,27 +78,27 @@ public abstract class AbstractModuleDiagnosis implements Debugger<FormulaSet<OWL
 
     @Override
     public void setMaxDiagnosesNumber(int number) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int getMaxDiagnosesNumber() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void reset() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Set<FormulaSet<OWLLogicalAxiom>> getConflicts() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Set<FormulaSet<OWLLogicalAxiom>> getDiagnoses() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     protected <X> FormulaSet<X> createFormularSet (Set<X> set) {
