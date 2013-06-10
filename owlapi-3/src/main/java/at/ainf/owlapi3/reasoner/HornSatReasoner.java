@@ -154,14 +154,16 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
     public boolean isSatisfiable(OWLClassExpression classExpression) throws
             ReasonerInterruptedException, TimeOutException, ClassExpressionNotInProfileException,
             FreshEntitiesException, InconsistentOntologyException {
+        if (classExpression instanceof OWLClass && isExtractingCoresOnUpdate())
+        {
+            boolean isRelevant = getRelevantCore().getRelevantClasses().contains(classExpression);
+            if (!isRelevant) return true;
+            else if (getRelevantCore().isHornComplete()) return false;
+        }
         Collection<IVecInt> iVecInts;
         if (classExpression instanceof OWLAxiom) {
             OWLAxiom axiom = (OWLAxiom) classExpression;
             iVecInts = processAxiom(axiom, new OWL2SATTranslator(this));
-        } else if (classExpression instanceof OWLClass && isExtractingCoresOnUpdate() &&
-                !getRelevantCore().getRelevantClasses().contains(classExpression)) {
-            return true;
-
         } else
             iVecInts = getiVecInt(classExpression);
         return isSatisfiable(iVecInts);
@@ -234,6 +236,9 @@ public class HornSatReasoner extends ExtendedStructuralReasoner {
 
     @Override
     public boolean isConsistent() throws ReasonerInterruptedException, TimeOutException {
+        if (logger.isDebugEnabled())
+            logger.debug("Veryfying consistency: " + String.valueOf(this.sat == null));
+
         if (this.sat != null)
             return this.sat;
 

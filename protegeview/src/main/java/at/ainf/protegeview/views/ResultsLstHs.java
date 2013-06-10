@@ -91,7 +91,6 @@ public class ResultsLstHs extends ResultsList {
                             .getAxiomSet();
                     DebugManager.getInstance().setTreeNode(node);
                     DebugManager.getInstance().notifyTreeNodeChanged();
-                    return;
                 }
             }));
 

@@ -1,8 +1,8 @@
 package at.ainf.owlapi3.model;
 
-import at.ainf.diagnosis.Speed4JMeasurement;
+import at.ainf.diagnosis.logging.MetricsLogger;
 import at.ainf.diagnosis.model.AbstractReasoner;
-import at.ainf.owlapi3.module.iterative.diag.IterativeStatistics;
+import com.codahale.metrics.Timer;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.InferenceType;
@@ -66,40 +66,50 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         }
     }
 
+    //private MetricsManager metricsManager = MetricsManager.getInstance();
+
+    private MetricsLogger metricsLogger = MetricsLogger.getInstance();
+
     @Override
     public boolean isConsistent() {
-        Speed4JMeasurement.start("consistencycheck");
-        Speed4JMeasurement.start("syncbeforeconsistencycheck");
+        Timer.Context timer = metricsLogger.getTimer("consistencyChecks").time();
+        metricsLogger.startTimer("consistencychecks");
+        metricsLogger.startTimer("syncbeforeconsistencycheck");
         sync();
-        Speed4JMeasurement.stop();
+        metricsLogger.stopTimer("syncbeforeconsistencycheck");
         boolean r = reasoner.isConsistent();
-        long time = Speed4JMeasurement.stop();
-        IterativeStatistics.avgConsistencyTime.addValue(time);
-        IterativeStatistics.avgConsistencyCheck.addValue(1L);
+        long time = metricsLogger.stopTimer("consistencychecks");
+        timer.stop();
+        //IterativeStatistics.avgConsistencyTime.addValue(time);
+        //IterativeStatistics.avgConsistencyCheck.addValue(1L);
         return r;
     }
 
     public boolean isSatisfiable(OWLClass unsatClass) {
-        Speed4JMeasurement.start("issatisfiablecheck");
-        Speed4JMeasurement.start("syncbeforeissatisfiablecheck");
+        Timer.Context timer = metricsLogger.getTimer("satisfiableChecks").time();
+        metricsLogger.startTimer("issatisfiablecheck");
+        metricsLogger.startTimer("syncbeforeissatisfiablecheck");
         sync();
-        Speed4JMeasurement.stop();
+        metricsLogger.stopTimer("syncbeforeissatisfiablecheck");
         boolean r = reasoner.isSatisfiable(unsatClass);
-        Speed4JMeasurement.stop();
+        metricsLogger.stopTimer("issatisfiablecheck");
+        timer.stop();
         return r;
     }
 
     @Override
     public boolean isCoherent() {
-        Speed4JMeasurement.start("iscoherencycheck");
-        Speed4JMeasurement.start("syncbeforeiscoherencycheck");
+        Timer.Context coherencyTimer = metricsLogger.getTimer("coherencyChecks").time();
+        metricsLogger.startTimer("iscoherencycheck");
+        metricsLogger.startTimer("syncbeforeiscoherencycheck");
         sync();
-        Speed4JMeasurement.stop();
+        metricsLogger.stopTimer("syncbeforeiscoherencycheck");
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         boolean r = reasoner.getBottomClassNode().isSingleton();
-        long time = Speed4JMeasurement.stop();
-        IterativeStatistics.avgCoherencyTime.addValue(time);
-        IterativeStatistics.avgCoherencyCheck.addValue(1L);
+        long time = metricsLogger.stopTimer("iscoherencycheck");
+        coherencyTimer.stop();
+        //IterativeStatistics.avgCoherencyTime.addValue(time);
+        //IterativeStatistics.avgCoherencyCheck.addValue(1L);
         return r;
     }
 

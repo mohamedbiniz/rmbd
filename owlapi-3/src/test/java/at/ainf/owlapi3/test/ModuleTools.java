@@ -10,6 +10,8 @@ import uk.ac.manchester.cs.owlapi.modularity.SyntacticLocalityModuleExtractor;
 
 import java.util.*;
 
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -18,17 +20,6 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class ModuleTools {
-
-    public OWLOntology createOntology (Set<OWLLogicalAxiom> axioms) {
-        OWLOntology debuggingOntology = null;
-        try {
-            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology,axioms);
-        return debuggingOntology;
-    }
 
     public OWLReasoner createReasoner(OWLOntology ontology) {
         return new Reasoner.ReasonerFactory().createNonBufferingReasoner(ontology);

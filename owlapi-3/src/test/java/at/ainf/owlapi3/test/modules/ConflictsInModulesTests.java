@@ -9,7 +9,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.module.OtfModuleProvider;
+import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
@@ -27,6 +27,8 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLOb
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.*;
+
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
 
 /**
  * Created with IntelliJ IDEA.
@@ -400,17 +402,6 @@ public class ConflictsInModulesTests {
         return search;
 
 
-    }
-
-    protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
-        OWLOntology debuggingOntology = null;
-        try {
-            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology,axioms);
-        return debuggingOntology;
     }
 
 

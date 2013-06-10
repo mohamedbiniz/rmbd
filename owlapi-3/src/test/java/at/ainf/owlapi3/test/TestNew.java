@@ -13,7 +13,7 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLJustificationIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.module.OtfModuleProvider;
+import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import at.ainf.owlapi3.module.SatisfiableQuickXplain;
 import at.ainf.owlapi3.reasoner.ExtendedStructuralReasoner;
 import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;
@@ -38,6 +38,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import static at.ainf.owlapi3.util.OWLUtils.createOntology;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -919,17 +920,6 @@ public class TestNew {
 
     protected SyntacticLocalityModuleExtractor createModuleExtractor(OWLOntology ontology) {
         return new SyntacticLocalityModuleExtractor(OWLManager.createOWLOntologyManager(), ontology, ModuleType.STAR);
-    }
-
-    protected OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
-        OWLOntology debuggingOntology = null;
-        try {
-            debuggingOntology = OWLManager.createOWLOntologyManager().createOntology();
-        } catch (OWLOntologyCreationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        debuggingOntology.getOWLOntologyManager().addAxioms(debuggingOntology,axioms);
-        return debuggingOntology;
     }
 
     protected OWLReasoner getReasoner(OWLOntology ontology) {
