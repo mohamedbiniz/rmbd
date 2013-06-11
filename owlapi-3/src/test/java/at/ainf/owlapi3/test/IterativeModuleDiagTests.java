@@ -844,7 +844,7 @@ public class IterativeModuleDiagTests {
     @Test
     public void testIterativeDiagnosis() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
 
-        String onto = "mouse2human";
+        String onto = "fma2nci";
         ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
         Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "genonto1.owl");
         Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "genonto2.owl");
@@ -852,8 +852,8 @@ public class IterativeModuleDiagTests {
         //Set<OWLLogicalAxiom> onto1Axioms = getAxioms("ontologies/" + onto + "_gen1_onto1.owl");
         //Set<OWLLogicalAxiom> onto2Axioms = getAxioms("ontologies/" + onto + "_gen1_onto2.owl");
         //Set<OWLLogicalAxiom> mappingAxioms = getAxioms("ontologies/" + onto + "_gen1_mappings.owl");
-        String fileMappings = "mouse2human_reference_2011";
-        //String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
+        //String fileMappings = "mouse2human_reference_2011";
+        String fileMappings = "onto_mappings_FMA_NCI_cleanDG_rmbd";
 
         Set<OWLLogicalAxiom> ontoAxioms = new HashSet<OWLLogicalAxiom>();
         ontoAxioms.addAll(onto1Axioms);
@@ -867,11 +867,11 @@ public class IterativeModuleDiagTests {
         Set<OWLLogicalAxiom> falseAxioms = new HashSet<OWLLogicalAxiom>(mappingAxioms);
         falseAxioms.removeAll(correctAxioms);
 
-        ModuleDiagSearcher d = new ModuleMinDiagSearcher();
+        //ModuleDiagSearcher d = new ModuleMinDiagSearcher();
         //ModuleDiagSearcher d = new ModuleInvTreeDiagSearcher();
         //ModuleDiagSearcher d = new ModuleTargetDiagSearcher(pathMappings);
         //ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
-        //ModuleDiagSearcher d = new ModuleOptQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
+        ModuleDiagSearcher d = new ModuleOptQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
 
         //d.setTreeCreator(new InvHSTreeCreator());
 

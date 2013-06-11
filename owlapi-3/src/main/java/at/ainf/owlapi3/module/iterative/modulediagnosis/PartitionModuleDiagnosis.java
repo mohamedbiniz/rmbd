@@ -1,8 +1,12 @@
-package at.ainf.owlapi3.module.iterative.diag;
+package at.ainf.owlapi3.module.iterative.modulediagnosis;
 
-import at.ainf.diagnosis.Speed4JMeasurement;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.model.OWLModuleExtractor;
-import at.ainf.owlapi3.module.iterative.ModuleDiagSearcher;
+import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
+import at.ainf.owlapi3.module.iterative.modulediagnosis.AbstractRootModuleDiagnosis;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -21,7 +25,7 @@ import java.util.*;
  */
 public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
-    private static Logger logger = LoggerFactory.getLogger(RootModuleDiagnosis.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(PartitionModuleDiagnosis.class.getName());
 
     private final int MAX_REDUCTION_TRIALS = 5;
     private final int MAX_MODULESIZE_FOR_DEBUG = 500;
@@ -30,6 +34,100 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     public PartitionModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms, OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher) {
         super(mappings, ontoAxioms, factory, moduleDiagSearcher);
     }
+
+
+    private class RepairInfo {
+        Set<OWLLogicalAxiom> partialDiag;
+        Set<OWLEntity> repairedClasses;
+
+        RepairInfo(){
+
+        }
+
+        private Set<OWLLogicalAxiom> getPartialDiag() {
+            return partialDiag;
+        }
+
+        private void setPartialDiag(Set<OWLLogicalAxiom> partialDiag) {
+            this.partialDiag = partialDiag;
+        }
+
+        private Set<OWLEntity> getRepairedClasses() {
+            return repairedClasses;
+        }
+
+        private void setRepairedClasses(Set<OWLEntity> repairedClasses) {
+            this.repairedClasses = repairedClasses;
+        }
+    }
+
+    private class SplitSignature {
+        Set<OWLClass> left;
+        Set<OWLClass> right;
+
+        SplitSignature(){
+
+        }
+
+        private Set<OWLClass> getLeft() {
+            return left;
+        }
+
+        private void setLeft(Set<OWLClass> left) {
+            this.left = left;
+        }
+
+        private Set<OWLClass> getRight() {
+            return right;
+        }
+
+        private void setRight(Set<OWLClass> right) {
+            this.right = right;
+        }
+    }
+
+    private SplitSignature splitSignature (Set<OWLClass> signature){
+        int sigSize = signature.size();
+        int splitPoint = sigSize/10;
+        List<OWLClass> sig = new LinkedList<OWLClass>(signature);
+        List<OWLClass> left = sig.subList(0,splitPoint);
+        List<OWLClass> right = sig.subList(splitPoint,sigSize);
+        SplitSignature ss = new SplitSignature();
+        ss.setLeft(new HashSet<OWLClass>(left));
+        ss.setRight(new HashSet<OWLClass>(right));
+        return ss;
+    }
+
+    private Set<OWLLogicalAxiom> debug(Set<OWLLogicalAxiom> axioms){
+        //TODO
+        return null;
+    }
+
+    private Set<OWLLogicalAxiom> fastRepair(Set<OWLLogicalAxiom> ontology){
+        Set<OWLClass> ontoSignature = getClassesInModuleSignature(ontology);
+        SplitSignature ss;
+        OWLModuleExtractor extractor = new OWLModuleExtractor(ontology);
+        while(!isDebuggable(ontology,ontoSignature)){
+            ss = splitSignature(ontoSignature);
+            Set<OWLLogicalAxiom> leftModule = extractor.calculateModule(ss.getLeft());
+            Set<OWLLogicalAxiom> rightModule = extractor.calculateModule(ss.getRight());
+            Set<OWLLogicalAxiom> iModule = leftModule;
+            iModule.retainAll(rightModule);
+            Set<OWLClass> iModSignature = getClassesInModuleSignature(iModule);
+            Set<OWLLogicalAxiom> iModDiag = fastRepair(iModule);
+            ontology.removeAll(iModDiag);
+            ontoSignature.removeAll(iModSignature);
+        }
+        Set<OWLLogicalAxiom> partialDiag = debug(ontology);
+        return partialDiag;
+    }
+
+    private boolean isDebuggable(Set<OWLLogicalAxiom> axioms, Set<OWLClass> signature){
+        return true;
+    }
+
+
+
 
     protected Set<OWLLogicalAxiom> createFixpointModule (Set<OWLLogicalAxiom> ontology, int nParts) {
 
@@ -48,18 +146,19 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
     protected List<Set<OWLLogicalAxiom>> recursiveModuleExtract (Set<OWLLogicalAxiom> ontology, List<OWLClass> signature, int nParts) {
 
-        List<Set<OWLLogicalAxiom>> submodules = new LinkedList<Set<OWLLogicalAxiom>>();
-        OWLModuleExtractor extractor = new OWLModuleExtractor(ontology);
-        List<List<OWLClass>> subsignatures = calculateSubSignaturePartitioned (signature, nParts);
-        for (List<OWLClass> s : subsignatures) {
-            Speed4JMeasurement.start("submodules_extraction_single");
-            Set<OWLLogicalAxiom> submod = extractor.calculateModule(s);
-            long time = Speed4JMeasurement.stop();
-            //logger.info("parts / time / start signature size / submodul size / signature size: " +
-            //        split + ", " + time + ", " + s.size() + ", " + submod.size() + ", " + getClassesInModuleSignature(submod).size());
-            submodules.add(submod);
-        }
-        return submodules;
+//        List<Set<OWLLogicalAxiom>> submodules = new LinkedList<Set<OWLLogicalAxiom>>();
+//        OWLModuleExtractor extractor = new OWLModuleExtractor(ontology);
+//        List<List<OWLClass>> subsignatures = calculateSubSignaturePartitioned (signature, nParts);
+//        for (List<OWLClass> s : subsignatures) {
+//            Speed4JMeasurement.start("submodules_extraction_single");
+//            Set<OWLLogicalAxiom> submod = extractor.calculateModule(s);
+//            long time = Speed4JMeasurement.stop();
+//            //logger.info("parts / time / start signature size / submodul size / signature size: " +
+//            //        split + ", " + time + ", " + s.size() + ", " + submod.size() + ", " + getClassesInModuleSignature(submod).size());
+//            submodules.add(submod);
+//        }
+//        return submodules;
+        return null;
     }
 
     private List<List<OWLClass>> calculateSubSignaturePartitioned (List<OWLClass> signature, int nParts){
@@ -67,23 +166,24 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     }
 
 
-    @Override
-    public Set<OWLLogicalAxiom> calculateTargetDiagnosis() {
-        //Set<OWLLogicalAxiom> fixpointModule = createFixpointModule();
 
-        //first: partition-intersection reduction until fixpoint
-        // if fixpoint-module has size higher than MAX_SIZE_FOR_DEBUG, then
-        //second: reduce to root until module is smaller than MAX_SIZE_FOR_DEBUG
-        //
+    protected Set<OWLLogicalAxiom> reduceToRootModule(Set<OWLLogicalAxiom> module, Set<OWLClass> atom) {
+//        ArrayList<OWLClass> moduleSignature = new ArrayList<OWLClass>(getClassesInModuleSignature(module));
+//        int moduleSignatureSize = moduleSignature.size();
+//        int classIndex = (int) Math.floor(Math.random());
+//        OWLClass nextClass = moduleSignature.get(classIndex);
         return null;
     }
 
-    protected Set<OWLLogicalAxiom> reduceToRootModule(Set<OWLLogicalAxiom> module, Set<OWLClass> atom) {
-        ArrayList<OWLClass> moduleSignature = new ArrayList<OWLClass>(getClassesInModuleSignature(module));
-        int moduleSignatureSize = moduleSignature.size();
-        int classIndex = (int) Math.floor(Math.random());
-        OWLClass nextClass = moduleSignature.get(classIndex);
-        return null;
+    @Override
+    public Set<FormulaSet<OWLLogicalAxiom>> start() throws SolverException, NoConflictException, InconsistentTheoryException {
+        //Set<OWLLogicalAxiom> fixpointModule = createFixpointModule();
+
+                //first: partition-intersection reduction until fixpoint
+                // if fixpoint-module has size higher than MAX_SIZE_FOR_DEBUG, then
+                //second: reduce to root until module is smaller than MAX_SIZE_FOR_DEBUG
+                //
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
 }
