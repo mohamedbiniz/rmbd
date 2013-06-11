@@ -195,10 +195,10 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             String lastLabel = "";
             Partition<OWLLogicalAxiom> best = null;
             try {
-                metricsLogger.startTimer("calculatingpartition");
+                metricsLogger.startTimer("calculatingquery");
                 best = ckk.generatePartition(search.getDiagnoses());
                 lastLabel = metricsLogger.getLabelManager().getLabelsConc();
-                long queryCalc = metricsLogger.stopTimer("calculatingpartition");
+                long queryCalc = metricsLogger.stopTimer("calculatingquery");
                 //IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);
             } catch (SolverException e) {
                 // e.printStackTrace();
@@ -209,9 +209,9 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             if (isMinimizerActive())
                 minimizePartitionAx(best,search.getSearchable());
 
-            metricsLogger.getHistogram("partition-size").update(best.partition.size());
+            metricsLogger.getHistogram("query-size").update(best.partition.size());
 
-            logger.info(lastLabel + " size of partition " + best.partition.size());
+            logger.info(lastLabel + " size of query " + best.partition.size());
             for (OWLLogicalAxiom axiom : best.partition)
                 logger.info("query axiom: " + axiom);
             logger.info("query axiom end");
