@@ -73,7 +73,7 @@ public class MetricsLogger {
 
     public long stopTimer (String timer) {
         long time = contexts.get(timer).stop();
-        // logTime(timer, time);
+        logTime(timer, time);
         return time;
     }
 
@@ -113,7 +113,7 @@ public class MetricsLogger {
     }
 
     public Gauge createGauge (String identifier, final int value) {
-        Gauge gauge = getActualMetric().getGauges().get(identifier);
+        Gauge gauge = getActualMetric().getGauges().get(name(MetricsLogger.class, identifier));
         if (gauge == null)
             gauge = getActualMetric().register(name(MetricsLogger.class, identifier), new Gauge<Integer>() {
                 @Override

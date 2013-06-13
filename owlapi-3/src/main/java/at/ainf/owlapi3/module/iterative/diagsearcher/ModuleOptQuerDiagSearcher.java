@@ -29,7 +29,7 @@ import static at.ainf.owlapi3.util.SetUtils.createUnion;
  */
 public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
-   private static Logger logger = LoggerFactory.getLogger(ModuleQuerDiagSearcher.class.getName());
+   private static Logger logger = LoggerFactory.getLogger(ModuleOptQuerDiagSearcher.class.getName());
 
    private MetricsLogger metricsLogger = MetricsLogger.getInstance();
 
@@ -197,6 +197,10 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             try {
                 metricsLogger.startTimer("calculatingquery");
                 best = ckk.generatePartition(search.getDiagnoses());
+
+                while (createUnion(collectedNonEntailedTCs).containsAll(best.partition))
+                    best = ckk.nextPartition(best);
+
                 lastLabel = metricsLogger.getLabelManager().getLabelsConc();
                 long queryCalc = metricsLogger.stopTimer("calculatingquery");
                 //IterativeStatistics.avgTimeQueryGen.addValue(queryCalc);

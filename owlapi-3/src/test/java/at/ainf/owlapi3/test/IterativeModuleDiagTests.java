@@ -10,6 +10,7 @@ import at.ainf.owlapi3.model.OWLModuleExtractor;
 import at.ainf.owlapi3.model.intersection.OWLEqualIntersectionExtractor;
 import at.ainf.owlapi3.model.intersection.OWLPerecentConceptIntersectionExtractor;
 import at.ainf.owlapi3.module.iterative.diagsearcher.*;
+import at.ainf.owlapi3.module.iterative.modulediagnosis.PartitionModuleDiagnosis;
 import at.ainf.owlapi3.module.iterative.modulediagnosis.multhread.InvTreeDiagSearcher;
 import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
@@ -839,6 +840,43 @@ public class IterativeModuleDiagTests {
             result.add((OWLLogicalAxiom) axiom);
         metricsLogger.stopTimer("extraction_module");
         return result;
+    }
+
+    @Test
+    public void testPartitionDiagnosis() throws SolverException, InconsistentTheoryException, NoConflictException {
+
+        String onto = "Economy-SDA";
+        ToStringRenderer.getInstance().setRenderer(new ManchesterOWLSyntaxOWLObjectRendererImpl());
+        Set<OWLLogicalAxiom> ontoAxioms = getAxioms("ontologies/" + onto + ".owl");
+
+        ModuleDiagSearcher d = new ModuleMinDiagSearcher();
+
+        long time = System.currentTimeMillis();
+        //Debugger<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> diagnosisFinder = new IterativeModuleDiagnosis(ontoAxioms, Collections.<OWLLogicalAxiom>emptySet(),
+        //        new Reasoner.ReasonerFactory(), d, true);
+        Debugger<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> diagnosisFinder = new PartitionModuleDiagnosis(ontoAxioms, Collections.<OWLLogicalAxiom>emptySet(),
+                new Reasoner.ReasonerFactory(), d);
+        metricsLogger.startTimer("modulediagnosiscreation");
+        //ModuleDiagnosis diagnosisFinder = new RootModuleDiagnosis(mappingAxioms, ontoAxioms,
+        //        new Reasoner.ReasonerFactory(), d);
+        metricsLogger.stopTimer("modulediagnosiscreation");
+
+        Set<FormulaSet<OWLLogicalAxiom>> diagnoses = diagnosisFinder.start();
+        Set<OWLLogicalAxiom> targetDiagnosis = diagnoses.iterator().next();
+        logger.info("size of target diag: " + targetDiagnosis.size());
+        time = System.currentTimeMillis() - time;
+
+        Set<OWLLogicalAxiom> repaired = new HashSet<OWLLogicalAxiom>();
+        repaired.addAll(ontoAxioms);
+        repaired.removeAll(targetDiagnosis);
+
+        OWLReasoner reasoner = new Reasoner.ReasonerFactory().createNonBufferingReasoner(createOntology(repaired));
+        metricsLogger.logStandardMetrics();
+        Set<OWLClass> unsatClasses = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+        assertTrue(unsatClasses.isEmpty());
+
+        logger.info("time needed: " + time);
+
     }
 
     @Test
