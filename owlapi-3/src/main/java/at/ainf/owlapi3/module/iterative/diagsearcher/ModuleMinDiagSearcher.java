@@ -126,7 +126,7 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
         for (Set<OWLLogicalAxiom> cs : search.getConflicts())
             metricsLogger.getHistogram("card-cs").update(cs.size());
         //IterativeStatistics.moduleSize.add((long)axioms.size());
-        metricsLogger.createGauge("module-size", axioms.size());
+          metricsLogger.createGauge("module-size", axioms.size());
 
         Set<FormulaSet<OWLLogicalAxiom>> diagnoses = search.getDiagnoses();
         Set<OWLLogicalAxiom> diagnosis;
