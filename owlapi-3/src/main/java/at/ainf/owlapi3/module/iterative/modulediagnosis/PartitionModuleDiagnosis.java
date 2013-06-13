@@ -31,6 +31,8 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     private final int MAX_MODULESIZE_FOR_DEBUG = 500;
     private Set<Set<OWLLogicalAxiom>> atoms = new LinkedHashSet<Set<OWLLogicalAxiom>>();
 
+    private Set<OWLLogicalAxiom> targetDiagnosis;
+
     public PartitionModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms, OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher) {
         super(mappings, ontoAxioms, factory, moduleDiagSearcher);
     }
@@ -109,6 +111,7 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
         Set<OWLClass> ontoSignature = getClassesInModuleSignature(ontology);
         SplitSignature ss;
         OWLModuleExtractor extractor = new OWLModuleExtractor(ontology);
+        Set<OWLLogicalAxiom> targetDiag = new HashSet<OWLLogicalAxiom>();
         while(!isDebuggable(ontology,ontoSignature)){
             ss = splitSignature(ontoSignature);
             Set<OWLLogicalAxiom> leftModule = extractor.calculateModule(ss.getLeft());
@@ -117,15 +120,17 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
             iModule.retainAll(rightModule);
             Set<OWLClass> iModSignature = getClassesInModuleSignature(iModule);
             Set<OWLLogicalAxiom> iModDiag = fastRepair(iModule);
+            targetDiag.addAll(iModDiag);
             ontology.removeAll(iModDiag);
             ontoSignature.removeAll(iModSignature);
         }
         Set<OWLLogicalAxiom> partialDiag = debug(ontology);
-        return partialDiag;
+        targetDiag.addAll(partialDiag);
+        return targetDiag;
     }
 
     private boolean isDebuggable(Set<OWLLogicalAxiom> axioms, Set<OWLClass> signature){
-        if(axioms.size() < 500)
+        if(axioms.size() < 500 || signature.size() < 50)
             return true;
         return false;
     }
