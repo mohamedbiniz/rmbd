@@ -99,8 +99,10 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     }
 
     private Set<OWLLogicalAxiom> debug(Set<OWLLogicalAxiom> axioms){
-        //TODO
-        return null;
+        Set<OWLLogicalAxiom> background = new HashSet<OWLLogicalAxiom>(getOntoAxioms());
+        background.retainAll(axioms);
+        Set<OWLLogicalAxiom> diagnosis = getDiagSearcher().calculateDiag(axioms, background);
+        return diagnosis;
     }
 
     private Set<OWLLogicalAxiom> fastRepair(Set<OWLLogicalAxiom> ontology){
@@ -123,7 +125,9 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     }
 
     private boolean isDebuggable(Set<OWLLogicalAxiom> axioms, Set<OWLClass> signature){
-        return true;
+        if(axioms.size() < 500)
+            return true;
+        return false;
     }
 
 
