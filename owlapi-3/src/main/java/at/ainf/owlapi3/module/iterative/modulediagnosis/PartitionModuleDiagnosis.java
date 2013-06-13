@@ -187,7 +187,9 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
                 // if fixpoint-module has size higher than MAX_SIZE_FOR_DEBUG, then
                 //second: reduce to root until module is smaller than MAX_SIZE_FOR_DEBUG
                 //
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Set<OWLLogicalAxiom> ontology = new HashSet<OWLLogicalAxiom>(getOntoAxioms());
+        ontology.addAll(getMappings());
+        return Collections.singleton(createFormularSet(fastRepair(ontology)));
     }
 
 }
