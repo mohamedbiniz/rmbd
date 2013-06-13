@@ -1,0 +1,1 @@
+http://CONFTOOL.owl#Topic EquivalentTo http://PCS.owl#DOCUMENT, http://CONFTOOL.owl#Contribution EquivalentTo http://PCS.owl#Electronic_proceeding

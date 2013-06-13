@@ -1,0 +1,12 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/PCS.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://PCS.owl
+
++ Person = PERSON | 0.5105743
++ Paper = Paper | 0.4275248
+- Topic = DOCUMENT | 0.19207743
++ Author = Author | 0.4976513
+- Contribution = Electronic_proceeding | 0.4390043
++ Administrator = Administrator | 0.38428295
++ Conference = Conference | 0.35

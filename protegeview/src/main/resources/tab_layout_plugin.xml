@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <VSNode splits="1.0">
+        <HSNode splits="0.022342995169082128">
+            <VSNode splits="0.011171497584541064">
+                <HSNode splits="0.006759924487930015 0.004411573096611049">
+                    <VSNode splits="0.003711079677056449 0.0018746691152140827">
+                        <HSNode splits="4.0425170365702816E-4 0.002388622692478238">
+                            <CNode>
+                                <Component label="Toolbox">
+                                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.buttonview.ButtonView"/>
+                                </Component>
+                            </CNode>
+                            <VSNode splits="0.0011468324815048195 0.0011468324815048195">
+                                <CNode>
+                                    <Component label="Axiom Explanation">
+                                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.AxiomExplainView"/>
+                                    </Component>
+                                    <Component label="HS Tree">
+                                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.diagnosistreeview.DiagnosisTreeView"/>
+                                    </Component>
+                                    <Component label="Entailments">
+                                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.RepairView"/>
+                                    </Component>
+                                </CNode>
+                                <CNode>
+                                    <Component label="Query Asking">
+                                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.queryaskingview.QueryAskingView"/>
+                                    </Component>
+                                </CNode>
+                            </VSNode>
+                        </HSNode>
+                        <HSNode splits="0.001396437198067633 0.001396437198067633">
+                            <CNode>
+                                <Component label="Diagnoses">
+                                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.HittingSetView"/>
+                                </Component>
+                            </CNode>
+                            <CNode>
+                                <Component label="Conflict Sets">
+                                    <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.views.ConflictSetView"/>
+                                </Component>
+                            </CNode>
+                        </HSNode>
+                    </VSNode>
+                    <VSNode splits="0.001396437198067633 0.0018855446430760933 0.0023037669511268054">
+                        <CNode>
+                            <Component label="Class hierarchy">
+                                <Property id="pluginId" value="org.protege.editor.owl.OWLAssertedClassHierarchy"/>
+                            </Component>
+                            <Component label="Data property hierarchy">
+                                <Property id="pluginId" value="org.protege.editor.owl.OWLDataPropertyTree"/>
+                            </Component>
+                            <Component label="Object property hierarchy">
+                                <Property id="pluginId" value="org.protege.editor.owl.OWLObjectPropertyTree"/>
+                            </Component>
+                            <Component label="Individuals">
+                                <Property id="pluginId" value="org.protege.editor.owl.OWLIndividualsList"/>
+                            </Component>
+                        </CNode>
+                        <CNode>
+                            <Component label="Test Cases and Entailments">
+                                <Property id="pluginId" value="at.ainf.protegeview.at.ainf.protegeview.testcasesentailmentsview.TestCasesEntailmentsView"/>
+                            </Component>
+                        </CNode>
+                        <CNode>
+                            <Component label="Selected entity">
+                                <Property id="pluginId" value="org.protege.editor.owl.SelectedEntityView"/>
+                            </Component>
+                        </CNode>
+                    </VSNode>
+                </HSNode>
+            </VSNode>
+        </HSNode>
+    </VSNode>
+</layout>
