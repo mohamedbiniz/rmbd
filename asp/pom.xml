@@ -30,7 +30,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.riedelcastro</groupId>
                 <artifactId>gcupload-maven-plugin</artifactId>
                 <version>0.9</version>
@@ -47,7 +47,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.0.2</version>
-            </plugin>
+            </plugin> -->
+
         </plugins>
     </build>
 
