@@ -73,7 +73,7 @@ public class MetricsLogger {
 
     public long stopTimer (String timer) {
         long time = contexts.get(timer).stop();
-        // logTime(timer, time);
+        logTime(timer, time);
         return time;
     }
 

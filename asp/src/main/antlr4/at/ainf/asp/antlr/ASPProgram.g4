@@ -1,8 +1,9 @@
+
 grammar ASPProgram;
 
 /* @header {
-	package at.ainf.asp.antlr;
-}  */
+	package antlr;
+} */
 
 
 /*----------------
@@ -25,7 +26,7 @@ normrule : head ENTAILS body DOT ;
 constraint : ENTAILS body DOT ;
 
 /** An aggregate can have bounds, curly or squared brackets and conditional literals. */
-aggregate : bound? equal? ( CURLBRL | SQURBRL ) (condliteral | COMMA)+ ( CURLBRR | SQURBRR ) bound? ;
+aggregate : bound? bracketL (literal | condliteral | COMMA)+ bracketR bound? ;
 
 /** The head consists of a literal or an aggregate. */
 head : literal | aggregate ;
@@ -52,7 +53,11 @@ range : INT RANGE INT ;
 terms : PARENTHL (SYMBOLS | INT | COMMA)+ PARENTHR ;
 
 /** Bounds of aggregates can be symbols. */
-bound : SYMBOLS ;
+bound : INT ;
+
+bracketL : CURLBRL | SQURBRL ;
+
+bracketR : CURLBRR | SQURBRR ;
 
 /** Equality. */
 equal : EQUAL ;
@@ -82,5 +87,4 @@ NEQUAL : '!=' ;
 RANGE : '..' ;
 INT : ('0'..'9')+ ;
 SYMBOLS : (' ' | 'a'..'z' | 'A'..'Z' | '0'..'9' | '_')+ ;
-
-LINE_COMMENT  : '%' ~('\n'|'\r')* -> skip ;
+COMMENT : ( '%' ~[\r\n]* '\r'? '\n' | '%*' .*? '*%' ) -> skip ;
