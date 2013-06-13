@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.test.modules;
 
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.BufferingMode;
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public class DistanceToTopComparator implements OWLClassComparator {
 
-    private static final OWLClass TOP_CLASS = OWLDataFactoryImpl.getInstance().getOWLThing();
+    private static final OWLClass TOP_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
 
     Map<OWLClass,Integer> map;
 

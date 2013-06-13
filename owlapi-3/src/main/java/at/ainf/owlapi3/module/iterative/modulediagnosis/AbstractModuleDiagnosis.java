@@ -7,6 +7,7 @@ import at.ainf.owlapi3.module.iterative.modulecalc.HornModuleCalc;
 import at.ainf.owlapi3.module.iterative.modulecalc.ModuleCalc;
 import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
 import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ public abstract class AbstractModuleDiagnosis implements Debugger<FormulaSet<OWL
 
     private static Logger logger = LoggerFactory.getLogger(AbstractModuleDiagnosis.class.getName());
 
-    protected static final OWLClass BOT_CLASS = OWLDataFactoryImpl.getInstance().getOWLNothing();
+    protected static final OWLClass BOT_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
 
     private ModuleCalc moduleCalculator;
 

@@ -75,7 +75,7 @@ public class ConflictsInModulesTests {
 
     }
 
-    private static final OWLClass BOT_CLASS = OWLDataFactoryImpl.getInstance().getOWLNothing();
+    private static final OWLClass BOT_CLASS = OWLManager.getOWLDataFactory().getOWLThing();
 
     @Test
     public void hierarchyOfUnsatclasses() throws OWLOntologyCreationException {
