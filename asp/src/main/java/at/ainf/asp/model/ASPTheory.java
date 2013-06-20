@@ -17,32 +17,34 @@ import org.slf4j.LoggerFactory;
  */
 public class ASPTheory extends BaseSearchableObject<IProgramElement> {
 
-    private static Logger logger = LoggerFactory.getLogger(ASPSolver.class.getName());
-	
-	@Override
-	public ReasonerASP getReasoner() {
-		return (ReasonerASP) super.getReasoner();
-	}
+    private static Logger logger = LoggerFactory.getLogger(ASPTheory.class.getName());
 
-	@Override
-	public boolean verifyConsistency() throws SolverException {
-		LinkedHashSet<IProgramElement> formulasToAdd = new LinkedHashSet<IProgramElement>(getKnowledgeBase().getBackgroundFormulas());
+    @Override
+    public ReasonerASP getReasoner() {
+        return (ReasonerASP) super.getReasoner();
+    }
+
+    @Override
+    public boolean verifyConsistency() throws SolverException {
+        LinkedHashSet<IProgramElement> formulasToAdd = new LinkedHashSet<IProgramElement>(getKnowledgeBase().getBackgroundFormulas());
         logger.info("\nFormulas to add:");
-		for (IProgramElement pe : formulasToAdd) {
+        for (IProgramElement pe : formulasToAdd) {
             logger.info(pe.getString());
-		}
-		Set<IProgramElement> cache = getReasoner().getFormulasCache();
+        }
+        Set<IProgramElement> cache = getReasoner().getFormulasCache();
         logger.info("\nFormulas cached:");
-		for (IProgramElement pe : cache) {
+        for (IProgramElement pe : cache) {
             logger.info(pe.getString());
-		}
-		formulasToAdd.removeAll(getReasoner().getFormulasCache());
-		getReasoner().addFormulasToCache(formulasToAdd);
-		boolean isConsistent = getReasoner().isConsistent();
-		getReasoner().removeFormulasFromCache(formulasToAdd);
-		return isConsistent;
-	}
+        }
+        formulasToAdd.removeAll(getReasoner().getFormulasCache());
+        getReasoner().addFormulasToCache(formulasToAdd);
+        boolean isConsistent = getReasoner().isConsistent();
+        ASPOutput output = ASPOutput.getASPOutputInstance();
+        if (output.isUnknown()) throw new SolverException("The solver returned UNKNOWN. Probably there are some syntax errors in the ASP file.");
+        getReasoner().removeFormulasFromCache(formulasToAdd);
+        return isConsistent;
+    }
 
-	
-	
+
+
 }

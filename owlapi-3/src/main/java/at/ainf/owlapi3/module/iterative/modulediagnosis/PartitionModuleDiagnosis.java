@@ -31,7 +31,7 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     private final int MAX_MODULESIZE_FOR_DEBUG = 500;
     private Set<Set<OWLLogicalAxiom>> atoms = new LinkedHashSet<Set<OWLLogicalAxiom>>();
 
-    private Set<OWLLogicalAxiom> targetDiagnosis;
+
 
     public PartitionModuleDiagnosis(Set<OWLLogicalAxiom> mappings, Set<OWLLogicalAxiom> ontoAxioms, OWLReasonerFactory factory, ModuleDiagSearcher moduleDiagSearcher) {
         super(mappings, ontoAxioms, factory, moduleDiagSearcher);
@@ -192,7 +192,9 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
                 // if fixpoint-module has size higher than MAX_SIZE_FOR_DEBUG, then
                 //second: reduce to root until module is smaller than MAX_SIZE_FOR_DEBUG
                 //
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        Set<OWLLogicalAxiom> ontology = new HashSet<OWLLogicalAxiom>(getOntoAxioms());
+        ontology.addAll(getMappings());
+        return Collections.singleton(createFormularSet(fastRepair(ontology)));
     }
 
 }
