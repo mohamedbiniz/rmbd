@@ -58,10 +58,6 @@ public class OptQueryTest {
         ModuleDiagSearcher optquery = new ModuleOptQuerDiagSearcher(null,correctAxioms,falseAxioms, false);
         optquery.setReasonerFactory(new Reasoner.ReasonerFactory());
         optquery.calculateDiag(ontology.getLogicalAxioms(), Collections.<OWLLogicalAxiom>emptySet());
-
-        OWLReasoner reasoner1 = new Reasoner.ReasonerFactory().createNonBufferingReasoner(ontology);
-
-
     }
 
 }
