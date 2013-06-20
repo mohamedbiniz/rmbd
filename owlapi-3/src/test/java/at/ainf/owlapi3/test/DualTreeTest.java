@@ -257,7 +257,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
     }
 
 
-
+    @Ignore
     @Test
     public void testResultsEqualTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
