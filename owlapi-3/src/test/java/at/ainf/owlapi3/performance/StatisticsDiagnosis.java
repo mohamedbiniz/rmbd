@@ -10,6 +10,7 @@ import at.ainf.owlapi3.model.OWLTheory;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,10 +135,36 @@ public class StatisticsDiagnosis {
                 if (!exclude.contains(file.getName()) && (file.getName().endsWith(".owl") || file.getName().endsWith("._owl_")
                         || file.getName().endsWith(".owl2")|| file.getName().endsWith(".rdf")) ) {
                     logger.info("started " + file.getName());
-                    test(file, 9);
+                    test(file, 9, "oaei11conference/ontology", "oaei11conference/matchings/");
                     printStatsAndClear("Leading diagnoses " + file.getName());
-                    test(file, -1);
+                    test(file, -1, "oaei11conference/ontology", "oaei11conference/matchings/");
                     printStatsAndClear("All diagnoses " + file.getName());
+                    logger.info("stopped " + file.getName());
+                }
+            } catch (Exception e) {
+                //file.renameTo(new File(file + ".checked"));
+                logger.error(e.toString());
+            }
+
+    }
+
+    @Test
+    public void testConference2012() throws SolverException, URISyntaxException, OWLException, InconsistentTheoryException {
+
+        List<String> exclude = new LinkedList<String>();
+
+        String testDir = ClassLoader.getSystemResource("oaei12conference/matcheralignments/unsat/").getPath();
+        LinkedList<File> files = new LinkedList<File>();
+        collectAllFiles(new File(testDir), files);
+        for (File file : files)
+            try {
+                if (!exclude.contains(file.getName()) && (file.getName().endsWith(".owl") || file.getName().endsWith("._owl_")
+                        || file.getName().endsWith(".owl2")|| file.getName().endsWith(".rdf")) ) {
+                    logger.info("started " + file.getName());
+                    boolean isOk = isAligendOntoSat(file, 9, "oaei12conference/ontologies",
+                            "oaei12conference/matcheralignments/");
+                    if (isOk)
+                        logger.info("matched ontology " + file.getName() + " is sat: " + isOk);
                     logger.info("stopped " + file.getName());
                 }
             } catch (Exception e) {
@@ -157,26 +184,27 @@ public class StatisticsDiagnosis {
         }
     }
 
-    private boolean test(File file, int number) throws URISyntaxException, SolverException, OWLException, InconsistentTheoryException, NoConflictException {
+    private boolean isAligendOntoSat(File file, int number, String pathOntos, String pathMappings) throws URISyntaxException, SolverException, OWLException, InconsistentTheoryException, NoConflictException {
         if (new File(file + ".checked").exists())
             return false;
 
         //SimpleDebugger debugger = new SimpleDebugger();
         logger.info("Processing " + file);
-        OWLOntology ontology = null;
-        if (file.getName().endsWith(".rdf")) {
-            String pathOntologies = "oaei11conference/ontology";
-            String o1 = file.getName().split("-")[1];
-            String o2 = file.getName().split("-")[2];
-            o2 = o2.substring(0,o2.length()-4);
-            String pathMapping = "oaei11conference/matchings/" + file.getParentFile().getName();
-            String mappingName = file.getName();
-            ontology = new OAEI11ConferenceSession().getOntology(pathOntologies, o1, o2, pathMapping, mappingName);
-        }
-        else {
-            ontology = new CalculateDiagnoses().getOntologyBase(file);
+        OWLOntology ontology = createOntologyWithMappings(file, pathOntos, pathMappings);
 
-        }
+        OWLReasoner reasoner = new Reasoner.ReasonerFactory().createNonBufferingReasoner(ontology);
+        Set<OWLClass> unsatClasses = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+        return unsatClasses.isEmpty();
+    }
+
+    private boolean test(File file, int number, String pathOntos, String pathMappings) throws URISyntaxException, SolverException, OWLException, InconsistentTheoryException, NoConflictException {
+        if (new File(file + ".checked").exists())
+            return false;
+
+        //SimpleDebugger debugger = new SimpleDebugger();
+        logger.info("Processing " + file);
+        OWLOntology ontology = createOntologyWithMappings(file, pathOntos, pathMappings);
+
         OWLTheory th = createTheory(ontology);
         //debugger.setSearchable(th);
         SimpleQueryDebugger<OWLLogicalAxiom> debugger = new SimpleQueryDebugger<OWLLogicalAxiom>(th);
@@ -209,6 +237,24 @@ public class StatisticsDiagnosis {
         }
         stop("Diagnosis finished in ");
         return ret;
+    }
+
+    private OWLOntology createOntologyWithMappings(File file, String pathOntos, String pathMappings) {
+        OWLOntology ontology = null;
+        if (file.getName().endsWith(".rdf")) {
+            String pathOntologies = pathOntos;
+            String o1 = file.getName().split("-")[1];
+            String o2 = file.getName().split("-")[2];
+            o2 = o2.substring(0,o2.length()-4);
+            String pathMapping = pathMappings + file.getParentFile().getName();
+            String mappingName = file.getName();
+            ontology = new OAEI11ConferenceSession().getOntology(pathOntologies, o1, o2, pathMapping, mappingName);
+        }
+        else {
+            ontology = new CalculateDiagnoses().getOntologyBase(file);
+
+        }
+        return ontology;
     }
 
     private void logResult(Collection<? extends Set<OWLLogicalAxiom>> sets, String message) throws OWLException {

@@ -4,18 +4,25 @@ grammar ASPOutput;
 	package antlr;
 } */
 
+@parser::members {
+
+}
+
 /*----------------
 * PARSER RULES
 *----------------*/
 
 /**  */
-output : ( ( (unsatisfiable)+ | (satisfiable)+ ) | other)+ ;
+output : ( (unsatisfiable | satisfiable | unknown)+ | other)+ ;
 
 /**  */
 unsatisfiable : UNSATISFIABLE ;
 
 /**  */
 satisfiable : SATISFIABLE ;
+
+/**  */
+unknown : UNKNOWN ;
 
 /**  */
 other : symbols ;
@@ -31,8 +38,9 @@ symbols : ( SYMBOLS | DOT | CONDITION | PARENTHL | PARENTHR )+ ;
 WS : (' ' | '\t' | '\n' | '\r' | '\f')+ -> skip ;
 UNSATISFIABLE : 'UNSATISFIABLE' ;
 SATISFIABLE : 'SATISFIABLE' ;
+UNKNOWN : 'UNKNOWN' ;
 CONDITION : ':' ;
 DOT : '.' ;
 PARENTHL : '(' ;
 PARENTHR : ')' ;
-SYMBOLS : (' ' | 'a'..'z' | 'A'..'Z' | '0'..'9' | '_' )+ ;
+SYMBOLS : (' ' | 'a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '+' )+ ;

@@ -76,9 +76,9 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         metricsLogger.startTimer("consistencychecks");
         metricsLogger.startTimer("syncbeforeconsistencycheck");
         sync();
-        metricsLogger.stopTimer("syncbeforeconsistencycheck");
+        metricsLogger.stopTimer("syncbeforeconsistencycheck", false);
         boolean r = reasoner.isConsistent();
-        long time = metricsLogger.stopTimer("consistencychecks");
+        long time = metricsLogger.stopTimer("consistencychecks", false);
         timer.stop();
         //IterativeStatistics.avgConsistencyTime.addValue(time);
         //IterativeStatistics.avgConsistencyCheck.addValue(1L);
@@ -90,9 +90,9 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         metricsLogger.startTimer("issatisfiablecheck");
         metricsLogger.startTimer("syncbeforeissatisfiablecheck");
         sync();
-        metricsLogger.stopTimer("syncbeforeissatisfiablecheck");
+        metricsLogger.stopTimer("syncbeforeissatisfiablecheck", false);
         boolean r = reasoner.isSatisfiable(unsatClass);
-        metricsLogger.stopTimer("issatisfiablecheck");
+        metricsLogger.stopTimer("issatisfiablecheck", false);
         timer.stop();
         return r;
     }
@@ -103,10 +103,10 @@ public class ReasonerOWL extends AbstractReasoner<OWLLogicalAxiom> {
         metricsLogger.startTimer("iscoherencycheck");
         metricsLogger.startTimer("syncbeforeiscoherencycheck");
         sync();
-        metricsLogger.stopTimer("syncbeforeiscoherencycheck");
+        metricsLogger.stopTimer("syncbeforeiscoherencycheck", false);
         reasoner.precomputeInferences(InferenceType.CLASS_HIERARCHY);
         boolean r = reasoner.getBottomClassNode().isSingleton();
-        long time = metricsLogger.stopTimer("iscoherencycheck");
+        long time = metricsLogger.stopTimer("iscoherencycheck", false);
         coherencyTimer.stop();
         //IterativeStatistics.avgCoherencyTime.addValue(time);
         //IterativeStatistics.avgCoherencyCheck.addValue(1L);
