@@ -198,8 +198,15 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                 metricsLogger.startTimer("calculatingquery");
                 best = ckk.generatePartition(search.getDiagnoses());
 
-                while (createUnion(collectedNonEntailedTCs).containsAll(best.partition))
-                    best = ckk.nextPartition(best);
+                while (createUnion(collectedNonEntailedTCs).containsAll(best.partition)) {
+                    Partition<OWLLogicalAxiom> next = ckk.nextPartition(best);
+                    if (next == null) {
+                        logger.info("we have no next alt query and all calculated queries are in NonEntailedTC");
+                        break;
+                    }
+                    else
+                        best = next;
+                }
 
                 lastLabel = metricsLogger.getLabelManager().getLabelsConc();
                 long queryCalc = metricsLogger.stopTimer("calculatingquery");

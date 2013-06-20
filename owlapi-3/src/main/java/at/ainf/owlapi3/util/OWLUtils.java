@@ -4,6 +4,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.DLExpressivityChecker;
 
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -26,6 +27,17 @@ public class OWLUtils {
         for (OWLLogicalAxiom axiom : module)
             classesInModule.addAll (axiom.getClassesInSignature());
         return classesInModule;
+    }
+
+    public static OWLOntology loadOntology (String path) {
+        InputStream st = ClassLoader.getSystemResourceAsStream(path);
+        OWLOntology ontology = null;
+        try {
+            ontology = OWLManager.createOWLOntologyManager().loadOntologyFromOntologyDocument(st);
+        } catch (OWLOntologyCreationException e) {
+            throw new IllegalArgumentException("ontology can not be loaded");
+        }
+        return ontology;
     }
 
     public static OWLOntology createOntology (Set<? extends OWLAxiom> axioms) {
