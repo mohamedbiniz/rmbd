@@ -1,81 +1,105 @@
-
+                                                                     
+                                                                     
+                                                                     
+                                             
 grammar ASPProgram;
 
 /* @header {
 	package antlr;
-} */
+}  */
+
+@parser::members { 
+
+}
 
 
 /*----------------
 * PARSER RULES
 *----------------*/
 
-/** The overall program consist of facts and rules. */
-prog : (aspfact | asprule)+ ;
+prog	: (asprule | aspfact)+ ;
 
-/** A rule can be a normal rule or a constraint. */
-asprule : normrule | constraint ;
+aspfact	: head DOT ;
 
-/** A fact is only the head followed by a dot. */
-aspfact : head DOT ;
+asprule	: hbrule | constraint ;
 
-/** A normal rule has a head and body. */
-normrule : head ENTAILS body DOT ;
+hbrule : head ENTAILS body DOT ;
 
-/** A constraint has NO head, only a body. */
 constraint : ENTAILS body DOT ;
 
-/** An aggregate can have bounds, curly or squared brackets and conditional literals. */
-aggregate : bound? bracketL (literal | condliteral | COMMA)+ bracketR bound? ;
+head : literal | choiceRule ;
 
-/** The head consists of a literal or an aggregate. */
-head : literal | aggregate ;
+body : (literal | hornConstraint | maxConstraint | builtIns | comma)+ ;
 
-/** The body consists of one or more literals or aggregates separated with comma. */
-body : (literal | aggregate | varassignment | notequal | COMMA)+ ;
+hornConstraint : bound? bracketL (literal (equal weight)? | condition | comma)+ bracketR ;
 
-/** A literal consists of symbols (no predicates) or symbols and terms (predicate literal). */
-literal : SYMBOLS | ( SYMBOLS terms ) ;
+maxConstraint : bound? max bracketL (literal (equal weight)? | comma)+ bracketR ;
 
-/** A conditional literal is a literal with conditions. */
-condliteral : (literal | CONDITION)+ ;
+choiceRule : bound? choiceBracL (literal | condition | comma)+ choiceBracR bound? ;
 
-/** Variable assignments in body. */
-varassignment : (SYMBOLS equal (INT | range) | (INT | range) equal SYMBOLS) ;
+literal : constants | predicate ;
 
-/** */
-notequal : SYMBOLS nequal SYMBOLS ;
+predicate : constants parenthL terms parenthR ;
 
-/** Ranges of interger values. */
-range : INT RANGE INT ;
+builtIns : varAss | inequality | equality ;
 
-/** Terms consist of parenthesis and symbols (separated by comma). */
-terms : PARENTHL (SYMBOLS | INT | COMMA)+ PARENTHR ;
+inequality : (variable | DIGIT | constants) nequal (variable | DIGIT | constants) ;
 
-/** Bounds of aggregates can be symbols. */
-bound : INT ;
+varAss : variable equal DIGIT ;
+
+equality : (variable | DIGIT | constants) equal equal? (variable | DIGIT | constants) ;
+
+terms : (variable | constants | DIGIT | rangeDigit | comma)+ ;
+
+rangeDigit : DIGIT range DIGIT ;
+
+range : RANGE ;
+
+weight : DIGIT ;
+
+equal : EQUAL ;
+
+nequal : NEQUAL ;
+
+bound : DIGIT | VARIABLE ;
+
+variable : VARIABLE ;
+
+constants : PREDICATE ;
+
+parenthL : PARENTHL ;
+
+parenthR : PARENTHR ;
+
+choiceBracL : CURLBRL ;
+
+choiceBracR : CURLBRR ;
 
 bracketL : CURLBRL | SQURBRL ;
 
 bracketR : CURLBRR | SQURBRR ;
 
-/** Equality. */
-equal : EQUAL ;
+condition : CONDITION ;
 
-/** Non equality. */
-nequal : NEQUAL ;
+max : MAX ;
 
+comma : COMMA ;
 
 
 /*----------------
 * LEXER RULES
 *----------------*/
 
+/** SYMBOLS : (' ' | 'a'..'z' | 'A'..'Z' | '0'..'9' | '_')+ ; */
+
 WS : (' ' | '\t' | '\n' | '\r' | '\f')+ -> skip ;
+COMMENT : ( '%' ~[\r\n]* '\r'? '\n' | '%*' .*? '*%' ) -> skip ;
 ENTAILS : ':-' ;
 DOT : '.' ;
 COMMA : ',' ;
 CONDITION : ':' ;
+NAF : 'not' ;
+MAX : '#max' ;
 PARENTHL : '(' ;
 PARENTHR : ')' ;
 CURLBRL : '{' ;
@@ -85,6 +109,7 @@ SQURBRR : ']' ;
 EQUAL : '=' ;
 NEQUAL : '!=' ;
 RANGE : '..' ;
-INT : ('0'..'9')+ ;
-SYMBOLS : (' ' | 'a'..'z' | 'A'..'Z' | '0'..'9' | '_')+ ;
-COMMENT : ( '%' ~[\r\n]* '\r'? '\n' | '%*' .*? '*%' ) -> skip ;
+DIGIT : (INT)+ ;
+fragment INT : '0'..'9' ;
+VARIABLE : 'A'..'Z' ('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;
+PREDICATE : 'a'..'z' ('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;
