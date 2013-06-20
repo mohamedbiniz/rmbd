@@ -25,7 +25,12 @@ public class ModuleTargetDiagSearcher extends ModuleMinDiagSearcher {
     public ModuleTargetDiagSearcher(String path, Map<OWLLogicalAxiom, BigDecimal> confidences) {
         super(confidences);
         GS_MappingsReader reader = new GS_MappingsReader();
-        this.mappingAxioms = reader.loadGSmappings(path);
+        if (path == null)
+            this.mappingAxioms = Collections.emptySet();
+        else
+            this.mappingAxioms = reader.loadGSmappings(path);
+
+
     }
 
     public Set<OWLLogicalAxiom> getGSMappings() {
