@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import at.ainf.asp.test.Application;
+
 public class StreamGobbler extends Thread {
 
     private static Logger logger = LoggerFactory.getLogger(StreamGobbler.class.getName());
@@ -31,8 +33,7 @@ public class StreamGobbler extends Thread {
             StringBuffer buf = new StringBuffer();
             String line=null;
             while ( (line = br.readLine()) != null) {
-//          	System.out.println(type + ">" + line);
-                System.err.println(line);
+                if (Application.enableInfo) { System.out.println(line); }
                 buf.append(line).append("\n");
             }
             output = buf.toString();
