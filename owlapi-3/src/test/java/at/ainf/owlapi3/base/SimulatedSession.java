@@ -427,7 +427,10 @@ public class SimulatedSession extends CalculateDiagnoses {
                         actPa = queryGenerator.nextPartition(actPa);
                         if (actPa == null) {
                             logger.error("All partitions were tested and none provided an answer to the target diagnosis!");
-                            break;
+                            String msgComma = getMessage() + "," + "act2,problem no queryanswer";
+                            logger.info(msgComma);
+                            return msgComma;
+                            //break;
                         }
                     }
                 }
