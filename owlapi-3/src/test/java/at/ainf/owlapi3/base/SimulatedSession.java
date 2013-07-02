@@ -520,6 +520,22 @@ public class SimulatedSession extends CalculateDiagnoses {
                 ",\n" + "System break: "+systemBreak + ", \n" + "Has query with no decision possible: "+hasQueryWithNoDecisionPossible +
                 ", \n" + "Consistency count: "+consistencyCount + ",\n" +"Consistency time: "+ consistencyTime;
         logger.info (msg);
+        
+        String msgComma = getMessage() + "," + "act2," +
+                time + "," + 
+                num_of_queries + "," +
+                queryCardinality + "," +
+                targetDiagnosisIsMostProbable + "," + 
+                targetDiagnosisIsInWind + "," +
+                diagWinSize + "," + 
+                reactionTime + "," +
+                userBreak + "," +
+                possibleError + "," +
+                systemBreak + "," +
+                hasQueryWithNoDecisionPossible + "," +
+                consistencyCount + "," +
+                consistencyTime;
+        logger.info (msgComma);
 
         //Probehalber
         logger.info("Conflict time: "+((AbstractTreeSearch)getSearch()).getAvgConflictTime() );
