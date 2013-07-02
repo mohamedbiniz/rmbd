@@ -1,24 +1,25 @@
-                                                                     
-                                                                     
-                                                                     
-                                             
 grammar ASPProgram;
 
-/* @header {
-	package antlr;
-}  */
-
-@parser::members { 
-
+@header {
+	/* package antlr; */
+	import at.ainf.asp.model.exceptions.IllegalParserElementException;
 }
-
 
 /*----------------
 * PARSER RULES
 *----------------*/
 
 prog	: (asprule | aspfact)+ ;
-
+		catch[RecognitionException e] {
+			try {
+				throw new IllegalParserElementException("Probably the parser cannot deal with some program elements.");
+			} catch (IllegalParserElementException e1) {
+				e1.printStackTrace();
+			}
+			System.exit(1);
+		}
+		
+		
 aspfact	: head DOT ;
 
 asprule	: hbrule | constraint ;
@@ -29,43 +30,96 @@ constraint : ENTAILS body DOT ;
 
 head : literal | choiceRule ;
 
-body : (literal | hornConstraint | maxConstraint | builtIns | comma)+ ;
+body : (literal | hornConstraint | maxConstraint | builtIns | arithmetic | upperBoundCardinalityNOT | defaultNegationNOT | otherConstraints | comma)+ ;
 
-hornConstraint : bound? bracketL (literal (equal weight)? | condition | comma)+ bracketR ;
 
-maxConstraint : bound? max bracketL (literal (equal weight)? | comma)+ bracketR ;
 
-choiceRule : bound? choiceBracL (literal | condition | comma)+ choiceBracR bound? ;
+/** Cardinality constraints that are monotone. */
+hornConstraint : bound? bracketL ((literal | builtIns | defaultNegatedLiteralsNOT) (equal weight)? | condition | comma)+ bracketR ;
 
+maxConstraint : bound? max bracketL ((literal | builtIns | defaultNegatedLiteralsNOT) (equal weight)? | condition | comma)+ bracketR ;
+
+choiceRule : bound? choiceBracL (literal | builtIns | condition | comma)+ choiceBracR bound? ;
+
+
+
+/** Defining literals, can be constants, built ins, arithmetics, or predicate literals. */
 literal : constants | predicate ;
 
 predicate : constants parenthL terms parenthR ;
 
-builtIns : varAss | inequality | equality ;
+terms : (variable | constants | DIGIT | rangeDigit | arithmetic | semicolon | predicate | comma)+ ;
 
-inequality : (variable | DIGIT | constants) nequal (variable | DIGIT | constants) ;
 
-varAss : variable equal DIGIT ;
 
-equality : (variable | DIGIT | constants) equal equal? (variable | DIGIT | constants) ;
+/** Defining comparing built ins. */
+builtIns : (rangeDigit | variable | DIGIT | constants | arithmetic) builtInSign (rangeDigit | variable | DIGIT | constants | arithmetic) ;
 
-terms : (variable | constants | DIGIT | rangeDigit | comma)+ ;
+builtInSign : lowerequal | lower | greaterequal | greater | equal equal? | notequal ;
 
-rangeDigit : DIGIT range DIGIT ;
+
+
+/** Defining arithmetics. */
+arithmetic : (variable | DIGIT) (arithmeticSign (variable | DIGIT))+ ;
+
+arithmeticSign : plus | minus | mult | div ;
+
+
+
+/* NOT ALLOWED CONSTRUCTS:
+* Cardinality constraints with upper bounds in the body are NOT ALLOWED. */
+upperBoundCardinalityNOT : bound? bracketL (literal (equal weight)? | condition | comma)+ bracketR bound ;
+
+/** #even, #odd and #min constraints are NOT ALLOWED. */
+otherConstraints : evenConstraint | oddConstraint | minConstraint ;
+
+evenConstraint : even choiceBracL (literal | builtIns | condition | comma)+ choiceBracR ;
+
+oddConstraint : odd choiceBracL (literal | builtIns | condition | comma)+ choiceBracR ;
+
+minConstraint : bound? min bracketL ((literal | builtIns | defaultNegatedLiteralsNOT) (equal weight)? | condition | comma)+ bracketR ;
+
+/** There is NO default negation allowed in monotone programs. */
+defaultNegationNOT : defaultNegatedLiteralsNOT | defaultNegatedAggregateNOT ;
+
+defaultNegatedLiteralsNOT : NOT (literal | builtIns | arithmetic) ;
+
+defaultNegatedAggregateNOT : NOT (maxConstraint | hornConstraint) ;
+
+
+
+/** Defining other program elements. */
+rangeDigit : (DIGIT | VARIABLE) range (DIGIT | VARIABLE) ;
 
 range : RANGE ;
 
-weight : DIGIT ;
+weight : DIGIT | variable ;
 
 equal : EQUAL ;
 
-nequal : NEQUAL ;
+notequal : NOTEQUAL ;
 
-bound : DIGIT | VARIABLE ;
+lower : LOWER ;
+
+lowerequal : LOWEREQUAL ;
+
+greater : GREATER ;
+
+greaterequal : GREATEREQUAL ;
+
+plus : PLUS ;
+
+minus : MINUS ;
+
+div : DIV ;
+
+mult : MULT ;
+
+bound : DIGIT | VARIABLE | arithmetic ;
 
 variable : VARIABLE ;
 
-constants : PREDICATE ;
+constants : PREDICATE | STRING ;
 
 parenthL : PARENTHL ;
 
@@ -83,6 +137,14 @@ condition : CONDITION ;
 
 max : MAX ;
 
+min : MIN ;
+
+odd : ODD ;
+
+even : EVEN ;
+
+semicolon : SEMICOLON ;
+
 comma : COMMA ;
 
 
@@ -94,12 +156,16 @@ comma : COMMA ;
 
 WS : (' ' | '\t' | '\n' | '\r' | '\f')+ -> skip ;
 COMMENT : ( '%' ~[\r\n]* '\r'? '\n' | '%*' .*? '*%' ) -> skip ;
+HIDESHOW : ('#hide' | '#show') .*? '\n' -> skip ;
 ENTAILS : ':-' ;
 DOT : '.' ;
 COMMA : ',' ;
 CONDITION : ':' ;
 NAF : 'not' ;
 MAX : '#max' ;
+EVEN : '#even' ;
+ODD : '#odd' ;
+MIN : '#min' ;
 PARENTHL : '(' ;
 PARENTHR : ')' ;
 CURLBRL : '{' ;
@@ -107,9 +173,20 @@ CURLBRR : '}' ;
 SQURBRL : '[' ;
 SQURBRR : ']' ;
 EQUAL : '=' ;
-NEQUAL : '!=' ;
+NOTEQUAL : '!=' ;
+LOWER : '<' ;
+LOWEREQUAL : '<=' ;
+GREATER : '>' ;
+GREATEREQUAL : '>=' ;
+PLUS : '+' ;
+MINUS :	'-' ;
+DIV : '/' ;
+MULT : '*' ;
 RANGE : '..' ;
+SEMICOLON : ';' ;
 DIGIT : (INT)+ ;
 fragment INT : '0'..'9' ;
+NOT : 'not ' ;
+STRING : '"' (~('"'))* '"' ;
 VARIABLE : 'A'..'Z' ('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;
 PREDICATE : 'a'..'z' ('a'..'z' | 'A'..'Z' | '0'..'9' | '_')* ;

@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static at.ainf.owlapi3.util.SetUtils.createIntersection;
+
 /**
  * Created with IntelliJ IDEA.
  * User: pfleiss
@@ -39,7 +41,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
     public OWLOntology getOntology(String pathToOntologies,
                                           String o1, String o2, String pathToMapping, String mappingName) {
         OWLOntology ontology1 = getOntologySimple(pathToOntologies + "/" + o1 + ".owl");
-        OWLOntology ontology2 = getOntologySimple(pathToOntologies + "/"+o2 + ".owl");
+        OWLOntology ontology2 = getOntologySimple(pathToOntologies + "/" + o2 + ".owl");
         OWLOntology merged = mergeOntologies(ontology1, ontology2);
         Set<OWLLogicalAxiom> mapping = readRdfMapping(pathToMapping, mappingName).keySet();
         for (OWLLogicalAxiom axiom : mapping)
@@ -62,7 +64,15 @@ public class OAEI11ConferenceSession extends SimulatedSession {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        return handler.getMappings();
+        Map<OWLLogicalAxiom, BigDecimal> mappings = new HashMap<OWLLogicalAxiom, BigDecimal>();
+        for (Map.Entry<OWLLogicalAxiom, BigDecimal> entry : handler.getMappings().entrySet())
+            if (BigDecimal.valueOf(0.0).compareTo(entry.getValue()) == 0) {
+                mappings.put(entry.getKey(),BigDecimal.valueOf(0.00001));
+                logger.info ("confidence of mappings is zero: " + entry.getKey());
+            }
+            else
+                mappings.put(entry.getKey(), entry.getValue());
+        return mappings;
     }
 
     public OWLOntology mergeOntologies (OWLOntology ontology1, OWLOntology ontology2) {
@@ -87,20 +97,15 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         }
     }
 
-    public <X> Set<X> getIntersection (Set<X> axioms1, Set<X> axioms2) {
-        Set<X> intersection = new LinkedHashSet<X>();
-        intersection.addAll(axioms1);
-        intersection.retainAll(axioms2);
-
-        return intersection;
-    }
-
 
 
     protected Set<FormulaSet<OWLLogicalAxiom>> getRandomDiagSet(File file, String directory ) throws SolverException, InconsistentTheoryException {
-        String matchingsDir = "oaei11conference/matchings/";
+        String conferenceYear = getConferenceYear();
+        String matchingsDir = conferenceYear + getMatchingsDir();
+        String matchingsDirName = "/ontology";
         String mapd = matchingsDir + directory;
 
+        boolean dual = false;
         String fileName = file.getName();
         StringTokenizer t = new StringTokenizer(fileName, "-");
         String matcher = t.nextToken();
@@ -110,19 +115,20 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         o2 = o2.substring(0, o2.length() - 4);
 
         String n = file.getName().substring(0, file.getName().length() - 4);
-        OWLOntology merged = getOntology("oaei11conference/ontology",
+        OWLOntology merged = getOntology(conferenceYear + matchingsDirName,
                 o1, o2, mapd, n + ".rdf");
 
         OWLOntology ontology = new OWLIncoherencyExtractor(
                 new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
-        OWLTheory theory = getExtendTheory(ontology, true);
-        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
+        OWLTheory theory = getExtendTheory(ontology, dual);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, dual);
 
         LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-        OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
-        OWLOntology ontology2 = getOntologySimple("oaei11conference/ontology", o2 + ".owl");
-        bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-        bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+        OWLOntology ontology1 = getOntologySimple(conferenceYear + matchingsDirName, o1 + ".owl");
+        OWLOntology ontology2 = getOntologySimple(conferenceYear + matchingsDirName, o2 + ".owl");
+
+        bx.addAll(createIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+        bx.addAll(createIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
         theory.getKnowledgeBase().addBackgroundFormulas(bx);
 
         Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(mapd, n + ".rdf");
@@ -134,8 +140,8 @@ public class OAEI11ConferenceSession extends SimulatedSession {
 
         search.reset();
 
-        OWLTheory th30 = getExtendTheory(ontology, true);
-        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getUniformCostSearch(th30, true);
+        OWLTheory th30 = getExtendTheory(ontology, dual);
+        TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search30 = getUniformCostSearch(th30, dual);
         th30.getKnowledgeBase().addBackgroundFormulas(bx);
         OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
@@ -154,6 +160,13 @@ public class OAEI11ConferenceSession extends SimulatedSession {
 
     }
 
+    protected String getMatchingsDir() {
+        return "/matchings/";
+    }
+
+    protected String getConferenceYear() {
+        return "oaei11conference";
+    }
 
 
     protected int chooseRandomNum(Set<FormulaSet<OWLLogicalAxiom>> diagnoses, Random random) {

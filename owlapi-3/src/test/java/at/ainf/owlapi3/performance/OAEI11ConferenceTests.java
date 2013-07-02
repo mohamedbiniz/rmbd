@@ -32,8 +32,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.*;
+
+import static at.ainf.owlapi3.util.SetUtils.createIntersection;
 
 /**
  * Created with IntelliJ IDEA.
@@ -106,20 +109,13 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
     public void doTestsOAEIConference()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
 
-        SimulatedSession session = new SimulatedSession();
 
         String matchingsDir = "oaei11conference/matchings/";
-        String directory = "incoherent";
-        //String mapd = matchingsDir + directory;
-        File incl = new File(ClassLoader.getSystemResource(matchingsDir + "includedIncoher.txt").getFile());
-        MyFilenameFilter filter = new MyFilenameFilter(incl);
-        File[] f = new File(ClassLoader.getSystemResource(matchingsDir + directory)
-                .getFile()).listFiles(filter);
-        String directory2 = "inconsistent";
-        File incl2 = new File(ClassLoader.getSystemResource(matchingsDir + "included.txt").getFile());
-        MyFilenameFilter filter2 = new MyFilenameFilter(incl2);
-        File[] f2 = new File(ClassLoader.getSystemResource(matchingsDir + directory2)
-                .getFile()).listFiles(filter2);
+        String ontologyDir = "oaei11conference/ontology";
+
+        File[] f = getMappingFiles(matchingsDir, "incoherent", "includedIncoher.txt");
+        File[] f2 = getMappingFiles(matchingsDir, "inconsistent", "included.txt");
+
         Set<File> files = new LinkedHashSet<File>();
         Map<File, String> map = new HashMap<File, String>();
         for (File file : f) {
@@ -131,12 +127,18 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             map.put(file, "inconsistent");
         }
 
+        runOaeiConfereneTests(matchingsDir, ontologyDir, files, map);
+    }
+
+    protected void runOaeiConfereneTests(String matchingsDir, String ontologyDir, Set<File> files, Map<File, String> map) throws SolverException, InconsistentTheoryException {
+        SimulatedSession session = new SimulatedSession();
+
         session.setShowElRates(false);
 
-        SimulatedSession.QSSType[] qssTypes = new SimulatedSession.QSSType[]
-                {SimulatedSession.QSSType.MINSCORE, SimulatedSession.QSSType.SPLITINHALF};
+        QSSType[] qssTypes = new QSSType[]
+                {QSSType.MINSCORE, QSSType.SPLITINHALF};
 
-        for (SimulatedSession.TargetSource targetSource : new SimulatedSession.TargetSource[]{SimulatedSession.TargetSource.FROM_30_DIAGS}) {
+        for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
 
             for (File file : files) {
                 logger.info("processing " + file.getName());
@@ -150,7 +152,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                 Set<OWLLogicalAxiom> targetDg = chooseRandomDiag(targetDgSet,file,randomNr);
 
 
-                for (SimulatedSession.QSSType type : qssTypes) {
+                for (QSSType qssType : qssTypes) {
 
 
                     String fileName = file.getName();
@@ -162,21 +164,21 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                     o2 = o2.substring(0, o2.length() - 4);
 
                     String n = file.getName().substring(0, file.getName().length() - 4);
-                    OWLOntology merged = getOntology("oaei11conference/ontology",
+                    OWLOntology merged = getOntology(ontologyDir,
                             o1, o2, matchingsDir + map.get(file), n + ".rdf");
 
                     long preprocessModulExtract = System.currentTimeMillis();
                     OWLOntology ontology = new OWLIncoherencyExtractor(
                             new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
                     preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
-                    OWLTheory theory = getExtendTheory(ontology, true);
-                    TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, true);
+                    OWLTheory theory = getExtendTheory(ontology, false);
+                    TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
 
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
-                    OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
-                    OWLOntology ontology2 = getOntologySimple("oaei11conference/ontology", o2 + ".owl");
-                    bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-                    bx.addAll(getIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+                    OWLOntology ontology1 = getOntologySimple(ontologyDir, o1 + ".owl");
+                    OWLOntology ontology2 = getOntologySimple(ontologyDir, o2 + ".owl");
+                    bx.addAll(createIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+                    bx.addAll(createIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
                     theory.getKnowledgeBase().addBackgroundFormulas(bx);
 
                     Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
@@ -190,16 +192,17 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
 
                     TableList e = new TableList();
-                    out += "," + type + ",";
+                    out += "," + qssType + ",";
                     String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
-                            + "," + type + "," + preprocessModulExtract + "," + randomNr;
+                            + "," + qssType + "," + preprocessModulExtract + "," + randomNr;
                     session.setEntry(e);
                     session.setMessage(message);
-                    session.setScoringFunct(type);
+                    session.setScoringFunct(qssType);
                     session.setTargetD(targetDg);
                     session.setTheory(theory);
                     session.setSearch(search);
                     out += session.simulateQuerySession();
+                    logger.info ("done " + file.getName() + " with qss " + qssType + "result " + out );
 
                 }
                 logger.info(out);
@@ -207,6 +210,16 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
             }
         }
+    }
+
+    protected File[] getMappingFiles(String matchingsDir, String dir, String exclusionFile) {
+        URL exclusionFileUrl = ClassLoader.getSystemResource(matchingsDir + exclusionFile);
+        File folder = new File(ClassLoader.getSystemResource(matchingsDir + dir).getFile());
+        if (exclusionFileUrl == null)
+            return folder.listFiles();
+        File incl = new File(exclusionFileUrl.getFile());
+        MyFilenameFilter filter = new MyFilenameFilter(incl);
+        return folder.listFiles(filter);
     }
 
     private class SearchThread implements Callable<String> {
@@ -246,12 +259,12 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             String refmatchPath = "oaei11conference/matchings/references";
             String refMatch = o1 + "-" + o2 + ".rdf";
             Set<OWLLogicalAxiom> correctMappingAxioms = readRdfMapping(refmatchPath, refMatch).keySet();
-            ontoBackground.addAll(getIntersection(extracted.getLogicalAxioms(), correctMappingAxioms));
+            ontoBackground.addAll(createIntersection(extracted.getLogicalAxioms(), correctMappingAxioms));
 
             OWLOntology ontology1 = getOntologySimple("oaei11conference/ontology", o1 + ".owl");
             OWLOntology ontology2 = getOntologySimple("oaei11conference/ontology", o2 + ".owl");
-            ontoBackground.addAll(getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-            ontoBackground.addAll(getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+            ontoBackground.addAll(createIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms()));
+            ontoBackground.addAll(createIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms()));
 
             TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> searchDual;
             if (dual) {
@@ -562,8 +575,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                 continue;
             }
 
-            Set<OWLLogicalAxiom> ontology1CutExtracted = getIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
-            Set<OWLLogicalAxiom> ontology2CutExtracted = getIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms());
+            Set<OWLLogicalAxiom> ontology1CutExtracted = createIntersection(extracted.getLogicalAxioms(), ontology1.getLogicalAxioms());
+            Set<OWLLogicalAxiom> ontology2CutExtracted = createIntersection(extracted.getLogicalAxioms(), ontology2.getLogicalAxioms());
             theory.getKnowledgeBase().addBackgroundFormulas(ontology1CutExtracted);
             theory.getKnowledgeBase().addBackgroundFormulas(ontology2CutExtracted);
 

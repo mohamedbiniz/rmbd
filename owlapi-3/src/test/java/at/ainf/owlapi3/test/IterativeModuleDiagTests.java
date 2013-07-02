@@ -34,9 +34,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.*;
 
-import static at.ainf.owlapi3.util.OWLUtils.calculateExpressivity;
-import static at.ainf.owlapi3.util.OWLUtils.calculateSignature;
-import static at.ainf.owlapi3.util.OWLUtils.createOntology;
+import static at.ainf.owlapi3.util.OWLUtils.*;
 import static at.ainf.owlapi3.util.SetUtils.createIntersection;
 import static at.ainf.owlapi3.util.SetUtils.createUnion;
 import static com.codahale.metrics.MetricRegistry.name;
@@ -879,6 +877,16 @@ public class IterativeModuleDiagTests {
 
     }
 
+
+    @Test
+    public void loadOntos() {
+        String file = "mouse.owl";
+        OWLOntology ontology = loadOntology(System.getenv("bigontosdir") + file);
+        int num = ontology.getLogicalAxioms().size();
+        logger.info (file + ": " + num);
+
+    }
+
     @Test
     public void testIterativeDiagnosis() throws OWLOntologyCreationException, SolverException, InconsistentTheoryException, NoConflictException {
 
@@ -908,8 +916,8 @@ public class IterativeModuleDiagTests {
         //ModuleDiagSearcher d = new ModuleMinDiagSearcher();
         //ModuleDiagSearcher d = new ModuleInvTreeDiagSearcher();
         //ModuleDiagSearcher d = new ModuleTargetDiagSearcher(pathMappings);
-        //ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
-        ModuleDiagSearcher d = new ModuleOptQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
+        ModuleDiagSearcher d = new ModuleQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
+        //ModuleDiagSearcher d = new ModuleOptQuerDiagSearcher(pathMappings,correctAxioms,falseAxioms, false);
 
         //d.setTreeCreator(new InvHSTreeCreator());
 
