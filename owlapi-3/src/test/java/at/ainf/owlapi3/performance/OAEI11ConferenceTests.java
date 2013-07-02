@@ -135,8 +135,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
         session.setShowElRates(false);
 
-        QSSType[] qssTypes = new QSSType[]
-                {QSSType.MINSCORE, QSSType.SPLITINHALF};
+        QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE};
+        //QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF};
 
         for (TargetSource targetSource : new TargetSource[]{TargetSource.FROM_30_DIAGS}) {
 
@@ -202,7 +202,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                     session.setTheory(theory);
                     session.setSearch(search);
                     out += session.simulateQuerySession();
-                    logger.info ("done " + file.getName() + " with qss " + qssType + "result " + out );
+                    //logger.info ("done " + file.getName() + " with qss " + qssType + "result " + out );
 
                 }
                 logger.info(out);
