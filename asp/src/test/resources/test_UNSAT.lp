@@ -15,7 +15,7 @@ room(1004).
 personTOthing(1,6).
 personTOthing(2,7).
 
-1{cabinetTOthing(X,Y):cabinet(X)}1:- thing(Y).
+1 {cabinetTOthing(X,Y):cabinet(X)} 1:- thing(Y).
 :- 6 {cabinetTOthing(X,Y):thing(Y)}, cabinet(X).
 
 1{roomTOcabinet(X,Y):room(X)}1:-cabinet(Y).
@@ -28,3 +28,8 @@ personTOroom(P,R):-personTOthing(P,X), cabinetTOthing(C,X),
 	personTOthing(P2,Y2), P1!=P2.
 
 :- personTOroom(P1,R), personTOroom(P2,R).
+
+%:- #even { roomTOcabinet(X,Y) }.
+
+
+%#hide.

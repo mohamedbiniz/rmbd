@@ -2,19 +2,13 @@ package at.ainf.owlapi3.module.iterative.diagsearcher;
 
 //import at.ainf.diagnosis.logging.old.MetricsManager;
 import at.ainf.diagnosis.Searchable;
-import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.logging.MetricsLogger;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.quickxplain.DirectDiagnosis;
+import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.ConfidenceCostsEstimator;
-import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
-import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
@@ -85,6 +79,8 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
 
         Searchable<OWLLogicalAxiom> theory = getTreeCreator().getSearchable(getReasonerFactory(), backg, ontology);
 
+        loadTestsIntoKB (theory.getKnowledgeBase());
+
         search.setSearcher(getTreeCreator().getSearcher());
 
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
@@ -136,8 +132,36 @@ public class ModuleMinDiagSearcher implements ModuleDiagSearcher {
             diagnosis = chooseDiagnosis(diagnoses);
         //IterativeStatistics.cardHS.add((long) diagnosis.size());
         metricsLogger.createGauge("card-hs", diagnosis.size());
+        saveTestsFromKB(search.getSearchable().getKnowledgeBase());
 
         return diagnosis;
+
+    }
+
+    private Collection<Set<OWLLogicalAxiom>> positiveTests = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+
+    private Collection<Set<OWLLogicalAxiom>> negativeTests = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+
+    private Collection<Set<OWLLogicalAxiom>> entailedTests = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+
+    private Collection<Set<OWLLogicalAxiom>> nonentailedTests = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+
+    protected void saveTestsFromKB(IKnowledgeBase<OWLLogicalAxiom> knowledgeBase) {
+        positiveTests.addAll(knowledgeBase.getPositiveTests());
+        negativeTests.addAll(knowledgeBase.getNegativeTests());
+        entailedTests.addAll(knowledgeBase.getEntailedTests());
+        nonentailedTests.addAll(knowledgeBase.getNonentailedTests());
+    }
+
+    protected void loadTestsIntoKB(IKnowledgeBase<OWLLogicalAxiom> knowledgeBase) {
+        for (Set<OWLLogicalAxiom> test : positiveTests)
+            knowledgeBase.addPositiveTest(test);
+        for (Set<OWLLogicalAxiom> test : negativeTests)
+            knowledgeBase.addNegativeTest(test);
+        for (Set<OWLLogicalAxiom> test : entailedTests)
+            knowledgeBase.addEntailedTest(test);
+        for (Set<OWLLogicalAxiom> test : nonentailedTests)
+            knowledgeBase.addNonEntailedTest(test);
 
     }
 
