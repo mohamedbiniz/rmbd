@@ -11,6 +11,10 @@ import java.util.*;
  */
 public class SetUtils {
 
+    public static <X> Set<X> createIntersection (Set<X>... collection) {
+        return createIntersection (Arrays.asList(collection));
+    }
+
     public static <X> Set<X> createIntersection (Collection<Set<X>> collection) {
         if (collection.isEmpty())
             return Collections.emptySet();
@@ -19,6 +23,10 @@ public class SetUtils {
         while (iterator.hasNext())
             intersection.retainAll(iterator.next());
         return intersection;
+    }
+
+    public static <X> Set<X> createUnion (Set<X>... collection) {
+        return createUnion (Arrays.asList(collection));
     }
 
     public static <X> Set<X> createUnion (Collection<Set<X>> collection) {

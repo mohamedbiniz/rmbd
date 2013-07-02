@@ -236,6 +236,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
             while(!posTcOrTargetDiagFound){
                 Answer answer = askUser(query);
                 numOfQueries++;
+                //answer = Answer.FALSE;
                 metricsLogger.getCounter("numofqueries").inc();
 
                 switch(answer){
@@ -258,6 +259,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                                 Set<OWLLogicalAxiom> targetDiag = qd.getDiagnosis();
                                 targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
                                 collectedNonEntailedTCs.clear();
+                                saveTestsFromKB(search.getSearchable().getKnowledgeBase());
                                 return targetDiag;
                             }
                             secondAltQuAsked = true;
@@ -265,6 +267,7 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
                             Set<OWLLogicalAxiom> targetDiag = qd.getDiagnosis();
                             targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
                             collectedNonEntailedTCs.clear();
+                            saveTestsFromKB(search.getSearchable().getKnowledgeBase());
                             return targetDiag;
                         }
                         break;
@@ -310,12 +313,14 @@ public class ModuleOptQuerDiagSearcher extends ModuleQuerDiagSearcher {
 
         if (diagnoses.isEmpty()) {
             collectedNonEntailedTCs.clear();
+            saveTestsFromKB(search.getSearchable().getKnowledgeBase());
             return Collections.emptySet();
         }
         else {
             Set<OWLLogicalAxiom> targetDiag = diagnoses.iterator().next();
             targetDiag = extendWithNonEntailedTCs(targetDiag,possibleFaultyAxioms);
             collectedNonEntailedTCs.clear();
+            saveTestsFromKB(search.getSearchable().getKnowledgeBase());
             return targetDiag;
         }
 

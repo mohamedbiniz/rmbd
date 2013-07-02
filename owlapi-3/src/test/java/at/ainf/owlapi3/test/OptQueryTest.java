@@ -51,13 +51,16 @@ public class OptQueryTest {
         Set<OWLLogicalAxiom> correctAxioms = new HashSet<OWLLogicalAxiom>();
         Set<OWLLogicalAxiom> falseAxioms = new HashSet<OWLLogicalAxiom>();
         MyOWLRendererParser parser = new MyOWLRendererParser(ontology);
-        falseAxioms.add(parser.parse("A8 SubclassOf not A1"));
-        correctAxioms.addAll(ontology.getLogicalAxioms());
-        correctAxioms.remove(parser.parse("A8 SubclassOf not A1"));
+        Set<OWLLogicalAxiom> background = new HashSet<OWLLogicalAxiom>();
+        background.add(parser.parse("w Type A1"));
+        background.add(parser.parse("w Type not (A9)"));
+        correctAxioms.addAll(background);
+        falseAxioms.addAll(ontology.getLogicalAxioms());
+        falseAxioms.removeAll(background);
 
         ModuleDiagSearcher optquery = new ModuleOptQuerDiagSearcher(null,correctAxioms,falseAxioms, false);
         optquery.setReasonerFactory(new Reasoner.ReasonerFactory());
-        optquery.calculateDiag(ontology.getLogicalAxioms(), Collections.<OWLLogicalAxiom>emptySet());
+        optquery.calculateDiag(ontology.getLogicalAxioms(), background);
     }
 
 }
