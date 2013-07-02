@@ -206,6 +206,8 @@ public class ModuleQuerDiagSearcher extends ModuleTargetDiagSearcher {
         logger.info("number of queries: " + numOfQueries);
         //IterativeStatistics.numOfQueries.add((long)numOfQueries);
 
+        saveTestsFromKB(search.getSearchable().getKnowledgeBase());
+
         if (diagnoses.isEmpty())
             return Collections.emptySet();
         else

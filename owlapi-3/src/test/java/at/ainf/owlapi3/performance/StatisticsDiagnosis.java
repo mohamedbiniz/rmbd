@@ -10,8 +10,7 @@ import at.ainf.owlapi3.model.OWLTheory;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
+import org.semanticweb.owlapi.reasoner.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,7 +152,7 @@ public class StatisticsDiagnosis {
 
         List<String> exclude = new LinkedList<String>();
 
-        String testDir = ClassLoader.getSystemResource("oaei12conference/matcheralignments/unsat/").getPath();
+        String testDir = ClassLoader.getSystemResource("oaei12conference/matcheralignments/inconsistent/").getPath();
         LinkedList<File> files = new LinkedList<File>();
         collectAllFiles(new File(testDir), files);
         for (File file : files)
@@ -161,10 +160,10 @@ public class StatisticsDiagnosis {
                 if (!exclude.contains(file.getName()) && (file.getName().endsWith(".owl") || file.getName().endsWith("._owl_")
                         || file.getName().endsWith(".owl2")|| file.getName().endsWith(".rdf")) ) {
                     logger.info("started " + file.getName());
-                    boolean isOk = isAligendOntoSat(file, 9, "oaei12conference/ontologies",
+                    OntoStatus ontoStatus = calculateOntoStatus(file, 9, "oaei12conference/ontologies",
                             "oaei12conference/matcheralignments/");
-                    if (isOk)
-                        logger.info("matched ontology " + file.getName() + " is sat: " + isOk);
+                    //if (ontoStatus.equals(OntoStatus.INCONSISTENT))
+                        logger.info("matched ontology " + file.getName() + " is sat: " + ontoStatus);
                     logger.info("stopped " + file.getName());
                 }
             } catch (Exception e) {
@@ -184,17 +183,26 @@ public class StatisticsDiagnosis {
         }
     }
 
-    private boolean isAligendOntoSat(File file, int number, String pathOntos, String pathMappings) throws URISyntaxException, SolverException, OWLException, InconsistentTheoryException, NoConflictException {
-        if (new File(file + ".checked").exists())
-            return false;
+    enum OntoStatus { OK, INCOHERENT, INCONSISTENT }
+
+    private OntoStatus calculateOntoStatus(File file, int number, String pathOntos, String pathMappings)  {
 
         //SimpleDebugger debugger = new SimpleDebugger();
         logger.info("Processing " + file);
         OWLOntology ontology = createOntologyWithMappings(file, pathOntos, pathMappings);
 
         OWLReasoner reasoner = new Reasoner.ReasonerFactory().createNonBufferingReasoner(ontology);
-        Set<OWLClass> unsatClasses = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
-        return unsatClasses.isEmpty();
+        Set<OWLClass> unsatClasses = null;
+        try {
+            unsatClasses = reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom();
+        } catch (InconsistentOntologyException e) {
+            return OntoStatus.INCONSISTENT;
+        }
+        if (unsatClasses.isEmpty())
+            return OntoStatus.OK;
+        else
+            return OntoStatus.INCOHERENT;
+
     }
 
     private boolean test(File file, int number, String pathOntos, String pathMappings) throws URISyntaxException, SolverException, OWLException, InconsistentTheoryException, NoConflictException {

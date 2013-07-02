@@ -47,7 +47,9 @@ public class TestBaseFunc {
 	@Ignore  @Test
 	public void testHsTree() {
 
-        ASPModel model = createAspModel(filePathUNSAT);
+        String filename = "test1_UNSAT.lp";
+
+        ASPModel model = createAspModel(ClassLoader.getSystemResource(filename).getPath());
         
 //        ReasonerASP reasoner = new ReasonerASP();
 //        boolean consistent = reasoner.isConsistent();
@@ -56,6 +58,25 @@ public class TestBaseFunc {
         ASPTheory theory = createAspTheory(model);
 
         HsTreeSearch<FormulaSet<IProgramElement>, IProgramElement> search = createTreeSearch(theory);
+        runSearch(search);
+
+        Set<FormulaSet<IProgramElement>> conflicts = search.getConflicts();
+        Set<FormulaSet<IProgramElement>> diagnosis = search.getDiagnoses();
+        Assert.assertTrue(conflicts.size() == 1);
+        Assert.assertTrue(diagnosis.size() == 1);
+        Assert.assertTrue(conflicts.iterator().next().size() == 1);
+        Assert.assertTrue(diagnosis.iterator().next().size() == 1);
+        Assert.assertTrue(conflicts.iterator().next().iterator().next().getString().equals(":-pc(M)."));
+        Assert.assertTrue(diagnosis.iterator().next().iterator().next().getString().equals(":-pc(M)."));
+        printFormularSets(conflicts, "Conflict ", false);
+        printFormularSets(diagnosis, "Diagnosis ", false);
+
+//        QuickXplain<IProgramElement> qxp = new QuickXplain<IProgramElement>();
+////			Set<FormulaSet<IProgramElement>> conflict = qxp.search(theory, model.getRules(), null);
+
+	}
+
+    private void runSearch(HsTreeSearch<FormulaSet<IProgramElement>, IProgramElement> search) {
         try {
 			search.start();
 		} catch (SolverException e1) {
@@ -68,22 +89,37 @@ public class TestBaseFunc {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        
+    }
+
+    @Ignore  @Test
+    public void testFile() {
+
+        String filename = "modv1_debugwithoutnot.lp";
+
+        ASPModel model = createAspModel(ClassLoader.getSystemResource(filename).getPath());
+
+        ASPTheory theory = createAspTheory(model);
+
+        HsTreeSearch<FormulaSet<IProgramElement>, IProgramElement> search = createTreeSearch(theory);
+        runSearch(search);
+
         Set<FormulaSet<IProgramElement>> conflicts = search.getConflicts();
         Set<FormulaSet<IProgramElement>> diagnosis = search.getDiagnoses();
-        Assert.assertTrue(conflicts.size() == 1);
-        Assert.assertTrue(diagnosis.size() == 1);
-        Assert.assertTrue(conflicts.iterator().next().size() == 1);
-        Assert.assertTrue(diagnosis.iterator().next().size() == 1);
-        Assert.assertTrue(conflicts.iterator().next().iterator().next().getString().equals(":- pc(M)."));
-        Assert.assertTrue(diagnosis.iterator().next().iterator().next().getString().equals(":- pc(M)."));
-        printFormularSets(conflicts, "Conflict ");
-        printFormularSets(diagnosis, "Diagnosis ");
+        putAllRulesToMap(conflicts);
+        putAllRulesToMap(diagnosis);
+        printFormularSets(conflicts, "Conflict ", true);
+        printFormularSets(diagnosis, "Diagnosis ", true);
 
-//        QuickXplain<IProgramElement> qxp = new QuickXplain<IProgramElement>();
-////			Set<FormulaSet<IProgramElement>> conflict = qxp.search(theory, model.getRules(), null);
+    }
 
-	}
+    private void putAllRulesToMap (Collection<? extends Set<IProgramElement>> set) {
+        for (Set<IProgramElement> s : set)
+            for (IProgramElement rule : s)
+                if (!rules.contains(rule))
+                    rules.add(rule);
+    }
+
+    private List<IProgramElement> rules = new LinkedList<IProgramElement>();
 
     protected ASPTheory createAspTheory(ASPModel model) {
         ASPTheory theory = new ASPTheory();
@@ -159,12 +195,15 @@ public class TestBaseFunc {
         return search;
     }
 
-    private void printFormularSets(Set<FormulaSet<IProgramElement>> diagnosis, String namePr) {
+    private void printFormularSets(Set<FormulaSet<IProgramElement>> diagnosis, String namePr, boolean asNumber) {
         int j = 0;
         for (FormulaSet<IProgramElement> fs : diagnosis) {
             logger.info(namePr + j + ":");
             for (IProgramElement pe : fs) {
-                logger.info(pe.getString());
+                if (asNumber)
+                    logger.info(new Integer(rules.indexOf(pe)).toString());
+                else
+                    logger.info(pe.getString());
             }
             j++;
         }
