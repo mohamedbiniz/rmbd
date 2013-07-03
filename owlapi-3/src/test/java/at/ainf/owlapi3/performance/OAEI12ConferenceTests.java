@@ -29,8 +29,8 @@ public class OAEI12ConferenceTests extends OAEI11ConferenceTests {
         String matchingsDir = "oaei12conference/matcheralignments/";
         String ontologyDir = "oaei12conference/ontology";
 
-        File[] f = getMappingFiles(matchingsDir, "incoherent", "includedIncoher.txt");
-        File[] f2 = getMappingFiles(matchingsDir, "inconsistent", "included.txt");
+        File[] f = getMappingFiles(matchingsDir, "incoherent", "incoherent.txt");
+        File[] f2 = getMappingFiles(matchingsDir, "inconsistent", "inconsistent.txt");
 
         Set<File> files = new LinkedHashSet<File>();
         Map<File, String> map = new HashMap<File, String>();
