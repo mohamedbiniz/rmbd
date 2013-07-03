@@ -1,6 +1,7 @@
 # is probably ok
 ## is ok but has query with no decision possible
 ### problem no query can be found
+#### use too much heap
 
 aroma-cmt-conference.rdf
 aroma-cmt-confof.rdf
@@ -44,7 +45,7 @@ maasmatch-cmt-confof.rdf
 maasmatch-cmt-ekaw.rdf
 maasmatch-cmt-sigkdd.rdf
 maasmatch-conference-confof.rdf
-maasmatch-conference-edas.rdf
+#### maasmatch-conference-edas.rdf
 # maasmatch-conference-ekaw.rdf
 maasmatch-conference-sigkdd.rdf
 maasmatch-confof-edas.rdf
