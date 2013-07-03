@@ -1,19 +1,20 @@
 # is probably ok
-## is ok but has query with no decision possible
-### problem no query can be found
-#### use too much heap
+#2 is ok but has query with no decision possible
+#3 problem no query can be found
+#4 use too much heap
+#5 runs very long
 
 aroma-cmt-conference.rdf
 aroma-cmt-confof.rdf
 aroma-cmt-edas.rdf
 aroma-cmt-ekaw.rdf
 aroma-cmt-sigkdd.rdf
-## aroma-conference-confof.rdf
+#2 aroma-conference-confof.rdf
 aroma-conference-edas.rdf
 # aroma-conference-ekaw.rdf
 aroma-confof-edas.rdf
 aroma-confof-ekaw.rdf
-## aroma-edas-ekaw.rdf
+#2 aroma-edas-ekaw.rdf
 # aroma-edas-sigkdd.rdf
 # aroma-ekaw-iasted.rdf
 # ase-cmt-conference.rdf
@@ -41,11 +42,11 @@ hertuda-edas-sigkdd.rdf
 logmaplt-confof-ekaw.rdf
 # maasmatch-cmt-conference.rdf
 maasmatch-cmt-confof.rdf
-## maasmatch-cmt-edas.rdf
+#2 maasmatch-cmt-edas.rdf
 maasmatch-cmt-ekaw.rdf
 maasmatch-cmt-sigkdd.rdf
 maasmatch-conference-confof.rdf
-#### maasmatch-conference-edas.rdf
+#4 maasmatch-conference-edas.rdf
 # maasmatch-conference-ekaw.rdf
 maasmatch-conference-sigkdd.rdf
 maasmatch-confof-edas.rdf
@@ -61,13 +62,13 @@ medley-cmt-conference.rdf
 medley-cmt-confof.rdf
 medley-cmt-ekaw.rdf
 # medley-cmt-sigkdd.rdf
-## medley-conference-confof.rdf
+#2 medley-conference-confof.rdf
 medley-conference-ekaw.rdf
 medley-confof-edas.rdf
-## medley-confof-ekaw.rdf
+#2 medley-confof-ekaw.rdf
 # medley-confof-sigkdd.rdf
-### medley-edas-ekaw.rdf
-## medley-edas-sigkdd.rdf
+#3 medley-edas-ekaw.rdf
+#2 medley-edas-sigkdd.rdf
 medley-ekaw-sigkdd.rdf
 # optima-cmt-conference.rdf
 optima-cmt-ekaw.rdf
