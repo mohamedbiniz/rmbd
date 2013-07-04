@@ -4,82 +4,87 @@
 #4 use too much heap
 #5 runs very long
 #6 runs 3h
+#7 target not in window problem strange
 
-# aroma-cmt-conference.rdf
-# aroma-cmt-confof.rdf
-# aroma-cmt-edas.rdf
-# aroma-cmt-ekaw.rdf
-# aroma-cmt-sigkdd.rdf
+aroma-cmt-conference.rdf
+aroma-cmt-confof.rdf
+aroma-cmt-edas.rdf
+aroma-cmt-ekaw.rdf
+aroma-cmt-sigkdd.rdf
+aroma-conference-edas.rdf
+aroma-conference-ekaw.rdf
+aroma-confof-edas.rdf
+aroma-confof-ekaw.rdf
+aroma-edas-sigkdd.rdf
+aroma-ekaw-iasted.rdf
+ase-cmt-conference.rdf
+ase-cmt-edas.rdf
+ase-cmt-iasted.rdf
+ase-cmt-sigkdd.rdf
+ase-conference-confof.rdf
+ase-conference-edas.rdf
+ase-conference-ekaw.rdf
+ase-conference-sigkdd.rdf
+ase-confof-iasted.rdf
+ase-confof-sigkdd.rdf
+ase-edas-ekaw.rdf
+ase-edas-sigkdd.rdf
+ase-ekaw-sigkdd.rdf
+automsv2-cmt-edas.rdf
+automsv2-cmt-ekaw.rdf
+automsv2-conference-ekaw.rdf
+automsv2-edas-ekaw.rdf
+hertuda-confof-sigkdd.rdf
+hertuda-edas-sigkdd.rdf
+hotmatch-confof-sigkdd.rdf
+hotmatch-edas-sigkdd.rdf
+logmaplt-confof-ekaw.rdf
+maasmatch-cmt-conference.rdf
+maasmatch-cmt-confof.rdf
+maasmatch-cmt-sigkdd.rdf
+maasmatch-conference-ekaw.rdf
+maasmatch-conference-sigkdd.rdf
+maasmatch-confof-ekaw.rdf
+maasmatch-confof-sigkdd.rdf
+maasmatch-iasted-sigkdd.rdf
+mapsss-conference-confof.rdf
+mapsss-conference-edas.rdf
+mapsss-confof-ekaw.rdf
+medley-cmt-conference.rdf
+medley-cmt-confof.rdf
+medley-cmt-ekaw.rdf
+medley-cmt-sigkdd.rdf
+medley-conference-ekaw.rdf
+medley-confof-sigkdd.rdf
+medley-ekaw-sigkdd.rdf
+optima-cmt-conference.rdf
+optima-cmt-ekaw.rdf
+optima-conference-edas.rdf
+optima-conference-ekaw.rdf
+optima-confof-edas.rdf
+optima-edas-ekaw.rdf
+optima-ekaw-iasted.rdf
+optima-ekaw-sigkdd.rdf
+servomap-conference-ekaw.rdf
+wesee-cmt-conference.rdf
+wmatch-confof-sigkdd.rdf
+wmatch-edas-sigkdd.rdf
+
 #2 aroma-conference-confof.rdf
-# aroma-conference-edas.rdf
-# aroma-conference-ekaw.rdf
-# aroma-confof-edas.rdf
-# aroma-confof-ekaw.rdf
 #2 aroma-edas-ekaw.rdf
-# aroma-edas-sigkdd.rdf
-# aroma-ekaw-iasted.rdf
-# ase-cmt-conference.rdf
-# ase-cmt-edas.rdf
 #2 ase-cmt-ekaw.rdf
-# ase-cmt-iasted.rdf
-# ase-cmt-sigkdd.rdf
-# ase-conference-confof.rdf
-# ase-conference-edas.rdf
-# ase-conference-ekaw.rdf
-# ase-conference-sigkdd.rdf
-# ase-confof-iasted.rdf
-# ase-confof-sigkdd.rdf
-# ase-edas-ekaw.rdf
-# ase-edas-sigkdd.rdf
-# ase-ekaw-sigkdd.rdf
-# automsv2-cmt-edas.rdf
-# automsv2-cmt-ekaw.rdf
-# automsv2-conference-ekaw.rdf
-# automsv2-edas-ekaw.rdf
-# hertuda-confof-sigkdd.rdf
-# hertuda-edas-sigkdd.rdf
-# hotmatch-confof-sigkdd.rdf
-# hotmatch-edas-sigkdd.rdf
-# logmaplt-confof-ekaw.rdf
-# maasmatch-cmt-conference.rdf
-# maasmatch-cmt-confof.rdf
 #2 maasmatch-cmt-edas.rdf
 #2 maasmatch-cmt-ekaw.rdf
-# maasmatch-cmt-sigkdd.rdf
 #2 maasmatch-conference-confof.rdf
-#4 maasmatch-conference-edas.rdf
-# maasmatch-conference-ekaw.rdf
-# maasmatch-conference-sigkdd.rdf
 #2 maasmatch-confof-edas.rdf
-# maasmatch-confof-ekaw.rdf
-# maasmatch-confof-sigkdd.rdf
-maasmatch-edas-sigkdd.rdf
 #2 maasmatch-ekaw-sigkdd.rdf
-# maasmatch-iasted-sigkdd.rdf
-# mapsss-conference-confof.rdf
-# mapsss-conference-edas.rdf
-# mapsss-confof-ekaw.rdf
-# medley-cmt-conference.rdf
-# medley-cmt-confof.rdf
-# medley-cmt-ekaw.rdf
-# medley-cmt-sigkdd.rdf
 #2 medley-conference-confof.rdf
-# medley-conference-ekaw.rdf
 #2 medley-confof-edas.rdf
 #2 medley-confof-ekaw.rdf
-# medley-confof-sigkdd.rdf
-#3 medley-edas-ekaw.rdf
 #2 medley-edas-sigkdd.rdf
-# medley-ekaw-sigkdd.rdf
-# optima-cmt-conference.rdf
-# optima-cmt-ekaw.rdf
-# optima-conference-edas.rdf
-# optima-conference-ekaw.rdf
-# optima-confof-edas.rdf
-# optima-edas-ekaw.rdf
-# optima-ekaw-iasted.rdf
-# optima-ekaw-sigkdd.rdf
-# servomap-conference-ekaw.rdf
-# wesee-cmt-conference.rdf
-# wmatch-confof-sigkdd.rdf
-# wmatch-edas-sigkdd.rdf
+
+#3 medley-edas-ekaw.rdf
+
+#4 maasmatch-conference-edas.rdf
+
+#7 maasmatch-edas-sigkdd.rdf
