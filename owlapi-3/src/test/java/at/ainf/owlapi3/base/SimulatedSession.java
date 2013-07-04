@@ -424,14 +424,18 @@ public class SimulatedSession extends CalculateDiagnoses {
                         hasAn = true;
                     } catch (NoDecisionPossibleException e) {
                         hasQueryWithNoDecisionPossible = true;
-                        actPa = queryGenerator.nextPartition(actPa);
+
+                        logger.info("do not know query answer but query should be entailed so answering true");
+                        hasAn = true;
+
+                        /* actPa = queryGenerator.nextPartition(actPa);
                         if (actPa == null) {
                             logger.error("All partitions were tested and none provided an answer to the target diagnosis!");
                             String msgComma = getMessage() + "," + "act2,problem no queryanswer";
                             logger.info(msgComma);
                             return msgComma;
                             //break;
-                        }
+                        }*/
                     }
                 }
 

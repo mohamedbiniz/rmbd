@@ -5,28 +5,28 @@
     <appender name="owlapi3-timestamp" class="ch.qos.logback.core.FileAppender">
         <file>logs/${bySecond}/owlapi3-${bySecond}.log</file>
         <encoder>
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
     </appender>
 
     <appender name="diagnosis-timestamp" class="ch.qos.logback.core.FileAppender">
         <file>logs/${bySecond}/diagnosis-${bySecond}.log</file>
         <encoder>
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
     </appender>
 
     <appender name="metrics-timestamp" class="ch.qos.logback.core.FileAppender">
         <file>logs/${bySecond}/metrics-${bySecond}.log</file>
         <encoder>
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
     </appender>
 
     <appender name="dev-timestamp" class="ch.qos.logback.core.FileAppender">
         <file>logs/${bySecond}/dev-${bySecond}.log</file>
         <encoder>
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
     </appender>
 
@@ -35,7 +35,7 @@
         <File>logs/diagnosis.log</File>
         <encoder>
             <!-- <pattern>%p %t %c - %m%n</pattern> -->
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>
@@ -51,7 +51,7 @@
         <File>logs/metrics.log</File>
         <encoder>
             <!-- <pattern>%p %t %c - %m%n</pattern> -->
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>
@@ -66,7 +66,7 @@
         <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
         <File>logs/owlapi3.log</File>
         <encoder>
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>
@@ -81,7 +81,7 @@
         <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
         <File>logs/dev.log</File>
         <encoder>
-            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <maxIndex>5</maxIndex>

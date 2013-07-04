@@ -70,18 +70,20 @@ wesee-cmt-conference.rdf
 wmatch-confof-sigkdd.rdf
 wmatch-edas-sigkdd.rdf
 
-#2 aroma-conference-confof.rdf
-#2 aroma-edas-ekaw.rdf
-#2 ase-cmt-ekaw.rdf
-#2 maasmatch-cmt-edas.rdf
-#2 maasmatch-cmt-ekaw.rdf
-#2 maasmatch-conference-confof.rdf
-#2 maasmatch-confof-edas.rdf
-#2 maasmatch-ekaw-sigkdd.rdf
-#2 medley-conference-confof.rdf
-#2 medley-confof-edas.rdf
-#2 medley-confof-ekaw.rdf
-#2 medley-edas-sigkdd.rdf
+#2
+aroma-conference-confof.rdf
+aroma-edas-ekaw.rdf
+ase-cmt-ekaw.rdf
+maasmatch-cmt-edas.rdf
+maasmatch-cmt-ekaw.rdf
+maasmatch-conference-confof.rdf
+maasmatch-confof-edas.rdf
+maasmatch-ekaw-sigkdd.rdf
+medley-conference-confof.rdf
+medley-confof-edas.rdf
+medley-confof-ekaw.rdf
+medley-edas-sigkdd.rdf
+#2end
 
 #3 medley-edas-ekaw.rdf
 
