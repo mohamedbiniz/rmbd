@@ -31,11 +31,8 @@ public class HsDagSearch<T extends FormulaSet<Id>,Id> extends HsTreeSearch<T,Id>
 
     }
 
-
-
-
-    protected Set<Set<Id>> calculateNode(HSTreeNode<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
-        return calculateConflict(node);
+    protected Set<Set<Id>> calculateNode(HSTreeNode<Id> node,Set<Id> path) throws SolverException, InconsistentTheoryException, NoConflictException{
+        return calculateConflict(node,path);
     }
 
     public void pruneConflictSets(Node<Id> idNode, T conflictSet) throws SolverException, InconsistentTheoryException {

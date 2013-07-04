@@ -1,21 +1,19 @@
 package at.ainf.owlapi3.test;
 
+import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
 import at.ainf.diagnosis.quickxplain.QXAxiomSetListener;
-import at.ainf.diagnosis.quickxplain.QXSingleAxiomListener;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
+import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.BinaryTreeSearch;
 import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.owlapi3.model.OWLTheory;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
-import at.ainf.diagnosis.model.InconsistentTheoryException;
-import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.owlapi3.model.OWLTheory;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -233,6 +231,7 @@ public class Example2Test extends AbstractExample {
 
     }
 
+    @Ignore
     @Test
     public void testResumeHS() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -241,6 +240,7 @@ public class Example2Test extends AbstractExample {
         resumeDiagnosis(search, new UniformCostSearchStrategy<OWLLogicalAxiom>());
     }
 
+    @Ignore
     @Test
     public void testResumeBHS() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -319,6 +319,7 @@ public class Example2Test extends AbstractExample {
         assertTrue(set.equals(expectedRes));
     }
 
+    @Ignore
     @Test
     public void testAllQueryEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -365,6 +366,7 @@ public class Example2Test extends AbstractExample {
 
     }
 
+    @Ignore
     @Test
     public void testSomeQueryNotEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -402,6 +404,7 @@ public class Example2Test extends AbstractExample {
 
     }
 
+    @Ignore
     @Test
     public void testQuery4Entailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -432,6 +435,7 @@ public class Example2Test extends AbstractExample {
 
     }
 
+    @Ignore
     @Test
     public void testQuery5NotEntailed() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -462,6 +466,7 @@ public class Example2Test extends AbstractExample {
 
     }
 
+    @Ignore
     @Test
     public void testAllQueryEntailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -508,6 +513,8 @@ public class Example2Test extends AbstractExample {
 
     }
 
+
+@Ignore
     @Test
     public void testSomeQueryNotEntailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -545,6 +552,7 @@ public class Example2Test extends AbstractExample {
 
     }
 
+    @Ignore
     @Test
     public void testQuery4Entailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -575,6 +583,7 @@ public class Example2Test extends AbstractExample {
 
     }
 
+    @Ignore
     @Test
     public void testQuery5NotEntailed2() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();
@@ -605,6 +614,7 @@ public class Example2Test extends AbstractExample {
 
     }
 
+    @Ignore
     @Test
     public void allMultiThread() throws InconsistentTheoryException, SolverException, NoConflictException {
         HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom>();

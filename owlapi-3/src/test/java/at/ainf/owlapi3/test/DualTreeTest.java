@@ -12,7 +12,9 @@ import at.ainf.diagnosis.tree.*;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
-import at.ainf.diagnosis.tree.splitstrategy.*;
+import at.ainf.diagnosis.tree.splitstrategy.MostFrequentSplitStrategy;
+import at.ainf.diagnosis.tree.splitstrategy.MostProbableSplitStrategy;
+import at.ainf.diagnosis.tree.splitstrategy.SplitStrategy;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.base.tools.TableList;
@@ -39,7 +41,6 @@ import java.util.*;
 
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType;
 import static at.ainf.owlapi3.base.SimulatedSession.QSSType.MINSCORE;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -55,7 +56,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
 
     String[] ontologies = {"Univ.owl"}; //, "Univ2.owl"};
-    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"};
+    String[] jwsOntologies = {"CHEM-A.owl", "koala.owl", "buggy-sweet-jpl.owl", "miniTambis.owl", "Univ.owl", "Economy-SDA.owl", "Transportation-SDA.owl"};
     static Set<SplitStrategy<OWLLogicalAxiom>> splitStrategies = new LinkedHashSet<SplitStrategy<OWLLogicalAxiom>>();
     static Set<Searcher<OWLLogicalAxiom>> searchers = new LinkedHashSet<Searcher<OWLLogicalAxiom>>();
 
@@ -66,12 +67,14 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public static void setUp() {
         /* String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf);*/
-        splitStrategies.add(new SimpleSplitStrategy<OWLLogicalAxiom>());
         splitStrategies.add(new MostFrequentSplitStrategy<OWLLogicalAxiom>());
+        /*splitStrategies.add(new SimpleSplitStrategy<OWLLogicalAxiom>());
+
         splitStrategies.add(new GreatestConflictSplitStrategy<OWLLogicalAxiom>());
         splitStrategies.add(new MostProbableSplitStrategy<OWLLogicalAxiom>());
+        */
 
-        searchers.add(new QuickXplain<OWLLogicalAxiom>());
+    //    searchers.add(new QuickXplain<OWLLogicalAxiom>());
 
         MultiQuickXplain<OWLLogicalAxiom> mult = new MultiQuickXplain<OWLLogicalAxiom>();
         mult.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
@@ -82,7 +85,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
     @Ignore
     @Test
-    public void testAllVariants() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+    public void testAllOntologies() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsBinary = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
 
@@ -98,7 +101,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
             for (SplitStrategy<OWLLogicalAxiom> split : splitStrategies) {
                 binary.setSplitStrategy(split);
 
-                for (String ont : ontologies) {
+                for (String ont : jwsOntologies) {
                     boolean success = false;
 
                     while (!success) {
@@ -111,11 +114,11 @@ public class DualTreeTest {//extends BasePerformanceTests {
 
         }
 
-        Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsNormal = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
+      /*  Set<Set<? extends FormulaSet<OWLLogicalAxiom>>> resultsNormal = new LinkedHashSet<Set<? extends FormulaSet<OWLLogicalAxiom>>>();
 
-        for (String ont : ontologies) {
+        for (String ont : jwsOntologies) {
             resultsNormal.add(testHSTree(ont));
-        }
+        }  */
 
     }
 
@@ -256,21 +259,21 @@ public class DualTreeTest {//extends BasePerformanceTests {
             logger.info("cs " + new CalculateDiagnoses().renderAxioms(confl));
     }
 
-
     @Ignore
     @Test
     public void testResultsEqualTime() throws NoConflictException, OWLOntologyCreationException, SolverException, InconsistentTheoryException {
 
         BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> binary = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
         binary.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
-        binary.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
-        // MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>();
-        // searcher.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
-        QuickXplain<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
+        binary.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+         MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>(2,10,10);
+         //searcher.setAxiomListener(new QXSingleAxiomListener<OWLLogicalAxiom>(true));
+        searcher.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
+       // QuickXplain<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
         binary.setSearcher(searcher);
 
 
-        runTimeComparison(binary, false, "univ.owl");
+        runTimeComparison(binary, false, "CHEM-A.owl");
 
     }
 
@@ -287,7 +290,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
             searcher.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
             binary.setSearcher(searcher);
 
-            runTimeComparison(binary, false, "Transportation-SDA.owl");
+            runTimeComparison(binary, false, "CHEM-A.owl");
         }
 
     }
@@ -296,11 +299,12 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public void runTimeComparison(BinaryTreeSearch referenceSearch, boolean dualMode, String ont)
             throws InconsistentTheoryException, OWLOntologyCreationException, SolverException, NoConflictException {
 
-         try {
+        /*try {
          Thread.sleep(10000);
          } catch (InterruptedException e) {
          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-         }
+         }*/
+
 
 
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultNormal = Collections.emptySet();
@@ -308,10 +312,16 @@ public class DualTreeTest {//extends BasePerformanceTests {
         Set<? extends FormulaSet<OWLLogicalAxiom>> resultDual = Collections.emptySet();
 
 
-        resultDual = testBHSTree(referenceSearch, dualMode, ont);
-        resultNormal = testHSTree(ont);
 
-        //assertEquals(resultNormal, resultDual);
+       //  resultNormal = testHSTree(ont);
+          resultDual = testBHSTree(referenceSearch, dualMode, ont);
+
+
+       //System.out.println("Normal number of Diagnosis: "+resultNormal.size());
+        System.out.println("Binary Tree number of Diagnosis: "+resultDual.size());
+
+
+       //assertEqual(resultNormal, resultDual);
 
     }
 
@@ -343,7 +353,9 @@ public class DualTreeTest {//extends BasePerformanceTests {
         logger.info("Consistency count: "+theoryNormal.getConsistencyCount());
         logger.info("Consistency time: "+theoryNormal.getConsistencyTime());
 
-
+        System.out.println("Normal CalculateConflictCount: "+((AbstractTreeSearch)searchNormal).calculateConflictCount);
+        System.out.println("Normal DiagnosisValidCount: "+((AbstractTreeSearch)searchNormal).checkDiagnosisConsistencyCount);
+        System.out.println("Normal NodeCount: "+((AbstractTreeSearch)searchNormal).nodeCount);
 
         return resultNormal;
     }
@@ -388,7 +400,14 @@ public class DualTreeTest {//extends BasePerformanceTests {
         logger.info("Consistency count: "+theoryDual.getConsistencyCount());
         logger.info("Consistency time: "+theoryDual.getConsistencyTime());
 
+        System.out.println("Binary CalculateConflictCount: "+((AbstractTreeSearch)referenceSearch).calculateConflictCount);
+        System.out.println("Binary DiagnosisValidCount: "+((AbstractTreeSearch)referenceSearch).checkDiagnosisConsistencyCount);
+        System.out.println("Binary NodeCount: "+((AbstractTreeSearch)referenceSearch).nodeCount);
+
         System.out.println("Binary " + new CalculateDiagnoses().getStringTime(dual));
+
+
+
 
         return resultDual;
     }
@@ -399,7 +418,12 @@ public class DualTreeTest {//extends BasePerformanceTests {
         OWLOntology ont = manager.loadOntologyFromOntologyDocument(st);
 
         // create a module extractor
-        OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(new Reasoner.ReasonerFactory());
+        OWLReasonerFactory rf = new Reasoner.ReasonerFactory();
+       // OWLReasonerFactory rf = new PelletReasonerFactory();
+       // // PelletIncremantalReasonerFactory();
+
+
+        OWLIncoherencyExtractor ex = new OWLIncoherencyExtractor(rf);
         // replace the ontology with a module
         OWLOntology ontology = ex.getIncoherentPartAsOntology(ont);
 
@@ -409,7 +433,11 @@ public class DualTreeTest {//extends BasePerformanceTests {
             bax.addAll(ontology.getObjectPropertyAssertionAxioms(ind));
         }
 
-        OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
+        for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
+            bax.addAll(ontology.getDataPropertyAssertionAxioms(ind));
+        }
+
+        OWLReasonerFactory reasonerFactory = rf;
         OWLTheory theory = null;
         if (dual)
             theory = new DualTreeOWLTheory(reasonerFactory, ontology, bax);
@@ -465,7 +493,7 @@ public class DualTreeTest {//extends BasePerformanceTests {
     public void computeAllDiagnoses()
             throws NoConflictException, SolverException, InconsistentTheoryException, OWLOntologyCreationException {
 
-        String ont = "ecai.simple.owl";
+        String ont = "example2005.owl";
         if (TEST_CACHING) {
             for (int i = 10; i <= 10; i = i + 5) {
                 logger.info("Running diagnosis compare " + ont + " (" + i + ")");
@@ -653,5 +681,14 @@ public class DualTreeTest {//extends BasePerformanceTests {
         logger.info("Consistency count: "+theory.getConsistencyCount());
         logger.info("Consistency time: "+theory.getConsistencyTime());
     }
+
+
+    private void assertEqual(Set s1, Set s2){
+        if(!s1.equals(s2))
+            System.err.print("Results are not equal \n");
+          else System.out.print("Results equal \n");
+
+    }
+
 
 }

@@ -61,7 +61,7 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
-        Set<Set<Id>> conflict = calculateConflict(null);
+        Set<Set<Id>> conflict = calculateConflict(null,null);
 
         //convert to linked HashSet
         LinkedHashSet conflictH = new LinkedHashSet(conflict);
@@ -73,9 +73,9 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
         setRoot(node);
     }
 
-    public Set<Set<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException,InconsistentTheoryException{
+    public Set<Set<Id>> calculateNode(Node<Id> node,Set<Id> path) throws NoConflictException,SolverException,InconsistentTheoryException{
         if(node.getAxiomSets()==null || node.getAxiomSets().isEmpty())
-            return calculateConflict(node);
+            return calculateConflict(node,path);
 
         else return null;
     }
@@ -127,26 +127,69 @@ public class BinaryTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeS
 
 
     @Override
-    public Set<Set<Id>> calculateConflict(Node<Id> node) throws SolverException, NoConflictException, InconsistentTheoryException {
+    public Set<Set<Id>> calculateConflict(Node<Id> node,Set<Id> path) throws SolverException, NoConflictException, InconsistentTheoryException {
 
-        Set<Set<Id>> quickConflict = super.calculateConflict(node);
 
-        if (node != null)
-            for(Set<Id> conflictS: quickConflict) {
+
+        Set<Set<Id>> quickConflict = super.calculateConflict(node,path);
+
+       if (node != null) {
+        Set<Node<Id>> deleteNodes= new LinkedHashSet<Node<Id>>();
+        Set<Node<Id>> pushNodes= new LinkedHashSet<Node<Id>>();
+
+           for(Set<Id> conflictS: quickConflict) {
 
                 LinkedHashSet<Id> conflict = new LinkedHashSet<Id>(conflictS);
 
+               getSearchStrategy().getOpenNodes().add(node);
+
                // for(HSTreeNode<Id> leaf: (Set<HSTreeNode>)((HSTreeNode)getRoot()).getLeaves()) {
                 for(Node<Id> leaf: getSearchStrategy().getOpenNodes()) {
-                    if(!leaf.isClosed() && !intersectsWith(conflict,leaf.getPathLabels())) {
-                        ((BHSTreeNode<Id>)leaf).addNewConflict(conflict);
-                        //SEHR UNSCHÖN später ausbessern
-                        if(((HSTreeNode<Id>)leaf).getConflicts()!=null)
-                            ((HSTreeNode<Id>)leaf).getConflicts().add(((BHSTreeNode)leaf).updateConflict(conflict));
-                        else leaf.setAxiomSet((LinkedHashSet<Id>)((BHSTreeNode)leaf).updateConflict(conflict));
+
+                    //Für MultiparentGraph: Statt intersects-Bedingung: !nonHittingPaths.isEmpty()
+                    if(!leaf.isClosed() && !intersectsWith(conflict,leaf.getPathLabels().iterator().next().getPositivePath())) {
+                   //nur für MultiParentBHs
+                    // if(!leaf.isClosed()){
+
+                    ((BHSTreeNode<Id>)leaf).addNewConflict(conflict);
+                     List<Node<Id>> newNodes=  ((BHSTreeNode<Id>)leaf).expandNode(conflict);
+
+                         if(!newNodes.isEmpty()){
+                       deleteNodes.add(leaf);
+
+                         for(Node<Id> newNode:newNodes)
+                            pushNodes.add(newNode);
+                     }
                     }
+
+
+                    //Alte Sachen von SingleParentBHS
+                       // ((BHSTreeNode<Id>)leaf).addNewConflict(conflict);
+                        //SEHR UNSCHÖN später ausbessern
+                       // if(((HSTreeNode<Id>)leaf).getConflicts()!=null)
+                         //   ((HSTreeNode<Id>)leaf).getConflicts().add(((BHSTreeNode)leaf).updateConflict(conflict));
+                        //else leaf.setAxiomSet((LinkedHashSet<Id>)((BHSTreeNode)leaf).updateConflict(conflict));
+                    }
+               /*
+               Kann beides optimiert werden indem Arrays in jedem
+               Durchlauf neu initialisiert werden um nicht
+               jedesmal das ganze Array zu durchlaufen
+                */
+               for(Node<Id> pushNode :pushNodes){
+                   getSearchStrategy().pushOpenNode(pushNode);
+               }
+
+
+               for(Node<Id> delete:deleteNodes){
+                   getSearchStrategy().getOpenNodes().remove(delete);
+               }
+              // getSearchStrategy().getOpenNodes().remove(node);
+
                 }
-            }
+
+
+
+       }
 
         return quickConflict;
     }
