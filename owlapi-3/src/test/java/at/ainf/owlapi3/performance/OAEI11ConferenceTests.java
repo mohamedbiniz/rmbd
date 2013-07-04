@@ -213,7 +213,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                     TableList e = new TableList();
                     out += "," + qssType + ",";
                     String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
-                            + "," + qssType + "," + preprocessModulExtract + "," + randomNr
+                            + "," + qssType + "," + preprocessModulExtract + "," + randomNr + ","
                             + modOnto1Size + "," + modOnto2Size + "," + modMappingSize + "";
                     session.setEntry(e);
                     session.setMessage(message);
