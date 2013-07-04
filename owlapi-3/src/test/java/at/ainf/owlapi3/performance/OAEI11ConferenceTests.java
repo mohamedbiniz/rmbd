@@ -177,8 +177,13 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                     OWLOntology ontology1 = getOntologySimple(ontologyDir, o1 + ".owl");
                     OWLOntology ontology2 = getOntologySimple(ontologyDir, o2 + ".owl");
-                    bx.addAll(createIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms()));
-                    bx.addAll(createIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms()));
+                    Set<OWLLogicalAxiom> onto1Axioms = createIntersection(ontology.getLogicalAxioms(), ontology1.getLogicalAxioms());
+                    Set<OWLLogicalAxiom> onto2Axioms = createIntersection(ontology.getLogicalAxioms(), ontology2.getLogicalAxioms());
+                    int modOnto1Size = onto1Axioms.size();
+                    int modOnto2Size = onto2Axioms.size();
+                    int modMappingSize = ontology.getLogicalAxioms().size() - modOnto1Size - modOnto2Size;
+                    bx.addAll(onto1Axioms);
+                    bx.addAll(onto2Axioms);
                     theory.getKnowledgeBase().addBackgroundFormulas(bx);
 
                     Map<OWLLogicalAxiom, BigDecimal> map1 = readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
@@ -194,7 +199,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                     TableList e = new TableList();
                     out += "," + qssType + ",";
                     String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
-                            + "," + qssType + "," + preprocessModulExtract + "," + randomNr;
+                            + "," + qssType + "," + preprocessModulExtract + "," + randomNr
+                            + modOnto1Size + "," + modOnto2Size + "," + modMappingSize + "";
                     session.setEntry(e);
                     session.setMessage(message);
                     session.setScoringFunct(qssType);
