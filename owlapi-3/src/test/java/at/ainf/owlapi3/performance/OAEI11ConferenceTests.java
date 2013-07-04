@@ -13,12 +13,13 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.owlapi3.base.OAEI11ConferenceSession;
 import at.ainf.owlapi3.base.SimulatedSession;
+import at.ainf.owlapi3.base.tools.TableList;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.base.tools.TableList;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -53,7 +54,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
     public static void setUp() {
         String conf = ClassLoader.getSystemResource("owlapi3-log4j.properties").getFile();
         PropertyConfigurator.configure(conf); }*/
-
+    @Ignore
     @Test
     public void saveOntologiesConference2011()
             throws SolverException, InconsistentTheoryException, IOException, OWLOntologyCreationException {
@@ -172,7 +173,19 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
                             new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
                     preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                     OWLTheory theory = getExtendTheory(ontology, false);
+                    //Define Treesearch here
                     TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search = getUniformCostSearch(theory, false);
+                   /* BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search = new BinaryTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
+                    search.setCostsEstimator(new SimpleCostsEstimator<OWLLogicalAxiom>());
+                    search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+                    MultiQuickXplain<OWLLogicalAxiom> searcher = new MultiQuickXplain<OWLLogicalAxiom>(2,10,10);
+                    //searcher.setAxiomListener(new QXSingleAxiomListener<OWLLogicalAxiom>(true));
+                    searcher.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
+                    // QuickXplain<OWLLogicalAxiom> searcher = new QuickXplain<OWLLogicalAxiom>();
+                    search.setSearcher(searcher);
+                    search.setSearchable(theory);     */
+                    //Copy of Search initialisation ends here
+
 
                     LinkedHashSet<OWLLogicalAxiom> bx = new LinkedHashSet<OWLLogicalAxiom>();
                     OWLOntology ontology1 = getOntologySimple(ontologyDir, o1 + ".owl");
@@ -193,7 +206,8 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
                     search.setCostsEstimator(es);
 
-                    search.reset();
+
+                       search.reset();
 
 
                     TableList e = new TableList();
@@ -425,7 +439,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
             return acceptedNames.contains(name);
         }
     }
-
+    @Ignore
     @Test
     public void searchOneDiagTime() throws SolverException, InconsistentTheoryException, NoConflictException {
         String d = "incoherent";
@@ -457,6 +471,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
         }
     }
 
+    @Ignore
     @Test
     public void testSearchDiagnosisTimes() throws SolverException, InconsistentTheoryException, NoConflictException {
         String d = "incoherent";
@@ -507,6 +522,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
         }
     }
 
+    @Ignore
     @Test
     public void testConsistency() throws SolverException, InconsistentTheoryException{
         File[] f = new File(ClassLoader.getSystemResource("oaei11conference/matchings/incoherent").getFile()).listFiles();
@@ -549,7 +565,7 @@ public class OAEI11ConferenceTests extends OAEI11ConferenceSession {
 
         }
     }
-
+   @Ignore
     @Test
     public void testParser() throws SolverException, InconsistentTheoryException{
         for (File file : new File(ClassLoader.getSystemResource("oaei11conference/matchings").getFile()).listFiles()) {

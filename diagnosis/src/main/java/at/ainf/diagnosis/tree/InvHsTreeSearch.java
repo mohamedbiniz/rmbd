@@ -118,7 +118,7 @@ public class InvHsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSe
             for (Iterator<Node<Id>> onodeit = getSearchStrategy().getOpenNodes().iterator(); onodeit.hasNext(); ) {
                 Node<Id> openNode = onodeit.next();
                 if (!openNode.isRoot() && hasParent(node, openNode.getParent())
-                        && containsOneOf(openNode.getPathLabels(), invalidAxioms))
+                        && containsOneOf(openNode.getPathLabels().iterator().next().getPositivePath(), invalidAxioms))
                     onodeit.remove();
             }
             if (node.getAxiomSets().equals(axSet)) {
@@ -162,8 +162,8 @@ public class InvHsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSe
         return node.getChildren();
     }
 
-    protected Set<Set<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
-        return calculateConflict(node);
+    protected Set<Set<Id>> calculateNode(Node<Id> node,Set<Id> path) throws SolverException, InconsistentTheoryException, NoConflictException{
+        return calculateConflict(node,path);
     }
 
 }

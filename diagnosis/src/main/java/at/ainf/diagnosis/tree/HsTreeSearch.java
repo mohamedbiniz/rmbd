@@ -31,11 +31,8 @@ public class HsTreeSearch<T extends FormulaSet<Id>,Id> extends AbstractTreeSearc
 
     }
 
-
-
-
-    protected Set<Set<Id>> calculateNode(Node<Id> node) throws SolverException, InconsistentTheoryException, NoConflictException{
-        return calculateConflict(node);
+    protected Set<Set<Id>> calculateNode(Node<Id> node,Set<Id> path) throws SolverException, InconsistentTheoryException, NoConflictException{
+        return calculateConflict(node,path);
     }
 
     @Override

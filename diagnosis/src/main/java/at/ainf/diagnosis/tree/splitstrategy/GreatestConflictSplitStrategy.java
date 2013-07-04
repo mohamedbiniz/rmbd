@@ -16,23 +16,58 @@ public class GreatestConflictSplitStrategy<Id> implements SplitStrategy<Id> {
     @Override
     public Id getSplitElement(Set<Set<Id>> conflicts) {
 
-        return getGreatestConflict(conflicts).iterator().next();
+        Set<Id> minConflict= getGreatestConflict(conflicts);
 
+       /* int maxCount=0;
+        Id res = null;
+
+        for(Id id:minConflict){
+
+            int tempCount=count(id,conflicts);
+
+              if(tempCount>maxCount){
+                      maxCount=tempCount;
+                  res=id;
+              }
+        } */
+
+       return minConflict.iterator().next();
     }
 
     private Set<Id> getGreatestConflict(Set<Set<Id>> conflicts){
 
         Set<Id> result= new LinkedHashSet<Id>();
-        int max=0;
+        int min=Integer.MAX_VALUE;
 
         for(Set<Id> c:conflicts){
-              if(c.size()>max){
+              if(c.size()<min){
                   result=c;
-                  max=c.size();
+                  min=c.size();
               }
 
         }
          return result;
 
     }
+
+    /**
+     * Counts the number of occurrences of an element in a set of conflicts
+     * @param element
+     * @param conflicts
+     * @return
+     */
+    private int count(Id element, Set<Set<Id>> conflicts){
+
+        int cnt=0;
+
+        for(Set ax:conflicts){
+            if(ax.contains(element))
+                cnt++;
+        }
+
+        return cnt;
+
+
+    }
+
 }

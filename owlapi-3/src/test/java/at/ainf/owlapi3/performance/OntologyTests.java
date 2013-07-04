@@ -346,6 +346,7 @@ public class OntologyTests extends OntologySession {
 
     }
 
+    @Ignore
     @Test
     public void testNormalCasesHS() throws SolverException, InconsistentTheoryException, IOException {
 
@@ -503,7 +504,7 @@ public class OntologyTests extends OntologySession {
                             for (int run = 7; run < MAX_RUNS; run++) {
 
 
-                                logger.info("-----------------------------Binary Tree Search-----------------------------");
+                                logger.info("---------------------------Binary Tree Search-----------------------------");
 
                                 OWLOntology extracted = new OWLIncoherencyExtractor(
                                         new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(getOntologySimple("ontologies", name));
@@ -530,10 +531,10 @@ public class OntologyTests extends OntologySession {
 
                                // logger.info("-----------------------------Binary Tree Search-----------------------------");
 
-                                if (search.getSearcher() instanceof MultiQuickXplain)
-                                    logger.info("Multi-threaded");
+                              //  if (search.getSearcher() instanceof MultiQuickXplain)
+                                    logger.info(search1.getSearcher().getClass().getName());
 
-                                else logger.info("Single-threaded");
+                                //else logger.info("Single-threaded");
 
                                 logger.info(((BinaryTreeSearch) search1).getSplitStrategy().getClass().getName());
                                 logger.info("Ontology: " + name);

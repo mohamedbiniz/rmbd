@@ -1,6 +1,5 @@
 package at.ainf.owlapi3.test;
 
-import at.ainf.diagnosis.Debugger;
 import at.ainf.diagnosis.debugger.SimpleQueryDebugger;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
@@ -42,6 +41,7 @@ public class Example2005Test {
 
     MyOWLRendererParser parser;
 
+    @Ignore
     @Test
     public void testCSandHS() throws OWLOntologyCreationException, InconsistentTheoryException, SolverException, NoConflictException, ParserException {
         //SimpleStorage<OWLLogicalAxiom> storage = new SimpleStorage<OWLLogicalAxiom>();

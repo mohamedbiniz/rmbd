@@ -1,7 +1,5 @@
 package at.ainf.diagnosis.tree.splitstrategy;
 
-import at.ainf.diagnosis.storage.FormulaSet;
-
 import java.util.Set;
 
 /**
@@ -36,12 +34,17 @@ public class MostFrequentSplitStrategy<Id> implements SplitStrategy<Id> {
 
         }
 
+        /**If most frequent Element occurs only one time, the problem is disjoint.
+         We notify this by returning null as a result**/
+        if(maxCount==1)
+            return null;
+        else
         return  result;
 
     }
 
     /**
-     * Counts the number of occurrences of an element in a set conflicts
+     * Counts the number of occurrences of an element in a set of conflicts
      * @param element
      * @param conflicts
      * @return

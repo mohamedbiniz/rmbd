@@ -1,14 +1,16 @@
 package at.ainf.owlapi3.test;
 
-import  at.ainf.diagnosis.model.*;
-import java.util.Date;
+import at.ainf.diagnosis.model.*;
 import at.ainf.diagnosis.quickxplain.PredefinedConflictSearcher;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.FormulaSetImpl;
-import at.ainf.diagnosis.tree.*;
+import at.ainf.diagnosis.tree.BHSTreeNode;
+import at.ainf.diagnosis.tree.BinaryTreeSearch;
+import at.ainf.diagnosis.tree.HsTreeSearch;
+import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.tree.searchstrategy.*;
-
+import at.ainf.diagnosis.tree.searchstrategy.DepthFirstSearchStrategy;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.OWLIndividual;
@@ -37,6 +39,7 @@ public class BinaryTreeTest {
 
     private static Logger logger = LoggerFactory.getLogger(TreeTest.class.getName());
 
+    @Ignore
     @Test
     /**
      * This testcase is a simple example how to start diagnoses

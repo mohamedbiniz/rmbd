@@ -19,8 +19,6 @@ import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
-import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
-import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
@@ -121,6 +119,8 @@ public class CalculateDiagnoses {
         }
         search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearchable(theory);
+
+
 
         return search;
     }

@@ -8,15 +8,18 @@
 
 package at.ainf.diagnosis.tree;
 
-import    _dev.TimeLog;
+import _dev.TimeLog;
 import at.ainf.diagnosis.AbstractDebugger;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
-import at.ainf.diagnosis.storage.*;
+import at.ainf.diagnosis.storage.FormulaRenderer;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
+import at.ainf.diagnosis.storage.StorageListener;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.diagnosis.tree.searchstrategy.*;
+import at.ainf.diagnosis.tree.searchstrategy.SearchStrategy;
 import at.ainf.logging.aop.ProfiledVar;
 import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
@@ -59,6 +62,14 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
     private int prunedHS;
 
     private SearchStrategy<Id> searchStrategy;
+
+    //zu testzwecken
+    public int calculateConflictCount=0;
+
+    //zu testzwecken
+    public int checkDiagnosisConsistencyCount=0;
+    //zu testzwecken
+    public int nodeCount=0;
 
     public SearchStrategy<Id> getSearchStrategy() {
         return searchStrategy;
@@ -113,21 +124,17 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         return (T)quickConflict;
     }
 
-    protected T createHittingSet(Node<Id> node, boolean valid) throws SolverException {
-        Set<Id> labels = node.getPathLabels();
+    //"labels" ist neu
+    protected T createHittingSet(Node<Id> node,Set<Id>labels, boolean valid) throws SolverException {
+         //Nur für MultiParentGraph aktiviert
+        //Set<Id> labels = node.getPathLabels();
         Set<Id> entailments = calculateEntailmentsForHittingSet(labels, valid);
+        //Für MultiParent müsste Measure über spezifische Diagnose gemessen werden
+        //Und nicht Knoten
         BigDecimal measure = getSearchStrategy().getDiagnosisMeasure(node);
         T hs = (T) new FormulaSetImpl<Id>(measure, labels, entailments);
         hs.setNode(node);
         return hs;
-    }
-
-    public Set<T> getDiagnoses() {
-        return getValidAxiomSets(getHittingSets());
-    }
-
-    public Set<T> getConflicts() {
-        return getValidAxiomSets(getNodeLabels());
     }
 
     protected Set<Id> calculateEntailmentsForConflictSet(FormulaSet<Id> quickConflict) throws SolverException {
@@ -340,10 +347,14 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
 
     protected void processNode(Node<Id> node) throws SolverException, InconsistentTheoryException {
 
-       // boolean prune;
+      // boolean prune;
          //   if(!(this instanceof BinaryTreeSearch))
-            boolean   prune = pruneHittingSet(node);
-        //else prune =false;
+          boolean prune = pruneHittingSet(node);
+            Path<Id> currentPath=new Path<Id>();
+        //nur zur Probe:
+        Set<Path<Id>> paths=node.getPathLabels();
+
+         //boolean prune =false;
 
 
         //if(axiomRenderer!=null) loggerDual.info("arc: " + axiomRenderer.renderAxiom(node.getArcLabel()));
@@ -351,7 +362,22 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
             try {
                 if (!canReuseConflict(node) )
                     //EDITED von CalculateConflict
-                    calculateNode(node);
+
+                    if(!isValidConflict(node.getAxiomSets()))
+                  for(Path<Id> path:node.getPathLabels()){
+
+
+
+                      if(!path.isExtended()){
+
+
+                        //path.setExtended(true);
+                      currentPath=path;
+                      //path-Argument is new
+                    calculateNode(node,path.getPositivePath());
+                      }
+                  }
+
                 if (!node.isClosed() && isValidConflict(node.getAxiomSets())) {
                     getSearchStrategy().expand(node);
                    //If child isn't empty, add to open Nodes
@@ -373,12 +399,20 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
                     return;
                 }*/
 
-
-                Set<Id> diagnosis = node.getPathLabels();
-
+               //Für MultiParentGraph mehrere Diagnosen
+                /*
+                CurrentPath ist Pfad bei dem Exception geworfen wurde,
+                also aktuelle Diagnose
+                 */
+                Set<Id> diagnosis = currentPath.getPositivePath();
+               // Set<Id> diagnosis = node.getPathLabels().iterator().next();
+               currentPath.setExtended(true);
+                checkDiagnosisConsistencyCount++;
                 boolean valid = proveValidnessDiagnosis(diagnosis);
-                
-                T hs = createHittingSet(node, valid);
+
+
+                //"diagnosis" ist neu
+                T hs = createHittingSet(node, diagnosis,valid);
 
                 hs.setValid(valid);
                 addHittingSet(hs);
@@ -415,6 +449,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
                    ninthDiagnosisTime=System.currentTimeMillis()-this.startTime;
                 }
 
+               //   nodeCount=((HSTreeNode)getRoot()).countNodes();
+                // processNode(node);
             }
         } else
             this.prunedHS++;
@@ -424,7 +460,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
             SolverException, InconsistentTheoryException {
         // if there is already a root
         if (getRoot() != null) return;
-        Set<Set<Id>> conflict = calculateConflict(null);
+        Set<Set<Id>> conflict = calculateConflict(null,null);
         //NEW
         Node<Id> node = getSearchStrategy().createRootNode(new LinkedHashSet(conflict.iterator().next()), getCostsEstimator(), getSearchable().getKnowledgeBase().getFaultyFormulas());
         setRoot(node);
@@ -454,8 +490,11 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         }
     }
      */
-    public Set<Set<Id>> calculateConflict(Node<Id> node) throws
+    public Set<Set<Id>> calculateConflict(Node<Id> node, Set<Id> pathLabels) throws
             SolverException, NoConflictException, InconsistentTheoryException {
+
+
+
         // if conflict was already calculated
         //edited
        /* if(getRoot()!=null)
@@ -475,7 +514,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
             }
         });
 
-        Set<Id> pathLabels = null;
+        //ALT
+       // Set<Id> pathLabels = null;
         if (node != null) {
             if (logger.isDebugEnabled())
                 logger.debug("Calculating a conflict for the node: " + node);
@@ -485,7 +525,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
                 //EDITED
                 return node.getAxiomSets();
             }
-            pathLabels = node.getPathLabels();
+            //ALT
+           // pathLabels = node.getPathLabels();
         }
 
         //Measure time to compute Conflict
@@ -493,7 +534,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         quickConflict = getSearcher().search(getSearchable(), list, pathLabels);
         long conflictEnd=System.currentTimeMillis();
         long conflictTime=conflictEnd-conflictStart;
-
+        calculateConflictCount++;
            avgConflictTime=(avgConflictTime+conflictTime)/2;
 
         if (logger.isInfoEnabled())
@@ -533,17 +574,26 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         addNodeLabel(conflictSet);
         notifySearchListeners();
 
-        // current node should get a conflict only if a path from
-        // this node to root does not include closed nodes
-        if (node != null && !hasClosedParent(node.getParent())){
-            node.setAxiomSet(new LinkedHashSet<Set<Id>>(quickConflict));
-        }
+
 
         Set<Set<Id>> quickConflictRes = new LinkedHashSet<Set<Id>>();
 
         for(FormulaSet<Id> fs:quickConflict){
-                  quickConflictRes.add(new LinkedHashSet<Id>(fs));
+            quickConflictRes.add(new LinkedHashSet<Id>(fs));
         }
+
+        // current node should get a conflict only if a path from
+        // this node to root does not include closed nodes
+       //  probier mit res
+       if (node != null&& !hasClosedParent(node.getParent())){
+
+           if(node.isRoot()||!(node instanceof  BHSTreeNode))
+           // node.setAxiomSet(new LinkedHashSet<Set<Id>>(quickConflict));
+           node.setAxiomSet(new LinkedHashSet<Set<Id>>(quickConflictRes));
+
+       }
+
+
 
 
         return quickConflictRes;
@@ -564,7 +614,7 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         }*/
     }
 
-    protected abstract Set<Set<Id>> calculateNode(Node<Id> node) throws NoConflictException,SolverException, InconsistentTheoryException;
+    protected abstract Set<Set<Id>> calculateNode(Node<Id> node,Set<Id> path) throws NoConflictException,SolverException, InconsistentTheoryException;
 
     /*public Set<T> getConflicts() {
         return getStorage().getConflicts();
@@ -641,7 +691,8 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         // check if this is a root
         //EDITED MultiNodes don't reuse Conflicts
         if (node.isRoot() || node.getAxiomSets() != null || (node instanceof BHSTreeNode)) return false;
-        Collection<Id> pathLabels = node.getPathLabels();
+        //Für normalen HS-Tree betrachte nur einen Pfad
+        Collection<Id> pathLabels = node.getPathLabels().iterator().next().getPositivePath();
         for (FormulaSet<Id> localConflict : getConflicts()) {
             if (localConflict.isValid() && !intersectsWith(pathLabels, localConflict)) {
                 node.setAxiomSet(new LinkedHashSet<Id>(localConflict));
@@ -666,6 +717,85 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         return false;
     }
 
+    /*
+    Veränderung für MultiparentGraph:
+    Wenn es einen Path gibt, der nicht Supermenge eines HittingSets
+    ist, dann wird nicht gepruned.
+    Jeder Path der Superset eines HittingSets ist wird jedoch aus dem Knoten entfernt.
+     */
+   //Funktioniert!
+   /*
+    public boolean pruneHittingSet(Node<Id> node) {
+       // boolean result=true;
+        if (node.isRoot()) return false;
+
+        //Für HS-Tree nur ein Pfad, für BHS-Mehrere, muss anpassen
+        Collection<Id> pathLabels = node.getPathLabels().iterator().next().getPositivePath();
+      //  Set<Path<Id>> paths=node.getPathLabels();
+        for (T diagnosis : getHittingSets()) {
+        //    for(Path<Id> pathLabels:paths)
+
+            if (pathLabels.containsAll(diagnosis)) {
+            //eigentlich: if(!pathLabels.containsAll(diagnosis)) return false;
+             // node.removePath(pathLabels);
+
+
+                return true;
+            }// else result = false;
+            //}
+        }
+
+        //eigentlich: return true;
+       // return result;
+        return false;
+    }  */
+
+    public boolean pruneHittingSet(Node<Id> node) {
+        boolean result=false;
+
+        if (node.isRoot()) return false;
+
+        //Für HS-Tree nur ein Pfad, für BHS-Mehrere, muss anpassen
+        //Collection<Id> pathLabels = node.getPathLabels().iterator().next().getPositivePath();
+          Set<Path<Id>> paths=node.getPathLabels();
+
+        if(paths.isEmpty()) return false;
+
+
+
+        Set<Path<Id>> deletePaths=new LinkedHashSet<Path<Id>>();
+
+        for (T diagnosis : getHittingSets()) {
+             for(Path<Id> pathLabels:paths) {
+
+            if (pathLabels.getPositivePath().containsAll(diagnosis)) {
+                //eigentlich: if(!pathLabels.containsAll(diagnosis)) return false;
+                // node.removePath(pathLabels);
+                   deletePaths.add(pathLabels);
+
+                //return true;
+            }
+             }
+            //}
+        }
+
+
+
+        //If all paths were deleted then the node can be pruned
+        if(deletePaths.size()==paths.size())
+            result= true;
+
+        for(Path<Id> delete:deletePaths){
+            node.removePath(delete);
+        }
+
+        //eigentlich: return true;
+        // return result;
+        return result;
+    }
+
+   //Ur-Version
+    /*
     public boolean pruneHittingSet(Node<Id> node) {
         if (node.isRoot()) return false;
         Collection<Id> pathLabels = node.getPathLabels();
@@ -676,6 +806,22 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
         }
         return false;
     }
+
+    */
+    /*
+public boolean pruneHittingSet(Node<Id> node) {
+    if (node.isRoot()) return false;
+    Set<Path<Id>> pathLabels = node.getPathLabels();
+    for (T diagnosis : getHittingSets()) {
+     for(Path<Id> path:pathLabels){
+        if (!path.getPositivePath().containsAll(diagnosis)) {
+            return false;
+        }
+    }
+   }
+    return true;
+}
+    */
 
     public void setMaxDiagnosesNumber(int maxDiagnoses) {
         this.maxHittingSets = maxDiagnoses;
@@ -722,12 +868,20 @@ public abstract class   AbstractTreeSearch<T extends FormulaSet<Id>, Id> extends
     protected Set<T> nodeLabels = new LinkedHashSet<T>();
     protected Set<T> hittingSets = new LinkedHashSet<T>();
 
+    public Set<T> getDiagnoses() {
+        return getValidAxiomSets((getHittingSets()));
+    }
+
+    public Set<T> getConflicts() {
+        return getValidAxiomSets((getNodeLabels()));
+    }
+
     private StorageListener<T, Id> hittingSetListener = new StorageListener<T, Id>() {
         public boolean remove(T oldObject) {
             boolean remValid = oldObject.isValid();
             if (!hittingSets.remove(oldObject)) {
                 // perhaps treeset order is not correct
-                hittingSets = copy(hittingSets);
+                //hittingSets = copy(hittingSets);
                 if (hittingSets.remove(oldObject))
                     logger.error("treeset ordering is not correct - updates of probabilities? ");
                 else

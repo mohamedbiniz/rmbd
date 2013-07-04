@@ -32,13 +32,20 @@ public class HSTreeNode<Id> implements Node<Id> {
     // ARC_OF_ROOT: is a constant for the arcLabel if node is root
     //private final Id ARC_OF_ROOT = null;
 
+
     // PARENT: if node is the root parent = null
     protected HSTreeNode<Id> parent;
+
+    //A node may have several Parents
+   // protected Set<HSTreeNode<Id>> parents;
 
     protected final Set<Node<Id>> children = new LinkedHashSet<Node<Id>>();
 
     // ARCLABEL: if node is the root arcLabel = -1
     protected Id arcLabel;
+
+   // protected Set<Id> arcLabels;
+
 
     // CONFLICT: if the node is not calculated or closed conflict = null
     protected Set<Set<Id>> conflict = null;
@@ -77,6 +84,9 @@ public class HSTreeNode<Id> implements Node<Id> {
     public HSTreeNode(Node<Id> parent, Id arcLabel) {
         parent.addChild(this);
         this.arcLabel = arcLabel;
+        //Eventuell entfernen
+       // this.arcLabels.add(arcLabel);
+
         this.root = false;
         //this.conflict = NOT_CALCULATED;
     }
@@ -84,8 +94,12 @@ public class HSTreeNode<Id> implements Node<Id> {
     @Override
     public boolean addChild(HSTreeNode<Id> node) {
         node.parent = this;
+       // node.parents.add(this);
+
         return this.children.add(node);
     }
+
+
 
     @Override
     public boolean removeChild(Node<Id> node) {
@@ -109,7 +123,7 @@ public class HSTreeNode<Id> implements Node<Id> {
     }
 
     @Override
-    public ArrayList<Node<Id>> expandNode() {
+    public List<Node<Id>> expandNode() {
         ArrayList<Node<Id>> newNodes = new ArrayList<Node<Id>>();
 
         //NEU
@@ -150,7 +164,7 @@ public class HSTreeNode<Id> implements Node<Id> {
     // setter and getter
 
     @Override
-    public Set<Id> getPathLabels() {
+    public Set<Path<Id>> getPathLabels() {
         Set<Id> pathLabels = new TreeSet<Id>();
         HSTreeNode<Id> node = this;
         // steps from this node to root and adds the arcLables of each node
@@ -159,10 +173,65 @@ public class HSTreeNode<Id> implements Node<Id> {
                 pathLabels.add(node.getArcLabel());
             node = node.getParent();
         }
-        return pathLabels;
+
+        //NEW to accommodate MultiParentGraph
+
+        Set<Path<Id>> result= new LinkedHashSet<Path<Id>>();
+            Path<Id> path= new Path<Id>();
+        path.setPositivePath(pathLabels);
+        result.add(path);
+        return result;
+        //return pathLabels;
+
     }
 
+    /**
+     * May be applied if a node can have multiple Parents. Returns the labels of
+     * all paths from the current node to the root.
+     * @return
+     */
+    /*
+    @Override
+    public Set<TreeSet<Id>> getPathLabels(){
+        return getPathLabels(new TreeSet<Id>());
+    }
+
+
+    public Set<TreeSet<Id>> getPathLabels(TreeSet<Id> initial) {
+       Set<TreeSet<Id>> result = new LinkedHashSet<TreeSet<Id>>();
+        HSTreeNode<Id> node = this;
+        // steps from this node to root and adds the arcLables of each node
+
+        if(parents==null||parents.isEmpty())
+            result.add(initial);
+        else
+        for (Node<Id> parent:node.parents) {
+
+            TreeSet<Id> initial1= (TreeSet<Id>)copy((Set<Id>)initial);
+
+            //Create a new path for each parent
+            Set<Id> pathLabels = new TreeSet<Id>();
+
+            if (node.getArcLabels().iterator().hasNext())
+                initial1.add(node.getArcLabels().iterator().next());
+
+            Set<TreeSet<Id>>tempResult=node.getPathLabels(initial1);
+            for(TreeSet<Id> set:tempResult){
+                result.add(set);
+            }
+            //node = node.getParent();
+        }
+        return result;
+    }
+    */
+
     protected boolean closed = false;
+
+    protected Set<Id> copy(Set<Id> set) {
+        Set<Id> cs =  new LinkedHashSet<Id>(set);
+
+        return cs;
+    }
 
     @Override
     public boolean isClosed() {
@@ -184,15 +253,30 @@ public class HSTreeNode<Id> implements Node<Id> {
         this.parent = null;
     }
 
+   /* @Override
+    public HSTreeNode<Id> getParent() {
+        return parent;
+    } */
+
     @Override
     public HSTreeNode<Id> getParent() {
         return parent;
     }
 
+    /**@Override
+    public Id getArcLabel() {
+        return arcLabel;
+    }  **/
+
     @Override
     public Id getArcLabel() {
         return arcLabel;
     }
+
+
+    /*public Set<Id> getArcLabels() {
+        return arcLabels;
+    } */
 
     @Override
     public Set<Set<Id>> getAxiomSets() {
@@ -244,6 +328,11 @@ public class HSTreeNode<Id> implements Node<Id> {
     @Override
     public void setOpen() {
         this.closed = false;
+    }
+
+    @Override
+    public void removePath(Path<Id> path) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
@@ -308,10 +397,24 @@ public class HSTreeNode<Id> implements Node<Id> {
         Set<Set<Id>> result = new LinkedHashSet<Set<Id>>();
 
         for(Node<Id> node:getLeaves()){
-            result.add(node.getPathLabels());
+            result.add(node.getPathLabels().iterator().next().getPositivePath());
         }
         return result;
     }
+
+    /*
+    public Set<Set<Id>> getHittingSets(){
+
+        Set<Set<Id>> result = new LinkedHashSet<Set<Id>>();
+
+        for(Node<Id> node:getLeaves()){
+            for(TreeSet<Id> path:node.getPathLabels())
+            result.add(path);
+        }
+        return result;
+    }
+    */
+
 
     public Set<Set<Id>> getConflicts(){
         return conflict;

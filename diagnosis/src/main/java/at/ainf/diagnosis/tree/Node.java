@@ -1,11 +1,7 @@
 package at.ainf.diagnosis.tree;
 
-import at.ainf.diagnosis.storage.FormulaSet;
-
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,17 +16,15 @@ public interface Node<Id> extends Comparable<Node<Id>>{
 
     boolean removeChild(Node<Id> node);
 
-
-
     void removeChildren();
 
     Set<Node<Id>> getChildren();
 
-    ArrayList<Node<Id>> expandNode();
+    List<Node<Id>> expandNode();
 
     ArrayList<Node<Id>> expandNode(boolean bool);
 
-    Set<Id> getPathLabels();
+    Set<Path<Id>> getPathLabels();
 
     boolean isClosed();
 
@@ -57,6 +51,8 @@ public interface Node<Id> extends Comparable<Node<Id>>{
     void removeAxioms();
 
     void setOpen();
+
+    void removePath(Path<Id> path);
 
     BigDecimal getNodePathCosts();
 
