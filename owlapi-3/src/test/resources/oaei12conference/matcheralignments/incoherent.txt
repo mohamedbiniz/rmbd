@@ -85,7 +85,8 @@
 #2 medley-edas-sigkdd.rdf
 #2end
 
-#3 medley-edas-ekaw.rdf
+#3
+medley-edas-ekaw.rdf
 
 #4 maasmatch-conference-edas.rdf
 

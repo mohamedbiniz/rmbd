@@ -24,16 +24,17 @@
 # medley-ekaw-iasted.rdf
 # optima-edas-iasted.rdf
 
-#3 maasmatch-edas-ekaw.rdf
-#3 medley-edas-iasted.rdf
+#3
+maasmatch-edas-ekaw.rdf
+medley-edas-iasted.rdf
 
 #4 maasmatch-conference-iasted.rdf
 
 #5
-maasmatch-edas-iasted.rdf
-medley-conference-iasted.rdf
+#5 maasmatch-edas-iasted.rdf
+#5 medley-conference-iasted.rdf
 #5end
 
 #6
-maasmatch-ekaw-iasted.rdf
+#6 maasmatch-ekaw-iasted.rdf
 #6end
