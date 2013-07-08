@@ -1,10 +1,10 @@
 # is probably ok
 #2 is ok but has query with no decision possible
 #3 problem no query can be found
+
 #4 use too much heap
 #5 runs very long
 #6 runs 3h
-#7 target not in window problem strange
 
 # aroma-cmt-conference.rdf
 # aroma-cmt-confof.rdf
@@ -69,6 +69,7 @@
 # wesee-cmt-conference.rdf
 # wmatch-confof-sigkdd.rdf
 # wmatch-edas-sigkdd.rdf
+# maasmatch-edas-sigkdd.rdf
 
 #2
 #2 aroma-conference-confof.rdf
@@ -89,6 +90,6 @@
 #3 medley-edas-ekaw.rdf
 #3end
 
-#4 maasmatch-conference-edas.rdf
+#4
+# maasmatch-conference-edas.rdf
 
-#7 maasmatch-edas-sigkdd.rdf

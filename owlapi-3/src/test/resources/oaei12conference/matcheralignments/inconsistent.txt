@@ -1,10 +1,10 @@
 # is probably ok
 #2 is ok but has query with no decision possible
 #3 problem no query can be found
+
 #4 use too much heap
 #5 runs very long
 #6 runs 3h
-#7 target not in window problem strange
 
 # aroma-cmt-iasted.rdf
 # aroma-confof-iasted.rdf
@@ -29,10 +29,12 @@
 #3 medley-edas-iasted.rdf
 #3end
 
-#4 maasmatch-conference-iasted.rdf
+#4
+# maasmatch-conference-iasted.rdf
 
 #5
-maasmatch-edas-iasted.rdf
+# uses also too much heap space
+# maasmatch-edas-iasted.rdf
 medley-conference-iasted.rdf
 #5end
 

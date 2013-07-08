@@ -399,6 +399,17 @@ public class SimulatedSession extends CalculateDiagnoses {
 
                 actPa = queryGenerator.generatePartition(diagnoses);
 
+                if (actPa == null) {
+                    search.reset();
+                    try {
+                        search.start();
+                    } catch (NoConflictException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                    diagnoses = search.getDiagnoses();
+                    actPa = queryGenerator.generatePartition(diagnoses);
+                }
+
                 if (minimizeQuery) {
                     minimizeQuery(getTheory(), actPa);
                 }
