@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.reasoner.cores;
 
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
 import org.sat4j.specs.IVecInt;
 import org.sat4j.specs.IteratorInt;
 import org.semanticweb.owlapi.model.OWLClass;
@@ -17,24 +17,24 @@ import java.util.*;
 public abstract class AbstractCore<T extends CoreSymbol> {
     private final int signatureSize;
     // private final int constraintsCount;
-    private final HornSatReasoner reasoner;
+    private final OWLSatReasoner reasoner;
     protected Set<T> symbols;
     protected boolean isHornComplete = true;
     protected Set<OWLClass> relevantClasses = null;
     private Map<Integer, T> symbolsCache;
 
-    public AbstractCore(HornSatReasoner reasoner, int symbols) { //, int constraints) {
+    public AbstractCore(OWLSatReasoner reasoner, int symbols) { //, int constraints) {
         this.reasoner = reasoner;
         this.signatureSize = symbols;
 //        this.constraintsCount = constraints;
         this.symbols = new HashSet<T>(symbols);
     }
 
-    public AbstractCore(HornSatReasoner reasoner) {
+    public AbstractCore(OWLSatReasoner reasoner) {
         this(reasoner, 16);
     }
 
-    public HornSatReasoner getReasoner() {
+    public OWLSatReasoner getReasoner() {
         return reasoner;
     }
 

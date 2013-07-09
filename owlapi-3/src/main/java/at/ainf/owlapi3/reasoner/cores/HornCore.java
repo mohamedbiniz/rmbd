@@ -1,10 +1,9 @@
 package at.ainf.owlapi3.reasoner.cores;
 
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
 import org.sat4j.specs.IVecInt;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,11 +14,11 @@ import java.util.List;
  */
 public class HornCore extends Core {
 
-    public HornCore(HornSatReasoner reasoner, int symbols) {
+    public HornCore(OWLSatReasoner reasoner, int symbols) {
         super(reasoner, symbols);
     }
 
-    public HornCore(HornSatReasoner reasoner) {
+    public HornCore(OWLSatReasoner reasoner) {
         super(reasoner);
     }
 

@@ -37,7 +37,7 @@ public class InvTreeDiagSearcher extends AbstractModuleDiagnosis {
         ExecutorService pool = Executors.newFixedThreadPool(USABLE_CORES);
         List<Future<Set<OWLLogicalAxiom>>> futures = startWorkerThreads(pool, subSignatures, USABLE_CORES);
 
-        return Collections.singleton(createFormularSet(computeTargetDiagnosis(futures)));
+        return Collections.singleton(createFormulaSet(computeTargetDiagnosis(futures)));
     }
 
     protected Set<OWLLogicalAxiom> computeTargetDiagnosis(List<Future<Set<OWLLogicalAxiom>>> futures) {
