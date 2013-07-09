@@ -6,7 +6,7 @@ import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.owlapi3.module.iterative.modulecalc.HornModuleCalc;
 import at.ainf.owlapi3.module.iterative.modulecalc.ModuleCalc;
 import at.ainf.owlapi3.module.iterative.diagsearcher.ModuleDiagSearcher;
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public abstract class AbstractModuleDiagnosis implements Debugger<FormulaSet<OWL
     }
 
     protected ModuleCalc createModuleCalc(OWLReasonerFactory factory, OWLOntology ontology) {
-        if (factory.getReasonerName().equals(HornSatReasoner.NAME))
+        if (factory.getReasonerName().equals(OWLSatReasoner.NAME))
             return new HornModuleCalc(ontology);
         else
             return new ModuleCalc(ontology, factory);
@@ -101,7 +101,7 @@ public abstract class AbstractModuleDiagnosis implements Debugger<FormulaSet<OWL
         throw new UnsupportedOperationException();
     }
 
-    protected <X> FormulaSet<X> createFormularSet (Set<X> set) {
+    protected <X> FormulaSet<X> createFormulaSet(Set<X> set) {
         return new FormulaSetImpl<X>(BigDecimal.valueOf(-1),set, Collections.<X>emptySet());
     }
 

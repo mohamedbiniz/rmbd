@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.reasoner.axiomprocessors;
 
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
 import org.sat4j.core.VecInt;
 import org.sat4j.specs.IVecInt;
 import org.semanticweb.owlapi.model.*;
@@ -11,10 +11,10 @@ import java.util.*;
 
 public class OWL2SATTranslator implements Translator<Collection<IVecInt>> {
 
-    private final HornSatReasoner reasoner;
+    private final OWLSatReasoner reasoner;
     private static Logger logger = LoggerFactory.getLogger(OWL2SATTranslator.class.getName());
 
-    public OWL2SATTranslator(HornSatReasoner reasoner) {
+    public OWL2SATTranslator(OWLSatReasoner reasoner) {
         this.reasoner = reasoner;
     }
 

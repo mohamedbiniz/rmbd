@@ -14,8 +14,8 @@ import at.ainf.owlapi3.module.iterative.modulediagnosis.multhread.InvTreeDiagSea
 import at.ainf.owlapi3.module.modprovider.OtfModuleProvider;
 import at.ainf.owlapi3.module.iterative.*;
 import at.ainf.owlapi3.module.iterative.modulediagnosis.IterativeModuleDiagnosis;
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
-import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasonerFactory;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -744,12 +744,12 @@ public class IterativeModuleDiagTests {
         }
         metricsLogger.stopTimer("intersection_computation");
 
-        OWLReasonerFactory reasonerFactory = new HornSatReasonerFactory();
+        OWLReasonerFactory reasonerFactory = new OWLSatReasonerFactory();
         //OWLReasonerFactory reasonerFactory = new Reasoner.ReasonerFactory();
 
         for (Set<OWLLogicalAxiom> submodul : submodules) {
             metricsLogger.startTimer("hornreasoner_submodul_classifiy");
-            final HornSatReasoner reasoner = (HornSatReasoner) reasonerFactory.createNonBufferingReasoner(createOntology(submodul));
+            final OWLSatReasoner reasoner = (OWLSatReasoner) reasonerFactory.createNonBufferingReasoner(createOntology(submodul));
             //logger.info("unsat classes in submodul: " + reasoner.getUnsatisfiableClasses().getEntitiesMinusBottom().size());
 
             List<OWLClass> sortedClassesInSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(submodul));
@@ -795,7 +795,7 @@ public class IterativeModuleDiagTests {
 
         metricsLogger.startTimer("interesction_classifiy");
 
-        final HornSatReasoner reasoner = (HornSatReasoner) reasonerFactory.createNonBufferingReasoner(createOntology(intersection));
+        final OWLSatReasoner reasoner = (OWLSatReasoner) reasonerFactory.createNonBufferingReasoner(createOntology(intersection));
 
         List<OWLClass> sortedClassesInSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(intersection));
 

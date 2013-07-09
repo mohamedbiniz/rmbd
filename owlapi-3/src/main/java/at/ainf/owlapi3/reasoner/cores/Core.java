@@ -1,10 +1,7 @@
 package at.ainf.owlapi3.reasoner.cores;
 
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
-import com.hp.hpl.jena.sparql.engine.QueryEngineRegistry;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
 import org.sat4j.specs.IVecInt;
-import org.sat4j.specs.IteratorInt;
-import org.semanticweb.owlapi.model.OWLClass;
 
 import java.util.*;
 
@@ -17,11 +14,11 @@ import java.util.*;
  */
 public class Core extends AbstractCore<CoreSymbol> {
 
-    public Core(HornSatReasoner reasoner, int symbols) {
+    public Core(OWLSatReasoner reasoner, int symbols) {
         super(reasoner, symbols);
     }
 
-    public Core(HornSatReasoner reasoner) {
+    public Core(OWLSatReasoner reasoner) {
         super(reasoner);
     }
 

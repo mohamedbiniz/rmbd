@@ -1,8 +1,7 @@
 package at.ainf.owlapi3.reasoner.cores;
 
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
 import org.sat4j.specs.IVecInt;
-import org.sat4j.specs.IteratorInt;
 
 import java.util.*;
 
@@ -19,11 +18,11 @@ public class AxiomCore extends AbstractCore<CoreTreeSymbol>{
     // TODO remove dependent classes (levels)
     // convert clauses to OWL
 
-    public AxiomCore(HornSatReasoner reasoner, int symbols) {
+    public AxiomCore(OWLSatReasoner reasoner, int symbols) {
         super(reasoner, symbols);
     }
 
-    public AxiomCore(HornSatReasoner reasoner) {
+    public AxiomCore(OWLSatReasoner reasoner) {
         super(reasoner);
     }
 
