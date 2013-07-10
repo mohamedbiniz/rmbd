@@ -1,0 +1,1 @@
+http://EKAW.owl#Contributed_Talk SubClassOf http://SIGKDD.owl#Author_of_paper, http://SIGKDD.owl#Author_of_paper SubClassOf http://EKAW.owl#Contributed_Talk, http://EKAW.owl#Contributed_Talk SubClassOf http://SIGKDD.owl#Author_of_paper_student, http://SIGKDD.owl#Author_of_paper_student SubClassOf http://EKAW.owl#Contributed_Talk

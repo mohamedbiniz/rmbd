@@ -1,0 +1,38 @@
+# is probably ok
+#2 is ok but has query with no decision possible
+#3 problem no query can be found
+
+#4 use too much heap
+#5 runs 3h
+
+# aroma-cmt-iasted.rdf
+# aroma-confof-iasted.rdf
+# aroma-edas-iasted.rdf
+# ase-edas-iasted.rdf
+# ase-ekaw-iasted.rdf
+# ase-iasted-sigkdd.rdf
+# automsv2-edas-iasted.rdf
+# maasmatch-cmt-iasted.rdf
+# maasmatch-confof-iasted.rdf
+# mapsss-edas-iasted.rdf
+# mapsss-ekaw-iasted.rdf
+# medley-cmt-edas.rdf
+# medley-cmt-iasted.rdf
+# medley-conference-edas.rdf
+# medley-confof-iasted.rdf
+# medley-ekaw-iasted.rdf
+# optima-edas-iasted.rdf
+
+#3
+#3 maasmatch-edas-ekaw.rdf
+#3 medley-edas-iasted.rdf
+#3end
+
+#4
+maasmatch-conference-iasted.rdf
+maasmatch-edas-iasted.rdf
+medley-conference-iasted.rdf
+
+#5
+#maasmatch-ekaw-iasted.rdf
+#5end
