@@ -3,8 +3,7 @@
 #3 problem no query can be found
 
 #4 use too much heap
-#5 runs very long
-#6 runs 3h
+#5 runs 3h
 
 # aroma-cmt-iasted.rdf
 # aroma-confof-iasted.rdf
@@ -30,14 +29,10 @@
 #3end
 
 #4
-# maasmatch-conference-iasted.rdf
+maasmatch-conference-iasted.rdf
+maasmatch-edas-iasted.rdf
+medley-conference-iasted.rdf
 
 #5
-# uses also too much heap space
-# maasmatch-edas-iasted.rdf
-medley-conference-iasted.rdf
+#maasmatch-ekaw-iasted.rdf
 #5end
-
-#6
-maasmatch-ekaw-iasted.rdf
-#6end

@@ -3,8 +3,7 @@
 #3 problem no query can be found
 
 #4 use too much heap
-#5 runs very long
-#6 runs 3h
+#5 runs 3h
 
 # aroma-cmt-conference.rdf
 # aroma-cmt-confof.rdf
