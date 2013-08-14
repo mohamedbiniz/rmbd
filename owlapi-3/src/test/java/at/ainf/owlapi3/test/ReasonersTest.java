@@ -11,8 +11,8 @@ import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
-import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasonerFactory;
 import at.ainf.owlapi3.reasoner.axiomprocessors.OWLClassAxiomNegation;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -60,8 +60,8 @@ public class ReasonersTest {
         OWLOntology ontology = extractor.getIncoherentPartAsOntology(ontologyFull);
 
 
-         //if (factoryList.size() == 1 && factoryList.get(0) instanceof HornSatReasonerFactory)
-         //   ((HornSatReasonerFactory) factoryList.get(0)).precomputeUnsatClasses(ontology);
+         //if (factoryList.size() == 1 && factoryList.get(0) instanceof OWLSatReasonerFactory)
+         //   ((OWLSatReasonerFactory) factoryList.get(0)).precomputeUnsatClasses(ontology);
 
         Set<OWLLogicalAxiom> bax = new LinkedHashSet<OWLLogicalAxiom>();
         for (OWLIndividual ind : ontology.getIndividualsInSignature()) {
@@ -152,7 +152,7 @@ public class ReasonersTest {
         OWLOntology ontology = OWLManager.createOWLOntologyManager().
                 loadOntologyFromOntologyDocument(koalaStream);
 
-        HornSatReasoner sat = new HornSatReasoner(ontology);
+        OWLSatReasoner sat = new OWLSatReasoner(ontology);
         assertTrue(sat.isConsistent());
         logger.info("KB is consistent");
         for (OWLLogicalAxiom owlLogicalAxiom : ontology.getLogicalAxioms()) {
@@ -198,7 +198,7 @@ public class ReasonersTest {
         //String ontology = "ontologies/Transportation-SDA.owl";
         //addConsoleLogger();
 
-        HornSatReasonerFactory factory = new HornSatReasonerFactory();
+        OWLSatReasonerFactory factory = new OWLSatReasonerFactory();
         //factory.setPrecomputeUnsatClasses(true);
         Result sat = reasonerTest(factory, ontology);
         Result hermit = reasonerTest(new Reasoner.ReasonerFactory(), ontology);

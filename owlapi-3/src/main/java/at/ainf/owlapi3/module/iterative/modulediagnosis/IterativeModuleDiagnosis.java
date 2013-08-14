@@ -165,7 +165,7 @@ public class IterativeModuleDiagnosis extends AbstractModuleDiagnosis {
 
 
         metricsLogger.stopTimer("calculatetargetdiag");
-        return Collections.singleton(createFormularSet(targetDiagnosis));
+        return Collections.singleton(createFormulaSet(targetDiagnosis));
     }
 
     protected class ChildsComparator implements Comparator<OWLClass> {

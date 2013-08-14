@@ -42,11 +42,12 @@
                 </executions>
             </plugin>
             -->
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12.2</version>
-                <!--
+
                 <configuration>
                     <forkMode>once</forkMode>
                     <argLine>
@@ -56,8 +57,9 @@
                     <skipTests>false</skipTests>
                     <enableAssertions>false</enableAssertions>
                 </configuration>
-                -->
+
             </plugin>
+             -->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -144,7 +146,7 @@
         <dependency>
             <groupId>org.ow2.sat4j</groupId>
             <artifactId>org.ow2.sat4j.core</artifactId>
-            <version>2.3.3</version>
+            <version>2.3.5-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

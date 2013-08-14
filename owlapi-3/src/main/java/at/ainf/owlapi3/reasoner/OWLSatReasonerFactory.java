@@ -1,11 +1,8 @@
 package at.ainf.owlapi3.reasoner;
 
-import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
-
-import java.util.Collection;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,9 +11,9 @@ import java.util.Collection;
  * Time: 10:08
  * To change this template use File | Settings | File Templates.
  */
-public class HornSatReasonerFactory extends StructuralReasonerFactory {
+public class OWLSatReasonerFactory extends StructuralReasonerFactory {
 
-    private HornSatReasoner.OWLSatStructure owlSatStructure = null;
+    private OWLSatReasoner.OWLSatStructure owlSatStructure = null;
 
     /*
     private boolean precompute = true;
@@ -26,14 +23,14 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
 
     @Override
     public String getReasonerName() {
-        return HornSatReasoner.NAME;
+        return OWLSatReasoner.NAME;
     }
 
     /*
 
 
     public void precomputeUnsatClasses(OWLOntology ontology) {
-        HornSatReasoner reasoner = new HornSatReasoner(ontology, new SimpleConfiguration(), BufferingMode.BUFFERING);
+        OWLSatReasoner reasoner = new OWLSatReasoner(ontology, new SimpleConfiguration(), BufferingMode.BUFFERING);
 
     }
 
@@ -51,7 +48,7 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
     }
     */
 
-    public HornSatReasoner.OWLSatStructure getOWLSatStructure() {
+    public OWLSatReasoner.OWLSatStructure getOWLSatStructure() {
         return owlSatStructure;
     }
 
@@ -65,15 +62,15 @@ public class HornSatReasonerFactory extends StructuralReasonerFactory {
         return createReasoner(ontology, config, BufferingMode.NON_BUFFERING);
     }
 
-    private HornSatReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
-        //return new HornSatReasoner(ontology, config, buffering);
+    private OWLSatReasoner createReasoner(OWLOntology ontology, OWLReasonerConfiguration config, BufferingMode buffering) {
+        //return new OWLSatReasoner(ontology, config, buffering);
 
         if (getOWLSatStructure() == null) {
-            HornSatReasoner reasoner = new HornSatReasoner(ontology, config, buffering);
+            OWLSatReasoner reasoner = new OWLSatReasoner(ontology, config, buffering);
             this.owlSatStructure = reasoner.getOWLSatStructure();
             return reasoner;
         }
-        return new HornSatReasoner(ontology, config, buffering, getOWLSatStructure());
+        return new OWLSatReasoner(ontology, config, buffering, getOWLSatStructure());
 
     }
 
