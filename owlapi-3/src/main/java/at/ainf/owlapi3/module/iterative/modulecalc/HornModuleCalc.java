@@ -1,7 +1,7 @@
 package at.ainf.owlapi3.module.iterative.modulecalc;
 
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
-import at.ainf.owlapi3.reasoner.HornSatReasonerFactory;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasonerFactory;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLOntology;
 
@@ -19,7 +19,7 @@ import java.util.List;
 public class HornModuleCalc extends ModuleCalc {
 
     public HornModuleCalc(OWLOntology ontology) {
-        super(ontology, new HornSatReasonerFactory());
+        super(ontology, new OWLSatReasonerFactory());
     }
 
     public List<OWLClass> getInitialUnsatClasses(Collection<OWLClass> excludeClasses, int maxClasses) {
@@ -30,8 +30,8 @@ public class HornModuleCalc extends ModuleCalc {
 
     }
 
-    protected HornSatReasoner getHornReasoner() {
-        return (HornSatReasoner) getReasoner();
+    protected OWLSatReasoner getHornReasoner() {
+        return (OWLSatReasoner) getReasoner();
     }
 
     @Override
