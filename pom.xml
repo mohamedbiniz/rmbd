@@ -167,6 +167,11 @@
 
     <repositories>
         <repository>
+            <id>rmbd-snapshot-repository</id>
+            <name>RMBD Snapshot Repository</name>
+            <url>http://scs-iwas.uni-klu.ac.at/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
             <id>vknow-public</id>
             <name>VKnow (custom + maven2)</name>
             <url>http://scs-iwas.uni-klu.ac.at/nexus/content/groups/public/</url>
@@ -255,4 +260,30 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <!--
+    <profiles>
+        <profile>
+            <id>noTest</id>
+            <activation>
+            <property>
+                <name>noTest</name>
+                <value>true</value>
+            </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.14.1</version>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    -->
 </project>
