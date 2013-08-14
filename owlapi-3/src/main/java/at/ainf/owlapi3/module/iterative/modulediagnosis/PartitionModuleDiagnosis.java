@@ -136,8 +136,6 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
     }
 
 
-
-
     protected Set<OWLLogicalAxiom> createFixpointModule (Set<OWLLogicalAxiom> ontology, int nParts) {
 
         /*List<OWLClass> classesInModuleSignature = new LinkedList<OWLClass>(getClassesInModuleSignature(ontology));
@@ -194,7 +192,7 @@ public class PartitionModuleDiagnosis extends AbstractRootModuleDiagnosis {
                 //
         Set<OWLLogicalAxiom> ontology = new HashSet<OWLLogicalAxiom>(getOntoAxioms());
         ontology.addAll(getMappings());
-        return Collections.singleton(createFormularSet(fastRepair(ontology)));
+        return Collections.singleton(createFormulaSet(fastRepair(ontology)));
     }
 
 }

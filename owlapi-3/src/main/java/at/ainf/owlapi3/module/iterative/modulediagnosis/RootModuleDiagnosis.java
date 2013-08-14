@@ -106,7 +106,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
                 if ( counter > max_search_before_test && !alreadyCheckedConsistency) {
                     alreadyCheckedConsistency = true;
                     if (isAlreadyConsistent(targetDiagnosis))
-                        return Collections.singleton(createFormularSet(targetDiagnosis));
+                        return Collections.singleton(createFormulaSet(targetDiagnosis));
                 }
 
                 module = computeModule(unsatClass, targetDiagnosis);
@@ -192,7 +192,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
                     if ( counterV > max_search_before_testV && !alreadyCheckedConsistencyV) {
                         alreadyCheckedConsistencyV = true;
                         if (isAlreadyConsistent(targetDiagnosis))
-                            return Collections.singleton(createFormularSet(targetDiagnosis));
+                            return Collections.singleton(createFormulaSet(targetDiagnosis));
                     }
 
                     module = computeModule(unsatClass, targetDiagnosis);
@@ -247,7 +247,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
 
 
             if (actualUnsatClass == null)
-                return Collections.singleton(createFormularSet(targetDiagnosis));
+                return Collections.singleton(createFormulaSet(targetDiagnosis));
 
             muv = getClassesInModuleSignature(module);
             muv.retainAll(getModuleCalculator().getInitialUnsatClasses());
@@ -314,7 +314,7 @@ public class RootModuleDiagnosis extends AbstractRootModuleDiagnosis {
             bothEmpty = nvClasses.isEmpty() && vClasses.isEmpty();
         }
 
-        return Collections.singleton(createFormularSet(targetDiagnosis));
+        return Collections.singleton(createFormulaSet(targetDiagnosis));
     }
 
     /*protected boolean isOntoSat(Set<OWLLogicalAxiom> targetDiagnosis) {
