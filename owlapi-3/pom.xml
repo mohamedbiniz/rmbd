@@ -14,6 +14,26 @@
     <!-- <version>1.0-070213-1555</version> -->
     <version>1.0-SNAPSHOT</version>
 
+
+    <properties>
+        <surefire.java.args></surefire.java.args>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>jmx</id>
+            <properties>
+                <surefire.java.args>
+                    -Dcom.sun.management.jmxremote
+                    -Dcom.sun.management.jmxremote.port=9010
+                    -Dcom.sun.management.jmxremote.local.only=false
+                    -Dcom.sun.management.jmxremote.authenticate=false
+                    -Dcom.sun.management.jmxremote.ssl=false
+                </surefire.java.args>
+            </properties>
+        </profile>
+    </profiles>
+
     <packaging>jar</packaging>
     <build>
         <plugins>
@@ -60,6 +80,14 @@
 
             </plugin>
              -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <argLine>${surefire.java.args}</argLine>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
