@@ -1,10 +1,8 @@
 package at.ainf.owlapi3.reasoner.axiomprocessors;
 
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
-import org.sat4j.specs.IVecInt;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
 import org.semanticweb.owlapi.model.*;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -18,9 +16,9 @@ import java.util.Set;
  */
 public class OWLClassAxiomNegation implements Translator<OWLClassExpression> {
 
-    private final HornSatReasoner reasoner;
+    private final OWLSatReasoner reasoner;
 
-    public OWLClassAxiomNegation(HornSatReasoner reasoner) {
+    public OWLClassAxiomNegation(OWLSatReasoner reasoner) {
         this.reasoner = reasoner;
     }
 
