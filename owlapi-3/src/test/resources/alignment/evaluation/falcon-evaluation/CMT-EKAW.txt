@@ -1,0 +1,12 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/EKAW.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://EKAW.owl
+
++ Document = Document | 0.999095534904732
++ Person = Person | 0.9989398905076134
++ Review = Review | 0.998642952148468
++ Paper = Paper | 0.9978921869855062
++ Conference = Conference | 0.9671276551514854
++ PaperAbstract = Abstract | 0.7892951053432216
++ Author = Paper_Author | 0.7678334204297668
