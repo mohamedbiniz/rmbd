@@ -14,6 +14,26 @@
     <!-- <version>1.0-070213-1555</version> -->
     <version>1.0-SNAPSHOT</version>
 
+
+    <properties>
+        <surefire.java.args></surefire.java.args>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>jmx</id>
+            <properties>
+                <surefire.java.args>
+                    -Dcom.sun.management.jmxremote
+                    -Dcom.sun.management.jmxremote.port=9010
+                    -Dcom.sun.management.jmxremote.local.only=false
+                    -Dcom.sun.management.jmxremote.authenticate=false
+                    -Dcom.sun.management.jmxremote.ssl=false
+                </surefire.java.args>
+            </properties>
+        </profile>
+    </profiles>
+
     <packaging>jar</packaging>
     <build>
         <plugins>
@@ -42,11 +62,12 @@
                 </executions>
             </plugin>
             -->
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12.2</version>
-                <!--
+
                 <configuration>
                     <forkMode>once</forkMode>
                     <argLine>
@@ -56,7 +77,16 @@
                     <skipTests>false</skipTests>
                     <enableAssertions>false</enableAssertions>
                 </configuration>
-                -->
+
+            </plugin>
+             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
+                <configuration>
+                    <argLine>${surefire.java.args}</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -144,7 +174,7 @@
         <dependency>
             <groupId>org.ow2.sat4j</groupId>
             <artifactId>org.ow2.sat4j.core</artifactId>
-            <version>2.3.3</version>
+            <version>2.3.5-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

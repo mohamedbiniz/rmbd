@@ -1,6 +1,6 @@
 package at.ainf.owlapi3.module.iterative.modulecalc;
 
-import at.ainf.owlapi3.reasoner.HornSatReasoner;
+import at.ainf.owlapi3.reasoner.OWLSatReasoner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -161,10 +161,10 @@ public class ModuleCalc {
     }
 
     public Multimap<OWLAxiom, OWLClass> clusterModule(Set<? extends OWLAxiom> module){
-        if (!testReasoner.getReasonerName().equals(HornSatReasoner.NAME))
+        if (!testReasoner.getReasonerName().equals(OWLSatReasoner.NAME))
             return HashMultimap.create(0, 0);
         this.testOnto.getOWLOntologyManager().addAxioms(this.testOnto, module);
-        Multimap<OWLAxiom,OWLClass> modMap = ((HornSatReasoner) this.testReasoner).clusterAxioms(module);
+        Multimap<OWLAxiom,OWLClass> modMap = ((OWLSatReasoner) this.testReasoner).clusterAxioms(module);
         for (OWLAxiom owlAxiom : modMap.keySet()) {
             Collection<OWLClass> classes = modMap.get(owlAxiom);
             Set<OWLLogicalAxiom> subModule = extractModule(testOnto, new HashSet<OWLEntity>(classes));
@@ -183,7 +183,7 @@ public class ModuleCalc {
     }
 
     public void sortUnsatisfiableClasses(List<OWLClass> actualUnsatClasses) {
-        if (testReasoner.getReasonerName().equals(HornSatReasoner.NAME))
+        if (testReasoner.getReasonerName().equals(OWLSatReasoner.NAME))
             return;
         Collections.sort(actualUnsatClasses, new Comparator<OWLClass>() {
             @Override
