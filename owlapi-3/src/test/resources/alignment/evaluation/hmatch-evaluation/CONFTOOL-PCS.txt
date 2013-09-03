@@ -1,0 +1,14 @@
+sourceOntology = file:/C:/mapping-debugging/conference/hmatch/CONFTOOL.owl
+targetOntology = file:/C:/mapping-debugging/conference/hmatch/PCS.owl
+sourceNamespace = http://CONFTOOL.owl
+targetNamespace = http://PCS.owl
+
+- Company = System | 0.8
+- Organization = System | 1.0
+- Paper = Report | 1.0
+- Person = Report | 0.8
+- Scholar = Report | 0.64
+- Short_paper = Report | 0.8
+- Student = Report | 0.64
+- Topic = Paper | 1.0
+- Topic = Report | 1.0

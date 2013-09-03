@@ -1,0 +1,17 @@
+sourceOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/SIGKDD.owl
+targetOntology = file:/C:/mapping-debugging/conference/owl-ctxmatch/CONFTOOL.owl
+sourceNamespace = http://SIGKDD.owl
+targetNamespace = http://CONFTOOL.owl
+
++ Conference > Conference | 1.0
++ Conference < Conference | 1.0
++ Person > Person | 1.0
++ Person < Person | 1.0
+- Registration_SIGMOD_Member > Member | 1.0
+- Registration_SIGMOD_Member < Member | 1.0
++ Author > Author | 1.0
++ Author < Author | 1.0
+- Registration_SIGMOD_Member > Member_PC | 1.0
+- Registration_SIGMOD_Member < Member_PC | 1.0
++ Paper > Paper | 1.0
++ Paper < Paper | 1.0

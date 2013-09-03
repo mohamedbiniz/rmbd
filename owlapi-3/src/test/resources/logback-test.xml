@@ -1,0 +1,176 @@
+<configuration>
+
+    <timestamp key="bySecond" datePattern="yyyy'-'MM'-'dd'-T-'HH-mm-ss"/>
+
+    <appender name="owlapi3-timestamp" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${bySecond}/owlapi3-${bySecond}.log</file>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="diagnosis-timestamp" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${bySecond}/diagnosis-${bySecond}.log</file>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="metrics-timestamp" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${bySecond}/metrics-${bySecond}.log</file>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="dev-timestamp" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${bySecond}/dev-${bySecond}.log</file>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="diagnosis-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>logs/diagnosis.log</File>
+        <encoder>
+            <!-- <pattern>%p %t %c - %m%n</pattern> -->
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>logs/diagnosis.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="metrics-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>logs/metrics.log</File>
+        <encoder>
+            <!-- <pattern>%p %t %c - %m%n</pattern> -->
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>logs/metrics.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="owlapi3-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>logs/owlapi3.log</File>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>logs/owlapi3.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="dev-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>logs/dev.log</File>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss.SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>logs/dev.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+
+    <!-- This file appender is used to output aggregated performance statistics -->
+    <appender name="perfStatApp" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>logs/perfStats.log</File>
+        <encoder>
+            <pattern>%p %t %c - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>logs/perfStats.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="perfStatAppGraphs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>logs/perfStatsGraphs.log</File>
+        <encoder>
+            <pattern>%p %t %c - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>5</maxIndex>
+            <FileNamePattern>logs/perfStatsGraphs.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>5MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="graphExecutionTimes"
+              class="org.perf4j.logback.GraphingStatisticsAppender">
+        <!-- Possible GraphTypes are Mean, Min, Max, StdDev, Count and TPS -->
+        <param name="GraphType" value="Mean"/>
+        <!-- The tags of the timed execution blocks to graph are specified here -->
+        <!--<param name="TagNamesToGraph" value="time_calcdiagnoses,calcdiagnoses"/>-->
+        <appender-ref ref="perfStatAppGraphs"/>
+    </appender>
+
+    <appender name="CoalescingStatistics"
+              class="org.perf4j.logback.AsyncCoalescingStatisticsAppender">
+        <!--
+          The TimeSlice option is used to determine the time window for which
+          all received StopWatch logs are aggregated to create a single
+          GroupedTimingStatistics log. Here we set it to 10 seconds, overriding
+          the default of 30000 ms
+        -->
+        <param name="TimeSlice" value="10000000"/>
+        <appender-ref ref="graphExecutionTimes"/>
+        <appender-ref ref="perfStatApp"/>
+    </appender>
+
+    <logger name="org.perf4j.TimingLogger" level="trace">
+        <appender-ref ref="CoalescingStatistics"/>
+    </logger>
+
+
+    <logger name="at.ainf.diagnosis" level="info">
+        <appender-ref ref="diagnosis-file"/>
+        <appender-ref ref="diagnosis-timestamp"/>
+    </logger>
+
+    <logger name="at.ainf.owlapi3" level="info">
+        <appender-ref ref="owlapi3-file"/>
+        <appender-ref ref="owlapi3-timestamp"/>
+    </logger>
+
+    <logger name="at.ainf.metrics" level="info">
+        <appender-ref ref="metrics-file"/>
+        <appender-ref ref="metrics-timestamp"/>
+    </logger>
+
+    <logger name="_dev" level="trace">
+        <appender-ref ref="dev-file"/>
+        <appender-ref ref="dev-timestamp"/>
+    </logger>
+
+    <root level="debug"/>
+
+</configuration>

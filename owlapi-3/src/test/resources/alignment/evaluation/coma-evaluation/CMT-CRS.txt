@@ -1,0 +1,11 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/CRS.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://CRS.owl
+
+- ProgramCommittee = program | 0.31947303
++ Person = person | 0.78852654
++ Author = author | 0.42616832
++ Reviewer = reviewer | 0.4324534
++ Conference = conference | 0.35
++ Review = review | 0.44332302
