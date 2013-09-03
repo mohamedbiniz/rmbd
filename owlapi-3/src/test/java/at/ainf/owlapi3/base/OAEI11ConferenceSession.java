@@ -5,7 +5,7 @@ import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
-import at.ainf.owlapi3.base.tools.OAEI11ConferenceRdfMatchingParser;
+import at.ainf.owlapi3.tools.OAEI11ConferenceRdfMatchingParser;
 import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;

@@ -26,14 +26,14 @@ public class OAEI11AnatomySession extends SimulatedSession {
 
     private Logger logger = LoggerFactory.getLogger(OAEI11AnatomySession.class.getName());
 
-    public Set<OWLLogicalAxiom> getDiagnosisTarget(String file) {
+    public Set<OWLLogicalAxiom> getDiagnosisTarget(String file, String dir, String s) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
         Map<OWLLogicalAxiom, Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
         Set<OWLLogicalAxiom> targetDiagnosis = new LinkedHashSet<OWLLogicalAxiom>();
         try {
-            String path = ClassLoader.getSystemResource("oaei11").getPath() + "/";
-            readDataOAEI(path + file + ".txt", axioms, targetDiagnosis, man);
+            String path = ClassLoader.getSystemResource(dir).getPath() + "/";
+            readDataOAEI(path + file + s, axioms, targetDiagnosis, man);
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -41,13 +41,13 @@ public class OAEI11AnatomySession extends SimulatedSession {
         return targetDiagnosis;
     }
 
-    public Set<OWLLogicalAxiom> getAxiomsInMappingOAEI(String path, String source) {
+    public Set<OWLLogicalAxiom> getAxiomsInMappingOAEI(String path, String source, String fileSuffix) {
         OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
         Map<OWLLogicalAxiom, Double> axioms = new HashMap<OWLLogicalAxiom, Double>();
         Set<OWLLogicalAxiom> targetDiagnosis = new LinkedHashSet<OWLLogicalAxiom>();
         try {
-            readDataOAEI(path + source + ".txt", axioms, targetDiagnosis, man);
+            readDataOAEI(path + source + fileSuffix, axioms, targetDiagnosis, man);
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -121,19 +121,19 @@ public class OAEI11AnatomySession extends SimulatedSession {
         // "<" + sourceNamespace + "#" + source + "> <" + targetNamespace + "#" + target + ">";
     }
 
-    public OWLOntology getOntology(String file) {
+    public OWLOntology getOntology(String file, final String ontoDir, String fileSuffix) {
         try {
             OWLOntologyManager man = OWLManager.createOWLOntologyManager();
 
-            InputStream st = ClassLoader.getSystemResourceAsStream("oaei11/mouse.owl");
+            InputStream st = ClassLoader.getSystemResourceAsStream(ontoDir + "/mouse.owl");
             OWLOntology mouse = man.loadOntologyFromOntologyDocument(st);
-            st = ClassLoader.getSystemResourceAsStream("oaei11/human.owl");
+            st = ClassLoader.getSystemResourceAsStream(ontoDir + "/human.owl");
             OWLOntology human = man.loadOntologyFromOntologyDocument(st);
 
             OWLOntologyMerger merger = new OWLOntologyMerger(man);
-            OWLOntology merged = merger.createMergedOntology(man, IRI.create("matched" + file + ".txt"));
-            Set<OWLLogicalAxiom> mappAx = getAxiomsInMappingOAEI(ClassLoader.getSystemResource("oaei11").
-                    getPath() + "/", file);
+            OWLOntology merged = merger.createMergedOntology(man, IRI.create("matched" + file + fileSuffix));
+            Set<OWLLogicalAxiom> mappAx = getAxiomsInMappingOAEI(ClassLoader.getSystemResource(ontoDir).
+                    getPath() + "/", file, fileSuffix);
             for (OWLLogicalAxiom axiom : mappAx)
                 man.applyChange(new AddAxiom(merged, axiom));
 

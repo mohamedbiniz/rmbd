@@ -3,9 +3,16 @@ package at.ainf.owlapi3.costestimation;
 import at.ainf.diagnosis.tree.AbstractCostEstimator;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.owlapi3.model.OWLTheory;
+import at.ainf.owlapi3.tools.OAEI11ConferenceRdfMatchingParser;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -23,25 +30,62 @@ public class OWLAxiomCostsEstimator extends AbstractCostEstimator<OWLLogicalAxio
     protected Map<OWLLogicalAxiom, BigDecimal> axiomProb;
 
     //Neu war früher 0.001
-    protected BigDecimal STATIC_COSTS = new BigDecimal("0.5");
+    protected BigDecimal STATIC_COSTS = new BigDecimal("0.001");
 
     public OWLAxiomCostsEstimator(Set<OWLLogicalAxiom> faultyFormulas){
         super(faultyFormulas);
     }
 
     public OWLAxiomCostsEstimator(OWLTheory t, String file) throws IOException {
+        this(t, file, false);
+
+    }
+
+    public OWLAxiomCostsEstimator(OWLTheory t, String file, boolean isXmlFile) throws IOException {
         this(t.getKnowledgeBase().getFaultyFormulas());
         Map<String, BigDecimal> axioms = new LinkedHashMap<String, BigDecimal>();
         Set<String> targetDiag = new LinkedHashSet<String>();
         if (file != null)
-            readData(file, axioms, targetDiag);
-        axiomProb = getAx(t.getOriginalOntology().getLogicalAxioms(), axioms);
+            if (isXmlFile) {
+                axiomProb = readRdfMapping(file);
+            }
+            else {
+                readData(file, axioms, targetDiag);
+                axiomProb = getAx(t.getOriginalOntology().getLogicalAxioms(), axioms);
+            }
+
 
     }
 
     public OWLAxiomCostsEstimator(OWLTheory t, Map<OWLLogicalAxiom, BigDecimal> probMap) {
         this(t.getKnowledgeBase().getFaultyFormulas());
         axiomProb = probMap;
+    }
+
+    public Map<OWLLogicalAxiom,BigDecimal> readRdfMapping(String name) {
+        OAEI11ConferenceRdfMatchingParser handler = new OAEI11ConferenceRdfMatchingParser();
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+
+        try {
+            SAXParser saxParser = factory.newSAXParser();
+            saxParser.parse( name, handler );
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (SAXException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        Map<OWLLogicalAxiom, BigDecimal> mappings = new HashMap<OWLLogicalAxiom, BigDecimal>();
+        for (Map.Entry<OWLLogicalAxiom, BigDecimal> entry : handler.getMappings().entrySet())
+            if (BigDecimal.valueOf(0.0).compareTo(entry.getValue()) == 0) {
+                mappings.put(entry.getKey(),BigDecimal.valueOf(0.50001));
+                //logger.info ("confidence of mappings is zero: " + entry.getKey());
+            }
+            else
+                mappings.put(entry.getKey(), entry.getValue());
+        return mappings;
     }
 
     protected Map<OWLLogicalAxiom, BigDecimal> getAx(Set<OWLLogicalAxiom> logicalAxioms, Map<String, BigDecimal> axioms) {

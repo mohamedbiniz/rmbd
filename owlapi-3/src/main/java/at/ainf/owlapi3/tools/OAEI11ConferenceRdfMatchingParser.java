@@ -1,4 +1,4 @@
-package at.ainf.owlapi3.base.tools;
+package at.ainf.owlapi3.tools;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;

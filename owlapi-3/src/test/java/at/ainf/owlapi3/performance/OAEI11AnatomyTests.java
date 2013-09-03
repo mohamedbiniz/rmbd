@@ -62,7 +62,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             //String[] targetAxioms = AlignmentUtils.getDiagnosis2(m,o);
                             //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
 
-                            OWLOntology ontology = getOntology(file);
+                            OWLOntology ontology = getOntology(file, "oaei11", ".txt");
 
                             Set<OWLLogicalAxiom> targetDg;
                             long preprocessModulExtract = System.currentTimeMillis();
@@ -108,7 +108,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
 
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = getDiagnosisTarget(file);
+                                targetDg = getDiagnosisTarget(file, "oaei11", ".txt");
 
                             TableList e = new TableList();
                             out += "," + type + ",";
@@ -158,7 +158,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
                             //String[] targetAxioms = AlignmentUtils.getDiagnosis2(m,o);
                             //OWLOntology ontology = createOwlOntology2(m.trim(), o.trim());
 
-                            OWLOntology ontology = getOntology(file);
+                            OWLOntology ontology = getOntology(file, "oaei11", ".txt");
 
                             Set<OWLLogicalAxiom> targetDg;
                             long preprocessModulExtract = System.currentTimeMillis();
@@ -200,7 +200,7 @@ public class OAEI11AnatomyTests extends OAEI11AnatomySession {
 
 
                             if (targetSource == SimulatedSession.TargetSource.FROM_FILE)
-                                targetDg = getDiagnosisTarget(file);
+                                targetDg = getDiagnosisTarget(file, "oaei11", ".txt");
 
                             TableList e = new TableList();
                             out += "," + type + ",";
