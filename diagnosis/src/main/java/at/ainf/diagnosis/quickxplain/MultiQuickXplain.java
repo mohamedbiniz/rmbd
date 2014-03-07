@@ -104,7 +104,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             resetIterations();
             this.results.clear();
 
-            if (verifyKnowledgeBase(searchable, formulas)){
+            if (verifyKnowledgeBase(searchable, formulas)) {
                 addConflict(new FormulaSetImpl<Id>(new BigDecimal(1), new TreeSet<Id>(), new TreeSet<Id>()));
                 return getResults();
             }
@@ -112,8 +112,10 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             this.pool = new ThreadPoolExecutor(minThreads, maxThreads, 1,
                     TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(maxConflicts, true));
 
-            if (searchable.isMultiThreading())
-                searchable.setLock(new ReentrantLock());
+            if (!searchable.allowsMultiThreading())
+                throw new IllegalStateException("Trying to apply multi-threaded searcher to a " +
+                        "searchable object that does not support multi-threading!");
+            searchable.setLock(new ReentrantLock());
             quickXplain(searchable, formulas);
 
             try {
@@ -142,17 +144,28 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     }
 
+    /**
+     * Multi-threaded version of QX that computes a set of conflicts
+     *
+     * @param c
+     * @param u
+     * @return
+     * @throws NoConflictException
+     * @throws SolverException
+     * @throws InconsistentTheoryException
+     */
     public FormulaSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException {
 
         incCount();
-        FormulaSet<Id> formulaSet = null;
+        //FormulaSet<Id> formulaSet = null;
 
         try {
-            if (results.size() >= getMaxConflictSetCount()) {
+
+            if (getResults().size() >= getMaxConflictSetCount()) {
                 if (!this.pool.isShutdown())
                     this.pool.shutdownNow();
-                return formulaSet;
+                return null;
             }
 
             QXThread qxThread = new QXThread();
@@ -179,19 +192,15 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
 
                         Searchable<Id> ct = c.copy();
                         quickXplain(ct, cu);
-
-                        if (results.size() >= getMaxConflictSetCount()) {
-                            if (!this.pool.isShutdown())
-                                this.pool.shutdownNow();
-                            break;
-                        }
                     } else if (logger.isDebugEnabled())
                         logger.debug("Duplicate conflict possible. The branch is ignored!");
                 }
             }
-            fqx.get();
-            if (formulaSet != null)
-                addConflict(formulaSet);
+            if (!fqx.isCancelled()) {
+                fqx.get();
+            }
+            //if (formulaSet != null)
+            //    addConflict(formulaSet);
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (ExecutionException e) {
@@ -200,7 +209,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
             if (decCount() == 0)
                 this.pool.shutdown();
         }
-        return formulaSet;
+        return null;
     }
 
     public int getMaxConflictSetCount() {
@@ -212,6 +221,8 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
     }
 
     private void addConflict(FormulaSet<Id> formulaSet) {
+        if (results.size() >= maxConflicts)
+            return;
         resultsLock.writeLock().lock();
         try {
             if (formulaSet != null)
@@ -255,6 +266,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
         private Searchable<Id> c;
         private Collection<Id> u;
         private QuickXplain<Id> qx = new QuickXplain<Id>();
+
 
         @Override
         public FormulaSet<Id> call() {

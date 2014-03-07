@@ -2,11 +2,10 @@ package at.ainf.sat4j.model;
 
 import at.ainf.diagnosis.model.AbstractReasoner;
 import org.sat4j.minisat.SolverFactory;
-import org.sat4j.specs.ContradictionException;
-import org.sat4j.specs.ISolver;
-import org.sat4j.specs.TimeoutException;
+import org.sat4j.specs.*;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -70,6 +69,41 @@ public class ReasonerSat4j extends AbstractReasoner<IVecIntComparable> {
         } catch (TimeoutException e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean isEntailed(Set<IVecIntComparable> test) {
+        try {
+            // process test case
+            Set<IVecIntComparable> statement = negate(test);
+            addFormulasToCache(statement);
+
+            solver.reset();
+            solver.newVar(getNumOfLiterals());
+            solver.setExpectedNumberOfClauses(getFormulasCache().size());
+
+            sync();
+
+            boolean result = hasContradiction() || !solver.isSatisfiable();
+            removeFormulasFromCache(statement);
+            return result;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    private Set<IVecIntComparable> negate(Set<IVecIntComparable> test) {
+        if (test.size() > 1)
+            throw new UnsupportedOperationException("Entailment checking for non-unary CNFs " +
+                    "is not supported at teh moment.");
+        Set<IVecIntComparable> res = new HashSet<IVecIntComparable>();
+        IVecIntComparable el = test.iterator().next();
+        IteratorInt iterator = el.iterator();
+        while (iterator.hasNext()) {
+            int next = iterator.next();
+            res.add(new VecIntComparable(new int[]{-1*next}));
+        }
+        return res;
     }
 
     @Override

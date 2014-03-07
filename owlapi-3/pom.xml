@@ -205,9 +205,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.owldl</groupId>
-            <artifactId>pellet</artifactId>
-            <version>2.3.0</version>
+            <groupId>com.github.ansell.pellet</groupId>
+            <artifactId>pellet-owlapiv3</artifactId>
+            <version>2.3.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>asp</artifactId>
+    <artifactId>interactive-asp</artifactId>
     <version>1.0</version>
-    <name>Asp adapter</name>
+    <name>Interactive ASP adapter</name>
 
     <build>
         <plugins>

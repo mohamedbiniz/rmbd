@@ -53,14 +53,35 @@ public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable>
         //backup.addAll(getReasoner().getFormulasCache());
 
         getReasoner().addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
-        boolean result = getReasoner().isConsistent();
+        for (Set<IVecIntComparable> pt : getKnowledgeBase().getPositiveTests()) {
+            getReasoner().addFormulasToCache(pt);
+        }
+        for (Set<IVecIntComparable> et : getKnowledgeBase().getEntailedTests()) {
+            getReasoner().addFormulasToCache(et);
+        }
 
+        if (!getReasoner().isConsistent())
+            return false;
 
+        for (Set<IVecIntComparable> test : getKnowledgeBase().getNegativeTests()) {
+            getReasoner().addFormulasToCache(test);
+            boolean consistent = getReasoner().isConsistent();
+            getReasoner().removeFormulasFromCache(test);
+            if (consistent)  return false;
+        }
+
+        for (Set<IVecIntComparable> test : getKnowledgeBase().getNonentailedTests()) {
+            if (test != null && getReasoner().isEntailed(test)) {
+                return false;
+            }
+        }
         //getReasoner().clearFormulasCache();
         //getReasoner().addFormulasToCache(backup);
 
-        return result;
+        return true;
     }
+
+
 
     public IVecIntComparable addClause(int[] vector) {
         VecIntComparable anInt = new VecIntComparable(vector);

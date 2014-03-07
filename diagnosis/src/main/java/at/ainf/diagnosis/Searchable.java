@@ -63,5 +63,7 @@ public interface Searchable<E> {
 
     boolean isMultiThreading();
 
+    boolean allowsMultiThreading();
+
     void setLock(Lock lock);
 }

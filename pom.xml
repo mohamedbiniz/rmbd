@@ -25,6 +25,8 @@
         <module>choco2</module>
         <module>protegeview</module>
         <module>usrstudlogger</module>
+        <module>asp</module>
+        <module>interactive-asp</module>
 
     </modules>
     <!--
@@ -63,7 +65,7 @@
         <junit.version>4.10</junit.version>
         <distributionRepositoryId>releases</distributionRepositoryId>
         <distributionRepositoryUrl>
-            http://scs-iwas.uni-klu.ac.at/nexus/content/repositories/releases
+            https://scs-iwas.uni-klu.ac.at/nexus/content/repositories/releases
         </distributionRepositoryUrl>
 
         <!-- <versNumberForRelease>1.0-TTMMYY-HHMM</versNumberForRelease> for deploying diagnosis, owlapi-3
@@ -87,7 +89,7 @@
         <snapshotRepository>
             <id>rmbd-snapshot-repository</id>
             <name>RMBD Snapshot Repository</name>
-            <url>http://scs-iwas.uni-klu.ac.at/nexus/content/repositories/snapshots/</url>
+            <url>https://scs-iwas.uni-klu.ac.at/nexus/content/repositories/snapshots/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
@@ -108,20 +110,22 @@
         </plugins>
         <pluginManagement>
             <plugins>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
                     <configuration>
                         <source>${java.source.version}</source>
                         <target>${java.target.version}</target>
                     </configuration>
                 </plugin>
+                <!--
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>2.1.2</version>
                 </plugin>
+                -->
                 <!--
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -168,14 +172,23 @@
 
     <repositories>
         <repository>
+            <id>maven-central</id>
+            <name>Maven central repository</name>
+            <url>http://repo.maven.apache.org/maven2/</url>
+            <releases>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
             <id>rmbd-snapshot-repository</id>
             <name>RMBD Snapshot Repository</name>
-            <url>http://scs-iwas.uni-klu.ac.at/nexus/content/repositories/snapshots/</url>
+            <url>https://vcs-isbi.aau.at/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>vknow-public</id>
             <name>VKnow (custom + maven2)</name>
-            <url>http://scs-iwas.uni-klu.ac.at/nexus/content/groups/public/</url>
+            <url>https://vcs-isbi.aau.at/nexus/content/groups/public/</url>
             <releases>
                 <updatePolicy>daily</updatePolicy>
                 <checksumPolicy>warn</checksumPolicy>
@@ -190,6 +203,7 @@
                 <checksumPolicy>warn</checksumPolicy>
             </releases>
         </repository>
+        <!--
         <repository>
             <id>OWLDL</id>
             <name>OwlDL repo</name>
@@ -199,13 +213,14 @@
                 <checksumPolicy>warn</checksumPolicy>
             </releases>
         </repository>
+        -->
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>vknow-public</id>
             <name>VKnow (custom + maven2)</name>
-            <url>http://scs-iwas.uni-klu.ac.at/nexus/content/groups/public/</url>
+            <url>https://vcs-isbi.aau.at/nexus/content/groups/public/</url>
             <releases>
                 <updatePolicy>daily</updatePolicy>
                 <checksumPolicy>warn</checksumPolicy>
