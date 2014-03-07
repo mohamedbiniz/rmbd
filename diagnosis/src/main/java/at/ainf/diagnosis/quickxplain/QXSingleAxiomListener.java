@@ -8,7 +8,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * User: kostya
  * Date: 06.12.12
  * Time: 17:39
- * To change this template use File | Settings | File Templates.
+ *
+ *  A listener that stores only 1 axiom from a found set at a time. This listener must be used only in
+ *  case the multi-threading searcher is required to go depth-first one left-most branch only.
+ *
  */
 public class QXSingleAxiomListener<Id> extends AbstractAxiomListener<Id> {
     private Id axiom = null;

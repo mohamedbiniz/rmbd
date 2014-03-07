@@ -64,7 +64,6 @@ public class QuickXplainTest {
 
         int[] fm10 = new int[]{10};
 
-
         ISolver reasoner = SolverFactory.newDefault();
         reasoner.setExpectedNumberOfClauses(20);
         reasoner.newVar(10);
@@ -221,6 +220,48 @@ public class QuickXplainTest {
         if (!value)
             assertNotNull(fl);
         return fl;
+    }
+
+    @Test
+    public void runVerifyTestCases() throws SolverException, InconsistentTheoryException {
+
+        Searcher<IVecIntComparable> quick = new QuickXplain<IVecIntComparable>();
+        ISolver reasoner = SolverFactory.newDefault();
+        reasoner.setExpectedNumberOfClauses(20);
+        reasoner.newVar(10);
+        PropositionalTheory theory = new PropositionalTheory(reasoner);
+
+        // add some background knowledge
+        int[] fm10 = new int[]{-5};
+        theory.getKnowledgeBase().addBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(fm10)));
+
+        List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
+        check(quick, theory, list, true);
+
+        List<int[]> vec = new ArrayList<int[]>();
+
+        vec.add(new int[]{-1, 2});
+
+        int[] clause = new int[]{3};
+        vec.add(clause);
+
+        vec.add(new int[]{-3,4});
+        vec.add(new int[]{-4,5});
+
+        //Collection<IVecIntComparable> test = theory.addClauses(vec);
+        Collection<IVecIntComparable> test = new LinkedList<IVecIntComparable>();
+        for (int[] e : vec)
+            test.add(theory.addClause(e));
+        list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
+        check(quick, theory, list, false);
+
+        IVecIntComparable fm4 = theory.addClause(new int[]{3});
+        theory.getKnowledgeBase().addNonEntailedTest(Collections.singleton(fm4));
+
+        Collection<IVecIntComparable> fl = check(quick, theory, list, false);
+
+        assertTrue(fl.size() == 1);
+        assertTrue(fl.contains(fm4));
     }
 
 

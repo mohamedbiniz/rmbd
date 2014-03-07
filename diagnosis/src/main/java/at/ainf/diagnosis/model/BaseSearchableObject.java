@@ -20,7 +20,7 @@ public class BaseSearchableObject<T> implements Searchable<T> {
 
     private IReasoner<T> reasoner;
 
-    private Lock lock = new ReentrantLock(true);
+    private Lock lock = null;
 
     public BaseSearchableObject() {
         setKnowledgeBase(new KnowledgeBase<T>());
@@ -138,6 +138,10 @@ public class BaseSearchableObject<T> implements Searchable<T> {
             if (isMultiThreading())
                 lock.unlock();
         }
+    }
+
+    public boolean allowsMultiThreading() {
+        return true;
     }
 
     public boolean isMultiThreading() {

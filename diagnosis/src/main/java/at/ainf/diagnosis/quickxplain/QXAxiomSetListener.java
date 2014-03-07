@@ -9,7 +9,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * User: kostya
  * Date: 06.12.12
  * Time: 17:39
- * To change this template use File | Settings | File Templates.
+ *
+ *  A listener that stores complete set of axiom from a found set. This listener must be used if
+ *  the multi-threading searcher is searching for all unique sets depth-first in all branches of a tree.
  */
 public class QXAxiomSetListener<Id> extends AbstractAxiomListener<Id> {
     private LinkedList<Id> axioms = new LinkedList<Id>();

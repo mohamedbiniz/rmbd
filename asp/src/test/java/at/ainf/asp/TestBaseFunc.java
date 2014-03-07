@@ -44,7 +44,7 @@ public class TestBaseFunc {
 //	final private static String filePathUNSAT = ClassLoader.getSystemResource("test_UNSAT.lp").getPath();
 	final private static String filePathUNSAT = ClassLoader.getSystemResource("test1_UNSAT.lp").getPath();
 	
-	@Ignore  @Test
+	@Test
 	public void testHsTree() {
 
         String filename = "test1_UNSAT.lp";
