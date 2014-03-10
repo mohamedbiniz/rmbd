@@ -1,0 +1,23 @@
+clingo version 4.3.0
+Reading from C:\Users\kostya\Desktop\test.txt
+Solving...
+Answer: 1
+int(a) int(b) int(c) -int(d) unsatisfied(r4)
+Optimization: 1
+Answer: 2
+int(a) int(b) -int(c) -int(d) unsatisfied(r3)
+Optimization: 1
+Answer: 3
+int(a) -int(b) -int(c) -int(d) unsatisfied(r2)
+Optimization: 1
+OPTIMUM FOUND
+
+Models       : 4
+  Optimum    : yes
+  Optimal    : 3
+Optimization : 1
+Calls        : 1
+Time         : 0.005s (Solving: 0.00s 1st Model: -0.00s Unsat: 0.00s)
+CPU Time     : 0.016s
+<<< Process finished. (Exit code 30)
+================ READY ================

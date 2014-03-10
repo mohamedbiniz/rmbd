@@ -3,10 +3,12 @@ package at.ainf.asp.interactive.input;
 import at.ainf.asp.antlr.IntASPInputBaseListener;
 import at.ainf.asp.antlr.IntASPInputListener;
 import at.ainf.asp.antlr.IntASPInputParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -19,6 +21,8 @@ import java.util.List;
  */
 public class IntASPInput extends IntASPInputBaseListener implements IntASPInputListener {
 
+    private static Logger logger = LoggerFactory.getLogger(IntASPInput.class.getName());
+
     public enum Mode {ASP, BK, BT, BF, CT, CF}
 
     private Mode currentMode = Mode.ASP;
@@ -27,16 +31,20 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
     private List<List<String>> positive = new LinkedList<List<String>>();
     private List<List<String>> negative = new LinkedList<List<String>>();
 
-    public IntASPInput(){
+    public IntASPInput() {
         // add projections and minimization statements to a program
-        String path = ClassLoader.getSystemResource("extension.lp").getPath();
         try {
+            URI path = ClassLoader.getSystemResource("extension.lp").toURI();
             program.append(
                     Charset.defaultCharset().decode(
                             ByteBuffer.wrap(
                                     Files.readAllBytes(Paths.get(path))
                             )));
         } catch (IOException e) {
+            logger.error("Resources are not found!",e);
+            throw new RuntimeException("Resources are not found!");
+        } catch (URISyntaxException e) {
+            logger.error("Resources are not found!",e);
             throw new RuntimeException("Resources are not found!");
         }
     }
@@ -90,8 +98,8 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
         String id = ctx.getText();
         switch (getCurrentMode()){
             case BK:
-                program.append(":- rule(").append(id).append("), violated(").append(id).append(").");
-                program.append(":- rule(").append(id).append("), unsatisfied(").append(id).append(").");
+                program.append(":- rule(").append(id).append("), violated(").append(id).append(").\n");
+                program.append(":- rule(").append(id).append("), unsatisfied(").append(id).append(").\n");
                 break;
 
             case CT:

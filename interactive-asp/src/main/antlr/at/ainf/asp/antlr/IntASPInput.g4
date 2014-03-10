@@ -14,18 +14,21 @@ section
  : aspsection | bksection | testsection
  ;
 
+comment:
+ COMMENT text* NEW_LINE+;
+
 // (asp | bk ) NEW_LINE* line*) | ( bt | bf | ct | cf )
 
 aspsection
-    : asp NEW_LINE* asprule*
+    : asp NEW_LINE* (asprule | comment)*
     ;
 
 bksection
-    : ( bk ) (NEW_LINE | csvline NEW_LINE)*
+    : ( bk ) (NEW_LINE | csvline NEW_LINE*)*
     ;
 
 testsection
-    : ( bt | bf | ct | cf ) (NEW_LINE | csvline NEW_LINE)*
+    : ( bt | bf | ct | cf ) (NEW_LINE | csvline NEW_LINE*)*
     ;
 
 asp
@@ -45,11 +48,11 @@ cf
 
 
 csvline
- : value (COMMA value)*
+ : value ((WS | COMMA)* value)*
  ;
 
 asprule
- : text NEW_LINE*;
+ : text DOT NEW_LINE*;
 
 
 value
@@ -58,14 +61,16 @@ value
 
 
 text
- : (ID | OTHER | COMMA)+
+ : (ID | OTHER | COMMA | NEW_LINE | WS)+
  ;
 
 /*----------------
 * LEXER RULES
 *----------------*/
 
-WS : (' ' | '\t' | '\f')+ -> skip ;
+DOT:     '.';
+COMMENT: '%';
+WS : (' ' | '\t' | '\f')+ ;
 COMMA : ',';
 NEW_LINE          : '\r'? '\n';
 
