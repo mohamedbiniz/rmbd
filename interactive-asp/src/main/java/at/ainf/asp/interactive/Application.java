@@ -4,12 +4,17 @@ import at.ainf.asp.antlr.IntASPInputLexer;
 import at.ainf.asp.antlr.IntASPInputParser;
 import at.ainf.asp.interactive.input.IntASPDiagnosisListener;
 import at.ainf.asp.interactive.input.IntASPInput;
-import at.ainf.asp.interactive.input.IntASPInterpretationListener;
 import at.ainf.asp.interactive.solver.ASPSolver;
+import at.ainf.asp.interactive.solver.ASPTheory;
+import at.ainf.diagnosis.model.KnowledgeBase;
+import at.ainf.diagnosis.partitioning.CKK;
+import at.ainf.diagnosis.partitioning.Partitioning;
+import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +22,8 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Set;
 
 /**
  * Main class for interactive debugger prototype
@@ -34,28 +40,6 @@ public class Application {
         } else
             stream = System.in;
         IntASPInput listener = new IntASPInput();
-        parseInput(stream, listener);
-
-        ASPSolver solver = new ASPSolver(args[1]);
-        IntASPDiagnosisListener diagnoses = new IntASPDiagnosisListener();
-        String program = listener.getProgram();
-        solver.executeSolver(program, diagnoses, "--opt-mode=optN", "--quiet=1,1", "--number=" + 9);
-        for (List<String> diag : diagnoses.getDiagnoses()) {
-            String programExtension = generateDiagnosisProgram(program, diag);
-            IntASPInterpretationListener entailments = new IntASPInterpretationListener();
-            solver.executeSolver(program, programExtension, entailments, "--enum-mode=cautious", "--quiet=1,1");
-        }
-
-
-    }
-
-    private static String generateDiagnosisProgram(String program, List<String> diag) {
-        StringBuffer ext = new StringBuffer();
-
-        return ext.toString();
-    }
-
-    private static void parseInput(InputStream stream, ParseTreeListener listener) throws IOException {
         ANTLRInputStream input = new ANTLRInputStream(stream);
         IntASPInputLexer lexer = new IntASPInputLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -63,7 +47,25 @@ public class Application {
         ParseTree tree = parser.parse();
         ParseTreeWalker.DEFAULT.walk(listener, tree);
 
+        KnowledgeBase<String> kb = listener.getKnowledgeBase();
+
         logger.info("Parsing OK");
+
+        ASPSolver solver = new ASPSolver(args[1]);
+        IntASPDiagnosisListener diagnoses = new IntASPDiagnosisListener();
+        final Set<String> errorAtoms = listener.getErrorAtoms();
+        solver.computeDiagnoses(kb, 9);
+        ASPTheory theory = new ASPTheory();
+        for (Set<String> diag : diagnoses.getDiagnoses()) {
+            final Set<String> entailments = solver.computeEntailments(kb, errorAtoms, diag);
+            FormulaSet<String> diagnosis =
+                    new FormulaSetImpl<String>(BigDecimal.valueOf(0.001), diag, entailments);
+
+        }
+
+        Partitioning<String> queryGenerator = new CKK<String>(theory, QSSFactory.<String>createMinScoreQSS());
+
     }
+
 
 }

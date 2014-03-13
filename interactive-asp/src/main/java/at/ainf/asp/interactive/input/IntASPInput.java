@@ -3,6 +3,7 @@ package at.ainf.asp.interactive.input;
 import at.ainf.asp.antlr.IntASPInputBaseListener;
 import at.ainf.asp.antlr.IntASPInputListener;
 import at.ainf.asp.antlr.IntASPInputParser;
+import at.ainf.diagnosis.model.KnowledgeBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,66 +14,62 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
- * Created by Kostya on 10.03.14.
+ * Input parser that creates a knowledge base from the input file
  */
-public class IntASPInput extends IntASPInputBaseListener implements IntASPInputListener {
+public class IntASPInput extends IntASPInputBaseListener implements IntASPInputListener, ASPListener {
 
     private static Logger logger = LoggerFactory.getLogger(IntASPInput.class.getName());
-    private StringBuffer program = new StringBuffer();
-    private List<List<String>> positive = new LinkedList<List<String>>();
-    private List<List<String>> negative = new LinkedList<List<String>>();
+
     private Set<String> atomIDs = new HashSet<String>();
     private Set<String> ruleIDs = new HashSet<String>();
+    private KnowledgeBase<String> kb = new KnowledgeBase<String>();
 
     public IntASPInput() {
         // add projections and minimization statements to a program
         try {
             URI path = ClassLoader.getSystemResource("extension.lp").toURI();
-            program.append(
-                    Charset.defaultCharset().decode(
-                            ByteBuffer.wrap(
-                                    Files.readAllBytes(Paths.get(path))
-                            )));
+            getKnowledgeBase().addFormulas(
+                    Collections.singleton(Charset.defaultCharset().decode(
+                            ByteBuffer.wrap(Files.readAllBytes(Paths.get(path)))).toString()));
         } catch (IOException e) {
-            logger.error("Resources are not found!",e);
+            logger.error("Resources are not found!", e);
             throw new RuntimeException("Resources are not found!");
         } catch (URISyntaxException e) {
-            logger.error("Resources are not found!",e);
+            logger.error("Resources are not found!", e);
             throw new RuntimeException("Resources are not found!");
         }
+    }
+
+    @Override
+    public void enterParse(IntASPInputParser.ParseContext ctx) {
+        this.kb = new KnowledgeBase<String>();
+    }
+
+    @Override
+    public boolean hasResult() {
+        throw new RuntimeException("This listener cannot be used for diagnostic reasoning!");
     }
 
     public enum Mode {ASP, BK, BT, BF, CT, CF}
 
     private Mode currentMode = Mode.ASP;
 
-    public String getProgram() {
-        return program.toString();
-    }
-
-    public List<List<String>> getPositive() {
-        return positive;
-    }
-
-    public List<List<String>> getNegative() {
-        return negative;
+    public KnowledgeBase<String> getKnowledgeBase() {
+        return this.kb;
     }
 
     public Set<String> getErrorAtoms() {
-        Set<String> errorAtoms = new HashSet<String>(this.ruleIDs.size()*2+this.atomIDs.size()*2);
+        Set<String> errorAtoms = new HashSet<String>(this.ruleIDs.size() * 2 + this.atomIDs.size() * 2);
         for (String ruleID : this.ruleIDs) {
-            errorAtoms.add("unsatisfied("+ruleID+")");
-            errorAtoms.add("violated("+ruleID+")");
+            errorAtoms.add("unsatisfied(" + ruleID + ")");
+            errorAtoms.add("violated(" + ruleID + ")");
         }
         for (String atomID : this.atomIDs) {
-            errorAtoms.add("ufLoop("+atomID+")");
-            errorAtoms.add("unsupported("+atomID+")");
+            errorAtoms.add("ufLoop(" + atomID + ")");
+            errorAtoms.add("unsupported(" + atomID + ")");
         }
         return errorAtoms;
     }
@@ -101,24 +98,24 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
 
     @Override
     public void enterAsprule(IntASPInputParser.AspruleContext ctx) {
-        program.append(ctx.getText());
+        getKnowledgeBase().addFormulas(Collections.singleton(ctx.getText()));
     }
 
     @Override
     public void enterCf(IntASPInputParser.CfContext ctx) {
-        testCase = new LinkedList<String>();
+        testCase = new LinkedHashSet<String>();
         setCurrentMode(Mode.CF);
     }
 
     @Override
     public void enterCt(IntASPInputParser.CtContext ctx) {
-        testCase = new LinkedList<String>();
+        testCase = new LinkedHashSet<String>();
         setCurrentMode(Mode.CT);
     }
 
     @Override
     public void enterBt(IntASPInputParser.BtContext ctx) {
-        testCase = new LinkedList<String>();
+        testCase = new LinkedHashSet<String>();
         setCurrentMode(Mode.BT);
     }
 
@@ -129,52 +126,54 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
 
     @Override
     public void enterBf(IntASPInputParser.BfContext ctx) {
-        testCase = new LinkedList<String>();
+        testCase = new LinkedHashSet<String>();
         setCurrentMode(Mode.BF);
     }
 
-    private List<String> testCase;
+    private Set<String> testCase;
 
     @Override
     public void enterValue(IntASPInputParser.ValueContext ctx) {
         String id = ctx.getText();
-        switch (getCurrentMode()){
+        switch (getCurrentMode()) {
             case BK:
-                program.append(":- rule(").append(id).append("), violated(").append(id).append(").\n");
-                program.append(":- rule(").append(id).append("), unsatisfied(").append(id).append(").\n");
+                Set<String> bk = new LinkedHashSet<String>();
+                bk.add(":- rule(" + id + "), violated(" + id + ").\n");
+                bk.add(":- rule(" + id +"), unsatisfied(" + id + ").\n");
+                getKnowledgeBase().addBackgroundFormulas(bk);
                 break;
 
             case CT:
                 testCase.add("int(" + id + ")");
                 break;
             case CF:
-                testCase.add("-int("+id+")");
+                testCase.add("-int(" + id + ")");
                 break;
             case BT:
                 testCase.add("int(" + id + ")");
                 break;
             case BF:
-                testCase.add("-int("+id+")");
+                testCase.add("-int(" + id + ")");
         }
     }
 
     @Override
     public void exitCt(IntASPInputParser.CtContext ctx) {
-        positive.add(testCase);
+        getKnowledgeBase().addEntailedTest(testCase);
     }
 
     @Override
     public void exitBt(IntASPInputParser.BtContext ctx) {
-        negative.add(testCase);
+        getKnowledgeBase().addNonEntailedTest(testCase);
     }
 
     @Override
     public void exitBf(IntASPInputParser.BfContext ctx) {
-        positive.add(testCase);
+        getKnowledgeBase().addEntailedTest(testCase);
     }
 
     @Override
     public void exitCf(IntASPInputParser.CfContext ctx) {
-        negative.add(testCase);
+        getKnowledgeBase().addNonEntailedTest(testCase);
     }
 }
