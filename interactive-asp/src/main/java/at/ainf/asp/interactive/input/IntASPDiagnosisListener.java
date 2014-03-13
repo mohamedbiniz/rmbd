@@ -4,21 +4,20 @@ import at.ainf.asp.antlr.IntASPOutputBaseListener;
 import at.ainf.asp.antlr.IntASPOutputListener;
 import at.ainf.asp.antlr.IntASPOutputParser;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Listener that extracts diagnoses from the answer sets
  */
-public class IntASPDiagnosisListener extends IntASPOutputBaseListener implements IntASPOutputListener {
+public class IntASPDiagnosisListener extends IntASPOutputBaseListener implements IntASPOutputListener, ASPListener {
 
-    private List<List<String>> diagnoses = new LinkedList<List<String>>();
+    private List<Set<String>> diagnoses = new LinkedList<Set<String>>();
 
-    private List<String> diagnosis;
+    private Set<String> diagnosis;
 
     @Override
     public void enterDiagnosis(IntASPOutputParser.DiagnosisContext ctx) {
-        this.diagnosis = new LinkedList<String>();
+        this.diagnosis = new HashSet<String>();
     }
 
     @Override
@@ -31,7 +30,12 @@ public class IntASPDiagnosisListener extends IntASPOutputBaseListener implements
         getDiagnoses().add(this.diagnosis);
     }
 
-    public List<List<String>> getDiagnoses() {
+    public List<Set<String>> getDiagnoses() {
         return diagnoses;
+    }
+
+    @Override
+    public boolean hasResult() {
+        return !getDiagnoses().isEmpty();
     }
 }
