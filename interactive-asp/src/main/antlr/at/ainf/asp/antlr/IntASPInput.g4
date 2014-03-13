@@ -14,14 +14,36 @@ section
  : aspsection | bksection | testsection
  ;
 
-comment:
- COMMENT text* NEW_LINE+;
-
-// (asp | bk ) NEW_LINE* line*) | ( bt | bf | ct | cf )
-
 aspsection
-    : asp NEW_LINE* (asprule | comment)*
+    : asp NEW_LINE* asprule*
     ;
+asprule
+ : (idfact | fact | otherrules | comment) NEW_LINE*;
+
+comment:
+ COMMENT+ bodytext* NEW_LINE+;
+
+idfact
+ : (HEAD | BODYN | BODYP) LBR ruleid COMMA WS* atomid RBR DOT;
+
+ruleid:
+ ID+;
+
+atomid:
+ ID+;
+
+fact: headtext DOT;
+
+otherrules:
+ headtext IMP bodytext DOT;
+
+headtext
+ : (ID | OTHER | COMMA | NEW_LINE | WS | LBR | RBR)+
+ ;
+
+bodytext
+ : (ID | OTHER | COMMA | NEW_LINE | WS | LBR | RBR | HEAD | BODYN | BODYP )+
+ ;
 
 bksection
     : ( bk ) (NEW_LINE | csvline NEW_LINE*)*
@@ -31,43 +53,31 @@ testsection
     : ( bt | bf | ct | cf ) (NEW_LINE | csvline NEW_LINE*)*
     ;
 
-asp
- : ASP
- ;
-
-bk
- : BK  ;
-bt
- : BT  ;
-bf
- : BF  ;
-ct
- : CT  ;
-cf
- : CF ;
-
-
 csvline
  : value ((WS | COMMA)* value)*
  ;
-
-asprule
- : text DOT NEW_LINE*;
-
 
 value
  : ID+
  ;
 
 
-text
- : (ID | OTHER | COMMA | NEW_LINE | WS)+
- ;
+asp : ASP ;
+bk  : BK  ;
+bt  : BT  ;
+bf  : BF  ;
+ct  : CT  ;
+cf  : CF ;
 
 /*----------------
 * LEXER RULES
 *----------------*/
 
+HEAD: 'head';
+BODYN: 'bodyN';
+BODYP: 'bodyP';
+
+IMP: ':-';
 DOT:     '.';
 COMMENT: '%';
 WS : (' ' | '\t' | '\f')+ ;
@@ -81,8 +91,11 @@ BF:  SECTION_TAG_START 'BF' SECTION_TAG_END;
 CT:  SECTION_TAG_START 'CT' SECTION_TAG_END;
 CF:  SECTION_TAG_START 'CF' SECTION_TAG_END;
 
-
+NUMBER: DIGIT+;
 ID : LETTER (ALPHANUM)*;
+
+LBR: '(';
+RBR: ')';
 
 fragment SECTION_TAG_START : '[';
 fragment SECTION_TAG_END   : ']';
