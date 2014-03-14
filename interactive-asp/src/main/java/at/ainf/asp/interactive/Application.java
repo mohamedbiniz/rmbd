@@ -7,6 +7,7 @@ import at.ainf.asp.interactive.input.IntASPInput;
 import at.ainf.asp.interactive.solver.ASPSolver;
 import at.ainf.asp.interactive.solver.ASPTheory;
 import at.ainf.diagnosis.model.KnowledgeBase;
+import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
@@ -32,7 +33,7 @@ public class Application {
 
     private static Logger logger = LoggerFactory.getLogger(Application.class.getName());
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, SolverException {
 
         InputStream stream;
         if (args.length > 0) {
@@ -53,11 +54,13 @@ public class Application {
 
         ASPSolver solver = new ASPSolver(args[1]);
         IntASPDiagnosisListener diagnoses = new IntASPDiagnosisListener();
-        final Set<String> errorAtoms = listener.getErrorAtoms();
-        solver.computeDiagnoses(kb, 9);
+        solver.addFormulasToCache(kb.getFaultyFormulas());
+        solver.addFormulasToCache(kb.getBackgroundFormulas());
+        solver.computeDiagnoses(9);
         ASPTheory theory = new ASPTheory();
         for (Set<String> diag : diagnoses.getDiagnoses()) {
-            final Set<String> entailments = solver.computeEntailments(kb, errorAtoms, diag);
+
+            final Set<String> entailments = theory.getEntailments(diag);
             FormulaSet<String> diagnosis =
                     new FormulaSetImpl<String>(BigDecimal.valueOf(0.001), diag, entailments);
 
