@@ -1,10 +1,10 @@
 package at.ainf.asp.interactive.solver;
 
-import at.ainf.asp.test.Application;
+
 import at.ainf.diagnosis.model.BaseSearchableObject;
 import at.ainf.diagnosis.model.SolverException;
+import at.ainf.diagnosis.storage.FormulaSet;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -19,33 +19,49 @@ public class ASPTheory extends BaseSearchableObject<String> {
 	
 	@Override
 	public boolean verifyConsistency() throws SolverException {
-		LinkedHashSet<IProgramElement> formulasToAdd =
-                new LinkedHashSet<IProgramElement>(getKnowledgeBase().getBackgroundFormulas());
-		
-		if (Application.enableInfo) {
-			System.out.println("\nFormulas to add:");
-			for (IProgramElement pe : formulasToAdd) {
-				System.out.println(pe.getString());
-			}
-		}
-		
-		Set<IProgramElement> cache = getReasoner().getFormulasCache();
-		
-		if (Application.enableInfo) {
-			System.out.println("\nFormulas cached:");
-			for (IProgramElement pe : cache) {
-				System.out.println(pe.getString());
-			}
-		}
-		
-		formulasToAdd.removeAll(getReasoner().getFormulasCache());
-		getReasoner().addFormulasToCache(formulasToAdd);
-		boolean isConsistent = getReasoner().isConsistent();
-		ASPOutput output = ASPOutput.getASPOutputInstance();
-		if (output.isUnknown()) throw new SolverException("The solver returned UNKNOWN. Probably there are some syntax errors in the ASP file.");
-		getReasoner().removeFormulasFromCache(formulasToAdd);
-		return isConsistent;
-	}
+        boolean consistent = getReasoner().isConsistent();
+        return consistent && checkTestsConsistency();
+    }
+
+    private boolean checkTestsConsistency() {
+        //OWLReasoner solver = getSolver();
+        for (Set<String> test : getKnowledgeBase().getNegativeTests()) {
+            if (!getReasoner().isEntailed(test)) {
+                return true;
+            }
+        }
+
+        for (Set<String> test : getKnowledgeBase().getNonentailedTests()) {
+            if (test != null && getReasoner().isEntailed(test)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Set<String> getEntailments(Set<String> hittingSet) throws SolverException {
+        throw new RuntimeException("This theory does not support computation of entailments!");
+    }
+
+    public boolean isEntailed(Set<String> n) {
+        throw new RuntimeException("This theory does not support verification of entailments!");
+    }
+
+    public void reset() {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    public boolean diagnosisEntails(FormulaSet<String> hs, Set<String> ent) {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    public boolean diagnosisConsistent(FormulaSet<String> hs, Set<String> ent) {
+        throw new RuntimeException("Unimplemented method");
+    }
+
+    public void doBayesUpdate(Set<? extends FormulaSet<String>> hittingSets) {
+        throw new RuntimeException("Unimplemented method");
+    }
 
 	
 	

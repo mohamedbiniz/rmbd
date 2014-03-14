@@ -3,6 +3,7 @@ package at.ainf.asp.interactive.input;
 import at.ainf.asp.antlr.IntASPInputBaseListener;
 import at.ainf.asp.antlr.IntASPInputListener;
 import at.ainf.asp.antlr.IntASPInputParser;
+import at.ainf.asp.interactive.solver.ASPKnowledgeBase;
 import at.ainf.diagnosis.model.KnowledgeBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,8 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
 
     private Set<String> atomIDs = new HashSet<String>();
     private Set<String> ruleIDs = new HashSet<String>();
-    private KnowledgeBase<String> kb = new KnowledgeBase<String>();
+
+    private ASPKnowledgeBase kb = new ASPKnowledgeBase();
 
     public IntASPInput() {
         // add projections and minimization statements to a program
@@ -45,7 +47,7 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
 
     @Override
     public void enterParse(IntASPInputParser.ParseContext ctx) {
-        this.kb = new KnowledgeBase<String>();
+        this.kb = new ASPKnowledgeBase();
     }
 
     @Override
@@ -57,11 +59,16 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
 
     private Mode currentMode = Mode.ASP;
 
-    public KnowledgeBase<String> getKnowledgeBase() {
+    public ASPKnowledgeBase getKnowledgeBase() {
         return this.kb;
     }
 
-    public Set<String> getErrorAtoms() {
+    @Override
+    public void exitAspsection(IntASPInputParser.AspsectionContext ctx) {
+        getKnowledgeBase().setErrorAtoms(getErrorAtoms());
+    }
+
+    private Set<String> getErrorAtoms() {
         Set<String> errorAtoms = new HashSet<String>(this.ruleIDs.size() * 2 + this.atomIDs.size() * 2);
         for (String ruleID : this.ruleIDs) {
             errorAtoms.add("unsatisfied(" + ruleID + ")");
@@ -72,10 +79,6 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
             errorAtoms.add("unsupported(" + atomID + ")");
         }
         return errorAtoms;
-    }
-
-    public Set<String> getAtomIDs() {
-        return atomIDs;
     }
 
     private Mode getCurrentMode() {
@@ -139,7 +142,7 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
             case BK:
                 Set<String> bk = new LinkedHashSet<String>();
                 bk.add(":- rule(" + id + "), violated(" + id + ").\n");
-                bk.add(":- rule(" + id +"), unsatisfied(" + id + ").\n");
+                bk.add(":- rule(" + id + "), unsatisfied(" + id + ").\n");
                 getKnowledgeBase().addBackgroundFormulas(bk);
                 break;
 
@@ -159,21 +162,21 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
 
     @Override
     public void exitCt(IntASPInputParser.CtContext ctx) {
-        getKnowledgeBase().addEntailedTest(testCase);
+        getKnowledgeBase().addPositiveTest(testCase);
     }
 
     @Override
     public void exitBt(IntASPInputParser.BtContext ctx) {
-        getKnowledgeBase().addNonEntailedTest(testCase);
+        getKnowledgeBase().addNegativeTest(testCase);
     }
 
     @Override
     public void exitBf(IntASPInputParser.BfContext ctx) {
-        getKnowledgeBase().addEntailedTest(testCase);
+        getKnowledgeBase().addPositiveTest(testCase);
     }
 
     @Override
     public void exitCf(IntASPInputParser.CfContext ctx) {
-        getKnowledgeBase().addNonEntailedTest(testCase);
+        getKnowledgeBase().addNegativeTest(testCase);
     }
 }

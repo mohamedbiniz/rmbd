@@ -5,8 +5,8 @@ import at.ainf.asp.antlr.IntASPOutputParser;
 import at.ainf.asp.interactive.input.ASPListener;
 import at.ainf.asp.interactive.input.IntASPDiagnosisListener;
 import at.ainf.asp.interactive.input.IntASPInterpretationListener;
+import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.IReasoner;
-import at.ainf.diagnosis.model.KnowledgeBase;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,18 +25,20 @@ import java.util.concurrent.TimeUnit;
 /**
  * Calling ASP solver and providing its output
  */
-public class ASPSolver implements IReasoner<String> {
+public class ASPSolver extends AbstractReasoner<String> implements IReasoner<String> {
 
 
     private static Logger logger = LoggerFactory.getLogger(ASPSolver.class.getName());
 
     private final String clingoPath;
-    private BlockingQueue<String> lines = new LinkedBlockingQueue<String>();
+    private Boolean result = null;
 
+    private BlockingQueue<String> lines = new LinkedBlockingQueue<String>();
     private Set<String> program;
+
     private ASPListener listener;
     private List<String> options = new LinkedList<String>();
-    private Boolean result = null;
+
 
     public void setProgram(Set<String> program) {
         resetReasoningCache();
@@ -78,6 +81,12 @@ public class ASPSolver implements IReasoner<String> {
 
 
     @Override
+    protected void updateReasonerModel(Set<String> axiomsToAdd, Set<String> axiomsToRemove) {
+        this.program.addAll(axiomsToAdd);
+        this.program.removeAll(axiomsToRemove);
+    }
+
+    @Override
     public boolean isEntailed(Set<String> test) {
         return false;
     }
@@ -87,25 +96,12 @@ public class ASPSolver implements IReasoner<String> {
         return new ASPSolver(clingoPath);
     }
 
-    public List<Set<String>> computeDiagnoses(KnowledgeBase<String> kb, int diagnosesNumber) throws IOException, InterruptedException {
-        Set<String> program = new HashSet<String>(kb.getFaultyFormulas());
-        program.addAll(kb.getBackgroundFormulas());
-        setProgram(program);
+    public List<Set<String>> computeDiagnoses(int diagnosesNumber) throws IOException, InterruptedException {
         final IntASPDiagnosisListener lst = new IntASPDiagnosisListener();
         setListener(lst);
         setOptions("--opt-mode=optN", "--quiet=1,1", "--number=" + diagnosesNumber);
         executeSolver();
         return lst.getDiagnoses();
-    }
-
-    public Set<String> computeEntailments(KnowledgeBase<String> kb, Set<String> errorAtoms, Set<String> diagnosis)
-            throws IOException, InterruptedException {
-
-        Set<String> program = new HashSet<String>(kb.getFaultyFormulas());
-        program.addAll(kb.getBackgroundFormulas());
-        program.addAll(generateDiagnosisProgram(errorAtoms, diagnosis));
-        setProgram(program);
-        return getEntailments();
     }
 
     @Override
@@ -119,16 +115,6 @@ public class ASPSolver implements IReasoner<String> {
             throw new IllegalStateException("Solver returned many intersections of all interpretations");
         if (interpretations.isEmpty()) return Collections.emptySet();
         return interpretations.get(0);
-    }
-
-    private Set<String> generateDiagnosisProgram(Set<String> errorAtoms, Set<String> diagnosis) {
-        Set<String> ext = new HashSet<String>(errorAtoms.size());
-        Set<String> remAtoms = new HashSet<String>(errorAtoms);
-        remAtoms.removeAll(diagnosis);
-        for (String atom : remAtoms) {
-            ext.add(":- " + atom + ".\n");
-        }
-        return ext;
     }
 
 
@@ -177,7 +163,7 @@ public class ASPSolver implements IReasoner<String> {
 
             // provide the program to the solver input if there is no program (file) to process
             Writer pw = new BufferedWriter(new OutputStreamWriter(pos));
-            for (String rule : this.program) {
+            for (String rule : getReasonerFormulas()) {
                 pw.write(rule);
             }
             pw.close();
