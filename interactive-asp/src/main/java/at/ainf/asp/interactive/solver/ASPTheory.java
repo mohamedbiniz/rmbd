@@ -12,6 +12,11 @@ import java.util.Set;
  */
 public class ASPTheory extends BaseSearchableObject<String> {
 
+    public ASPTheory(ASPSolver solver, ASPKnowledgeBase kb){
+        setKnowledgeBase(kb);
+        setReasoner(solver);
+    }
+
 	@Override
 	public ASPSolver getReasoner() {
 		return (ASPSolver) super.getReasoner();
@@ -39,30 +44,83 @@ public class ASPTheory extends BaseSearchableObject<String> {
         return false;
     }
 
+    @Override
     public Set<String> getEntailments(Set<String> hittingSet) throws SolverException {
-        throw new RuntimeException("This theory does not support computation of entailments!");
+        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hittingSet);
+        getReasoner().clearFormulasCache();
+        getReasoner().addFormulasToCache(program);
+        return getReasoner().getEntailments();
     }
 
-    public boolean isEntailed(Set<String> n) {
-        throw new RuntimeException("This theory does not support verification of entailments!");
+    @Override
+    public boolean isEntailed(Set<String> formulas) {
+        final Set<String> program = getASPKnowledgeBase().generateDebuggingProgram();
+        getReasoner().clearFormulasCache();
+        getReasoner().addFormulasToCache(program);
+        return getReasoner().getEntailments().containsAll(formulas);
     }
 
+    @Override
     public void reset() {
-        throw new RuntimeException("Unimplemented method");
     }
 
+    @Override
     public boolean diagnosisEntails(FormulaSet<String> hs, Set<String> ent) {
-        throw new RuntimeException("Unimplemented method");
+        try {
+            return getEntailments(hs).containsAll(ent);
+        } catch (SolverException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean diagnosisCandidateConsistent(Set<String> hs) {
+        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hs);
+        getReasoner().clearFormulasCache();
+        getReasoner().addFormulasToCache(program);
+        try {
+            return verifyConsistency();
+        } catch (SolverException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean diagnosisConsistent(FormulaSet<String> hs, Set<String> ent) {
-        throw new RuntimeException("Unimplemented method");
+        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hs);
+        getReasoner().clearFormulasCache();
+        getReasoner().addFormulasToCache(program);
+        getReasoner().addFormulasToCache(ent);
+        try {
+            return verifyConsistency();
+        } catch (SolverException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void doBayesUpdate(Set<? extends FormulaSet<String>> hittingSets) {
-        throw new RuntimeException("Unimplemented method");
+    @Override
+    protected boolean diagnosisConsistent(FormulaSet<String> hs, Set<String> testcase, Set<String> positive) {
+        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hs);
+        getReasoner().clearFormulasCache();
+        getReasoner().addFormulasToCache(program);
+        getReasoner().addFormulasToCache(testcase);
+        getReasoner().addFormulasToCache(positive);
+        try {
+            return verifyConsistency();
+        } catch (SolverException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-	
-	
+    @Override
+    protected boolean diagnosisEntails(FormulaSet<String> hs, Set<String> testcase, Set<String> positive) {
+        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hs);
+        getReasoner().clearFormulasCache();
+        getReasoner().addFormulasToCache(program);
+        getReasoner().addFormulasToCache(positive);
+        return getReasoner().getEntailments().containsAll(testcase);
+    }
+
+
+    public ASPKnowledgeBase getASPKnowledgeBase() {
+        return (ASPKnowledgeBase) getKnowledgeBase();
+    }
 }

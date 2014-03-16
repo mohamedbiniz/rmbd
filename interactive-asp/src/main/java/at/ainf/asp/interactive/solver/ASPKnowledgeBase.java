@@ -13,12 +13,6 @@ public class ASPKnowledgeBase extends KnowledgeBase<String> {
 
     private Set<String> errorAtoms = new HashSet<String>();
 
-    public void setDiagnosis(Set<String> diagnosis) {
-        this.diagnosis = diagnosis;
-    }
-
-    private Set<String> diagnosis = null;
-
     public Set<String> getErrorAtoms() {
         return Collections.unmodifiableSet(errorAtoms);
     }
@@ -27,19 +21,23 @@ public class ASPKnowledgeBase extends KnowledgeBase<String> {
         this.errorAtoms = errorAtoms;
     }
 
-    public Set<String> generateProgram() {
+    public Set<String> generateDiagnosisProgram(Set<String> diagnosis) {
+        Set<String> ext = generateDebuggingProgram();
+
+        Set<String> remAtoms = new HashSet<String>(errorAtoms);
+        remAtoms.removeAll(diagnosis);
+        for (String atom : remAtoms) {
+            ext.add(":- " + atom + ".\n");
+        }
+
+        return ext;
+    }
+
+    public Set<String> generateDebuggingProgram() {
         Set<String> bg = getBackgroundFormulas();
         Set<String> ext = new HashSet<String>(this.errorAtoms.size() + this.knowledgeBase.size() + bg.size());
         ext.addAll(this.knowledgeBase);
         ext.addAll(bg);
-        if (this.diagnosis != null) {
-            Set<String> remAtoms = new HashSet<String>(errorAtoms);
-            remAtoms.removeAll(diagnosis);
-            for (String atom : remAtoms) {
-                ext.add(":- " + atom + ".\n");
-            }
-            this.diagnosis = null;
-        }
         return ext;
     }
 }

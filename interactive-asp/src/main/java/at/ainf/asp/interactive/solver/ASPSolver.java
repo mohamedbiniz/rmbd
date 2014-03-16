@@ -96,7 +96,7 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
         return new ASPSolver(clingoPath);
     }
 
-    public List<Set<String>> computeDiagnoses(int diagnosesNumber) throws IOException, InterruptedException {
+    public List<Set<String>> computeDiagnoses(int diagnosesNumber) {
         final IntASPDiagnosisListener lst = new IntASPDiagnosisListener();
         setListener(lst);
         setOptions("--opt-mode=optN", "--quiet=1,1", "--number=" + diagnosesNumber);
