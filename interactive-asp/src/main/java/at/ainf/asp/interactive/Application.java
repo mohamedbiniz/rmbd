@@ -6,14 +6,20 @@ import at.ainf.asp.interactive.input.IntASPInput;
 import at.ainf.asp.interactive.solver.ASPKnowledgeBase;
 import at.ainf.asp.interactive.solver.ASPSolver;
 import at.ainf.asp.interactive.solver.ASPTheory;
+import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.Partitioning;
-import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
+import at.ainf.diagnosis.partitioning.QueryMinimizer;
+import at.ainf.diagnosis.partitioning.scoring.*;
+import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.FormulaSetImpl;
+import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.CostsEstimator;
+import at.ainf.diagnosis.tree.EqualCostsEstimator;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
+import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -24,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,9 +39,20 @@ import java.util.*;
 /**
  * Main class for interactive debugger prototype
  */
-public class Application {
+public class Application{
 
     private static Logger logger = LoggerFactory.getLogger(Application.class.getName());
+    private final ASPTheory theory;
+    private final double thresholdQuery;
+    private final CostsEstimator<String> costsEstimator;
+    private Scoring<String> scoring;
+
+
+    public Application(ASPTheory theory) {
+        this.theory = theory;
+        this.costsEstimator = new EqualCostsEstimator<String>(Collections.<String>emptySet(), BigDecimal.valueOf(0.01d));
+        this.thresholdQuery = 0.95;
+    }
 
     public static void main(String[] args) throws IOException, InterruptedException, SolverException {
 
@@ -56,18 +74,81 @@ public class Application {
 
         ASPKnowledgeBase kb = listener.getKnowledgeBase();
         String claspPath = getOptionValue(args, "--clasp", "Clasp path is not specified! Use --clasp=<path> option.");
+        String scoring = getOptionValue(args, "--scoring", "minscore", "Invalid scoring function. 1 - ");
         ASPSolver solver = new ASPSolver(claspPath);
         ASPTheory theory = new ASPTheory(solver, kb);
 
-        Set<FormulaSet<String>> diagnoses = new HashSet<FormulaSet<String>>();
-        diagnoses = getDiagnoses(theory,  new SimpleCostsEstimator<String>(), diagnoses, 9);
+        Application app = new Application(theory);
+        app.setScoring(scoring);
+        app.start();
 
-        Partitioning<String> queryGenerator = new CKK<String>(theory, QSSFactory.<String>createMinScoreQSS());
 
     }
 
-    private static Set<FormulaSet<String>> getDiagnoses(ASPTheory theory, CostsEstimator<String> costsEstimator,
-                                                        Set<FormulaSet<String>> diagnoses, int number)
+    private void start() throws SolverException {
+        Set<FormulaSet<String>> diagnoses = new TreeSet<FormulaSet<String>>();
+
+        boolean terminate = false;
+        while(!terminate){
+            diagnoses = getDiagnoses(diagnoses, 9);
+            Partition<String> query = getQuery(diagnoses);
+            // return the most probable diagnosis in case there is no query
+            if (query == null) {
+                System.out.println(diagnoses.iterator().next());
+                break;
+            }
+
+            // ask query and update
+            // update test cases
+            // check termination criteria
+        }
+
+    }
+
+    public Scoring<String> setScoring(String func) {
+        if ("split".equals(func)) this.scoring = new SplitInHalfQSS<String>();
+        if ("dynamic".equals(func)) this.scoring = new DynamicRiskQSS<String>(0,0.4,0.5);
+        if ("minscore".equals(func)) this.scoring = new MinScoreQSS<String>();
+        throw new IllegalArgumentException("Scoring function " + func + " is unknown!");
+    }
+
+    public Scoring<String> getScoring() {
+        return scoring;
+    }
+
+    public double getThresholdQuery() {
+        return thresholdQuery;
+    }
+
+    public Partition<String> getQuery(Set<FormulaSet<String>> diagnoses) throws SolverException {
+        CKK<String> ckk = new CKK<String>(theory, getScoring());
+        ckk.setThreshold(getThresholdQuery());
+
+        Partition<String> query = null;
+        try {
+            query = ckk.generatePartition(diagnoses);
+        } catch (InconsistentTheoryException e) {
+            e.printStackTrace();
+        }
+
+        if (query == null || query.partition == null) return null;
+        QueryMinimizer<String> mnz = new QueryMinimizer<String>(query, theory);
+        QuickXplain<String> q = new QuickXplain<String>();
+        try {
+            query.partition = q.search(mnz, query.partition).iterator().next();
+        } catch (NoConflictException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (SolverException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InconsistentTheoryException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return query;
+    }
+
+
+    private Set<FormulaSet<String>> getDiagnoses(Set<FormulaSet<String>> diagnoses, int number)
             throws SolverException {
 
         ASPSolver solver = theory.getReasoner();
@@ -82,17 +163,7 @@ public class Application {
             solver.addFormulasToCache(testCase);
         }
 
-        final List<Set<String>> diagnosisCandidates = solver.computeDiagnoses(number);
-
-        // verify if the returned candidates are consistent with negative test cases
-        for (Iterator<Set<String>> it = diagnosisCandidates.iterator(); it.hasNext();) {
-            final Set<String> diag = it.next();
-            if (!theory.diagnosisCandidateConsistent(diag)){
-
-                // TODO block diagnosis
-                it.remove();
-            }
-        }
+        final List<Set<String>> diagnosisCandidates = computeDiagnoses(theory, number);
 
         for (Set<String> diag : diagnosisCandidates) {
 
@@ -102,6 +173,38 @@ public class Application {
             diagnoses.add(diagnosis);
         }
         return diagnoses;
+    }
+
+    private List<Set<String>> computeDiagnoses(ASPTheory theory, int number) {
+        ASPSolver solver = theory.getReasoner();
+        ASPKnowledgeBase kb = theory.getASPKnowledgeBase();
+        final List<Set<String>> diagnosisCandidates = new LinkedList<Set<String>>();
+
+        while (diagnosisCandidates.size() < number) {
+            diagnosisCandidates.addAll(solver.computeDiagnoses(number-diagnosisCandidates.size()));
+
+            // verify if the returned candidates are consistent with negative test cases
+            for (Iterator<Set<String>> it = diagnosisCandidates.iterator(); it.hasNext(); ) {
+                final Set<String> candidate = it.next();
+                if (!theory.diagnosisCandidateConsistent(candidate)) {
+                    // block candidates that are not diagnoses due to negative test cases
+                    kb.addFormulas(Collections.singleton(generateConstraint(candidate)));
+                    it.remove();
+                }
+            }
+        }
+        return diagnosisCandidates;
+    }
+
+    private String generateConstraint(Set<String> atoms) {
+        StringBuilder constraint = new StringBuilder(":- ");
+        for (Iterator<String> iterator = atoms.iterator(); iterator.hasNext(); ) {
+            String atom = iterator.next();
+            constraint.append(atom);
+            if (iterator.hasNext()) constraint.append(",");
+            else constraint.append(".");
+        }
+        return constraint.toString();
     }
 
     private static List<Path> getFiles(String[] args) {
@@ -120,6 +223,14 @@ public class Application {
         return res;
     }
 
+    private static String getOptionValue(String[] args, String option, String defaultValue, String errorMessage) {
+        for (String arg : args) {
+            if (arg.startsWith(option))
+                return arg.substring(option.length() + 1);
+        }
+        return defaultValue;
+    }
+
     private static String getOptionValue(String[] args, String option, String errorMessage) {
         for (String arg : args) {
             if (arg.startsWith(option))
@@ -127,11 +238,6 @@ public class Application {
         }
         logger.error(errorMessage);
         System.exit(1);
-        return null;
-    }
-
-    private static String getOptionValue(String arg, String option) {
-
         return null;
     }
 
