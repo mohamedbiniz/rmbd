@@ -9,16 +9,17 @@ import at.ainf.asp.interactive.solver.ASPTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
-import at.ainf.diagnosis.partitioning.Partitioning;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
-import at.ainf.diagnosis.partitioning.scoring.*;
+import at.ainf.diagnosis.partitioning.scoring.DynamicRiskQSS;
+import at.ainf.diagnosis.partitioning.scoring.MinScoreQSS;
+import at.ainf.diagnosis.partitioning.scoring.Scoring;
+import at.ainf.diagnosis.partitioning.scoring.SplitInHalfQSS;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.EqualCostsEstimator;
-import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -27,9 +28,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -39,7 +38,7 @@ import java.util.*;
 /**
  * Main class for interactive debugger prototype
  */
-public class Application{
+public class Application {
 
     private static Logger logger = LoggerFactory.getLogger(Application.class.getName());
     private final ASPTheory theory;
@@ -89,7 +88,8 @@ public class Application{
         Set<FormulaSet<String>> diagnoses = new TreeSet<FormulaSet<String>>();
 
         boolean terminate = false;
-        while(!terminate){
+        boolean firstRun = true;
+        while (!terminate) {
             diagnoses = getDiagnoses(diagnoses, 9);
             Partition<String> query = getQuery(diagnoses);
             // return the most probable diagnosis in case there is no query
@@ -99,15 +99,95 @@ public class Application{
             }
 
             // ask query and update
+            if (firstRun) {
+                System.out.println("Classification for queries: 1 - cautiously true, " +
+                        "2 - cautiously false, 3 - bravely true, 4 - bravely false");
+                firstRun = false;
+            }
+            final Set<String> queryAtoms = extractAtoms(query);
+            int classification = askQuery(queryAtoms);
             // update test cases
+            updateTestCases(queryAtoms, classification);
             // check termination criteria
+
         }
 
     }
 
+    private void updateTestCases(Set<String> queryAtoms, int classification) {
+        Set<String> testCase = new HashSet<String>();
+        Collection<Set<String>> tests = null;
+        for (String id : queryAtoms) {
+            switch (classification) {
+                // cautiously true
+                case 1:
+                    testCase.add("int(" + id + ")");
+                    if (tests == null) tests = this.theory.getKnowledgeBase().getPositiveTests();
+                    break;
+                // cautiously false
+                case 2:
+                    testCase.add("-int(" + id + ")");
+                    if (tests == null) tests = this.theory.getKnowledgeBase().getNegativeTests();
+                    break;
+                // bravely true
+                case 3:
+                    testCase.add("int(" + id + ")");
+                    if (tests == null) tests = this.theory.getKnowledgeBase().getNegativeTests();
+                    break;
+                // bravely false
+                case 4:
+                    testCase.add("-int(" + id + ")");
+                    if (tests == null) tests = this.theory.getKnowledgeBase().getPositiveTests();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Classification is unknown!");
+            }
+        }
+        if (tests == null) throw new IllegalStateException("A test case cannot be added to a knowledge base!");
+        tests.add(testCase);
+    }
+
+    private Set<String> extractAtoms(Partition<String> query) {
+        Set<String> res = new HashSet<String>(query.partition.size());
+        for (String atom : query.partition) {
+            res.add(atom.substring(atom.indexOf("(")+1, atom.indexOf(")")));
+        }
+        return res;
+    }
+
+    private Integer askQuery(Set<String> query) {
+        BufferedReader br =
+                new BufferedReader(new InputStreamReader(System.in));
+
+        while (true) {
+            System.out.print(generateQuery(query) + " \n > ");
+            try {
+                String input = br.readLine();
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Incorrect classification value!");
+            } catch (IOException e) {
+                logger.error("Cannot read input stream!", e);
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private String generateQuery(Set<String> query) {
+        StringBuilder res = new StringBuilder("Provide classification for the following set of atoms: {");
+        for (Iterator<String> iterator = query.iterator(); iterator.hasNext(); ) {
+            String atom = iterator.next();
+            res.append(atom);
+            if (iterator.hasNext()) res.append(", ");
+        }
+        res.append("}");
+        return res.toString();
+    }
+
+
     public Scoring<String> setScoring(String func) {
         if ("split".equals(func)) this.scoring = new SplitInHalfQSS<String>();
-        if ("dynamic".equals(func)) this.scoring = new DynamicRiskQSS<String>(0,0.4,0.5);
+        if ("dynamic".equals(func)) this.scoring = new DynamicRiskQSS<String>(0, 0.4, 0.5);
         if ("minscore".equals(func)) this.scoring = new MinScoreQSS<String>();
         throw new IllegalArgumentException("Scoring function " + func + " is unknown!");
     }
@@ -166,7 +246,6 @@ public class Application{
         final List<Set<String>> diagnosisCandidates = computeDiagnoses(theory, number);
 
         for (Set<String> diag : diagnosisCandidates) {
-
             final Set<String> entailments = theory.getEntailments(diag);
             FormulaSet<String> diagnosis =
                     new FormulaSetImpl<String>(costsEstimator.getFormulaSetCosts(diag), diag, entailments);
@@ -181,7 +260,7 @@ public class Application{
         final List<Set<String>> diagnosisCandidates = new LinkedList<Set<String>>();
 
         while (diagnosisCandidates.size() < number) {
-            diagnosisCandidates.addAll(solver.computeDiagnoses(number-diagnosisCandidates.size()));
+            diagnosisCandidates.addAll(solver.computeDiagnoses(number - diagnosisCandidates.size()));
 
             // verify if the returned candidates are consistent with negative test cases
             for (Iterator<Set<String>> it = diagnosisCandidates.iterator(); it.hasNext(); ) {
