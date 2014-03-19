@@ -29,22 +29,6 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
 
     private ASPKnowledgeBase kb = new ASPKnowledgeBase();
 
-    public IntASPInput() {
-        // add projections and minimization statements to a program
-        try {
-            URI path = ClassLoader.getSystemResource("extension.lp").toURI();
-            getKnowledgeBase().addFormulas(
-                    Collections.singleton(Charset.defaultCharset().decode(
-                            ByteBuffer.wrap(Files.readAllBytes(Paths.get(path)))).toString()));
-        } catch (IOException e) {
-            logger.error("Resources are not found!", e);
-            throw new RuntimeException("Resources are not found!");
-        } catch (URISyntaxException e) {
-            logger.error("Resources are not found!", e);
-            throw new RuntimeException("Resources are not found!");
-        }
-    }
-
     @Override
     public void enterParse(IntASPInputParser.ParseContext ctx) {
         this.kb = new ASPKnowledgeBase();

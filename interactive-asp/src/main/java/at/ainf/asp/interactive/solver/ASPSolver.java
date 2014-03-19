@@ -36,16 +36,10 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
     private Boolean result = null;
 
     private BlockingQueue<String> lines = new LinkedBlockingQueue<String>();
-    private Set<String> program;
+    private Set<String> program = new HashSet<String>();
 
     private ASPListener listener;
     private List<String> options = new LinkedList<String>();
-
-
-    public void setProgram(Set<String> program) {
-        resetReasoningCache();
-        this.program = program;
-    }
 
     private void resetReasoningCache() {
         this.result = null;
@@ -70,7 +64,7 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
     public boolean isConsistent() {
         if (this.result != null)
             return this.result;
-
+        setOptions("--opt-mode=ignore", "--quiet=1,1", "--number=" + 1);
         executeSolver();
         this.result = this.listener.hasResult();
         return this.result;
@@ -84,9 +78,10 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
 
     @Override
     protected void updateReasonerModel(Set<String> axiomsToAdd, Set<String> axiomsToRemove) {
+        resetReasoningCache();
         this.program.addAll(axiomsToAdd);
         this.program.removeAll(axiomsToRemove);
-    }
+}
 
     @Override
     public boolean isEntailed(Set<String> test) {
@@ -113,6 +108,37 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
             diagnoses.add(diagnosis);
         }
         return diagnoses;
+    }
+
+    public String generateConstraint(Set<String> atoms) {
+        StringBuilder constraint = new StringBuilder(":- ");
+        for (Iterator<String> iterator = atoms.iterator(); iterator.hasNext(); ) {
+            String atom = iterator.next();
+            constraint.append(atom);
+            if (iterator.hasNext()) constraint.append(",");
+            else constraint.append(".");
+        }
+        return constraint.toString();
+    }
+
+    public Set<String> generateDiagnosisProgram(Set<String> diagnosis, ASPKnowledgeBase kb) {
+        Set<String> ext = generateDebuggingProgram(kb);
+
+        Set<String> remAtoms = new HashSet<String>(kb.getErrorAtoms());
+        remAtoms.removeAll(diagnosis);
+        for (String atom : remAtoms) {
+            ext.add(":- " + atom + ".\n");
+        }
+        ext.remove(generateConstraint(diagnosis));
+        return ext;
+    }
+
+    public Set<String> generateDebuggingProgram(ASPKnowledgeBase kb) {
+        Set<String> bg = kb.getBackgroundFormulas();
+        Set<String> ext = new HashSet<String>(kb.getErrorAtoms().size() + kb.getKnowledgeBase().size() + bg.size());
+        ext.addAll(kb.getKnowledgeBase());
+        ext.addAll(bg);
+        return ext;
     }
 
     @Override
@@ -172,9 +198,12 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
             if (logger.isDebugEnabled()) logger.debug("Running clasp " + cl.toString());
             exec.execute(cl, solver);
 
+            // synchronize solver caches
+            sync();
+
             // provide the program to the solver input if there is no program (file) to process
             Writer pw = new BufferedWriter(new OutputStreamWriter(pos));
-            for (String rule : getReasonerFormulas()) {
+            for (String rule : this.program) {
                 pw.write(rule);
             }
             pw.close();

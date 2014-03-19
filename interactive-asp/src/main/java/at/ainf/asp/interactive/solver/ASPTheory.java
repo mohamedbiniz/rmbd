@@ -49,7 +49,7 @@ public class ASPTheory extends BaseSearchableObject<String> {
 
     @Override
     public Set<String> getEntailments(Set<String> hittingSet) throws SolverException {
-        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hittingSet);
+        final Set<String> program = getReasoner().generateDiagnosisProgram(hittingSet, getASPKnowledgeBase());
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(program);
         return getReasoner().getEntailments();
@@ -57,7 +57,7 @@ public class ASPTheory extends BaseSearchableObject<String> {
 
     @Override
     public boolean isEntailed(Set<String> formulas) {
-        final Set<String> program = getASPKnowledgeBase().generateDebuggingProgram();
+        final Set<String> program = getReasoner().generateDebuggingProgram(getASPKnowledgeBase());
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(program);
         return getReasoner().getEntailments().containsAll(formulas);
@@ -76,8 +76,8 @@ public class ASPTheory extends BaseSearchableObject<String> {
         }
     }
 
-    public boolean diagnosisCandidateConsistent(Set<String> hs) {
-        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hs);
+    public boolean verifyTestCasesForDiagnosisCandidate(Set<String> hs) {
+        final Set<String> program = getReasoner().generateDiagnosisProgram(hs, getASPKnowledgeBase());
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(program);
         try {
@@ -89,7 +89,7 @@ public class ASPTheory extends BaseSearchableObject<String> {
 
     @Override
     public boolean diagnosisConsistent(FormulaSet<String> hs, Set<String> ent) {
-        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hs);
+        final Set<String> program = getReasoner().generateDiagnosisProgram(hs, getASPKnowledgeBase());
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(program);
         getReasoner().addFormulasToCache(ent);
@@ -146,7 +146,7 @@ public class ASPTheory extends BaseSearchableObject<String> {
     }
 
     protected boolean diagnosisConsistent(FormulaSet<String> hs, Set<String> testcase, Set<String> positive) {
-        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hs);
+        final Set<String> program = getReasoner().generateDiagnosisProgram(hs, getASPKnowledgeBase());
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(program);
         getReasoner().addFormulasToCache(testcase);
@@ -160,7 +160,7 @@ public class ASPTheory extends BaseSearchableObject<String> {
 
 
     protected boolean diagnosisEntails(FormulaSet<String> hs, Set<String> testcase, Set<String> positive) {
-        final Set<String> program = getASPKnowledgeBase().generateDiagnosisProgram(hs);
+        final Set<String> program = getReasoner().generateDiagnosisProgram(hs, getASPKnowledgeBase());
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(program);
         getReasoner().addFormulasToCache(positive);
