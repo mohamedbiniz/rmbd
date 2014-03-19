@@ -6,15 +6,14 @@ import at.ainf.asp.interactive.input.IntASPInput;
 import at.ainf.asp.interactive.solver.ASPKnowledgeBase;
 import at.ainf.asp.interactive.solver.ASPSolver;
 import at.ainf.asp.interactive.solver.ASPTheory;
-import at.ainf.diagnosis.model.IKnowledgeBase;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
 import at.ainf.diagnosis.partitioning.QueryMinimizer;
-import at.ainf.diagnosis.partitioning.scoring.*;
+import at.ainf.diagnosis.partitioning.scoring.QSS;
+import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
-import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.EqualCostsEstimator;
@@ -30,6 +29,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -74,6 +78,8 @@ public class Application {
         logger.info("Parsing OK");
 
         ASPKnowledgeBase kb = listener.getKnowledgeBase();
+        addDebuggingExtension(kb);
+
         String claspPath = getOptionValue(args, "--clasp", "Clasp path is not specified! Use --clasp=<path> option.");
         ASPSolver solver = new ASPSolver(claspPath);
         ASPTheory theory = new ASPTheory(solver, kb);
@@ -91,6 +97,23 @@ public class Application {
         app.start();
 
 
+    }
+
+    private static void addDebuggingExtension(ASPKnowledgeBase kb) {
+        // add projections and minimization statements to a program
+        try {
+            URI path = ClassLoader.getSystemResource("extension.lp").toURI();
+            kb.addBackgroundFormulas(
+                    Collections.singleton(Charset.defaultCharset().decode(
+                            ByteBuffer.wrap(Files.readAllBytes(Paths.get(path)))).toString())
+            );
+        } catch (IOException e) {
+            logger.error("Resources are not found!", e);
+            throw new RuntimeException("Resources are not found!");
+        } catch (URISyntaxException e) {
+            logger.error("Resources are not found!", e);
+            throw new RuntimeException("Resources are not found!");
+        }
     }
 
     private void start() throws SolverException {
@@ -227,7 +250,7 @@ public class Application {
     public void setScoring(String func) {
         if ("split".equals(func)) this.qss = QSSFactory.createSplitInHalfQSS();
         if ("dynamic".equals(func)) this.qss = QSSFactory.createDynamicRiskQSS(0, 0.4, 0.5);
-        if (!"minscore".equals(func)) logger.error("Unknown scoring function " + func + ", using miscore!");
+        if (!"minscore".equals(func)) logger.error("Unknown scoring function " + func + ", using \"miscore\"!");
         this.qss = QSSFactory.createMinScoreQSS();
     }
 
@@ -241,10 +264,10 @@ public class Application {
             }
             this.costsEstimator = new SimpleCostsEstimator<String>(preferredAtoms);
         }
-        if ("equal".equals(estimator))
+        if (!"equal".equals(estimator))
+            logger.error("Unknown scoring function \"" + estimator + "\", using \"equal\"!");
 
-            this.costsEstimator = new EqualCostsEstimator<String>(Collections.<String>emptySet(), BigDecimal.valueOf(0.01d));
-        throw new IllegalArgumentException("Scoring function " + estimator + " is unknown!");
+        this.costsEstimator = new EqualCostsEstimator<String>(Collections.<String>emptySet(), BigDecimal.valueOf(0.01d));
     }
 
     public QSS<String> getScoring() {
@@ -314,31 +337,26 @@ public class Application {
         final Set<FormulaSet<String>> diagnosisCandidates = new LinkedHashSet<FormulaSet<String>>();
 
         while (diagnosisCandidates.size() < number) {
-            diagnosisCandidates.addAll(solver.computeDiagnoses(number - diagnosisCandidates.size(), this.costsEstimator));
+            final Set<FormulaSet<String>> formulaSets = solver.computeDiagnoses(
+                    number - diagnosisCandidates.size(), this.costsEstimator);
+            // exit loop if no new diagnoses are found
+            if (formulaSets.isEmpty())
+                break;
 
             // verify if the returned candidates are consistent with negative test cases
-            for (Iterator<FormulaSet<String>> it = diagnosisCandidates.iterator(); it.hasNext(); ) {
+            for (Iterator<FormulaSet<String>> it = formulaSets.iterator(); it.hasNext(); ) {
                 final Set<String> candidate = it.next();
-                if (!theory.diagnosisCandidateConsistent(candidate)) {
-                    // block candidates that are not diagnoses due to negative test cases
-                    kb.addFormulas(Collections.singleton(generateConstraint(candidate)));
+                // block found candidate by a constraint
+                kb.addBackgroundFormulas(Collections.singleton(solver.generateConstraint(candidate)));
+                if (!theory.verifyTestCasesForDiagnosisCandidate(candidate)) {
                     it.remove();
                 }
             }
+
+            diagnosisCandidates.addAll(formulaSets);
         }
         theory.doBayesUpdate(diagnosisCandidates);
         return diagnosisCandidates;
-    }
-
-    private String generateConstraint(Set<String> atoms) {
-        StringBuilder constraint = new StringBuilder(":- ");
-        for (Iterator<String> iterator = atoms.iterator(); iterator.hasNext(); ) {
-            String atom = iterator.next();
-            constraint.append(atom);
-            if (iterator.hasNext()) constraint.append(",");
-            else constraint.append(".");
-        }
-        return constraint.toString();
     }
 
     private static List<Path> getFiles(String[] args) {
@@ -348,8 +366,9 @@ public class Application {
             if (!arg.startsWith("--")) {
                 try {
                     final Path path = Paths.get(arg);
+                    res.add(path);
                 } catch (InvalidPathException e) {
-                    logger.error("Option value " + arg + " is not a path!");
+                    logger.error("The value " + arg + " is not a path!");
                     System.exit(1);
                 }
             }

@@ -3,6 +3,7 @@ package at.ainf.diagnosis.model;
 import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.storage.FormulaSet;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -189,9 +190,43 @@ public class BaseSearchableObject<T> implements Searchable<T> {
         throw new RuntimeException("Unimplemented method");
     }
 
+
+
     public void doBayesUpdate(Set<? extends FormulaSet<T>> hittingSets) {
-        throw new RuntimeException("Unimplemented method");
+        for (FormulaSet<T> hs : hittingSets) {
+            Set<T> positive = new LinkedHashSet<T>();
+
+            for (int i = 0; i < getKnowledgeBase().getTestsSize(); i++) {
+                Set<T> testcase = getKnowledgeBase().getTest(i);
+
+                if (i - 1 > -1) {
+                    Set<T> olderTC = getKnowledgeBase().getTest(i - 1);
+                    if (getKnowledgeBase().getTypeOfTest(olderTC))
+                        positive.addAll(olderTC);
+                }
+                BigDecimal value = hs.getMeasure().divide(BigDecimal.valueOf(2));
+
+                if (getKnowledgeBase().getTypeOfTest(testcase)) {
+                    if (!diagnosisEntails(hs, testcase, positive)) {
+                        hs.setMeasure(value);
+                    }
+                } else {
+                    if (diagnosisConsistent(hs, testcase, positive)) {
+                        hs.setMeasure(value);
+                    }
+                }
+            }
+        }
     }
+
+    protected boolean diagnosisConsistent(FormulaSet<T> hs, Set<T> testcase, Set<T> positive) {
+        return false;
+    }
+
+    protected boolean diagnosisEntails(FormulaSet<T> hs, Set<T> testcase, Set<T> positive) {
+        return false;
+    }
+
 
     @Override
     public boolean verifyConsistency() throws SolverException {

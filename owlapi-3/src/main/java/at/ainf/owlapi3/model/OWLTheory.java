@@ -566,33 +566,7 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return ax;
     }
 
-    public boolean diagnosisEntails(FormulaSet<OWLLogicalAxiom> hs, Set<OWLLogicalAxiom> ent, Set<OWLLogicalAxiom> axioms) {
-        // cleanup stack
-        Collection<OWLLogicalAxiom> stack = getReasoner().getFormulasCache();
-        getReasoner().clearFormulasCache();
-        // cleanup ontology
-        //Set<OWLLogicalAxiom> logicalAxioms = getOntology().getLogicalAxioms();
-        //removeAxioms(logicalAxioms, getOntology());
 
-        // add entailed test cases to simulate extension EX
-        for (Set<OWLLogicalAxiom> test : getKnowledgeBase().getEntailedTests()) {
-            getReasoner().addFormulasToCache(test);
-        }
-        // add axioms to the ontology
-        getReasoner().addFormulasToCache(setminus(getOriginalOntology().getLogicalAxioms(), hs));
-        getReasoner().addFormulasToCache(getKnowledgeBase().getBackgroundFormulas());
-        getReasoner().addFormulasToCache(axioms);
-        //removeAxioms(hs, getOntology());
-        //addAxioms(, getOntology());
-
-        boolean res = isEntailed(new LinkedHashSet<OWLLogicalAxiom>(ent));
-
-        // restore the state of the theory prior to the test
-        getReasoner().clearFormulasCache();
-        //setFormularCach(getOntology(), logicalAxioms);
-        getReasoner().addFormulasToCache(stack);
-        return res;
-    }
 
     protected Set<OWLLogicalAxiom> setminus(Set<OWLLogicalAxiom> logicalAxioms, Set<OWLLogicalAxiom> hs) {
         Set<OWLLogicalAxiom> res = new LinkedHashSet<OWLLogicalAxiom>(logicalAxioms);

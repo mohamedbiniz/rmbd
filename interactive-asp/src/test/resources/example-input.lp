@@ -68,4 +68,4 @@ noAnswerSet :- unsupported(A), atom(A).
 
 % background knowledge: list of ids separated by a comma r1, r2, r3
 [BK]
-r5, r1
+r5
