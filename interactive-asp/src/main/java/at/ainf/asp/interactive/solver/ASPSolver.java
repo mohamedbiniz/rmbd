@@ -7,6 +7,9 @@ import at.ainf.asp.interactive.input.IntASPDiagnosisListener;
 import at.ainf.asp.interactive.input.IntASPInterpretationListener;
 import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.IReasoner;
+import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
+import at.ainf.diagnosis.tree.CostsEstimator;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -16,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -96,12 +98,21 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
         return new ASPSolver(clingoPath);
     }
 
-    public List<Set<String>> computeDiagnoses(int diagnosesNumber) {
+    public Set<FormulaSet<String>> computeDiagnoses(int diagnosesNumber, CostsEstimator<String> costsEstimator) {
         final IntASPDiagnosisListener lst = new IntASPDiagnosisListener();
         setListener(lst);
         setOptions("--opt-mode=optN", "--quiet=1,1", "--number=" + diagnosesNumber);
         executeSolver();
-        return lst.getDiagnoses();
+
+        List<Set<String>> diagnosisCandidates = lst.getDiagnosisCandidates();
+        Set<FormulaSet<String>> diagnoses = new HashSet<FormulaSet<String>>(diagnosisCandidates.size());
+
+        for (Set<String> candidate : diagnosisCandidates) {
+            FormulaSet<String> diagnosis =
+                    new FormulaSetImpl<String>(costsEstimator.getFormulaSetCosts(candidate), candidate, Collections.<String>emptySet());
+            diagnoses.add(diagnosis);
+        }
+        return diagnoses;
     }
 
     @Override
