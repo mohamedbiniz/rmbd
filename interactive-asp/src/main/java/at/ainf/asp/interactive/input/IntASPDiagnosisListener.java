@@ -7,35 +7,36 @@ import at.ainf.asp.antlr.IntASPOutputParser;
 import java.util.*;
 
 /**
- * Listener that extracts diagnoses from the answer sets
+ * Listener that extracts diagnosis candidates from the answer sets
  */
 public class IntASPDiagnosisListener extends IntASPOutputBaseListener implements IntASPOutputListener, ASPListener {
 
-    private List<Set<String>> diagnoses = new LinkedList<Set<String>>();
+    private List<Set<String>> diagnosisCandidates = new LinkedList<Set<String>>();
 
-    private Set<String> diagnosis;
+    private Set<String> diagnosisCandidate;
 
     @Override
     public void enterDiagnosis(IntASPOutputParser.DiagnosisContext ctx) {
-        this.diagnosis = new HashSet<String>();
+        this.diagnosisCandidate = new HashSet<String>();
     }
 
     @Override
     public void enterDiagatom(IntASPOutputParser.DiagatomContext ctx) {
-        this.diagnosis.add(ctx.getText());
+        this.diagnosisCandidate.add(ctx.getText());
     }
 
     @Override
     public void exitDiagnosis(IntASPOutputParser.DiagnosisContext ctx) {
-        getDiagnoses().add(this.diagnosis);
+        getDiagnosisCandidates().add(this.diagnosisCandidate);
     }
 
-    public List<Set<String>> getDiagnoses() {
-        return diagnoses;
-    }
 
     @Override
     public boolean hasResult() {
-        return !getDiagnoses().isEmpty();
+        return !getDiagnosisCandidates().isEmpty();
+    }
+
+    public List<Set<String>> getDiagnosisCandidates() {
+        return diagnosisCandidates;
     }
 }
