@@ -311,37 +311,18 @@ public class Application {
 
         ASPSolver solver = theory.getReasoner();
         ASPKnowledgeBase kb = theory.getASPKnowledgeBase();
-
-        // clear cache and add all relevant parts of the program, namely
-        // program, background knowledge and positive test cases
-        solver.clearFormulasCache();
-        solver.addFormulasToCache(kb.getFaultyFormulas());
-        solver.addFormulasToCache(kb.getBackgroundFormulas());
-        for (Set<String> testCase : kb.getPositiveTests()) {
-            solver.addFormulasToCache(testCase);
-        }
-
-        final Set<FormulaSet<String>> diagnosisCandidates = computeDiagnoses(theory, number);
-
-        for (FormulaSet<String> diag : diagnosisCandidates) {
-            diag.setEntailments(theory.getEntailments(diag));
-            diagnoses.add(diag);
-        }
-
-        return diagnoses;
-    }
-
-    private Set<FormulaSet<String>> computeDiagnoses(ASPTheory theory, int number) {
-        ASPSolver solver = theory.getReasoner();
-        ASPKnowledgeBase kb = theory.getASPKnowledgeBase();
         final Set<FormulaSet<String>> diagnosisCandidates = new LinkedHashSet<FormulaSet<String>>();
 
-        while (diagnosisCandidates.size() < number) {
-            final Set<FormulaSet<String>> formulaSets = solver.computeDiagnoses(
-                    number - diagnosisCandidates.size(), this.costsEstimator);
-            // exit loop if no new diagnoses are found
-            if (formulaSets.isEmpty())
-                break;
+        final int diagnosesNumber = number - diagnoses.size();
+
+        while (true) {
+
+            // clear cache and add all relevant parts of the program, namely
+            // program, background knowledge and positive test cases
+            solver.clearFormulasCache();
+            solver.addFormulasToCache(solver.generateDebuggingProgram(kb));
+
+            final Set<FormulaSet<String>> formulaSets = solver.computeDiagnoses(diagnosesNumber, this.costsEstimator);
 
             // verify if the returned candidates are consistent with negative test cases
             for (Iterator<FormulaSet<String>> it = formulaSets.iterator(); it.hasNext(); ) {
@@ -354,9 +335,18 @@ public class Application {
             }
 
             diagnosisCandidates.addAll(formulaSets);
+            if (diagnosisCandidates.size() >= diagnosesNumber || formulaSets.isEmpty())
+                break;
         }
-        theory.doBayesUpdate(diagnosisCandidates);
-        return diagnosisCandidates;
+
+        for (FormulaSet<String> diagnosis : diagnosisCandidates) {
+            diagnosis.setEntailments(theory.getEntailments(diagnosis));
+            diagnoses.add(diagnosis);
+        }
+
+        theory.doBayesUpdate(diagnoses);
+
+        return diagnoses;
     }
 
     private static List<Path> getFiles(String[] args) {
