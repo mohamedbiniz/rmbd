@@ -97,6 +97,7 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
         final IntASPDiagnosisListener lst = new IntASPDiagnosisListener();
         setListener(lst);
         setOptions("--opt-mode=optN", "--quiet=1,1", "--number=" + diagnosesNumber);
+
         executeSolver();
 
         List<Set<String>> diagnosisCandidates = lst.getDiagnosisCandidates();
@@ -137,6 +138,9 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
         Set<String> bg = kb.getBackgroundFormulas();
         Set<String> ext = new HashSet<String>(kb.getErrorAtoms().size() + kb.getKnowledgeBase().size() + bg.size());
         ext.addAll(kb.getKnowledgeBase());
+        for (Set<String> testCase : kb.getPositiveTests()) {
+            ext.addAll(testCase);
+        }
         ext.addAll(bg);
         return ext;
     }

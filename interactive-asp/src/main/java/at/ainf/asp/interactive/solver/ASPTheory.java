@@ -28,11 +28,10 @@ public class ASPTheory extends BaseSearchableObject<String> {
     @Override
     public boolean verifyConsistency() throws SolverException {
         boolean consistent = getReasoner().isConsistent();
-        return consistent && checkTestsConsistency();
+        return consistent && !violatesTestCases();
     }
 
-    private boolean checkTestsConsistency() {
-        //OWLReasoner solver = getSolver();
+    private boolean violatesTestCases() {
         for (Set<String> test : getKnowledgeBase().getNegativeTests()) {
             if (!getReasoner().isEntailed(test)) {
                 return true;
