@@ -100,14 +100,16 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
 
         executeSolver();
 
-        List<Set<String>> diagnosisCandidates = lst.getDiagnosisCandidates();
-        Set<FormulaSet<String>> diagnoses = new HashSet<FormulaSet<String>>(diagnosisCandidates.size());
+        Set<Set<String>> diagnosisCandidates = lst.getDiagnosisCandidates();
 
+        Set<FormulaSet<String>> diagnoses = new HashSet<FormulaSet<String>>(diagnosisCandidates.size());
         for (Set<String> candidate : diagnosisCandidates) {
             FormulaSet<String> diagnosis =
                     new FormulaSetImpl<String>(costsEstimator.getFormulaSetCosts(candidate), candidate, Collections.<String>emptySet());
             diagnoses.add(diagnosis);
         }
+
+
         return diagnoses;
     }
 

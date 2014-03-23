@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class IntASPDiagnosisListener extends IntASPOutputBaseListener implements IntASPOutputListener, ASPListener {
 
-    private List<Set<String>> diagnosisCandidates = new LinkedList<Set<String>>();
+    private Set<Set<String>> diagnosisCandidates = new HashSet<Set<String>>();
 
     private Set<String> diagnosisCandidate;
 
@@ -36,7 +36,7 @@ public class IntASPDiagnosisListener extends IntASPOutputBaseListener implements
         return !getDiagnosisCandidates().isEmpty();
     }
 
-    public List<Set<String>> getDiagnosisCandidates() {
+    public Set<Set<String>> getDiagnosisCandidates() {
         return diagnosisCandidates;
     }
 }
