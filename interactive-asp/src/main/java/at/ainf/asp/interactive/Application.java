@@ -14,6 +14,7 @@ import at.ainf.diagnosis.partitioning.scoring.QSS;
 import at.ainf.diagnosis.partitioning.scoring.QSSFactory;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
+import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.storage.Partition;
 import at.ainf.diagnosis.tree.CostsEstimator;
 import at.ainf.diagnosis.tree.EqualCostsEstimator;
@@ -80,7 +81,7 @@ public class Application {
         ASPKnowledgeBase kb = listener.getKnowledgeBase();
         addDebuggingExtension(kb);
 
-        String claspPath = getOptionValue(args, "--clasp", "Clasp path is not specified! Use --clasp=<path> option.");
+        String claspPath = getOptionValue(args, "--clingo", "Clingo (ver. 4 or higher) is not found! Use --clingo=<path> option.");
         ASPSolver solver = new ASPSolver(claspPath);
         ASPTheory theory = new ASPTheory(solver, kb);
 
@@ -328,10 +329,10 @@ public class Application {
             for (Iterator<FormulaSet<String>> it = formulaSets.iterator(); it.hasNext(); ) {
                 final Set<String> candidate = it.next();
                 // block found candidate by a constraint
-                kb.addBackgroundFormulas(Collections.singleton(solver.generateConstraint(candidate)));
                 if (!theory.verifyTestCasesForDiagnosisCandidate(candidate)) {
                     it.remove();
                 }
+                kb.addBackgroundFormulas(Collections.singleton(solver.generateConstraint(candidate)));
             }
 
             diagnosisCandidates.addAll(formulaSets);
@@ -339,8 +340,10 @@ public class Application {
                 break;
         }
 
-        for (FormulaSet<String> diagnosis : diagnosisCandidates) {
-            diagnosis.setEntailments(theory.getEntailments(diagnosis));
+        for (FormulaSet<String> candidate : diagnosisCandidates) {
+            Set<String> entailments = theory.getEntailments(candidate);
+            FormulaSet<String> diagnosis =
+                        new FormulaSetImpl<String>(costsEstimator.getFormulaSetCosts(candidate), candidate, entailments);
             diagnoses.add(diagnosis);
         }
 
