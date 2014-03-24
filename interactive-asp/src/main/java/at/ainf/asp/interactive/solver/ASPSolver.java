@@ -64,6 +64,7 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
     public boolean isConsistent() {
         if (this.result != null)
             return this.result;
+        setListener(new IntASPInterpretationListener());
         setOptions("--opt-mode=ignore", "--quiet=1,1", "--number=" + 1);
         executeSolver();
         this.result = this.listener.hasResult();
@@ -85,7 +86,7 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
 
     @Override
     public boolean isEntailed(Set<String> test) {
-        return false;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -122,6 +123,23 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
             else constraint.append(".");
         }
         return constraint.toString();
+    }
+
+
+    public Set<String> generateFacts(Set<String> atoms){
+        Set<String> res = new LinkedHashSet<String>();
+        for (String atom : atoms) {
+            res.add(generateFact(atom));
+        }
+        return res;
+    }
+
+    public String generateFact(String atom) {
+        if (atom.contains(":-"))
+            throw new IllegalArgumentException("Trying to convert a rule to a fact!");
+        if (atom.contains("."))
+            return atom;
+        return atom + ".\n";
     }
 
     public Set<String> generateDiagnosisProgram(Set<String> diagnosis, ASPKnowledgeBase kb) {
@@ -218,7 +236,7 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
             // wait for the solver to exit and process the results
 
             while (!solver.hasResult() || !this.lines.isEmpty()) {
-                String ln = getLine();
+              String ln = getLine();
                 if (ln != null) {
                     ANTLRInputStream input = new ANTLRInputStream(ln);
                     IntASPOutputLexer lexer = new IntASPOutputLexer(input);

@@ -29,7 +29,8 @@ public abstract class AbstractQSS<T> implements QSS<T> {
         if (value.compareTo(BigDecimal.ZERO) == 0)
             return BigDecimal.ZERO;
 
-        return BigFunctions.ln(value,value.scale()).divide(BigFunctions.ln(base, base.scale()));
+        return BigFunctions.ln(value,value.scale()).
+                divide(BigFunctions.ln(base, value.scale()), value.scale(), BigDecimal.ROUND_HALF_EVEN);
     }
 
     protected int getMinNumOfElimDiags(Partition<T> partition) {

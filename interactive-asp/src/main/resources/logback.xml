@@ -14,8 +14,18 @@
         </triggeringPolicy>
     </appender>
 
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%p: %m%n</pattern>
+        </encoder>
+    </appender>
+
     <logger name="at.ainf.asp.interactive" level="debug">
         <appender-ref ref="intasp-file"/>
+    </logger>
+
+    <logger name="at.ainf.asp.interactive" level="warn">
+        <appender-ref ref="console"/>
     </logger>
 
     <root level="info"/>

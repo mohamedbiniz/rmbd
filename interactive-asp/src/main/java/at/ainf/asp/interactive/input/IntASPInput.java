@@ -39,6 +39,13 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
         throw new RuntimeException("This listener cannot be used for diagnostic reasoning!");
     }
 
+    @Override
+    public void reset() {
+        this.kb = new ASPKnowledgeBase();
+        atomIDs.clear();
+        ruleIDs.clear();
+    }
+
     public enum Mode {ASP, BK, BT, BF, CT, CF}
 
     private Mode currentMode = Mode.ASP;

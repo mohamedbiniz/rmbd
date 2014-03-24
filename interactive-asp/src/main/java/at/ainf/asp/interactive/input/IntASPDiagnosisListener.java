@@ -36,6 +36,11 @@ public class IntASPDiagnosisListener extends IntASPOutputBaseListener implements
         return !getDiagnosisCandidates().isEmpty();
     }
 
+    @Override
+    public void reset() {
+        this.diagnosisCandidates.clear();
+    }
+
     public Set<Set<String>> getDiagnosisCandidates() {
         return diagnosisCandidates;
     }

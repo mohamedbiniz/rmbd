@@ -5,7 +5,7 @@ import at.ainf.asp.antlr.IntASPInputParser;
 import at.ainf.asp.interactive.input.IntASPInput;
 import at.ainf.asp.interactive.solver.ASPKnowledgeBase;
 import at.ainf.asp.interactive.solver.ASPSolver;
-import at.ainf.asp.interactive.solver.ASPTheory;
+import at.ainf.asp.interactive.solver.InteractiveASPTheory;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.partitioning.CKK;
@@ -46,7 +46,7 @@ import java.util.*;
 public class Application {
 
     private static Logger logger = LoggerFactory.getLogger(Application.class.getName());
-    private final ASPTheory theory;
+    private final InteractiveASPTheory theory;
     private final double thresholdQuery;
     private CostsEstimator<String> costsEstimator;
     private QSS<String> qss = null;
@@ -54,10 +54,10 @@ public class Application {
     private BigDecimal SIGMA = new BigDecimal("100");
 
 
-    public Application(ASPTheory theory) {
+    public Application(InteractiveASPTheory theory) {
         this.theory = theory;
         this.costsEstimator = new EqualCostsEstimator<String>(Collections.<String>emptySet(), BigDecimal.valueOf(0.01d));
-        this.thresholdQuery = 0.95;
+        this.thresholdQuery = 0.01d;
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, SolverException {
@@ -83,7 +83,7 @@ public class Application {
 
         String claspPath = getOptionValue(args, "--clingo", "Clingo (ver. 4 or higher) is not found! Use --clingo=<path> option.");
         ASPSolver solver = new ASPSolver(claspPath);
-        ASPTheory theory = new ASPTheory(solver, kb);
+        InteractiveASPTheory theory = new InteractiveASPTheory(solver, kb);
 
         Application app = new Application(theory);
 
@@ -204,9 +204,9 @@ public class Application {
         }
         if (positiveAnswer == null) throw new IllegalStateException("A test case cannot be added to a knowledge base!");
         if (positiveAnswer)
-            this.theory.getKnowledgeBase().getPositiveTests().add(testCase);
+            this.theory.getKnowledgeBase().addPositiveTest(testCase);
         else
-            this.theory.getKnowledgeBase().getNegativeTests().add(testCase);
+            this.theory.getKnowledgeBase().addNegativeTest(testCase);
         qss.updateParameters(positiveAnswer);
     }
 

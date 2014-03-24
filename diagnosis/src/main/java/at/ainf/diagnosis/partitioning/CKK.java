@@ -114,21 +114,10 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
         Differencing<E> dif = new Differencing<E>(desc);
 
         findPartition(dif);   // calculates partition where diags in dx have common entailments
-        Collections.sort(getPartitions(), new Comparator<Partition<Id>>() {
-            public int compare(Partition<Id> o1, Partition<Id> o2) {
-                int res = o1.difference.compareTo(o2.difference);
-                if (res == 0) {
-                    return -1 * Integer.valueOf(o1.dx.size()).compareTo(o2.dx.size());
-                }
-                return res;
-            }
-        });
-
         Partition<Id> partition = null;
-
         sort(getPartitions());  // sorts partitions ascending by difference
 
-        partition = nextPartition(partition);
+        partition = nextPartition();
 
         if (logger.isInfoEnabled())
             logger.info("Searched through " + count + "/" + getPartitionsCount() + " partitionsCount");
@@ -143,20 +132,38 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
     private void sort(List<Partition<Id>> partitions) {
         Collections.sort(partitions, new Comparator<Partition<Id>>() {
             public int compare(Partition<Id> o1, Partition<Id> o2) {
+                int res = o1.difference.compareTo(o2.difference);
+                if (res == 0) {
+                    return -1 * Integer.valueOf(o1.dx.size()).compareTo(o2.dx.size());
+                }
+                return res;
+            }
+        });
+        /*
+        Collections.sort(partitions, new Comparator<Partition<Id>>() {
+            public int compare(Partition<Id> o1, Partition<Id> o2) {
                 return o1.difference.compareTo(o2.difference);
             }
         });
+        */
     }
 
-    public <E extends FormulaSet<Id>> Partition<Id> nextPartition(Partition<Id> partition) throws SolverException, InconsistentTheoryException {
+    @Override
+    public Partition<Id> nextPartition(Partition<Id> partition)
+            throws SolverException, InconsistentTheoryException {
         if (partition != null) {
             getPartitions().remove(partition);
-            partition = null;
             sort(getPartitions());
         }
+        return nextPartition();
+    }
+
+    private Partition<Id> nextPartition() throws SolverException, InconsistentTheoryException {
         if (getPartitions().isEmpty())
             return null;
 
+        Partition<Id> partition = null;
+        BigDecimal best = BigDecimal.valueOf(Double.MAX_VALUE);
         bestdiff = new BigDecimal(Double.MAX_VALUE);
         count = 0;
         List<Partition<Id>> empty = new LinkedList<Partition<Id>>();
@@ -170,9 +177,9 @@ public class CKK<Id> extends BruteForce<Id> implements Partitioning<Id> {
                     empty.add(part);
                 else {
                     BigDecimal score = getScoringFunction().getScore(part);
-                    BigDecimal best = getScoringFunction().getScore(partition);
                     if ((score.compareTo(best) < 0) || (score.compareTo(best) == 0 && diff(part) < diff(partition))) {
                         partition = part;
+                        best = score;
                         updateDifference(partition);
                         if (partition.difference.compareTo(bestdiff) < 0)
                             bestdiff = partition.difference;
