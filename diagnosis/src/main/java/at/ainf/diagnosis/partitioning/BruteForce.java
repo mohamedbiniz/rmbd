@@ -84,7 +84,7 @@ public class BruteForce<Id> implements Partitioning<Id> {
     }
 
 
-    public <E extends FormulaSet<Id>> Partition<Id> nextPartition (Partition<Id> lastPartition) throws SolverException, InconsistentTheoryException {
+    public Partition<Id> nextPartition (Partition<Id> lastPartition) throws SolverException, InconsistentTheoryException {
         getPartitions().remove(lastPartition);
         Partition<Id> partition = getPartitions().get(0);
         if (!partition.isVerified) verifyPartition(partition);

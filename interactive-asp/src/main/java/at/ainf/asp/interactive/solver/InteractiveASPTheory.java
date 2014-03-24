@@ -13,9 +13,9 @@ import java.util.Set;
 /**
  * *
  */
-public class ASPTheory extends BaseSearchableObject<String> {
+public class InteractiveASPTheory extends BaseSearchableObject<String> {
 
-    public ASPTheory(ASPSolver solver, ASPKnowledgeBase kb) {
+    public InteractiveASPTheory(ASPSolver solver, ASPKnowledgeBase kb) {
         setKnowledgeBase(kb);
         setReasoner(solver);
     }
@@ -91,7 +91,7 @@ public class ASPTheory extends BaseSearchableObject<String> {
         final Set<String> program = getReasoner().generateDiagnosisProgram(hs, getASPKnowledgeBase());
         getReasoner().clearFormulasCache();
         getReasoner().addFormulasToCache(program);
-        getReasoner().addFormulasToCache(ent);
+        getReasoner().addFormulasToCache(getReasoner().generateFacts(ent));
         try {
             return verifyConsistency();
         } catch (SolverException e) {

@@ -9,4 +9,6 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 public interface ASPListener extends ParseTreeListener {
 
     boolean hasResult();
+
+    void reset();
 }

@@ -17,7 +17,7 @@ import java.util.Set;
 public interface Partitioning<T> {
     <E extends FormulaSet<T>> Partition<T> generatePartition(Set<E> hittingSets) throws SolverException, InconsistentTheoryException;
 
-    <E extends FormulaSet<T>> Partition<T> nextPartition(Partition<T> partition) throws SolverException, InconsistentTheoryException;
+    Partition<T> nextPartition(Partition<T> partition) throws SolverException, InconsistentTheoryException;
 
     public double getThreshold();
 

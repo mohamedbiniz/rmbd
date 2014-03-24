@@ -42,4 +42,9 @@ public class IntASPInterpretationListener extends IntASPOutputBaseListener
     public boolean hasResult() {
         return !getInterpretations().isEmpty();
     }
+
+    @Override
+    public void reset() {
+        this.interpretations.clear();
+    }
 }
