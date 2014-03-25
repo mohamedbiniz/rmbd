@@ -137,7 +137,7 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
     public String generateFact(String atom) {
         if (atom.contains(":-"))
             throw new IllegalArgumentException("Trying to convert a rule to a fact!");
-        if (atom.contains("."))
+        if (atom.endsWith("."))
             return atom;
         return atom + ".\n";
     }
@@ -159,10 +159,20 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
         Set<String> ext = new HashSet<String>(kb.getErrorAtoms().size() + kb.getKnowledgeBase().size() + bg.size());
         ext.addAll(kb.getKnowledgeBase());
         for (Set<String> testCase : kb.getPositiveTests()) {
-            ext.addAll(testCase);
+            ext.addAll(generateFacts(testCase));
         }
         ext.addAll(bg);
         return ext;
+    }
+
+    public Set<String> generateDebuggingProgram(ASPKnowledgeBase kb, TreeSet<FormulaSet<String>> outdatedDiagnoses) {
+        Set<String> program = generateDebuggingProgram(kb);
+        if (outdatedDiagnoses == null || outdatedDiagnoses.isEmpty()) return program;
+        // unblock all diagnoses to validate them
+        for (FormulaSet<String> diagnosis : outdatedDiagnoses) {
+            program.remove(generateConstraint(diagnosis));
+        }
+        return program;
     }
 
     @Override
@@ -177,6 +187,8 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
         if (interpretations.isEmpty()) return Collections.emptySet();
         return interpretations.get(0);
     }
+
+
 
 
     private class ExecHandler extends LineOutputStream {
