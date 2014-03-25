@@ -1,0 +1,14 @@
+sourceOntology = file:/C:/mapping-debugging/conference/falcon/EKAW.owl
+targetOntology = file:/C:/mapping-debugging/conference/falcon/PCS.owl
+sourceNamespace = http://EKAW.owl
+targetNamespace = http://PCS.owl
+
++ Document = DOCUMENT | 0.9985686583167551
++ Rejected_Paper = Rejected_paper | 0.9982492355706971
++ Review = Review | 0.9975182889189032
++ Person = PERSON | 0.9971695706417172
++ Paper = Paper | 0.9962075116526188
++ Conference = Conference | 0.970814538358531
++ Accepted_Paper = Accepted_paper | 0.9621066074532982
++ Paper_Author = Author | 0.7921006150003964
+- Programme_Brochure = Programme | 0.7353493298624745

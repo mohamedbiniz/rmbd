@@ -1,0 +1,16 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CMT.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/EKAW.owl
+sourceNamespace = http://CMT.owl
+targetNamespace = http://EKAW.owl
+
+- ProgramCommittee = Programme_Brochure | 0.114382714
++ Document = Document | 0.34094277
+- Person = Organisation | 0.3626701
++ Author = Paper_Author | 0.22642009
++ Conference = Conference | 0.23333333
+- Co-author = PC_Member | 0.2283426
++ Paper = Paper | 0.2731258
++ PaperAbstract = Abstract | 0.23234983
+- AssociatedChair = Demo_Chair | 0.1937316
+- Decision = Location | 0.10950618
++ Review = Review | 0.2748843

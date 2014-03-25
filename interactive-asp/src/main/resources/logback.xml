@@ -1,0 +1,33 @@
+<configuration>
+
+    <appender name="intasp-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>logs/intasp.log</File>
+        <encoder>
+            <pattern>%p %d{"dd MMM YYYY HH:mm:ss,SSS"} %t %r %c %M %L - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>1</maxIndex>
+            <FileNamePattern>logs/intasp.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>500KB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%p: %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="at.ainf.asp.interactive" level="debug">
+        <appender-ref ref="intasp-file"/>
+    </logger>
+
+    <logger name="at.ainf.asp.interactive" level="warn">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <root level="info"/>
+
+</configuration>

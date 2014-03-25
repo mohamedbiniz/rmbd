@@ -1,0 +1,13 @@
+sourceOntology = file:/C:/mapping-debugging/conference/coma/CRS.owl
+targetOntology = file:/C:/mapping-debugging/conference/coma/EKAW.owl
+sourceNamespace = http://CRS.owl
+targetNamespace = http://EKAW.owl
+
++ author = Paper_Author | 0.30747926
++ review = Review | 0.393917
+- conference = Conference_Session | 0.39048767
++ session = Session | 0.38836563
+- program = Programme_Brochure | 0.1833854
++ abstract = Abstract | 0.39911932
+> chair = PC_Chair | 0.2660265
+- person = Organisation | 0.5584865
