@@ -307,21 +307,22 @@ public class Application {
     }
 
 
-    private TreeSet<FormulaSet<String>> getDiagnoses(TreeSet<FormulaSet<String>> diagnoses, int number)
+    private TreeSet<FormulaSet<String>> getDiagnoses(TreeSet<FormulaSet<String>> diagnoses, final int diagnosesNumber)
             throws SolverException {
 
         ASPSolver solver = theory.getReasoner();
         ASPKnowledgeBase kb = theory.getASPKnowledgeBase();
         final Set<FormulaSet<String>> diagnosisCandidates = new LinkedHashSet<FormulaSet<String>>();
 
-        final int diagnosesNumber = number - diagnoses.size();
+        Set<FormulaSet<String>> oldDiagnoses = new HashSet<FormulaSet<String>>(diagnosesNumber);
+        oldDiagnoses.addAll(diagnoses);
 
         while (true) {
 
             // clear cache and add all relevant parts of the program, namely
             // program, background knowledge and positive test cases
             solver.clearFormulasCache();
-            solver.addFormulasToCache(solver.generateDebuggingProgram(kb));
+            solver.addFormulasToCache(solver.generateDebuggingProgram(kb, diagnoses));
 
             final Set<FormulaSet<String>> formulaSets = solver.computeDiagnoses(diagnosesNumber, this.costsEstimator);
 
@@ -336,11 +337,20 @@ public class Application {
             }
 
             diagnosisCandidates.addAll(formulaSets);
-            if (diagnosisCandidates.size() >= diagnosesNumber || formulaSets.isEmpty())
+
+            if (diagnosisCandidates.size() >= diagnosesNumber || formulaSets.isEmpty() ||
+                    oldDiagnoses.containsAll(diagnosisCandidates))
                 break;
         }
 
+        oldDiagnoses.retainAll(diagnosisCandidates);
+
+        diagnoses.clear();
+        diagnoses.addAll(oldDiagnoses);
+
         for (FormulaSet<String> candidate : diagnosisCandidates) {
+            if (diagnoses.contains(candidate))
+                continue;
             Set<String> entailments = theory.getEntailments(candidate);
             FormulaSet<String> diagnosis =
                         new FormulaSetImpl<String>(costsEstimator.getFormulaSetCosts(candidate), candidate, entailments);
