@@ -1,3 +1,8 @@
+% background knowledge: list of ids separated by a comma r1, r2, r3
+[BK]
+r5
+
+% ASP meta program returned by spock
 [ASP]
 head(r1, a).
 bodyN(r1, d).
@@ -65,7 +70,3 @@ noAnswerSet :- violated(R), rule(R).
 noAnswerSet :- unsupported(A), atom(A).
 
 :- not noAnswerSet.
-
-% background knowledge: list of ids separated by a comma r1, r2, r3
-[BK]
-r5

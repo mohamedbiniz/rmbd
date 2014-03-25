@@ -86,7 +86,20 @@ public class ASPSolver extends AbstractReasoner<String> implements IReasoner<Str
 
     @Override
     public boolean isEntailed(Set<String> test) {
-        throw new RuntimeException("Not implemented");
+        final IntASPInterpretationListener lst = new IntASPInterpretationListener();
+        setListener(lst);
+        setOptions("--enum-mode=cautious", "--quiet=1,1", "--opt-mode=ignore");
+
+        final Set<String> facts = generateFacts(test);
+        addFormulasToCache(facts);
+
+        executeSolver();
+
+        removeFormulasFromCache(facts);
+        final List<Set<String>> interpretations = lst.getInterpretations();
+        if (interpretations.size() > 1)
+            throw new IllegalStateException("Solver returned many intersections of all interpretations");
+        return !interpretations.isEmpty();
     }
 
     @Override

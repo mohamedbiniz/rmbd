@@ -66,8 +66,11 @@ public class Application {
         InputStream stream;
         if (paths.size() > 0) {
             stream = new FileInputStream(paths.get(0).toFile());
-        } else
-            stream = System.in;
+        } else {
+            System.out.println("Please provide a path to an input file!");
+            System.exit(1);
+            return;
+        }
 
         IntASPInput listener = new IntASPInput();
         ANTLRInputStream input = new ANTLRInputStream(stream);
@@ -76,7 +79,8 @@ public class Application {
         IntASPInputParser parser = new IntASPInputParser(tokens);
         ParseTree tree = parser.parse();
         ParseTreeWalker.DEFAULT.walk(listener, tree);
-        logger.info("Parsing OK");
+        if (logger.isInfoEnabled())
+            logger.info("Parsing OK");
 
         ASPKnowledgeBase kb = listener.getKnowledgeBase();
         addDebuggingExtension(kb);
@@ -96,22 +100,24 @@ public class Application {
         app.setMaxDiagnosesNumber(diagnosesNumber);
 
         app.start();
-
-
     }
 
     private static void addDebuggingExtension(ASPKnowledgeBase kb) {
         // add projections and minimization statements to a program
         try {
-            URI path = ClassLoader.getSystemResource("extension.lp").toURI();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(ClassLoader.getSystemResourceAsStream("extension.lp")));
+            String line;
+            StringBuilder st = new StringBuilder();
+            while ((line = br.readLine()) != null) {
+                st.append(line).append("\n");
+            }
+
+            br.close();
             kb.addBackgroundFormulas(
-                    Collections.singleton(Charset.defaultCharset().decode(
-                            ByteBuffer.wrap(Files.readAllBytes(Paths.get(path)))).toString())
+                    Collections.singleton(st.toString())
             );
         } catch (IOException e) {
-            logger.error("Resources are not found!", e);
-            throw new RuntimeException("Resources are not found!");
-        } catch (URISyntaxException e) {
             logger.error("Resources are not found!", e);
             throw new RuntimeException("Resources are not found!");
         }
@@ -353,7 +359,7 @@ public class Application {
                 continue;
             Set<String> entailments = theory.getEntailments(candidate);
             FormulaSet<String> diagnosis =
-                        new FormulaSetImpl<String>(costsEstimator.getFormulaSetCosts(candidate), candidate, entailments);
+                    new FormulaSetImpl<String>(costsEstimator.getFormulaSetCosts(candidate), candidate, entailments);
             diagnoses.add(diagnosis);
         }
 

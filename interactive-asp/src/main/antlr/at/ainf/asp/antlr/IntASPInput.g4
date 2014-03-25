@@ -11,12 +11,13 @@ parse
  ;
 
 section
- : aspsection | bksection | testsection
+ : aspsection | bksection | testsection  | comment
  ;
 
 aspsection
     : asp NEW_LINE* asprule*
     ;
+
 asprule
  : (idfact | fact | otherrules | comment) NEW_LINE*;
 
@@ -50,11 +51,11 @@ bksection
     ;
 
 testsection
-    : ( bt | bf | ct | cf ) (NEW_LINE | csvline NEW_LINE*)*
+    : ( bt | bf | ct | cf ) (WS|NEW_LINE)* ((csvline | comment) NEW_LINE*)*
     ;
 
 csvline
- : value ((WS | COMMA)* value)*
+ : value (WS|NEW_LINE)* (COMMA (WS|NEW_LINE)* value (WS|NEW_LINE)*)*
  ;
 
 value
