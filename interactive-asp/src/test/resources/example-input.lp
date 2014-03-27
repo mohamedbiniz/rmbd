@@ -70,3 +70,7 @@ noAnswerSet :- violated(R), rule(R).
 noAnswerSet :- unsupported(A), atom(A).
 
 :- not noAnswerSet.
+
+
+[CT]
+a,b

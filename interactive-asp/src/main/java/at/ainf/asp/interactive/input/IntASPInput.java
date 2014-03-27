@@ -152,22 +152,20 @@ public class IntASPInput extends IntASPInputBaseListener implements IntASPInputL
     }
 
     @Override
-    public void exitCt(IntASPInputParser.CtContext ctx) {
-        getKnowledgeBase().addPositiveTest(testCase);
-    }
-
-    @Override
-    public void exitBt(IntASPInputParser.BtContext ctx) {
-        getKnowledgeBase().addNegativeTest(testCase);
-    }
-
-    @Override
-    public void exitBf(IntASPInputParser.BfContext ctx) {
-        getKnowledgeBase().addPositiveTest(testCase);
-    }
-
-    @Override
-    public void exitCf(IntASPInputParser.CfContext ctx) {
-        getKnowledgeBase().addNegativeTest(testCase);
+    public void exitCsvline(IntASPInputParser.CsvlineContext ctx) {
+        switch (getCurrentMode()) {
+            case CT:
+                getKnowledgeBase().addPositiveTest(testCase);
+                break;
+            case CF:
+                getKnowledgeBase().addNegativeTest(testCase);
+                break;
+            case BT:
+                getKnowledgeBase().addNegativeTest(testCase);
+                break;
+            case BF:
+                getKnowledgeBase().addPositiveTest(testCase);
+               // default: throw new IllegalStateException("Mode " + getCurrentMode() + " does not corresponds to a test case!");
+        }
     }
 }
