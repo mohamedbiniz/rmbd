@@ -1,14 +1,14 @@
 package at.ainf.asp.mdebugging.hstree.model;
 
 import at.ainf.asp.mdebugging.hstree.Application;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramBaseListener;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser.AspfactContext;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser.AspruleContext;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser.DefaultNegationNOTContext;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser.EvenConstraintContext;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser.MinConstraintContext;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser.OddConstraintContext;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser.UpperBoundCardinalityNOTContext;
+import at.ainf.asp.antlr.ASPProgramBaseListener;
+import at.ainf.asp.antlr.ASPProgramParser.AspfactContext;
+import at.ainf.asp.antlr.ASPProgramParser.AspruleContext;
+import at.ainf.asp.antlr.ASPProgramParser.DefaultNegationNOTContext;
+import at.ainf.asp.antlr.ASPProgramParser.EvenConstraintContext;
+import at.ainf.asp.antlr.ASPProgramParser.MinConstraintContext;
+import at.ainf.asp.antlr.ASPProgramParser.OddConstraintContext;
+import at.ainf.asp.antlr.ASPProgramParser.UpperBoundCardinalityNOTContext;
 import at.ainf.asp.mdebugging.hstree.model.exceptions.NotMonotoneException;
 
 /**

@@ -17,8 +17,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramLexer;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser;
+import at.ainf.asp.antlr.ASPProgramLexer;
+import at.ainf.asp.antlr.ASPProgramParser;
 import at.ainf.asp.mdebugging.hstree.ioactions.ASPConverter;
 import at.ainf.asp.mdebugging.hstree.model.ASPModel;
 import at.ainf.asp.mdebugging.hstree.model.ASPTheory;
