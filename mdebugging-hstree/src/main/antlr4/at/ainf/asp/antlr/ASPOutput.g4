@@ -1,12 +1,16 @@
 grammar ASPOutput;
 
-/* @header {
-	package antlr;
-} */
+@header {
+	/* package at.ainf.asp.antlr; */
+}
 
 @parser::members {
 
 }
+
+/*---------------------------
+* Author: Melanie Frühstück
+*----------------------------*/
 
 /*----------------
 * PARSER RULES
@@ -43,4 +47,4 @@ CONDITION : ':' ;
 DOT : '.' ;
 PARENTHL : '(' ;
 PARENTHR : ')' ;
-SYMBOLS : (' ' | 'a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '+' )+ ;
+SYMBOLS : (' ' | 'a'..'z' | 'A'..'Z' | '0'..'9' | '_' | '+' | '/' )+ ;
