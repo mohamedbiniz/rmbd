@@ -28,6 +28,7 @@
         <module>mdebugging-hstree</module>
         <module>interactive-asp</module>
 
+        <module>mdebugging-asp</module>
     </modules>
     <!--
     More Project Information

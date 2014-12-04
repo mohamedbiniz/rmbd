@@ -1,4 +1,4 @@
-package at.ainf.asp.model;
+package at.ainf.asp.mdebugging.hstree.model;
 
 /**
  * @author Melanie Frühstück

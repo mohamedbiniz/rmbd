@@ -1,11 +1,11 @@
-package at.ainf.asp.ioactions;
+package at.ainf.asp.mdebugging.hstree.ioactions;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import at.ainf.asp.main.Application;
+import at.ainf.asp.mdebugging.hstree.Application;
 
 /**
  * @author Melanie Frühstück

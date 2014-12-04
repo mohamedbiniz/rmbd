@@ -1,21 +1,21 @@
-package at.ainf.asp.main;
+package at.ainf.asp.mdebugging.hstree;
 
 import java.util.Set;
 
-import at.ainf.asp.inputoutputactions.ASPConverter;
-import at.ainf.asp.model.ASPModel;
-import at.ainf.asp.model.ASPTheory;
-import at.ainf.asp.model.IProgramElement;
-import at.ainf.asp.model.ProgramListener;
-import at.ainf.asp.model.ReasonerASP;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramLexer;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser;
+import at.ainf.asp.mdebugging.hstree.inputoutputactions.ASPConverter;
+import at.ainf.asp.mdebugging.hstree.model.ASPModel;
+import at.ainf.asp.mdebugging.hstree.model.ASPTheory;
+import at.ainf.asp.mdebugging.hstree.model.IProgramElement;
+import at.ainf.asp.mdebugging.hstree.model.ProgramListener;
+import at.ainf.asp.mdebugging.hstree.model.ReasonerASP;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import at.ainf.asp.antlr.ASPProgramLexer;
-import at.ainf.asp.antlr.ASPProgramParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.KnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;

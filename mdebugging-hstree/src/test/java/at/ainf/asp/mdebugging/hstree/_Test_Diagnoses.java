@@ -1,4 +1,4 @@
-package at.ainf.asp;
+package at.ainf.asp.mdebugging.hstree;
 
 /**
  * When executing all test at all, there are incorrect solutions.
@@ -17,14 +17,14 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import at.ainf.asp.antlr.ASPProgramLexer;
-import at.ainf.asp.antlr.ASPProgramParser;
-import at.ainf.asp.ioactions.ASPConverter;
-import at.ainf.asp.model.ASPModel;
-import at.ainf.asp.model.ASPTheory;
-import at.ainf.asp.model.IProgramElement;
-import at.ainf.asp.model.ProgramListener;
-import at.ainf.asp.model.ReasonerASP;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramLexer;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser;
+import at.ainf.asp.mdebugging.hstree.ioactions.ASPConverter;
+import at.ainf.asp.mdebugging.hstree.model.ASPModel;
+import at.ainf.asp.mdebugging.hstree.model.ASPTheory;
+import at.ainf.asp.mdebugging.hstree.model.IProgramElement;
+import at.ainf.asp.mdebugging.hstree.model.ProgramListener;
+import at.ainf.asp.mdebugging.hstree.model.ReasonerASP;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.KnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
