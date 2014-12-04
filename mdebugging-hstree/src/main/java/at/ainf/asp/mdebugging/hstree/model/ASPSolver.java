@@ -12,8 +12,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import at.ainf.asp.mdebugging.hstree.Application;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPOutputLexer;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPOutputParser;
+import at.ainf.asp.antlr.ASPOutputLexer;
+import at.ainf.asp.antlr.ASPOutputParser;
 import at.ainf.asp.mdebugging.hstree.ioactions.ASPConverter;
 import at.ainf.asp.mdebugging.hstree.ioactions.StreamGobbler;
 
