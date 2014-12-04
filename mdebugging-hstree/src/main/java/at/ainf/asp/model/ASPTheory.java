@@ -3,13 +3,12 @@ package at.ainf.asp.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import at.ainf.asp.test.Application;
-
+import at.ainf.asp.main.Application;
 import at.ainf.diagnosis.model.BaseSearchableObject;
 import at.ainf.diagnosis.model.SolverException;
 
 /**
- * @author Melanie Fruehstueck
+ * @author Melanie Frühstück
  *
  */
 public class ASPTheory extends BaseSearchableObject<IProgramElement> {

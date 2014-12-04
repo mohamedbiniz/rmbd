@@ -1,4 +1,4 @@
-package at.ainf.asp.test;
+package at.ainf.asp.main;
 
 import java.util.Set;
 
@@ -8,10 +8,12 @@ import at.ainf.asp.model.ASPTheory;
 import at.ainf.asp.model.IProgramElement;
 import at.ainf.asp.model.ProgramListener;
 import at.ainf.asp.model.ReasonerASP;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
 import at.ainf.asp.antlr.ASPProgramLexer;
 import at.ainf.asp.antlr.ASPProgramParser;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
@@ -32,14 +34,15 @@ public class Application {
 
 	private static final String falseParameterMsg = "Type in [-help] or [-h] to show possible parameters and how they are used.";
 	// INFO: if module doesn't serve as a executable jar, the fileToDebug has to be set manually
-	private static String fileToDebug = System.getProperty("user.dir") + "/src/test/modv1_debugwithoutnot.lp";
+	private static String fileToDebug = System.getProperty("user.dir") + "/src/test/house_p02t002.lp";
 //	private static String fileToDebug = "";
 	
-	public static boolean enableInfo = true;
-	// INFO: if you want to set the gringo and clasp path manually, set pathSet to true 
+	public static boolean enableInfo = false;
+	// INFO: if you want to set clingo path manually, set pathSet to true 
 	public static boolean pathSet = false;
-	public static String claspPath = "";
-	public static String gringoPath = "";
+//	public static String claspPath = "";
+//	public static String gringoPath = "";
+	public static String clingoPath = "";
 	
 	/**
 	 * @param args
@@ -127,7 +130,7 @@ public class Application {
 	}
 
 	private static void handleCommandLine(String[] args) {
-		String dir = System.getProperty("user.dir") + "/";
+String dir = System.getProperty("user.dir") + "/";
 		
 		// handle arguments of command line
 		if (args.length==0) {
@@ -153,31 +156,29 @@ public class Application {
 				System.out.println(falseParameterMsg);
 				System.exit(1);
 			}
-		} else if (args.length==6) {
-			// -gringo /usr/bin/gringo -clasp /usr/bin/clasp -file example.lp
-			boolean gringo = args[0].equals("-gringo") || args[0].equals("-g");
-			boolean clasp = args[2].equals("-clasp") || args[2].equals("-c");
-			boolean file = args[4].equals("-file") || args[4].equals("-f");
-			if (gringo && clasp && file) {
-				gringoPath = args[1];
-				claspPath = args[3];
-				fileToDebug = args[5];
+		} else if (args.length==4) {
+			// -clingo /usr/bin/clingo -file example.lp
+			boolean clingo = args[0].equals("-clingo") || args[0].equals("-c");
+			boolean file = args[2].equals("-file") || args[2].equals("-f");
+			if (clingo && file) {
+				clingoPath = args[1];
+				pathSet = true;
+				fileToDebug = args[3];
 			} else {
 				System.out.println(falseParameterMsg);
 				System.exit(1);
 			}
 				
-		} else if (args.length==7) {
-			// -i -g /usr/bin/gringo -c /usr/bin/clasp -f example.lp
+		} else if (args.length==5) {
+			// -i -c /usr/bin/clingo -f example.lp
 			boolean info = args[0].equals("-enableInfo") || args[0].equals("-i");
-			boolean gringo = args[1].equals("-gringo") || args[1].equals("-g");
-			boolean clasp = args[3].equals("-clasp") || args[3].equals("-c");
-			boolean file = args[5].equals("-file") || args[5].equals("-f");
-			if (info && gringo && clasp && file) {
+			boolean clingo = args[1].equals("-clingo") || args[1].equals("-c");
+			boolean file = args[3].equals("-file") || args[3].equals("-f");
+			if (info && clingo && file) {
 				enableInfo = true;
-				gringoPath = args[2];
-				claspPath = args[4];
-				fileToDebug = args[6];
+				clingoPath = args[2];
+				pathSet = true;
+				fileToDebug = args[4];
 			} else {
 				System.out.println(falseParameterMsg);
 				System.exit(1);
@@ -192,22 +193,20 @@ public class Application {
 	 * 
 	 */
 	private static void printHelp() {
-		System.out.println("To debug a monotone answer set program use the following parameter:" +
+		System.out.println(" Make sure that clingo is in your path (for UNIX) or in the current directory (for WINDOWS)." + 
+				"\n Otherwise it is possible to set the path manually (see below)." +
+				"\n To debug a monotone answer set program use the following parameter:" +
 				"\n [-file] or [-f] followed by the file to debug." +
-				"\n I.e. java -jar aspmodule.jar -file example.lp" +
+				"\n E.g. java -jar monotonic-asp-hstree-1.0.jar -file example.lp" +
 				"" +
 				"\n\n To show more information about the debugging process use the following parameters:" +
 				"\n [-enableInfo] or [-i] followed by [-file] or [-f] followed by the file to debug." +
-				"\n I.e. java -jar aspmodule.jar -enableInfo -file example.lp" +
+				"\n E.g. java -jar monotonic-asp-hstree-1.0.jar -enableInfo -f example.lp" +
 				"" +
-				"\n\n Additional information:" +
-				"\n Unix: Make sure that gringo and clasp (POTASSCO) are in the path." +
-				"\n Windows: Make sure that gringo and clasp are in the current directory." +
-				"" +
-				"\n\n Otherwise there is the possibility to set the path of the two programs:" +
-				"\n [-gringo] or [-g] followed by the gringo path and [-clasp] or [-c] followed by the clasp path." +
-				"\n I.e. java -jar aspmodule.jar -gringo /usr/bin/gringo -clasp /usr/bin/clasp -file example.lp or" +
-				"\n i.e. java -jar aspmodule.jar -i -g /usr/bin/gringo -c /usr/bin/clasp -f example.lp");
+				"\n\n There is the possibility to set the path of the program:" +
+				"\n [-clingo] or [-c] followed by the clingo path." +
+				"\n E.g. java -jar monotonic-asp-hstree-1.0.jar -clingo /usr/bin/clingo -file example.lp or" +
+				"\n E.g. java -jar monotonic-asp-hstree-1.0.jar -i -c /usr/bin/clingo -f example.lp");
 		
 	}
 

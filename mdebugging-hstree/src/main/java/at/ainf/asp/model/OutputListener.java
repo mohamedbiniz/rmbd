@@ -6,7 +6,7 @@ import at.ainf.asp.antlr.ASPOutputParser.UnknownContext;
 import at.ainf.asp.antlr.ASPOutputParser.UnsatisfiableContext;
 
 /**
- * @author Melanie Fruehstueck
+ * @author Melanie Frühstück
  *
  */
 public class OutputListener extends ASPOutputBaseListener {

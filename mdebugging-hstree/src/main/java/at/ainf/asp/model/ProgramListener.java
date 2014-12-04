@@ -1,12 +1,6 @@
 package at.ainf.asp.model;
 
 import at.ainf.asp.antlr.ASPProgramBaseListener;
-import at.ainf.asp.test.Application;
-import at.ainf.asp.model.exceptions.NotMonotoneException;
-
-import at.ainf.asp.test.Application;
-
-import at.ainf.asp.antlr.ASPProgramBaseListener;
 import at.ainf.asp.antlr.ASPProgramParser.AspfactContext;
 import at.ainf.asp.antlr.ASPProgramParser.AspruleContext;
 import at.ainf.asp.antlr.ASPProgramParser.DefaultNegationNOTContext;
@@ -14,9 +8,11 @@ import at.ainf.asp.antlr.ASPProgramParser.EvenConstraintContext;
 import at.ainf.asp.antlr.ASPProgramParser.MinConstraintContext;
 import at.ainf.asp.antlr.ASPProgramParser.OddConstraintContext;
 import at.ainf.asp.antlr.ASPProgramParser.UpperBoundCardinalityNOTContext;
+import at.ainf.asp.main.Application;
+import at.ainf.asp.model.exceptions.NotMonotoneException;
 
 /**
- * @author Melanie Fruehstueck
+ * @author Melanie Frühstück
  *
  */
 public class ProgramListener extends ASPProgramBaseListener {
