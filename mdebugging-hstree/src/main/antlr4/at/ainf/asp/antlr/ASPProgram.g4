@@ -1,9 +1,13 @@
 grammar ASPProgram;
 
 @header {
-	/* package antlr; */
+	/* package at.ainf.asp.antlr; */
 	import at.ainf.asp.model.exceptions.IllegalParserElementException;
 }
+
+/*---------------------------
+* Author: Melanie Frühstück
+*----------------------------*/
 
 /*----------------
 * PARSER RULES
@@ -20,7 +24,7 @@ prog	: (asprule | aspfact)+ ;
 		}
 		
 		
-aspfact	: head DOT ;
+aspfact	: head DOT | constantSymbol constant equal DIGIT DOT ;
 
 asprule	: hbrule | constraint ;
 
@@ -44,23 +48,23 @@ choiceRule : bound? choiceBracL (literal | builtIns | condition | comma)+ choice
 
 
 /** Defining literals, can be constants, built ins, arithmetics, or predicate literals. */
-literal : constants | predicate ;
+literal : constant | predicate ;
 
-predicate : constants parenthL terms parenthR ;
+predicate : constant parenthL terms parenthR ;
 
-terms : (variable | constants | DIGIT | rangeDigit | arithmetic | semicolon | predicate | comma)+ ;
+terms : (variable | constant | DIGIT | rangeDigit | arithmetic | semicolon | predicate | comma)+ ;
 
 
 
 /** Defining comparing built ins. */
-builtIns : (rangeDigit | variable | DIGIT | constants | arithmetic) builtInSign (rangeDigit | variable | DIGIT | constants | arithmetic) ;
+builtIns : (rangeDigit | variable | DIGIT | constant | arithmetic) builtInSign (rangeDigit | variable | DIGIT | constant | arithmetic) ;
 
 builtInSign : lowerequal | lower | greaterequal | greater | equal equal? | notequal ;
 
 
 
 /** Defining arithmetics. */
-arithmetic : (variable | DIGIT) (arithmeticSign (variable | DIGIT))+ ;
+arithmetic : (variable | DIGIT | constant) (arithmeticSign (variable | DIGIT | constant))+ ;
 
 arithmeticSign : plus | minus | mult | div ;
 
@@ -89,7 +93,7 @@ defaultNegatedAggregateNOT : NOT (maxConstraint | hornConstraint) ;
 
 
 /** Defining other program elements. */
-rangeDigit : (DIGIT | VARIABLE) range (DIGIT | VARIABLE) ;
+rangeDigit : (DIGIT | VARIABLE | constant) range (DIGIT | VARIABLE | constant) ;
 
 range : RANGE ;
 
@@ -115,11 +119,11 @@ div : DIV ;
 
 mult : MULT ;
 
-bound : DIGIT | VARIABLE | arithmetic ;
+bound : DIGIT | VARIABLE | arithmetic | constant ;
 
 variable : VARIABLE ;
 
-constants : PREDICATE | STRING ;
+constant : PREDICATE | STRING ;
 
 parenthL : PARENTHL ;
 
@@ -142,6 +146,8 @@ min : MIN ;
 odd : ODD ;
 
 even : EVEN ;
+
+constantSymbol : CONST ;
 
 semicolon : SEMICOLON ;
 
@@ -166,6 +172,7 @@ MAX : '#max' ;
 EVEN : '#even' ;
 ODD : '#odd' ;
 MIN : '#min' ;
+CONST : '#const ' ;
 PARENTHL : '(' ;
 PARENTHR : ')' ;
 CURLBRL : '{' ;
