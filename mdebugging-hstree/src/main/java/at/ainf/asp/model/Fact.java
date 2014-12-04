@@ -1,7 +1,9 @@
 package at.ainf.asp.model;
 
+import at.ainf.asp.model.IProgramElement;
+
 /**
- * @author Melanie Fruehstueck
+ * @author Melanie Frühstück
  *
  */
 public class Fact implements IProgramElement, Comparable<IProgramElement> {

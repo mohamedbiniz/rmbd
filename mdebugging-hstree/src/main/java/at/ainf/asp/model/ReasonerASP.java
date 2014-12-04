@@ -5,7 +5,7 @@ import at.ainf.diagnosis.model.AbstractReasoner;
 import at.ainf.diagnosis.model.IReasoner;
 
 /**
- * @author Melanie Fruehstueck
+ * @author Melanie Frühstück
  *
  */
 public class ReasonerASP extends AbstractReasoner<IProgramElement> {
