@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>asp</artifactId>
+    <artifactId>mdebugging-hstree</artifactId>
     <version>1.0</version>
-    <name>Asp adapter</name>
+    <name>Monotonic ASP HS-tree adapter</name>
 
     <build>
         <plugins>
