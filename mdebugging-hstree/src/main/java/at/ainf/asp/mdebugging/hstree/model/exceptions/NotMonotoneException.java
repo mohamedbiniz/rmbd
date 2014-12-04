@@ -1,7 +1,7 @@
 /**
  * 
  */
-package at.ainf.asp.model.exceptions;
+package at.ainf.asp.mdebugging.hstree.model.exceptions;
 
 /**
  * @author Melanie Frühstück

@@ -1,9 +1,9 @@
-package at.ainf.asp.model;
+package at.ainf.asp.mdebugging.hstree.model;
 
-import at.ainf.asp.antlr.ASPOutputBaseListener;
-import at.ainf.asp.antlr.ASPOutputParser.SatisfiableContext;
-import at.ainf.asp.antlr.ASPOutputParser.UnknownContext;
-import at.ainf.asp.antlr.ASPOutputParser.UnsatisfiableContext;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPOutputBaseListener;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPOutputParser.SatisfiableContext;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPOutputParser.UnknownContext;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPOutputParser.UnsatisfiableContext;
 
 /**
  * @author Melanie Frühstück

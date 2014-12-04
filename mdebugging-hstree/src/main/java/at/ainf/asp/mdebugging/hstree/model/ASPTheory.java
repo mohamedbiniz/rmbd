@@ -1,9 +1,9 @@
-package at.ainf.asp.model;
+package at.ainf.asp.mdebugging.hstree.model;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import at.ainf.asp.main.Application;
+import at.ainf.asp.mdebugging.hstree.Application;
 import at.ainf.diagnosis.model.BaseSearchableObject;
 import at.ainf.diagnosis.model.SolverException;
 

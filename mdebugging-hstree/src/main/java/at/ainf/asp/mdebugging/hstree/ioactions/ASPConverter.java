@@ -1,7 +1,7 @@
 /**
  * 
  */
-package at.ainf.asp.ioactions;
+package at.ainf.asp.mdebugging.hstree.ioactions;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Set;
 
-import at.ainf.asp.model.IProgramElement;
+import at.ainf.asp.mdebugging.hstree.model.IProgramElement;
 
 /**
  * @author Melanie Frühstück

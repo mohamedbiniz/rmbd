@@ -1,9 +1,9 @@
 /**
  * 
  */
-package at.ainf.asp.model;
+package at.ainf.asp.mdebugging.hstree.model;
 
-import at.ainf.asp.model.ASPOutput;
+import at.ainf.asp.mdebugging.hstree.model.ASPOutput;
 
 
 /**

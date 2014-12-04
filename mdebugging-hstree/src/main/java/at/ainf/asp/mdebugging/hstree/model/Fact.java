@@ -1,6 +1,6 @@
-package at.ainf.asp.model;
+package at.ainf.asp.mdebugging.hstree.model;
 
-import at.ainf.asp.model.IProgramElement;
+import at.ainf.asp.mdebugging.hstree.model.IProgramElement;
 
 /**
  * @author Melanie Frühstück

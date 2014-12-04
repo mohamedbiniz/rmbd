@@ -1,4 +1,4 @@
-package at.ainf.asp.model;
+package at.ainf.asp.mdebugging.hstree.model;
 
 import java.util.Set;
 import at.ainf.diagnosis.model.AbstractReasoner;

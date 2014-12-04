@@ -1,7 +1,7 @@
 /**
  * 
  */
-package at.ainf.asp.model;
+package at.ainf.asp.mdebugging.hstree.model;
 
 import java.io.IOException;
 import java.util.Set;
@@ -11,11 +11,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import at.ainf.asp.antlr.ASPOutputLexer;
-import at.ainf.asp.antlr.ASPOutputParser;
-import at.ainf.asp.ioactions.ASPConverter;
-import at.ainf.asp.ioactions.StreamGobbler;
-import at.ainf.asp.main.Application;
+import at.ainf.asp.mdebugging.hstree.Application;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPOutputLexer;
+import at.ainf.asp.mdebugging.hstree.antlr.ASPOutputParser;
+import at.ainf.asp.mdebugging.hstree.ioactions.ASPConverter;
+import at.ainf.asp.mdebugging.hstree.ioactions.StreamGobbler;
 
 /**
  * @author Melanie Frühstück
