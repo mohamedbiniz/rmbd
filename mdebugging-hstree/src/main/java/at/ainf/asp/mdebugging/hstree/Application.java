@@ -2,9 +2,9 @@ package at.ainf.asp.mdebugging.hstree;
 
 import java.util.Set;
 
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramLexer;
-import at.ainf.asp.mdebugging.hstree.antlr.ASPProgramParser;
-import at.ainf.asp.mdebugging.hstree.inputoutputactions.ASPConverter;
+import at.ainf.asp.antlr.ASPProgramLexer;
+import at.ainf.asp.antlr.ASPProgramParser;
+import at.ainf.asp.mdebugging.hstree.ioactions.ASPConverter;
 import at.ainf.asp.mdebugging.hstree.model.ASPModel;
 import at.ainf.asp.mdebugging.hstree.model.ASPTheory;
 import at.ainf.asp.mdebugging.hstree.model.IProgramElement;
