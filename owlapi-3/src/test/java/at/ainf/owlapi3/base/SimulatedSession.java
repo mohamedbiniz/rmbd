@@ -373,7 +373,7 @@ public class SimulatedSession extends CalculateDiagnoses {
                 if (d1 != null) {// && scoringFunc != QSSType.SPLITINHALF) {
                     BigDecimal d1p = d1.getMeasure();
                     BigDecimal temp = d1p.multiply(new BigDecimal("100"));
-                    temp = temp.divide(dp, Rounding.PRECISION,Rounding.ROUNDING_MODE);
+                    temp = temp.divide(dp, Rounding.PRECISION, Rounding.ROUNDING_MODE);
                     BigDecimal diff = new BigDecimal("100").subtract(temp);
                     logger.trace("difference : " + (dp.subtract(d1p)) + " - " + diff + " %");
                     if (this.userBreak && diff.compareTo(SIGMA) > 0 && isTargetDiagFirst && num_of_queries > 0) {
@@ -398,6 +398,8 @@ public class SimulatedSession extends CalculateDiagnoses {
                 //actPa = getBestQuery(start, diagnoses);
 
                 actPa = queryGenerator.generatePartition(diagnoses);
+                //TODO delete logger output
+                logger.info("\nactPa: " + actPa.partition.toString() + "\n");
 
                 if (actPa == null) {
                     search.reset();
@@ -533,7 +535,7 @@ public class SimulatedSession extends CalculateDiagnoses {
 //                ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
 //                ", consistency checks " + consistencyCount;
         String msg = getMessage() + "," + "Time: " +time + ", \n" + "Number of queries: "+num_of_queries + ", \n"
-               +"Query cardinality: "+queryCardinality+", \\n" + "Target Diagnosis is most probable: "+targetDiagnosisIsMostProbable + ", \n" + "Target diagnosis is windows: "+targetDiagnosisIsInWind + ", \n" + "Diagnosis window size: "+diagWinSize
+               +"Query cardinality: "+queryCardinality+", \n" + "Target Diagnosis is most probable: "+targetDiagnosisIsMostProbable + ", \n" + "Target diagnosis is windows: "+targetDiagnosisIsInWind + ", \n" + "Diagnosis window size: "+diagWinSize
                 + ", \n" + "Reaction time: "+ reactionTime + ", \n" + "User break: "+userBreak + ", \n" + possibleError +
                 ",\n" + "System break: "+systemBreak + ", \n" + "Has query with no decision possible: "+hasQueryWithNoDecisionPossible +
                 ", \n" + "Consistency count: "+consistencyCount + ",\n" +"Consistency time: "+ consistencyTime;
