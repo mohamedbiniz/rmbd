@@ -44,6 +44,10 @@ public class PredefinedConflictSearcher<Id> implements Searcher<Id> {
         return conflictSets;
     }
 
+    public void setConflictSets(Set<FormulaSet<Id>> conflictSets) {
+        this.conflictSets = conflictSets;
+    }
+
     private Set<FormulaSet<Id>> conflictSets;
 
     public PredefinedConflictSearcher(Set<FormulaSet<Id>> conflictSets) {
@@ -78,11 +82,11 @@ public class PredefinedConflictSearcher<Id> implements Searcher<Id> {
 
         }
 
-        //if(isBHS){
-        for(FormulaSet<Id> delete : result){
-            conflictSets.remove(delete);
+        if(isBHS){
+            for(FormulaSet<Id> delete : result){
+                conflictSets.remove(delete);
+            }
         }
-        //}
 
         if(result.isEmpty()  ) throw new NoConflictException("No conflicts available!");
 

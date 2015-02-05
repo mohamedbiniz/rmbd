@@ -9,9 +9,13 @@
 package at.ainf.sat4j.model;
 
 import at.ainf.diagnosis.model.*;
-import org.sat4j.specs.*;
+import at.ainf.diagnosis.storage.FormulaSet;
+import org.sat4j.specs.ISolver;
+import org.sat4j.specs.IteratorInt;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
 
 public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable> {
 
@@ -89,5 +93,18 @@ public class PropositionalTheory extends BaseSearchableObject<IVecIntComparable>
         return anInt;
     }
 
+    public IVecIntComparable removeClause(IVecIntComparable vector) {
+        VecIntComparable vector2 = (VecIntComparable) vector;
+        getKnowledgeBase().removeFormulas(Collections.<IVecIntComparable>singleton(vector2));
+        return vector;
+    }
 
+    public boolean addAll(FormulaSet<IVecIntComparable> vectorSet) {
+        Iterator<IVecIntComparable> iterator = vectorSet.iterator();
+        while(iterator.hasNext()) {
+            VecIntComparable vector = (VecIntComparable) iterator.next();
+            getKnowledgeBase().addFormulas(Collections.<IVecIntComparable>singleton(vector));
+        }
+        return true;
+    }
 }

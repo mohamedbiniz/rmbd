@@ -131,7 +131,8 @@ public class QuickXplainTest {
         for (int i = 0; i < 100; i++) {
             MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
             quick.setAxiomListener(new QXSingleAxiomListener<IVecIntComparable>(true));
-
+            //if maxCount not set, there will be 6 conflicts on some systems
+            quick.setMaxConflictSetCount(5);
             conflict = computeMultipleConflicts(quick);
         }
         assertEquals(conflict.size(), 5);
@@ -193,6 +194,203 @@ public class QuickXplainTest {
 
         vec.add(new int[]{6, 12});
         vec.add(new int[]{-10, -12});
+
+        Collection<IVecIntComparable> test = new LinkedList<IVecIntComparable>();
+        for (int[] e : vec)
+            test.add(theory.addClause(e));
+        list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
+
+        return quick.search(theory, list);
+    }
+
+    @Test
+    public void run2TestNConflictComputation() throws SolverException, InconsistentTheoryException, NoConflictException {
+        int n = 4;
+
+        //create quick
+        MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+        quick.setAxiomListener(new QXAxiomSetListener<IVecIntComparable>(true));
+        //create theory
+        PropositionalTheory theory = generateTheory();
+
+
+        //calculate conflicts
+        Set<FormulaSet<IVecIntComparable>> conflicts = computeNConflictsAtTime(quick, theory, n);
+        System.out.print("Test: " + conflicts.size());
+        assertTrue(n > conflicts.size());
+        //create KB'
+        PropositionalTheory theoryPrime = getTheoryFromConflicts(conflicts, theory);
+
+
+
+    }
+
+    public PropositionalTheory getTheoryFromConflicts(Set<FormulaSet<IVecIntComparable>> conflicts, PropositionalTheory completeTheory) {
+
+        ISolver reasoner = SolverFactory.newDefault();
+        reasoner.setExpectedNumberOfClauses(20);
+        reasoner.newVar(10);
+        PropositionalTheory theory = new PropositionalTheory(reasoner);
+        theory.getKnowledgeBase().addBackgroundFormulas(completeTheory.getKnowledgeBase().getBackgroundFormulas());
+
+        Iterator<FormulaSet<IVecIntComparable>> iterator = conflicts.iterator();
+        while(iterator.hasNext()) {
+            theory.addAll(iterator.next());
+        }
+        return theory;
+    }
+
+
+        @Test
+    public void run2TestSingleConflictComputation() throws SolverException, InconsistentTheoryException, NoConflictException {
+        //create quick
+        MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+        quick.setAxiomListener(new QXAxiomSetListener<IVecIntComparable>(true));
+        //create theory
+        PropositionalTheory theory = generateTheory();
+        //calculate conflict
+        Set<FormulaSet<IVecIntComparable>> conflicts = computeSingleConflictAtTime(quick, theory);
+        assertEquals(conflicts.size(), 1);
+
+        //remove 1 axiom of conflict from theory
+        FormulaSet<IVecIntComparable> conflict = conflicts.iterator().next();
+        IVecIntComparable diagnose = conflict.iterator().next();
+        theory.removeClause(diagnose);
+        //calculate conflict
+        conflicts = computeSingleConflictAtTime(quick, theory);
+        assertEquals(conflicts.size(), 1);
+
+        //remove 1 axiom of conflict from theory
+        conflict = conflicts.iterator().next();
+        diagnose = conflict.iterator().next();
+        theory.removeClause(diagnose);
+        //calculate conflict
+        List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
+        list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
+        check(quick, theory, list, true); //passes test if no more conflicts
+
+    }
+
+    /**
+     * searches for 1 conflict and returns it
+     * @param MultiQuickXplain<IVecIntComparable> quick
+     * @param PropositionalTheory theory
+     * @return Set<FormulaSet<IVecIntComparable>> conflict
+     * @throws at.ainf.diagnosis.model.InconsistentTheoryException
+     * @throws at.ainf.diagnosis.model.SolverException
+     * @throws at.ainf.diagnosis.tree.exceptions.NoConflictException
+     */
+    public Set<FormulaSet<IVecIntComparable>> computeSingleConflictAtTime(MultiQuickXplain<IVecIntComparable> quick, PropositionalTheory theory) throws InconsistentTheoryException, SolverException, NoConflictException {
+        List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
+        list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
+
+        //set maxConflict to 1 to get only one conflict
+        quick.setMaxConflictSetCount(1);
+        Set<FormulaSet<IVecIntComparable>> conflict = quick.search(theory, list);
+        return conflict;
+    }
+
+
+    /**
+     * searches for n conflict and returns them
+     * @param MultiQuickXplain<IVecIntComparable> quick
+     * @param PropositionalTheory theory
+     * @param numConflicts maximum number of computed conflicts
+     * @return Set<FormulaSet<IVecIntComparable>> conflicts
+     * @throws at.ainf.diagnosis.model.InconsistentTheoryException
+     * @throws at.ainf.diagnosis.model.SolverException
+     * @throws at.ainf.diagnosis.tree.exceptions.NoConflictException
+     */
+    public Set<FormulaSet<IVecIntComparable>> computeNConflictsAtTime(MultiQuickXplain<IVecIntComparable> quick, PropositionalTheory theory, int numConflicts) throws InconsistentTheoryException, SolverException, NoConflictException {
+        List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
+        list.addAll(theory.getKnowledgeBase().getFaultyFormulas());
+
+        //set maxConflict to 1 to get only one conflict
+        quick.setMaxConflictSetCount(numConflicts);
+        Set<FormulaSet<IVecIntComparable>> conflicts = quick.search(theory, list);
+        return conflicts;
+    }
+
+
+    /**
+     * generates theory for the test run2TestSingleConflictComputation()
+     * @return PropositionalTheory theory
+     */
+    public PropositionalTheory generateTheory() {
+        //array with background formula
+        int[] fm10 = new int[]{10};
+
+        ISolver reasoner = SolverFactory.newDefault();
+        reasoner.setExpectedNumberOfClauses(20);
+        reasoner.newVar(10);
+        PropositionalTheory theory = new PropositionalTheory(reasoner);
+        //adds the above background formula
+        theory.getKnowledgeBase().addBackgroundFormulas(Collections.<IVecIntComparable>singleton(new VecIntComparable(fm10)));
+        List<int[]> vec = new ArrayList<int[]>();
+
+        //add clauses
+        vec.add(new int[]{-1, -2, -3, 4});
+        vec.add(new int[]{1});
+        vec.add(new int[]{2});
+        vec.add(new int[]{3});
+        vec.add(new int[]{-4});
+        vec.add(new int[]{5});
+
+        vec.add(new int[]{16, -17});
+        vec.add(new int[]{16, 17});
+        vec.add(new int[]{-16});
+
+        vec.add(new int[]{9});
+        vec.add(new int[]{-10, -11});
+        vec.add(new int[]{-11});
+
+        vec.add(new int[]{6, -7});
+        vec.add(new int[]{6, 7});
+
+        vec.add(new int[]{-10, -12});
+
+        for (int[] e : vec)
+            theory.addClause(e);
+
+        return theory;
+    }
+
+    @Test
+    public void run2SetQuickPresentationExample() throws SolverException, InconsistentTheoryException, NoConflictException {
+
+        MultiQuickXplain<IVecIntComparable> quick = new MultiQuickXplain<IVecIntComparable>();
+        quick.setAxiomListener(new QXAxiomSetListener<IVecIntComparable>(true));
+
+        Set<FormulaSet<IVecIntComparable>> conflict = computeMultipleConflictsPresentationExample(quick);
+        assertEquals(5, conflict.size());
+    }
+
+    private Set<FormulaSet<IVecIntComparable>> computeMultipleConflictsPresentationExample(MultiQuickXplain<IVecIntComparable> quick) throws SolverException, InconsistentTheoryException, NoConflictException {
+        ISolver reasoner = SolverFactory.newDefault();
+        reasoner.setExpectedNumberOfClauses(20);
+        reasoner.newVar(10);
+        PropositionalTheory theory = new PropositionalTheory(reasoner);
+        List<IVecIntComparable> list = new LinkedList<IVecIntComparable>();
+        check(quick, theory, list, true);
+
+        List<int[]> vec = new ArrayList<int[]>();
+
+        //add clauses
+        vec.add(new int[]{1});
+        vec.add(new int[]{2});
+        vec.add(new int[]{3});
+        vec.add(new int[]{-1, 2});
+        vec.add(new int[]{-2, -1});
+        vec.add(new int[]{-3, 1});
+        vec.add(new int[]{-1, -3});
+
+        vec.add(new int[]{1});
+        vec.add(new int[]{2});
+        vec.add(new int[]{-1, 2});
+        vec.add(new int[]{-2, -1});
+        vec.add(new int[]{-2, 3});
+        vec.add(new int[]{-3, -2});
+
 
         Collection<IVecIntComparable> test = new LinkedList<IVecIntComparable>();
         for (int[] e : vec)

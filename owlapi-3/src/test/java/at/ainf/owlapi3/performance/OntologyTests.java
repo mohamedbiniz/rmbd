@@ -387,8 +387,8 @@ public class OntologyTests extends OntologySession {
 
 
 
-                for (UsersProbab usersProbab : new UsersProbab[]{UsersProbab.MODERATE,UsersProbab.EXTREME,UsersProbab.UNIFORM}) {
-                    for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD,DiagProbab.AVERAGE,DiagProbab.GOOD}) {
+                for (UsersProbab usersProbab : new UsersProbab[]{UsersProbab.MODERATE, UsersProbab.EXTREME, UsersProbab.UNIFORM}) {
+                    for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD, DiagProbab.AVERAGE, DiagProbab.GOOD}) {
 
                                  for (int run = 7; run < MAX_RUNS; run++) {
 
@@ -497,8 +497,8 @@ public class OntologyTests extends OntologySession {
 
 
 
-            for (UsersProbab usersProbab : new UsersProbab[]{UsersProbab.MODERATE,UsersProbab.EXTREME,UsersProbab.UNIFORM}) {
-                for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD,DiagProbab.AVERAGE,DiagProbab.GOOD}) {
+            for (UsersProbab usersProbab : new UsersProbab[]{UsersProbab.MODERATE, UsersProbab.EXTREME, UsersProbab.UNIFORM}) {
+                for (DiagProbab diagProbab : new DiagProbab[]{DiagProbab.BAD, DiagProbab.AVERAGE, DiagProbab.GOOD}) {
                     for(Searcher<OWLLogicalAxiom> searcher:searchers)   {
 
                             for (int run = 7; run < MAX_RUNS; run++) {
@@ -625,6 +625,7 @@ public class OntologyTests extends OntologySession {
         session.simulateQuerySession();
         timeNormal = System.currentTimeMillis() - timeNormal;
         FormulaSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
+        logger.info("\nfound Diag" + diag.toString() + "\n");
         boolean foundCorrectD = diag.equals(diagnoses);
         boolean hasNegativeTestcases = searchNormal.getSearchable().getKnowledgeBase().getNonentailedTests().size() > 0;
         theoryNormal.getKnowledgeBase().clearTestCases();

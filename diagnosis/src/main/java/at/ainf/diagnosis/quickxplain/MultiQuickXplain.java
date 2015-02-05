@@ -42,7 +42,7 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
     private static Logger logger = LoggerFactory.getLogger(MultiQuickXplain.class.getName());
     private final int minThreads;
     private final int maxThreads;
-    private final int maxConflicts;
+    private int maxConflicts;
     private final Set<FormulaSet<Id>> results = new LinkedHashSet<FormulaSet<Id>>();
     private ThreadPoolExecutor pool;
     private int count = 0;
@@ -150,9 +150,9 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
      * @param c
      * @param u
      * @return
-     * @throws NoConflictException
-     * @throws SolverException
-     * @throws InconsistentTheoryException
+     * @throws at.ainf.diagnosis.tree.exceptions.NoConflictException
+     * @throws at.ainf.diagnosis.model.SolverException
+     * @throws at.ainf.diagnosis.model.InconsistentTheoryException
      */
     public FormulaSet<Id> quickXplain(final Searchable<Id> c, final Collection<Id> u)
             throws NoConflictException, SolverException, InconsistentTheoryException {
@@ -260,6 +260,10 @@ public class MultiQuickXplain<Id> extends BaseQuickXplain<Id> {
 
     public int incCount() {
         return ++this.count;
+    }
+
+    public void setMaxConflictSetCount(int maxConflictSetCount) {
+        this.maxConflicts = maxConflictSetCount;
     }
 
     private class QXThread implements Callable<FormulaSet<Id>> {
