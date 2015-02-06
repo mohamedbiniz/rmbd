@@ -16,6 +16,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.junit.Test;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -83,12 +84,12 @@ public class ConflictTreeTest extends OntologyTests {
     }
 
 
-    //@Test
+    @Test
     public void ConflictTreeTest() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         logger.info("ConflictTreeTest");
 
         //set for all found diagnoses during search
-        Set<FormulaSet<OWLLogicalAxiom>> foundDiagnoses = new HashSet<FormulaSet<OWLLogicalAxiom>>();
+        Set<Set<OWLLogicalAxiom>> foundDiagnoses = new LinkedHashSet<Set<OWLLogicalAxiom>>();
 
         //create theory
         OWLOntology ontology = getOntologySimple("ontologies/ecai2010.owl");
@@ -106,73 +107,80 @@ public class ConflictTreeTest extends OntologyTests {
         //run for each possible target diagnosis
         for (FormulaSet<OWLLogicalAxiom> targetDiagnosis : diags) {
             logger.info("\ntargetD: " + targetDiagnosis.toString() + "\n");
-            //create quick
-            MultiQuickXplain<OWLLogicalAxiom> quick = new MultiQuickXplain<OWLLogicalAxiom>();
-            quick.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
 
-            //create searcher
-            PredefinedConflictSearcher<OWLLogicalAxiom> conflictSearcher = new PredefinedConflictSearcher<OWLLogicalAxiom>(null);
-            conflictSearcher.setIsBHS(false);
-
-            //set query selection type
-            QSSType type = QSSType.SPLITINHALF;
-            logger.info("QSSType: " + type);
-            Map<QSSType, List<Double>> nqueries = new HashMap<QSSType, List<Double>>();
-            nqueries.put(type, new LinkedList<Double>());
-
-            boolean conflictExists = true;
-            FormulaSet<OWLLogicalAxiom> partialDiagnoses = null;
-            long time = System.currentTimeMillis();
-            while(conflictExists) {
-                maximumNumberOfConflicts = 1;
-                Set<FormulaSet<OWLLogicalAxiom>> conflicts = null;
-                try {
-                    //calculate n conflicts
-                    conflicts = computeNConflictsAtTime(quick, theory, maximumNumberOfConflicts);
-                } catch (NoConflictException e) {
-                    conflictExists = false;
-                    logger.info("no more conflicts");
-                    break;
-                }
-                logger.info("maxNumberOfConflicts: " + maximumNumberOfConflicts + ", numberReturnedConflicts: " + conflicts.size());
-                assertTrue(maximumNumberOfConflicts >= conflicts.size());
-
-                if (conflicts.size() == 0) {
-                    conflictExists = false;
-                } else {
-                    logger.info("\nconflict: " + conflicts.toString() + "\n");
-                    //create KB' from conflicts
-                    OWLTheory theoryPrime = getTheoryFromConflicts(conflicts, theory);
-
-                    //setup for simulated session
-                    conflictSearcher.setConflictSets(conflicts);
-                    search.setSearcher(conflictSearcher);
-                    search.setSearchable(theoryPrime);
-                    time = System.currentTimeMillis() - time;
-                    FormulaSet<OWLLogicalAxiom> reducedTargetDiagnosis = getIntersectingDiagnosisAxiom(targetDiagnosis, conflicts);
-                    long hsTime = computeHS(search, theoryPrime, reducedTargetDiagnosis, nqueries.get(type), type);
-
-                    logger.info("\nreducedTargetDiagnosis: " + reducedTargetDiagnosis.toString() + "\n");
-                    //if test doesn't fail, the found diagnosis is equal the targetDiagnosis
-                    if (partialDiagnoses == null) {
-                        partialDiagnoses = targetDiagnosis;
-                    } else {
-                        partialDiagnoses.addAll(targetDiagnosis);
-                    }
-
-                    //save changed P' and N' in theory and remove target diagnosis from theory
-                    copyPositiveAndNegativeTests(theory, theoryPrime);
-                    theory.getKnowledgeBase().removeFormulas(reducedTargetDiagnosis);
-                }
-            }
-            time = System.currentTimeMillis() - time;
-            foundDiagnoses.add(partialDiagnoses);
-            partialDiagnoses = null;
+            long time = runConflictTreeSearch(targetDiagnosis, search, foundDiagnoses);
 
             logger.info("search terminated, time: " + time + ", number of found diagnoses: " + foundDiagnoses.size() + ", found diagnoses: " + foundDiagnoses.toString() );
             assertTrue(theory.verifyConsistency());
             theory.getKnowledgeBase().addFormulas(origTheory.getKnowledgeBase().getKnowledgeBase());
         }
+
+    }
+
+    private long runConflictTreeSearch(FormulaSet<OWLLogicalAxiom> targetDiagnosis, TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search, Set<Set<OWLLogicalAxiom>> foundDiagnoses) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        //create quick
+        MultiQuickXplain<OWLLogicalAxiom> quick = new MultiQuickXplain<OWLLogicalAxiom>();
+        quick.setAxiomListener(new QXAxiomSetListener<OWLLogicalAxiom>(true));
+
+        //create searcher
+        PredefinedConflictSearcher<OWLLogicalAxiom> conflictSearcher = new PredefinedConflictSearcher<OWLLogicalAxiom>(null);
+        conflictSearcher.setIsBHS(false);
+
+        //set query selection type
+        QSSType type = QSSType.SPLITINHALF;
+        logger.info("QSSType: " + type);
+        Map<QSSType, List<Double>> nqueries = new HashMap<QSSType, List<Double>>();
+        nqueries.put(type, new LinkedList<Double>());
+
+        boolean conflictExists = true;
+        Set<OWLLogicalAxiom> partialDiagnoses = new LinkedHashSet<OWLLogicalAxiom>();
+        long time = System.currentTimeMillis();
+        while(conflictExists) {
+            maximumNumberOfConflicts = 1;
+            Set<FormulaSet<OWLLogicalAxiom>> conflicts = null;
+            try {
+                //calculate n conflicts
+                conflicts = computeNConflictsAtTime(quick, theory, maximumNumberOfConflicts);
+            } catch (NoConflictException e) {
+                conflictExists = false;
+                logger.info("no more conflicts");
+                break;
+            }
+            logger.info("maxNumberOfConflicts: " + maximumNumberOfConflicts + ", numberReturnedConflicts: " + conflicts.size());
+            assertTrue(maximumNumberOfConflicts >= conflicts.size());
+
+            if (conflicts.size() == 0) {
+                conflictExists = false;
+            } else {
+                logger.info("\nconflict: " + conflicts.toString() + "\n");
+                //create KB' from conflicts
+                OWLTheory theoryPrime = getTheoryFromConflicts(conflicts, theory);
+
+                //setup for simulated session
+                conflictSearcher.setConflictSets(conflicts);
+                search.setSearcher(conflictSearcher);
+                search.setSearchable(theoryPrime);
+
+                long calcTargetDiagTime = System.currentTimeMillis();
+                FormulaSet<OWLLogicalAxiom> reducedTargetDiagnosis = getIntersectingDiagnosisAxiom(targetDiagnosis, conflicts);
+                calcTargetDiagTime = System.currentTimeMillis() - calcTargetDiagTime;
+                //remove time needed to get target diagnosis
+                time = time + calcTargetDiagTime;
+
+                computeHS(search, theoryPrime, reducedTargetDiagnosis, nqueries.get(type), type);
+
+                logger.info("\nreducedTargetDiagnosis: " + reducedTargetDiagnosis.toString() + "\n");
+                //if test doesn't fail, the found diagnosis is equal the targetDiagnosis
+                partialDiagnoses.addAll(reducedTargetDiagnosis);
+
+                //save changed P' and N' in theory and remove target diagnosis from theory
+                copyPositiveAndNegativeTests(theory, theoryPrime);
+                theory.getKnowledgeBase().removeFormulas(reducedTargetDiagnosis);
+            }
+        }
+        time = System.currentTimeMillis() - time;
+        foundDiagnoses.add(partialDiagnoses);
+        return time;
     }
 
 
@@ -194,18 +202,20 @@ public class ConflictTreeTest extends OntologyTests {
 
 
     public OWLTheory getTheoryFromConflicts(Set<FormulaSet<OWLLogicalAxiom>> conflicts, OWLTheory completeTheory) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
-        Set<OWLLogicalAxiom> unneededFormulas = new HashSet<OWLLogicalAxiom>();
-        unneededFormulas.addAll(completeTheory.getKnowledgeBase().getKnowledgeBase());
-
+        Set<OWLAxiom> axiomSet = new HashSet<OWLAxiom>();
         Iterator<FormulaSet<OWLLogicalAxiom>> iterator = conflicts.iterator();
         while(iterator.hasNext()) {
-            unneededFormulas.removeAll(iterator.next());
+            Iterator<OWLLogicalAxiom> axiomIterator = iterator.next().iterator();
+            while (axiomIterator.hasNext()) {
+                OWLLogicalAxiom ax = axiomIterator.next();
+                axiomSet.add(ax);
+            }
         }
 
-        OWLTheory conflictsTheory = (OWLTheory) completeTheory.copy();
-        conflictsTheory.getKnowledgeBase().removeFormulas(unneededFormulas);
+        OWLTheory theory = completeTheory.copyChangedTheory(axiomSet);
+        copyPositiveAndNegativeTests(theory, completeTheory);
 
-        return conflictsTheory;
+        return theory;
     }
 
     /**
