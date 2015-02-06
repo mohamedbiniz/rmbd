@@ -44,6 +44,11 @@ public class OWLTheory extends BaseSearchableObject<OWLLogicalAxiom> {
         return new OWLTheory(this.originalReasonerFactories, this.origOntology, knowledgeBase.getBackgroundFormulas());
     }
 
+    public OWLTheory copyChangedTheory(Set<OWLAxiom> knowledgeBaseAxioms) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        OWLOntology ontology = getOwlOntologyManager().createOntology(knowledgeBaseAxioms);
+        return new OWLTheory(this.originalReasonerFactories, ontology, getKnowledgeBase().getBackgroundFormulas());
+    }
+
     public void setIncludeTrivialEntailments(boolean includeTrivialEntailments) {
         this.includeTrivialEntailments = includeTrivialEntailments;
     }
