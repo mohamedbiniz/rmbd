@@ -99,7 +99,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
 
 
 
-    protected Set<FormulaSet<OWLLogicalAxiom>> getRandomDiagSet(File file, String directory ) throws SolverException, InconsistentTheoryException {
+    public Set<FormulaSet<OWLLogicalAxiom>> getRandomDiagSet(File file, String directory ) throws SolverException, InconsistentTheoryException {
         String conferenceYear = getConferenceYear();
         String matchingsDir = conferenceYear + getMatchingsDir();
         String matchingsDirName = "/ontology";
@@ -169,12 +169,12 @@ public class OAEI11ConferenceSession extends SimulatedSession {
     }
 
 
-    protected int chooseRandomNum(Set<FormulaSet<OWLLogicalAxiom>> diagnoses, Random random) {
+    public int chooseRandomNum(Set<FormulaSet<OWLLogicalAxiom>> diagnoses, Random random) {
 
         return random.nextInt(diagnoses.size());
     }
 
-    protected Set<OWLLogicalAxiom> chooseRandomDiag(Set<FormulaSet<OWLLogicalAxiom>> diagnoses,File file, int random) {
+    public Set<OWLLogicalAxiom> chooseRandomDiag(Set<FormulaSet<OWLLogicalAxiom>> diagnoses,File file, int random) {
         Set<OWLLogicalAxiom> targetDg = null;
 
         logger.info(file.getName() + ",diagnosis selected as target," + random);
