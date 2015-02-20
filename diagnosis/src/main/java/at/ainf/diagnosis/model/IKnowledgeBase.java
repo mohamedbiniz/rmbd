@@ -89,6 +89,8 @@ public interface IKnowledgeBase<Id> {
 
     public void clearTestCases();
 
+    public void clearTestsList();
+
     public void setEmptyBackgroundFormulas();
 
     public void setBackgroundFormulas(Collection<Id> fs);

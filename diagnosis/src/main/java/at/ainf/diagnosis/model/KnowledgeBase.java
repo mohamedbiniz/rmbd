@@ -228,6 +228,14 @@ public class KnowledgeBase<T> implements IKnowledgeBase<T> {
         this.nonentailed.clear();
     }
 
+    public void clearTestsList() {
+        if (locked > 0)
+            throw new UnsupportedOperationException();
+
+        tests.clear();
+        typeOfTest.clear();
+    }
+
     public boolean hasBackgroundTheory() {
         return this.backgroundFormulas.size() > 0;
     }
