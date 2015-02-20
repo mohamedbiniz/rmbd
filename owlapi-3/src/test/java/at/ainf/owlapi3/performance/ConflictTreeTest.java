@@ -236,6 +236,7 @@ public class ConflictTreeTest extends OntologyTests {
 
         for (QSSType type : QSSType.values()) { //run for each scoring function
             logger.info("\n-------QSSType: " + type);
+            search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
             search.setSearchable(ctTheory);
 
             //run normal simulated session
@@ -244,6 +245,7 @@ public class ConflictTreeTest extends OntologyTests {
             nQueries.put(type, new LinkedList<Double>());
             for (FormulaSet<OWLLogicalAxiom> targetDiagnosis : diagnoses) { //run for each possible target diagnosis
                 long completeTime = System.currentTimeMillis();
+                search.reset();
 
                 computeHS(search, ctTheory, targetDiagnosis, nQueries.get(type), type);
                 ctTheory.getKnowledgeBase().removeFormulas(targetDiagnosis);
@@ -254,7 +256,7 @@ public class ConflictTreeTest extends OntologyTests {
                 assertTrue(ctTheory.verifyConsistency());
 
                 resetTheoryTests(ctTheory);
-                search.reset();
+
             }
             logger.info("found Diagnoses: " + foundDiagnoses.toString());
             logger.info("\n-----found all target diagnoses: " + (foundDiagnoses.size() > 0 && foundDiagnoses.containsAll(diagnoses)) + "------\n");
@@ -268,6 +270,7 @@ public class ConflictTreeTest extends OntologyTests {
             ctQueries.put(type, new LinkedList<Double>());
             for (FormulaSet<OWLLogicalAxiom> targetDiagnosis : diagnoses) { //run for each possible target diagnosis
                 logger.info("\ntargetD: " + targetDiagnosis.toString() + "\n");
+                search.reset();
 
                 ConflictTreeSession conflictTreeSearch = new ConflictTreeSession(this, ctTheory, search);
                 long completeTime = conflictTreeSearch.search(targetDiagnosis, ctQueries, type);
@@ -277,7 +280,6 @@ public class ConflictTreeTest extends OntologyTests {
                 assertTrue(ctTheory.verifyConsistency());
 
                 resetTheoryTests(ctTheory);
-                search.reset();
             }
             logger.info("found Diagnoses: " + foundDiagnoses.toString());
             logger.info("\n-----found all target diagnoses: " + (foundDiagnoses.size() > 0 && foundDiagnoses.containsAll(diagnoses)) + "------\n");
