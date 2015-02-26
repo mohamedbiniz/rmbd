@@ -399,7 +399,7 @@ public class SimulatedSession extends CalculateDiagnoses {
 
                 actPa = queryGenerator.generatePartition(diagnoses);
                 //TODO delete logger output
-                logger.info("\nactPa: " + actPa.partition.toString() + "\n");
+                logger.info("actPa: " + CalculateDiagnoses.renderAxioms(actPa.partition) + "\n");
 
                 if (actPa == null) {
                     search.reset();

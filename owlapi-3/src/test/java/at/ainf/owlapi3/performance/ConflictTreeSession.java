@@ -1,6 +1,5 @@
 package at.ainf.owlapi3.performance;
 
-import at.ainf.diagnosis.Searcher;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
@@ -10,6 +9,7 @@ import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.model.OWLTheory;
 import org.semanticweb.owlapi.model.OWLAxiom;
@@ -34,8 +34,9 @@ public class ConflictTreeSession {
     private Set<Set<OWLLogicalAxiom>> diagnosis;
     private OWLTheory theory;
     private TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
-    private boolean isShortLogging;
-    private String outputString;
+    private boolean isShortLogging = false;
+    private String outputString = "";
+    private String messageString = "";
     /**
      * searcher for the tree search
      */
@@ -98,19 +99,14 @@ public class ConflictTreeSession {
 
             long getTargetDiagTime = System.currentTimeMillis();
             FormulaSet<OWLLogicalAxiom> reducedTargetDiagnosis = getIntersectingDiagnosisAxiom(targetDiagnosis, conflicts);
-            logger.info("\nreducedTargetDiagnosis: " + reducedTargetDiagnosis.toString() + "\n");
+            logger.info("reducedTargetDiagnosis: " + CalculateDiagnoses.renderAxioms(reducedTargetDiagnosis) + "\n");
             getTargetDiagTime = System.currentTimeMillis() - getTargetDiagTime;
             //remove time needed to get target diagnosis by increasing the start time
             completeTime += getTargetDiagTime;
 
             if (isShortLogging) {
                 outputString = "," + type + ",";
-                String message = "";
-                //TODO
-//                String message = "act," + file.getName() + "," + map.get(file) + "," + targetSource
-//                        + "," + qssType + "," + preprocessModulExtract + "," + randomNr + ","
-//                        + modOnto1Size + "," + modOnto2Size + "," + modMappingSize + "";
-                outputString += caller.computeHSShortLog(search, theoryPrime, reducedTargetDiagnosis, queries.get(type), type, message);
+                outputString += caller.computeHSShortLog(search, theoryPrime, reducedTargetDiagnosis, queries.get(type), type, messageString);
             } else {
                 caller.computeHS(search, theoryPrime, reducedTargetDiagnosis, queries.get(type), type);
             }
@@ -239,5 +235,18 @@ public class ConflictTreeSession {
     public void setOutputString(String outputString) {
         this.outputString = outputString;
     }
+
+    public String getOutputString() {
+        return outputString;
+    }
+
+    public void setMessageString(String messageString) {
+        this.messageString = messageString;
+    }
+
+    public String getMessageString() {
+        return messageString;
+    }
+
 
 }

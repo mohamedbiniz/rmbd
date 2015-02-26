@@ -625,12 +625,11 @@ public class OntologyTests extends OntologySession {
         session.simulateQuerySession();
         timeNormal = System.currentTimeMillis() - timeNormal;
         FormulaSet<OWLLogicalAxiom> diag = getMostProbable(searchNormal.getDiagnoses());
-        logger.info("\nfound Diag" + diag.toString() + "\n");
+        logger.info("found Diag: " + CalculateDiagnoses.renderAxioms(diag));
         boolean foundCorrectD = diag.equals(diagnoses);
         boolean hasNegativeTestcases = searchNormal.getSearchable().getKnowledgeBase().getNonentailedTests().size() > 0;
-        //TODO: clear isn't allowed if conflictTreeSession
         if (this.getClass() != ConflictTreeTest.class)
-            theoryNormal.getKnowledgeBase().clearTestCases(); //
+            theoryNormal.getKnowledgeBase().clearTestCases(); // clear isn't allowed if conflictTreeSession
         searchNormal.reset();
         logger.info("hstree iteration finished: window size "
                 + entry.getMeanWin() + " num of query " + entry.getMeanQuery() + " time " +
