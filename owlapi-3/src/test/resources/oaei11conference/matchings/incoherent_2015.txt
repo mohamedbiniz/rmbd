@@ -1,13 +1,8 @@
-ldoa-conference-confof.rdf
+csa-conference-ekaw.rdf
 ldoa-cmt-ekaw.rdf
+ldoa-conference-confof.rdf
+ldoa-conference-ekaw.rdf
+mappso-conference-ekaw.rdf
 mappso-confof-ekaw.rdf
 optima-conference-ekaw.rdf
 optima-confof-ekaw.rdf
-ldoa-conference-ekaw.rdf
-csa-conference-ekaw.rdf
-mappso-conference-ekaw.rdf
-ldoa-cmt-edas.rdf
-csa-conference-edas.rdf
-csa-edas-iasted.rdf
-ldoa-ekaw-iasted.rdf
-mappso-edas-iasted.rdf
