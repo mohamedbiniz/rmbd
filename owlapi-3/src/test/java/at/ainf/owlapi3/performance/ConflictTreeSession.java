@@ -80,7 +80,14 @@ public class ConflictTreeSession {
             Set<FormulaSet<OWLLogicalAxiom>> conflicts = null;
             try {
                 //calculate n conflicts
+                logger.info("maximum number of conflicts: " + maximumNumberOfConflicts);
                 conflicts = computeNConflictsAtTime(conflictsSearcher, theory);
+                logger.info("number of calculated conflicts: " + conflicts.size());
+                int i = 0;
+                for (Set<OWLLogicalAxiom> conflict : conflicts) {
+                    i++;
+                    logger.info("found conflict " + i + ": " + CalculateDiagnoses.renderAxioms(conflict));
+                }
             } catch (NoConflictException e) {
                 logger.info("no more conflicts");
                 break;

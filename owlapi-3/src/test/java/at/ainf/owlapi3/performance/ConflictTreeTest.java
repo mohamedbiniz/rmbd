@@ -96,7 +96,12 @@ public class ConflictTreeTest extends OntologyTests {
 
 
     @Test
+    /**
+     * Tests ConflictTreeSimulatedSession with unsolvable ontologies, target diagnoses are from file
+     */
     public void doUnsolvableTest() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        logger.info("doUnsolveableTest_with_2015_ontologies");
+
         String matchingsDir = "oaei11conference/matchings/";
         String ontologyDir = "oaei11conference/ontology";
 
@@ -117,6 +122,16 @@ public class ConflictTreeTest extends OntologyTests {
         runUnsolvableTests(matchingsDir, ontologyDir, files, map);
     }
 
+    /**
+     * Runs ConflictTreeSimulatedSession with diagnoses from file
+     * @param matchingsDir
+     * @param ontologyDir
+     * @param files
+     * @param map
+     * @throws SolverException
+     * @throws InconsistentTheoryException
+     * @throws OWLOntologyCreationException
+     */
     private void runUnsolvableTests(String matchingsDir, String ontologyDir, Set<File> files, Map<File, String> map) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         OAEI11ConferenceSession conferenceSession = new OAEI11ConferenceSession();
 
@@ -163,7 +178,7 @@ public class ConflictTreeTest extends OntologyTests {
                 Map<OWLLogicalAxiom, BigDecimal> map1 = conferenceSession.readRdfMapping(matchingsDir + map.get(file), n + ".rdf");
                 OWLAxiomCostsEstimator es = new OWLAxiomCostsEstimator(ctTheory, map1);
                 search.setCostsEstimator(es);
-                Set<FormulaSet<OWLLogicalAxiom>> allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
+                //Set<FormulaSet<OWLLogicalAxiom>> allD = new LinkedHashSet<FormulaSet<OWLLogicalAxiom>>(search.getDiagnoses());
                 search.reset();
                 targetDg = null;
 
@@ -198,7 +213,12 @@ public class ConflictTreeTest extends OntologyTests {
 
 
     @Test
+    /**
+     * Tests ConflictTreeSimulatedSession with unsolvable ontologies, target diagnoses are calculated
+     */
     public void doUnsolvableOAEIConferenceTest() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        logger.info("doOAEIConferenceTest_with_2015_ontologies");
+
         String matchingsDir = "oaei11conference/matchings/";
         String ontologyDir = "oaei11conference/ontology";
 
@@ -244,7 +264,12 @@ public class ConflictTreeTest extends OntologyTests {
 
 
     @Test
+    /**
+     * Tests ConflictTreeSimulatedSession with solvable ontologies from OAEI11 Conference, target diagnoses are calculated
+     */
     public void doOAEIConferenceTest() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        logger.info("doOAEIConferenceTest");
+
         String matchingsDir = "oaei11conference/matchings/";
         String ontologyDir = "oaei11conference/ontology";
 
@@ -285,6 +310,16 @@ public class ConflictTreeTest extends OntologyTests {
 
     }
 
+    /**
+     * Runs ConflictTreeSimulatedSession with calculated diagnoses
+     * @param matchingsDir
+     * @param ontologyDir
+     * @param files
+     * @param map
+     * @throws SolverException
+     * @throws InconsistentTheoryException
+     * @throws OWLOntologyCreationException
+     */
     private void runOaeiConfereneTests(String matchingsDir, String ontologyDir, Set<File> files, Map<File, String> map) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         OAEI11ConferenceSession conferenceSession = new OAEI11ConferenceSession();
 
@@ -294,22 +329,18 @@ public class ConflictTreeTest extends OntologyTests {
         TargetSource targetSource = TargetSource.FROM_30_DIAGS;
         for (File file : files) {
             logger.info("processing " + file.getName());
-
             String out = "STAT, " + file;
-
 
             Random random = new Random(12311);
             Set<FormulaSet<OWLLogicalAxiom>> targetDgSet = conferenceSession.getRandomDiagSet(file, map.get(file));
+            logger.info("number of found diagnoses (max. 30): " + targetDgSet.size());
             int randomNr = conferenceSession.chooseRandomNum(targetDgSet, random);
             Set<OWLLogicalAxiom> targetDg = conferenceSession.chooseRandomDiag(targetDgSet,file,randomNr);
 
             Map<QSSType, DurationStat> ctTimes = new HashMap<QSSType, DurationStat>();
             Map<QSSType, List<Double>> ctQueries = new HashMap<QSSType, List<Double>>();
 
-
             for (QSSType qssType : qssTypes) {
-
-
                 String fileName = file.getName();
                 StringTokenizer t = new StringTokenizer(fileName, "-");
                 String matcher = t.nextToken();
