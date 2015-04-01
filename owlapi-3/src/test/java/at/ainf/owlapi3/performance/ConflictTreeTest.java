@@ -6,7 +6,6 @@ import at.ainf.diagnosis.quickxplain.QuickXplain;
 import at.ainf.diagnosis.storage.FormulaSet;
 import at.ainf.diagnosis.storage.FormulaSetImpl;
 import at.ainf.diagnosis.tree.HsTreeSearch;
-import at.ainf.diagnosis.tree.Node;
 import at.ainf.diagnosis.tree.SimpleCostsEstimator;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
@@ -20,7 +19,6 @@ import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
 import junit.framework.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -46,7 +44,6 @@ import static org.junit.Assert.assertTrue;
 
 public class ConflictTreeTest extends OntologyTests {
 
-    private int maximumNumberOfConflicts = 1;
     private static Logger logger = LoggerFactory.getLogger(ConflictTreeTest.class.getName());
     private OWLTheory ctTheory;
     private OWLTheory origTheory;
@@ -94,13 +91,40 @@ public class ConflictTreeTest extends OntologyTests {
         return search;
     }
 
+    @Test
+    /**
+     * Testing the ontologies witch are throwing the NoSuchElementException
+     */
+    public void testThrowingException() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        logger.info("doUnsolveableTest_with_2015_ontologies");
+
+        String matchingsDir = "oaei11conference/matchings/";
+        String ontologyDir = "oaei11conference/ontology";
+
+        File[] f = getMappingFiles(matchingsDir, "incoherent", "error_throwing.txt");
+
+        Set<File> files = new LinkedHashSet<File>();
+        Map<File, String> map = new HashMap<File, String>();
+        for (File file : f) {
+            files.add(file);
+            map.put(file, "incoherent");
+        }
+        try {
+            //each of the following configurations is throwing an exception
+            runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 1); // aroma-cmt-confof.rdf
+            //runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 2); // aroma-cmt-ekaw.rdf
+            //runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 3); // aroma-conference-confof.rdf
+        } catch (NoSuchElementException e) {
+            logger.info(e.toString());
+        }
+    }
 
     @Test
     /**
      * Tests ConflictTreeSimulatedSession with unsolvable ontologies, target diagnoses are from file
      */
-    public void doUnsolvableTest() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        logger.info("doUnsolveableTest_with_2015_ontologies");
+    public void doUnsolvableOAEIConferenceFromFileTest() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        logger.info("doUnsolveableTest_with_2015_ontologies_from_file");
 
         String matchingsDir = "oaei11conference/matchings/";
         String ontologyDir = "oaei11conference/ontology";
@@ -119,7 +143,7 @@ public class ConflictTreeTest extends OntologyTests {
             map.put(file, "inconsistent");
         }
 
-        runUnsolvableTests(matchingsDir, ontologyDir, files, map);
+        runOaeiConferenceTestsFromFile(matchingsDir, ontologyDir, files, map);
     }
 
     /**
@@ -132,7 +156,7 @@ public class ConflictTreeTest extends OntologyTests {
      * @throws InconsistentTheoryException
      * @throws OWLOntologyCreationException
      */
-    private void runUnsolvableTests(String matchingsDir, String ontologyDir, Set<File> files, Map<File, String> map) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+    private void runOaeiConferenceTestsFromFile(String matchingsDir, String ontologyDir, Set<File> files, Map<File, String> map) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         OAEI11ConferenceSession conferenceSession = new OAEI11ConferenceSession();
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE, QSSType.SPLITINHALF, QSSType.DYNAMICRISK};
@@ -217,7 +241,7 @@ public class ConflictTreeTest extends OntologyTests {
      * Tests ConflictTreeSimulatedSession with unsolvable ontologies, target diagnoses are calculated
      */
     public void doUnsolvableOAEIConferenceTest() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
-        logger.info("doOAEIConferenceTest_with_2015_ontologies");
+        logger.info("doUnsolveableTest_with_2015_ontologies");
 
         String matchingsDir = "oaei11conference/matchings/";
         String ontologyDir = "oaei11conference/ontology";
@@ -236,14 +260,14 @@ public class ConflictTreeTest extends OntologyTests {
             map.put(file, "inconsistent");
         }
 
-        runOaeiConfereneTests(matchingsDir, ontologyDir, files, map);
+        runOaeiConferenceTests(matchingsDir, ontologyDir, files, map);
         /*
         result: 2015-02-26-T-10-58-50
         junit.framework.AssertionFailedError
             at at.ainf.owlapi3.performance.ConflictTreeTest.computeHSShortLog(ConflictTreeTest.java:562)
             at at.ainf.owlapi3.performance.ConflictTreeSession.search(ConflictTreeSession.java:109)
             at at.ainf.owlapi3.performance.ConflictTreeSession.search(ConflictTreeSession.java:69)
-            at at.ainf.owlapi3.performance.ConflictTreeTest.runOaeiConfereneTests(ConflictTreeTest.java:315)
+            at at.ainf.owlapi3.performance.ConflictTreeTest.runOaeiConferenceTests(ConflictTreeTest.java:315)
             at at.ainf.owlapi3.performance.ConflictTreeTest.doUnsolvableOAEIConferenceTest(ConflictTreeTest.java:174)
 
             and
@@ -256,7 +280,7 @@ public class ConflictTreeTest extends OntologyTests {
             at at.ainf.owlapi3.performance.ConflictTreeSession.computeNConflictsAtTime(ConflictTreeSession.java:193)
             at at.ainf.owlapi3.performance.ConflictTreeSession.search(ConflictTreeSession.java:83)
             at at.ainf.owlapi3.performance.ConflictTreeSession.search(ConflictTreeSession.java:69)
-            at at.ainf.owlapi3.performance.ConflictTreeTest.runOaeiConfereneTests(ConflictTreeTest.java:353)
+            at at.ainf.owlapi3.performance.ConflictTreeTest.runOaeiConferenceTests(ConflictTreeTest.java:353)
             at at.ainf.owlapi3.performance.ConflictTreeTest.doUnsolvableOAEIConferenceTest(ConflictTreeTest.java:219)
 
         */
@@ -287,7 +311,7 @@ public class ConflictTreeTest extends OntologyTests {
             map.put(file, "inconsistent");
         }
 
-        runOaeiConfereneTests(matchingsDir, ontologyDir, files, map);
+        runOaeiConferenceTests(matchingsDir, ontologyDir, files, map);
         /*
         result: 2015-02-26-T-09-29-38
         java.lang.OutOfMemoryError: GC overhead limit exceeded
@@ -304,10 +328,14 @@ public class ConflictTreeTest extends OntologyTests {
             at at.ainf.diagnosis.tree.AbstractTreeSearch.searchDiagnoses(AbstractTreeSearch.java:268)
             at at.ainf.diagnosis.tree.AbstractTreeSearch.start(AbstractTreeSearch.java:202)
             at at.ainf.owlapi3.base.OAEI11ConferenceSession.getRandomDiagSet(OAEI11ConferenceSession.java:151)
-            at at.ainf.owlapi3.performance.OAEI11ConferenceTests.runOaeiConfereneTests(OAEI11ConferenceTests.java:151)
+            at at.ainf.owlapi3.performance.OAEI11ConferenceTests.runOaeiConferenceTests(OAEI11ConferenceTests.java:151)
             at at.ainf.owlapi3.performance.OAEI11ConferenceTests.doTestsOAEIConference(OAEI11ConferenceTests.java:131)
         */
 
+    }
+
+    private void runOaeiConferenceTests(String matchingsDir, String ontologyDir, Set<File> files, Map<File, String> map) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+        runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 0);
     }
 
     /**
@@ -320,7 +348,7 @@ public class ConflictTreeTest extends OntologyTests {
      * @throws InconsistentTheoryException
      * @throws OWLOntologyCreationException
      */
-    private void runOaeiConfereneTests(String matchingsDir, String ontologyDir, Set<File> files, Map<File, String> map) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
+    private void runOaeiConferenceTests(String matchingsDir, String ontologyDir, Set<File> files, Map<File, String> map, int numberOfConflicts) throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         OAEI11ConferenceSession conferenceSession = new OAEI11ConferenceSession();
 
         QSSType[] qssTypes = new QSSType[]{QSSType.MINSCORE};
@@ -331,6 +359,10 @@ public class ConflictTreeTest extends OntologyTests {
             logger.info("processing " + file.getName());
             String out = "STAT, " + file;
 
+            /*
+            TODO: for each ontology always the same "randomly" chosen diagnosis is calculated, dependent
+                from the size of the targetDgSet -> change to a real random selection
+             */
             Random random = new Random(12311);
             Set<FormulaSet<OWLLogicalAxiom>> targetDgSet = conferenceSession.getRandomDiagSet(file, map.get(file));
             logger.info("number of found diagnoses (max. 30): " + targetDgSet.size());
@@ -392,6 +424,9 @@ public class ConflictTreeTest extends OntologyTests {
 
                 //calculation part
                 ConflictTreeSession conflictTreeSearch = new ConflictTreeSession(this, ctTheory, search);
+                if (numberOfConflicts > 0) {
+                    conflictTreeSearch.setMaximumNumberOfConflicts(numberOfConflicts);
+                }
                 conflictTreeSearch.setOutputString(out);
                 conflictTreeSearch.setMessageString(message);
                 FormulaSet<OWLLogicalAxiom> targetD = new FormulaSetImpl<OWLLogicalAxiom>(new BigDecimal(1), targetDg, null);
