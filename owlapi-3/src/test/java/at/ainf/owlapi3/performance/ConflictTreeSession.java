@@ -1,6 +1,7 @@
 package at.ainf.owlapi3.performance;
 
 import at.ainf.diagnosis.model.InconsistentTheoryException;
+import at.ainf.diagnosis.model.KnowledgeBase;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.MultiQuickXplain;
 import at.ainf.diagnosis.quickxplain.PredefinedConflictSearcher;
@@ -12,6 +13,7 @@ import at.ainf.diagnosis.tree.exceptions.NoConflictException;
 import at.ainf.owlapi3.base.CalculateDiagnoses;
 import at.ainf.owlapi3.base.SimulatedSession;
 import at.ainf.owlapi3.model.OWLTheory;
+import com.sun.xml.internal.bind.v2.util.TypeCast;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -31,9 +33,10 @@ public class ConflictTreeSession {
 
     private ConflictTreeTest caller;
     private int maximumNumberOfConflicts = 1;
-    private Set<Set<OWLLogicalAxiom>> diagnosis;
+    private Set<OWLLogicalAxiom> diagnosis;
     private OWLTheory theory;
-    private TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search;
+    private OWLTheory queryAnswerTheory = null;
+    private TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> search;
     private boolean isShortLogging = false;
     private String outputString = "";
     private String messageString = "";
@@ -60,23 +63,24 @@ public class ConflictTreeSession {
         searcher = new PredefinedConflictSearcher<OWLLogicalAxiom>(null);
         searcher.setIsBHS(false);
 
-        diagnosis = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+        diagnosis = new LinkedHashSet<OWLLogicalAxiom>();
     }
 
-    public long search(FormulaSet<OWLLogicalAxiom> targetDiagnosis, Map<SimulatedSession.QSSType,List<Double>> queries, SimulatedSession.QSSType type, boolean isShortLogging)
+    public long search(FormulaSet<OWLLogicalAxiom> targetDiagnosis, Map<SimulatedSession.QSSType, List<Double>> queries, SimulatedSession.QSSType type, boolean isShortLogging)
             throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
         this.isShortLogging = isShortLogging;
         return search(targetDiagnosis, queries, type);
     }
 
-    public long search(FormulaSet<OWLLogicalAxiom> targetDiagnosis, Map<SimulatedSession.QSSType,List<Double>> queries, SimulatedSession.QSSType type)
+    public long search(FormulaSet<OWLLogicalAxiom> targetDiagnosis, Map<SimulatedSession.QSSType, List<Double>> queries, SimulatedSession.QSSType type)
             throws SolverException, InconsistentTheoryException, OWLOntologyCreationException {
 
         Set<OWLLogicalAxiom> partialDiagnoses = new LinkedHashSet<OWLLogicalAxiom>();
 
+        queryAnswerTheory = getQueryAnswerTheory(targetDiagnosis);
         boolean conflictExists = true;
         long completeTime = System.currentTimeMillis();
-        while(conflictExists) {
+        while (conflictExists) {
             Set<FormulaSet<OWLLogicalAxiom>> conflicts = null;
             try {
                 //calculate n conflicts
@@ -113,9 +117,9 @@ public class ConflictTreeSession {
 
             if (isShortLogging) {
                 outputString = "," + type + ",";
-                outputString += caller.computeHSShortLog(search, theoryPrime, reducedTargetDiagnosis, queries.get(type), type, messageString);
+                outputString += caller.computeHSShortLog(search, theoryPrime, reducedTargetDiagnosis, queries.get(type), type, messageString, queryAnswerTheory);
             } else {
-                caller.computeHS(search, theoryPrime, reducedTargetDiagnosis, queries.get(type), type);
+                caller.computeHS(search, theoryPrime, reducedTargetDiagnosis, queries.get(type), type, queryAnswerTheory);
             }
 
             //if test doesn't fail, the found diagnosis is equal the targetDiagnosis
@@ -126,12 +130,28 @@ public class ConflictTreeSession {
             theory.getKnowledgeBase().removeFormulas(reducedTargetDiagnosis);
         }
         completeTime = System.currentTimeMillis() - completeTime;
-        diagnosis.add(partialDiagnoses);
+        diagnosis.addAll(partialDiagnoses);
         return completeTime;
+    }
+
+
+    private OWLTheory getQueryAnswerTheory(Set<OWLLogicalAxiom> axiomsToRemove) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+        Set<OWLAxiom> axiomSet = new HashSet<OWLAxiom>();
+        axiomSet.addAll(theory.getKnowledgeBase().getKnowledgeBase());
+        if (!axiomSet.removeAll(axiomsToRemove)) {
+            return null;
+        }
+        OWLTheory newTheory = theory.copyChangedTheory(axiomSet);
+        copyPositiveAndNegativeTests(newTheory, theory); //TODO check if needed
+
+        boolean consistent = newTheory.verifyConsistency();
+        logger.info("queryAnswerTheory is consistent: " + consistent);
+        return newTheory;
     }
 
     /**
      * Creates a copy of the complete theory, that only contains the axioms of the conflicts in the knowledge base
+     *
      * @param conflicts
      * @param completeTheory
      * @return
@@ -139,15 +159,11 @@ public class ConflictTreeSession {
      * @throws SolverException
      * @throws InconsistentTheoryException
      */
-    public OWLTheory getTheoryFromConflicts(Set<FormulaSet<OWLLogicalAxiom>> conflicts, OWLTheory completeTheory) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
+    private OWLTheory getTheoryFromConflicts(Set<FormulaSet<OWLLogicalAxiom>> conflicts, OWLTheory completeTheory) throws OWLOntologyCreationException, SolverException, InconsistentTheoryException {
         Set<OWLAxiom> axiomSet = new HashSet<OWLAxiom>();
         Iterator<FormulaSet<OWLLogicalAxiom>> iterator = conflicts.iterator();
-        while(iterator.hasNext()) {
-            Iterator<OWLLogicalAxiom> axiomIterator = iterator.next().iterator();
-            while (axiomIterator.hasNext()) {
-                OWLLogicalAxiom ax = axiomIterator.next();
-                axiomSet.add(ax);
-            }
+        while (iterator.hasNext()) {
+            axiomSet.addAll(iterator.next());
         }
 
         OWLTheory theory = completeTheory.copyChangedTheory(axiomSet);
@@ -159,33 +175,35 @@ public class ConflictTreeSession {
     /**
      * Copies the positive, negative, entailed and non entailed tests from the knowledge base of the source theory
      * to the target theory
+     *
      * @param targetTheory the target theory
      * @param sourceTheory the source theory
      */
     public void copyPositiveAndNegativeTests(OWLTheory targetTheory, OWLTheory sourceTheory) {
         Iterator<Set<OWLLogicalAxiom>> iterator = sourceTheory.getKnowledgeBase().getPositiveTests().iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             targetTheory.getKnowledgeBase().addPositiveTest(iterator.next());
         }
         iterator = sourceTheory.getKnowledgeBase().getNegativeTests().iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             targetTheory.getKnowledgeBase().addNegativeTest(iterator.next());
         }
 
         iterator = sourceTheory.getKnowledgeBase().getEntailedTests().iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             targetTheory.getKnowledgeBase().addEntailedTest(iterator.next());
         }
         iterator = sourceTheory.getKnowledgeBase().getNonentailedTests().iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             targetTheory.getKnowledgeBase().addNonEntailedTest(iterator.next());
         }
     }
 
     /**
      * searches for n conflict and returns them
+     *
      * @param MultiQuickXplain<OWLLogicalAxiom> conflictsSearcher
-     * @param OWLTheory theory
+     * @param OWLTheory                         theory
      * @return Set<FormulaSet<OWLLogicalAxiom>> conflicts
      * @throws InconsistentTheoryException
      * @throws SolverException
@@ -203,13 +221,14 @@ public class ConflictTreeSession {
 
     /**
      * Returns a formula set of the axioms, that are present in the conflict sets
+     *
      * @param diagnosis
      * @param conflicts conflict sets
      * @return intersecting axioms FormulaSet<OWLLogicalAxiom>
      */
     private FormulaSet<OWLLogicalAxiom> getIntersectingDiagnosisAxiom(FormulaSet<OWLLogicalAxiom> diagnosis, Set<FormulaSet<OWLLogicalAxiom>> conflicts) {
         Set<OWLLogicalAxiom> axiomSet = new HashSet<OWLLogicalAxiom>();
-        if(diagnosis==null || conflicts==null)
+        if (diagnosis == null || conflicts == null)
             return null;
 
         for (OWLLogicalAxiom diagAxiom : diagnosis) {
@@ -235,7 +254,7 @@ public class ConflictTreeSession {
         this.maximumNumberOfConflicts = maximumNumberOfConflicts;
     }
 
-    public Set<Set<OWLLogicalAxiom>> getDiagnosis() {
+    public Set<OWLLogicalAxiom> getDiagnosis() {
         return diagnosis;
     }
 

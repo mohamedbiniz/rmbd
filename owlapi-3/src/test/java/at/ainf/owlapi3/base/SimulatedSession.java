@@ -184,10 +184,9 @@ public class SimulatedSession extends CalculateDiagnoses {
     }
 
     protected boolean generateQueryAnswer
-            (TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
+            (Searchable<OWLLogicalAxiom> theory,
              Partition<OWLLogicalAxiom> actualQuery, Set<OWLLogicalAxiom> t) throws NoDecisionPossibleException {
         boolean answer;
-        Searchable<OWLLogicalAxiom> theory = search.getSearchable();
 
         FormulaSet<OWLLogicalAxiom> target = new FormulaSetImpl<OWLLogicalAxiom>(BigDecimal.valueOf(0.5), t, new LinkedHashSet<OWLLogicalAxiom>());
         if (theory.diagnosisEntails(target, actualQuery.partition)) {
@@ -288,6 +287,8 @@ public class SimulatedSession extends CalculateDiagnoses {
 
     private OWLTheory theory;
 
+    private Searchable<OWLLogicalAxiom> queryAnswerTheory;
+
     public TreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom> getSearch() {
         return search;
     }
@@ -302,6 +303,14 @@ public class SimulatedSession extends CalculateDiagnoses {
 
     public void setTheory(OWLTheory theory) {
         this.theory = theory;
+    }
+
+    public Searchable<OWLLogicalAxiom> getQueryAnswerTheory() {
+        return queryAnswerTheory;
+    }
+
+    public void setQueryAnswerTheory(Searchable<OWLLogicalAxiom> queryAnswerTheory) {
+        this.queryAnswerTheory = queryAnswerTheory;
     }
 
     public String simulateQuerySession() {
@@ -433,7 +442,11 @@ public class SimulatedSession extends CalculateDiagnoses {
                 boolean hasAn = false;
                 while (!hasAn) {
                     try {
-                        answer = generateQueryAnswer(getSearch(), actPa, getTargetD());
+                        //TODO only change theory here
+                        if (getQueryAnswerTheory() == null) {
+                            setQueryAnswerTheory(getSearch().getSearchable());
+                        }
+                        answer = generateQueryAnswer(getQueryAnswerTheory(), actPa, getTargetD());
                         hasAn = true;
                     } catch (NoDecisionPossibleException e) {
                         hasQueryWithNoDecisionPossible = true;
