@@ -1,5 +1,6 @@
 package at.ainf.owlapi3.performance;
 
+import at.ainf.diagnosis.Searchable;
 import at.ainf.diagnosis.model.InconsistentTheoryException;
 import at.ainf.diagnosis.model.SolverException;
 import at.ainf.diagnosis.quickxplain.QuickXplain;
@@ -33,6 +34,8 @@ import java.net.URL;
 import java.util.*;
 
 import static at.ainf.owlapi3.util.SetUtils.createIntersection;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -51,7 +54,7 @@ public class ConflictTreeTest extends OntologyTests {
     /**
      * Set of diagnoses found during search
      */
-    private Set<Set<OWLLogicalAxiom>> foundDiagnoses;
+    private Set<OWLLogicalAxiom> foundDiagnoses;
 
 //    static Set<Searcher<OWLLogicalAxiom>> searchers = new LinkedHashSet<Searcher<OWLLogicalAxiom>>();
 
@@ -86,7 +89,7 @@ public class ConflictTreeTest extends OntologyTests {
         search.setCostsEstimator(new OWLAxiomKeywordCostsEstimator(ctTheory));
 
         //set for all found diagnoses during search
-        foundDiagnoses = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+        foundDiagnoses = new LinkedHashSet<OWLLogicalAxiom>();
 
         return search;
     }
@@ -109,14 +112,10 @@ public class ConflictTreeTest extends OntologyTests {
             files.add(file);
             map.put(file, "incoherent");
         }
-        try {
-            //each of the following configurations is throwing an exception
-            runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 1); // aroma-cmt-confof.rdf
-            //runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 2); // aroma-cmt-ekaw.rdf
-            //runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 3); // aroma-conference-confof.rdf
-        } catch (NoSuchElementException e) {
-            logger.info(e.toString());
-        }
+        //each of the following configurations is throwing an exception
+        //runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 1);   // aroma-cmt-confof.rdf
+        //runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 2); // aroma-cmt-ekaw.rdf
+        runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 3); // aroma-conference-confof.rdf
     }
 
     @Test
@@ -209,7 +208,7 @@ public class ConflictTreeTest extends OntologyTests {
                 //TODO read targetDg from File | which file for our ontologies?
 
                 //set for all found diagnoses during search
-                foundDiagnoses = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+                foundDiagnoses = new LinkedHashSet<OWLLogicalAxiom>();
 
                 ctTimes.put(qssType, new DurationStat());
                 ctQueries.put(qssType, new LinkedList<Double>());
@@ -226,7 +225,7 @@ public class ConflictTreeTest extends OntologyTests {
                 ctTimes.get(qssType).add(completeTime);
                 out += conflictTreeSearch.getOutputString();
 
-                foundDiagnoses.addAll(conflictTreeSearch.getDiagnosis());
+                foundDiagnoses = conflictTreeSearch.getDiagnosis();
 
                 resetTheoryTests(ctTheory);
                 search.reset();
@@ -373,6 +372,7 @@ public class ConflictTreeTest extends OntologyTests {
             Map<QSSType, List<Double>> ctQueries = new HashMap<QSSType, List<Double>>();
 
             for (QSSType qssType : qssTypes) {
+                long preprocessModulExtract = System.currentTimeMillis();
                 String fileName = file.getName();
                 StringTokenizer t = new StringTokenizer(fileName, "-");
                 String matcher = t.nextToken();
@@ -382,12 +382,7 @@ public class ConflictTreeTest extends OntologyTests {
                 o2 = o2.substring(0, o2.length() - 4);
 
                 String n = file.getName().substring(0, file.getName().length() - 4);
-                OWLOntology merged = conferenceSession.getOntology(ontologyDir,
-                        o1, o2, matchingsDir + map.get(file), n + ".rdf");
-
-                long preprocessModulExtract = System.currentTimeMillis();
-                OWLOntology ontology = new OWLIncoherencyExtractor(
-                        new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
+                OWLOntology ontology = loadOntology(matchingsDir, ontologyDir, map, conferenceSession, file, o1, o2, n);
                 preprocessModulExtract = System.currentTimeMillis() - preprocessModulExtract;
                 ctTheory = getExtendTheory(ontology, false);
                 origTheory = (OWLTheory) ctTheory.copy();
@@ -413,7 +408,7 @@ public class ConflictTreeTest extends OntologyTests {
                 search.reset();
 
                 //set for all found diagnoses during search
-                foundDiagnoses = new LinkedHashSet<Set<OWLLogicalAxiom>>();
+                foundDiagnoses = new LinkedHashSet<OWLLogicalAxiom>();
 
                 ctTimes.put(qssType, new DurationStat());
                 ctQueries.put(qssType, new LinkedList<Double>());
@@ -434,13 +429,34 @@ public class ConflictTreeTest extends OntologyTests {
                 ctTimes.get(qssType).add(completeTime);
                 out += conflictTreeSearch.getOutputString();
 
-                foundDiagnoses.addAll(conflictTreeSearch.getDiagnosis());
+                foundDiagnoses = conflictTreeSearch.getDiagnosis();
+                logger.info("targetD: " + targetD.size() + ", " + CalculateDiagnoses.renderAxioms(targetD));
+                logger.info("foundD: " + foundDiagnoses.size() + ", " + CalculateDiagnoses.renderAxioms(foundDiagnoses));
+
+
+                OWLOntology inconsOntology = loadOntology(matchingsDir, ontologyDir, map, conferenceSession, file, o1, o2, n);
+                OWLTheory faultyTheory = getExtendTheory(inconsOntology, false);
+                faultyTheory.getReasoner().addFormulasToCache(origTheory.getKnowledgeBase().getFaultyFormulas());
+                assertFalse(faultyTheory.verifyConsistency());
+                assertTrue(faultyTheory.testDiagnosis(foundDiagnoses));
+
+                assertTrue(targetD.containsAll(foundDiagnoses));
+                assertTrue(foundDiagnoses.containsAll(targetD));
 
                 resetTheoryTests(ctTheory);
                 search.reset();
             }
             logger.info(out);
         }
+    }
+
+    private OWLOntology loadOntology(String matchingsDir, String ontologyDir, Map<File, String> map, OAEI11ConferenceSession conferenceSession, File file, String o1, String o2, String n) {
+        OWLOntology merged = conferenceSession.getOntology(ontologyDir,
+                o1, o2, matchingsDir + map.get(file), n + ".rdf");
+
+
+        return new OWLIncoherencyExtractor(
+                new Reasoner.ReasonerFactory()).getIncoherentPartAsOntology(merged);
     }
 
 
@@ -478,7 +494,7 @@ public class ConflictTreeTest extends OntologyTests {
                 completeTime = System.currentTimeMillis() - completeTime;
                 nTimes.get(type).add(completeTime);
 
-                foundDiagnoses.add(targetDiagnosis);
+                foundDiagnoses.addAll(targetDiagnosis);
                 assertTrue(ctTheory.verifyConsistency());
 
                 resetTheoryTests(ctTheory);
@@ -486,9 +502,7 @@ public class ConflictTreeTest extends OntologyTests {
 
             }
             logger.info("found Diagnoses: " + foundDiagnoses.size());
-            for (Set<OWLLogicalAxiom> diag : foundDiagnoses) {
-                logger.info("found Diagnosis: " + CalculateDiagnoses.renderAxioms(diag));
-            }
+            logger.info("found Diagnosis: " + CalculateDiagnoses.renderAxioms(foundDiagnoses));
             logger.info("found all target diagnoses: " + (foundDiagnoses.size() > 0 && foundDiagnoses.containsAll(diagnoses)));
             // end (run normal simulated session)
 
@@ -512,9 +526,7 @@ public class ConflictTreeTest extends OntologyTests {
                 ctSearch.reset();
             }
             logger.info("found Diagnoses: " + foundDiagnoses.size());
-            for (Set<OWLLogicalAxiom> diag : foundDiagnoses) {
-                logger.info("found Diagnosis: " + CalculateDiagnoses.renderAxioms(diag));
-            }
+            logger.info("found Diagnosis: " + CalculateDiagnoses.renderAxioms(foundDiagnoses));
             logger.info("found all target diagnoses: " + (foundDiagnoses.size() > 0 && foundDiagnoses.containsAll(diagnoses)));
             // end (run conflict tree simulated session)
 
@@ -551,7 +563,7 @@ public class ConflictTreeTest extends OntologyTests {
                 completeTime = System.currentTimeMillis() - completeTime;
                 nTimes.get(type).add(completeTime);
 
-                foundDiagnoses.add(targetDiagnosis);
+                foundDiagnoses.addAll(targetDiagnosis);
                 assertTrue(ctTheory.verifyConsistency());
 
                 resetTheoryTests(ctTheory);
@@ -559,9 +571,7 @@ public class ConflictTreeTest extends OntologyTests {
             }
             logStatistics(nQueries, nTimes, type, "normal");
             logger.info("found Diagnoses: " + foundDiagnoses.size());
-            for (Set<OWLLogicalAxiom> diag : foundDiagnoses) {
-                logger.info("found Diagnosis: " + CalculateDiagnoses.renderAxioms(diag));
-            }
+            logger.info("found Diagnosis: " + CalculateDiagnoses.renderAxioms(foundDiagnoses));
             logger.info("found all target diagnoses: " + (foundDiagnoses.size() > 0 && foundDiagnoses.containsAll(diagnoses)));
         }
     }
@@ -597,9 +607,7 @@ public class ConflictTreeTest extends OntologyTests {
             }
             logStatistics(ctQueries, ctTimes, type, "treeSearch");
             logger.info("found Diagnoses: " + foundDiagnoses.size());
-            for (Set<OWLLogicalAxiom> diag : foundDiagnoses) {
-                logger.info("found Diagnosis: " + CalculateDiagnoses.renderAxioms(diag));
-            }
+            logger.info("found Diagnosis: " + CalculateDiagnoses.renderAxioms(foundDiagnoses));
             logger.info("found all target diagnoses: " + (foundDiagnoses.size() > 0 && foundDiagnoses.containsAll(diagnoses)));
         }
     }
@@ -653,19 +661,23 @@ public class ConflictTreeTest extends OntologyTests {
         theory.getKnowledgeBase().clearTestsList();
     }
 
-
+    protected String computeHSShortLog(TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
+                                       OWLTheory theory, FormulaSet<OWLLogicalAxiom> diagnoses,
+                                       List<Double> queries, QSSType type, String message) {
+        return computeHSShortLog(search, theory, diagnoses, queries, type, message, null);
+    }
     protected String computeHSShortLog(TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> search,
                              OWLTheory theory, FormulaSet<OWLLogicalAxiom> diagnoses,
-                             List<Double> queries, QSSType type, String message) {
+                             List<Double> queries, QSSType type, String message, OWLTheory queryAnswerTheory) {
         SimulatedSession session = new SimulatedSession();
         session.setShowElRates(false);
-
         TableList entry = new TableList();
         session.setEntry(entry);
         session.setMessage(message);
         session.setTargetD(diagnoses);
         session.setScoringFunct(type);
         session.setTheory(theory);
+        session.setQueryAnswerTheory(queryAnswerTheory);
         session.setSearch(search);
         String out = session.simulateQuerySession();
         FormulaSet<OWLLogicalAxiom> diag = getMostProbable(search.getDiagnoses());
@@ -676,11 +688,7 @@ public class ConflictTreeTest extends OntologyTests {
             theory.getKnowledgeBase().clearTestCases(); // don't clear if called from ConflictTreeTest
         }
         search.reset();
-        try {
-            Assert.assertTrue(foundCorrectD);
-        }catch (AssertionError e){
-            System.out.println(e);
-        }
+        //Assert.assertTrue(foundCorrectD);
         queries.add(entry.getMeanQuery());
         return out;
     }

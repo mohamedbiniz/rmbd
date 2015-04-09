@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static at.ainf.owlapi3.util.SetUtils.createIntersection;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Created with IntelliJ IDEA.
@@ -145,6 +146,9 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         th30.getKnowledgeBase().addBackgroundFormulas(bx);
         OWLAxiomCostsEstimator es30 = new OWLAxiomCostsEstimator(th30, readRdfMapping(mapd, n + ".rdf"));
         search30.setCostsEstimator(es30);
+        th30.getReasoner().addFormulasToCache(th30.getKnowledgeBase().getFaultyFormulas());
+        assertFalse(th30.verifyConsistency());
+        th30.reset();
 
         try {
             search30.setMaxDiagnosesNumber(30);

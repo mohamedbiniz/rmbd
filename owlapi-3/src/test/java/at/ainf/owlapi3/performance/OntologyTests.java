@@ -610,6 +610,12 @@ public class OntologyTests extends OntologySession {
     protected long computeHS(TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal,
                              OWLTheory theoryNormal, FormulaSet<OWLLogicalAxiom> diagnoses,
                              List<Double> queries, QSSType type) {
+        return computeHS(searchNormal, theoryNormal, diagnoses, queries, type, null);
+    }
+
+    protected long computeHS(TreeSearch<FormulaSet<OWLLogicalAxiom>,OWLLogicalAxiom> searchNormal,
+                             OWLTheory theoryNormal, FormulaSet<OWLLogicalAxiom> diagnoses,
+                             List<Double> queries, QSSType type, OWLTheory queryAnswerTheory) {
         SimulatedSession session = new SimulatedSession();
         TableList entry = new TableList();
         long timeNormal = System.currentTimeMillis();
@@ -621,6 +627,7 @@ public class OntologyTests extends OntologySession {
         session.setTargetD(diagnoses);
         session.setScoringFunct(type);
         session.setTheory(theoryNormal);
+        session.setQueryAnswerTheory(queryAnswerTheory);
         session.setSearch(searchNormal);
         session.simulateQuerySession();
         timeNormal = System.currentTimeMillis() - timeNormal;
