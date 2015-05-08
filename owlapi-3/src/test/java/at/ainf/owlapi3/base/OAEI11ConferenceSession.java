@@ -40,7 +40,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
 
 
     public OWLOntology getOntology(String pathToOntologies,
-                                          String o1, String o2, String pathToMapping, String mappingName) {
+                                   String o1, String o2, String pathToMapping, String mappingName) {
         OWLOntology ontology1 = getOntologySimple(pathToOntologies + "/" + o1 + ".owl");
         OWLOntology ontology2 = getOntologySimple(pathToOntologies + "/" + o2 + ".owl");
         OWLOntology merged = mergeOntologies(ontology1, ontology2);
@@ -98,9 +98,7 @@ public class OAEI11ConferenceSession extends SimulatedSession {
         }
     }
 
-
-
-    public Set<FormulaSet<OWLLogicalAxiom>> getRandomDiagSet(File file, String directory ) throws SolverException, InconsistentTheoryException {
+    public Set<FormulaSet<OWLLogicalAxiom>> getRandomDiagSet(File file, String directory) throws SolverException, InconsistentTheoryException {
         String conferenceYear = getConferenceYear();
         String matchingsDir = conferenceYear + getMatchingsDir();
         String matchingsDirName = "/ontology";

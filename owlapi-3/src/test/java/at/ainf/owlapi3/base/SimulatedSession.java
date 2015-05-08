@@ -149,7 +149,7 @@ public class SimulatedSession extends CalculateDiagnoses {
     }
 
     protected int getEliminationRate(Searchable<OWLLogicalAxiom> theory, Set<FormulaSet<OWLLogicalAxiom>> d,
-                                   boolean a, Partition<OWLLogicalAxiom> partition)
+                                     boolean a, Partition<OWLLogicalAxiom> partition)
             throws SolverException {
         int deleted = 0;
         for (FormulaSet<OWLLogicalAxiom> diagnosis : d) {
@@ -442,7 +442,6 @@ public class SimulatedSession extends CalculateDiagnoses {
                 boolean hasAn = false;
                 while (!hasAn) {
                     try {
-                        //TODO only change theory here
                         if (getQueryAnswerTheory() == null) {
                             setQueryAnswerTheory(getSearch().getSearchable());
                         }
@@ -495,13 +494,13 @@ public class SimulatedSession extends CalculateDiagnoses {
                     logger.info("elimination rates: in leading ;" + eliminatedInLeading + "/" + diagnoses.size());
 
                 if (answer) {
-                        getSearch().getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-                        if (actPa.dnx.isEmpty() && diagnoses.size() < numberOfHittingSets)
-                            querySessionEnd = true;
+                    getSearch().getSearchable().getKnowledgeBase().addEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                    if (actPa.dnx.isEmpty() && diagnoses.size() < numberOfHittingSets)
+                        querySessionEnd = true;
                 } else {
-                        getSearch().getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
-                        if (actPa.dx.isEmpty() && diagnoses.size() < numberOfHittingSets)
-                            querySessionEnd = true;
+                    getSearch().getSearchable().getKnowledgeBase().addNonEntailedTest(new TreeSet<OWLLogicalAxiom>(actPa.partition));
+                    if (actPa.dx.isEmpty() && diagnoses.size() < numberOfHittingSets)
+                        querySessionEnd = true;
 
                 }
 
@@ -548,19 +547,19 @@ public class SimulatedSession extends CalculateDiagnoses {
 //                ", systemBrake " + systemBreak + ", nd " + hasQueryWithNoDecisionPossible +
 //                ", consistency checks " + consistencyCount;
         String msg = getMessage() + "," + "Time: " +time + ", \n" + "Number of queries: "+num_of_queries + ", \n"
-               +"Query cardinality: "+queryCardinality+", \n" + "Target Diagnosis is most probable: "+targetDiagnosisIsMostProbable + ", \n" + "Target diagnosis is windows: "+targetDiagnosisIsInWind + ", \n" + "Diagnosis window size: "+diagWinSize
+                +"Query cardinality: "+queryCardinality+", \n" + "Target Diagnosis is most probable: "+targetDiagnosisIsMostProbable + ", \n" + "Target diagnosis is windows: "+targetDiagnosisIsInWind + ", \n" + "Diagnosis window size: "+diagWinSize
                 + ", \n" + "Reaction time: "+ reactionTime + ", \n" + "User break: "+userBreak + ", \n" + possibleError +
                 ",\n" + "System break: "+systemBreak + ", \n" + "Has query with no decision possible: "+hasQueryWithNoDecisionPossible +
                 ", \n" + "Consistency count: "+consistencyCount + ",\n" +"Consistency time: "+ consistencyTime;
         logger.info (msg);
-        
+
         String msgComma = getMessage() + "," + "act2," +
-                time + "," + 
+                time + "," +
                 num_of_queries + "," +
                 queryCardinality + "," +
-                targetDiagnosisIsMostProbable + "," + 
+                targetDiagnosisIsMostProbable + "," +
                 targetDiagnosisIsInWind + "," +
-                diagWinSize + "," + 
+                diagWinSize + "," +
                 reactionTime + "," +
                 userBreak + "," +
                 possibleError + "," +

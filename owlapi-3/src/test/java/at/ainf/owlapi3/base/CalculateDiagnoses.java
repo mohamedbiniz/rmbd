@@ -9,6 +9,7 @@ import at.ainf.diagnosis.tree.HsTreeSearch;
 import at.ainf.diagnosis.tree.InvHsTreeSearch;
 import at.ainf.diagnosis.tree.TreeSearch;
 import at.ainf.diagnosis.tree.exceptions.NoConflictException;
+import at.ainf.diagnosis.tree.searchstrategy.BreadthFirstSearchStrategy;
 import at.ainf.diagnosis.tree.searchstrategy.UniformCostSearchStrategy;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.DualTreeOWLTheory;
@@ -40,30 +41,30 @@ public class CalculateDiagnoses {
     private Logger logger = LoggerFactory.getLogger(CalculateDiagnoses.class.getName());
 
     private ManchesterOWLSyntax[] keywords = {ManchesterOWLSyntax.SOME,
-                ManchesterOWLSyntax.ONLY,
-                ManchesterOWLSyntax.MIN,
-                ManchesterOWLSyntax.MAX,
-                ManchesterOWLSyntax.EXACTLY,
-                ManchesterOWLSyntax.AND,
-                ManchesterOWLSyntax.OR,
-                ManchesterOWLSyntax.NOT,
-                ManchesterOWLSyntax.VALUE,
-                ManchesterOWLSyntax.INVERSE,
-                ManchesterOWLSyntax.SUBCLASS_OF,
-                ManchesterOWLSyntax.EQUIVALENT_TO,
-                ManchesterOWLSyntax.DISJOINT_CLASSES,
-                ManchesterOWLSyntax.DISJOINT_WITH,
-                ManchesterOWLSyntax.FUNCTIONAL,
-                ManchesterOWLSyntax.INVERSE_OF,
-                ManchesterOWLSyntax.SUB_PROPERTY_OF,
-                ManchesterOWLSyntax.SAME_AS,
-                ManchesterOWLSyntax.DIFFERENT_FROM,
-                ManchesterOWLSyntax.RANGE,
-                ManchesterOWLSyntax.DOMAIN,
-                ManchesterOWLSyntax.TYPE,
-                ManchesterOWLSyntax.TRANSITIVE,
-                ManchesterOWLSyntax.SYMMETRIC
-        };
+            ManchesterOWLSyntax.ONLY,
+            ManchesterOWLSyntax.MIN,
+            ManchesterOWLSyntax.MAX,
+            ManchesterOWLSyntax.EXACTLY,
+            ManchesterOWLSyntax.AND,
+            ManchesterOWLSyntax.OR,
+            ManchesterOWLSyntax.NOT,
+            ManchesterOWLSyntax.VALUE,
+            ManchesterOWLSyntax.INVERSE,
+            ManchesterOWLSyntax.SUBCLASS_OF,
+            ManchesterOWLSyntax.EQUIVALENT_TO,
+            ManchesterOWLSyntax.DISJOINT_CLASSES,
+            ManchesterOWLSyntax.DISJOINT_WITH,
+            ManchesterOWLSyntax.FUNCTIONAL,
+            ManchesterOWLSyntax.INVERSE_OF,
+            ManchesterOWLSyntax.SUB_PROPERTY_OF,
+            ManchesterOWLSyntax.SAME_AS,
+            ManchesterOWLSyntax.DIFFERENT_FROM,
+            ManchesterOWLSyntax.RANGE,
+            ManchesterOWLSyntax.DOMAIN,
+            ManchesterOWLSyntax.TYPE,
+            ManchesterOWLSyntax.TRANSITIVE,
+            ManchesterOWLSyntax.SYMMETRIC
+    };
 
     public HashMap<ManchesterOWLSyntax, BigDecimal> getProbabMap() {
         HashMap<ManchesterOWLSyntax, BigDecimal> map = new HashMap<ManchesterOWLSyntax, BigDecimal>();
@@ -117,7 +118,9 @@ public class CalculateDiagnoses {
             search = new HsTreeSearch<FormulaSet<OWLLogicalAxiom>, OWLLogicalAxiom>();
             search.setSearcher(new QuickXplain<OWLLogicalAxiom>());
         }
-        search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
+        //TODO: change back
+        search.setSearchStrategy(new BreadthFirstSearchStrategy<OWLLogicalAxiom>());
+        //search.setSearchStrategy(new UniformCostSearchStrategy<OWLLogicalAxiom>());
         search.setSearchable(theory);
 
 

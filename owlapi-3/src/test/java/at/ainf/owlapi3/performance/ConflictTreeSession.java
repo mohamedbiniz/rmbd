@@ -144,7 +144,9 @@ public class ConflictTreeSession {
         OWLTheory newTheory = theory.copyChangedTheory(axiomSet);
         copyPositiveAndNegativeTests(newTheory, theory); //TODO check if needed
 
+        newTheory.getReasoner().addFormulasToCache(newTheory.getKnowledgeBase().getFaultyFormulas());
         boolean consistent = newTheory.verifyConsistency();
+        newTheory.reset();
         logger.info("queryAnswerTheory is consistent: " + consistent);
         return newTheory;
     }
