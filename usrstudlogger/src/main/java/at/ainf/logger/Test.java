@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-@Aspect
+//@Aspect
 public class Test {
 
     private static Logger logger = LoggerFactory.getLogger(Test.class.getName());

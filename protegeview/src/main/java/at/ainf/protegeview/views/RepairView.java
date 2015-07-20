@@ -95,7 +95,7 @@ public class RepairView extends AbstractOWLViewComponent implements EntailmentsS
 
     public void entailmentSetChanged(EntailmentsShowEvent e) {
         processAxiom(e.getEntHSets());
-        getWS().bringViewToFront(getView().getId());
+        //getWS().bringViewToFront(getView().getId());
     }
 
     public void hittingSetsChanged(HittingSetsChangedEvent e) {

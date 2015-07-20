@@ -18,6 +18,7 @@ import at.ainf.owlapi3.costestimation.OWLAxiomCostsEstimator;
 import at.ainf.owlapi3.costestimation.OWLAxiomKeywordCostsEstimator;
 import at.ainf.owlapi3.model.OWLIncoherencyExtractor;
 import at.ainf.owlapi3.model.OWLTheory;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.OWLLogicalAxiom;
@@ -92,7 +93,7 @@ public class ConflictTreeTest extends OntologyTests {
         return search;
     }
 
-    @Test
+    @Ignore @Test
     /**
      * Testing the ontologies which are throwing the NoSuchElementException
      */
@@ -116,7 +117,8 @@ public class ConflictTreeTest extends OntologyTests {
         runOaeiConferenceTests(matchingsDir, ontologyDir, files, map, 3); // aroma-conference-confof.rdf
     }
 
-    @Test
+    @Ignore @Test
+
     /**
      * Tests ConflictTreeSimulatedSession with unsolvable ontologies, target diagnoses are calculated
      */
@@ -167,7 +169,8 @@ public class ConflictTreeTest extends OntologyTests {
     }
 
 
-    @Test
+    @Ignore @Test
+
     /**
      * Tests ConflictTreeSimulatedSession with solvable ontologies from OAEI11 Conference, target diagnoses are calculated
      */
@@ -518,7 +521,7 @@ public class ConflictTreeTest extends OntologyTests {
     */
 
 
-    @Test
+    @Ignore @Test
     public void testCompareSearchMethods() throws SolverException, InconsistentTheoryException, NoConflictException, OWLOntologyCreationException {
         logger.info("NormalSimulatedSession compared to ConflictTreeSimulatedSession");
 
@@ -601,7 +604,7 @@ public class ConflictTreeTest extends OntologyTests {
     }
 
 
-    @Test
+    @Ignore @Test
     public void testNormalSimulatedSession() throws SolverException, InconsistentTheoryException, NoConflictException, OWLOntologyCreationException {
         logger.info("NormalSimulatedSession");
 
@@ -641,7 +644,7 @@ public class ConflictTreeTest extends OntologyTests {
     }
 
 
-    @Test
+    @Test @Ignore
     public void testConflictTreeSimulatedSession() throws SolverException, InconsistentTheoryException, OWLOntologyCreationException, NoConflictException {
         logger.info("ConflictTreeSimulatedSession");
 
