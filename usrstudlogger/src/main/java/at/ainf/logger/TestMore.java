@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 
-@Aspect
+//@Aspect
 public class TestMore {
 
     /*private static Logger logger = Logger.getLogger(TestMore.class.getName());

@@ -100,8 +100,8 @@ public class AxiomExplainView extends AbstractOWLViewComponent implements AxiomC
 
     public void axiomChanged(AxiomChangedEvent e) {
         processAxiom (e.getAxiom());
+
         getWS().bringViewToFront(getView().getId());
-
-
     }
+
 }

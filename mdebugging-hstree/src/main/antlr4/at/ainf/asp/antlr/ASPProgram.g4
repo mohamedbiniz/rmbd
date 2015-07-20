@@ -2,7 +2,7 @@ grammar ASPProgram;
 
 @header {
 	/* package at.ainf.asp.antlr; */
-	import at.ainf.asp.model.exceptions.IllegalParserElementException;
+	import at.ainf.asp.mdebugging.hstree.model.exceptions.IllegalParserElementException;
 }
 
 /*---------------------------
